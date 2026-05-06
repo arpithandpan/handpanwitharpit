@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Online Classes — Handpan with Arpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+.classes-intro { display: grid; grid-template-columns: 1.4fr 1fr; gap: 5rem; align-items: center; margin-bottom: 5rem; }
+.classes-intro-text p { font-family: var(--font-display); font-size: 1.2rem; font-weight: 300; color: var(--text-mid); line-height: 1.85; margin-bottom: 1.2rem; }
+.how-it-works { background: var(--sand); border-radius: 3px; padding: 2rem; }
+.how-it-works h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 300; color: var(--bark); margin-bottom: 1.5rem; font-style: italic; }
+.step { display: flex; gap: 1rem; margin-bottom: 1.2rem; }
+.step-num { font-family: var(--font-display); font-size: 1.5rem; font-weight: 300; color: var(--clay); min-width: 28px; line-height: 1.2; }
+.step-text strong { display: block; font-size: 0.82rem; font-weight: 500; color: var(--bark); margin-bottom: 0.2rem; }
+.step-text p { font-size: 0.82rem; color: var(--text-light); line-height: 1.6; }
+
+.course-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-bottom: 4rem; }
+.course-card {
+  border: 1px solid var(--clay-pale); border-radius: 3px;
+  overflow: hidden; transition: border-color 0.25s, transform 0.25s;
+}
+.course-card:hover { border-color: var(--clay); transform: translateY(-4px); }
+.course-card.featured { border-color: var(--bark); }
+.course-card-top {
+  padding: 2rem 2rem 1.5rem;
+  border-bottom: 1px solid var(--clay-pale);
+}
+.course-card.featured .course-card-top { background: var(--bark); border-bottom-color: rgba(193,127,82,0.2); }
+.popular-tag {
+  display: inline-block; font-size: 0.65rem; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 20px;
+  background: rgba(193,127,82,0.15); color: var(--clay); margin-bottom: 0.8rem;
+}
+.course-card.featured .popular-tag { background: rgba(193,127,82,0.2); color: var(--clay-light); }
+.course-level { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.3rem; }
+.course-card.featured .course-level { color: var(--clay-light); }
+.course-name { font-family: var(--font-display); font-size: 1.9rem; font-weight: 300; color: var(--bark); line-height: 1.1; margin-bottom: 0.5rem; }
+.course-card.featured .course-name { color: var(--clay-pale); }
+.course-tagline { font-family: var(--font-display); font-size: 1rem; font-weight: 300; font-style: italic; color: var(--text-light); }
+.course-card.featured .course-tagline { color: rgba(240,219,200,0.5); }
+.course-card-body { padding: 1.5rem 2rem 2rem; }
+.course-meta-row { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.course-meta-item { text-align: center; }
+.course-meta-item span { font-family: var(--font-display); font-size: 1.4rem; font-weight: 300; color: var(--clay); display: block; }
+.course-meta-item small { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
+.course-lessons { margin-bottom: 1.5rem; }
+.lesson-item { padding: 0.65rem 0; border-bottom: 1px solid rgba(193,127,82,0.1); display: flex; justify-content: space-between; }
+.lesson-name { font-size: 0.85rem; color: var(--text-mid); }
+.lesson-dur { font-size: 0.78rem; color: var(--text-light); }
+.course-price-row { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 1.2rem; }
+.course-price { font-family: var(--font-display); font-size: 2rem; font-weight: 300; color: var(--bark); }
+.course-price-note { font-size: 0.8rem; color: var(--text-light); }
+.btn-enroll-lg {
+  width: 100%; padding: 0.9rem;
+  font-family: var(--font-body); font-size: 0.78rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  border: 1px solid var(--bark); color: var(--bark);
+  background: transparent; border-radius: 2px; cursor: pointer; transition: all 0.2s;
+}
+.btn-enroll-lg:hover { background: var(--bark); color: var(--cream); }
+.course-card.featured .btn-enroll-lg { background: var(--clay); border-color: var(--clay); color: var(--cream); }
+.course-card.featured .btn-enroll-lg:hover { background: var(--clay-light); }
+
+/* FAQ */
+.faq-list { max-width: 720px; }
+.faq-item { border-bottom: 1px solid var(--clay-pale); }
+.faq-q {
+  padding: 1.2rem 0; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.95rem; color: var(--bark); font-weight: 400;
+}
+.faq-q::after { content: '+'; font-size: 1.2rem; color: var(--clay); transition: transform 0.2s; }
+.faq-item.open .faq-q::after { content: '−'; }
+.faq-a { display: none; padding-bottom: 1.2rem; font-size: 0.88rem; color: var(--text-mid); line-height: 1.7; }
+.faq-item.open .faq-a { display: block; }
+
+/* Enroll modal */
+.enroll-overlay {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(61,43,31,0.6); backdrop-filter: blur(4px);
+  align-items: center; justify-content: center; padding: 2rem;
+}
+.enroll-overlay.open { display: flex; }
+.enroll-modal {
+  background: var(--cream); border-radius: 4px;
+  max-width: 500px; width: 100%; max-height: 90vh;
+  overflow-y: auto; padding: 2.5rem; position: relative;
+}
+.modal-close { position: absolute; top: 1.2rem; right: 1.2rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-light); line-height: 1; padding: 4px 8px; }
+.modal-close:hover { color: var(--bark); }
+.modal-eyebrow { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.5rem; }
+.modal-title { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; color: var(--bark); margin-bottom: 0.3rem; }
+.modal-meta { font-size: 0.82rem; color: var(--text-light); margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--clay-pale); }
+.form-note { font-size: 0.75rem; color: var(--text-light); text-align: center; margin-top: 0.8rem; line-height: 1.5; }
+
+@media (max-width: 960px) {
+  .classes-intro { grid-template-columns: 1fr; gap: 2.5rem; }
+  .course-cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-logo">Handpan <em>with Arpit</em></a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li><li><a href="about.html">About</a></li>
+    <li><a href="music.html">Music</a></li><li><a href="workshops.html">Workshops</a></li>
+    <li><a href="classes.html" class="active">Classes</a></li><li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="workshops.html" class="nav-cta">Book a Workshop</a>
+  <div class="nav-hamburger"><span></span><span></span><span></span></div>
+</nav>
+<div class="mobile-menu">
+  <a href="../index.html">Home</a><a href="about.html">About</a><a href="music.html">Music</a>
+  <a href="workshops.html">Workshops</a><a href="classes.html">Classes</a><a href="contact.html">Contact</a>
+</div>
+
+<section class="page-hero">
+  <p class="page-hero-eyebrow">Learn Online</p>
+  <h1 class="page-hero-title">Online <em>Classes</em></h1>
+  <p class="page-hero-sub">Learn handpan from anywhere in the world — at your own pace, guided by Arpit's patient and thoughtful teaching.</p>
+</section>
+
+<section class="section">
+  <div class="classes-intro">
+    <div class="classes-intro-text">
+      <p>These courses are built around a simple belief: the handpan is an instrument of listening first, and technique second. You don't need to be a musician. You just need to be willing to slow down and pay attention.</p>
+      <p>Each course is a series of video lessons that you can watch and revisit at any time. Arpit teaches directly to camera — unhurried, clear, and always focused on helping you find your own relationship with the instrument.</p>
+      <p>Students from India, the UK, Germany, Australia, and the US have gone through these courses. Whatever your timezone or background, you're welcome here.</p>
+    </div>
+    <div class="how-it-works">
+      <h3>How it works</h3>
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Enroll online</strong><p>Pick your level and complete enrollment. Access begins within a few hours.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Watch at your pace</strong><p>Video lessons are yours to keep. Rewatch as many times as you need.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Practice and share</strong><p>Send recordings to Arpit for personal feedback (included in Level 2 and 3).</p></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Join the community</strong><p>Access the private student community to share progress and ask questions.</p></div></div>
+    </div>
+  </div>
+
+  <!-- COURSE CARDS -->
+  <div class="course-cards">
+    <!-- Level 1 -->
+    <div class="course-card">
+      <div class="course-card-top">
+        <p class="course-level">Level 01</p>
+        <h2 class="course-name">First Touch</h2>
+        <p class="course-tagline">For complete beginners</p>
+      </div>
+      <div class="course-card-body">
+        <div class="course-meta-row">
+          <div class="course-meta-item"><span>8</span><small>Lessons</small></div>
+          <div class="course-meta-item"><span>4h</span><small>Content</small></div>
+          <div class="course-meta-item"><span>∞</span><small>Access</small></div>
+        </div>
+        <div class="course-lessons">
+          <div class="lesson-item"><span class="lesson-name">What is a handpan?</span><span class="lesson-dur">18 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">How to hold and strike</span><span class="lesson-dur">24 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">Understanding the scale</span><span class="lesson-dur">20 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">Your first melody</span><span class="lesson-dur">32 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">+ 4 more lessons</span><span class="lesson-dur">—</span></div>
+        </div>
+        <div class="course-price-row"><span class="course-price">₹2,999</span><span class="course-price-note">one-time</span></div>
+        <button class="btn-enroll-lg" onclick="openEnroll('First Touch','Level 01 — Beginner','₹2,999')">Enroll Now</button>
+      </div>
+    </div>
+
+    <!-- Level 2 FEATURED -->
+    <div class="course-card featured">
+      <div class="course-card-top">
+        <span class="popular-tag">Most popular</span>
+        <p class="course-level">Level 02</p>
+        <h2 class="course-name">Finding Your Voice</h2>
+        <p class="course-tagline">Build your own language</p>
+      </div>
+      <div class="course-card-body">
+        <div class="course-meta-row">
+          <div class="course-meta-item"><span>16</span><small>Lessons</small></div>
+          <div class="course-meta-item"><span>9h</span><small>Content</small></div>
+          <div class="course-meta-item"><span>∞</span><small>Access</small></div>
+        </div>
+        <div class="course-lessons">
+          <div class="lesson-item"><span class="lesson-name">Rhythm fundamentals</span><span class="lesson-dur">28 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">Melodic improvisation</span><span class="lesson-dur">35 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">Playing from feeling</span><span class="lesson-dur">30 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">Developing a practice</span><span class="lesson-dur">22 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">+ 12 more lessons</span><span class="lesson-dur">—</span></div>
+        </div>
+        <div class="course-price-row"><span class="course-price">₹5,499</span><span class="course-price-note">one-time</span></div>
+        <button class="btn-enroll-lg" onclick="openEnroll('Finding Your Voice','Level 02 — Intermediate','₹5,499')">Enroll Now</button>
+      </div>
+    </div>
+
+    <!-- Level 3 -->
+    <div class="course-card">
+      <div class="course-card-top">
+        <p class="course-level">Level 03</p>
+        <h2 class="course-name">Deep Waters</h2>
+        <p class="course-tagline">Advanced technique & composition</p>
+      </div>
+      <div class="course-card-body">
+        <div class="course-meta-row">
+          <div class="course-meta-item"><span>24</span><small>Lessons</small></div>
+          <div class="course-meta-item"><span>16h</span><small>Content</small></div>
+          <div class="course-meta-item"><span>∞</span><small>Access</small></div>
+        </div>
+        <div class="course-lessons">
+          <div class="lesson-item"><span class="lesson-name">Advanced technique</span><span class="lesson-dur">40 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">Composition for handpan</span><span class="lesson-dur">38 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">Performance preparation</span><span class="lesson-dur">30 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">Music theory applied</span><span class="lesson-dur">35 min</span></div>
+          <div class="lesson-item"><span class="lesson-name">+ 20 more lessons</span><span class="lesson-dur">—</span></div>
+        </div>
+        <div class="course-price-row"><span class="course-price">₹9,999</span><span class="course-price-note">one-time</span></div>
+        <button class="btn-enroll-lg" onclick="openEnroll('Deep Waters','Level 03 — Advanced','₹9,999')">Enroll Now</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section bg-sand">
+  <div class="section-header"><h2 class="section-title">Common <em>Questions</em></h2></div>
+  <div class="faq-list">
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Do I need to own a handpan to enroll?</div><div class="faq-a">No — you can begin Level 01 without owning an instrument. The early lessons cover understanding the handpan, its history, and how it works. However, you'll get much more out of the course if you have access to one. Arpit can suggest affordable options if you're looking to buy your first instrument.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What level should I start at?</div><div class="faq-a">If you've never touched a handpan, start at Level 01. If you've played a bit but feel unsure of your foundations, Level 01 or 02. If you've been playing for a year or more and feel comfortable with basic melodies, Level 02 or 03. When in doubt, drop Arpit a message and he'll help you decide.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How does feedback work?</div><div class="faq-a">In Level 02 and Level 03, you can send video recordings of your practice to Arpit via email or WhatsApp. He'll respond with personalised written or voice note feedback within 3–5 working days. Level 03 also includes a monthly 30-minute video call with Arpit.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is this a subscription or one-time payment?</div><div class="faq-a">One-time payment. Once you enroll, the course is yours forever — including any future updates Arpit adds to the curriculum. No recurring charges.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I get a refund?</div><div class="faq-a">If you're not satisfied within the first 7 days of enrollment, reach out and Arpit will work something out with you. His priority is that you feel the course was worth it.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What payment methods are accepted?</div><div class="faq-a">UPI, credit/debit card, net banking, and international cards. Payment is processed securely via Razorpay.</div></div>
+  </div>
+</section>
+
+<!-- Enroll modal -->
+<div class="enroll-overlay" id="enrollOverlay">
+  <div class="enroll-modal">
+    <button class="modal-close" onclick="closeEnroll()">×</button>
+    <p class="modal-eyebrow">Enrollment</p>
+    <h2 class="modal-title" id="enrollTitle">Course Name</h2>
+    <p class="modal-meta" id="enrollMeta">Level · Price</p>
+    <form class="enroll-form">
+      <div class="form-group"><label>Full name</label><input type="text" placeholder="Your name" required/></div>
+      <div class="form-group"><label>Email address</label><input type="email" placeholder="you@email.com" required/></div>
+      <div class="form-group"><label>Phone (for WhatsApp feedback)</label><input type="tel" placeholder="+91 98765 43210"/></div>
+      <div class="form-group"><label>Country</label>
+        <select><option value="">Select...</option><option>India</option><option>United Kingdom</option><option>United States</option><option>Germany</option><option>Australia</option><option>Other</option></select>
+      </div>
+      <div class="form-group"><label>Do you own a handpan?</label>
+        <select><option value="">Select...</option><option>Yes</option><option>No, but planning to get one</option><option>No, will use what's available</option></select>
+      </div>
+      <div class="form-group"><label>Anything you'd like Arpit to know?</label><textarea placeholder="Goals, questions, or a quick hello..."></textarea></div>
+      <button type="submit" class="btn-primary" style="width:100%;margin-top:0.5rem;">Complete Enrollment</button>
+      <p class="form-note">After submitting, Arpit will send you a payment link within a few hours. Course access begins once payment is confirmed.</p>
+    </form>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-brand"><p>Handpan <em>with Arpit</em></p><span>Music, workshops and online classes by handpan artist Arpit Pandey, based in India.</span></div>
+    <div class="footer-col"><h4>Navigate</h4><ul><li><a href="../index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="music.html">Music</a></li><li><a href="workshops.html">Workshops</a></li><li><a href="classes.html">Classes</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Courses</h4><ul><li><a href="classes.html">Level 01 — First Touch</a></li><li><a href="classes.html">Level 02 — Finding Your Voice</a></li><li><a href="classes.html">Level 03 — Deep Waters</a></li></ul></div>
+    <div class="footer-col"><h4>Connect</h4><ul><li><a href="https://www.instagram.com/pandeyarpit" target="_blank">Instagram</a></li><li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank">YouTube</a></li><li><a href="mailto:arpitbam@gmail.com">Email</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2025 Arpit Pandey · handpanwitharpit.com</p><div class="footer-social"><a href="#">Instagram</a><a href="#">YouTube</a><a href="#">Spotify</a></div></div>
+</footer>
+
+<script src="../js/main.js"></script>
+<script>
+function openEnroll(name, meta, price) {
+  document.getElementById('enrollTitle').textContent = name;
+  document.getElementById('enrollMeta').textContent = meta + ' · ' + price;
+  document.getElementById('enrollOverlay').classList.add('open');
+}
+function closeEnroll() { document.getElementById('enrollOverlay').classList.remove('open'); }
+document.getElementById('enrollOverlay').addEventListener('click', function(e) { if(e.target===this) closeEnroll(); });
+function toggleFaq(el) { el.parentElement.classList.toggle('open'); }
+</script>
+</body>
+</html>

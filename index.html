@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Handpan with Arpit — Arpit Pandey</title>
+<meta name="description" content="Handpan artist, teacher and workshop facilitator. Music releases, live workshops across India, and online classes for all levels."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
+<style>
+/* ---- HERO ---- */
+.hero {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  position: relative; overflow: hidden;
+  padding-top: var(--nav-h);
+}
+.hero-left {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 4rem 4rem 4rem 4rem; position: relative; z-index: 2;
+}
+.hero-eyebrow {
+  font-size: 0.72rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--clay);
+  margin-bottom: 1.5rem;
+  opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 5.5vw, 5.5rem);
+  font-weight: 300; line-height: 1.05;
+  color: var(--bark); margin-bottom: 1rem;
+  opacity: 0; animation: fadeUp 0.8s 0.35s forwards;
+}
+.hero-title em { font-style: italic; color: var(--clay); display: block; }
+.hero-sub {
+  font-family: var(--font-display);
+  font-size: 1.25rem; font-weight: 300; font-style: italic;
+  color: var(--text-mid); line-height: 1.7; max-width: 380px;
+  margin-bottom: 3rem;
+  opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
+}
+.hero-actions {
+  display: flex; gap: 1rem; align-items: center;
+  opacity: 0; animation: fadeUp 0.8s 0.65s forwards;
+}
+.hero-scroll {
+  position: absolute; bottom: 2.5rem; left: 4rem;
+  display: flex; align-items: center; gap: 0.75rem;
+  opacity: 0; animation: fadeUp 0.8s 1.1s forwards;
+}
+.scroll-line {
+  width: 40px; height: 1px;
+  background: var(--clay-pale);
+  position: relative; overflow: hidden;
+}
+.scroll-line::after {
+  content: ''; position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%; background: var(--clay);
+  animation: scrollLine 2s 1.5s infinite;
+}
+.scroll-text { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); }
+
+.hero-right {
+  position: relative; overflow: hidden;
+}
+.hero-image-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 55% 40%, rgba(193,127,82,0.2) 0%, transparent 55%),
+    radial-gradient(ellipse at 20% 80%, rgba(122,140,106,0.12) 0%, transparent 50%),
+    linear-gradient(140deg, #E8D5BE 0%, #C9A882 45%, #7A5035 100%);
+}
+.hero-ring {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -52%);
+  border-radius: 50%;
+  border: 1px solid rgba(193,127,82,0.25);
+  animation: rotateRing 35s linear infinite;
+}
+.hero-ring-1 { width: min(80%, 440px); aspect-ratio: 1; }
+.hero-ring-2 { width: min(63%, 350px); aspect-ratio: 1; animation-direction: reverse; animation-duration: 25s; }
+@keyframes rotateRing {
+  from { transform: translate(-50%,-52%) rotate(0deg); }
+  to   { transform: translate(-50%,-52%) rotate(360deg); }
+}
+.hero-handpan {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -53%);
+  width: min(72%, 400px);
+  opacity: 0; animation: fadeIn 1.4s 0.5s forwards;
+}
+.hero-note {
+  position: absolute; bottom: 2.5rem; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display); font-style: italic;
+  font-size: 0.88rem; color: rgba(61,43,31,0.45);
+  white-space: nowrap;
+}
+
+/* ---- INTRO BAND ---- */
+.intro-band {
+  background: var(--bark); padding: 5rem 4rem;
+  display: grid; grid-template-columns: 1fr 2fr; gap: 5rem; align-items: center;
+}
+.intro-label {
+  font-family: var(--font-display); font-size: 3.2rem;
+  font-weight: 300; font-style: italic;
+  color: var(--clay-pale); line-height: 1.1;
+}
+.intro-body p {
+  font-family: var(--font-display); font-size: 1.2rem;
+  font-weight: 300; color: rgba(240,219,200,0.75);
+  line-height: 1.85; margin-bottom: 1rem;
+}
+.intro-body p:last-of-type { margin-bottom: 2rem; }
+.intro-stats { display: flex; gap: 3rem; margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid rgba(193,127,82,0.2); }
+.stat span { font-family: var(--font-display); font-size: 2.4rem; font-weight: 300; color: var(--clay-light); display: block; }
+.stat small { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(240,219,200,0.35); }
+
+/* ---- MUSIC SECTION ---- */
+.music-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+.music-card {
+  background: var(--sand); border-radius: 3px; overflow: hidden;
+  transition: transform 0.3s; cursor: pointer;
+}
+.music-card:hover { transform: translateY(-5px); }
+.music-art {
+  aspect-ratio: 1; background: var(--sand-deep);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.music-play-btn {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(61,43,31,0.4); opacity: 0; transition: opacity 0.2s;
+}
+.music-card:hover .music-play-btn { opacity: 1; }
+.play-tri {
+  width: 0; height: 0; border-style: solid;
+  border-width: 10px 0 10px 18px;
+  border-color: transparent transparent transparent rgba(240,219,200,0.9);
+  margin-left: 4px;
+}
+.music-info { padding: 1.2rem 1.4rem 1.5rem; }
+.music-type { font-size: 0.67rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.4rem; }
+.music-name { font-family: var(--font-display); font-size: 1.4rem; font-weight: 400; color: var(--bark); margin-bottom: 0.3rem; }
+.music-meta { font-size: 0.78rem; color: var(--text-light); }
+.music-links { display: flex; gap: 0.8rem; margin-top: 0.9rem; flex-wrap: wrap; }
+.music-link {
+  font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-mid); text-decoration: none;
+  border: 1px solid var(--clay-pale); padding: 0.3rem 0.7rem; border-radius: 20px;
+  transition: all 0.2s;
+}
+.music-link:hover { border-color: var(--clay); color: var(--clay); }
+
+/* ---- WORKSHOPS PREVIEW ---- */
+.workshop-rows { display: flex; flex-direction: column; gap: 1px; border: 1px solid var(--clay-pale); border-radius: 3px; overflow: hidden; }
+.workshop-row {
+  display: grid; grid-template-columns: 100px 1fr auto;
+  gap: 2rem; align-items: center;
+  padding: 1.8rem 2rem; background: var(--cream);
+  transition: background 0.2s; cursor: default;
+}
+.workshop-row:hover { background: var(--sand); }
+.w-date { text-align: center; }
+.w-day { font-family: var(--font-display); font-size: 2.4rem; font-weight: 300; color: var(--clay); line-height: 1; display: block; }
+.w-month { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); }
+.w-title { font-family: var(--font-display); font-size: 1.35rem; font-weight: 400; color: var(--bark); margin-bottom: 0.4rem; }
+.w-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.w-meta span { font-size: 0.78rem; color: var(--text-light); }
+.w-action { text-align: right; min-width: 130px; }
+.spots-badge {
+  display: inline-block; font-size: 0.65rem; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 20px;
+  background: rgba(193,127,82,0.12); color: var(--clay); margin-bottom: 0.7rem;
+}
+.spots-badge.few { background: rgba(180,60,40,0.1); color: #B43C28; }
+.spots-badge.full { background: rgba(100,100,100,0.1); color: var(--text-light); }
+
+/* ---- CLASSES PREVIEW ---- */
+.classes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+.class-card {
+  border: 1px solid var(--clay-pale); border-radius: 3px; padding: 2rem;
+  transition: border-color 0.25s, transform 0.25s; position: relative;
+}
+.class-card:hover { border-color: var(--clay); transform: translateY(-3px); }
+.class-card.featured { background: var(--bark); border-color: var(--bark); }
+.class-level { font-size: 0.67rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.9rem; }
+.class-card.featured .class-level { color: var(--clay-light); }
+.class-name { font-family: var(--font-display); font-size: 1.75rem; font-weight: 300; color: var(--bark); margin-bottom: 0.5rem; line-height: 1.2; }
+.class-card.featured .class-name { color: var(--clay-pale); }
+.class-desc { font-size: 0.83rem; color: var(--text-light); line-height: 1.7; margin-bottom: 1.5rem; }
+.class-card.featured .class-desc { color: rgba(240,219,200,0.55); }
+.class-features { list-style: none; margin-bottom: 1.8rem; display: flex; flex-direction: column; gap: 0.55rem; }
+.class-features li { font-size: 0.82rem; color: var(--text-mid); padding-left: 1.2rem; position: relative; }
+.class-card.featured .class-features li { color: rgba(240,219,200,0.65); }
+.class-features li::before { content: '—'; position: absolute; left: 0; color: var(--clay); font-size: 0.8rem; }
+.class-price { font-family: var(--font-display); font-size: 1.9rem; font-weight: 300; color: var(--bark); margin-bottom: 1.2rem; }
+.class-card.featured .class-price { color: var(--clay-light); }
+.class-price span { font-size: 0.85rem; color: var(--text-light); }
+.class-card.featured .class-price span { color: rgba(240,219,200,0.4); }
+.btn-enroll {
+  width: 100%; padding: 0.8rem;
+  font-family: var(--font-body); font-size: 0.75rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  border: 1px solid var(--bark); color: var(--bark);
+  background: transparent; border-radius: 2px; cursor: pointer; transition: all 0.2s;
+}
+.btn-enroll:hover { background: var(--bark); color: var(--cream); }
+.class-card.featured .btn-enroll { background: var(--clay); border-color: var(--clay); color: var(--cream); }
+.class-card.featured .btn-enroll:hover { background: var(--clay-light); }
+
+/* ---- TESTIMONIALS ---- */
+.testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+.testi-card { padding: 2rem; border: 1px solid rgba(193,127,82,0.18); border-radius: 3px; }
+.testi-quote {
+  font-family: var(--font-display); font-size: 1.1rem;
+  font-weight: 300; font-style: italic;
+  color: rgba(240,219,200,0.8); line-height: 1.8; margin-bottom: 1.5rem;
+}
+.testi-quote::before { content: '\201C'; color: var(--clay); font-size: 2rem; line-height: 0; vertical-align: -0.4em; margin-right: 3px; }
+.testi-name { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--clay-light); }
+.testi-loc { font-size: 0.72rem; color: rgba(240,219,200,0.3); margin-top: 0.2rem; }
+
+/* ---- NEWSLETTER ---- */
+.newsletter { padding: 5rem 4rem; background: var(--sand); text-align: center; border-top: 1px solid var(--clay-pale); }
+.nl-title { font-family: var(--font-display); font-size: 2.4rem; font-weight: 300; color: var(--bark); margin-bottom: 0.7rem; }
+.nl-title em { font-style: italic; color: var(--clay); }
+.nl-sub { font-size: 0.88rem; color: var(--text-light); margin-bottom: 2rem; }
+.newsletter-form {
+  display: flex; max-width: 400px; margin: 0 auto;
+  border: 1px solid var(--clay-pale); border-radius: 2px; overflow: hidden;
+}
+.newsletter-form input {
+  flex: 1; padding: 0.85rem 1.1rem;
+  font-family: var(--font-body); font-size: 0.85rem;
+  border: none; background: var(--cream); color: var(--text-dark); outline: none;
+}
+.newsletter-form input::placeholder { color: var(--text-light); }
+.newsletter-form button {
+  padding: 0.85rem 1.4rem;
+  font-family: var(--font-body); font-size: 0.72rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--clay); color: var(--cream); border: none; cursor: pointer; transition: background 0.2s;
+}
+.newsletter-form button:hover { background: var(--bark); }
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 960px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-left { padding: 3rem 2rem; }
+  .hero-right { height: 55vw; min-height: 280px; }
+  .hero-scroll { left: 2rem; }
+  .intro-band { grid-template-columns: 1fr; padding: 3.5rem 2rem; gap: 2.5rem; }
+  .intro-stats { gap: 2rem; }
+  .music-grid, .classes-grid, .testi-grid { grid-template-columns: 1fr; }
+  .workshop-row { grid-template-columns: 80px 1fr; gap: 1rem; }
+  .w-action { grid-column: 2; }
+  .newsletter { padding: 3.5rem 2rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Handpan <em>with Arpit</em></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="pages/about.html">About</a></li>
+    <li><a href="pages/music.html">Music</a></li>
+    <li><a href="pages/workshops.html">Workshops</a></li>
+    <li><a href="pages/classes.html">Classes</a></li>
+    <li><a href="pages/contact.html">Contact</a></li>
+  </ul>
+  <a href="pages/workshops.html" class="nav-cta">Book a Workshop</a>
+  <div class="nav-hamburger"><span></span><span></span><span></span></div>
+</nav>
+<div class="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="pages/about.html">About</a>
+  <a href="pages/music.html">Music</a>
+  <a href="pages/workshops.html">Workshops</a>
+  <a href="pages/classes.html">Classes</a>
+  <a href="pages/contact.html">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Handpan Artist &amp; Teacher · India</p>
+    <h1 class="hero-title">Arpit<br/><em>Pandey</em></h1>
+    <p class="hero-sub">Where silence becomes sound, and sound becomes stillness.</p>
+    <div class="hero-actions">
+      <a href="pages/music.html" class="btn-primary">Listen to Music</a>
+      <a href="pages/classes.html" class="btn-ghost">Explore Classes →</a>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span class="scroll-text">Scroll</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-image-bg"></div>
+    <div class="hero-ring hero-ring-1"></div>
+    <div class="hero-ring hero-ring-2"></div>
+    <svg class="hero-handpan" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="200" cy="208" rx="168" ry="28" fill="rgba(61,43,31,0.22)"/>
+      <ellipse cx="200" cy="195" rx="170" ry="170" fill="url(#hpShell)"/>
+      <ellipse cx="200" cy="195" rx="170" ry="170" fill="none" stroke="rgba(193,127,82,0.35)" stroke-width="1.5"/>
+      <ellipse cx="200" cy="195" rx="163" ry="163" fill="none" stroke="rgba(193,127,82,0.15)" stroke-width="1"/>
+      <ellipse cx="200" cy="184" rx="43" ry="41" fill="url(#hpDing)" stroke="rgba(193,127,82,0.5)" stroke-width="1.5"/>
+      <ellipse cx="200" cy="182" rx="28" ry="27" fill="none" stroke="rgba(193,127,82,0.3)" stroke-width="1"/>
+      <g opacity="0.88">
+        <ellipse cx="200" cy="113" rx="27" ry="35" fill="url(#hpTone)" stroke="rgba(193,127,82,0.4)" stroke-width="1.2" transform="rotate(0 200 184)"/>
+        <ellipse cx="200" cy="113" rx="27" ry="35" fill="url(#hpTone)" stroke="rgba(193,127,82,0.4)" stroke-width="1.2" transform="rotate(45 200 184)"/>
+        <ellipse cx="200" cy="113" rx="27" ry="35" fill="url(#hpTone)" stroke="rgba(193,127,82,0.4)" stroke-width="1.2" transform="rotate(90 200 184)"/>
+        <ellipse cx="200" cy="113" rx="27" ry="35" fill="url(#hpTone)" stroke="rgba(193,127,82,0.4)" stroke-width="1.2" transform="rotate(135 200 184)"/>
+        <ellipse cx="200" cy="113" rx="27" ry="35" fill="url(#hpTone)" stroke="rgba(193,127,82,0.4)" stroke-width="1.2" transform="rotate(180 200 184)"/>
+        <ellipse cx="200" cy="113" rx="27" ry="35" fill="url(#hpTone)" stroke="rgba(193,127,82,0.4)" stroke-width="1.2" transform="rotate(225 200 184)"/>
+        <ellipse cx="200" cy="113" rx="27" ry="35" fill="url(#hpTone)" stroke="rgba(193,127,82,0.4)" stroke-width="1.2" transform="rotate(270 200 184)"/>
+        <ellipse cx="200" cy="113" rx="27" ry="35" fill="url(#hpTone)" stroke="rgba(193,127,82,0.4)" stroke-width="1.2" transform="rotate(315 200 184)"/>
+      </g>
+      <ellipse cx="160" cy="148" rx="34" ry="20" fill="rgba(255,255,255,0.07)" transform="rotate(-22 160 148)"/>
+      <defs>
+        <radialGradient id="hpShell" cx="38%" cy="32%" r="65%">
+          <stop offset="0%" stop-color="#CDA07A"/><stop offset="42%" stop-color="#8C5A38"/><stop offset="100%" stop-color="#3D2B1F"/>
+        </radialGradient>
+        <radialGradient id="hpDing" cx="38%" cy="32%" r="65%">
+          <stop offset="0%" stop-color="#D4A07A"/><stop offset="100%" stop-color="#7A4A2A"/>
+        </radialGradient>
+        <radialGradient id="hpTone" cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="rgba(185,125,75,0.55)"/><stop offset="100%" stop-color="rgba(80,40,20,0.25)"/>
+        </radialGradient>
+      </defs>
+    </svg>
+    <p class="hero-note">Pantam · D Kurd · 9 Notes</p>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="intro-band">
+  <p class="intro-label">The<br/>Artist</p>
+  <div class="intro-body">
+    <p>Arpit Pandey is a handpan artist and educator based in India, drawn to the instrument for its unique ability to hold both melody and meditation in the same breath.</p>
+    <p>He has performed at retreats, cultural festivals, and intimate gatherings across India, and teaches students worldwide through live workshops and online classes.</p>
+    <a href="pages/about.html" class="btn-ghost" style="color:var(--clay-light);border-color:rgba(193,127,82,0.3);">Read full story →</a>
+    <div class="intro-stats">
+      <div class="stat"><span>200+</span><small>Students</small></div>
+      <div class="stat"><span>50+</span><small>Workshops</small></div>
+      <div class="stat"><span>8+</span><small>Years playing</small></div>
+      <div class="stat"><span>3</span><small>Releases</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- MUSIC -->
+<section class="section bg-cream" id="music">
+  <div class="section-header">
+    <h2 class="section-title">Music <em>Releases</em></h2>
+    <a href="pages/music.html" class="section-link">All releases →</a>
+  </div>
+  <div class="music-grid">
+    <div class="music-card">
+      <div class="music-art">
+        <svg width="100" height="100" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="44" fill="rgba(193,127,82,0.15)" stroke="rgba(193,127,82,0.3)" stroke-width="1"/><circle cx="50" cy="50" r="26" fill="rgba(193,127,82,0.1)" stroke="rgba(193,127,82,0.2)" stroke-width="1"/><circle cx="50" cy="50" r="6" fill="rgba(193,127,82,0.45)"/></svg>
+        <div class="music-play-btn"><div class="play-tri"></div></div>
+      </div>
+      <div class="music-info">
+        <p class="music-type">Album</p>
+        <p class="music-name">Mitti aur Sur</p>
+        <p class="music-meta">2024 · 9 tracks</p>
+        <div class="music-links">
+          <a href="#" class="music-link">Spotify</a>
+          <a href="#" class="music-link">Apple Music</a>
+          <a href="#" class="music-link">YouTube</a>
+        </div>
+      </div>
+    </div>
+    <div class="music-card">
+      <div class="music-art" style="background:#E8F0E0;">
+        <svg width="100" height="100" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="44" fill="rgba(122,140,106,0.2)" stroke="rgba(122,140,106,0.35)" stroke-width="1"/><circle cx="50" cy="50" r="26" fill="rgba(122,140,106,0.1)" stroke="rgba(122,140,106,0.25)" stroke-width="1"/><circle cx="50" cy="50" r="6" fill="rgba(122,140,106,0.5)"/></svg>
+        <div class="music-play-btn"><div class="play-tri"></div></div>
+      </div>
+      <div class="music-info">
+        <p class="music-type">Single</p>
+        <p class="music-name">Paani</p>
+        <p class="music-meta">2023 · 1 track</p>
+        <div class="music-links">
+          <a href="#" class="music-link">Spotify</a>
+          <a href="#" class="music-link">YouTube</a>
+        </div>
+      </div>
+    </div>
+    <div class="music-card">
+      <div class="music-art" style="background:#EDE8E0;">
+        <svg width="100" height="100" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="44" fill="rgba(140,123,110,0.18)" stroke="rgba(140,123,110,0.3)" stroke-width="1"/><circle cx="50" cy="50" r="26" fill="rgba(140,123,110,0.1)" stroke="rgba(140,123,110,0.2)" stroke-width="1"/><circle cx="50" cy="50" r="6" fill="rgba(140,123,110,0.45)"/></svg>
+        <div class="music-play-btn"><div class="play-tri"></div></div>
+      </div>
+      <div class="music-info">
+        <p class="music-type">EP</p>
+        <p class="music-name">Prakriti Sessions</p>
+        <p class="music-meta">2022 · 4 tracks</p>
+        <div class="music-links">
+          <a href="#" class="music-link">Spotify</a>
+          <a href="#" class="music-link">Apple Music</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKSHOPS -->
+<section class="section bg-sand-deep" id="workshops">
+  <div class="section-header">
+    <h2 class="section-title">Upcoming <em>Workshops</em></h2>
+    <a href="pages/workshops.html" class="section-link">All workshops →</a>
+  </div>
+  <div class="workshop-rows">
+    <div class="workshop-row">
+      <div class="w-date"><span class="w-day">14</span><span class="w-month">Jun 2025</span></div>
+      <div><p class="w-title">Introduction to Handpan — Beginners</p><div class="w-meta"><span>Bangalore, KA</span><span>Full day · 10am–5pm</span><span>₹3,500</span></div></div>
+      <div class="w-action"><div class="spots-badge">4 spots left</div><a href="pages/workshops.html" class="btn-outline" style="font-size:0.72rem;padding:0.5rem 1.1rem;">Book Now</a></div>
+    </div>
+    <div class="workshop-row">
+      <div class="w-date"><span class="w-day">28</span><span class="w-month">Jun 2025</span></div>
+      <div><p class="w-title">Rhythm &amp; Melody — Intermediate</p><div class="w-meta"><span>Mumbai, MH</span><span>2 days · 10am–4pm</span><span>₹6,500</span></div></div>
+      <div class="w-action"><div class="spots-badge">8 spots left</div><a href="pages/workshops.html" class="btn-outline" style="font-size:0.72rem;padding:0.5rem 1.1rem;">Book Now</a></div>
+    </div>
+    <div class="workshop-row">
+      <div class="w-date"><span class="w-day">12</span><span class="w-month">Jul 2025</span></div>
+      <div><p class="w-title">Handpan &amp; Meditation Retreat</p><div class="w-meta"><span>Rishikesh, UK</span><span>3 days residential</span><span>₹14,000</span></div></div>
+      <div class="w-action"><div class="spots-badge few">2 spots left</div><a href="pages/workshops.html" class="btn-outline" style="font-size:0.72rem;padding:0.5rem 1.1rem;">Book Now</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- CLASSES -->
+<section class="section bg-cream" id="classes">
+  <div class="section-header">
+    <h2 class="section-title">Online <em>Classes</em></h2>
+    <a href="pages/classes.html" class="section-link">Full curriculum →</a>
+  </div>
+  <div class="classes-grid">
+    <div class="class-card">
+      <p class="class-level">Level 01</p>
+      <h3 class="class-name">First Touch</h3>
+      <p class="class-desc">Complete beginners welcome. Learn how the handpan works, basic technique, and your first simple melodies.</p>
+      <ul class="class-features"><li>8 video lessons</li><li>Instrument basics &amp; care</li><li>2 beginner compositions</li><li>Email support</li></ul>
+      <p class="class-price">₹2,999 <span>/ one-time</span></p>
+      <button class="btn-enroll" onclick="window.location='pages/classes.html'">Enroll Now</button>
+    </div>
+    <div class="class-card featured">
+      <p class="class-level">Level 02 — Most popular</p>
+      <h3 class="class-name">Finding Your Voice</h3>
+      <p class="class-desc">Build on the basics. Explore scales, rhythm patterns, and develop your own improvisational language.</p>
+      <ul class="class-features"><li>16 video lessons</li><li>Monthly live Q&amp;A</li><li>5 intermediate pieces</li><li>Community access</li><li>Direct feedback</li></ul>
+      <p class="class-price">₹5,499 <span>/ one-time</span></p>
+      <button class="btn-enroll" onclick="window.location='pages/classes.html'">Enroll Now</button>
+    </div>
+    <div class="class-card">
+      <p class="class-level">Level 03</p>
+      <h3 class="class-name">Deep Waters</h3>
+      <p class="class-desc">Advanced technique, composition, performance prep, and music theory tailored for handpan.</p>
+      <ul class="class-features"><li>24 video lessons</li><li>Monthly 1-on-1 session</li><li>Original compositions</li><li>Performance coaching</li></ul>
+      <p class="class-price">₹9,999 <span>/ one-time</span></p>
+      <button class="btn-enroll" onclick="window.location='pages/classes.html'">Enroll Now</button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section bg-bark">
+  <div class="section-header section-header-dark">
+    <h2 class="section-title section-title-light">What <em>Students Say</em></h2>
+    <a href="pages/about.html#testimonials" class="section-link section-link-light">More stories →</a>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card"><p class="testi-quote">Arpit's workshop changed how I listen to music. I came with zero experience and left with something that felt like a superpower.</p><p class="testi-name">Sneha Rajput</p><p class="testi-loc">Pune, Maharashtra</p></div>
+    <div class="testi-card"><p class="testi-quote">The online course is beautifully structured. Arpit teaches with patience and depth — you feel guided, never rushed.</p><p class="testi-name">Marcus Webb</p><p class="testi-loc">London, UK</p></div>
+    <div class="testi-card"><p class="testi-quote">The Rishikesh retreat was one of the most meaningful experiences of my life. Handpan and meditation together is truly something else.</p><p class="testi-name">Priya Nair</p><p class="testi-loc">Kochi, Kerala</p></div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <h2 class="nl-title">Stay in the <em>Loop</em></h2>
+  <p class="nl-sub">New music, upcoming workshops, and handpan stories — straight to your inbox.</p>
+  <form class="newsletter-form">
+    <input type="email" placeholder="Your email address" required/>
+    <button type="submit">Subscribe</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <p>Handpan <em>with Arpit</em></p>
+      <span>Music, workshops and online classes by handpan artist Arpit Pandey, based in India.</span>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul><li><a href="pages/about.html">About</a></li><li><a href="pages/music.html">Music</a></li><li><a href="pages/workshops.html">Workshops</a></li><li><a href="pages/classes.html">Classes</a></li><li><a href="pages/contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Learn</h4><ul><li><a href="pages/classes.html">Beginner classes</a></li><li><a href="pages/classes.html">Intermediate</a></li><li><a href="pages/classes.html">Advanced</a></li><li><a href="pages/workshops.html">Live workshops</a></li></ul></div>
+    <div class="footer-col"><h4>Connect</h4><ul><li><a href="https://www.instagram.com/pandeyarpit" target="_blank">Instagram</a></li><li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank">YouTube</a></li><li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank">Spotify</a></li><li><a href="mailto:arpitbam@gmail.com">Email</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Arpit Pandey · handpanwitharpit.com</p>
+    <div class="footer-social"><a href="https://www.instagram.com/pandeyarpit" target="_blank">Instagram</a><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank">YouTube</a><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank">Spotify</a></div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
