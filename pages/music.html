@@ -47,18 +47,30 @@
 .releases-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
 .release-card { background: var(--sand); border-radius: 3px; overflow: hidden; border: 1px solid transparent; transition: border-color 0.2s; }
 .release-card:hover { border-color: var(--clay); }
-.release-art { aspect-ratio: 1; background: var(--sand-deep); display: flex; align-items: center; justify-content: center; position: relative; }
-.play-circle {
-  width: 48px; height: 48px; border-radius: 50%;
-  background: rgba(240,219,200,0.9);
-  display: flex; align-items: center; justify-content: center;
+.release-art { aspect-ratio: 1; background: var(--sand-deep); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.release-art-overlay {
+  position: absolute; inset: 0;
+  background: rgba(61,43,31,0.78);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 0.6rem;
+  opacity: 0; transition: opacity 0.25s ease;
+  padding: 1.2rem;
 }
-.play-tri-sm { width:0; height:0; border-style:solid; border-width:7px 0 7px 13px; border-color:transparent transparent transparent var(--bark); margin-left:3px; }
+.release-card:hover .release-art-overlay,
+.release-card.tapped .release-art-overlay { opacity: 1; }
+.release-art-overlay .rp-link {
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--clay-pale); text-decoration: none;
+  border: 1px solid rgba(240,219,200,0.4); padding: 0.4rem 1.2rem; border-radius: 20px;
+  transition: all 0.2s; width: 150px; text-align: center;
+  background: rgba(61,43,31,0.4);
+}
+.release-art-overlay .rp-link:hover { border-color: var(--clay-light); color: var(--clay-light); }
 .release-body { padding: 1.2rem 1.4rem 1.5rem; }
 .release-type { font-size: 0.67rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.3rem; }
 .release-name { font-family: var(--font-display); font-size: 1.35rem; font-weight: 400; color: var(--bark); margin-bottom: 0.3rem; }
-.release-info { font-size: 0.78rem; color: var(--text-light); margin-bottom: 0.9rem; }
-.release-platforms { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.release-info { font-size: 0.78rem; color: var(--text-light); }
+.release-platforms { display: none; }
 .rp-link { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mid); text-decoration: none; border: 1px solid var(--clay-pale); padding: 0.25rem 0.65rem; border-radius: 20px; transition: all 0.2s; }
 .rp-link:hover { border-color: var(--clay); color: var(--clay); }
 

@@ -11,10 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Active nav link based on current page
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const pathname = window.location.pathname;
+  const currentPage = pathname.split('/').pop() || 'index.html';
+  const isHome = currentPage === 'index.html' || currentPage === '' || pathname === '/' || pathname.endsWith('/');
   document.querySelectorAll('.nav-links a').forEach(link => {
     const href = link.getAttribute('href');
-    if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+    const hrefPage = href.split('/').pop();
+    if (isHome && (hrefPage === 'index.html' || href === 'index.html')) {
+      link.classList.add('active');
+    } else if (!isHome && hrefPage === currentPage) {
       link.classList.add('active');
     }
   });
@@ -68,6 +73,19 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'Sent! We\'ll be in touch.';
         btn.disabled = true;
         setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 4000);
+      }
+    });
+  });
+
+  // Music card tap-to-reveal on mobile
+  document.querySelectorAll('.music-card, .release-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+      // Only intercept if it's a touch device and click isn't on a link
+      if (e.target.tagName === 'A') return;
+      if (window.matchMedia('(hover: none)').matches) {
+        const isOpen = this.classList.contains('tapped');
+        document.querySelectorAll('.music-card.tapped, .release-card.tapped').forEach(c => c.classList.remove('tapped'));
+        if (!isOpen) this.classList.add('tapped');
       }
     });
   });
