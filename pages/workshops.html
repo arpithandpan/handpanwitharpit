@@ -47,33 +47,6 @@
 .detail-block ul li::before { content: '—'; position: absolute; left: 0; color: var(--clay-pale); font-size: 1rem; }
 .detail-block p { font-size: 1.05rem; color: var(--text-mid); line-height: 1.7; font-weight: 450; }
 
-/* Booking modal overlay */
-.booking-overlay {
-  display: none; position: fixed; inset: 0; z-index: 300;
-  background: rgba(61,43,31,0.6); backdrop-filter: blur(4px);
-  align-items: center; justify-content: center; padding: 2rem;
-}
-.booking-overlay.open { display: flex; }
-.booking-modal {
-  background: var(--cream); border-radius: 4px;
-  max-width: 520px; width: 100%; max-height: 90vh;
-  overflow-y: auto; padding: 2.5rem;
-  position: relative;
-}
-.modal-close {
-  position: absolute; top: 1.2rem; right: 1.2rem;
-  background: none; border: none; font-size: 1.4rem;
-  cursor: pointer; color: var(--text-light); line-height: 1;
-  padding: 4px 8px;
-}
-.modal-close:hover { color: var(--bark); }
-.modal-eyebrow { font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.5rem; }
-.modal-title { font-family: var(--font-body); font-size: 1.8rem; font-weight: 400; color: var(--bark); margin-bottom: 0.3rem; }
-.modal-meta { font-size: 1rem; color: var(--text-light); margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--clay-pale); }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.form-submit { width: 100%; margin-top: 0.5rem; }
-.form-note { font-size: 0.95rem; color: var(--text-light); text-align: center; margin-top: 0.8rem; line-height: 1.5; }
-
 /* PAST WORKSHOPS */
 .past-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
 .past-card {
@@ -129,7 +102,6 @@
   .past-photo-wrap { height: 220px; }
   .past-photo-title { font-size: 1.6rem; }
   .booking-overlay { align-items: flex-end; padding: 0; }
-  .modal-content { border-radius: 6px 6px 0 0; padding: 1.8rem; }
 }
 </style>
 </head>
@@ -284,7 +256,7 @@
     <div class="footer-brand"><svg width="52" height="52" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><circle cx="21" cy="21" r="19.5" fill="none" stroke="#C17F52" stroke-width="1"/><circle cx="21" cy="21" r="16.5" fill="none" stroke="rgba(193,127,82,0.3)" stroke-width="1"/><text x="21" y="26" text-anchor="middle" font-family="Helvetica Neue,Helvetica,sans-serif" font-size="11" font-weight="700" fill="#F0DBC8" letter-spacing="1">A<tspan fill="#C17F52">·</tspan>P</text></svg><span>Music, workshops and online classes by handpan artist Arpit Pandey, based in India.</span></div>
     <div class="footer-col"><h4>Navigate</h4><ul><li><a href="../index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="music.html">Music</a></li><li><a href="workshops.html">Workshops</a></li><li><a href="classes.html">Classes</a></li><li><a href="contact.html">Contact</a></li></ul></div>
     <div class="footer-col"><h4>Workshops</h4><ul><li><a href="#upcoming">Upcoming dates</a></li><li><a href="contact.html">Private events</a></li><li><a href="contact.html">Corporate wellness</a></li></ul></div>
-    <div class="footer-col"><h4>Connect</h4><ul><li><a href="https://www.instagram.com/pandeyarpit" target="_blank">Instagram</a></li><li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank">YouTube</a></li><li><a href="mailto:arpitbam@gmail.com">Email</a></li></ul></div>
+    <div class="footer-col"><h4>Connect</h4><ul><li><a href="https://www.instagram.com/pandeyarpit" target="_blank">Instagram</a></li><li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank">YouTube</a></li><li><a href="mailto:arpithandpan@gmail.com">Email</a></li></ul></div>
   </div>
   <div class="footer-bottom"><p>© 2026 Arpit Pandey · arpitpandey.com</p><div class="footer-social"><a href="#">Instagram</a><a href="#">YouTube</a><a href="#">Spotify</a></div></div>
 </footer>
@@ -295,18 +267,7 @@ function toggleWorkshop(header) {
   const body = header.nextElementSibling;
   body.classList.toggle('open');
 }
-function openBooking(e, title, meta, price) {
-  e.stopPropagation();
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalMeta').textContent = meta + ' · ' + price;
-  document.getElementById('bookingOverlay').classList.add('open');
-}
-function closeBooking() {
-  document.getElementById('bookingOverlay').classList.remove('open');
-}
-document.getElementById('bookingOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeBooking();
-});
+
 </script>
 </body>
 </html>

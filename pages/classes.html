@@ -86,24 +86,6 @@
 .faq-a { display: none; padding-bottom: 1.2rem; font-size: 1.05rem; color: var(--text-mid); line-height: 1.7; font-weight: 450; }
 .faq-item.open .faq-a { display: block; }
 
-/* Enroll modal */
-.enroll-overlay {
-  display: none; position: fixed; inset: 0; z-index: 300;
-  background: rgba(61,43,31,0.6); backdrop-filter: blur(4px);
-  align-items: center; justify-content: center; padding: 2rem;
-}
-.enroll-overlay.open { display: flex; }
-.enroll-modal {
-  background: var(--cream); border-radius: 4px;
-  max-width: 500px; width: 100%; max-height: 90vh;
-  overflow-y: auto; padding: 2.5rem; position: relative;
-}
-.modal-close { position: absolute; top: 1.2rem; right: 1.2rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-light); line-height: 1; padding: 4px 8px; }
-.modal-close:hover { color: var(--bark); }
-.modal-eyebrow { font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.5rem; }
-.modal-title { font-family: var(--font-body); font-size: 1.8rem; font-weight: 400; color: var(--bark); margin-bottom: 0.3rem; }
-.modal-meta { font-size: 1rem; color: var(--text-light); margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--clay-pale); }
-.form-note { font-size: 0.95rem; color: var(--text-light); text-align: center; margin-top: 0.8rem; line-height: 1.5; }
 
 @media (max-width: 1080px) {
   .classes-intro { grid-template-columns: 1fr; gap: 2.5rem; }
@@ -114,9 +96,6 @@
   .course-cards { grid-template-columns: 1fr; }
   .course-card-header { padding: 1.5rem 1.5rem 1.2rem; }
   .course-card-body { padding: 1.2rem 1.5rem 1.5rem; }
-  .modal-content { padding: 1.8rem; }
-  .enroll-overlay { align-items: flex-end; padding: 0; }
-  .modal-content { border-radius: 6px 6px 0 0; }
 }
 </style>
 </head>
@@ -232,49 +211,18 @@
   </div>
 </section>
 
-<!-- Enroll modal -->
-<div class="enroll-overlay" id="enrollOverlay">
-  <div class="enroll-modal">
-    <button class="modal-close" onclick="closeEnroll()">×</button>
-    <p class="modal-eyebrow">Enrollment</p>
-    <h2 class="modal-title" id="enrollTitle">Course Name</h2>
-    <p class="modal-meta" id="enrollMeta">Level · Price</p>
-    <form class="enroll-form">
-      <div class="form-group"><label>Full name</label><input type="text" placeholder="Your name" required/></div>
-      <div class="form-group"><label>Email address</label><input type="email" placeholder="you@email.com" required/></div>
-      <div class="form-group"><label>Phone (for WhatsApp feedback)</label><input type="tel" placeholder="+91 98765 43210"/></div>
-      <div class="form-group"><label>Country</label>
-        <select><option value="">Select...</option><option>India</option><option>United Kingdom</option><option>United States</option><option>Germany</option><option>Australia</option><option>Other</option></select>
-      </div>
-      <div class="form-group"><label>Do you own a handpan?</label>
-        <select><option value="">Select...</option><option>Yes</option><option>No, but planning to get one</option><option>No, will use what's available</option></select>
-      </div>
-      <div class="form-group"><label>Anything you'd like Arpit to know?</label><textarea placeholder="Goals, questions, or a quick hello..."></textarea></div>
-      <button type="submit" class="btn-primary" style="width:100%;margin-top:0.5rem;">Complete Enrollment</button>
-      <p class="form-note">After submitting, Arpit will send you a payment link within a few hours. Course access begins once payment is confirmed.</p>
-    </form>
-  </div>
-</div>
-
 <footer class="site-footer">
   <div class="footer-main">
     <div class="footer-brand"><svg width="52" height="52" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><circle cx="21" cy="21" r="19.5" fill="none" stroke="#C17F52" stroke-width="1"/><circle cx="21" cy="21" r="16.5" fill="none" stroke="rgba(193,127,82,0.3)" stroke-width="1"/><text x="21" y="26" text-anchor="middle" font-family="Helvetica Neue,Helvetica,sans-serif" font-size="11" font-weight="700" fill="#F0DBC8" letter-spacing="1">A<tspan fill="#C17F52">·</tspan>P</text></svg><span>Music, workshops and online classes by handpan artist Arpit Pandey, based in India.</span></div>
     <div class="footer-col"><h4>Navigate</h4><ul><li><a href="../index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="music.html">Music</a></li><li><a href="workshops.html">Workshops</a></li><li><a href="classes.html">Classes</a></li><li><a href="contact.html">Contact</a></li></ul></div>
-    <div class="footer-col"><h4>Courses</h4><ul><li><a href="classes.html">Level 01 — First Touch</a></li><li><a href="classes.html">Level 02 — Finding Your Voice</a></li><li><a href="classes.html">Level 03 — Deep Waters</a></li></ul></div>
-    <div class="footer-col"><h4>Connect</h4><ul><li><a href="https://www.instagram.com/pandeyarpit" target="_blank">Instagram</a></li><li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank">YouTube</a></li><li><a href="mailto:arpitbam@gmail.com">Email</a></li></ul></div>
+    <div class="footer-col"><h4>Courses</h4><ul><li><a href="classes.html">Beginner Course</a></li><li><a href="classes.html">Intermediate Course</a></li><li><a href="workshops.html">Live Workshops</a></li></ul></div>
+    <div class="footer-col"><h4>Connect</h4><ul><li><a href="https://www.instagram.com/pandeyarpit" target="_blank">Instagram</a></li><li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank">YouTube</a></li><li><a href="mailto:arpithandpan@gmail.com">Email</a></li></ul></div>
   </div>
   <div class="footer-bottom"><p>© 2026 Arpit Pandey · arpitpandey.com</p><div class="footer-social"><a href="#">Instagram</a><a href="#">YouTube</a><a href="#">Spotify</a></div></div>
 </footer>
 
 <script src="../js/main.js"></script>
 <script>
-function openEnroll(name, meta, price) {
-  document.getElementById('enrollTitle').textContent = name;
-  document.getElementById('enrollMeta').textContent = meta + ' · ' + price;
-  document.getElementById('enrollOverlay').classList.add('open');
-}
-function closeEnroll() { document.getElementById('enrollOverlay').classList.remove('open'); }
-document.getElementById('enrollOverlay').addEventListener('click', function(e) { if(e.target===this) closeEnroll(); });
 function toggleFaq(el) { el.parentElement.classList.toggle('open'); }
 </script>
 </body>
