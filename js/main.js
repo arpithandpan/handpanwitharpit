@@ -80,22 +80,33 @@ document.addEventListener('DOMContentLoaded', () => {
   // Music card tap-to-reveal on mobile
   document.querySelectorAll('.music-card, .release-card').forEach(card => {
     card.addEventListener('click', function(e) {
-      // Only intercept if it's a touch device and click isn't on a link
-      if (e.target.tagName === 'A') return;
-      if (window.matchMedia('(hover: none)').matches) {
-        const isOpen = this.classList.contains('tapped');
-        document.querySelectorAll('.music-card.tapped, .release-card.tapped').forEach(c => c.classList.remove('tapped'));
-        if (!isOpen) this.classList.add('tapped');
+      if (!window.matchMedia('(hover: none)').matches) return;
+
+      const isOpen = this.classList.contains('tapped');
+
+      // If card is not yet open, always open it first — even if tapping a link
+      if (!isOpen) {
+        e.preventDefault();
         e.stopPropagation();
+        document.querySelectorAll('.music-card.tapped, .release-card.tapped').forEach(c => c.classList.remove('tapped'));
+        this.classList.add('tapped');
+        return;
       }
+
+      // Card is already open — if tapping a link, let it navigate
+      if (e.target.tagName === 'A' || e.target.closest('a')) return;
+
+      // Tapping non-link area while open — close it
+      this.classList.remove('tapped');
+      e.stopPropagation();
     });
   });
 
-  // Dismiss tapped card when tapping outside
-  document.addEventListener('click', function() {
-    if (window.matchMedia('(hover: none)').matches) {
-      document.querySelectorAll('.music-card.tapped, .release-card.tapped').forEach(c => c.classList.remove('tapped'));
-    }
+  // Dismiss tapped card when tapping outside the card
+  document.addEventListener('click', function(e) {
+    if (!window.matchMedia('(hover: none)').matches) return;
+    if (e.target.closest('.music-card, .release-card')) return;
+    document.querySelectorAll('.music-card.tapped, .release-card.tapped').forEach(c => c.classList.remove('tapped'));
   });
 
 });
