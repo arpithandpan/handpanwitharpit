@@ -4,6 +4,20 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Nav logo rotation on scroll
+  const navLogo = document.querySelector('.nav-logo svg');
+  if (navLogo) {
+    let lastScrollY = window.scrollY;
+    let rotation = 0;
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      const delta = currentScrollY - lastScrollY;
+      rotation += delta * 0.15;
+      navLogo.style.transform = `rotate(${rotation}deg)`;
+      lastScrollY = currentScrollY;
+    }, { passive: true });
+  }
+
   // Nav scroll effect
   const nav = document.querySelector('nav');
   window.addEventListener('scroll', () => {
