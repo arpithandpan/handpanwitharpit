@@ -54,11 +54,6 @@
 
 .releases-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
 .release-card { background: var(--sand); border-radius: 3px; overflow: hidden; border: 1px solid transparent; transition: border-color 0.2s; -webkit-tap-highlight-color: transparent; cursor: pointer; }
-.release-card.tapped .release-art-overlay { opacity: 1; }
-@media (hover: hover) {
-  .release-card:hover { border-color: var(--clay); }
-  .release-card:hover .release-art-overlay { opacity: 1; pointer-events: auto; }
-}
 .release-art { aspect-ratio: 1; background: var(--sand-deep); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .release-art-overlay {
   position: absolute; inset: 0;
@@ -69,8 +64,11 @@
   padding: 1.5rem;
   pointer-events: none;
 }
-.release-card.tapped .release-art-overlay,
-.release-art-overlay.visible { opacity: 1; pointer-events: auto; }
+.release-card.tapped .release-art-overlay { opacity: 1; pointer-events: auto; }
+@media (hover: hover) {
+  .release-card:hover { border-color: var(--clay); }
+  .release-card:hover .release-art-overlay { opacity: 1; pointer-events: auto; }
+}
 .release-art-overlay .rp-link {
   font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--clay-pale); text-decoration: none;
@@ -110,12 +108,14 @@
 
 @media (max-width: 1080px) {
   .release-featured { grid-template-columns: 1fr; padding: 2rem; gap: 2rem; }
+  .release-art-lg { max-height: 400px; }
   .releases-grid { grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
   .video-grid { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
   .release-art-wrap { max-width: 240px; margin: 0 auto; }
 }
 @media (max-width: 600px) {
   .release-featured { padding: 1.5rem; }
+  .release-art-lg { max-height: 280px; }
   .releases-grid { grid-template-columns: 1fr; }
   .video-grid { grid-template-columns: 1fr; }
   .platform-links { gap: 0.6rem; }
