@@ -46,7 +46,11 @@
 
 .releases-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
 .release-card { background: var(--sand); border-radius: 3px; overflow: hidden; border: 1px solid transparent; transition: border-color 0.2s; }
-.release-card:hover { border-color: var(--clay); }
+.release-card.tapped .release-art-overlay { opacity: 1; }
+@media (hover: hover) {
+  .release-card:hover { border-color: var(--clay); }
+  .release-card:hover .release-art-overlay { opacity: 1; }
+}
 .release-art { aspect-ratio: 1; background: var(--sand-deep); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .release-art-overlay {
   position: absolute; inset: 0;
@@ -56,8 +60,6 @@
   opacity: 0; transition: opacity 0.25s ease;
   padding: 1.5rem;
 }
-.release-card:hover .release-art-overlay,
-.release-card.tapped .release-art-overlay { opacity: 1; }
 .release-art-overlay .rp-link {
   font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--clay-pale); text-decoration: none;
