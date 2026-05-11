@@ -86,8 +86,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const isOpen = this.classList.contains('tapped');
         document.querySelectorAll('.music-card.tapped, .release-card.tapped').forEach(c => c.classList.remove('tapped'));
         if (!isOpen) this.classList.add('tapped');
+        e.stopPropagation();
       }
     });
+  });
+
+  // Dismiss tapped card when tapping outside
+  document.addEventListener('click', function() {
+    if (window.matchMedia('(hover: none)').matches) {
+      document.querySelectorAll('.music-card.tapped, .release-card.tapped').forEach(c => c.classList.remove('tapped'));
+    }
   });
 
 });
