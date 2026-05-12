@@ -45,9 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
     hamburger.addEventListener('click', () => {
       mobileMenu.classList.toggle('open');
       const spans = hamburger.querySelectorAll('span');
-      spans[0].style.transform = mobileMenu.classList.contains('open') ? 'rotate(45deg) translate(4px, 4.5px)' : '';
+      spans[0].style.transform = mobileMenu.classList.contains('open') ? 'translateY(6.5px) rotate(45deg)' : '';
       spans[1].style.opacity  = mobileMenu.classList.contains('open') ? '0' : '1';
-      spans[2].style.transform = mobileMenu.classList.contains('open') ? 'rotate(-45deg) translate(4px, -4.5px)' : '';
+      spans[1].style.transform = mobileMenu.classList.contains('open') ? 'scaleX(0)' : '';
+      spans[2].style.transform = mobileMenu.classList.contains('open') ? 'translateY(-6.5px) rotate(-45deg)' : '';
     });
   }
 
