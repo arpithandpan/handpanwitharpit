@@ -44,11 +44,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (hamburger && mobileMenu) {
     hamburger.addEventListener('click', () => {
       mobileMenu.classList.toggle('open');
+      const isOpen = mobileMenu.classList.contains('open');
+      document.body.style.overflow = isOpen ? 'hidden' : '';
       const spans = hamburger.querySelectorAll('span');
-      spans[0].style.transform = mobileMenu.classList.contains('open') ? 'translateY(6.5px) rotate(45deg)' : '';
-      spans[1].style.opacity  = mobileMenu.classList.contains('open') ? '0' : '1';
-      spans[1].style.transform = mobileMenu.classList.contains('open') ? 'scaleX(0)' : '';
-      spans[2].style.transform = mobileMenu.classList.contains('open') ? 'translateY(-6.5px) rotate(-45deg)' : '';
+      spans[0].style.transform = isOpen ? 'translateY(6.5px) rotate(45deg)' : '';
+      spans[1].style.opacity  = isOpen ? '0' : '1';
+      spans[1].style.transform = isOpen ? 'scaleX(0)' : '';
+      spans[2].style.transform = isOpen ? 'translateY(-6.5px) rotate(-45deg)' : '';
+    });
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
     });
   }
 
