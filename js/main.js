@@ -58,6 +58,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = '';
       });
     });
+    // Close when clicking the overlay (outside the inner panel)
+    mobileMenu.addEventListener('click', (e) => {
+      if (!e.target.closest('.mobile-menu-inner')) {
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+        const spans = hamburger.querySelectorAll('span');
+        spans[0].style.transform = '';
+        spans[1].style.opacity = '1';
+        spans[1].style.transform = '';
+        spans[2].style.transform = '';
+      }
+    });
   }
 
   // Scroll-triggered fade-in for sections
