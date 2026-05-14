@@ -104,13 +104,19 @@ nav.scrolled { box-shadow: 0 2px 20px rgba(61,43,31,0.08); }
 }
 .mobile-menu {
   display: none; position: fixed;
-  top: var(--nav-h); left: 0; right: 0;
+  top: var(--nav-h); left: 0; right: 0; bottom: 0;
   background: var(--cream);
-  border-bottom: 1px solid var(--clay-pale);
   padding: 1.5rem 2rem;
   flex-direction: column; gap: 0;
   z-index: 199;
-  box-shadow: 0 8px 24px rgba(61,43,31,0.1);
+  overflow-y: auto;
+}
+.mobile-menu::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(61,43,31,0.5);
+  z-index: -1;
 }
 .mobile-menu.open { display: flex; }
 .mobile-menu a {
