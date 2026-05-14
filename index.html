@@ -188,36 +188,38 @@
 /* ---- CLASSES PREVIEW ---- */
 .classes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
 .class-card {
-  border: 1px solid var(--clay-pale); border-radius: 3px; padding: 2rem;
-  transition: border-color 0.25s, transform 0.25s; position: relative;
-  display: flex; flex-direction: column;
+  border: 1px solid var(--clay-pale); border-radius: 6px; overflow: hidden;
+  display: flex; flex-direction: column; background: var(--cream);
+  transition: border-color 0.25s, transform 0.25s;
 }
 .class-card:hover { border-color: var(--clay); transform: translateY(-3px); }
 .class-card.featured { background: var(--bark); border-color: var(--bark); }
-.class-level { font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.9rem; }
+.class-card-inner { padding: 2rem; display: flex; flex-direction: column; flex: 1; }
+.class-level { font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.7rem; }
 .class-card.featured .class-level { color: var(--clay-light); }
-.class-name { font-family: var(--font-body); font-size: 1.75rem; font-weight: 400; color: var(--bark); margin-bottom: 0.5rem; line-height: 1.2; }
+.class-name { font-family: var(--font-body); font-size: 1.75rem; font-weight: 400; color: var(--bark); margin-bottom: 0.5rem; line-height: 1.1; }
 .class-card.featured .class-name { color: var(--clay-pale); }
-.class-desc { font-size: 1rem; color: var(--text-light); line-height: 1.7; font-weight: 450; margin-bottom: 1.5rem; }
-.class-card.featured .class-desc { color: rgba(240,219,200,0.55); }
-.class-features { list-style: none; margin-bottom: 1.8rem; display: flex; flex-direction: column; gap: 0.55rem; flex: 1; }
-.class-features li { font-size: 1rem; color: var(--text-mid); padding-left: 1.2rem; position: relative; }
-.class-card.featured .class-features li { color: rgba(240,219,200,0.65); }
-.class-features li::before { content: '—'; position: absolute; left: 0; color: var(--clay); font-size: 1rem; }
-.class-price { font-family: var(--font-body); font-size: 1.9rem; font-weight: 400; color: var(--bark); margin-bottom: 1.2rem; }
-.class-card.featured .class-price { color: var(--clay-light); }
-.class-price span { font-size: 1.05rem; color: var(--text-light); }
-.class-card.featured .class-price span { color: rgba(240,219,200,0.4); }
+.class-meta { font-size: 0.95rem; color: var(--text-light); margin-bottom: 1.4rem; }
+.class-card.featured .class-meta { color: rgba(240,219,200,0.45); }
+.class-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.8rem; }
+.class-pill {
+  font-size: 0.82rem; letter-spacing: 0.06em; padding: 0.3rem 0.75rem;
+  border-radius: 20px; background: rgba(193,127,82,0.1);
+  color: var(--clay); border: 1px solid rgba(193,127,82,0.2);
+}
+.class-card.featured .class-pill { background: rgba(193,127,82,0.18); color: var(--clay-light); border-color: rgba(193,127,82,0.3); }
 .btn-enroll {
+  margin-top: auto; display: block; text-align: center; text-decoration: none;
   width: 100%; padding: 0.8rem;
-  font-family: var(--font-body); font-size: 0.95rem;
-  letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--font-body); font-size: 0.88rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
   border: 1px solid var(--bark); color: var(--bark);
-  background: transparent; border-radius: 2px; cursor: pointer; transition: all 0.2s;
+  background: transparent; border-radius: 3px; cursor: pointer; transition: all 0.2s; box-sizing: border-box;
 }
 .btn-enroll:hover { background: var(--bark); color: var(--cream); }
 .class-card.featured .btn-enroll { background: var(--clay); border-color: var(--clay); color: var(--cream); }
 .class-card.featured .btn-enroll:hover { background: var(--clay-light); }
+@media (max-width: 600px) { .classes-grid { grid-template-columns: 1fr; } }
 
 /* ---- TESTIMONIALS ---- */
 .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
@@ -345,7 +347,7 @@
     <li><a href="pages/classes.html">Classes</a></li>
     <li><a href="pages/contact.html">Contact</a></li>
   </ul>
-  <a href="https://www.arpitpandey.in/" class="nav-cta" target="_blank" rel="noopener">UX Work</a>
+  <a href="https://www.arpitpandey.in/" class="nav-cta" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;">Design Portfolio <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
   <div class="nav-hamburger"><span></span><span></span><span></span></div>
 </nav>
 <div class="mobile-menu">
@@ -473,7 +475,7 @@
   <div class="photo-banner-overlay">
     <div class="photo-banner-text">
       <p>Community</p>
-      <p class="photo-banner-title">3 workshops.<br/><em>Growing community.</em></p>
+      <p class="photo-banner-title">Some sounds you feel<br/><em>before you hear.</em></p>
       <a href="pages/workshops.html" class="photo-banner-link">View all workshops →</a>
     </div>
   </div>
@@ -488,28 +490,30 @@
   <div style="max-width:780px;">
   <div class="classes-grid">
     <div class="class-card featured">
-      <div class="class-card-top" onclick="toggleClass(this)">
+      <div class="class-card-inner">
         <p class="class-level">Beginner</p>
         <h3 class="class-name">Beginner Course</h3>
-        <p class="class-desc">3 months · 12 sessions · 1 hour each. For complete beginners — no musical background needed.</p>
-        <span class="class-toggle">+ See details</span>
+        <p class="class-meta">3 months · 12 sessions · 1hr each</p>
+        <div class="class-pills">
+          <span class="class-pill">Live on Zoom</span>
+          <span class="class-pill">No background needed</span>
+          <span class="class-pill">Recordings shared</span>
+        </div>
+        <a href="pages/classes.html" class="btn-enroll">Explore Classes →</a>
       </div>
-      <div class="class-card-body">
-        <ul class="class-features"><li>Live on Zoom</li><li>Recorded sessions shared after each class</li><li>From first sound to first performance</li></ul>
-      </div>
-      <a href="pages/contact.html" class="btn-enroll" style="display:inline-block;text-align:center;text-decoration:none;width:100%;">Enquire Now</a>
     </div>
     <div class="class-card">
-      <div class="class-card-top" onclick="toggleClass(this)">
+      <div class="class-card-inner">
         <p class="class-level">Intermediate</p>
         <h3 class="class-name">Intermediate Course</h3>
-        <p class="class-desc">6 months · 24 sessions · 1 hour each. For those with a good command of the basics.</p>
-        <span class="class-toggle">+ See details</span>
+        <p class="class-meta">6 months · 24 sessions · 1hr each</p>
+        <div class="class-pills">
+          <span class="class-pill">Live on Zoom</span>
+          <span class="class-pill">Rhythm &amp; theory</span>
+          <span class="class-pill">Compose your own piece</span>
+        </div>
+        <a href="pages/classes.html" class="btn-enroll">Explore Classes →</a>
       </div>
-      <div class="class-card-body">
-        <ul class="class-features"><li>Live on Zoom</li><li>Deeper rhythm, music theory, improvisation</li><li>Create your own composition</li></ul>
-      </div>
-      <a href="pages/contact.html" class="btn-enroll" style="display:block;text-align:center;text-decoration:none;">Enquire Now</a>
     </div>
   </div>
 </div>
