@@ -82,6 +82,13 @@
 .stat span { font-family: var(--font-body); font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 400; color: var(--clay-light); display: block; }
 .stat small { font-size: 0.92rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(240,219,200,0.35); }
 
+/* ---- CLASS CARD ACCORDION ---- */
+.class-card-top { cursor: pointer; }
+.class-toggle { display: inline-block; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--clay); margin-top: 0.8rem; -webkit-tap-highlight-color: transparent; }
+.class-card-body { display: none; margin-bottom: 1rem; }
+.class-card-body.open { display: block; }
+.class-card.featured .class-toggle { color: var(--clay-light); }
+
 /* ---- MUSIC SECTION ---- */
 .music-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
 .music-card {
@@ -102,17 +109,23 @@
   align-items: center; justify-content: center; gap: 1rem;
   opacity: 0; transition: opacity 0.25s ease;
   padding: 1.5rem;
+  pointer-events: none;
 }
-.music-card:hover .music-art-overlay,
-.music-card.tapped .music-art-overlay { opacity: 1; }
+.music-card.tapped .music-art-overlay { opacity: 1; pointer-events: auto; }
+@media (hover: hover) {
+  .music-card:hover .music-art-overlay { opacity: 1; pointer-events: auto; }
+}
 .music-art-overlay .music-link {
   font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--clay-pale); text-decoration: none;
   border: 1px solid rgba(240,219,200,0.5); padding: 1rem 2rem; border-radius: 30px;
   transition: all 0.2s; width: 200px; text-align: center;
   background: rgba(61,43,31,0.5);
+  -webkit-tap-highlight-color: transparent;
 }
-.music-art-overlay .music-link:hover { border-color: var(--clay-light); color: var(--clay-light); }
+@media (hover: hover) {
+  .music-art-overlay .music-link:hover { border-color: var(--clay-light); color: var(--clay-light); }
+}
 .music-info { padding: 1.2rem 1.4rem 1.5rem; }
 .music-type { font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.4rem; }
 .music-name { font-family: var(--font-body); font-size: 1.4rem; font-weight: 400; color: var(--bark); margin-bottom: 0.3rem; }
@@ -332,7 +345,7 @@
     <li><a href="pages/classes.html">Classes</a></li>
     <li><a href="pages/contact.html">Contact</a></li>
   </ul>
-  <a href="pages/contact.html" class="nav-cta">Enquire Now</a>
+  <a href="https://www.arpitpandey.in/" class="nav-cta" target="_blank" rel="noopener">UX Work</a>
   <div class="nav-hamburger"><span></span><span></span><span></span></div>
 </nav>
 <div class="mobile-menu">
@@ -366,14 +379,7 @@
   <div class="intro-body" style="max-width:720px;">
     <p>Arpit Pandey is a handpan artist based in Bengaluru, drawn to the instrument for its rare ability to hold both melody and meditation in the same breath.</p>
     <p>He performs, records, and teaches, carrying everything he has learned into every session, workshop, and note.</p>
-    <a href="pages/about.html" class="btn-ghost" style="color:var(--clay-light);border-color:rgba(193,127,82,0.3);">Read full story →</a>
-    <div class="intro-stats">
-      <div class="stat"><span>30+</span><small>Participants</small></div>
-      <div class="stat"><span>3</span><small>Workshops</small></div>
-      <div class="stat"><span>8+</span><small>Years playing</small></div>
-      <div class="stat"><span>15+</span><small>Releases</small></div>
-    </div>
-  </div>
+    <a href="pages/about.html" class="btn-ghost" style="color:var(--clay-light);border-color:rgba(193,127,82,0.3);">Read full story →</a></div>
 </section>
 
 <!-- MUSIC -->
@@ -482,17 +488,27 @@
   <div style="max-width:780px;">
   <div class="classes-grid">
     <div class="class-card featured">
-      <p class="class-level">Beginner</p>
-      <h3 class="class-name">Beginner Course</h3>
-      <p class="class-desc">3 months · 12 sessions · 1 hour each. For complete beginners — no musical background needed.</p>
-      <ul class="class-features"><li>Live on Zoom</li><li>Recorded sessions shared after each class</li><li>From first sound to first performance</li></ul>
+      <div class="class-card-top" onclick="toggleClass(this)">
+        <p class="class-level">Beginner</p>
+        <h3 class="class-name">Beginner Course</h3>
+        <p class="class-desc">3 months · 12 sessions · 1 hour each. For complete beginners — no musical background needed.</p>
+        <span class="class-toggle">+ See details</span>
+      </div>
+      <div class="class-card-body">
+        <ul class="class-features"><li>Live on Zoom</li><li>Recorded sessions shared after each class</li><li>From first sound to first performance</li></ul>
+      </div>
       <a href="pages/contact.html" class="btn-enroll" style="display:inline-block;text-align:center;text-decoration:none;width:100%;">Enquire Now</a>
     </div>
     <div class="class-card">
-      <p class="class-level">Intermediate</p>
-      <h3 class="class-name">Intermediate Course</h3>
-      <p class="class-desc">6 months · 24 sessions · 1 hour each. For those with a good command of the basics.</p>
-      <ul class="class-features"><li>Live on Zoom</li><li>Deeper rhythm, music theory, improvisation</li><li>Create your own composition</li></ul>
+      <div class="class-card-top" onclick="toggleClass(this)">
+        <p class="class-level">Intermediate</p>
+        <h3 class="class-name">Intermediate Course</h3>
+        <p class="class-desc">6 months · 24 sessions · 1 hour each. For those with a good command of the basics.</p>
+        <span class="class-toggle">+ See details</span>
+      </div>
+      <div class="class-card-body">
+        <ul class="class-features"><li>Live on Zoom</li><li>Deeper rhythm, music theory, improvisation</li><li>Create your own composition</li></ul>
+      </div>
       <a href="pages/contact.html" class="btn-enroll" style="display:block;text-align:center;text-decoration:none;">Enquire Now</a>
     </div>
   </div>
@@ -517,5 +533,14 @@
 </footer>
 
 <script src="js/main.js"></script>
+<script>
+function toggleClass(el) {
+  const body = el.nextElementSibling;
+  const toggle = el.querySelector('.class-toggle');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  toggle.textContent = isOpen ? '+ See details' : '− Hide details';
+}
+</script>
 </body>
 </html>

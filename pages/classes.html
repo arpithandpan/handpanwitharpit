@@ -23,14 +23,12 @@
   overflow: hidden; transition: border-color 0.25s, transform 0.25s;
   display: flex; flex-direction: column;
 }
-.course-card-body { display: flex; flex-direction: column; flex: 1; }
+.course-card-body { display: none; padding: 1.5rem 2rem 2rem; flex-direction: column; flex: 1; }
+.course-card-body.open { display: flex; }
 .course-card-body .btn-enroll-lg { margin-top: auto; }
-.course-card:hover { border-color: var(--clay); transform: translateY(-4px); }
-.course-card.featured { border-color: var(--bark); }
-.course-card-top {
-  padding: 2rem 2rem 1.5rem;
-  border-bottom: 1px solid var(--clay-pale);
-}
+.course-card-top { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.course-toggle { display: inline-block; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--clay); margin-top: 0.8rem; }
+.course-card.featured .course-toggle { color: var(--clay-light); }
 .course-card.featured .course-card-top { background: var(--bark); border-bottom-color: rgba(193,127,82,0.2); }
 .course-card.featured .course-card-body { background: #2a1f16; }
 .course-card.featured .course-meta-item span { color: var(--clay-light); }
@@ -49,8 +47,6 @@
 .course-card.featured .course-name { color: var(--clay-pale); }
 .course-tagline { font-family: var(--font-body); font-size: 1rem; font-weight: 400; font-style: normal; color: var(--text-light); }
 .course-card.featured .course-tagline { color: rgba(240,219,200,0.5); }
-.course-card-body { padding: 1.5rem 2rem 2rem; display: flex; flex-direction: column; flex: 1; }
-.course-card-body .btn-enroll-lg { margin-top: auto; }
 .course-meta-row { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
 .course-meta-item { text-align: center; }
 .course-meta-item span { font-family: var(--font-body); font-size: 1.4rem; font-weight: 400; color: var(--clay); display: block; }
@@ -120,7 +116,7 @@
     <li><a href="music.html">Music</a></li><li><a href="workshops.html">Workshops</a></li>
     <li><a href="classes.html" class="active">Classes</a></li><li><a href="contact.html">Contact</a></li>
   </ul>
-  <a href="contact.html" class="nav-cta">Enquire Now</a>
+  <a href="https://www.arpitpandey.in/" class="nav-cta" target="_blank" rel="noopener">UX Work</a>
   <div class="nav-hamburger"><span></span><span></span><span></span></div>
 </nav>
 <div class="mobile-menu">
@@ -153,10 +149,11 @@
 
     <!-- Beginner FEATURED -->
     <div class="course-card featured">
-      <div class="course-card-top">
+      <div class="course-card-top" onclick="toggleCourse(this)">
         <p class="course-level">Beginner</p>
         <h2 class="course-name">Beginner Course</h2>
         <p class="course-tagline">For complete beginners — no musical background needed</p>
+        <span class="course-toggle">+ See details</span>
       </div>
       <div class="course-card-body">
         <div class="course-meta-row">
@@ -178,10 +175,11 @@
 
     <!-- Intermediate -->
     <div class="course-card">
-      <div class="course-card-top">
+      <div class="course-card-top" onclick="toggleCourse(this)">
         <p class="course-level">Intermediate</p>
         <h2 class="course-name">Intermediate Course</h2>
         <p class="course-tagline">For those with a good command of the basics</p>
+        <span class="course-toggle">+ See details</span>
       </div>
       <div class="course-card-body">
         <div class="course-meta-row">
@@ -231,6 +229,14 @@
 <script src="../js/main.js"></script>
 <script>
 function toggleFaq(el) { el.parentElement.classList.toggle('open'); }
+function toggleCourse(el) {
+  const body = el.nextElementSibling;
+  const toggle = el.querySelector('.course-toggle');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  toggle.textContent = isOpen ? '+ See details' : '− Hide details';
+}
+</script>
 </script>
 </body>
 </html>
