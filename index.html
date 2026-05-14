@@ -1,521 +1,1050 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Arpit Pandey | Handpan Artist</title>
-<meta name="description" content="Handpan artist, teacher and workshop facilitator. Music releases, live workshops across India, and online classes for all levels."/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/style.css"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Handpan with Arpit</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Handpan">
+<link rel="apple-touch-icon" href="icon.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ---- HERO ---- */
-.hero {
-  min-height: 100vh;
-  display: grid; grid-template-columns: 1fr 1fr;
-  position: relative; overflow: hidden;
-  padding-top: var(--nav-h);
-}
-.hero-left {
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 4rem 4rem 4rem 4rem; position: relative; z-index: 2;
-}
-.hero-eyebrow {
-  font-size: 0.95rem; letter-spacing: 0.2em;
-  text-transform: uppercase; color: var(--clay);
-  margin-bottom: 1.5rem;
-  opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
-}
-.hero-title {
-  font-family: var(--font-body);
-  font-size: clamp(3rem, 5.5vw, 5.5rem);
-  font-weight: 400; line-height: 1.05;
-  color: var(--bark); margin-bottom: 1rem;
-  opacity: 0; animation: fadeUp 0.8s 0.35s forwards;
-}
-.hero-title em { font-style: normal; color: var(--clay); display: block; }
-.hero-sub {
-  font-family: var(--font-body);
-  font-size: clamp(1rem, 2vw, 1.25rem); font-weight: 400; font-style: normal;
-  color: var(--text-mid); line-height: 1.7; font-weight: 450; max-width: 380px;
-  margin-bottom: 3rem;
-  opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
-}
-.hero-actions {
-  display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;
-  opacity: 0; animation: fadeUp 0.8s 0.65s forwards;
-}
-.hero-right {
-  position: relative; overflow: hidden;
-}
-.hero-photo-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to right, rgba(250,245,238,0.15) 0%, transparent 40%),
-              linear-gradient(to top, rgba(61,43,31,0.3) 0%, transparent 50%);
-}
-.hero-note {
-  position: absolute; bottom: 2rem; left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-body); font-style: normal;
-  font-size: 1.05rem; color: rgba(240,219,200,0.7);
-  white-space: nowrap; z-index: 2;
-}
+  :root {
+    --bg: #0f0f0f;
+    --bg2: #1a1a1a;
+    --bg3: #242424;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0f0f0;
+    --text2: #888;
+    --text3: #555;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.12);
+    --green-border: rgba(34,197,94,0.3);
+    --amber: #f59e0b;
+    --amber-bg: rgba(245,158,11,0.12);
+    --amber-border: rgba(245,158,11,0.3);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.1);
+    --red-border: rgba(239,68,68,0.25);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59,130,246,0.1);
+    --r: 12px;
+    --r2: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow: hidden; }
 
-/* ---- INTRO BAND ---- */
-.intro-band {
-  background: var(--bark); padding: 5rem 4rem;
-  position: relative; overflow: hidden;
-}
-.intro-label {
-  font-family: var(--font-body); font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 400; font-style: normal;
-  color: var(--clay-pale); line-height: 1.1;
-}
-.intro-body p {
-  font-family: var(--font-body); font-size: clamp(1rem, 1.5vw, 1.2rem);
-  font-weight: 400; color: rgba(240,219,200,0.75); font-weight: 450;
-  line-height: 1.85; margin-bottom: 1rem;
-}
-.intro-body p:last-of-type { margin-bottom: 2rem; }
-.intro-stats { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid rgba(193,127,82,0.2); }
-.stat span { font-family: var(--font-body); font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 400; color: var(--clay-light); display: block; }
-.stat small { font-size: 0.92rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(240,219,200,0.35); }
+  /* PIN SCREEN */
+  #pin-screen {
+    position: fixed; inset: 0; background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 100; padding: 40px 24px;
+  }
+  .pin-logo {
+    width: 64px; height: 64px; border-radius: 18px;
+    background: var(--green-bg); border: 1px solid var(--green-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; margin-bottom: 20px;
+  }
+  .pin-title { font-size: 22px; font-weight: 600; color: var(--text); }
+  .pin-sub { font-size: 14px; color: var(--text2); margin-top: 6px; }
+  .pin-dots { display: flex; gap: 16px; margin: 28px 0; }
+  .pin-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 1.5px solid var(--border2); background: transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .pin-dot.filled { background: var(--green); border-color: var(--green); }
+  .pin-pad { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; width: 240px; }
+  .pin-key {
+    padding: 16px; border-radius: var(--r); border: 1px solid var(--border);
+    background: var(--bg2); font-size: 20px; font-weight: 500;
+    cursor: pointer; text-align: center; color: var(--text);
+    transition: background 0.1s, transform 0.1s;
+    font-family: 'DM Mono', monospace;
+  }
+  .pin-key:active { background: var(--bg3); transform: scale(0.96); }
+  .pin-hint { font-size: 12px; color: var(--text3); margin-top: 20px; }
+  .pin-error { color: var(--red); font-size: 13px; margin-top: 8px; animation: shake 0.3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
 
-/* ---- MUSIC SECTION ---- */
-.music-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
-.music-card {
-  background: var(--sand); border-radius: 3px; overflow: hidden;
-  border: 1px solid transparent; transition: border-color 0.2s;
-  cursor: pointer;
-}
-.music-card:hover { border-color: var(--clay); }
-.music-art {
-  aspect-ratio: 1; background: var(--sand-deep);
-  display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
-}
-.music-art-overlay {
-  position: absolute; inset: 0;
-  background: rgba(61,43,31,0.75);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 1rem;
-  opacity: 0; transition: opacity 0.25s ease;
-  padding: 1.5rem;
-}
-.music-card:hover .music-art-overlay,
-.music-card.tapped .music-art-overlay { opacity: 1; }
-.music-art-overlay .music-link {
-  font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--clay-pale); text-decoration: none;
-  border: 1px solid rgba(240,219,200,0.5); padding: 1rem 2rem; border-radius: 30px;
-  transition: all 0.2s; width: 200px; text-align: center;
-  background: rgba(61,43,31,0.5);
-}
-.music-art-overlay .music-link:hover { border-color: var(--clay-light); color: var(--clay-light); }
-.music-info { padding: 1.2rem 1.4rem 1.5rem; }
-.music-type { font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.4rem; }
-.music-name { font-family: var(--font-body); font-size: 1.4rem; font-weight: 400; color: var(--bark); margin-bottom: 0.3rem; }
-.music-meta { font-size: 1rem; color: var(--text-light); }
-.music-links { display: none; }
+  /* MAIN APP */
+  #app { height: 100%; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; }
+  .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+  .screen.active { display: flex; }
 
-/* ---- WORKSHOPS PREVIEW ---- */
-.workshop-rows { display: flex; flex-direction: column; gap: 0.75rem; }
-.workshop-row {
-  display: grid; grid-template-columns: 100px 1fr auto;
-  gap: 2rem; align-items: center;
-  padding: 1.8rem 2rem; background: var(--cream);
-  border: 1px solid var(--clay-pale); border-radius: 3px;
-  transition: background 0.2s;
-}
-.workshop-row:hover { background: var(--sand); }
-.w-date { text-align: left; flex-shrink: 0; }
-.w-day { font-family: var(--font-body); font-size: 2.4rem; font-weight: 400; color: var(--clay); line-height: 1; display: block; }
-.w-month { font-size: 0.9rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); display: block; white-space: nowrap; }
-.w-title { font-family: var(--font-body); font-size: 1.35rem; font-weight: 400; color: var(--bark); margin-bottom: 0.4rem; }
-.w-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: baseline; }
-.w-meta span { font-size: 1rem; color: var(--text-light); }
-.w-meta span + span::before { content: none; }
-.w-action { text-align: right; flex-shrink: 0; }
-.spots-badge {
-  display: inline-block; font-size: 0.9rem; letter-spacing: 0.08em;
-  text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 20px;
-  background: rgba(193,127,82,0.12); color: var(--clay); margin-bottom: 0.7rem;
-}
-.spots-badge.few { background: rgba(180,60,40,0.1); color: #B43C28; }
-.spots-badge.full { background: rgba(100,100,100,0.1); color: var(--text-light); }
+  /* TOP BAR */
+  .topbar {
+    padding: 14px 18px 12px; background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+    flex-shrink: 0;
+  }
+  .topbar-back {
+    width: 36px; height: 36px; border-radius: 10px;
+    border: 1px solid var(--border); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text); flex-shrink: 0; font-size: 18px;
+  }
+  .topbar-info { flex: 1; }
+  .topbar-title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .topbar-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
+  .topbar-action {
+    width: 36px; height: 36px; border-radius: 10px;
+    border: 1px solid var(--border); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text); font-size: 20px;
+  }
 
-/* ---- PHOTO BANNER ---- */
-.photo-banner {
-  position: relative; height: 340px; overflow: hidden;
-}
-.photo-banner img {
-  width: 100%; height: 100%; object-fit: cover; object-position: center 40%;
-}
-.photo-banner-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to right, rgba(61,43,31,0.75) 0%, rgba(61,43,31,0.3) 60%, transparent 100%);
-  display: flex; align-items: center; padding: 3rem 4rem;
-}
-.photo-banner-text p:first-child {
-  font-size: 0.92rem; letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(240,219,200,0.6); margin-bottom: 0.8rem;
-}
-.photo-banner-title {
-  font-family: var(--font-body); font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 400; color: #F0DBC8; line-height: 1.2; margin-bottom: 1.2rem;
-}
-.photo-banner-title em { font-style: normal; color: #D4956A; }
-.photo-banner-link {
-  font-size: 0.95rem; letter-spacing: 0.1em; text-transform: uppercase;
-  color: #F0DBC8; border-bottom: 1px solid rgba(240,219,200,0.4);
-  padding-bottom: 2px; text-decoration: none;
-}
+  /* SCROLL BODY */
+  .body { flex: 1; overflow-y: auto; padding: 16px; -webkit-overflow-scrolling: touch; }
+  .body::-webkit-scrollbar { display: none; }
 
-/* ---- CLASSES PREVIEW ---- */
-.classes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-.class-card {
-  border: 1px solid var(--clay-pale); border-radius: 3px; padding: 2rem;
-  transition: border-color 0.25s, transform 0.25s; position: relative;
-  display: flex; flex-direction: column;
-}
-.class-card:hover { border-color: var(--clay); transform: translateY(-3px); }
-.class-card.featured { background: var(--bark); border-color: var(--bark); }
-.class-level { font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.9rem; }
-.class-card.featured .class-level { color: var(--clay-light); }
-.class-name { font-family: var(--font-body); font-size: 1.75rem; font-weight: 400; color: var(--bark); margin-bottom: 0.5rem; line-height: 1.2; }
-.class-card.featured .class-name { color: var(--clay-pale); }
-.class-desc { font-size: 1rem; color: var(--text-light); line-height: 1.7; font-weight: 450; margin-bottom: 1.5rem; }
-.class-card.featured .class-desc { color: rgba(240,219,200,0.55); }
-.class-features { list-style: none; margin-bottom: 1.8rem; display: flex; flex-direction: column; gap: 0.55rem; flex: 1; }
-.class-features li { font-size: 1rem; color: var(--text-mid); padding-left: 1.2rem; position: relative; }
-.class-card.featured .class-features li { color: rgba(240,219,200,0.65); }
-.class-features li::before { content: '—'; position: absolute; left: 0; color: var(--clay); font-size: 1rem; }
-.class-price { font-family: var(--font-body); font-size: 1.9rem; font-weight: 400; color: var(--bark); margin-bottom: 1.2rem; }
-.class-card.featured .class-price { color: var(--clay-light); }
-.class-price span { font-size: 1.05rem; color: var(--text-light); }
-.class-card.featured .class-price span { color: rgba(240,219,200,0.4); }
-.btn-enroll {
-  width: 100%; padding: 0.8rem;
-  font-family: var(--font-body); font-size: 0.95rem;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  border: 1px solid var(--bark); color: var(--bark);
-  background: transparent; border-radius: 2px; cursor: pointer; transition: all 0.2s;
-}
-.btn-enroll:hover { background: var(--bark); color: var(--cream); }
-.class-card.featured .btn-enroll { background: var(--clay); border-color: var(--clay); color: var(--cream); }
-.class-card.featured .btn-enroll:hover { background: var(--clay-light); }
+  /* NAV BAR */
+  .navbar {
+    display: grid; grid-template-columns: repeat(5,1fr);
+    background: var(--bg); border-top: 1px solid var(--border);
+    padding: 8px 0 max(10px, env(safe-area-inset-bottom));
+    flex-shrink: 0;
+  }
+  .ni {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: pointer; padding: 4px 0; color: var(--text3);
+    font-size: 10px; border: none; background: transparent;
+    transition: color 0.15s;
+  }
+  .ni.on { color: var(--green); }
+  .ni svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; }
 
-/* ---- TESTIMONIALS ---- */
-.testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
-.testi-card { padding: 2rem; border: 1px solid rgba(193,127,82,0.18); border-radius: 3px; }
-.testi-quote {
-  font-family: var(--font-body); font-size: 1.2rem;
-  font-weight: 400; font-style: normal;
-  color: rgba(240,219,200,0.8); line-height: 1.8; margin-bottom: 1.5rem;
-}
-.testi-quote::before { content: 'C'; color: var(--clay); font-size: 2rem; line-height: 0; vertical-align: -0.4em; margin-right: 3px; }
-.testi-name { font-size: 0.95rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--clay-light); }
-.testi-loc { font-size: 0.95rem; color: rgba(240,219,200,0.3); margin-top: 0.2rem; }
+  /* CARDS */
+  .card {
+    background: var(--bg2); border-radius: var(--r2);
+    border: 1px solid var(--border); padding: 14px;
+    margin-bottom: 10px; cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .card:active { border-color: var(--border2); }
+  .card-static { cursor: default; }
+  .card-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .card-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .card-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
 
-/* ---- NEWSLETTER ---- */
-.newsletter { padding: 5rem 4rem; background: var(--sand); text-align: center; border-top: 1px solid var(--clay-pale); }
-.nl-title { font-family: var(--font-body); font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 400; color: var(--bark); margin-bottom: 0.7rem; }
-.nl-title em { font-style: normal; color: var(--clay); }
-.nl-sub { font-size: 1.05rem; color: var(--text-light); margin-bottom: 2rem; }
-.newsletter-form {
-  display: flex; max-width: 400px; margin: 0 auto;
-  border: 1px solid var(--clay-pale); border-radius: 2px; overflow: hidden;
-}
-.newsletter-form input {
-  flex: 1; padding: 0.85rem 1.1rem;
-  font-family: var(--font-body); font-size: 1.05rem;
-  border: none; background: var(--cream); color: var(--text-dark); outline: none;
-  min-width: 0;
-}
-.newsletter-form input::placeholder { color: var(--text-light); }
-.newsletter-form button {
-  padding: 0.85rem 1.2rem;
-  font-family: var(--font-body); font-size: 0.95rem;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  background: var(--clay); color: var(--cream); border: none; cursor: pointer; transition: background 0.2s;
-  white-space: nowrap; flex-shrink: 0;
-}
-.newsletter-form button:hover { background: var(--bark); }
+  /* BADGES */
+  .badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+  .bg { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .ba { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .br { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .bb { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+  .bgr { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
 
-/* ---- RESPONSIVE TABLET (≤960px) ---- */
-@media (max-width: 1080px) {
-  .hero { grid-template-columns: 1fr; min-height: auto; }
-  .hero-left { padding: 3rem 2rem 2.5rem; }
-  .hero-right { height: 60vw; min-height: 300px; }
-  .hero-right img { width: 100%; height: 100%; object-fit: cover; }
+  /* STAT GRID */
+  .sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .scard { background: var(--bg2); border-radius: var(--r); border: 1px solid var(--border); padding: 13px; }
+  .slabel { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+  .sval { font-size: 20px; font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; }
+  .sval.g { color: var(--green); }
+  .sval.a { color: var(--amber); }
+  .sval.r { color: var(--red); }
 
-  .intro-band { padding: 4rem 2rem; }
-  .intro-stats { gap: 1.5rem; }
+  /* HERO PROFIT */
+  .profit-hero {
+    background: var(--green-bg); border: 1px solid var(--green-border);
+    border-radius: var(--r2); padding: 16px; margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .ph-label { font-size: 12px; color: var(--green); }
+  .ph-sub { font-size: 11px; color: rgba(34,197,94,0.7); margin-top: 2px; }
+  .ph-val { font-size: 28px; font-weight: 600; color: var(--green); font-family: 'DM Mono', monospace; }
 
-  .music-grid { grid-template-columns: repeat(2,1fr); }
-  .classes-grid { grid-template-columns: 1fr 1fr; }
-  .testi-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  /* ALERT */
+  .alert {
+    border-radius: var(--r); padding: 12px 14px; margin-bottom: 12px;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .alert-w { background: var(--amber-bg); border: 1px solid var(--amber-border); }
+  .alert-w .at { font-size: 13px; color: var(--amber); font-weight: 500; }
+  .alert-w .as { font-size: 12px; color: rgba(245,158,11,0.8); margin-top: 2px; }
+  .alert-g { background: var(--green-bg); border: 1px solid var(--green-border); }
+  .alert-g .at { font-size: 13px; color: var(--green); font-weight: 500; }
+  .alert-g .as { font-size: 12px; color: rgba(34,197,94,0.8); margin-top: 2px; }
 
-  .workshop-row { grid-template-columns: 70px 1fr auto; gap: 1rem; padding: 1.5rem; }
-  .w-action { text-align: right; min-width: unset; margin-top: 0; }
+  /* UPCOMING HERO */
+  .upcoming-hero {
+    background: var(--bg2); border: 1.5px solid var(--green);
+    border-radius: var(--r2); padding: 14px; margin-bottom: 14px;
+  }
+  .uh-tag { font-size: 11px; color: var(--green); font-weight: 500; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+  .uh-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .uh-date { font-size: 12px; color: var(--text2); margin-top: 2px; }
 
-  .photo-banner { height: 280px; }
-  .photo-banner-overlay { padding: 2rem; }
+  /* DIVIDER */
+  .div { height: 1px; background: var(--border); margin: 10px 0; }
 
-  .newsletter { padding: 4rem 2rem; }
-  .newsletter-form { max-width: 100%; }
-}
+  /* SECTION LABEL */
+  .sec { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.7px; margin: 14px 0 8px; }
 
-/* ---- RESPONSIVE MOBILE (≤768px) ---- */
-@media (max-width: 768px) {
-  .workshop-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1.4rem; }
-  .w-date { display: flex; align-items: baseline; gap: 0.5rem; text-align: left; }
-  .w-action { text-align: left; min-width: unset; margin-top: 1.2rem; }
-}
+  /* DETAIL ROWS */
+  .drow { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .drow:last-child { border-bottom: none; }
+  .dk { color: var(--text2); }
+  .dv { color: var(--text); font-weight: 500; text-align: right; }
 
-/* ---- RESPONSIVE MOBILE (≤600px) ---- */
-@media (max-width: 600px) {
-  .hero-left { padding: 2.5rem 1.2rem 2rem; }
-  .hero-right { height: 75vw; min-height: 260px; }
-  .hero-sub { max-width: 100%; margin-bottom: 2rem; }
-  .hero-actions { flex-direction: column; align-items: flex-start; gap: 2.5rem; }
-  .hero-actions .btn-primary,
-  .hero-actions .btn-ghost { width: 100%; text-align: center; }
+  /* PROGRESS BAR */
+  .pbar { height: 5px; background: var(--bg3); border-radius: 3px; margin-top: 6px; overflow: hidden; }
+  .pfill { height: 100%; border-radius: 3px; background: var(--green); transition: width 0.4s; }
 
-  .intro-band { padding: 3rem 1.2rem; }
-  .intro-stats { gap: 1.2rem; }
-  .stat span { font-size: 1.8rem; }
+  /* AVATAR */
+  .av {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+  }
+  .av-g { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .av-b { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+  .av-a { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .av-p { background: rgba(168,85,247,0.1); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
 
-  .music-grid { grid-template-columns: 1fr; }
-  .testi-grid { grid-template-columns: 1fr; }
-  .classes-grid { grid-template-columns: 1fr; }
+  /* TAGS */
+  .tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--bg3); color: var(--text2); border: 1px solid var(--border); display: inline-block; margin: 2px 2px 0 0; }
+  .tag-g { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+  .tag-p { background: rgba(168,85,247,0.1); color: #a855f7; border-color: rgba(168,85,247,0.3); }
+  .tag-a { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
 
-  .workshop-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1.2rem; }
-  .w-date { display: flex; align-items: baseline; gap: 0.5rem; text-align: left; }
-  .w-day { font-size: 1.6rem; }
-  .w-action { text-align: left; min-width: unset; margin-top: 1.2rem; }
+  /* FORMS */
+  .fg { margin-bottom: 13px; }
+  .fl { font-size: 12px; color: var(--text2); margin-bottom: 5px; display: block; }
+  .fi {
+    width: 100%; padding: 10px 12px; border-radius: var(--r);
+    border: 1px solid var(--border2); background: var(--bg2);
+    font-size: 14px; color: var(--text); font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.15s;
+  }
+  .fi:focus { outline: none; border-color: var(--green); }
+  .fi-half { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 13px; }
+  .btnp {
+    width: 100%; padding: 12px; border-radius: var(--r);
+    background: var(--green); color: #000; border: none;
+    font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 4px;
+    font-family: 'DM Sans', sans-serif; transition: opacity 0.15s, transform 0.1s;
+  }
+  .btnp:active { opacity: 0.85; transform: scale(0.99); }
+  .btn-outline {
+    width: 100%; padding: 11px; border-radius: var(--r);
+    background: transparent; color: var(--green);
+    border: 1px solid var(--green-border);
+    font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 8px;
+    font-family: 'DM Sans', sans-serif;
+  }
 
-  .photo-banner { height: 220px; }
-  .photo-banner-overlay { padding: 1.5rem 1.2rem; }
+  /* FAB */
+  .fab {
+    position: fixed; bottom: 80px; right: 20px;
+    width: 50px; height: 50px; border-radius: 50%;
+    background: var(--green); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #000; font-size: 24px; z-index: 10;
+    transition: transform 0.15s, opacity 0.15s;
+    box-shadow: 0 4px 20px rgba(34,197,94,0.3);
+  }
+  .fab:active { transform: scale(0.92); }
 
-  .newsletter { padding: 3rem 1.2rem; }
-  .newsletter-form { flex-direction: column; border: none; gap: 0.8rem; }
-  .newsletter-form input { border: 1px solid var(--clay-pale); border-radius: 2px; padding: 0.85rem 1rem; }
-  .newsletter-form button { border-radius: 2px; padding: 0.85rem; width: 100%; }
-}
+  /* TABS */
+  .tab-row { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px; }
+  .tab-row::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 7px 14px; border-radius: 20px; font-size: 13px;
+    border: 1px solid var(--border); background: transparent;
+    cursor: pointer; color: var(--text2); white-space: nowrap;
+    transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+  }
+  .tab.on { background: var(--green); color: #000; border-color: var(--green); font-weight: 500; }
 
+  /* BAR CHART */
+  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+  .bar-label { font-size: 12px; color: var(--text2); width: 90px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-track { flex: 1; height: 7px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; background: var(--green); transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+  .bar-val { font-size: 12px; color: var(--text); font-weight: 500; width: 56px; text-align: right; flex-shrink: 0; font-family: 'DM Mono', monospace; }
+
+  /* INSIGHT CARDS */
+  .igrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .icard { background: var(--bg2); border-radius: var(--r); border: 1px solid var(--border); padding: 13px; }
+  .inum { font-size: 22px; font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; }
+  .ilabel { font-size: 12px; color: var(--text2); margin-top: 3px; }
+  .itrend { font-size: 11px; margin-top: 5px; color: var(--green); }
+
+  /* LOADING */
+  .loading {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 50px 20px; gap: 12px;
+  }
+  .spinner {
+    width: 28px; height: 28px; border: 2px solid var(--border2);
+    border-top-color: var(--green); border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: var(--text2); }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 40px 20px; }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+  .empty-text { font-size: 13px; color: var(--text2); }
+
+  /* PARTICIPANT ROW */
+  .prow { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .prow:last-child { border-bottom: none; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); font-size: 13px; padding: 10px 18px;
+    border-radius: 20px; z-index: 200; opacity: 0;
+    transition: all 0.25s; pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nav-logo">
-    <svg width="48" height="48" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="47" fill="#EAD9C4" stroke="#C17F52" stroke-width="3"/>
-      <circle cx="50" cy="50" r="10" fill="#8B6345"/>
-      <circle cx="50" cy="23" r="5" fill="#8B6345"/>
-      <circle cx="69.1" cy="30.9" r="5" fill="#8B6345"/>
-      <circle cx="77" cy="50" r="5" fill="#8B6345"/>
-      <circle cx="69.1" cy="69.1" r="5" fill="#8B6345"/>
-      <circle cx="50" cy="77" r="5" fill="#8B6345"/>
-      <circle cx="30.9" cy="69.1" r="5" fill="#8B6345"/>
-      <circle cx="23" cy="50" r="5" fill="#8B6345"/>
-      <circle cx="30.9" cy="30.9" r="5" fill="#8B6345"/>
-    </svg>
-  </a>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="pages/about.html">About</a></li>
-    <li><a href="pages/music.html">Music</a></li>
-    <li><a href="pages/workshops.html">Workshops</a></li>
-    <li><a href="pages/classes.html">Classes</a></li>
-    <li><a href="pages/contact.html">Contact</a></li>
-  </ul>
-  <a href="pages/contact.html" class="nav-cta">Enquire Now</a>
-  <div class="nav-hamburger"><span></span><span></span><span></span></div>
-</nav>
-<div class="mobile-menu">
-  <a href="index.html">Home</a>
-  <a href="pages/about.html">About</a>
-  <a href="pages/music.html">Music</a>
-  <a href="pages/workshops.html">Workshops</a>
-  <a href="pages/classes.html">Classes</a>
-  <a href="pages/contact.html">Contact</a>
+<!-- PIN SCREEN -->
+<div id="pin-screen">
+  <div class="pin-logo">🥁</div>
+  <div class="pin-title">Handpan with Arpit</div>
+  <div class="pin-sub">Enter your PIN to continue</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="d0"></div>
+    <div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div>
+    <div class="pin-dot" id="d3"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-key" onclick="pinTap('1')">1</button>
+    <button class="pin-key" onclick="pinTap('2')">2</button>
+    <button class="pin-key" onclick="pinTap('3')">3</button>
+    <button class="pin-key" onclick="pinTap('4')">4</button>
+    <button class="pin-key" onclick="pinTap('5')">5</button>
+    <button class="pin-key" onclick="pinTap('6')">6</button>
+    <button class="pin-key" onclick="pinTap('7')">7</button>
+    <button class="pin-key" onclick="pinTap('8')">8</button>
+    <button class="pin-key" onclick="pinTap('9')">9</button>
+    <div></div>
+    <button class="pin-key" onclick="pinTap('0')">0</button>
+    <button class="pin-key" onclick="pinDel()">⌫</button>
+  </div>
+  <div class="pin-hint">Default PIN: 1234</div>
+  <div id="pin-error" class="pin-error" style="display:none">Wrong PIN. Try again.</div>
 </div>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-left">
-    <p class="hero-eyebrow">Handpan Artist · India</p>
-    <h1 class="hero-title">Arpit<br/><em>Pandey</em></h1>
-    <p class="hero-sub">Where silence becomes sound and sound becomes stillness.</p>
-    <div class="hero-actions">
-      <a href="pages/music.html" class="btn-primary">Listen to Music</a>
-      <a href="pages/classes.html" class="btn-ghost">Explore Classes →</a>
-    </div>
+<!-- MAIN APP -->
+<div id="app" style="display:none">
 
+  <!-- HOME -->
+  <div class="screen active" id="s-home">
+    <div class="topbar">
+      <div class="topbar-info">
+        <div class="topbar-title">Handpan with Arpit</div>
+        <div class="topbar-sub" id="home-date">Loading...</div>
+      </div>
+      <button class="topbar-action" onclick="go('s-settings')">⚙️</button>
+    </div>
+    <div class="body" id="home-body">
+      <div class="loading"><div class="spinner"></div><div class="loading-text">Loading your data...</div></div>
+    </div>
+    <button class="fab" onclick="go('s-add-ws')">＋</button>
+    <nav class="navbar">
+      <button class="ni on" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+      <button class="ni" onclick="go('s-workshops')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Workshops</button>
+      <button class="ni" onclick="go('s-people')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>People</button>
+      <button class="ni" onclick="go('s-finance')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finances</button>
+      <button class="ni" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Insights</button>
+    </nav>
   </div>
-  <div class="hero-right" style="position:relative;overflow:hidden;">
-    <img src="images/arpit-sunset.jpg" alt="Arpit Pandey playing handpan at sunset" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"/>
-  </div>
-</section>
 
-<!-- INTRO -->
-<section class="intro-band">
-  <div class="intro-body" style="max-width:720px;">
-    <p>Arpit Pandey is a handpan artist based in Bengaluru, drawn to the instrument for its rare ability to hold both melody and meditation in the same breath.</p>
-    <p>He performs, records, and teaches, carrying everything he has learned into every session, workshop, and note.</p>
-    <a href="pages/about.html" class="btn-ghost" style="color:var(--clay-light);border-color:rgba(193,127,82,0.3);">Read full story →</a>
-    <div class="intro-stats">
-      <div class="stat"><span>30+</span><small>Participants</small></div>
-      <div class="stat"><span>3</span><small>Workshops</small></div>
-      <div class="stat"><span>8+</span><small>Years playing</small></div>
-      <div class="stat"><span>15+</span><small>Releases</small></div>
+  <!-- WORKSHOPS -->
+  <div class="screen" id="s-workshops">
+    <div class="topbar">
+      <div class="topbar-title">Workshops</div>
+      <button class="topbar-action" onclick="go('s-add-ws')">＋</button>
     </div>
+    <div class="body" id="workshops-body">
+      <div class="loading"><div class="spinner"></div><div class="loading-text">Loading workshops...</div></div>
+    </div>
+    <button class="fab" onclick="go('s-add-ws')">＋</button>
+    <nav class="navbar">
+      <button class="ni" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+      <button class="ni on" onclick="go('s-workshops')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Workshops</button>
+      <button class="ni" onclick="go('s-people')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>People</button>
+      <button class="ni" onclick="go('s-finance')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finances</button>
+      <button class="ni" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Insights</button>
+    </nav>
   </div>
-</section>
 
-<!-- MUSIC -->
-<section class="section bg-cream" id="music">
-  <div class="section-header">
-    <h2 class="section-title">Music <em>Releases</em></h2>
-    <a href="pages/music.html" class="section-link">All releases →</a>
+  <!-- WORKSHOP DETAIL -->
+  <div class="screen" id="s-ws-detail">
+    <div class="topbar">
+      <button class="topbar-back" onclick="back()">←</button>
+      <div class="topbar-info">
+        <div class="topbar-title" id="wsd-title">Workshop</div>
+        <div class="topbar-sub" id="wsd-date"></div>
+      </div>
+    </div>
+    <div class="body" id="wsd-body">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+    <nav class="navbar">
+      <button class="ni" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+      <button class="ni on" onclick="go('s-workshops')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Workshops</button>
+      <button class="ni" onclick="go('s-people')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>People</button>
+      <button class="ni" onclick="go('s-finance')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finances</button>
+      <button class="ni" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Insights</button>
+    </nav>
   </div>
-  <div class="music-grid">
-    <div class="music-card">
-      <div class="music-art" style="padding:0;">
-        <img src="images/Resonance-Dialogue_Spotify-Cover.jpg" alt="Resonance Dialogue cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="music-art-overlay">
-          <a href="https://open.spotify.com/track/0dNjIvkYt8GHoHV49PT5E2?si=980812fcaece48d5" class="music-link" target="_blank" rel="noopener">Spotify</a>
-          <a href="https://music.apple.com/us/song/resonance-dialogue/6764633887" class="music-link" target="_blank" rel="noopener">Apple Music</a>
-          <a href="https://www.youtube.com/watch?v=sUMPDPOaV8M&list=OLAK5uy_m7zg5oP9OZKhh9LdMj37Rq7qu04RyPTGw" class="music-link" target="_blank" rel="noopener">YouTube</a>
-        </div>
-      </div>
-      <div class="music-info">
-        <p class="music-type">Single</p>
-        <p class="music-name">Resonance Dialogue</p>
-        <p class="music-meta">2026 · with Omkar Argulwar</p>
-      </div>
-    </div>
-    <div class="music-card">
-      <div class="music-art" style="padding:0;">
-        <img src="images/Dandelion-Dreams_Spotify-Cover.png" alt="Dandelion Dreams cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="music-art-overlay">
-          <a href="https://open.spotify.com/track/6kZ0p0dY0UgoaVfCrmCyO7?si=fc3cf8c0b7b34dd6" class="music-link" target="_blank" rel="noopener">Spotify</a>
-          <a href="https://music.apple.com/us/album/dandelion-dreams-single/1778759790" class="music-link" target="_blank" rel="noopener">Apple Music</a>
-          <a href="https://www.youtube.com/watch?v=MB8GINsNn_4" class="music-link" target="_blank" rel="noopener">YouTube</a>
-        </div>
-      </div>
-      <div class="music-info">
-        <p class="music-type">Single</p>
-        <p class="music-name">Dandelion Dreams</p>
-        <p class="music-meta">2024 · 1 track</p>
-      </div>
-    </div>
-    <div class="music-card">
-      <div class="music-art" style="padding:0;">
-        <img src="images/Una-Mattina-Spotify-Cover.jpg" alt="Una Mattina cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="music-art-overlay">
-          <a href="https://open.spotify.com/track/1o42EIauXHwOoAqQZM1Jd3?si=36588b5e3de840c6" class="music-link" target="_blank" rel="noopener">Spotify</a>
-          <a href="https://music.apple.com/us/album/una-mattina-single/1736906194" class="music-link" target="_blank" rel="noopener">Apple Music</a>
-          <a href="https://www.youtube.com/watch?v=0yWFzxMqVdY&list=OLAK5uy_kYpasaZqF29vyw75WBx1K4W5mPpoFpFUw" class="music-link" target="_blank" rel="noopener">YouTube</a>
-        </div>
-      </div>
-      <div class="music-info">
-        <p class="music-type">Single</p>
-        <p class="music-name">Una Mattina</p>
-        <p class="music-meta">2024 · 1 track</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- WORKSHOPS -->
-<section class="section bg-sand-deep" id="workshops">
-  <div class="section-header">
-    <h2 class="section-title">Upcoming <em>Workshops</em></h2>
-    <a href="pages/workshops.html" class="section-link">All workshops →</a>
-  </div>
-  <div class="workshop-rows">
-    <div class="workshop-row">
-      <div class="w-date"><span class="w-day">06</span><span class="w-month">Jun 2026</span></div>
-      <div><p class="w-title">Sound and Silence Circle</p><div class="w-meta"><span>Creative Bloom, Indiranagar, Bengaluru · 2 hours · Beginner</span></div></div>
-      <div class="w-action"><span style="font-size:0.78rem;cursor:not-allowed;white-space:nowrap;color:var(--text-light);border:1px solid var(--clay-pale);padding:0.5rem 0.9rem;border-radius:2px;display:inline-block;letter-spacing:0.08em;text-transform:uppercase;">Opening Soon</span></div>
+  <!-- ADD WORKSHOP -->
+  <div class="screen" id="s-add-ws">
+    <div class="topbar">
+      <button class="topbar-back" onclick="back()">←</button>
+      <div class="topbar-title">New workshop</div>
     </div>
-    <div class="workshop-row">
-      <div class="w-date"><span class="w-day">04</span><span class="w-month">Jul 2026</span></div>
-      <div><p class="w-title">Finding Your Still Sound</p><div class="w-meta"><span>Creative Bloom, Haralur, Bengaluru · 2 hours · Beginner</span></div></div>
-      <div class="w-action"><span style="font-size:0.78rem;cursor:not-allowed;white-space:nowrap;color:var(--text-light);border:1px solid var(--clay-pale);padding:0.5rem 0.9rem;border-radius:2px;display:inline-block;letter-spacing:0.08em;text-transform:uppercase;">Scheduled</span></div>
-    </div>
-    <div class="workshop-row">
-      <div class="w-date"><span class="w-day">01</span><span class="w-month">Aug 2026</span></div>
-      <div><p class="w-title">First Notes, Open Hands</p><div class="w-meta"><span>Creative Bloom, Jayanagar, Bengaluru · 2 hours · Beginner</span></div></div>
-      <div class="w-action"><span style="font-size:0.78rem;cursor:not-allowed;white-space:nowrap;color:var(--text-light);border:1px solid var(--clay-pale);padding:0.5rem 0.9rem;border-radius:2px;display:inline-block;letter-spacing:0.08em;text-transform:uppercase;">Scheduled</span></div>
-    </div>
-    <div class="workshop-row">
-      <div class="w-date"><span class="w-day">06</span><span class="w-month">Sep 2026</span></div>
-      <div><p class="w-title">Between Stillness and Storm</p><div class="w-meta"><span>Venue to be announced, Bengaluru · 2 hours · Beginner</span></div></div>
-      <div class="w-action"><span style="font-size:0.78rem;cursor:not-allowed;white-space:nowrap;color:var(--text-light);border:1px solid var(--clay-pale);padding:0.5rem 0.9rem;border-radius:2px;display:inline-block;letter-spacing:0.08em;text-transform:uppercase;">Scheduled</span></div>
+    <div class="body">
+      <div class="fg"><label class="fl">Venue / location</label><input class="fi" id="ws-venue" type="text" placeholder="e.g. Creative Bloom Koramangala"></div>
+      <div class="fg"><label class="fl">Date</label><input class="fi" id="ws-date" type="date"></div>
+      <div class="fi-half">
+        <div><label class="fl">BMS price/head (₹)</label><input class="fi" id="ws-bms" type="number" placeholder="1799"></div>
+        <div><label class="fl">UPI price/head (₹)</label><input class="fi" id="ws-upi" type="number" placeholder="1799"></div>
+      </div>
+      <div class="sec">Expenses</div>
+      <div class="fi-half">
+        <div><label class="fl">Venue rent (₹)</label><input class="fi" id="ws-rent" type="number" placeholder="3000"></div>
+        <div><label class="fl">Handpan rental (₹)</label><input class="fi" id="ws-hp" type="number" placeholder="5000"></div>
+        <div><label class="fl">Porter charges (₹)</label><input class="fi" id="ws-porter" type="number" placeholder="1500"></div>
+        <div><label class="fl">Snacks + misc (₹)</label><input class="fi" id="ws-snacks" type="number" placeholder="200"></div>
+      </div>
+      <div class="fg"><label class="fl">Notes (optional)</label><input class="fi" id="ws-notes" type="text" placeholder="Anything to remember"></div>
+      <button class="btnp" onclick="saveWorkshop()">Save workshop</button>
     </div>
   </div>
-</section>
 
-<!-- PHOTO BANNER -->
-<div class="photo-banner">
-  <img src="images/arpit-community.jpg" alt="Arpit performing live"/>
-  <div class="photo-banner-overlay">
-    <div class="photo-banner-text">
-      <p>Community</p>
-      <p class="photo-banner-title">3 workshops.<br/><em>Growing community.</em></p>
-      <a href="pages/workshops.html" class="photo-banner-link">View all workshops →</a>
+  <!-- PEOPLE -->
+  <div class="screen" id="s-people">
+    <div class="topbar">
+      <div class="topbar-title">People</div>
+      <button class="topbar-action" onclick="go('s-add-person')">＋</button>
+    </div>
+    <div class="body" id="people-body">
+      <div class="loading"><div class="spinner"></div><div class="loading-text">Loading people...</div></div>
+    </div>
+    <button class="fab" onclick="go('s-add-person')">＋</button>
+    <nav class="navbar">
+      <button class="ni" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+      <button class="ni" onclick="go('s-workshops')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Workshops</button>
+      <button class="ni on" onclick="go('s-people')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>People</button>
+      <button class="ni" onclick="go('s-finance')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finances</button>
+      <button class="ni" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Insights</button>
+    </nav>
+  </div>
+
+  <!-- PERSON DETAIL -->
+  <div class="screen" id="s-person-detail">
+    <div class="topbar">
+      <button class="topbar-back" onclick="back()">←</button>
+      <div class="topbar-info">
+        <div class="topbar-title" id="pd-name">Person</div>
+        <div class="topbar-sub" id="pd-sub"></div>
+      </div>
+    </div>
+    <div class="body" id="pd-body"></div>
+    <nav class="navbar">
+      <button class="ni" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+      <button class="ni" onclick="go('s-workshops')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Workshops</button>
+      <button class="ni on" onclick="go('s-people')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>People</button>
+      <button class="ni" onclick="go('s-finance')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finances</button>
+      <button class="ni" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Insights</button>
+    </nav>
+  </div>
+
+  <!-- ADD PERSON -->
+  <div class="screen" id="s-add-person">
+    <div class="topbar">
+      <button class="topbar-back" onclick="back()">←</button>
+      <div class="topbar-title">Add person</div>
+    </div>
+    <div class="body">
+      <div class="fg"><label class="fl">Full name</label><input class="fi" id="p-name" type="text" placeholder="Name"></div>
+      <div class="fg"><label class="fl">Phone</label><input class="fi" id="p-phone" type="tel" placeholder="10-digit number"></div>
+      <div class="fg"><label class="fl">City</label><input class="fi" id="p-city" type="text" placeholder="e.g. Bengaluru"></div>
+      <div class="fg"><label class="fl">Source</label>
+        <select class="fi" id="p-source"><option>Instagram</option><option>BMS</option><option>Razorpay</option><option>WhatsApp</option><option>Referral</option><option>Other</option></select>
+      </div>
+      <div class="fg"><label class="fl">Role</label>
+        <select class="fi" id="p-role"><option>Participant</option><option>Online student</option><option>Handpan lead</option><option>WA community</option></select>
+      </div>
+      <div class="fg"><label class="fl">Workshop attended</label><input class="fi" id="p-ws" type="text" placeholder="e.g. WS-003"></div>
+      <div class="fg"><label class="fl">Amount paid (₹)</label><input class="fi" id="p-amount" type="number" placeholder="0"></div>
+      <div class="fg"><label class="fl">Notes</label><input class="fi" id="p-notes" type="text" placeholder="Anything useful"></div>
+      <button class="btnp" onclick="savePerson()">Save person</button>
     </div>
   </div>
+
+  <!-- FINANCES -->
+  <div class="screen" id="s-finance">
+    <div class="topbar"><div class="topbar-title">Finances</div></div>
+    <div class="body" id="finance-body">
+      <div class="loading"><div class="spinner"></div><div class="loading-text">Loading finances...</div></div>
+    </div>
+    <nav class="navbar">
+      <button class="ni" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+      <button class="ni" onclick="go('s-workshops')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Workshops</button>
+      <button class="ni" onclick="go('s-people')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>People</button>
+      <button class="ni on" onclick="go('s-finance')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finances</button>
+      <button class="ni" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Insights</button>
+    </nav>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div class="screen" id="s-insights">
+    <div class="topbar"><div class="topbar-title">Insights</div></div>
+    <div class="body" id="insights-body">
+      <div class="loading"><div class="spinner"></div><div class="loading-text">Loading insights...</div></div>
+    </div>
+    <nav class="navbar">
+      <button class="ni" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+      <button class="ni" onclick="go('s-workshops')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Workshops</button>
+      <button class="ni" onclick="go('s-people')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>People</button>
+      <button class="ni" onclick="go('s-finance')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finances</button>
+      <button class="ni on" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Insights</button>
+    </nav>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="screen" id="s-settings">
+    <div class="topbar">
+      <button class="topbar-back" onclick="back()">←</button>
+      <div class="topbar-title">Settings</div>
+    </div>
+    <div class="body">
+      <div class="sec">Connection</div>
+      <div class="card card-static">
+        <div class="drow"><span class="dk">Backend status</span><span class="dv"><span class="badge bg" id="conn-status">Connected</span></span></div>
+        <div class="drow"><span class="dk">Last sync</span><span class="dv" id="last-sync">Just now</span></div>
+        <div class="drow"><span class="dk">Data source</span><span class="dv" style="font-size:11px;color:var(--text2)">Google Sheets</span></div>
+      </div>
+      <div class="sec">Access</div>
+      <div class="card card-static">
+        <div class="drow"><span class="dk">App PIN</span><span class="dv">1234 · tap to change</span></div>
+        <div class="drow" onclick="copyAppLink()" style="cursor:pointer"><span class="dk">Share with friend</span><span class="dv" style="color:var(--green)">Copy app link →</span></div>
+      </div>
+      <div class="sec">Razorpay webhook</div>
+      <div class="card card-static">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Paste this URL in your Razorpay dashboard → Webhooks → Add new webhook</div>
+        <div style="font-size:11px;background:var(--bg3);padding:10px;border-radius:8px;word-break:break-all;color:var(--green);font-family:'DM Mono',monospace" id="webhook-url">Loading...</div>
+        <button class="btn-outline" onclick="copyWebhook()" style="margin-top:10px">Copy webhook URL</button>
+      </div>
+      <div class="sec">About</div>
+      <div class="card card-static">
+        <div class="drow"><span class="dk">App version</span><span class="dv">v2.0</span></div>
+        <div class="drow"><span class="dk">Built for</span><span class="dv">Arpit · Handpan facilitator</span></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<!-- CLASSES -->
-<section class="section bg-cream" id="classes">
-  <div class="section-header">
-    <h2 class="section-title">Online <em>Classes</em></h2>
-    <a href="pages/classes.html" class="section-link">Full curriculum →</a>
-  </div>
-  <div style="max-width:780px;">
-  <div class="classes-grid">
-    <div class="class-card featured">
-      <p class="class-level">Beginner</p>
-      <h3 class="class-name">Beginner Course</h3>
-      <p class="class-desc">3 months · 12 sessions · 1 hour each. For complete beginners — no musical background needed.</p>
-      <ul class="class-features"><li>Live on Zoom</li><li>Recorded sessions shared after each class</li><li>From first sound to first performance</li></ul>
-      <a href="pages/contact.html" class="btn-enroll" style="display:inline-block;text-align:center;text-decoration:none;width:100%;">Enquire Now</a>
-    </div>
-    <div class="class-card">
-      <p class="class-level">Intermediate</p>
-      <h3 class="class-name">Intermediate Course</h3>
-      <p class="class-desc">6 months · 24 sessions · 1 hour each. For those with a good command of the basics.</p>
-      <ul class="class-features"><li>Live on Zoom</li><li>Deeper rhythm, music theory, improvisation</li><li>Create your own composition</li></ul>
-      <a href="pages/contact.html" class="btn-enroll" style="display:block;text-align:center;text-decoration:none;">Enquire Now</a>
-    </div>
-  </div>
-</div>
-</section>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
-<!-- FOOTER -->
-<footer class="site-footer">
-  <div class="footer-main">
-    <div class="footer-brand">
-      <svg width="160" height="44" viewBox="0 0 160 44" xmlns="http://www.w3.org/2000/svg"><text x="0" y="34" font-family="Jost,sans-serif" font-size="28" font-weight="400" fill="#F0DBC8">Arpit<tspan fill="#C17F52"> Pandey</tspan></text></svg>
-      <span>Music, workshops and online classes by handpan artist Arpit Pandey, based in India.</span>
-    </div>
-    <div class="footer-col"><h4>Navigate</h4><ul><li><a href="pages/about.html">About</a></li><li><a href="pages/music.html">Music</a></li><li><a href="pages/workshops.html">Workshops</a></li><li><a href="pages/classes.html">Classes</a></li><li><a href="pages/contact.html">Contact</a></li></ul></div>
-    <div class="footer-col"><h4>Learn</h4><ul><li><a href="pages/classes.html">Beginner classes</a></li><li><a href="pages/classes.html">Intermediate</a></li><li><a href="pages/workshops.html">Live workshops</a></li></ul></div>
-    <div class="footer-col"><h4>Connect</h4><ul><li><a href="https://www.instagram.com/pandeyarpit" target="_blank">Instagram</a></li><li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank">YouTube</a></li><li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank">Spotify</a></li><li><a href="mailto:arpithandpan@gmail.com">Email</a></li></ul></div>
-  </div>
-  <div class="footer-bottom">
-    <p>© 2026 Arpit Pandey</p>
-    <div class="footer-social"><a href="https://www.instagram.com/pandeyarpit" target="_blank">Instagram</a><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank">YouTube</a><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank">Spotify</a></div>
-  </div>
-</footer>
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbxPcGJb1a_puL2Xj9B-jaaL_zBYsj9415fOWcRV9QOD4pHI0188GChwUlvcOu-8WDpWzw/exec';
+const PIN = '1234';
+let pinEntered = '';
+let navHistory = ['s-home'];
+let cache = {};
 
-<script src="js/main.js"></script>
+// ---- PIN ----
+function pinTap(d) {
+  if (pinEntered.length >= 4) return;
+  pinEntered += d;
+  updateDots();
+  if (pinEntered.length === 4) {
+    setTimeout(() => {
+      if (pinEntered === PIN) {
+        document.getElementById('pin-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        loadHome();
+      } else {
+        document.getElementById('pin-error').style.display = 'block';
+        setTimeout(() => { pinEntered = ''; updateDots(); document.getElementById('pin-error').style.display = 'none'; }, 800);
+      }
+    }, 150);
+  }
+}
+function pinDel() {
+  pinEntered = pinEntered.slice(0, -1);
+  updateDots();
+}
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('d' + i).classList.toggle('filled', i < pinEntered.length);
+  }
+}
+
+// ---- NAVIGATION ----
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (navHistory[navHistory.length - 1] !== id) navHistory.push(id);
+  if (id === 's-workshops' && !cache.workshops) loadWorkshops();
+  if (id === 's-people' && !cache.people) loadPeople();
+  if (id === 's-finance' && !cache.finances) loadFinances();
+  if (id === 's-insights' && !cache.insights) loadInsights();
+  if (id === 's-settings') loadSettings();
+}
+function back() {
+  if (navHistory.length > 1) {
+    navHistory.pop();
+    const prev = navHistory[navHistory.length - 1];
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(prev).classList.add('active');
+  }
+}
+
+// ---- API — uses JSONP to bypass CORS with Google Apps Script ----
+function api(action, params = '') {
+  return new Promise((resolve, reject) => {
+    const cbName = 'cb_' + Math.random().toString(36).slice(2);
+    const url = API + '?action=' + action + (params ? '&' + params : '') + '&callback=' + cbName;
+    const script = document.createElement('script');
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error('Timeout'));
+    }, 15000);
+    window[cbName] = (data) => {
+      cleanup();
+      resolve(data);
+    };
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+    script.onerror = () => { cleanup(); reject(new Error('Script error')); };
+    script.src = url;
+    document.head.appendChild(script);
+  });
+}
+async function apiPost(data) {
+  const res = await fetch(API, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return { success: true };
+}
+
+// ---- HELPERS ----
+const fmt = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const pct = n => parseFloat(n).toFixed(1) + '%';
+function initials(name) {
+  return (name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+function avClass(name) {
+  const classes = ['av-g', 'av-b', 'av-a', 'av-p'];
+  let h = 0;
+  for (let c of (name || '')) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+  return classes[h % classes.length];
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+function formatDate(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  if (isNaN(dt)) return d;
+  return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+// ---- HOME ----
+async function loadHome() {
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const now = new Date();
+  document.getElementById('home-date').textContent = days[now.getDay()] + ', ' + now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  try {
+    const d = await api('getDashboard');
+    cache.dashboard = d;
+    let html = '';
+
+    if (d.attentionItems && d.attentionItems.length > 0) {
+      html += `<div class="alert alert-w"><div>
+        <div class="at">${d.attentionItems.length} thing${d.attentionItems.length > 1 ? 's' : ''} need attention</div>
+        <div class="as">${d.attentionItems.join(' · ')}</div>
+      </div></div>`;
+    }
+
+    html += `<div class="profit-hero">
+      <div><div class="ph-label">Total income · all time</div><div class="ph-sub">Workshops + online students</div></div>
+      <div class="ph-val">${fmt(d.totalIncome || 0)}</div>
+    </div>`;
+
+    html += `<div class="sgrid">
+      <div class="scard"><div class="slabel">Net profit</div><div class="sval g">${fmt(d.netProfit || 0)}</div></div>
+      <div class="scard"><div class="slabel">Expenses</div><div class="sval a">${fmt(d.totalExpenses || 0)}</div></div>
+      <div class="scard"><div class="slabel">Participants</div><div class="sval">${d.totalParticipants || 0}</div></div>
+      <div class="scard"><div class="slabel">Online students</div><div class="sval g">${d.activeStudents || 0}</div></div>
+    </div>`;
+
+    html += `<div class="sec">Recent workshops</div>`;
+    (d.recentWorkshops || []).forEach(w => {
+      const marginClass = w.margin >= 40 ? 'bg' : w.margin >= 20 ? 'ba' : 'br';
+      html += `<div class="card" onclick="openWorkshop('${w.id}')">
+        <div class="card-row">
+          <div><div class="card-title">${w.venue || w.id}</div><div class="card-sub">${formatDate(w.date)} · ${w.participants} participants</div></div>
+          <span class="badge ${marginClass}">${fmt(w.profit)}</span>
+        </div>
+        <div class="div"></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="badge bgr">Rev ${fmt(w.revenue)}</span>
+          <span class="badge ba">Exp ${fmt(w.expenses)}</span>
+          <span class="badge ${marginClass}">${pct(w.margin)}</span>
+        </div>
+      </div>`;
+    });
+
+    html += '<div style="height:70px"></div>';
+    document.getElementById('home-body').innerHTML = html;
+  } catch (e) {
+    document.getElementById('home-body').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Could not load data. Check your connection.</div></div>`;
+  }
+}
+
+// ---- WORKSHOPS ----
+async function loadWorkshops() {
+  try {
+    const data = await api('getWorkshops');
+    cache.workshops = data;
+    let html = `<div class="tab-row">
+      <button class="tab on" id="wtab-all" onclick="wsFilter('all')">All (${data.length})</button>
+      <button class="tab" id="wtab-profit" onclick="wsFilter('profit')">Profit</button>
+    </div><div id="ws-list">`;
+    data.forEach(w => {
+      const mc = w.margin >= 40 ? 'bg' : w.margin >= 20 ? 'ba' : 'br';
+      html += `<div class="card" onclick="openWorkshop('${w.id}')">
+        <div class="card-row">
+          <div><div class="card-title">${w.id} · ${w.venue}</div><div class="card-sub">${formatDate(w.date)} · ${w.participants} participants</div></div>
+          <span class="badge ${mc}">${pct(w.margin)}</span>
+        </div>
+        <div class="div"></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="badge bgr">${fmt(w.revenue)}</span>
+          <span class="badge ba">Exp ${fmt(w.expenses)}</span>
+          <span class="badge ${mc}">${fmt(w.profit)}</span>
+        </div>
+      </div>`;
+    });
+    html += '</div><div style="height:70px"></div>';
+    document.getElementById('workshops-body').innerHTML = html;
+  } catch (e) {
+    document.getElementById('workshops-body').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Could not load workshops.</div></div>`;
+  }
+}
+
+function wsFilter(type) {
+  document.querySelectorAll('[id^="wtab-"]').forEach(t => t.classList.remove('on'));
+  document.getElementById('wtab-' + type).classList.add('on');
+}
+
+async function openWorkshop(id) {
+  go('s-ws-detail');
+  document.getElementById('wsd-title').textContent = id;
+  document.getElementById('wsd-date').textContent = '';
+  document.getElementById('wsd-body').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const w = await api('getWorkshop', 'id=' + id);
+    document.getElementById('wsd-title').textContent = id + ' · ' + (w.venue || '');
+    document.getElementById('wsd-date').textContent = formatDate(w.date);
+    const mc = w.margin >= 40 ? 'bg' : w.margin >= 20 ? 'ba' : 'br';
+    let html = `<div class="profit-hero">
+      <div><div class="ph-label">Net profit</div><div class="ph-sub">${pct(w.margin)} margin</div></div>
+      <div class="ph-val">${fmt(w.profit)}</div>
+    </div>
+    <div class="sgrid">
+      <div class="scard"><div class="slabel">Revenue</div><div class="sval" style="font-size:17px">${fmt(w.earnings?.totalRevenue || 0)}</div></div>
+      <div class="scard"><div class="slabel">Expenses</div><div class="sval a" style="font-size:17px">${fmt(w.expenses?.total || 0)}</div></div>
+      <div class="scard"><div class="slabel">BMS pax</div><div class="sval">${w.bms || 0}</div></div>
+      <div class="scard"><div class="slabel">UPI pax</div><div class="sval">${w.upi || 0}</div></div>
+    </div>
+    <div class="sec">Expenses breakdown</div>
+    <div class="card card-static">
+      <div class="drow"><span class="dk">Venue rent</span><span class="dv">${fmt(w.expenses?.venueRent || 0)}</span></div>
+      <div class="drow"><span class="dk">Handpan rental</span><span class="dv">${fmt(w.expenses?.handpanRental || 0)}</span></div>
+      <div class="drow"><span class="dk">Porter / delivery</span><span class="dv">${fmt(w.expenses?.porter || 0)}</span></div>
+      <div class="drow"><span class="dk">Stationery + snacks</span><span class="dv">${fmt(w.expenses?.stationery || 0)}</span></div>
+    </div>`;
+
+    if (w.participants && w.participants.length > 0) {
+      html += `<div class="sec">Participants (${w.participants.length})</div><div class="card card-static">`;
+      w.participants.slice(0, 8).forEach(p => {
+        html += `<div class="prow">
+          <div class="av ${avClass(p.name)}">${initials(p.name)}</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text)">${p.name}</div>
+          <div style="font-size:11px;color:var(--text2)">${p.source || ''} · ${fmt(p.amount || 0)}</div></div>
+          <span class="badge bg">Paid</span>
+        </div>`;
+      });
+      if (w.participants.length > 8) html += `<div style="text-align:center;padding:8px 0 2px;font-size:12px;color:var(--text2)">+${w.participants.length - 8} more</div>`;
+      html += '</div>';
+    }
+    html += '<div style="height:20px"></div>';
+    document.getElementById('wsd-body').innerHTML = html;
+  } catch (e) {
+    document.getElementById('wsd-body').innerHTML = '<div class="empty"><div class="empty-text">Could not load workshop detail.</div></div>';
+  }
+}
+
+async function saveWorkshop() {
+  const data = {
+    venue: document.getElementById('ws-venue').value,
+    date: document.getElementById('ws-date').value,
+    bmsPrice: document.getElementById('ws-bms').value,
+    upiPrice: document.getElementById('ws-upi').value,
+    venueRent: document.getElementById('ws-rent').value,
+    handpanRental: document.getElementById('ws-hp').value,
+    porter: document.getElementById('ws-porter').value,
+    stationery: document.getElementById('ws-snacks').value,
+    notes: document.getElementById('ws-notes').value
+  };
+  if (!data.venue || !data.date) { showToast('Please fill venue and date'); return; }
+  showToast('Saving...');
+  try {
+    const res = await apiPost({ action: 'addWorkshop', data });
+    if (res.success) {
+      cache.workshops = null; cache.dashboard = null;
+      showToast('Workshop saved! ✓');
+      back();
+    } else {
+      showToast('Error: ' + (res.error || 'Unknown error'));
+    }
+  } catch (e) { showToast('Could not save. Check connection.'); }
+}
+
+// ---- PEOPLE ----
+async function loadPeople() {
+  try {
+    const data = await api('getPeople');
+    cache.people = data;
+    let html = `<div style="margin-bottom:12px"><input class="fi" type="text" placeholder="Search by name..." oninput="filterPeople(this.value)" id="people-search"></div>
+    <div class="tab-row">
+      <button class="tab on" id="ptab-all" onclick="peopleTab('all')">All (${data.length})</button>
+      <button class="tab" id="ptab-students" onclick="peopleTab('students')">Students</button>
+      <button class="tab" id="ptab-leads" onclick="peopleTab('leads')">Leads</button>
+    </div>
+    <div id="people-list">`;
+    data.forEach(p => {
+      html += personCard(p);
+    });
+    html += '</div><div style="height:70px"></div>';
+    document.getElementById('people-body').innerHTML = html;
+  } catch (e) {
+    document.getElementById('people-body').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Could not load people.</div></div>';
+  }
+}
+
+function personCard(p) {
+  const tags = p.tags || [];
+  return `<div class="card" onclick="openPerson('${p.phone || p.name}')">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="av ${avClass(p.name)}">${initials(p.name)}</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:500;color:var(--text)">${p.name}</div>
+        <div style="font-size:11px;color:var(--text2)">${p.workshops?.join(', ') || ''} · ${p.city || ''}</div>
+      </div>
+      <div style="text-align:right">${tags.map(t => `<span class="tag ${t === 'Online student' ? 'tag-g' : t === 'Handpan lead' ? 'tag-a' : t === 'Repeat participant' ? 'tag-p' : ''}">${t}</span>`).join('')}</div>
+    </div>
+  </div>`;
+}
+
+function filterPeople(q) {
+  const people = cache.people || [];
+  const filtered = q ? people.filter(p => (p.name || '').toLowerCase().includes(q.toLowerCase()) || (p.phone || '').includes(q)) : people;
+  document.getElementById('people-list').innerHTML = filtered.map(p => personCard(p)).join('') || '<div class="empty"><div class="empty-text">No results</div></div>';
+}
+
+function peopleTab(type) {
+  document.querySelectorAll('[id^="ptab-"]').forEach(t => t.classList.remove('on'));
+  document.getElementById('ptab-' + type).classList.add('on');
+  const people = cache.people || [];
+  let filtered = people;
+  if (type === 'students') filtered = people.filter(p => p.isStudent);
+  if (type === 'leads') filtered = people.filter(p => p.isLead);
+  document.getElementById('people-list').innerHTML = filtered.map(p => personCard(p)).join('') || '<div class="empty"><div class="empty-text">None yet</div></div>';
+}
+
+function openPerson(key) {
+  const p = (cache.people || []).find(x => x.phone === key || x.name === key);
+  if (!p) return;
+  go('s-person-detail');
+  document.getElementById('pd-name').textContent = p.name;
+  document.getElementById('pd-sub').textContent = (p.isStudent ? 'Online student · ' : '') + (p.city || 'Bengaluru');
+  let html = `<div class="card card-static">
+    <div class="drow"><span class="dk">Phone</span><span class="dv">${p.phone || '—'}</span></div>
+    <div class="drow"><span class="dk">City</span><span class="dv">${p.city || '—'}</span></div>
+    <div class="drow"><span class="dk">Source</span><span class="dv">${p.source || '—'}</span></div>
+    <div class="drow"><span class="dk">Workshops attended</span><span class="dv">${p.workshopCount || p.workshops?.length || 0}</span></div>
+    <div class="drow"><span class="dk">Total paid</span><span class="dv">${fmt(p.totalPaid || 0)}</span></div>
+    <div class="drow"><span class="dk">WA community</span><span class="dv">${p.inCommunity ? 'Yes' : 'No'}</span></div>
+  </div>`;
+  if (p.tags && p.tags.length > 0) {
+    html += `<div class="sec">Tags</div><div style="margin-bottom:14px">${p.tags.map(t => `<span class="tag ${t === 'Online student' ? 'tag-g' : t === 'Repeat participant' ? 'tag-p' : t === 'Handpan lead' ? 'tag-a' : ''}">${t}</span>`).join('')}</div>`;
+  }
+  if (p.workshops && p.workshops.length > 0) {
+    html += `<div class="sec">Workshop history</div><div class="card card-static">`;
+    p.workshops.forEach(w => { html += `<div class="drow"><span class="dk">${w}</span><span class="dv badge bg">Attended</span></div>`; });
+    html += '</div>';
+  }
+  if (p.isStudent) {
+    html += `<div class="sec">As online student</div><div class="card card-static">
+      <div class="drow"><span class="dk">Monthly fee</span><span class="dv">${fmt(p.monthlyFee || 0)}</span></div>
+      <div class="drow"><span class="dk">Classes done</span><span class="dv">${p.classesDone || 0}</span></div>
+      <div class="drow"><span class="dk">Fee paid</span><span class="dv"><span class="badge ${p.feePaid === 'Yes' ? 'bg' : 'br'}">${p.feePaid || 'No'}</span></span></div>
+    </div>`;
+  }
+  html += '<div style="height:20px"></div>';
+  document.getElementById('pd-body').innerHTML = html;
+}
+
+async function savePerson() {
+  const data = {
+    workshopId: document.getElementById('p-ws').value,
+    date: new Date().toISOString().split('T')[0],
+    name: document.getElementById('p-name').value,
+    phone: document.getElementById('p-phone').value,
+    city: document.getElementById('p-city').value,
+    bookingSource: document.getElementById('p-source').value,
+    amount: document.getElementById('p-amount').value,
+    paymentMode: 'UPI',
+    notes: document.getElementById('p-notes').value
+  };
+  if (!data.name) { showToast('Please enter a name'); return; }
+  showToast('Saving...');
+  try {
+    const res = await apiPost({ action: 'addParticipant', data });
+    if (res.success) { cache.people = null; showToast('Person saved! ✓'); back(); }
+    else showToast('Error: ' + (res.error || 'Unknown'));
+  } catch (e) { showToast('Could not save.'); }
+}
+
+// ---- FINANCES ----
+async function loadFinances() {
+  try {
+    const d = await api('getFinances');
+    cache.finances = d;
+    let html = `<div class="tab-row">
+      <button class="tab on" id="ftab-overview" onclick="finTab('overview')">Overview</button>
+      <button class="tab" id="ftab-workshops" onclick="finTab('workshops')">Workshops</button>
+      <button class="tab" id="ftab-online" onclick="finTab('online')">Online</button>
+    </div>
+    <div id="f-overview">
+      <div class="profit-hero">
+        <div><div class="ph-label">Total net income</div><div class="ph-sub">${d.workshopBreakdown?.length || 0} workshops + ${d.studentFees?.length || 0} students</div></div>
+        <div class="ph-val">${fmt(d.totalIncome || 0)}</div>
+      </div>
+      <div class="sgrid">
+        <div class="scard"><div class="slabel">Workshop revenue</div><div class="sval" style="font-size:16px">${fmt(d.totalWorkshopRevenue || 0)}</div></div>
+        <div class="scard"><div class="slabel">Online revenue</div><div class="sval g" style="font-size:16px">${fmt(d.onlineRevenue || 0)}</div></div>
+        <div class="scard"><div class="slabel">Total expenses</div><div class="sval a" style="font-size:16px">${fmt(d.totalExpenses || 0)}</div></div>
+        <div class="scard"><div class="slabel">Avg margin</div><div class="sval g" style="font-size:16px">${pct(d.avgMargin || 0)}</div></div>
+      </div>
+    </div>
+    <div id="f-workshops" style="display:none">
+      <div class="card card-static">`;
+    (d.workshopBreakdown || []).forEach(w => {
+      html += `<div class="drow"><span class="dk">${w.id} · ${w.venue}</span><span class="dv" style="color:var(--green)">${fmt(w.profit)}</span></div>`;
+    });
+    html += `<div class="div"></div><div class="drow"><span class="dk" style="font-weight:600">Total</span><span class="dv" style="color:var(--green)">${fmt(d.netProfit || 0)}</span></div></div></div>
+    <div id="f-online" style="display:none">
+      <div class="sgrid">
+        <div class="scard"><div class="slabel">Monthly recurring</div><div class="sval g">${fmt(d.onlineRevenue || 0)}</div></div>
+        <div class="scard"><div class="slabel">Active students</div><div class="sval">${d.studentFees?.length || 0}</div></div>
+      </div>
+      <div class="card card-static">`;
+    (d.studentFees || []).forEach(s => {
+      html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
+        <div><div style="font-size:13px;font-weight:500;color:var(--text)">${s.name}</div><div style="font-size:11px;color:var(--text2)">${fmt(s.fee)}/mo · ${s.paymentMode}</div></div>
+        <span class="badge ${s.feePaid === 'Yes' ? 'bg' : 'br'}">${s.feePaid === 'Yes' ? 'Paid' : 'Due'}</span>
+      </div>`;
+    });
+    html += '</div></div><div style="height:20px"></div>';
+    document.getElementById('finance-body').innerHTML = html;
+  } catch (e) {
+    document.getElementById('finance-body').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Could not load finances.</div></div>';
+  }
+}
+
+function finTab(t) {
+  ['overview','workshops','online'].forEach(x => {
+    document.getElementById('f-' + x).style.display = t === x ? 'block' : 'none';
+    document.getElementById('ftab-' + x).className = 'tab' + (t === x ? ' on' : '');
+  });
+}
+
+// ---- INSIGHTS ----
+async function loadInsights() {
+  try {
+    const d = await api('getInsights');
+    cache.insights = d;
+    const maxMargin = Math.max(...(d.venueMargins || []).map(v => parseFloat(v.margin)), 1);
+    const maxSource = Math.max(...(d.sourceBreakdown || []).map(s => s.count), 1);
+
+    let html = `<div class="alert alert-g">
+      <div><div class="at">You're growing — avg ${d.avgParticipants} participants per workshop</div>
+      <div class="as">Best margin: ${d.bestWorkshop?.venue || '—'} at ${pct(d.bestWorkshop?.margin || 0)}</div></div>
+    </div>
+    <div class="igrid">
+      <div class="icard"><div class="inum">${pct(d.bestWorkshop?.margin || 0)}</div><div class="ilabel">Best margin</div><div class="itrend">${d.bestWorkshop?.id || '—'}</div></div>
+      <div class="icard"><div class="inum">${d.avgParticipants}</div><div class="ilabel">Avg participants</div><div class="itrend">↑ per workshop</div></div>
+      <div class="icard"><div class="inum">${d.repeatParticipants}</div><div class="ilabel">Repeat participants</div><div class="itrend">came back again</div></div>
+      <div class="icard"><div class="inum">${pct(d.avgMargin || 0)}</div><div class="ilabel">Avg margin</div><div class="itrend">across all workshops</div></div>
+    </div>
+    <div class="sec">Best venues by profit margin</div>
+    <div class="card card-static">`;
+    (d.venueMargins || []).forEach(v => {
+      const w = Math.round((parseFloat(v.margin) / maxMargin) * 100);
+      html += `<div class="bar-row"><span class="bar-label">${v.venue}</span><div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div><span class="bar-val">${pct(v.margin)}</span></div>`;
+    });
+    html += `</div><div class="sec">Participant source breakdown</div><div class="card card-static">`;
+    (d.sourceBreakdown || []).forEach(s => {
+      const w = Math.round((s.count / maxSource) * 100);
+      html += `<div class="bar-row"><span class="bar-label">${s.source}</span><div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div><span class="bar-val">${s.count} pax</span></div>`;
+    });
+    html += '</div><div style="height:20px"></div>';
+    document.getElementById('insights-body').innerHTML = html;
+  } catch (e) {
+    document.getElementById('insights-body').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Could not load insights.</div></div>';
+  }
+}
+
+// ---- SETTINGS ----
+function loadSettings() {
+  document.getElementById('webhook-url').textContent = API;
+  document.getElementById('last-sync').textContent = new Date().toLocaleTimeString('en-IN');
+}
+function copyWebhook() {
+  navigator.clipboard.writeText(API).then(() => showToast('Webhook URL copied! ✓'));
+}
+function copyAppLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => showToast('App link copied! ✓'));
+}
+</script>
 </body>
 </html>
