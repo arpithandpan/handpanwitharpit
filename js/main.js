@@ -67,9 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     hamburger.addEventListener('click', () => {
       hamburger.getAttribute('data-open') === 'true' ? closeMenu() : openMenu();
     });
-    // Wire up the close button inside the menu
-    const closeBtn = mobileMenu.querySelector('.mobile-menu-close');
-    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
     mobileMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', closeMenu);
     });
