@@ -42,17 +42,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const hamburger = document.querySelector('.nav-hamburger');
   const mobileMenu = document.querySelector('.mobile-menu');
   if (hamburger && mobileMenu) {
+    const spans = hamburger.querySelectorAll('span');
     const openMenu = () => {
       mobileMenu.classList.add('open');
       document.body.style.overflow = 'hidden';
       hamburger.setAttribute('data-open', 'true');
-      hamburger.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+      spans[0].style.transform = 'translateY(6.5px) rotate(45deg)';
+      spans[1].style.opacity = '0';
+      spans[1].style.transform = 'scaleX(0)';
+      spans[2].style.transform = 'translateY(-6.5px) rotate(-45deg)';
     };
     const closeMenu = () => {
       mobileMenu.classList.remove('open');
       document.body.style.overflow = '';
       hamburger.setAttribute('data-open', 'false');
-      hamburger.innerHTML = '<span></span><span></span><span></span>';
+      spans[0].style.transform = '';
+      spans[1].style.opacity = '1';
+      spans[1].style.transform = '';
+      spans[2].style.transform = '';
     };
     hamburger.addEventListener('click', () => {
       hamburger.getAttribute('data-open') === 'true' ? closeMenu() : openMenu();
