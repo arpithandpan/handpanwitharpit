@@ -42,33 +42,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const hamburger = document.querySelector('.nav-hamburger');
   const mobileMenu = document.querySelector('.mobile-menu');
   if (hamburger && mobileMenu) {
+    const openMenu = () => {
+      mobileMenu.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      hamburger.setAttribute('data-open', 'true');
+      hamburger.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    };
+    const closeMenu = () => {
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+      hamburger.setAttribute('data-open', 'false');
+      hamburger.innerHTML = '<span></span><span></span><span></span>';
+    };
     hamburger.addEventListener('click', () => {
-      mobileMenu.classList.toggle('open');
-      const isOpen = mobileMenu.classList.contains('open');
-      document.body.style.overflow = isOpen ? 'hidden' : '';
-      const spans = hamburger.querySelectorAll('span');
-      spans[0].style.transform = isOpen ? 'translateY(6.5px) rotate(45deg)' : '';
-      spans[1].style.opacity  = isOpen ? '0' : '1';
-      spans[1].style.transform = isOpen ? 'scaleX(0)' : '';
-      spans[2].style.transform = isOpen ? 'translateY(-6.5px) rotate(-45deg)' : '';
+      hamburger.getAttribute('data-open') === 'true' ? closeMenu() : openMenu();
     });
     mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileMenu.classList.remove('open');
-        document.body.style.overflow = '';
-      });
-    });
-    // Close when clicking the overlay (outside the inner panel)
-    mobileMenu.addEventListener('click', (e) => {
-      if (!e.target.closest('.mobile-menu-inner')) {
-        mobileMenu.classList.remove('open');
-        document.body.style.overflow = '';
-        const spans = hamburger.querySelectorAll('span');
-        spans[0].style.transform = '';
-        spans[1].style.opacity = '1';
-        spans[1].style.transform = '';
-        spans[2].style.transform = '';
-      }
+      link.addEventListener('click', closeMenu);
     });
   }
 
