@@ -41,12 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mobile menu toggle
   const hamburger = document.querySelector('.nav-hamburger');
   const mobileMenu = document.querySelector('.mobile-menu');
+  const nav = document.querySelector('nav');
   if (hamburger && mobileMenu) {
     const spans = hamburger.querySelectorAll('span');
     const openMenu = () => {
       mobileMenu.classList.add('open');
       document.body.style.overflow = 'hidden';
       hamburger.setAttribute('data-open', 'true');
+      nav && nav.classList.add('menu-open');
       spans[0].style.transform = 'translateY(7px) rotate(45deg)';
       spans[1].style.opacity = '0';
       spans[1].style.transform = 'scaleX(0)';
@@ -56,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mobileMenu.classList.remove('open');
       document.body.style.overflow = '';
       hamburger.setAttribute('data-open', 'false');
+      nav && nav.classList.remove('menu-open');
       spans[0].style.transform = '';
       spans[1].style.opacity = '';
       spans[1].style.transform = '';
@@ -64,6 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
     hamburger.addEventListener('click', () => {
       hamburger.getAttribute('data-open') === 'true' ? closeMenu() : openMenu();
     });
+    // Wire up the close button inside the menu
+    const closeBtn = mobileMenu.querySelector('.mobile-menu-close');
+    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
     mobileMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', closeMenu);
     });
