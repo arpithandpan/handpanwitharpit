@@ -47,17 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
       mobileMenu.classList.add('open');
       document.body.style.overflow = 'hidden';
       hamburger.setAttribute('data-open', 'true');
-      spans[0].style.transform = 'translateY(6.5px) rotate(45deg)';
+      spans[0].style.transform = 'translateY(7px) rotate(45deg)';
       spans[1].style.opacity = '0';
       spans[1].style.transform = 'scaleX(0)';
-      spans[2].style.transform = 'translateY(-6.5px) rotate(-45deg)';
+      spans[2].style.transform = 'translateY(-7px) rotate(-45deg)';
     };
     const closeMenu = () => {
       mobileMenu.classList.remove('open');
       document.body.style.overflow = '';
       hamburger.setAttribute('data-open', 'false');
       spans[0].style.transform = '';
-      spans[1].style.opacity = '1';
+      spans[1].style.opacity = '';
       spans[1].style.transform = '';
       spans[2].style.transform = '';
     };
