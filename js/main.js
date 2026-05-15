@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mobile menu toggle
   const hamburger = document.querySelector('.nav-hamburger');
   const mobileMenu = document.querySelector('.mobile-menu');
-  const nav = document.querySelector('nav');
   if (hamburger && mobileMenu) {
     const spans = hamburger.querySelectorAll('span');
     const openMenu = () => {
