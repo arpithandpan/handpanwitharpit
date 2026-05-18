@@ -4,6 +4,21 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Scroll-based logo rotation
+  const navLogoImg = document.querySelector('.nav-logo img');
+  let currentRotation = 0;
+  let lastScrollY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    const delta = currentScrollY - lastScrollY;
+    currentRotation += delta * 0.3;
+    if (navLogoImg) {
+      navLogoImg.style.transform = `rotate(${currentRotation}deg)`;
+      navLogoImg.style.transition = 'none';
+    }
+    lastScrollY = currentScrollY;
+  }, { passive: true });
+
   // Nav logo rotation on scroll
   const navLogo = document.querySelector('.nav-logo svg');
   if (navLogo) {
