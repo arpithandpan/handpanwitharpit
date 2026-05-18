@@ -4,15 +4,16 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ---- LOGO: Scroll rotation ----
+  // ---- LOGO: Scroll rotation + press effect ----
   const navLogoImg = document.querySelector('.nav-logo img');
+  const navLogoEl = document.querySelector('.nav-logo');
   let currentRotation = parseFloat(sessionStorage.getItem('logoRotation') || '0');
   let lastScrollY = window.scrollY;
+  let releaseTimer = null;
 
-  // Restore rotation immediately on load
   if (navLogoImg) {
     navLogoImg.style.transition = 'none';
-    navLogoImg.style.transform = `rotate(${currentRotation}deg)`;
+    navLogoImg.style.transform = `rotate(${currentRotation}deg) scale(1)`;
   }
 
   window.addEventListener('scroll', () => {
@@ -21,16 +22,31 @@ document.addEventListener('DOMContentLoaded', () => {
     currentRotation += delta * 0.3;
     if (navLogoImg) {
       navLogoImg.style.transition = 'none';
-      navLogoImg.style.transform = `rotate(${currentRotation}deg)`;
+      navLogoImg.style.transform = `rotate(${currentRotation}deg) scale(1)`;
     }
     sessionStorage.setItem('logoRotation', currentRotation);
     lastScrollY = currentScrollY;
   }, { passive: true });
 
-  // Save rotation before navigating away
-  const navLogoLink = document.querySelector('.nav-logo');
-  if (navLogoLink) {
-    navLogoLink.addEventListener('click', () => {
+  if (navLogoEl && navLogoImg) {
+    const press = () => {
+      if (releaseTimer) { clearTimeout(releaseTimer); releaseTimer = null; }
+      navLogoImg.style.transition = 'none';
+      navLogoImg.style.transform = `rotate(${currentRotation}deg) scale(0.88)`;
+    };
+    const release = () => {
+      if (releaseTimer) clearTimeout(releaseTimer);
+      releaseTimer = setTimeout(() => {
+        navLogoImg.style.transition = 'transform 0.15s ease';
+        navLogoImg.style.transform = `rotate(${currentRotation}deg) scale(1)`;
+      }, 80);
+    };
+    navLogoEl.addEventListener('mousedown', press);
+    navLogoEl.addEventListener('mouseup', release);
+    navLogoEl.addEventListener('mouseleave', release);
+    navLogoEl.addEventListener('touchstart', press, { passive: true });
+    navLogoEl.addEventListener('touchend', release);
+    navLogoEl.addEventListener('click', () => {
       sessionStorage.setItem('logoRotation', currentRotation);
     });
   }
