@@ -53,8 +53,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Logo press effect
+  const navLogo = document.querySelector('.nav-logo');
+  let isPressed = false;
+  if (navLogo && navLogoImg) {
+    navLogo.addEventListener('mousedown', () => { isPressed = true; navLogoImg.style.transition = 'transform 0.1s ease'; navLogoImg.style.transform = `rotate(${currentRotation}deg) scale(0.85)`; });
+    navLogo.addEventListener('touchstart', () => { isPressed = true; navLogoImg.style.transition = 'transform 0.1s ease'; navLogoImg.style.transform = `rotate(${currentRotation}deg) scale(0.85)`; }, { passive: true });
+    const releasePress = () => { if (isPressed) { isPressed = false; navLogoImg.style.transition = 'transform 0.15s ease'; navLogoImg.style.transform = `rotate(${currentRotation}deg) scale(1)`; } };
+    navLogo.addEventListener('mouseup', releasePress);
+    navLogo.addEventListener('mouseleave', releasePress);
+    navLogo.addEventListener('touchend', releasePress);
+  }
+
   // Mobile menu toggle
-  const hamburger = document.querySelector('.nav-hamburger');
   const mobileMenu = document.querySelector('.mobile-menu');
   if (hamburger && mobileMenu) {
     const spans = hamburger.querySelectorAll('span');
