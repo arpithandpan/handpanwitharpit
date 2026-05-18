@@ -6,8 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ---- LOGO: Scroll rotation ----
   const navLogoImg = document.querySelector('.nav-logo img');
-  let currentRotation = 0;
+  let currentRotation = parseFloat(sessionStorage.getItem('logoRotation') || '0');
   let lastScrollY = window.scrollY;
+
+  // Restore rotation immediately on load
+  if (navLogoImg) {
+    navLogoImg.style.transition = 'none';
+    navLogoImg.style.transform = `rotate(${currentRotation}deg)`;
+  }
 
   window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
@@ -17,8 +23,17 @@ document.addEventListener('DOMContentLoaded', () => {
       navLogoImg.style.transition = 'none';
       navLogoImg.style.transform = `rotate(${currentRotation}deg)`;
     }
+    sessionStorage.setItem('logoRotation', currentRotation);
     lastScrollY = currentScrollY;
   }, { passive: true });
+
+  // Save rotation before navigating away
+  const navLogoLink = document.querySelector('.nav-logo');
+  if (navLogoLink) {
+    navLogoLink.addEventListener('click', () => {
+      sessionStorage.setItem('logoRotation', currentRotation);
+    });
+  }
 
   // ---- NAV scroll effect ----
   const nav = document.querySelector('nav');
