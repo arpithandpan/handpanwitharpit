@@ -4,42 +4,21 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ---- LOGO: Scroll rotation + press effect ----
+  // ---- LOGO: Scroll rotation ----
   const navLogoImg = document.querySelector('.nav-logo img');
-  const navLogoEl = document.querySelector('.nav-logo');
   let currentRotation = 0;
   let lastScrollY = window.scrollY;
-  let isPressed = false;
 
   window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
     const delta = currentScrollY - lastScrollY;
     currentRotation += delta * 0.3;
-    if (navLogoImg && !isPressed) {
+    if (navLogoImg) {
       navLogoImg.style.transition = 'none';
-      navLogoImg.style.transform = `rotate(${currentRotation}deg) scale(1)`;
+      navLogoImg.style.transform = `rotate(${currentRotation}deg)`;
     }
     lastScrollY = currentScrollY;
   }, { passive: true });
-
-  if (navLogoEl && navLogoImg) {
-    const pressDown = () => {
-      isPressed = true;
-      navLogoImg.style.transition = 'transform 0.1s ease';
-      navLogoImg.style.transform = `rotate(${currentRotation}deg) scale(0.82)`;
-    };
-    const pressUp = () => {
-      if (!isPressed) return;
-      isPressed = false;
-      navLogoImg.style.transition = 'transform 0.2s ease';
-      navLogoImg.style.transform = `rotate(${currentRotation}deg) scale(1)`;
-    };
-    navLogoEl.addEventListener('mousedown', pressDown);
-    navLogoEl.addEventListener('touchstart', pressDown, { passive: true });
-    navLogoEl.addEventListener('mouseup', pressUp);
-    navLogoEl.addEventListener('mouseleave', pressUp);
-    navLogoEl.addEventListener('touchend', pressUp);
-  }
 
   // ---- NAV scroll effect ----
   const nav = document.querySelector('nav');
