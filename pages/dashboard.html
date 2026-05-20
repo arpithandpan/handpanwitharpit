@@ -171,6 +171,10 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   position: absolute; inset: 0; width: 100%; height: 100%;
   pointer-events: none;
 }
+@keyframes ripple-expand {
+  0% { r: 5; opacity: 0.65; }
+  100% { r: 130; opacity: 0; }
+}
 .login-box {
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(200,147,90,0.35);
@@ -342,23 +346,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 <!-- ── LOGIN SCREEN ── -->
 <div class="login-screen" id="loginScreen">
-  <svg class="ripple-bg" viewBox="0 0 500 340" preserveAspectRatio="xMidYMid slice" fill="none">
-    <circle cx="80" cy="80" r="40" stroke="rgba(160,100,40,0.45)" stroke-width="1"/>
-    <circle cx="80" cy="80" r="70" stroke="rgba(160,100,40,0.35)" stroke-width="1"/>
-    <circle cx="80" cy="80" r="100" stroke="rgba(160,100,40,0.25)" stroke-width="0.8"/>
-    <circle cx="80" cy="80" r="130" stroke="rgba(160,100,40,0.15)" stroke-width="0.8"/>
-    <circle cx="80" cy="80" r="160" stroke="rgba(160,100,40,0.08)" stroke-width="0.8"/>
-    <circle cx="420" cy="80" r="40" stroke="rgba(160,100,40,0.4)" stroke-width="1"/>
-    <circle cx="420" cy="80" r="70" stroke="rgba(160,100,40,0.3)" stroke-width="1"/>
-    <circle cx="420" cy="80" r="100" stroke="rgba(160,100,40,0.2)" stroke-width="0.8"/>
-    <circle cx="420" cy="80" r="130" stroke="rgba(160,100,40,0.12)" stroke-width="0.8"/>
-    <circle cx="420" cy="80" r="160" stroke="rgba(160,100,40,0.06)" stroke-width="0.8"/>
-    <circle cx="250" cy="290" r="40" stroke="rgba(160,100,40,0.42)" stroke-width="1"/>
-    <circle cx="250" cy="290" r="70" stroke="rgba(160,100,40,0.32)" stroke-width="1"/>
-    <circle cx="250" cy="290" r="100" stroke="rgba(160,100,40,0.22)" stroke-width="0.8"/>
-    <circle cx="250" cy="290" r="130" stroke="rgba(160,100,40,0.13)" stroke-width="0.8"/>
-    <circle cx="250" cy="290" r="160" stroke="rgba(160,100,40,0.06)" stroke-width="0.8"/>
-  </svg>
+  <svg id="loginRippleSvg" class="ripple-bg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></svg>
   <div class="login-box">
     <div class="login-logo">
       <div style="color:#8b5e3c;margin:0 auto;width:48px;">
@@ -396,15 +384,15 @@ tr:hover td { background: rgba(193,127,82,0.04); }
     </svg>
     <span style="font-size:14px;font-weight:500;color:#e8d5c0;">Arpit's Studio</span>
   </div>
-  <button onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;flex-direction:column;gap:5px;" aria-label="Open menu">
-    <span style="display:block;width:22px;height:1.5px;background:#e8d5c0;"></span>
-    <span style="display:block;width:22px;height:1.5px;background:#e8d5c0;"></span>
-    <span style="display:block;width:22px;height:1.5px;background:#e8d5c0;"></span>
+  <button id="mobileMenuBtn" onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;flex-direction:column;gap:5px;" aria-label="Open menu">
+    <span style="display:block;width:22px;height:1.5px;background:#e8d5c0;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
+    <span style="display:block;width:22px;height:1.5px;background:#e8d5c0;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
+    <span style="display:block;width:22px;height:1.5px;background:#e8d5c0;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
   </button>
 </div>
 
-<div class="mobile-menu-overlay" id="mobileMenuOverlay">
-  <button onclick="toggleMobileMenu()" style="position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;font-size:1.5rem;color:#3d2b1f;cursor:pointer;line-height:1;">✕</button>
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" style="position:fixed;">
+
   <nav style="display:flex;flex-direction:column;gap:1.5rem;padding:4rem 2rem 2rem;">
     <a href="#" style="font-size:22px;color:#c8935a;text-decoration:none;font-weight:500;" onclick="showSection('overview',this);toggleMobileMenu()">Overview</a>
     <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('workshops',this);toggleMobileMenu()">Workshops</a>
@@ -413,7 +401,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
     <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('leads',this);toggleMobileMenu()">Leads</a>
     <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('insights',this);toggleMobileMenu()">Insights</a>
     <div style="border-top:0.5px solid #d4b99a;padding-top:1.25rem;display:flex;flex-direction:column;gap:1rem;">
-      <a href="https://arpitpandey.com" style="font-size:16px;color:#9c7a5e;text-decoration:none;">← arpitpandey.com</a>
+      <a href="https://arpitpandey.com" style="font-size:16px;color:#9c7a5e;text-decoration:none;" onclick="toggleMobileMenu()">← arpitpandey.com</a>
       <a href="#" style="font-size:16px;color:#9c7a5e;text-decoration:none;" onclick="logout();toggleMobileMenu()">Logout</a>
     </div>
   </nav>
@@ -444,6 +432,10 @@ tr:hover td { background: rgba(193,127,82,0.04); }
     <ul class="dash-nav">
       <li><a href="#" onclick="logout()"><span class="icon">→</span> Logout</a></li>
     </ul>
+    <div class="dash-nav-divider"></div>
+    <div style="padding:0 1.5rem 1.5rem;">
+      <a href="https://arpitpandey.com" style="font-size:12px;color:rgba(240,219,200,0.4);text-decoration:none;letter-spacing:0.05em;" onmouseover="this.style.color='rgba(200,147,90,0.7)'" onmouseout="this.style.color='rgba(240,219,200,0.4)'">← arpitpandey.com</a>
+    </div>
   </aside>
 
   <!-- Main -->
@@ -876,7 +868,29 @@ window.addEventListener('resize', function() {
 });
 
 function toggleMobileMenu() {
-  document.getElementById('mobileMenuOverlay').classList.toggle('open');
+  const overlay = document.getElementById('mobileMenuOverlay');
+  const btn = document.getElementById('mobileMenuBtn');
+  const spans = btn ? btn.querySelectorAll('span') : [];
+  const isOpen = overlay.classList.contains('open');
+  if (isOpen) {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    if (spans.length) {
+      spans[0].style.transform = '';
+      spans[1].style.opacity = '';
+      spans[1].style.transform = '';
+      spans[2].style.transform = '';
+    }
+  } else {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (spans.length) {
+      spans[0].style.transform = 'translateY(7px) rotate(45deg)';
+      spans[1].style.opacity = '0';
+      spans[1].style.transform = 'scaleX(0)';
+      spans[2].style.transform = 'translateY(-7px) rotate(-45deg)';
+    }
+  }
 }
 
 // ── LOAD ALL ──
@@ -1346,6 +1360,44 @@ function showToast(msg, type) {
 if (sessionStorage.getItem('dash_auth') === '1') {
   loadAll();
 }
+
+// ── LOGIN RIPPLES ──
+(function() {
+  const svg = document.getElementById('loginRippleSvg');
+  const screen = document.getElementById('loginScreen');
+  if (!svg || !screen) return;
+
+  function spawnRipple() {
+    const W = screen.offsetWidth;
+    const H = screen.offsetHeight;
+    const x = Math.random() * W;
+    const y = Math.random() * H;
+    const dur = 5 + Math.random() * 4;
+    const waves = 1 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < waves; i++) {
+      const delay = i * (dur / waves);
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', x);
+      c.setAttribute('cy', y);
+      c.setAttribute('r', 5);
+      c.setAttribute('fill', 'none');
+      c.setAttribute('stroke', 'rgba(200,147,90,0.55)');
+      c.setAttribute('stroke-width', (0.6 + Math.random() * 0.8).toFixed(1));
+      c.style.animation = 'ripple-expand ' + dur + 's ' + delay + 's ease-out forwards';
+      svg.appendChild(c);
+      setTimeout(function() { if (c.parentNode) c.parentNode.removeChild(c); }, (dur + delay) * 1000 + 200);
+    }
+  }
+
+  function scheduleNext() {
+    var gap = 1500 + Math.random() * 2000;
+    setTimeout(function() { spawnRipple(); scheduleNext(); }, gap);
+  }
+
+  spawnRipple(); spawnRipple(); spawnRipple();
+  scheduleNext();
+})();
+
 </script>
 </body>
 </html>
