@@ -807,7 +807,9 @@ function doLogin() {
     sessionStorage.setItem('dash_auth', '1');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashRoot').style.display = 'flex';
-    document.getElementById('mobileTopbar').style.display = 'flex';
+    if (window.innerWidth <= 900) {
+      document.getElementById('mobileTopbar').style.display = 'flex';
+    }
     loadAll();
   } else {
     document.getElementById('loginError').style.display = 'block';
@@ -824,7 +826,9 @@ function logout() {
 if (sessionStorage.getItem('dash_auth') === '1') {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('dashRoot').style.display = 'flex';
-  document.getElementById('mobileTopbar').style.display = 'flex';
+  if (window.innerWidth <= 900) {
+    document.getElementById('mobileTopbar').style.display = 'flex';
+  }
 }
 
 // ── API ──
@@ -858,6 +862,19 @@ function showSection(name, el) {
 function toggleSidebar() {
   document.getElementById('dashSidebar').classList.toggle('open');
 }
+
+window.addEventListener('resize', function() {
+  if (sessionStorage.getItem('dash_auth') === '1') {
+    const topbar = document.getElementById('mobileTopbar');
+    if (window.innerWidth <= 900) {
+      topbar.style.display = 'flex';
+    } else {
+      topbar.style.display = 'none';
+      document.getElementById('mobileMenuOverlay').classList.remove('open');
+    }
+  }
+});
+
 function toggleMobileMenu() {
   document.getElementById('mobileMenuOverlay').classList.toggle('open');
 }
