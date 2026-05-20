@@ -142,20 +142,34 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   align-items: center; justify-content: center;
 }
 .modal-overlay.open { display: flex; }
+.modal-drag-handle {
+  display: none; justify-content: center;
+  padding: 10px 0 4px; margin: 0 -1.5rem;
+}
+.modal-drag-handle span {
+  width: 36px; height: 4px; background: var(--clay-pale); border-radius: 2px;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
 .modal-close-btn {
-  display: none;
-  position: absolute; top: 1rem; right: 1rem;
-  background: none; border: none; font-size: 1.5rem;
-  color: var(--bark); cursor: pointer; line-height: 1; z-index: 10;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--sand); border: none; font-size: 1.1rem;
+  color: var(--bark); cursor: pointer; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
 @media (max-width: 900px) {
-  .modal-close-btn { display: block; }
-  .modal-overlay { align-items: flex-start; padding: 0; }
-  .modal { 
-    max-height: 100vh; overflow-y: auto; 
-    border-radius: 0; width: 100%; margin: 0;
-    padding-top: 3.5rem;
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal {
+    width: 100%; max-width: 100%; margin: 0;
+    border-radius: 16px 16px 0 0;
+    max-height: 90vh; overflow-y: auto;
+    padding: 0 1.5rem 2rem;
   }
+  .modal-drag-handle { display: flex; }
+  .modal-header { padding: 0.75rem 0 1rem; }
 }
 .modal {
   background: var(--cream); border-radius: 6px;
@@ -163,7 +177,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   max-height: 90vh; overflow-y: auto;
   box-shadow: 0 20px 60px rgba(61,43,31,0.2);
 }
-.modal-title { font-family: var(--font-body); font-size: 1.4rem; font-weight: 400; color: var(--bark); margin-bottom: 1.5rem; }
+.modal-title { font-family: var(--font-body); font-size: 1.4rem; font-weight: 400; color: var(--bark); margin-bottom: 0; }
 .form-group { margin-bottom: 1.25rem; }
 .form-label { display: block; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.5rem; }
 .form-input {
@@ -315,20 +329,34 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   .insight-tile-val { font-size: 1.3rem; }
   .dash-section-title { font-size: 1.4rem; }
   .btn-dash { font-size: 0.78rem; padding: 0.5rem 0.9rem; }
-  .modal-close-btn {
-  display: none;
-  position: absolute; top: 1rem; right: 1rem;
-  background: none; border: none; font-size: 1.5rem;
-  color: var(--bark); cursor: pointer; line-height: 1; z-index: 10;
+  .modal-drag-handle {
+  display: none; justify-content: center;
+  padding: 10px 0 4px; margin: 0 -1.5rem;
+}
+.modal-drag-handle span {
+  width: 36px; height: 4px; background: var(--clay-pale); border-radius: 2px;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.modal-close-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--sand); border: none; font-size: 1.1rem;
+  color: var(--bark); cursor: pointer; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
 @media (max-width: 900px) {
-  .modal-close-btn { display: block; }
-  .modal-overlay { align-items: flex-start; padding: 0; }
-  .modal { 
-    max-height: 100vh; overflow-y: auto; 
-    border-radius: 0; width: 100%; margin: 0;
-    padding-top: 3.5rem;
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal {
+    width: 100%; max-width: 100%; margin: 0;
+    border-radius: 16px 16px 0 0;
+    max-height: 90vh; overflow-y: auto;
+    padding: 0 1.5rem 2rem;
   }
+  .modal-drag-handle { display: flex; }
+  .modal-header { padding: 0.75rem 0 1rem; }
 }
 .modal { padding: 1.5rem; }
   .modal-title { font-size: 1.2rem; }
@@ -426,7 +454,11 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 <div class="mobile-menu-overlay" id="mobileMenuOverlay" style="position:fixed;">
 
-  <nav style="display:flex;flex-direction:column;gap:1.5rem;padding:4rem 2rem 2rem;">
+  <div style="display:flex;align-items:center;justify-content:flex-end;padding:1.25rem 1.5rem;">
+    <button onclick="toggleMobileMenu()" style="width:40px;height:40px;border-radius:50%;background:#e8d5c0;border:none;cursor:pointer;font-size:1.3rem;color:#3d2b1f;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+  </div>
+
+  <nav style="display:flex;flex-direction:column;gap:1.5rem;padding:2rem 2rem 2rem;">
     <a href="#" style="font-size:22px;color:#c8935a;text-decoration:none;font-weight:500;" onclick="showSection('overview',this);toggleMobileMenu()">Overview</a>
     <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('workshops',this);toggleMobileMenu()">Workshops</a>
     <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('classes',this);toggleMobileMenu()">Classes</a>
@@ -637,8 +669,46 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 <!-- Add Payment -->
 <div class="modal-overlay" id="modal-addPayment">
   <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Payment</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addPayment">
+  <div class="modal">
     <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
     <div class="modal-title">Add Payment</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="pay-date"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="pay-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="form-input" id="pay-type"><option value="income">Income</option><option value="expense">Expense</option></select></div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-input" id="pay-category">
+          <option value="workshop">Workshop</option><option value="class">Class</option>
+          <option value="gig">Gig / Performance</option><option value="sale">Accessory Sale</option>
+          <option value="venue">Venue Rent</option><option value="handpan_rental">Handpan Rental</option>
+          <option value="porter">Porter / Delivery</option><option value="misc">Misc</option>
+        </select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Payment Mode</label>
+        <select class="form-input" id="pay-mode">
+          <option value="Razorpay">Razorpay</option><option value="UPI">UPI</option>
+          <option value="Cash">Cash</option><option value="BMS">BMS</option>
+          <option value="Wise">Wise</option><option value="Other">Other</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Payer / Payee Name</label><input type="text" class="form-input" id="pay-name" placeholder="Name"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" id="pay-desc" placeholder="e.g. Workshop WS-004 booking"/></div>
+    <div class="form-group"><label class="form-label">Reference ID (Workshop / Student)</label><input type="text" class="form-input" id="pay-ref" placeholder="e.g. WS-004 or S-001"/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addPayment')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="savePayment()">Save Payment</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="pay-date"/></div>
       <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="pay-amount" placeholder="0"/></div>
@@ -675,8 +745,34 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 <!-- Add Lead -->
 <div class="modal-overlay" id="modal-addLead">
   <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Lead</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addLead">
+  <div class="modal">
     <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
     <div class="modal-title">Add Lead</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="lead-phone" placeholder="10-digit number"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Workshop Attended</label><input type="text" class="form-input" id="lead-workshop" placeholder="e.g. WS-003"/></div>
+      <div class="form-group"><label class="form-label">Est. Budget (₹)</label><input type="number" class="form-input" id="lead-budget" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-input" id="lead-status"><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div>
+      <div class="form-group"><label class="form-label">Follow-up Date</label><input type="date" class="form-input" id="lead-followup"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="lead-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addLead')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveLead()">Save Lead</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
       <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="lead-phone" placeholder="10-digit number"/></div>
@@ -701,8 +797,41 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 <!-- Add Workshop -->
 <div class="modal-overlay" id="modal-addWorkshop">
   <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Workshop</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addWorkshop">
+  <div class="modal">
     <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
     <div class="modal-title">Add Workshop</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="ws-id" placeholder="e.g. WS-004"/></div>
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ws-date"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Venue</label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">BMS Participants</label><input type="number" class="form-input" id="ws-bms" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">UPI Participants</label><input type="number" class="form-input" id="ws-upi" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Razorpay Participants</label><input type="number" class="form-input" id="ws-rzp" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Price per Head (₹)</label><input type="number" class="form-input" id="ws-price" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Venue Rent (₹)</label><input type="number" class="form-input" id="ws-venue-rent" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Handpan Rental (₹)</label><input type="number" class="form-input" id="ws-hp-rent" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Porter / Delivery (₹)</label><input type="number" class="form-input" id="ws-porter" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Snacks / Misc (₹)</label><input type="number" class="form-input" id="ws-misc" placeholder="0"/></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addWorkshop')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveWorkshop()">Save Workshop</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="ws-id" placeholder="e.g. WS-004"/></div>
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ws-date"/></div>
@@ -734,8 +863,34 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 <!-- Add Student -->
 <div class="modal-overlay" id="modal-addStudent">
   <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Student</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addStudent">
+  <div class="modal">
     <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
     <div class="modal-title">Add Student</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-003"/></div>
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Batch ID</label><input type="text" class="form-input" id="stu-batch" placeholder="e.g. BATCH-001"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="stu-phone" placeholder="Phone number"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Join Date</label><input type="date" class="form-input" id="stu-join"/></div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-input" id="stu-status"><option value="Active">Active</option><option value="On Break">On Break</option><option value="Inactive">Inactive</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="stu-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addStudent')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveStudent()">Save Student</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-003"/></div>
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
@@ -760,8 +915,38 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 <!-- Add Fee Payment -->
 <div class="modal-overlay" id="modal-addFeePayment">
   <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Fee Payment</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addFeePayment">
+  <div class="modal">
     <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
     <div class="modal-title">Add Fee Payment</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Payment ID</label><input type="text" class="form-input" id="fp-id" placeholder="e.g. FP-007"/></div>
+      <div class="form-group"><label class="form-label">Student Name</label><input type="text" class="form-input" id="fp-student" placeholder="Student name"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Batch ID</label><input type="text" class="form-input" id="fp-batch" placeholder="e.g. BATCH-001"/></div>
+      <div class="form-group"><label class="form-label">Month</label><input type="text" class="form-input" id="fp-month" placeholder="e.g. Jun-2026"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Classes</label><input type="number" class="form-input" id="fp-classes" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="fp-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Paid?</label>
+        <select class="form-input" id="fp-paid"><option value="true">Yes</option><option value="false">No</option></select></div>
+      <div class="form-group"><label class="form-label">Payment Date</label><input type="date" class="form-input" id="fp-date"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="fp-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addFeePayment')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveFeePayment()">Save</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Payment ID</label><input type="text" class="form-input" id="fp-id" placeholder="e.g. FP-007"/></div>
       <div class="form-group"><label class="form-label">Student Name</label><input type="text" class="form-input" id="fp-student" placeholder="Student name"/></div>
@@ -790,8 +975,39 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 <!-- Add Participant -->
 <div class="modal-overlay" id="modal-addParticipant">
   <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Participant</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addParticipant">
+  <div class="modal">
     <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
     <div class="modal-title">Add Participant</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Participant ID</label><input type="text" class="form-input" id="par-id" placeholder="e.g. P-0032"/></div>
+      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="par-workshop" placeholder="e.g. WS-004"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="par-phone" placeholder="Phone number"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Booking Source</label><input type="text" class="form-input" id="par-source" placeholder="Instagram / BMS / Razorpay"/></div>
+      <div class="form-group"><label class="form-label">Amount Paid (₹)</label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Payment Mode</label>
+        <select class="form-input" id="par-mode"><option value="Razorpay">Razorpay</option><option value="UPI">UPI</option><option value="BMS">BMS</option><option value="Cash">Cash</option></select></div>
+      <div class="form-group"><label class="form-label">Checked In?</label>
+        <select class="form-input" id="par-checkin"><option value="true">Yes</option><option value="false">No</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="par-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addParticipant')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveParticipant()">Save Participant</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Participant ID</label><input type="text" class="form-input" id="par-id" placeholder="e.g. P-0032"/></div>
       <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="par-workshop" placeholder="e.g. WS-004"/></div>
