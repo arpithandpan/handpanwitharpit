@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard | Handpan with Arpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+/* ── DASHBOARD LAYOUT ── */
+.dash-root { display: flex; min-height: 100vh; padding-top: 0; }
+
+/* Sidebar */
+.dash-sidebar {
+  width: 240px; flex-shrink: 0;
+  background: var(--bark);
+  position: fixed; top: 0; left: 0; bottom: 0;
+  overflow-y: auto; z-index: 100;
+  padding: 2rem 0;
+  transition: transform 0.3s;
+}
+.dash-sidebar-title {
+  font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(240,219,200,0.35); padding: 0 1.5rem; margin-bottom: 1rem;
+}
+.dash-nav { list-style: none; }
+.dash-nav li a {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(240,219,200,0.6); text-decoration: none;
+  transition: all 0.2s; border-left: 2px solid transparent;
+}
+.dash-nav li a:hover { color: var(--clay-light); background: rgba(193,127,82,0.08); }
+.dash-nav li a.active { color: var(--clay-light); border-left-color: var(--clay); background: rgba(193,127,82,0.12); }
+.dash-nav li a .icon { font-size: 1rem; width: 18px; text-align: center; }
+.dash-nav-divider { height: 1px; background: rgba(193,127,82,0.15); margin: 1rem 1.5rem; }
+
+/* Main content */
+.dash-main {
+  margin-left: 240px; flex: 1;
+  background: var(--cream); min-height: 100vh;
+}
+
+/* Section panels */
+.dash-section { display: none; padding: 2.5rem 3rem; }
+.dash-section.active { display: block; }
+
+/* Section header */
+.dash-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--clay-pale);
+}
+.dash-section-title {
+  font-family: var(--font-body); font-size: 1.8rem; font-weight: 400;
+  color: var(--bark);
+}
+.dash-section-subtitle {
+  font-size: 0.9rem; color: var(--text-light); margin-top: 0.25rem;
+}
+
+/* Stat cards */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+.stat-card {
+  background: white; border: 1px solid var(--clay-pale);
+  border-radius: 4px; padding: 1.5rem;
+  transition: box-shadow 0.2s;
+}
+.stat-card:hover { box-shadow: 0 4px 20px rgba(61,43,31,0.08); }
+.stat-label {
+  font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-light); margin-bottom: 0.75rem;
+}
+.stat-value {
+  font-family: var(--font-body); font-size: 2rem; font-weight: 400;
+  color: var(--bark); line-height: 1;
+}
+.stat-value.green { color: var(--moss); }
+.stat-value.clay { color: var(--clay); }
+.stat-sub { font-size: 0.85rem; color: var(--text-light); margin-top: 0.4rem; }
+
+/* Tables */
+.dash-table-wrap { background: white; border: 1px solid var(--clay-pale); border-radius: 4px; overflow: hidden; }
+.dash-table-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--clay-pale);
+  background: var(--sand);
+}
+.dash-table-header-title { font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bark); font-weight: 500; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-light); font-weight: 500;
+  padding: 0.9rem 1.25rem; text-align: left;
+  background: var(--sand); border-bottom: 1px solid var(--clay-pale);
+}
+td {
+  padding: 0.9rem 1.25rem; font-size: 0.95rem; color: var(--text-mid);
+  border-bottom: 1px solid rgba(193,127,82,0.08);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(193,127,82,0.04); }
+
+/* Badges */
+.badge {
+  display: inline-block; font-size: 0.75rem; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 20px;
+}
+.badge-green { background: rgba(122,140,106,0.15); color: var(--moss); }
+.badge-clay  { background: rgba(193,127,82,0.15); color: var(--clay); }
+.badge-red   { background: rgba(180,60,40,0.1); color: #B43C28; }
+.badge-gray  { background: rgba(100,100,100,0.1); color: var(--text-light); }
+.badge-blue  { background: rgba(70,100,160,0.1); color: #4664A0; }
+
+/* Buttons */
+.btn-dash {
+  font-family: var(--font-body); font-size: 0.85rem; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.6rem 1.25rem; border-radius: 3px; cursor: pointer;
+  border: none; transition: all 0.2s; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.btn-dash-primary { background: var(--bark); color: var(--clay-pale); }
+.btn-dash-primary:hover { background: var(--clay); }
+.btn-dash-outline { background: transparent; color: var(--bark); border: 1px solid var(--clay-pale); }
+.btn-dash-outline:hover { border-color: var(--clay); color: var(--clay); }
+.btn-dash-sm { padding: 0.4rem 0.9rem; font-size: 0.78rem; }
+.btn-dash-sync { background: rgba(122,140,106,0.15); color: var(--moss); border: 1px solid rgba(122,140,106,0.3); }
+.btn-dash-sync:hover { background: rgba(122,140,106,0.25); }
+
+/* Forms / Modal */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(61,43,31,0.5); z-index: 500;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-drag-handle {
+  display: none; justify-content: center;
+  padding: 10px 0 4px; margin: 0 -1.5rem;
+}
+.modal-drag-handle span {
+  width: 36px; height: 4px; background: var(--clay-pale); border-radius: 2px;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.modal-close-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--sand); border: none; font-size: 1.1rem;
+  color: var(--bark); cursor: pointer; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+@media (max-width: 900px) {
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal {
+    width: 100%; max-width: 100%; margin: 0;
+    border-radius: 16px 16px 0 0;
+    max-height: 90vh; overflow-y: auto;
+    padding: 0 1.5rem 2rem;
+  }
+  .modal-drag-handle { display: flex; }
+  .modal-header { padding: 0.75rem 0 1rem; }
+}
+.modal {
+  background: var(--cream); border-radius: 6px;
+  padding: 2rem; width: 500px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(61,43,31,0.2);
+}
+.modal-title { font-family: var(--font-body); font-size: 1.4rem; font-weight: 400; color: var(--bark); margin-bottom: 0; }
+.form-group { margin-bottom: 1.25rem; }
+.form-label { display: block; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.5rem; }
+.form-input {
+  width: 100%; padding: 0.7rem 1rem;
+  font-family: var(--font-body); font-size: 0.95rem; color: var(--text-dark);
+  background: white; border: 1px solid var(--clay-pale); border-radius: 3px;
+  transition: border-color 0.2s; outline: none;
+}
+.form-input:focus { border-color: var(--clay); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+/* Login screen */
+.login-screen {
+  position: fixed; inset: 0; background: #3d2b1f;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999; overflow: hidden;
+}
+.login-screen svg.ripple-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+.login-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(200,147,90,0.35);
+  border-radius: 12px;
+  padding: 2.5rem; width: 340px; max-width: 90vw;
+  text-align: center; position: relative; z-index: 1;
+}
+.login-logo { margin: 0 auto 1.5rem; }
+.login-title { font-family: var(--font-body); font-size: 1.6rem; font-weight: 400; color: #e8d5c0; margin-bottom: 0.5rem; }
+.login-sub { font-size: 0.95rem; color: rgba(200,147,90,0.65); margin-bottom: 2rem; }
+.login-error { color: #e8856a; font-size: 0.9rem; margin-top: 0.75rem; display: none; }
+
+/* Loading spinner */
+.loading { text-align: center; padding: 3rem; color: var(--text-light); }
+.spinner {
+  width: 32px; height: 32px; border: 2px solid var(--clay-pale);
+  border-top-color: var(--clay); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin: 0 auto 1rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Charts placeholder */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+.chart-box {
+  background: white; border: 1px solid var(--clay-pale); border-radius: 4px;
+  padding: 1.5rem;
+}
+.chart-box-title { font-size: 0.82rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); margin-bottom: 1.25rem; }
+.chart-bars { display: flex; align-items: flex-end; gap: 0.5rem; height: 120px; }
+.chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; height: 100%; justify-content: flex-end; }
+.chart-bar { width: 100%; background: var(--clay); border-radius: 2px 2px 0 0; min-height: 4px; transition: height 0.5s ease; }
+.chart-bar-label { font-size: 0.75rem; color: var(--text-light); white-space: nowrap; }
+.chart-bar-val { font-size: 0.78rem; color: var(--bark); font-weight: 500; }
+
+/* Overview quick stats row */
+.overview-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+.overview-card { background: white; border: 1px solid var(--clay-pale); border-radius: 4px; overflow: hidden; }
+.overview-card-head { background: var(--sand); padding: 1rem 1.5rem; border-bottom: 1px solid var(--clay-pale); font-size: 0.82rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bark); }
+
+/* Insight tiles */
+.insight-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-bottom: 2rem; }
+.insight-tile { background: white; border: 1px solid var(--clay-pale); border-radius: 4px; padding: 1.5rem; }
+.insight-tile-label { font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.5rem; }
+.insight-tile-val { font-size: 1.6rem; font-weight: 400; color: var(--bark); }
+.insight-tile-sub { font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem; }
+
+/* Notification toast */
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--bark); color: var(--clay-pale);
+  padding: 0.9rem 1.5rem; border-radius: 4px;
+  font-size: 0.9rem; z-index: 999;
+  transform: translateY(100px); opacity: 0;
+  transition: all 0.3s;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: var(--moss); }
+.toast.error { background: #B43C28; }
+
+
+/* Mobile top bar */
+.mobile-topbar {
+  display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+  background: #3d2b1f; padding: 18px 20px;
+  align-items: center; justify-content: space-between;
+}
+.mobile-menu-overlay {
+  display: none; position: fixed; inset: 0; background: #f5ede4;
+  z-index: 500; overflow-y: auto;
+}
+.mobile-menu-overlay.open { display: block; }
+@media (max-width: 900px) {
+  .mobile-topbar { display: flex; }
+  .dash-root { padding-top: 68px; }
+  .dash-sidebar-toggle { display: none !important; }
+}
+
+/* Mobile sidebar toggle */
+.dash-sidebar-toggle {
+  display: none; position: fixed;
+  bottom: 1.5rem; right: 1.5rem; z-index: 300;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--bark); color: var(--clay-pale);
+  border: none; cursor: pointer; font-size: 1.2rem;
+  box-shadow: 0 4px 20px rgba(61,43,31,0.3);
+}
+
+/* Tablet (max 1024px) */
+@media (max-width: 1024px) {
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .dash-section { padding: 2rem; }
+}
+
+/* Mobile & small tablet (max 900px) */
+@media (max-width: 900px) {
+  .dash-sidebar { transform: translateX(-100%); }
+  .dash-sidebar.open { transform: translateX(0); }
+  .dash-main { margin-left: 0; }
+  .dash-section { padding: 1.25rem; }
+  .dash-section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .stats-grid { grid-template-columns: repeat(2,1fr); gap: 0.75rem; }
+  .stat-card { padding: 1rem; }
+  .stat-value { font-size: 1.5rem; }
+  .chart-grid { grid-template-columns: 1fr; }
+  .insight-grid { grid-template-columns: repeat(2,1fr); gap: 0.75rem; }
+  .overview-row { grid-template-columns: 1fr; }
+  .dash-sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+  .form-row { grid-template-columns: 1fr; }
+  /* Make tables scrollable on mobile */
+  .dash-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 600px; }
+  th, td { padding: 0.75rem 1rem; font-size: 0.85rem; }
+  /* Stack dashboard section header buttons */
+  .dash-section-header > div:last-child { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+}
+
+/* Small mobile (max 500px) */
+@media (max-width: 500px) {
+  .dash-section { padding: 1rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .stat-card { padding: 0.85rem; }
+  .stat-value { font-size: 1.3rem; }
+  .stat-label { font-size: 0.72rem; }
+  .insight-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .insight-tile { padding: 1rem; }
+  .insight-tile-val { font-size: 1.3rem; }
+  .dash-section-title { font-size: 1.4rem; }
+  .btn-dash { font-size: 0.78rem; padding: 0.5rem 0.9rem; }
+  .modal-drag-handle {
+  display: none; justify-content: center;
+  padding: 10px 0 4px; margin: 0 -1.5rem;
+}
+.modal-drag-handle span {
+  width: 36px; height: 4px; background: var(--clay-pale); border-radius: 2px;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.modal-close-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--sand); border: none; font-size: 1.1rem;
+  color: var(--bark); cursor: pointer; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+@media (max-width: 900px) {
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal {
+    width: 100%; max-width: 100%; margin: 0;
+    border-radius: 16px 16px 0 0;
+    max-height: 90vh; overflow-y: auto;
+    padding: 0 1.5rem 2rem;
+  }
+  .modal-drag-handle { display: flex; }
+  .modal-header { padding: 0.75rem 0 1rem; }
+}
+.modal { padding: 1.5rem; }
+  .modal-title { font-size: 1.2rem; }
+  /* Login box */
+  .login-box { padding: 2rem 1.5rem; }
+  .login-title { font-size: 1.3rem; }
+}
+
+/* Mobile table cards */
+@media (max-width: 700px) {
+  .dash-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 520px; }
+  th, td { padding: 0.65rem 0.75rem; font-size: 0.82rem; }
+}
+
+
+/* ── MOBILE CARDS (replaces tables on small screens) ── */
+.mobile-cards { display: none; }
+.m-card {
+  background: white; border: 1px solid var(--clay-pale);
+  border-radius: 4px; padding: 1rem; margin-bottom: 0.75rem;
+}
+.m-card-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.25rem 0;
+}
+.m-card-label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
+.m-card-val { font-size: 0.9rem; color: var(--text-dark); text-align: right; max-width: 60%; }
+.m-card-title { font-size: 1rem; font-weight: 500; color: var(--bark); margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--clay-pale); }
+.m-card-divider { height: 1px; background: rgba(193,127,82,0.08); margin: 0.4rem 0; }
+
+@media (max-width: 700px) {
+  .desktop-table { display: none !important; }
+  .mobile-cards { display: block; }
+  .dash-table-wrap { background: transparent; border: none; overflow: hidden; }
+  .dash-table-header { border-radius: 4px; border: 1px solid var(--clay-pale); margin-bottom: 0.75rem; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div class="login-screen" id="loginScreen">
+  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 600 420" preserveAspectRatio="xMidYMid slice" fill="none">
+    <path d="M0 0 C80 0 120 80 100 160 C80 240 0 260 0 340 L0 0Z" fill="rgba(200,147,90,0.12)"/>
+    <path d="M0 0 C60 40 80 120 60 200 C40 280 0 300 0 420 L0 0Z" fill="rgba(200,147,90,0.08)"/>
+    <path d="M600 420 C520 420 480 340 500 260 C520 180 600 160 600 80 L600 420Z" fill="rgba(160,100,40,0.12)"/>
+    <path d="M600 420 C540 380 520 300 540 220 C560 140 600 120 600 0 L600 420Z" fill="rgba(160,100,40,0.07)"/>
+    <path d="M0 420 C100 400 160 340 140 260 C120 180 40 160 80 80 C120 0 200 0 240 0 L0 0 L0 420Z" fill="rgba(180,120,60,0.06)"/>
+    <path d="M600 0 C500 20 440 80 460 160 C480 240 560 260 520 340 C480 420 400 420 360 420 L600 420 L600 0Z" fill="rgba(140,85,30,0.07)"/>
+  </svg>
+  <div class="login-box">
+    <div class="login-logo">
+      <div style="color:#8b5e3c;margin:0 auto;width:48px;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="4" width="18" height="18" rx="4" stroke="#8b5e3c" stroke-width="1.5" fill="none"/>
+          <rect x="26" y="4" width="18" height="18" rx="4" fill="#8b5e3c" opacity="0.9"/>
+          <rect x="4" y="26" width="18" height="18" rx="4" fill="#8b5e3c" opacity="0.5"/>
+          <rect x="26" y="26" width="18" height="18" rx="4" stroke="#8b5e3c" stroke-width="1.5" fill="none"/>
+          
+        </svg>
+      </div>
+    </div>
+    <div class="login-title">Arpit's Studio</div>
+    <div class="login-sub">The numbers behind the notes</div>
+    <div class="form-group">
+      <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" style="text-align:center;letter-spacing:0.15em;background:rgba(255,255,255,0.08);border:1px solid rgba(200,147,90,0.3);color:#e8d5c0;"/>
+    </div>
+    <button class="btn-dash btn-dash-primary" style="width:100%;justify-content:center;padding:1rem;font-size:0.95rem;background:#c8935a;color:#3d2b1f;border:none;font-weight:600;letter-spacing:0.12em;" onclick="doLogin()">LET'S GO</button>
+    <div class="login-error" id="loginError">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- ── NAV ── -->
+
+
+<!-- ── DASHBOARD ROOT ── -->
+<div class="mobile-topbar" id="mobileTopbar" style="display:none;">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <svg width="30" height="30" viewBox="0 0 48 48" fill="none">
+      <rect x="4" y="4" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
+      <rect x="26" y="4" width="18" height="18" rx="4" fill="#c8935a" opacity="0.9"/>
+      <rect x="4" y="26" width="18" height="18" rx="4" fill="#c8935a" opacity="0.5"/>
+      <rect x="26" y="26" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
+    </svg>
+    <span style="font-size:17px;font-weight:500;color:#e8d5c0;">Arpit's Studio</span>
+  </div>
+  <button id="mobileMenuBtn" onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;flex-direction:column;gap:6px;" aria-label="Open menu">
+    <span style="display:block;width:22px;height:2px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
+    <span style="display:block;width:22px;height:2px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
+    <span style="display:block;width:22px;height:2px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
+  </button>
+</div>
+
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" style="position:fixed;">
+
+  <div style="display:flex;align-items:center;justify-content:flex-end;padding:1.25rem 1.5rem;">
+    <button onclick="toggleMobileMenu()" style="width:40px;height:40px;border-radius:50%;background:#e8d5c0;border:none;cursor:pointer;font-size:1.3rem;color:#3d2b1f;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+  </div>
+
+  <nav style="display:flex;flex-direction:column;gap:1.5rem;padding:2rem 2rem 2rem;">
+    <a href="#" style="font-size:22px;color:#c8935a;text-decoration:none;font-weight:500;" onclick="showSection('overview',this);toggleMobileMenu()">Overview</a>
+    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('workshops',this);toggleMobileMenu()">Workshops</a>
+    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('classes',this);toggleMobileMenu()">Classes</a>
+    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('payments',this);toggleMobileMenu()">Payments</a>
+    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('leads',this);toggleMobileMenu()">Leads</a>
+    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('insights',this);toggleMobileMenu()">Insights</a>
+    <div style="border-top:0.5px solid #d4b99a;padding-top:1.25rem;display:flex;flex-direction:column;gap:1rem;">
+      <a href="https://arpitpandey.com" style="font-size:20px;color:#9c7a5e;text-decoration:none;" onclick="toggleMobileMenu()">← arpitpandey.com</a>
+      <a href="#" style="font-size:20px;color:#9c7a5e;text-decoration:none;" onclick="logout();toggleMobileMenu()">Logout</a>
+    </div>
+  </nav>
+</div>
+
+<div class="dash-root" id="dashRoot" style="display:none;">
+  <!-- Sidebar -->
+  <aside class="dash-sidebar" id="dashSidebar">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 1.5rem;margin-bottom:1.5rem;">
+      <svg width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="4" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
+        <rect x="26" y="4" width="18" height="18" rx="4" fill="#c8935a" opacity="0.9"/>
+        <rect x="4" y="26" width="18" height="18" rx="4" fill="#c8935a" opacity="0.5"/>
+        <rect x="26" y="26" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
+        
+      </svg>
+      <div style="font-size:16px;font-weight:500;color:#e8d5c0;letter-spacing:0.02em;">Arpit's Studio</div>
+    </div>
+    <ul class="dash-nav">
+      <li><a href="#" class="active" onclick="showSection('overview',this)"><span class="icon">◈</span> Overview</a></li>
+      <li><a href="#" onclick="showSection('workshops',this)"><span class="icon">◎</span> Workshops</a></li>
+      <li><a href="#" onclick="showSection('classes',this)"><span class="icon">◉</span> Classes</a></li>
+      <li><a href="#" onclick="showSection('payments',this)"><span class="icon">◐</span> Payments</a></li>
+      <li><a href="#" onclick="showSection('leads',this)"><span class="icon">◑</span> Leads</a></li>
+      <li><a href="#" onclick="showSection('insights',this)"><span class="icon">◒</span> Insights</a></li>
+    </ul>
+    <div class="dash-nav-divider"></div>
+    <ul class="dash-nav">
+      <li><a href="#" onclick="logout()"><span class="icon">→</span> Logout</a></li>
+    </ul>
+    <div class="dash-nav-divider"></div>
+    <div style="padding:0 1.5rem 1.5rem;">
+      <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="dash-main">
+
+    <!-- ── OVERVIEW ── -->
+    <section class="dash-section active" id="section-overview">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Overview</div>
+          <div class="dash-section-subtitle">Your business at a glance</div>
+        </div>
+        <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Sync Razorpay</button>
+      </div>
+      <div class="stats-grid" id="overviewStats">
+        <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value clay" id="stat-revenue">—</div><div class="stat-sub">All time</div></div>
+        <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" id="stat-expenses">—</div><div class="stat-sub">All time</div></div>
+        <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="stat-profit">—</div><div class="stat-sub">All time</div></div>
+        <div class="stat-card"><div class="stat-label">Workshops Done</div><div class="stat-value" id="stat-workshops">—</div><div class="stat-sub">Total</div></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Total Participants</div><div class="stat-value" id="stat-participants">—</div><div class="stat-sub">Across all workshops</div></div>
+        <div class="stat-card"><div class="stat-label">Active Students</div><div class="stat-value clay" id="stat-students">—</div><div class="stat-sub">Online classes</div></div>
+        <div class="stat-card"><div class="stat-label">Open Leads</div><div class="stat-value" id="stat-leads">—</div><div class="stat-sub">Handpan buyers</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Margin</div><div class="stat-value green" id="stat-margin">—</div><div class="stat-sub">Per workshop</div></div>
+      </div>
+      <div class="overview-row">
+        <div class="overview-card">
+          <div class="overview-card-head">Recent Workshops</div>
+          <table><thead><tr><th>Workshop</th><th>Date</th><th>Pax</th><th>Revenue</th><th>Profit</th></tr></thead>
+          <tbody id="overviewWorkshops"><tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        </div>
+        <div class="overview-card">
+          <div class="overview-card-head">Recent Payments</div>
+          <table><thead><tr><th>Date</th><th>Name</th><th>Amount</th><th>Mode</th></tr></thead>
+          <tbody id="overviewPayments"><tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── WORKSHOPS ── -->
+    <section class="dash-section" id="section-workshops">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Workshops</div>
+          <div class="dash-section-subtitle" id="workshopCount">Loading...</div>
+        </div>
+        <button class="btn-dash btn-dash-primary" onclick="openModal('addWorkshop')">+ Add Workshop</button>
+      </div>
+      <div class="dash-table-wrap">
+        <table class="desktop-table"><thead><tr><th>WS #</th><th>Date</th><th>Venue</th><th>Participants</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th></tr></thead>
+        <tbody id="workshopsTable"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+      </div>
+      <div style="margin-top:2rem;">
+        <div class="dash-section-header" style="margin-bottom:1rem;">
+          <div class="dash-section-title" style="font-size:1.2rem;">Participants</div>
+          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openModal('addParticipant')">+ Add Participant</button>
+        </div>
+        <div class="dash-table-wrap">
+          <table><thead><tr><th>P #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Amount</th><th>Mode</th><th>Checked In</th><th>Interested</th><th>Notes</th></tr></thead>
+          <tbody id="participantsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CLASSES ── -->
+    <section class="dash-section" id="section-classes">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Classes</div>
+          <div class="dash-section-subtitle">Online students and fee tracking</div>
+        </div>
+        <button class="btn-dash btn-dash-primary" onclick="openModal('addStudent')">+ Add Student</button>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="stat-card"><div class="stat-label">Active Students</div><div class="stat-value clay" id="classActiveStudents">—</div></div>
+        <div class="stat-card"><div class="stat-label">Total Classes Revenue</div><div class="stat-value green" id="classTotalRevenue">—</div></div>
+        <div class="stat-card"><div class="stat-label">Students on Break</div><div class="stat-value" id="classOnBreak">—</div></div>
+      </div>
+      <div class="dash-table-wrap" style="margin-bottom:2rem;">
+        <div class="dash-table-header"><span class="dash-table-header-title">Students</span></div>
+        <table><thead><tr><th>S #</th><th>Name</th><th>Batch</th><th>Phone</th><th>Joined</th><th>Status</th><th>Classes</th><th>Total Paid</th><th>Notes</th></tr></thead>
+        <tbody id="studentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+      </div>
+      <div class="dash-table-wrap">
+        <div class="dash-table-header">
+          <span class="dash-table-header-title">Fee Payments</span>
+          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openModal('addFeePayment')">+ Add Fee Payment</button>
+        </div>
+        <table><thead><tr><th>FP #</th><th>Student</th><th>Batch</th><th>Month</th><th>Classes</th><th>Amount</th><th>Paid</th><th>Date</th><th>Notes</th></tr></thead>
+        <tbody id="feePaymentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+      </div>
+    </section>
+
+    <!-- ── PAYMENTS ── -->
+    <section class="dash-section" id="section-payments">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Payments</div>
+          <div class="dash-section-subtitle">All income and expenses</div>
+        </div>
+        <div style="display:flex;gap:0.75rem;">
+          <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Sync Razorpay</button>
+          <button class="btn-dash btn-dash-primary" onclick="openModal('addPayment')">+ Add Payment</button>
+        </div>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="stat-card"><div class="stat-label">Total Income</div><div class="stat-value clay" id="payTotalIncome">—</div></div>
+        <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" id="payTotalExpenses">—</div></div>
+        <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="payNetProfit">—</div></div>
+      </div>
+      <div class="dash-table-wrap">
+        <table class="desktop-table"><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Category</th><th>Mode</th><th>Amount</th><th>Source</th></tr></thead>
+        <tbody id="paymentsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+      </div>
+    </section>
+
+    <!-- ── LEADS ── -->
+    <section class="dash-section" id="section-leads">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Leads</div>
+          <div class="dash-section-subtitle">People interested in buying a handpan</div>
+        </div>
+        <button class="btn-dash btn-dash-primary" onclick="openModal('addLead')">+ Add Lead</button>
+      </div>
+      <div class="dash-table-wrap">
+        <table><thead><tr><th>Lead #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Added</th><th>Budget</th><th>Status</th><th>Follow-up</th><th>Referred</th><th>Notes</th></tr></thead>
+        <tbody id="leadsTable"><tr><td colspan="10" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+      </div>
+    </section>
+
+    <!-- ── INSIGHTS ── -->
+    <section class="dash-section" id="section-insights">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Insights</div>
+          <div class="dash-section-subtitle">The story of your business in numbers</div>
+        </div>
+      </div>
+      <div class="insight-grid" id="insightTiles">
+        <div class="insight-tile"><div class="insight-tile-label">Best Workshop</div><div class="insight-tile-val" id="ins-best-ws">—</div><div class="insight-tile-sub">Highest net profit</div></div>
+        <div class="insight-tile"><div class="insight-tile-label">Best Margin</div><div class="insight-tile-val" id="ins-best-margin">—</div><div class="insight-tile-sub">% profit on revenue</div></div>
+        <div class="insight-tile"><div class="insight-tile-label">Avg Participants</div><div class="insight-tile-val" id="ins-avg-pax">—</div><div class="insight-tile-sub">Per workshop</div></div>
+        <div class="insight-tile"><div class="insight-tile-label">Workshop Revenue</div><div class="insight-tile-val" id="ins-ws-rev">—</div><div class="insight-tile-sub">Total from workshops</div></div>
+        <div class="insight-tile"><div class="insight-tile-label">Class Revenue</div><div class="insight-tile-val" id="ins-class-rev">—</div><div class="insight-tile-sub">Total from classes</div></div>
+        <div class="insight-tile"><div class="insight-tile-label">Lead Conversion</div><div class="insight-tile-val" id="ins-lead-conv">—</div><div class="insight-tile-sub">Hot leads / total</div></div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-box">
+          <div class="chart-box-title">Revenue by Workshop</div>
+          <div class="chart-bars" id="chartWorkshops"></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-box-title">Income by Category</div>
+          <div class="chart-bars" id="chartCategories"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── MODALS ── -->
+
+<!-- Add Payment -->
+<div class="modal-overlay" id="modal-addPayment">
+  <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Payment</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addPayment">
+  <div class="modal">
+    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
+    <div class="modal-title">Add Payment</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="pay-date"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="pay-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="form-input" id="pay-type"><option value="income">Income</option><option value="expense">Expense</option></select></div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-input" id="pay-category">
+          <option value="workshop">Workshop</option><option value="class">Class</option>
+          <option value="gig">Gig / Performance</option><option value="sale">Accessory Sale</option>
+          <option value="venue">Venue Rent</option><option value="handpan_rental">Handpan Rental</option>
+          <option value="porter">Porter / Delivery</option><option value="misc">Misc</option>
+        </select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Payment Mode</label>
+        <select class="form-input" id="pay-mode">
+          <option value="Razorpay">Razorpay</option><option value="UPI">UPI</option>
+          <option value="Cash">Cash</option><option value="BMS">BMS</option>
+          <option value="Wise">Wise</option><option value="Other">Other</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Payer / Payee Name</label><input type="text" class="form-input" id="pay-name" placeholder="Name"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" id="pay-desc" placeholder="e.g. Workshop WS-004 booking"/></div>
+    <div class="form-group"><label class="form-label">Reference ID (Workshop / Student)</label><input type="text" class="form-input" id="pay-ref" placeholder="e.g. WS-004 or S-001"/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addPayment')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="savePayment()">Save Payment</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="pay-date"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="pay-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="form-input" id="pay-type"><option value="income">Income</option><option value="expense">Expense</option></select></div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-input" id="pay-category">
+          <option value="workshop">Workshop</option><option value="class">Class</option>
+          <option value="gig">Gig / Performance</option><option value="sale">Accessory Sale</option>
+          <option value="venue">Venue Rent</option><option value="handpan_rental">Handpan Rental</option>
+          <option value="porter">Porter / Delivery</option><option value="misc">Misc</option>
+        </select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Payment Mode</label>
+        <select class="form-input" id="pay-mode">
+          <option value="Razorpay">Razorpay</option><option value="UPI">UPI</option>
+          <option value="Cash">Cash</option><option value="BMS">BMS</option>
+          <option value="Wise">Wise</option><option value="Other">Other</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Payer / Payee Name</label><input type="text" class="form-input" id="pay-name" placeholder="Name"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" id="pay-desc" placeholder="e.g. Workshop WS-004 booking"/></div>
+    <div class="form-group"><label class="form-label">Reference ID (Workshop / Student)</label><input type="text" class="form-input" id="pay-ref" placeholder="e.g. WS-004 or S-001"/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addPayment')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="savePayment()">Save Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Lead -->
+<div class="modal-overlay" id="modal-addLead">
+  <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Lead</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addLead">
+  <div class="modal">
+    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
+    <div class="modal-title">Add Lead</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="lead-phone" placeholder="10-digit number"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Workshop Attended</label><input type="text" class="form-input" id="lead-workshop" placeholder="e.g. WS-003"/></div>
+      <div class="form-group"><label class="form-label">Est. Budget (₹)</label><input type="number" class="form-input" id="lead-budget" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-input" id="lead-status"><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div>
+      <div class="form-group"><label class="form-label">Follow-up Date</label><input type="date" class="form-input" id="lead-followup"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="lead-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addLead')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveLead()">Save Lead</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="lead-phone" placeholder="10-digit number"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Workshop Attended</label><input type="text" class="form-input" id="lead-workshop" placeholder="e.g. WS-003"/></div>
+      <div class="form-group"><label class="form-label">Est. Budget (₹)</label><input type="number" class="form-input" id="lead-budget" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-input" id="lead-status"><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div>
+      <div class="form-group"><label class="form-label">Follow-up Date</label><input type="date" class="form-input" id="lead-followup"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="lead-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addLead')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveLead()">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Workshop -->
+<div class="modal-overlay" id="modal-addWorkshop">
+  <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Workshop</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addWorkshop">
+  <div class="modal">
+    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
+    <div class="modal-title">Add Workshop</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="ws-id" placeholder="e.g. WS-004"/></div>
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ws-date"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Venue</label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">BMS Participants</label><input type="number" class="form-input" id="ws-bms" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">UPI Participants</label><input type="number" class="form-input" id="ws-upi" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Razorpay Participants</label><input type="number" class="form-input" id="ws-rzp" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Price per Head (₹)</label><input type="number" class="form-input" id="ws-price" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Venue Rent (₹)</label><input type="number" class="form-input" id="ws-venue-rent" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Handpan Rental (₹)</label><input type="number" class="form-input" id="ws-hp-rent" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Porter / Delivery (₹)</label><input type="number" class="form-input" id="ws-porter" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Snacks / Misc (₹)</label><input type="number" class="form-input" id="ws-misc" placeholder="0"/></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addWorkshop')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveWorkshop()">Save Workshop</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="ws-id" placeholder="e.g. WS-004"/></div>
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ws-date"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Venue</label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">BMS Participants</label><input type="number" class="form-input" id="ws-bms" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">UPI Participants</label><input type="number" class="form-input" id="ws-upi" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Razorpay Participants</label><input type="number" class="form-input" id="ws-rzp" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Price per Head (₹)</label><input type="number" class="form-input" id="ws-price" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Venue Rent (₹)</label><input type="number" class="form-input" id="ws-venue-rent" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Handpan Rental (₹)</label><input type="number" class="form-input" id="ws-hp-rent" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Porter / Delivery (₹)</label><input type="number" class="form-input" id="ws-porter" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Snacks / Misc (₹)</label><input type="number" class="form-input" id="ws-misc" placeholder="0"/></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addWorkshop')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveWorkshop()">Save Workshop</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Student -->
+<div class="modal-overlay" id="modal-addStudent">
+  <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Student</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addStudent">
+  <div class="modal">
+    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
+    <div class="modal-title">Add Student</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-003"/></div>
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Batch ID</label><input type="text" class="form-input" id="stu-batch" placeholder="e.g. BATCH-001"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="stu-phone" placeholder="Phone number"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Join Date</label><input type="date" class="form-input" id="stu-join"/></div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-input" id="stu-status"><option value="Active">Active</option><option value="On Break">On Break</option><option value="Inactive">Inactive</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="stu-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addStudent')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveStudent()">Save Student</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-003"/></div>
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Batch ID</label><input type="text" class="form-input" id="stu-batch" placeholder="e.g. BATCH-001"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="stu-phone" placeholder="Phone number"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Join Date</label><input type="date" class="form-input" id="stu-join"/></div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-input" id="stu-status"><option value="Active">Active</option><option value="On Break">On Break</option><option value="Inactive">Inactive</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="stu-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addStudent')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveStudent()">Save Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Fee Payment -->
+<div class="modal-overlay" id="modal-addFeePayment">
+  <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Fee Payment</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addFeePayment">
+  <div class="modal">
+    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
+    <div class="modal-title">Add Fee Payment</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Payment ID</label><input type="text" class="form-input" id="fp-id" placeholder="e.g. FP-007"/></div>
+      <div class="form-group"><label class="form-label">Student Name</label><input type="text" class="form-input" id="fp-student" placeholder="Student name"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Batch ID</label><input type="text" class="form-input" id="fp-batch" placeholder="e.g. BATCH-001"/></div>
+      <div class="form-group"><label class="form-label">Month</label><input type="text" class="form-input" id="fp-month" placeholder="e.g. Jun-2026"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Classes</label><input type="number" class="form-input" id="fp-classes" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="fp-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Paid?</label>
+        <select class="form-input" id="fp-paid"><option value="true">Yes</option><option value="false">No</option></select></div>
+      <div class="form-group"><label class="form-label">Payment Date</label><input type="date" class="form-input" id="fp-date"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="fp-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addFeePayment')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveFeePayment()">Save</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Payment ID</label><input type="text" class="form-input" id="fp-id" placeholder="e.g. FP-007"/></div>
+      <div class="form-group"><label class="form-label">Student Name</label><input type="text" class="form-input" id="fp-student" placeholder="Student name"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Batch ID</label><input type="text" class="form-input" id="fp-batch" placeholder="e.g. BATCH-001"/></div>
+      <div class="form-group"><label class="form-label">Month</label><input type="text" class="form-input" id="fp-month" placeholder="e.g. Jun-2026"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Classes</label><input type="number" class="form-input" id="fp-classes" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="fp-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Paid?</label>
+        <select class="form-input" id="fp-paid"><option value="true">Yes</option><option value="false">No</option></select></div>
+      <div class="form-group"><label class="form-label">Payment Date</label><input type="date" class="form-input" id="fp-date"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="fp-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addFeePayment')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveFeePayment()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Participant -->
+<div class="modal-overlay" id="modal-addParticipant">
+  <div class="modal">
+    <div class="modal-drag-handle"><span></span></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Participant</div>
+      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addParticipant">
+  <div class="modal">
+    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
+    <div class="modal-title">Add Participant</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Participant ID</label><input type="text" class="form-input" id="par-id" placeholder="e.g. P-0032"/></div>
+      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="par-workshop" placeholder="e.g. WS-004"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="par-phone" placeholder="Phone number"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Booking Source</label><input type="text" class="form-input" id="par-source" placeholder="Instagram / BMS / Razorpay"/></div>
+      <div class="form-group"><label class="form-label">Amount Paid (₹)</label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Payment Mode</label>
+        <select class="form-input" id="par-mode"><option value="Razorpay">Razorpay</option><option value="UPI">UPI</option><option value="BMS">BMS</option><option value="Cash">Cash</option></select></div>
+      <div class="form-group"><label class="form-label">Checked In?</label>
+        <select class="form-input" id="par-checkin"><option value="true">Yes</option><option value="false">No</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="par-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addParticipant')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveParticipant()">Save Participant</button>
+    </div>
+  </div>
+</div>')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Participant ID</label><input type="text" class="form-input" id="par-id" placeholder="e.g. P-0032"/></div>
+      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="par-workshop" placeholder="e.g. WS-004"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="par-phone" placeholder="Phone number"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Booking Source</label><input type="text" class="form-input" id="par-source" placeholder="Instagram / BMS / Razorpay"/></div>
+      <div class="form-group"><label class="form-label">Amount Paid (₹)</label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Payment Mode</label>
+        <select class="form-input" id="par-mode"><option value="Razorpay">Razorpay</option><option value="UPI">UPI</option><option value="BMS">BMS</option><option value="Cash">Cash</option></select></div>
+      <div class="form-group"><label class="form-label">Checked In?</label>
+        <select class="form-input" id="par-checkin"><option value="true">Yes</option><option value="false">No</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="par-notes" placeholder="Any notes..."/></div>
+    <div class="form-actions">
+      <button class="btn-dash btn-dash-outline" onclick="closeModal('addParticipant')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveParticipant()">Save Participant</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Sidebar toggle for mobile -->
+  </nav>
+</div>
+
+<script>
+// ── CONFIG ──
+const API_URL = 'https://901e470f-da9b-43dc-9a0a-aa918b394f01-00-2g35cvy2ruzc0.sisko.replit.dev/api';
+const API_KEY = 'Autumn@963$';
+const DASHBOARD_PASSWORD = 'arpit2026'; // Change this to your own password
+
+// ── AUTH ──
+function doLogin() {
+  const pwd = document.getElementById('loginPassword').value;
+  if (pwd === DASHBOARD_PASSWORD) {
+    sessionStorage.setItem('dash_auth', '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashRoot').style.display = 'flex';
+    if (window.innerWidth <= 900) {
+      document.getElementById('mobileTopbar').style.display = 'flex';
+    }
+    loadAll();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function logout() {
+  sessionStorage.removeItem('dash_auth');
+  location.reload();
+}
+
+// Check if already logged in this session
+if (sessionStorage.getItem('dash_auth') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashRoot').style.display = 'flex';
+  if (window.innerWidth <= 900) {
+    document.getElementById('mobileTopbar').style.display = 'flex';
+  }
+}
+
+// ── API ──
+async function api(endpoint, method = 'GET', body = null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API_URL + endpoint, opts);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  const json = await res.json();
+  // Handle both array response and {data: [...]} response
+  if (Array.isArray(json)) return { data: json };
+  return json;
+}
+
+// ── NAVIGATION ──
+function showSection(name, el) {
+  document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.dash-nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  // close mobile sidebar
+  document.getElementById('dashSidebar').classList.remove('open');
+  // load section data
+  loadSection(name);
+  return false;
+}
+
+function toggleSidebar() {
+  document.getElementById('dashSidebar').classList.toggle('open');
+}
+
+window.addEventListener('resize', function() {
+  if (sessionStorage.getItem('dash_auth') === '1') {
+    const topbar = document.getElementById('mobileTopbar');
+    if (window.innerWidth <= 900) {
+      topbar.style.display = 'flex';
+    } else {
+      topbar.style.display = 'none';
+      document.getElementById('mobileMenuOverlay').classList.remove('open');
+    }
+  }
+});
+
+function toggleMobileMenu() {
+  const overlay = document.getElementById('mobileMenuOverlay');
+  const btn = document.getElementById('mobileMenuBtn');
+  const spans = btn ? btn.querySelectorAll('span') : [];
+  const isOpen = overlay.classList.contains('open');
+  if (isOpen) {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    if (spans.length) {
+      spans[0].style.transform = '';
+      spans[1].style.opacity = '';
+      spans[1].style.transform = '';
+      spans[2].style.transform = '';
+    }
+  } else {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (spans.length) {
+      spans[0].style.transform = 'translateY(8px) rotate(45deg)';
+      spans[1].style.opacity = '0';
+      spans[1].style.transform = 'scaleX(0)';
+      spans[2].style.transform = 'translateY(-8px) rotate(-45deg)';
+    }
+  }
+}
+
+// ── LOAD ALL ──
+function loadAll() {
+  loadSection('overview');
+}
+
+function loadSection(name) {
+  if (name === 'overview') loadOverview();
+  else if (name === 'workshops') { loadWorkshops(); loadParticipants(); }
+  else if (name === 'classes') { loadStudents(); loadFeePayments(); }
+  else if (name === 'payments') loadPayments();
+  else if (name === 'leads') loadLeads();
+  else if (name === 'insights') loadInsights();
+}
+
+// ── FORMAT ──
+const fmt = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+const fmtPct = n => (Number(n || 0) * 100).toFixed(1) + '%';
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '—';
+
+// ── OVERVIEW ──
+async function loadOverview() {
+  try {
+    const [workshops, participants, students, leads, payments] = await Promise.all([
+      api('/workshops'), api('/participants'), api('/students'), api('/leads'), api('/payments')
+    ]);
+
+    const ws = workshops.data || [];
+    const pays = payments.data || [];
+    const stus = students.data || [];
+    const lds = leads.data || [];
+    const parts = participants.data || [];
+
+    const income = pays.filter(p => p.type === 'income').reduce((s, p) => s + Number(p.amount), 0);
+    const expense = pays.filter(p => p.type === 'expense').reduce((s, p) => s + Number(p.amount), 0);
+    const profit = income - expense;
+    const activeStudents = stus.filter(s => s.status === 'Active').length;
+    const openLeads = lds.filter(l => l.status === 'Hot' || l.status === 'Warm').length;
+    const avgMargin = ws.length ? ws.reduce((s, w) => s + Number(w.margin || 0), 0) / ws.length : 0;
+
+    document.getElementById('stat-revenue').textContent = fmt(income);
+    document.getElementById('stat-expenses').textContent = fmt(expense);
+    document.getElementById('stat-profit').textContent = fmt(profit);
+    document.getElementById('stat-workshops').textContent = ws.length;
+    document.getElementById('stat-participants').textContent = parts.length;
+    document.getElementById('stat-students').textContent = activeStudents;
+    document.getElementById('stat-leads').textContent = openLeads;
+    document.getElementById('stat-margin').textContent = fmtPct(avgMargin);
+
+    // Recent workshops
+    const wsTbody = document.getElementById('overviewWorkshops');
+    wsTbody.innerHTML = ws.slice(0,5).map(w => `
+      <tr>
+        <td><strong>${w.id}</strong></td>
+        <td>${fmtDate(w.date)}</td>
+        <td>${w.total_pax || 0}</td>
+        <td>${fmt(w.total_revenue)}</td>
+        <td style="color:var(--moss)">${fmt(w.net_profit)}</td>
+      </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-light);">No workshops yet</td></tr>';
+
+    // Recent payments
+    const payTbody = document.getElementById('overviewPayments');
+    const recentPays = pays.filter(p => p.type === 'income').slice(-8).reverse();
+    payTbody.innerHTML = recentPays.map(p => `
+      <tr>
+        <td>${fmtDate(p.date)}</td>
+        <td>${p.payer_name || '—'}</td>
+        <td style="color:var(--moss)">${fmt(p.amount)}</td>
+        <td><span class="badge badge-clay">${p.payment_mode || '—'}</span></td>
+      </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-light);">No payments yet</td></tr>';
+
+  } catch(e) { showToast('Error loading overview', 'error'); }
+}
+
+// ── WORKSHOPS ──
+async function loadWorkshops() {
+  try {
+    const res = await api('/workshops?order=date:desc');
+    const ws = Array.isArray(res) ? res : (res.data || []);
+    document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
+    document.getElementById('workshopsTable').innerHTML = ws.map(w => `
+      <tr>
+        <td><strong>${w.id}</strong></td>
+        <td>${fmtDate(w.date)}</td>
+        <td>${w.venue || '—'}</td>
+        <td>${w.total_pax || 0}</td>
+        <td>${fmt(w.total_revenue)}</td>
+        <td>${fmt(w.total_expense)}</td>
+        <td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td>
+        <td>${fmtPct(w.margin)}</td>
+      </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--text-light);">No workshops yet</td></tr>';
+    // Add mobile cards for workshops
+    const wsCardsEl = document.getElementById('workshopsCards');
+    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `
+      <div class="m-card">
+        <div class="m-card-title">${w.id} · ${w.venue||'—'}</div>
+        <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(w.date)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div>
+      </div>`).join('') || '<p style="text-align:center;color:var(--text-light);padding:2rem">No workshops yet</p>';
+  } catch(e) { showToast('Error loading workshops', 'error'); }
+}
+
+async function loadParticipants() {
+  try {
+    const res = await api('/participants?order=created_at:desc');
+    const parts = Array.isArray(res) ? res : (res.data || []);
+    document.getElementById('participantsTable').innerHTML = parts.map(p => `
+      <tr>
+        <td>${p.id}</td>
+        <td><strong>${p.full_name || '—'}</strong></td>
+        <td>${p.phone || '—'}</td>
+        <td>${p.workshop_id || '—'}</td>
+        <td>${fmt(p.amount_paid)}</td>
+        <td><span class="badge badge-clay">${p.payment_mode || '—'}</span></td>
+        <td>${p.checked_in ? '<span class="badge badge-green">Yes</span>' : '<span class="badge badge-gray">No</span>'}</td>
+        <td>${p.interested_in_handpan || '—'}</td>
+        <td style="font-size:0.85rem;color:var(--text-light)">${p.notes || '—'}</td>
+      </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text-light);">No participants yet</td></tr>';
+  } catch(e) { showToast('Error loading participants', 'error'); }
+}
+
+// ── CLASSES ──
+async function loadStudents() {
+  try {
+    const res = await api('/students');
+    const stus = Array.isArray(res) ? res : (res.data || []);
+    const active = stus.filter(s => s.status === 'Active').length;
+    const onBreak = stus.filter(s => s.status === 'On Break').length;
+    const totalPaid = stus.reduce((s, st) => s + Number(st.total_paid || 0), 0);
+    document.getElementById('classActiveStudents').textContent = active;
+    document.getElementById('classTotalRevenue').textContent = fmt(totalPaid);
+    document.getElementById('classOnBreak').textContent = onBreak;
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `
+      <tr>
+        <td>${s.id}</td>
+        <td><strong>${s.full_name}</strong></td>
+        <td>${s.batch_id || '—'}</td>
+        <td>${s.phone || '—'}</td>
+        <td>${fmtDate(s.join_date)}</td>
+        <td><span class="badge ${s.status === 'Active' ? 'badge-green' : s.status === 'On Break' ? 'badge-clay' : 'badge-gray'}">${s.status}</span></td>
+        <td>${s.total_classes || 0}</td>
+        <td style="color:var(--moss)">${fmt(s.total_paid)}</td>
+        <td style="font-size:0.85rem;color:var(--text-light)">${s.notes || '—'}</td>
+      </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text-light);">No students yet</td></tr>';
+  } catch(e) { showToast('Error loading students', 'error'); }
+}
+
+async function loadFeePayments() {
+  try {
+    const res = await api('/fee_payments?order=created_at:desc');
+    const fps = Array.isArray(res) ? res : (res.data || []);
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `
+      <tr>
+        <td>${f.id}</td>
+        <td><strong>${f.student_name}</strong></td>
+        <td>${f.batch_id}</td>
+        <td>${f.month}</td>
+        <td>${f.classes}</td>
+        <td>${fmt(f.amount)}</td>
+        <td>${f.paid ? '<span class="badge badge-green">Paid</span>' : f.amount == 0 ? '<span class="badge badge-gray">Break</span>' : '<span class="badge badge-red">Pending</span>'}</td>
+        <td>${fmtDate(f.payment_date)}</td>
+        <td style="font-size:0.85rem;color:var(--text-light)">${f.notes || '—'}</td>
+      </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text-light);">No fee payments yet</td></tr>';
+  } catch(e) { showToast('Error loading fee payments', 'error'); }
+}
+
+// ── PAYMENTS ──
+async function loadPayments() {
+  try {
+    const res = await api('/payments?order=date:desc');
+    const pays = Array.isArray(res) ? res : (res.data || []);
+    const income = pays.filter(p => p.type === 'income').reduce((s, p) => s + Number(p.amount), 0);
+    const expense = pays.filter(p => p.type === 'expense').reduce((s, p) => s + Number(p.amount), 0);
+    document.getElementById('payTotalIncome').textContent = fmt(income);
+    document.getElementById('payTotalExpenses').textContent = fmt(expense);
+    document.getElementById('payNetProfit').textContent = fmt(income - expense);
+    const payRows = pays.map(p => `
+      <tr>
+        <td>${fmtDate(p.date)}</td>
+        <td>${p.description || p.payer_name || '—'}</td>
+        <td><span class="badge ${p.type === 'income' ? 'badge-green' : 'badge-red'}">${p.type}</span></td>
+        <td><span class="badge badge-gray">${p.category || '—'}</span></td>
+        <td><span class="badge badge-clay">${p.payment_mode || '—'}</span></td>
+        <td style="font-weight:500;color:${p.type === 'income' ? 'var(--moss)' : '#B43C28'}">${p.type === 'income' ? '+' : '-'}${fmt(p.amount)}</td>
+        <td>${p.synced_from_razorpay ? '<span class="badge badge-blue">Razorpay</span>' : '<span class="badge badge-gray">Manual</span>'}</td>
+      </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text-light);">No payments yet</td></tr>';
+    document.getElementById('paymentsTable').innerHTML = payRows;
+    // Mobile cards
+    const payCards = document.getElementById('paymentsCards');
+    if (payCards) payCards.innerHTML = pays.map(p => `
+      <div class="m-card">
+        <div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)} &nbsp;<span class="badge badge-clay" style="font-size:0.7rem">${p.payment_mode||'—'}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Type</span><span class="m-card-val"><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></span></div>
+      </div>`).join('') || '<p style="text-align:center;color:var(--text-light);padding:2rem">No payments yet</p>';
+  } catch(e) { showToast('Error loading payments', 'error'); }
+}
+
+// ── LEADS ──
+async function loadLeads() {
+  try {
+    const res = await api('/leads?order=created_at:desc');
+    const leads = Array.isArray(res) ? res : (res.data || []);
+    document.getElementById('leadsTable').innerHTML = leads.map(l => `
+      <tr>
+        <td>${l.id}</td>
+        <td><strong>${l.full_name}</strong></td>
+        <td>${l.phone || '—'}</td>
+        <td>${l.workshop_attended || '—'}</td>
+        <td>${fmtDate(l.date_added)}</td>
+        <td>${l.estimated_budget ? fmt(l.estimated_budget) : '—'}</td>
+        <td><span class="badge ${l.status === 'Hot' ? 'badge-red' : l.status === 'Warm' ? 'badge-clay' : 'badge-gray'}">${l.status || '—'}</span></td>
+        <td>${fmtDate(l.follow_up_date)}</td>
+        <td>${l.referred_friend ? '<span class="badge badge-green">Yes</span>' : '<span class="badge badge-gray">No</span>'}</td>
+        <td style="font-size:0.85rem;color:var(--text-light)">${l.notes || '—'}</td>
+      </tr>`).join('') || '<tr><td colspan="10" style="text-align:center;color:var(--text-light);">No leads yet</td></tr>';
+  } catch(e) { showToast('Error loading leads', 'error'); }
+}
+
+// ── INSIGHTS ──
+async function loadInsights() {
+  try {
+    const [workshops, payments, leads] = await Promise.all([
+      api('/workshops'), api('/payments'), api('/leads')
+    ]);
+    const ws = workshops.data || [];
+    const pays = payments.data || [];
+    const lds = leads.data || [];
+
+    // Best workshop by profit
+    const bestWs = ws.sort((a,b) => Number(b.net_profit) - Number(a.net_profit))[0];
+    document.getElementById('ins-best-ws').textContent = bestWs ? bestWs.id + ' · ' + fmt(bestWs.net_profit) : '—';
+
+    // Best margin
+    const bestMargin = ws.sort((a,b) => Number(b.margin) - Number(a.margin))[0];
+    document.getElementById('ins-best-margin').textContent = bestMargin ? fmtPct(bestMargin.margin) + ' (' + bestMargin.id + ')' : '—';
+
+    // Avg participants
+    const avgPax = ws.length ? Math.round(ws.reduce((s, w) => s + Number(w.total_pax || 0), 0) / ws.length) : 0;
+    document.getElementById('ins-avg-pax').textContent = avgPax;
+
+    // Revenue by category
+    const wsRev = pays.filter(p => p.type === 'income' && p.category === 'workshop').reduce((s, p) => s + Number(p.amount), 0);
+    const classRev = pays.filter(p => p.type === 'income' && p.category === 'class').reduce((s, p) => s + Number(p.amount), 0);
+    document.getElementById('ins-ws-rev').textContent = fmt(wsRev);
+    document.getElementById('ins-class-rev').textContent = fmt(classRev);
+
+    // Lead conversion
+    const hotLeads = lds.filter(l => l.status === 'Hot').length;
+    document.getElementById('ins-lead-conv').textContent = lds.length ? hotLeads + ' / ' + lds.length : '—';
+
+    // Charts
+    buildChartWorkshops(ws);
+    buildChartCategories(pays);
+
+  } catch(e) { showToast('Error loading insights', 'error'); }
+}
+
+function buildChartWorkshops(ws) {
+  const max = Math.max(...ws.map(w => Number(w.total_revenue || 0)));
+  document.getElementById('chartWorkshops').innerHTML = ws.map(w => {
+    const h = max ? Math.round((Number(w.total_revenue) / max) * 100) : 0;
+    return `<div class="chart-bar-wrap">
+      <div class="chart-bar-val">${fmt(w.total_revenue)}</div>
+      <div class="chart-bar" style="height:${h}%"></div>
+      <div class="chart-bar-label">${w.id}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildChartCategories(pays) {
+  const cats = {};
+  pays.filter(p => p.type === 'income').forEach(p => {
+    cats[p.category] = (cats[p.category] || 0) + Number(p.amount);
+  });
+  const entries = Object.entries(cats).sort((a,b) => b[1]-a[1]);
+  const max = Math.max(...entries.map(e => e[1]));
+  document.getElementById('chartCategories').innerHTML = entries.map(([cat, val]) => {
+    const h = max ? Math.round((val / max) * 100) : 0;
+    return `<div class="chart-bar-wrap">
+      <div class="chart-bar-val">${fmt(val)}</div>
+      <div class="chart-bar" style="height:${h}%;background:var(--moss)"></div>
+      <div class="chart-bar-label">${cat}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── SYNC RAZORPAY ──
+async function syncAll() {
+  showToast('Syncing Razorpay payments...', '');
+  try {
+    // In production this will call the Razorpay sync endpoint
+    // For now just refresh payments
+    await loadPayments();
+    showToast('Sync complete!', 'success');
+  } catch(e) {
+    showToast('Sync failed. Try again.', 'error');
+  }
+}
+
+// ── MODALS ──
+function openModal(name) {
+  document.getElementById('modal-' + name).classList.add('open');
+}
+function closeModal(name) {
+  document.getElementById('modal-' + name).classList.remove('open');
+}
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+
+// ── SAVE FUNCTIONS ──
+async function savePayment() {
+  const body = {
+    id: 'PAY-' + Date.now(),
+    date: document.getElementById('pay-date').value,
+    amount: document.getElementById('pay-amount').value,
+    type: document.getElementById('pay-type').value,
+    category: document.getElementById('pay-category').value,
+    payment_mode: document.getElementById('pay-mode').value,
+    payer_name: document.getElementById('pay-name').value,
+    description: document.getElementById('pay-desc').value,
+    reference_id: document.getElementById('pay-ref').value,
+    synced_from_razorpay: false
+  };
+  try {
+    await api('/payments', 'POST', body);
+    closeModal('addPayment');
+    loadPayments();
+    showToast('Payment saved!', 'success');
+  } catch(e) { showToast('Error saving payment', 'error'); }
+}
+
+async function saveLead() {
+  const body = {
+    id: 'L-' + String(Date.now()).slice(-3),
+    full_name: document.getElementById('lead-name').value,
+    phone: document.getElementById('lead-phone').value,
+    workshop_attended: document.getElementById('lead-workshop').value,
+    date_added: new Date().toISOString().split('T')[0],
+    estimated_budget: document.getElementById('lead-budget').value,
+    status: document.getElementById('lead-status').value,
+    follow_up_date: document.getElementById('lead-followup').value,
+    referred_friend: false,
+    notes: document.getElementById('lead-notes').value
+  };
+  try {
+    await api('/leads', 'POST', body);
+    closeModal('addLead');
+    loadLeads();
+    showToast('Lead saved!', 'success');
+  } catch(e) { showToast('Error saving lead', 'error'); }
+}
+
+async function saveWorkshop() {
+  const bms = parseInt(document.getElementById('ws-bms').value) || 0;
+  const upi = parseInt(document.getElementById('ws-upi').value) || 0;
+  const rzp = parseInt(document.getElementById('ws-rzp').value) || 0;
+  const price = parseFloat(document.getElementById('ws-price').value) || 0;
+  const venueRent = parseFloat(document.getElementById('ws-venue-rent').value) || 0;
+  const hpRent = parseFloat(document.getElementById('ws-hp-rent').value) || 0;
+  const porter = parseFloat(document.getElementById('ws-porter').value) || 0;
+  const misc = parseFloat(document.getElementById('ws-misc').value) || 0;
+  const totalPax = bms + upi + rzp;
+  const totalRevenue = totalPax * price;
+  const totalExpense = venueRent + hpRent + porter + misc;
+  const netProfit = totalRevenue - totalExpense;
+  const margin = totalRevenue ? netProfit / totalRevenue : 0;
+  const body = {
+    id: document.getElementById('ws-id').value,
+    date: document.getElementById('ws-date').value,
+    venue: document.getElementById('ws-venue').value,
+    bms_pax: bms, upi_pax: upi, razorpay_pax: rzp,
+    total_pax: totalPax, price_per_head: price,
+    venue_rent: venueRent, handpan_rental: hpRent,
+    porter_delivery: porter, snacks_misc: misc,
+    total_expense: totalExpense, total_revenue: totalRevenue,
+    net_profit: netProfit, margin: margin
+  };
+  try {
+    await api('/workshops', 'POST', body);
+    closeModal('addWorkshop');
+    loadWorkshops();
+    showToast('Workshop saved!', 'success');
+  } catch(e) { showToast('Error saving workshop', 'error'); }
+}
+
+async function saveStudent() {
+  const body = {
+    id: document.getElementById('stu-id').value,
+    full_name: document.getElementById('stu-name').value,
+    batch_id: document.getElementById('stu-batch').value,
+    phone: document.getElementById('stu-phone').value,
+    join_date: document.getElementById('stu-join').value,
+    status: document.getElementById('stu-status').value,
+    total_classes: 0, total_paid: 0,
+    notes: document.getElementById('stu-notes').value
+  };
+  try {
+    await api('/students', 'POST', body);
+    closeModal('addStudent');
+    loadStudents();
+    showToast('Student saved!', 'success');
+  } catch(e) { showToast('Error saving student', 'error'); }
+}
+
+async function saveFeePayment() {
+  const body = {
+    id: document.getElementById('fp-id').value,
+    student_name: document.getElementById('fp-student').value,
+    batch_id: document.getElementById('fp-batch').value,
+    month: document.getElementById('fp-month').value,
+    classes: parseInt(document.getElementById('fp-classes').value) || 0,
+    amount: parseFloat(document.getElementById('fp-amount').value) || 0,
+    paid: document.getElementById('fp-paid').value === 'true',
+    payment_date: document.getElementById('fp-date').value,
+    notes: document.getElementById('fp-notes').value
+  };
+  try {
+    await api('/fee_payments', 'POST', body);
+    closeModal('addFeePayment');
+    loadFeePayments();
+    showToast('Fee payment saved!', 'success');
+  } catch(e) { showToast('Error saving fee payment', 'error'); }
+}
+
+async function saveParticipant() {
+  const body = {
+    id: document.getElementById('par-id').value,
+    workshop_id: document.getElementById('par-workshop').value,
+    date: new Date().toISOString().split('T')[0],
+    full_name: document.getElementById('par-name').value,
+    phone: document.getElementById('par-phone').value,
+    booking_source: document.getElementById('par-source').value,
+    amount_paid: parseFloat(document.getElementById('par-amount').value) || 0,
+    payment_mode: document.getElementById('par-mode').value,
+    checked_in: document.getElementById('par-checkin').value === 'true',
+    notes: document.getElementById('par-notes').value
+  };
+  try {
+    await api('/participants', 'POST', body);
+    closeModal('addParticipant');
+    loadParticipants();
+    showToast('Participant saved!', 'success');
+  } catch(e) { showToast('Error saving participant', 'error'); }
+}
+
+// ── TOAST ──
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+// ── MOBILE NAV ──
+
+// Load if already authenticated
+if (sessionStorage.getItem('dash_auth') === '1') {
+  loadAll();
+}
+
+
+
+</script>
+</body>
+</html>
