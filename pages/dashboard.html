@@ -790,7 +790,7 @@ async function loadOverview() {
 async function loadWorkshops() {
   try {
     const res = await api('/workshops?order=date:desc');
-    const ws = res.data || [];
+    const ws = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
     document.getElementById('workshopsTable').innerHTML = ws.map(w => `
       <tr>
@@ -809,7 +809,7 @@ async function loadWorkshops() {
 async function loadParticipants() {
   try {
     const res = await api('/participants?order=created_at:desc');
-    const parts = res.data || [];
+    const parts = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('participantsTable').innerHTML = parts.map(p => `
       <tr>
         <td>${p.id}</td>
@@ -829,7 +829,7 @@ async function loadParticipants() {
 async function loadStudents() {
   try {
     const res = await api('/students');
-    const stus = res.data || [];
+    const stus = Array.isArray(res) ? res : (res.data || []);
     const active = stus.filter(s => s.status === 'Active').length;
     const onBreak = stus.filter(s => s.status === 'On Break').length;
     const totalPaid = stus.reduce((s, st) => s + Number(st.total_paid || 0), 0);
@@ -854,7 +854,7 @@ async function loadStudents() {
 async function loadFeePayments() {
   try {
     const res = await api('/fee_payments?order=created_at:desc');
-    const fps = res.data || [];
+    const fps = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `
       <tr>
         <td>${f.id}</td>
@@ -874,7 +874,7 @@ async function loadFeePayments() {
 async function loadPayments() {
   try {
     const res = await api('/payments?order=date:desc');
-    const pays = res.data || [];
+    const pays = Array.isArray(res) ? res : (res.data || []);
     const income = pays.filter(p => p.type === 'income').reduce((s, p) => s + Number(p.amount), 0);
     const expense = pays.filter(p => p.type === 'expense').reduce((s, p) => s + Number(p.amount), 0);
     document.getElementById('payTotalIncome').textContent = fmt(income);
@@ -897,7 +897,7 @@ async function loadPayments() {
 async function loadLeads() {
   try {
     const res = await api('/leads?order=created_at:desc');
-    const leads = res.data || [];
+    const leads = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('leadsTable').innerHTML = leads.map(l => `
       <tr>
         <td>${l.id}</td>
