@@ -281,6 +281,37 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   .login-box { padding: 2rem 1.5rem; }
   .login-title { font-size: 1.3rem; }
 }
+
+/* Mobile table cards */
+@media (max-width: 700px) {
+  .dash-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 520px; }
+  th, td { padding: 0.65rem 0.75rem; font-size: 0.82rem; }
+}
+
+
+/* ── MOBILE CARDS (replaces tables on small screens) ── */
+.mobile-cards { display: none; }
+.m-card {
+  background: white; border: 1px solid var(--clay-pale);
+  border-radius: 4px; padding: 1rem; margin-bottom: 0.75rem;
+}
+.m-card-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.25rem 0;
+}
+.m-card-label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
+.m-card-val { font-size: 0.9rem; color: var(--text-dark); text-align: right; max-width: 60%; }
+.m-card-title { font-size: 1rem; font-weight: 500; color: var(--bark); margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--clay-pale); }
+.m-card-divider { height: 1px; background: rgba(193,127,82,0.08); margin: 0.4rem 0; }
+
+@media (max-width: 700px) {
+  .desktop-table { display: none !important; }
+  .mobile-cards { display: block; }
+  .dash-table-wrap { background: transparent; border: none; overflow: hidden; }
+  .dash-table-header { border-radius: 4px; border: 1px solid var(--clay-pale); margin-bottom: 0.75rem; }
+}
+
 </style>
 </head>
 <body>
@@ -385,7 +416,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
         <button class="btn-dash btn-dash-primary" onclick="openModal('addWorkshop')">+ Add Workshop</button>
       </div>
       <div class="dash-table-wrap">
-        <table><thead><tr><th>WS #</th><th>Date</th><th>Venue</th><th>Participants</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th></tr></thead>
+        <table class="desktop-table"><thead><tr><th>WS #</th><th>Date</th><th>Venue</th><th>Participants</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th></tr></thead>
         <tbody id="workshopsTable"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       </div>
       <div style="margin-top:2rem;">
@@ -447,7 +478,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
         <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="payNetProfit">—</div></div>
       </div>
       <div class="dash-table-wrap">
-        <table><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Category</th><th>Mode</th><th>Amount</th><th>Source</th></tr></thead>
+        <table class="desktop-table"><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Category</th><th>Mode</th><th>Amount</th><th>Source</th></tr></thead>
         <tbody id="paymentsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       </div>
     </section>
@@ -837,6 +868,18 @@ async function loadWorkshops() {
         <td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td>
         <td>${fmtPct(w.margin)}</td>
       </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--text-light);">No workshops yet</td></tr>';
+    // Add mobile cards for workshops
+    const wsCardsEl = document.getElementById('workshopsCards');
+    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `
+      <div class="m-card">
+        <div class="m-card-title">${w.id} · ${w.venue||'—'}</div>
+        <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(w.date)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div>
+      </div>`).join('') || '<p style="text-align:center;color:var(--text-light);padding:2rem">No workshops yet</p>';
   } catch(e) { showToast('Error loading workshops', 'error'); }
 }
 
@@ -914,7 +957,7 @@ async function loadPayments() {
     document.getElementById('payTotalIncome').textContent = fmt(income);
     document.getElementById('payTotalExpenses').textContent = fmt(expense);
     document.getElementById('payNetProfit').textContent = fmt(income - expense);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => `
+    const payRows = pays.map(p => `
       <tr>
         <td>${fmtDate(p.date)}</td>
         <td>${p.description || p.payer_name || '—'}</td>
@@ -924,6 +967,17 @@ async function loadPayments() {
         <td style="font-weight:500;color:${p.type === 'income' ? 'var(--moss)' : '#B43C28'}">${p.type === 'income' ? '+' : '-'}${fmt(p.amount)}</td>
         <td>${p.synced_from_razorpay ? '<span class="badge badge-blue">Razorpay</span>' : '<span class="badge badge-gray">Manual</span>'}</td>
       </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text-light);">No payments yet</td></tr>';
+    document.getElementById('paymentsTable').innerHTML = payRows;
+    // Mobile cards
+    const payCards = document.getElementById('paymentsCards');
+    if (payCards) payCards.innerHTML = pays.map(p => `
+      <div class="m-card">
+        <div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)} &nbsp;<span class="badge badge-clay" style="font-size:0.7rem">${p.payment_mode||'—'}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Type</span><span class="m-card-val"><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></span></div>
+      </div>`).join('') || '<p style="text-align:center;color:var(--text-light);padding:2rem">No payments yet</p>';
   } catch(e) { showToast('Error loading payments', 'error'); }
 }
 
