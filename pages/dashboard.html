@@ -224,7 +224,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .toast.success { background: var(--moss); }
 .toast.error { background: #B43C28; }
 
-/* Mobile sidebar */
+/* Mobile sidebar toggle */
 .dash-sidebar-toggle {
   display: none; position: fixed;
   bottom: 1.5rem; right: 1.5rem; z-index: 300;
@@ -234,21 +234,52 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   box-shadow: 0 4px 20px rgba(61,43,31,0.3);
 }
 
+/* Tablet (max 1024px) */
+@media (max-width: 1024px) {
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .dash-section { padding: 2rem; }
+}
+
+/* Mobile & small tablet (max 900px) */
 @media (max-width: 900px) {
   .dash-sidebar { transform: translateX(-100%); }
   .dash-sidebar.open { transform: translateX(0); }
   .dash-main { margin-left: 0; }
-  .dash-section { padding: 1.5rem; }
-  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .dash-section { padding: 1.25rem; }
+  .dash-section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .stats-grid { grid-template-columns: repeat(2,1fr); gap: 0.75rem; }
+  .stat-card { padding: 1rem; }
+  .stat-value { font-size: 1.5rem; }
   .chart-grid { grid-template-columns: 1fr; }
-  .insight-grid { grid-template-columns: repeat(2,1fr); }
+  .insight-grid { grid-template-columns: repeat(2,1fr); gap: 0.75rem; }
   .overview-row { grid-template-columns: 1fr; }
   .dash-sidebar-toggle { display: flex; align-items: center; justify-content: center; }
   .form-row { grid-template-columns: 1fr; }
+  /* Make tables scrollable on mobile */
+  .dash-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 600px; }
+  th, td { padding: 0.75rem 1rem; font-size: 0.85rem; }
+  /* Stack dashboard section header buttons */
+  .dash-section-header > div:last-child { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 }
+
+/* Small mobile (max 500px) */
 @media (max-width: 500px) {
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .insight-grid { grid-template-columns: 1fr 1fr; }
+  .dash-section { padding: 1rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .stat-card { padding: 0.85rem; }
+  .stat-value { font-size: 1.3rem; }
+  .stat-label { font-size: 0.72rem; }
+  .insight-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .insight-tile { padding: 1rem; }
+  .insight-tile-val { font-size: 1.3rem; }
+  .dash-section-title { font-size: 1.4rem; }
+  .btn-dash { font-size: 0.78rem; padding: 0.5rem 0.9rem; }
+  .modal { padding: 1.5rem; }
+  .modal-title { font-size: 1.2rem; }
+  /* Login box */
+  .login-box { padding: 2rem 1.5rem; }
+  .login-title { font-size: 1.3rem; }
 }
 </style>
 </head>
