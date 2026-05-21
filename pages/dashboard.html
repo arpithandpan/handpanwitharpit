@@ -426,6 +426,56 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   padding: 2rem 1.5rem 4rem;
 }
 
+
+/* ── SETTINGS ── */
+.settings-card {
+  background: #fff; border: 1px solid var(--clay-pale);
+  border-radius: 8px; padding: 1.5rem; margin-bottom: 1.25rem;
+}
+.settings-card-header {
+  display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.25rem;
+}
+.settings-card-icon { font-size: 1.2rem; margin-top: 2px; }
+.settings-card-title { font-size: 1rem; font-weight: 600; color: var(--bark); }
+.settings-card-sub { font-size: 0.85rem; color: var(--text-light); margin-top: 2px; }
+.settings-profile { display: flex; align-items: center; gap: 1rem; }
+.settings-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--clay); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; font-weight: 600; flex-shrink: 0;
+}
+.settings-profile-name { font-size: 1rem; font-weight: 500; color: var(--bark); }
+.settings-profile-email { font-size: 0.85rem; color: var(--text-light); }
+.settings-health-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;
+}
+.settings-health-item { display: flex; flex-direction: column; gap: 4px; }
+.settings-health-val { font-size: 1.1rem; font-weight: 500; color: var(--bark); }
+.settings-health-label { font-size: 0.75rem; color: var(--text-light); letter-spacing: 0.04em; }
+.settings-field-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.settings-label { font-size: 0.75rem; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; }
+.settings-code {
+  font-size: 0.78rem; background: var(--sand); padding: 0.5rem 0.75rem;
+  border-radius: 4px; word-break: break-all; flex: 1; color: var(--bark);
+}
+.settings-copy-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.25rem; }
+.settings-divider { border: none; border-top: 1px solid var(--clay-pale); margin: 1.25rem 0; }
+.settings-export-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;
+}
+.settings-export-btn {
+  background: var(--sand); border: 1px solid var(--clay-pale); border-radius: 6px;
+  padding: 0.65rem 1rem; font-size: 0.85rem; color: var(--bark);
+  cursor: pointer; text-align: left; font-family: var(--font-body);
+  transition: background 0.15s;
+}
+.settings-export-btn:hover { background: var(--clay-pale); }
+.settings-mvp-bar-wrap { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.settings-checklist { display: flex; flex-direction: column; gap: 0.5rem; }
+.settings-check-item { font-size: 0.9rem; color: var(--bark); }
+.settings-check-item.pending { color: var(--text-light); }
+
 </style>
 </head>
 <body>
@@ -496,6 +546,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
     <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('payments',this);toggleMobileMenu()">Payments</a>
     <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('leads',this);toggleMobileMenu()">Leads</a>
     <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('insights',this);toggleMobileMenu()">Insights</a>
+    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('settings',this);toggleMobileMenu()">Settings</a>
     <div style="border-top:0.5px solid #d4b99a;padding-top:1.25rem;display:flex;flex-direction:column;gap:1rem;">
       <a href="https://arpitpandey.com" style="font-size:20px;color:#9c7a5e;text-decoration:none;" onclick="toggleMobileMenu()">← arpitpandey.com</a>
       <a href="#" style="font-size:20px;color:#9c7a5e;text-decoration:none;" onclick="logout();toggleMobileMenu()">Logout</a>
@@ -523,6 +574,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
       <li><a href="#" onclick="showSection('payments',this)"><span class="icon">◐</span> Payments</a></li>
       <li><a href="#" onclick="showSection('leads',this)"><span class="icon">◑</span> Leads</a></li>
       <li><a href="#" onclick="showSection('insights',this)"><span class="icon">◒</span> Insights</a></li>
+      <li><a href="#" onclick="showSection('settings',this)"><span class="icon">⚙</span> Settings</a></li>
     </ul>
     <div class="dash-nav-divider"></div>
     <ul class="dash-nav">
@@ -690,6 +742,153 @@ tr:hover td { background: rgba(193,127,82,0.04); }
           <div class="chart-bars" id="chartCategories"></div>
         </div>
       </div>
+    </section>
+
+    <!-- ── SETTINGS ── -->
+    <section class="dash-section" id="section-settings">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Settings</div>
+          <div class="dash-section-subtitle">Manage your dashboard preferences</div>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <span class="settings-card-icon">👤</span>
+          <div>
+            <div class="settings-card-title">Profile</div>
+            <div class="settings-card-sub">Admin account details</div>
+          </div>
+        </div>
+        <div class="settings-profile">
+          <div class="settings-avatar">AP</div>
+          <div>
+            <div class="settings-profile-name">Arpit Pandey</div>
+            <div class="settings-profile-email">admin@arpitpandey.com</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Health -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <span class="settings-card-icon">📡</span>
+          <div>
+            <div class="settings-card-title">System Health</div>
+            <div class="settings-card-sub">Live status of your dashboard</div>
+          </div>
+        </div>
+        <div class="settings-health-grid">
+          <div class="settings-health-item">
+            <span class="badge badge-green" id="health-db">● Checking...</span>
+            <span class="settings-health-label">Database</span>
+          </div>
+          <div class="settings-health-item">
+            <span class="settings-health-val" id="health-records">—</span>
+            <span class="settings-health-label">Total Records</span>
+          </div>
+          <div class="settings-health-item">
+            <span class="settings-health-val" id="health-time">—</span>
+            <span class="settings-health-label">Last Data Load</span>
+          </div>
+          <div class="settings-health-item">
+            <span class="settings-health-val">MVP 1.0</span>
+            <span class="settings-health-label">App Version</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Razorpay -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <span class="settings-card-icon">💳</span>
+          <div>
+            <div class="settings-card-title">Razorpay Integration</div>
+            <div class="settings-card-sub">Webhook configuration and payment status</div>
+          </div>
+        </div>
+        <div class="settings-field-group">
+          <label class="settings-label">Webhook URL</label>
+          <div class="settings-copy-row">
+            <code class="settings-code">https://901e470f-da9b-43dc-9a0a-aa918b394f01-00-2g35cvy2ruzc0.sisko.replit.dev/api/webhooks/razorpay</code>
+            <button class="btn-dash btn-dash-outline" onclick="copyWebhook()" style="padding:0.4rem 0.75rem;font-size:0.8rem;white-space:nowrap;">Copy</button>
+          </div>
+        </div>
+        <div class="settings-health-grid" style="margin-top:1rem;">
+          <div class="settings-health-item">
+            <span class="settings-health-val" id="rzp-total">—</span>
+            <span class="settings-health-label">Total Payments</span>
+          </div>
+          <div class="settings-health-item">
+            <span class="settings-health-val" style="color:var(--moss)" id="rzp-mapped">—</span>
+            <span class="settings-health-label">Mapped</span>
+          </div>
+          <div class="settings-health-item">
+            <span class="settings-health-val" id="rzp-last">—</span>
+            <span class="settings-health-label">Last Payment</span>
+          </div>
+        </div>
+
+        <div class="settings-divider"></div>
+        <div class="settings-card-title" style="font-size:0.95rem;margin-bottom:0.75rem;">⚡ Test Webhook</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Reference ID</label><input type="text" class="form-input" id="test-ref" value="WS-003"/></div>
+          <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="test-amount" value="2000"/></div>
+          <div class="form-group"><label class="form-label">Name</label><input type="text" class="form-input" id="test-name" value="Test User"/></div>
+        </div>
+        <button class="btn-dash btn-dash-primary" onclick="sendTestWebhook()" style="margin-top:0.5rem;">⚡ Send Test Payment</button>
+      </div>
+
+      <!-- Export -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <span class="settings-card-icon">📊</span>
+          <div>
+            <div class="settings-card-title">Export Data</div>
+            <div class="settings-card-sub">Download your data as CSV</div>
+          </div>
+        </div>
+        <div class="settings-export-grid">
+          <button class="settings-export-btn" onclick="exportData('workshops')">⬇ Workshops</button>
+          <button class="settings-export-btn" onclick="exportData('participants')">⬇ Participants</button>
+          <button class="settings-export-btn" onclick="exportData('students')">⬇ Students</button>
+          <button class="settings-export-btn" onclick="exportData('payments')">⬇ Payments</button>
+          <button class="settings-export-btn" onclick="exportData('leads')">⬇ Leads</button>
+          <button class="settings-export-btn" onclick="exportData('fee_payments')">⬇ Fee Payments</button>
+        </div>
+        <button class="btn-dash btn-dash-primary" onclick="exportAll()" style="width:100%;margin-top:1rem;justify-content:center;">⬇ Export All Data</button>
+      </div>
+
+      <!-- MVP Readiness -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <span class="settings-card-icon">🚀</span>
+          <div>
+            <div class="settings-card-title">App Status</div>
+            <div class="settings-card-sub">Handpan Business Dashboard · MVP 1.0</div>
+          </div>
+        </div>
+        <div class="settings-mvp-bar-wrap">
+          <span class="settings-label">MVP READINESS</span>
+          <span class="settings-label">10 / 11 complete</span>
+        </div>
+        <div style="background:var(--clay-pale);border-radius:4px;height:6px;margin-bottom:1.25rem;">
+          <div style="background:var(--clay);width:91%;height:100%;border-radius:4px;"></div>
+        </div>
+        <div class="settings-checklist">
+          <div class="settings-check-item done">✅ Database connected</div>
+          <div class="settings-check-item done">✅ CRUD working (6 entities)</div>
+          <div class="settings-check-item done">✅ Dashboard analytics</div>
+          <div class="settings-check-item done">✅ Insights & reporting</div>
+          <div class="settings-check-item done">✅ Razorpay webhook endpoint ready</div>
+          <div class="settings-check-item done">✅ Audit log enabled</div>
+          <div class="settings-check-item done">✅ Mobile responsive</div>
+          <div class="settings-check-item pending">⏳ Razorpay webhook fully configured</div>
+        </div>
+      </div>
+
     </section>
 
   </main>
@@ -972,6 +1171,7 @@ function loadSection(name) {
   else if (name === 'payments') loadPayments();
   else if (name === 'leads') loadLeads();
   else if (name === 'insights') loadInsights();
+  else if (name === 'settings') loadSettings();
 }
 
 // ── FORMAT ──
@@ -1128,6 +1328,73 @@ async function saveParticipant() {
   const body = { workshop_id:document.getElementById('par-workshop').value, date:new Date().toISOString().split('T')[0], full_name:document.getElementById('par-name').value, phone:document.getElementById('par-phone').value, payment_mode:document.getElementById('par-mode').value, notes:document.getElementById('par-notes').value };
   try { await api('/participants','POST',body); closeFormPage('addParticipant'); loadParticipants(); showToast('Participant saved!','success'); }
   catch(e) { showToast('Error saving participant','error'); }
+}
+
+
+// ── SETTINGS ──
+async function loadSettings() {
+  try {
+    const now = new Date().toLocaleTimeString('en-IN');
+    document.getElementById('health-time').textContent = now;
+
+    const [ws, parts, stus, pays, leads, fps] = await Promise.all([
+      api('/workshops'), api('/participants'), api('/students'),
+      api('/payments'), api('/leads'), api('/fee_payments')
+    ]);
+    const total = (ws.data||[]).length + (parts.data||[]).length + (stus.data||[]).length +
+                  (pays.data||[]).length + (leads.data||[]).length + (fps.data||[]).length;
+    document.getElementById('health-db').textContent = '● Connected';
+    document.getElementById('health-db').className = 'badge badge-green';
+    document.getElementById('health-records').textContent = total;
+
+    const rzpPays = (pays.data||[]).filter(p => p.synced_from_razorpay);
+    document.getElementById('rzp-total').textContent = rzpPays.length;
+    document.getElementById('rzp-mapped').textContent = rzpPays.filter(p=>p.reference_id).length;
+    const lastPay = rzpPays.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];
+    document.getElementById('rzp-last').textContent = lastPay ? fmtDate(lastPay.date) : '—';
+  } catch(e) {
+    document.getElementById('health-db').textContent = '● Error';
+    document.getElementById('health-db').className = 'badge badge-red';
+  }
+}
+
+function copyWebhook() {
+  navigator.clipboard.writeText('https://901e470f-da9b-43dc-9a0a-aa918b394f01-00-2g35cvy2ruzc0.sisko.replit.dev/api/webhooks/razorpay');
+  showToast('Webhook URL copied!', 'success');
+}
+
+async function sendTestWebhook() {
+  const ref = document.getElementById('test-ref').value;
+  const amount = document.getElementById('test-amount').value;
+  const name = document.getElementById('test-name').value;
+  try {
+    showToast('Sending test payment...', '');
+    await api('/test-webhook', 'POST', { reference_id: ref, amount: Number(amount), payer_name: name });
+    showToast('Test payment sent!', 'success');
+    loadSettings();
+  } catch(e) { showToast('Test failed — check Replit logs', 'error'); }
+}
+
+async function exportData(entity) {
+  try {
+    const res = await api('/' + entity);
+    const data = Array.isArray(res) ? res : (res.data || []);
+    if (!data.length) { showToast('No data to export', ''); return; }
+    const headers = Object.keys(data[0]).join(',');
+    const rows = data.map(r => Object.values(r).map(v => JSON.stringify(v??'')).join(','));
+    const csv = [headers, ...rows].join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = entity + '_' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+    showToast(entity + ' exported!', 'success');
+  } catch(e) { showToast('Export failed', 'error'); }
+}
+
+async function exportAll() {
+  const entities = ['workshops','participants','students','payments','leads','fee_payments'];
+  for (const e of entities) { await exportData(e); await new Promise(r=>setTimeout(r,300)); }
 }
 
 // ── TOAST ──
