@@ -50,16 +50,17 @@
 
 /* Section header */
 .dash-section-header {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: flex-start; justify-content: space-between;
   margin-bottom: 2rem; padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--clay-pale);
+  flex-wrap: wrap; gap: 1rem;
 }
 .dash-section-title {
   font-family: var(--font-body); font-size: 1.8rem; font-weight: 400;
-  color: var(--bark);
+  color: var(--bark); display: block;
 }
 .dash-section-subtitle {
-  font-size: 0.9rem; color: var(--text-light); margin-top: 0.25rem;
+  font-size: 0.9rem; color: var(--text-light); margin-top: 0.25rem; display: block;
 }
 
 /* Stat cards */
@@ -270,8 +271,21 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .mobile-menu-overlay {
   display: none; position: fixed; inset: 0; background: #f5ede4;
   z-index: 500; overflow-y: auto; flex-direction: column;
+  width: 100%; box-sizing: border-box;
 }
 .mobile-menu-overlay.open { display: flex; }
+.mobile-menu-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.5rem; background: #3d2b1f;
+  width: 100%; box-sizing: border-box; flex-shrink: 0;
+}
+.mobile-menu-close {
+  width: 44px; height: 44px; border-radius: 8px;
+  background: #c8935a; border: none; cursor: pointer;
+  font-size: 1.3rem; color: #fff; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; line-height: 1;
+}
 @media (max-width: 900px) {
   .mobile-topbar { display: flex; }
   .dash-root { padding-top: 68px; }
@@ -418,13 +432,13 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 }
 .form-page-back {
   display: flex; align-items: center; gap: 0.5rem;
-  background: var(--bark); border: none; cursor: pointer;
-  font-size: 0.9rem; color: var(--clay-pale);
+  background: transparent; border: 1.5px solid rgba(232,213,192,0.45); cursor: pointer;
+  font-size: 0.9rem; color: #e8d5c0;
   font-family: var(--font-body); padding: 0.5rem 1rem;
   border-radius: 4px; font-weight: 500; letter-spacing: 0.05em;
-  text-transform: uppercase;
+  text-transform: uppercase; transition: border-color 0.2s, background 0.2s;
 }
-.form-page-back:hover { background: var(--clay); }
+.form-page-back:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
 .form-page-title {
   font-family: var(--font-body); font-size: 1.1rem;
   font-weight: 400; color: var(--bark);
@@ -521,35 +535,76 @@ body.dark-mode .settings-export-btn { background: #2a2018; color: #e8d5c0; }
 body.dark-mode .overview-card-head { background: #2a2018; }
 
 
-/* Dark mode button fixes */
-body.dark-mode .btn-dash-primary { background: #c8935a; color: #1a1410; }
+/* ── DARK MODE: comprehensive button + UI fixes ── */
+body.dark-mode .btn-dash-primary { background: #c8935a; color: #1a1410; border: none; }
 body.dark-mode .btn-dash-primary:hover { background: #dba870; color: #1a1410; }
-body.dark-mode .btn-dash-outline { color: #e8d5c0; border-color: rgba(200,147,90,0.4); }
-body.dark-mode .btn-dash-outline:hover { border-color: #c8935a; color: #c8935a; }
-body.dark-mode .btn-dash-sync { background: rgba(138,170,110,0.2); color: #8aaa6e; border-color: rgba(138,170,110,0.4); }
-body.dark-mode .badge-green { background: rgba(138,170,110,0.2); color: #8aaa6e; }
-body.dark-mode .badge-clay { background: rgba(200,147,90,0.2); color: #dba870; }
-body.dark-mode .badge-red { background: rgba(180,80,60,0.2); color: #e87a60; }
-body.dark-mode .badge-gray { background: rgba(180,160,140,0.15); color: #b09070; }
-body.dark-mode .form-page-back { background: #c8935a; color: #1a1410; }
-body.dark-mode .form-page-back:hover { background: #dba870; }
-body.dark-mode .btn-archive { color: #9a7d63; }
+body.dark-mode .btn-dash-outline { color: #e8d5c0; border-color: rgba(200,147,90,0.45); background: transparent; }
+body.dark-mode .btn-dash-outline:hover { border-color: #c8935a; color: #c8935a; background: rgba(200,147,90,0.08); }
+body.dark-mode .btn-dash-sync { background: rgba(138,170,110,0.15); color: #8aaa6e; border-color: rgba(138,170,110,0.35); }
+body.dark-mode .btn-dash-sync:hover { background: rgba(138,170,110,0.25); }
+body.dark-mode .btn-archive { color: #7a6354; background: transparent; border: none; }
 body.dark-mode .btn-archive:hover { color: #e87a60; background: rgba(180,80,60,0.15); }
-body.dark-mode .btn-restore { color: #8aaa6e; }
-body.dark-mode .dash-section-header { border-bottom-color: rgba(200,147,90,0.2); }
-body.dark-mode .dash-table-header { background: #2a2018; }
-body.dark-mode td { border-bottom-color: rgba(200,147,90,0.08); }
-body.dark-mode tr:hover td { background: rgba(200,147,90,0.05); }
-body.dark-mode .m-card-title { color: #e8d5c0; border-bottom-color: rgba(200,147,90,0.15); }
-body.dark-mode .m-card-label { color: #9a7d63; }
-body.dark-mode .m-card-val { color: #e8d5c0; }
-body.dark-mode .archived-toggle { color: #9a7d63; }
-body.dark-mode .stat-card { background: #231c16; }
+body.dark-mode .btn-restore { color: #8aaa6e; background: transparent; }
+body.dark-mode .btn-restore:hover { background: rgba(138,170,110,0.15); }
+body.dark-mode .badge-green { background: rgba(138,170,110,0.18); color: #8aaa6e; }
+body.dark-mode .badge-clay { background: rgba(200,147,90,0.18); color: #dba870; }
+body.dark-mode .badge-red { background: rgba(180,80,60,0.18); color: #e87a60; }
+body.dark-mode .badge-gray { background: rgba(180,160,140,0.12); color: #a08878; }
+body.dark-mode .badge-blue { background: rgba(70,100,180,0.18); color: #7a9de0; }
+body.dark-mode .form-page-back { background: transparent; color: #e8d5c0; border: 1.5px solid rgba(232,213,192,0.35); }
+body.dark-mode .form-page-back:hover { background: rgba(232,213,192,0.08); border-color: rgba(232,213,192,0.7); }
+body.dark-mode .form-page-header { background: #1a1410; border-bottom-color: rgba(200,147,90,0.2); }
 body.dark-mode .form-page-title { color: #e8d5c0; }
+body.dark-mode .form-page, body.dark-mode .form-page-scroll { background: #1a1410; }
+body.dark-mode .form-label { color: #c8935a; }
 body.dark-mode .dash-section-title { color: #e8d5c0; }
+body.dark-mode .dash-section-subtitle { color: #7a6354; }
+body.dark-mode .dash-section-header { border-bottom-color: rgba(200,147,90,0.18); }
+body.dark-mode .dash-table-header { background: #2a2018; border-bottom-color: rgba(200,147,90,0.15); }
+body.dark-mode .dash-table-header-title { color: #c8935a; }
+body.dark-mode td { border-bottom-color: rgba(200,147,90,0.07); color: #c4a882; }
+body.dark-mode td strong { color: #e8d5c0; }
+body.dark-mode tr:hover td { background: rgba(200,147,90,0.04); }
+body.dark-mode .stat-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .stat-label { color: #7a6354; }
+body.dark-mode .m-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .m-card-title { color: #e8d5c0; border-bottom-color: rgba(200,147,90,0.15); }
+body.dark-mode .m-card-label { color: #7a6354; }
+body.dark-mode .m-card-val { color: #c4a882; }
+body.dark-mode .archived-toggle { color: #7a6354; }
+body.dark-mode .toggle-track { background: rgba(200,147,90,0.2); border-color: rgba(200,147,90,0.2); }
+body.dark-mode .toggle-track::after { background: #7a6354; }
+body.dark-mode .settings-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .settings-card-title { color: #e8d5c0; }
+body.dark-mode .settings-card-sub { color: #7a6354; }
+body.dark-mode .settings-export-btn { background: #2a2018; color: #c4a882; border-color: rgba(200,147,90,0.2); }
+body.dark-mode .settings-export-btn:hover { background: rgba(200,147,90,0.12); color: #e8d5c0; }
+body.dark-mode .settings-code { background: #2a2018; color: #c4a882; border: 1px solid rgba(200,147,90,0.2); }
+body.dark-mode .settings-health-val { color: #e8d5c0; }
+body.dark-mode .settings-health-label { color: #7a6354; }
+body.dark-mode .settings-label { color: #7a6354; }
+body.dark-mode .settings-profile-name { color: #e8d5c0; }
+body.dark-mode .settings-profile-email { color: #7a6354; }
+body.dark-mode .chart-box { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .chart-box-title { color: #7a6354; }
+body.dark-mode .insight-tile { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .insight-tile-label { color: #7a6354; }
+body.dark-mode .insight-tile-val { color: #e8d5c0; }
+body.dark-mode .overview-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .overview-card-head { background: #2a2018; color: #c8935a; border-bottom-color: rgba(200,147,90,0.15); }
+body.dark-mode .modal { background: #231c16; }
+body.dark-mode .modal-title { color: #e8d5c0; }
+body.dark-mode .modal-close-btn { background: #2a2018; color: #e8d5c0; }
+body.dark-mode .mobile-topbar { background: #0e0b08; }
 body.dark-mode .mobile-menu-overlay { background: #1a1410; }
 body.dark-mode .mobile-menu-overlay a { color: #e8d5c0 !important; }
 body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
+body.dark-mode #darkModeToggle { background: var(--clay) !important; }
+body.dark-mode #darkModeKnob { transform: translateX(24px); background: #fff; }
+body.dark-mode .dash-sidebar { background: #0e0b08; }
+body.dark-mode .dash-main { background: #1a1410; }
+body.dark-mode .login-screen { background: #0a0806; }
+body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 
 /* ── ARCHIVE ── */
 .btn-archive {
@@ -565,11 +620,66 @@ body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
 }
 .btn-restore:hover { background: #f0f5ee; }
 .archived-toggle {
-  display: flex; align-items: center; gap: 0.5rem;
+  display: flex; align-items: center; gap: 0.6rem;
   font-size: 0.85rem; color: var(--text-light); cursor: pointer;
+  user-select: none;
 }
-.archived-toggle input { cursor: pointer; }
+.archived-toggle input[type="checkbox"] { display: none; }
+.toggle-track {
+  width: 36px; height: 20px; border-radius: 10px;
+  background: var(--clay-pale); border: 1.5px solid var(--clay-pale);
+  position: relative; transition: background 0.2s; flex-shrink: 0;
+  cursor: pointer;
+}
+.toggle-track::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--text-light); transition: transform 0.2s, background 0.2s;
+}
+.archived-toggle input:checked + .toggle-track { background: var(--clay); border-color: var(--clay); }
+.archived-toggle input:checked + .toggle-track::after { transform: translateX(16px); background: white; }
 .archived-row { opacity: 0.5; background: #fafafa; }
+body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
+
+
+/* ── MOBILE SPECIFIC FIXES ── */
+@media (max-width: 900px) {
+  .dash-section-header { flex-direction: column; align-items: flex-start; }
+  .dash-section-header > div:first-child { width: 100%; }
+  .dash-section-header > div:last-child, .dash-section-header > button { width: 100%; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .dash-section-header > button { width: auto; }
+  .dash-section-title { font-size: 1.5rem; }
+  .dash-section-subtitle { font-size: 0.85rem; margin-top: 0.2rem; }
+  .settings-card { padding: 1.25rem; }
+  .settings-copy-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .settings-copy-row .btn-dash { width: 100%; justify-content: center; }
+  .settings-export-grid { grid-template-columns: 1fr 1fr; }
+  .settings-health-grid { grid-template-columns: 1fr 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .form-page-header { padding: 0.75rem 1rem; }
+  .form-page-back { padding: 0.45rem 0.85rem; font-size: 0.82rem; }
+  .form-page-title { font-size: 0.95rem; }
+  .form-page-body { padding: 1.25rem 1rem 3rem; }
+  .dash-section-header > div[style*="display:flex"] { flex-wrap: wrap; }
+  .archived-toggle { font-size: 0.82rem; }
+  .btn-dash-sm { font-size: 0.78rem; padding: 0.4rem 0.75rem; }
+  .overview-card table { min-width: unset; }
+  .overview-card th, .overview-card td { padding: 0.6rem 0.75rem; font-size: 0.82rem; }
+  #archiveConfirmModal { padding: 1rem; }
+}
+@media (max-width: 500px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .stat-card { padding: 0.75rem; }
+  .stat-value { font-size: 1.25rem; }
+  .stat-label { font-size: 0.7rem; }
+  .m-card { padding: 0.85rem; }
+  .m-card-title { font-size: 0.95rem; }
+  .m-card-label { font-size: 0.7rem; }
+  .m-card-val { font-size: 0.85rem; }
+  .settings-export-grid { grid-template-columns: 1fr; }
+  .btn-dash { font-size: 0.8rem; padding: 0.5rem 0.85rem; }
+  .dash-section { padding: 0.85rem; }
+}
 
 </style>
 </head>
@@ -630,9 +740,9 @@ body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
 
 <div class="mobile-menu-overlay" id="mobileMenuOverlay" style="position:fixed;">
 
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;background:#3d2b1f;">
+  <div class="mobile-menu-header">
     <span style="font-size:16px;font-weight:600;color:#e8d5c0;letter-spacing:0.12em;text-transform:uppercase;">Menu</span>
-    <button onclick="toggleMobileMenu()" style="width:48px;height:48px;border-radius:8px;background:#c8935a;border:none;cursor:pointer;font-size:1.4rem;color:#fff;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+    <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
   </div>
 
   <nav style="display:flex;flex-direction:column;gap:1.5rem;padding:2rem 2rem 2rem;">
@@ -692,7 +802,7 @@ body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
           <div class="dash-section-title">Overview</div>
           <div class="dash-section-subtitle">Your business at a glance</div>
         </div>
-        <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Sync Razorpay</button>
+        <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Refresh Data</button>
       </div>
       <div class="stats-grid" id="overviewStats">
         <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value clay" id="stat-revenue">—</div><div class="stat-sub">All time</div></div>
@@ -728,7 +838,7 @@ body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
           <div class="dash-section-subtitle" id="workshopCount">Loading...</div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;">
-          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-workshops" onchange="loadWorkshops()"> Show archived</label>
+          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-workshops" onchange="loadWorkshops()"><span class="toggle-track"></span> Show archived</label>
           <button class="btn-dash btn-dash-primary" onclick="openModal('addWorkshop')">+ Add Workshop</button>
         </div>
       </div>
@@ -758,7 +868,7 @@ body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
           <div class="dash-section-subtitle">Online students and fee tracking</div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;">
-          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-students" onchange="loadStudents()"> Show archived</label>
+          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-students" onchange="loadStudents()"><span class="toggle-track"></span> Show archived</label>
           <button class="btn-dash btn-dash-primary" onclick="openModal('addStudent')">+ Add Student</button>
         </div>
       </div>
@@ -778,7 +888,7 @@ body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
           <span class="dash-table-header-title">Fee Payments</span>
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openModal('addFeePayment')">+ Add Fee Payment</button>
         </div>
-        <table class="desktop-table"><thead><tr><th>FP #</th><th>Student</th><th>Batch</th><th>Month</th><th>Classes</th><th>Amount</th><th>Paid</th><th>Date</th><th>Notes</th></tr></thead>
+        <table class="desktop-table"><thead><tr><th>FP #</th><th>Student</th><th>Batch</th><th>Month</th><th>Classes</th><th>Amount</th><th>Paid</th><th>Date</th><th>Action</th></tr></thead>
         <tbody id="feePaymentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards" id="feePaymentsCards"></div>
       </div>
@@ -792,8 +902,8 @@ body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
           <div class="dash-section-subtitle">All income and expenses</div>
         </div>
         <div style="display:flex;gap:0.75rem;">
-          <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Sync Razorpay</button>
-          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-payments" onchange="loadPayments()"> Show archived</label>
+          <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Refresh Data</button>
+          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-payments" onchange="loadPayments()"><span class="toggle-track"></span> Show archived</label>
           <button class="btn-dash btn-dash-primary" onclick="openModal('addPayment')">+ Add Payment</button>
         </div>
       </div>
@@ -817,7 +927,7 @@ body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
           <div class="dash-section-subtitle">People interested in buying a handpan</div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;">
-          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-leads" onchange="loadLeads()"> Show archived</label>
+          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-leads" onchange="loadLeads()"><span class="toggle-track"></span> Show archived</label>
           <button class="btn-dash btn-dash-primary" onclick="openModal('addLead')">+ Add Lead</button>
         </div>
       </div>
@@ -909,23 +1019,20 @@ body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
           <span class="settings-card-icon">📡</span>
           <div>
             <div class="settings-card-title">System Health</div>
-            <div class="settings-card-sub">Live status of your data connection</div>
+            <div class="settings-card-sub">Live status of your Supabase connection</div>
           </div>
         </div>
-        <div class="settings-health-grid" style="grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
+        <div style="display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:1.25rem;flex-wrap:wrap;">
           <div class="settings-health-item">
-            <span class="badge badge-green" id="health-db" style="font-size:0.9rem;padding:0.3rem 0.8rem;">● Checking...</span>
-            <span class="settings-health-label" style="margin-top:6px;">Database</span>
+            <span id="health-db" class="badge badge-green" style="font-size:0.9rem;padding:0.35rem 0.9rem;">● Connected</span>
+            <span class="settings-health-label" style="margin-top:6px;">Supabase</span>
           </div>
           <div class="settings-health-item">
-            <span class="settings-health-val" id="health-records" style="font-size:1.4rem;">—</span>
+            <span class="settings-health-val" id="health-records" style="font-size:1.6rem;font-weight:500;color:var(--bark);">—</span>
             <span class="settings-health-label">Total Records</span>
           </div>
         </div>
-        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-          <button onclick="wakeUpServer()" id="wakeup-btn" style="background:var(--bark);color:var(--clay-pale);border:none;border-radius:6px;padding:0.6rem 1.25rem;font-size:0.9rem;cursor:pointer;font-family:var(--font-body);font-weight:500;">🔄 Reconnect &amp; Reload</button>
-          <button onclick="loadAll();showToast('Data refreshed!','success');" style="background:transparent;color:var(--bark);border:1.5px solid var(--clay-pale);border-radius:6px;padding:0.6rem 1.25rem;font-size:0.9rem;cursor:pointer;font-family:var(--font-body);">↻ Refresh All Data</button>
-        </div>
+        <button onclick="loadAll();showToast('✓ All data refreshed!','success');" class="btn-dash btn-dash-primary" style="padding:0.6rem 1.25rem;">↻ Refresh All Data</button>
       </div>
 
       <!-- Razorpay -->
@@ -1157,6 +1264,28 @@ body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="par-notes" placeholder="Any notes..."/></div>
   </div></div>
+
+<!-- ── ARCHIVE CONFIRM MODAL ── -->
+<div id="archiveConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(61,43,31,0.5);z-index:600;align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:var(--cream);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+    <div style="padding:1.5rem 1.5rem 0;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(180,60,40,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B43C28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </div>
+        <div style="font-size:1rem;font-weight:600;color:var(--bark);">Hide this record?</div>
+      </div>
+      <p style="font-size:0.9rem;color:var(--text-light);line-height:1.5;margin:0 0 1.25rem;">
+        <strong id="archiveConfirmName" style="color:var(--bark);"></strong> will be hidden from the list. It won't be deleted — restore it anytime from "Show archived".
+      </p>
+    </div>
+    <div style="display:flex;border-top:1px solid var(--clay-pale);">
+      <button onclick="closeArchiveConfirm()" style="flex:1;padding:0.9rem;background:transparent;border:none;border-right:1px solid var(--clay-pale);font-size:0.9rem;color:var(--text-light);cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Cancel</button>
+      <button onclick="confirmArchive()" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:0.9rem;color:#B43C28;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Hide it</button>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <script>
@@ -1371,9 +1500,9 @@ async function loadWorkshops() {
 const res = await api('/workshops?order=date:desc' + (showArchivedWorkshops ? '&include_archived=true' : ''));
     const ws = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
-    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td>${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No workshops yet</td></tr>';
+    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td>${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No workshops yet</td></tr>';
     const wsCardsEl = document.getElementById('workshopsCards');
-    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card ${w.archived?'archived-row':''}"><div class="m-card-title">${w.id} · ${w.venue||'—'}<span style="float:right;font-size:0.8rem;color:var(--text-light)">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div><div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">🗑 Archive</button>`}</div></div>`).join('');
+    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card ${w.archived?'archived-row':''}"><div class="m-card-title">${w.id} · ${w.venue||'—'}<span style="float:right;font-size:0.8rem;color:var(--text-light)">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div><div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading workshops', 'error'); }
 }
 async function loadParticipants() {
@@ -1381,9 +1510,9 @@ async function loadParticipants() {
     const showArchivedParticipants = document.getElementById('toggle-archived-participants')?.checked;
 const res = await api('/participants?order=created_at:desc' + (showArchivedParticipants ? '&include_archived=true' : ''));
     const parts = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td>${p.checked_in?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No participants yet</td></tr>';
+    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td>${p.checked_in?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No participants yet</td></tr>';
     const parCards = document.getElementById('participantsCards');
-    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')">🗑 Archive</button>`}</div></div>`).join('');
+    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading participants', 'error'); }
 }
 
@@ -1396,9 +1525,9 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
     document.getElementById('classActiveStudents').textContent = stus.filter(s=>s.status==='Active').length;
     document.getElementById('classTotalRevenue').textContent = fmt(stus.reduce((s,st)=>s+Number(st.total_paid||0),0));
     document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No students yet</td></tr>';
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No students yet</td></tr>';
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')">🗑 Archive</button>`}</div></div>`).join('');
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading students', 'error'); }
 }
 async function loadFeePayments() {
@@ -1406,7 +1535,7 @@ async function loadFeePayments() {
     const showArchivedFee = document.getElementById('toggle-archived-fee')?.checked;
 const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ? '&include_archived=true' : ''));
     const fps = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No fee payments yet</td></tr>';
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No fee payments yet</td></tr>';
     const fpCards = document.getElementById('feePaymentsCards');
     if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card"><div class="m-card-title">${f.student_name} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${f.month}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmt(f.amount)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div></div>`).join('');
   } catch(e) { showToast('Error loading fee payments', 'error'); }
@@ -1423,9 +1552,9 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
     document.getElementById('payTotalIncome').textContent = fmt(income);
     document.getElementById('payTotalExpenses').textContent = fmt(expense);
     document.getElementById('payNetProfit').textContent = fmt(income-expense);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No payments yet</td></tr>';
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No payments yet</td></tr>';
     const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')">🗑 Archive</button>`}</div></div>`).join('');
+    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading payments', 'error'); }
 }
 
@@ -1435,9 +1564,9 @@ async function loadLeads() {
     const showArchivedLeads = document.getElementById('toggle-archived-leads')?.checked;
 const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&include_archived=true' : ''));
     const leads = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No leads yet</td></tr>';
+    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No leads yet</td></tr>';
     const leadsCards = document.getElementById('leadsCards');
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')">🗑 Archive</button>`}</div></div>`).join('');
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading leads', 'error'); }
 }
 
@@ -1465,14 +1594,14 @@ async function loadInsights() {
 
 // ── SYNC ──
 async function syncAll() {
-  showToast('Fetching latest data from Supabase...', '');
+  showToast('Refreshing payments data...', '');
   try {
     await loadPayments();
-    showToast('✓ Data synced successfully!', 'success');
+    showToast('✓ Payments refreshed!', 'success');
   }
   catch(e) {
-    console.error('Sync error:', e);
-    showToast('Sync failed — check your connection', 'error');
+    console.error('Refresh error:', e);
+    showToast('Refresh failed — check your connection', 'error');
   }
 }
 
@@ -1585,13 +1714,26 @@ async function exportAll() {
 
 
 // ── ARCHIVE / RESTORE ──
-async function archiveRecord(entity, id, name) {
-  if (!confirm('Archive "' + name + '"?\nIt will be hidden but not deleted. You can restore it from \"Show archived\".')) return;
+let _archivePending = null;
+function archiveRecord(entity, id, name) {
+  _archivePending = { entity, id, name };
+  document.getElementById('archiveConfirmName').textContent = name;
+  const modal = document.getElementById('archiveConfirmModal');
+  modal.style.display = 'flex';
+}
+function closeArchiveConfirm() {
+  document.getElementById('archiveConfirmModal').style.display = 'none';
+  _archivePending = null;
+}
+async function confirmArchive() {
+  if (!_archivePending) return;
+  const { entity, id, name } = _archivePending;
+  closeArchiveConfirm();
   try {
     await api('/' + entity + '/' + id + '/archive', 'POST');
-    showToast('✓ ' + name + ' archived — tap "Show archived" to undo', 'success');
+    showToast('✓ ' + name + ' hidden — toggle "Show archived" to restore', 'success');
     await reloadEntity(entity);
-  } catch(e) { showToast('Failed to archive — try again', 'error'); }
+  } catch(e) { showToast('Failed to hide record — try again', 'error'); }
 }
 
 async function restoreRecord(entity, id) {
