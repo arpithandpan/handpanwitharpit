@@ -870,7 +870,64 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 </div>
 
 <script>
-// ── FORM PAGE FUNCTIONS ──
+const API_URL = 'https://901e470f-da9b-43dc-9a0a-aa918b394f01-00-2g35cvy2ruzc0.sisko.replit.dev/api';
+const API_KEY = 'Autumn@963$';
+const DASHBOARD_PASSWORD = 'arpit2026';
+
+// ── AUTH ──
+function doLogin() {
+  const pwd = document.getElementById('loginPassword').value;
+  if (pwd === DASHBOARD_PASSWORD) {
+    sessionStorage.setItem('dash_auth', '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashRoot').style.display = 'flex';
+    if (window.innerWidth <= 900) {
+      document.getElementById('mobileTopbar').style.display = 'flex';
+    }
+    loadAll();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function logout() {
+  sessionStorage.removeItem('dash_auth');
+  location.reload();
+}
+
+if (sessionStorage.getItem('dash_auth') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashRoot').style.display = 'flex';
+  if (window.innerWidth <= 900) {
+    document.getElementById('mobileTopbar').style.display = 'flex';
+  }
+}
+
+// ── API ──
+async function api(endpoint, method = 'GET', body = null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API_URL + endpoint, opts);
+  if (!res.ok) throw new Error('API error: ' + res.status);
+  const json = await res.json();
+  if (Array.isArray(json)) return { data: json };
+  return json;
+}
+
+// ── NAVIGATION ──
+function showSection(name, el) {
+  document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.dash-nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('dashSidebar').classList.remove('open');
+  loadSection(name);
+  return false;
+}
+function toggleSidebar() { document.getElementById('dashSidebar').classList.toggle('open'); }
+
+// ── FORM PAGES ──
 function openFormPage(name) {
   document.getElementById('form-' + name).classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -879,10 +936,233 @@ function closeFormPage(name) {
   document.getElementById('form-' + name).classList.remove('open');
   document.body.style.overflow = '';
 }
-
-// Keep backward compat for any openModal calls
 function openModal(name) { openFormPage(name); }
 function closeModal(name) { closeFormPage(name); }
+
+// ── MOBILE MENU ──
+function toggleMobileMenu() {
+  const overlay = document.getElementById('mobileMenuOverlay');
+  const btn = document.getElementById('mobileMenuBtn');
+  const spans = btn ? btn.querySelectorAll('span') : [];
+  const isOpen = overlay.classList.contains('open');
+  if (isOpen) {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    if (spans.length) { spans[0].style.transform=''; spans[1].style.opacity=''; spans[1].style.transform=''; spans[2].style.transform=''; }
+  } else {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (spans.length) { spans[0].style.transform='translateY(8px) rotate(45deg)'; spans[1].style.opacity='0'; spans[1].style.transform='scaleX(0)'; spans[2].style.transform='translateY(-8px) rotate(-45deg)'; }
+  }
+}
+window.addEventListener('resize', function() {
+  if (sessionStorage.getItem('dash_auth') === '1') {
+    const topbar = document.getElementById('mobileTopbar');
+    if (window.innerWidth <= 900) { topbar.style.display = 'flex'; }
+    else { topbar.style.display = 'none'; document.getElementById('mobileMenuOverlay').classList.remove('open'); }
+  }
+});
+
+// ── LOAD ──
+function loadAll() { loadSection('overview'); }
+function loadSection(name) {
+  if (name === 'overview') loadOverview();
+  else if (name === 'workshops') { loadWorkshops(); loadParticipants(); }
+  else if (name === 'classes') { loadStudents(); loadFeePayments(); }
+  else if (name === 'payments') loadPayments();
+  else if (name === 'leads') loadLeads();
+  else if (name === 'insights') loadInsights();
+}
+
+// ── FORMAT ──
+const fmt = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+const fmtPct = n => (Number(n || 0) * 100).toFixed(1) + '%';
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '—';
+
+// ── OVERVIEW ──
+async function loadOverview() {
+  try {
+    const [workshops, participants, students, leads, payments] = await Promise.all([
+      api('/workshops'), api('/participants'), api('/students'), api('/leads'), api('/payments')
+    ]);
+    const ws = workshops.data || []; const pays = payments.data || [];
+    const stus = students.data || []; const lds = leads.data || []; const parts = participants.data || [];
+    const income = pays.filter(p => p.type === 'income').reduce((s, p) => s + Number(p.amount), 0);
+    const expense = pays.filter(p => p.type === 'expense').reduce((s, p) => s + Number(p.amount), 0);
+    document.getElementById('stat-revenue').textContent = fmt(income);
+    document.getElementById('stat-expenses').textContent = fmt(expense);
+    document.getElementById('stat-profit').textContent = fmt(income - expense);
+    document.getElementById('stat-workshops').textContent = ws.length;
+    document.getElementById('stat-participants').textContent = parts.length;
+    document.getElementById('stat-students').textContent = stus.filter(s => s.status === 'Active').length;
+    document.getElementById('stat-leads').textContent = lds.filter(l => l.status === 'Hot' || l.status === 'Warm').length;
+    const avgMargin = ws.length ? ws.reduce((s, w) => s + Number(w.margin || 0), 0) / ws.length : 0;
+    document.getElementById('stat-margin').textContent = fmtPct(avgMargin);
+    document.getElementById('overviewWorkshops').innerHTML = ws.slice(0,5).map(w => `<tr><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td style="color:var(--moss)">${fmt(w.net_profit)}</td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center">No workshops yet</td></tr>';
+    document.getElementById('overviewPayments').innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<tr><td>${fmtDate(p.date)}</td><td>${p.payer_name||'—'}</td><td style="color:var(--moss)">${fmt(p.amount)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td></tr>`).join('') || '<tr><td colspan="4" style="text-align:center">No payments yet</td></tr>';
+  } catch(e) { showToast('Error loading overview', 'error'); }
+}
+
+// ── WORKSHOPS ──
+async function loadWorkshops() {
+  try {
+    const res = await api('/workshops?order=date:desc');
+    const ws = Array.isArray(res) ? res : (res.data || []);
+    document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
+    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No workshops yet</td></tr>';
+    const wsCardsEl = document.getElementById('workshopsCards');
+    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</span></div></div>`).join('');
+  } catch(e) { showToast('Error loading workshops', 'error'); }
+}
+async function loadParticipants() {
+  try {
+    const res = await api('/participants?order=created_at:desc');
+    const parts = Array.isArray(res) ? res : (res.data || []);
+    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td>${p.checked_in?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td style="font-size:0.85rem">${p.notes||'—'}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No participants yet</td></tr>';
+  } catch(e) { showToast('Error loading participants', 'error'); }
+}
+
+// ── CLASSES ──
+async function loadStudents() {
+  try {
+    const res = await api('/students');
+    const stus = Array.isArray(res) ? res : (res.data || []);
+    document.getElementById('classActiveStudents').textContent = stus.filter(s=>s.status==='Active').length;
+    document.getElementById('classTotalRevenue').textContent = fmt(stus.reduce((s,st)=>s+Number(st.total_paid||0),0));
+    document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No students yet</td></tr>';
+  } catch(e) { showToast('Error loading students', 'error'); }
+}
+async function loadFeePayments() {
+  try {
+    const res = await api('/fee_payments?order=created_at:desc');
+    const fps = Array.isArray(res) ? res : (res.data || []);
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No fee payments yet</td></tr>';
+  } catch(e) { showToast('Error loading fee payments', 'error'); }
+}
+
+// ── PAYMENTS ──
+async function loadPayments() {
+  try {
+    const res = await api('/payments?order=date:desc');
+    const pays = Array.isArray(res) ? res : (res.data || []);
+    const income = pays.filter(p=>p.type==='income').reduce((s,p)=>s+Number(p.amount),0);
+    const expense = pays.filter(p=>p.type==='expense').reduce((s,p)=>s+Number(p.amount),0);
+    document.getElementById('payTotalIncome').textContent = fmt(income);
+    document.getElementById('payTotalExpenses').textContent = fmt(expense);
+    document.getElementById('payNetProfit').textContent = fmt(income-expense);
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.synced_from_razorpay?'<span class="badge badge-blue">Razorpay</span>':'<span class="badge badge-gray">Manual</span>'}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No payments yet</td></tr>';
+    const payCards = document.getElementById('paymentsCards');
+    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div></div>`).join('');
+  } catch(e) { showToast('Error loading payments', 'error'); }
+}
+
+// ── LEADS ──
+async function loadLeads() {
+  try {
+    const res = await api('/leads?order=created_at:desc');
+    const leads = Array.isArray(res) ? res : (res.data || []);
+    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${fmtDate(l.date_added)}</td><td>${l.estimated_budget?fmt(l.estimated_budget):'—'}</td><td><span class="badge ${l.status==='Hot'?'badge-red':l.status==='Warm'?'badge-clay':'badge-gray'}">${l.status||'—'}</span></td><td>${fmtDate(l.follow_up_date)}</td><td style="font-size:0.85rem">${l.notes||'—'}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No leads yet</td></tr>';
+  } catch(e) { showToast('Error loading leads', 'error'); }
+}
+
+// ── INSIGHTS ──
+async function loadInsights() {
+  try {
+    const [workshops, payments, leads] = await Promise.all([api('/workshops'), api('/payments'), api('/leads')]);
+    const ws = workshops.data || []; const pays = payments.data || []; const lds = leads.data || [];
+    const bestWs = [...ws].sort((a,b)=>Number(b.net_profit)-Number(a.net_profit))[0];
+    document.getElementById('ins-best-ws').textContent = bestWs ? bestWs.id+' · '+fmt(bestWs.net_profit) : '—';
+    const bestMargin = [...ws].sort((a,b)=>Number(b.margin)-Number(a.margin))[0];
+    document.getElementById('ins-best-margin').textContent = bestMargin ? fmtPct(bestMargin.margin)+' ('+bestMargin.id+')' : '—';
+    document.getElementById('ins-avg-pax').textContent = ws.length ? Math.round(ws.reduce((s,w)=>s+Number(w.total_pax||0),0)/ws.length) : 0;
+    document.getElementById('ins-ws-rev').textContent = fmt(pays.filter(p=>p.type==='income'&&p.category==='workshop').reduce((s,p)=>s+Number(p.amount),0));
+    document.getElementById('ins-class-rev').textContent = fmt(pays.filter(p=>p.type==='income'&&p.category==='class').reduce((s,p)=>s+Number(p.amount),0));
+    const hotLeads = lds.filter(l=>l.status==='Hot').length;
+    document.getElementById('ins-lead-conv').textContent = lds.length ? hotLeads+' / '+lds.length : '—';
+    const max = Math.max(...ws.map(w=>Number(w.total_revenue||0)));
+    document.getElementById('chartWorkshops').innerHTML = ws.map(w=>`<div class="chart-bar-wrap"><div class="chart-bar-val">${fmt(w.total_revenue)}</div><div class="chart-bar" style="height:${max?Math.round(Number(w.total_revenue)/max*100):0}%"></div><div class="chart-bar-label">${w.id}</div></div>`).join('');
+    const cats = {}; pays.filter(p=>p.type==='income').forEach(p=>{cats[p.category]=(cats[p.category]||0)+Number(p.amount);});
+    const entries = Object.entries(cats).sort((a,b)=>b[1]-a[1]); const maxC = Math.max(...entries.map(e=>e[1]));
+    document.getElementById('chartCategories').innerHTML = entries.map(([cat,val])=>`<div class="chart-bar-wrap"><div class="chart-bar-val">${fmt(val)}</div><div class="chart-bar" style="height:${maxC?Math.round(val/maxC*100):0}%;background:var(--moss)"></div><div class="chart-bar-label">${cat}</div></div>`).join('');
+  } catch(e) { showToast('Error loading insights', 'error'); }
+}
+
+// ── SYNC ──
+async function syncAll() {
+  showToast('Syncing Razorpay payments...', '');
+  try { await loadPayments(); showToast('Sync complete!', 'success'); }
+  catch(e) { showToast('Sync failed. Try again.', 'error'); }
+}
+
+// ── SAVE FUNCTIONS ──
+async function savePayment() {
+  const body = { id:'PAY-'+Date.now(), date:document.getElementById('pay-date').value, amount:document.getElementById('pay-amount').value, type:document.getElementById('pay-type').value, category:document.getElementById('pay-category').value, payment_mode:document.getElementById('pay-mode').value, payer_name:document.getElementById('pay-name').value, description:document.getElementById('pay-desc').value, reference_id:document.getElementById('pay-ref').value, synced_from_razorpay:false };
+  try { await api('/payments','POST',body); closeFormPage('addPayment'); loadPayments(); showToast('Payment saved!','success'); }
+  catch(e) { showToast('Error saving payment','error'); }
+}
+async function saveLead() {
+  const body = { id:'L-'+String(Date.now()).slice(-3), full_name:document.getElementById('lead-name').value, phone:document.getElementById('lead-phone').value, workshop_attended:document.getElementById('lead-workshop').value, date_added:new Date().toISOString().split('T')[0], estimated_budget:document.getElementById('lead-budget').value, status:document.getElementById('lead-status').value, follow_up_date:document.getElementById('lead-followup').value, referred_friend:false, notes:document.getElementById('lead-notes').value };
+  try { await api('/leads','POST',body); closeFormPage('addLead'); loadLeads(); showToast('Lead saved!','success'); }
+  catch(e) { showToast('Error saving lead','error'); }
+}
+async function saveWorkshop() {
+  const bms=parseInt(document.getElementById('ws-bms').value)||0, upi=parseInt(document.getElementById('ws-upi').value)||0, rzp=parseInt(document.getElementById('ws-rzp').value)||0, price=parseFloat(document.getElementById('ws-price').value)||0;
+  const venueRent=parseFloat(document.getElementById('ws-venue-rent').value)||0, hpRent=parseFloat(document.getElementById('ws-hp-rent').value)||0, porter=parseFloat(document.getElementById('ws-porter').value)||0, misc=parseFloat(document.getElementById('ws-misc').value)||0;
+  const totalPax=bms+upi+rzp, totalRevenue=totalPax*price, totalExpense=venueRent+hpRent+porter+misc, netProfit=totalRevenue-totalExpense;
+  const body = { id:document.getElementById('ws-id').value, date:document.getElementById('ws-date').value, venue:document.getElementById('ws-venue').value, bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0 };
+  try { await api('/workshops','POST',body); closeFormPage('addWorkshop'); loadWorkshops(); showToast('Workshop saved!','success'); }
+  catch(e) { showToast('Error saving workshop','error'); }
+}
+async function saveStudent() {
+  const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:document.getElementById('stu-phone').value, email:document.getElementById('stu-email').value, join_date:document.getElementById('stu-start').value, status:document.getElementById('stu-status').value, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value };
+  try { await api('/students','POST',body); closeFormPage('addStudent'); loadStudents(); showToast('Student saved!','success'); }
+  catch(e) { showToast('Error saving student','error'); }
+}
+async function saveFeePayment() {
+  const body = { student_id:document.getElementById('fee-student').value, month:document.getElementById('fee-month').value, amount:parseFloat(document.getElementById('fee-amount').value)||0, payment_mode:document.getElementById('fee-mode').value, notes:document.getElementById('fee-notes').value };
+  try { await api('/fee_payments','POST',body); closeFormPage('addFeePayment'); loadFeePayments(); showToast('Fee payment saved!','success'); }
+  catch(e) { showToast('Error saving fee payment','error'); }
+}
+async function saveParticipant() {
+  const body = { workshop_id:document.getElementById('par-workshop').value, date:new Date().toISOString().split('T')[0], full_name:document.getElementById('par-name').value, phone:document.getElementById('par-phone').value, payment_mode:document.getElementById('par-mode').value, notes:document.getElementById('par-notes').value };
+  try { await api('/participants','POST',body); closeFormPage('addParticipant'); loadParticipants(); showToast('Participant saved!','success'); }
+  catch(e) { showToast('Error saving participant','error'); }
+}
+
+// ── TOAST ──
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+// ── LOGIN RIPPLES ──
+(function() {
+  const svg = document.getElementById('loginRippleSvg');
+  const screen = document.getElementById('loginScreen');
+  if (!svg || !screen) return;
+  function spawnRipple() {
+    const W = screen.offsetWidth, H = screen.offsetHeight;
+    const x = Math.random()*W, y = Math.random()*H;
+    const dur = 5+Math.random()*4, waves = 1+Math.floor(Math.random()*3);
+    for (let i=0;i<waves;i++) {
+      const delay = i*(dur/waves);
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',5);
+      c.setAttribute('fill','none'); c.setAttribute('stroke','rgba(200,147,90,0.55)');
+      c.setAttribute('stroke-width',(0.6+Math.random()*0.8).toFixed(1));
+      c.style.animation = 'ripple-expand '+dur+'s '+delay+'s ease-out forwards';
+      svg.appendChild(c);
+      setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},(dur+delay)*1000+200);
+    }
+  }
+  function scheduleNext(){var gap=1500+Math.random()*2000;setTimeout(function(){spawnRipple();scheduleNext();},gap);}
+  spawnRipple();spawnRipple();spawnRipple();scheduleNext();
+})();
+
+if (sessionStorage.getItem('dash_auth') === '1') { loadAll(); }
 </script>
 </body>
 </html>
