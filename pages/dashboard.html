@@ -400,16 +400,21 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .form-page {
   display: none; position: fixed; inset: 0;
   background: var(--cream); z-index: 450;
-  overflow-y: auto; padding: 0;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden; padding: 0;
+  touch-action: none;
 }
-.form-page.open { display: block; }
+.form-page.open { display: flex; flex-direction: column; }
 .form-page-header {
-  position: sticky; top: 0; background: var(--cream);
+  flex-shrink: 0;
+  background: var(--cream);
   border-bottom: 2px solid var(--clay-pale);
   padding: 1rem 1.5rem; display: flex;
   align-items: center; justify-content: space-between;
   z-index: 10;
+}
+.form-page-scroll {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 .form-page-back {
   display: flex; align-items: center; gap: 0.5rem;
@@ -515,6 +520,37 @@ body.dark-mode .settings-code { background: #2a2018; color: #e8d5c0; }
 body.dark-mode .settings-export-btn { background: #2a2018; color: #e8d5c0; }
 body.dark-mode .overview-card-head { background: #2a2018; }
 
+
+/* Dark mode button fixes */
+body.dark-mode .btn-dash-primary { background: #c8935a; color: #1a1410; }
+body.dark-mode .btn-dash-primary:hover { background: #dba870; color: #1a1410; }
+body.dark-mode .btn-dash-outline { color: #e8d5c0; border-color: rgba(200,147,90,0.4); }
+body.dark-mode .btn-dash-outline:hover { border-color: #c8935a; color: #c8935a; }
+body.dark-mode .btn-dash-sync { background: rgba(138,170,110,0.2); color: #8aaa6e; border-color: rgba(138,170,110,0.4); }
+body.dark-mode .badge-green { background: rgba(138,170,110,0.2); color: #8aaa6e; }
+body.dark-mode .badge-clay { background: rgba(200,147,90,0.2); color: #dba870; }
+body.dark-mode .badge-red { background: rgba(180,80,60,0.2); color: #e87a60; }
+body.dark-mode .badge-gray { background: rgba(180,160,140,0.15); color: #b09070; }
+body.dark-mode .form-page-back { background: #c8935a; color: #1a1410; }
+body.dark-mode .form-page-back:hover { background: #dba870; }
+body.dark-mode .btn-archive { color: #9a7d63; }
+body.dark-mode .btn-archive:hover { color: #e87a60; background: rgba(180,80,60,0.15); }
+body.dark-mode .btn-restore { color: #8aaa6e; }
+body.dark-mode .dash-section-header { border-bottom-color: rgba(200,147,90,0.2); }
+body.dark-mode .dash-table-header { background: #2a2018; }
+body.dark-mode td { border-bottom-color: rgba(200,147,90,0.08); }
+body.dark-mode tr:hover td { background: rgba(200,147,90,0.05); }
+body.dark-mode .m-card-title { color: #e8d5c0; border-bottom-color: rgba(200,147,90,0.15); }
+body.dark-mode .m-card-label { color: #9a7d63; }
+body.dark-mode .m-card-val { color: #e8d5c0; }
+body.dark-mode .archived-toggle { color: #9a7d63; }
+body.dark-mode .stat-card { background: #231c16; }
+body.dark-mode .form-page-title { color: #e8d5c0; }
+body.dark-mode .dash-section-title { color: #e8d5c0; }
+body.dark-mode .mobile-menu-overlay { background: #1a1410; }
+body.dark-mode .mobile-menu-overlay a { color: #e8d5c0 !important; }
+body.dark-mode .mobile-menu-overlay span { color: #e8d5c0 !important; }
+
 /* ── ARCHIVE ── */
 .btn-archive {
   background: none; border: none; cursor: pointer;
@@ -594,9 +630,9 @@ body.dark-mode .overview-card-head { background: #2a2018; }
 
 <div class="mobile-menu-overlay" id="mobileMenuOverlay" style="position:fixed;">
 
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid rgba(193,127,82,0.15);">
-    <span style="font-size:18px;font-weight:500;color:#3d2b1f;letter-spacing:0.05em;">Menu</span>
-    <button onclick="toggleMobileMenu()" style="width:44px;height:44px;border-radius:50%;background:#3d2b1f;border:none;cursor:pointer;font-size:1.3rem;color:#f5ede4;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(61,43,31,0.2);">✕</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;background:#3d2b1f;">
+    <span style="font-size:16px;font-weight:600;color:#e8d5c0;letter-spacing:0.12em;text-transform:uppercase;">Menu</span>
+    <button onclick="toggleMobileMenu()" style="width:48px;height:48px;border-radius:8px;background:#c8935a;border:none;cursor:pointer;font-size:1.4rem;color:#fff;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
   </div>
 
   <nav style="display:flex;flex-direction:column;gap:1.5rem;padding:2rem 2rem 2rem;">
@@ -697,8 +733,9 @@ body.dark-mode .overview-card-head { background: #2a2018; }
         </div>
       </div>
       <div class="dash-table-wrap">
-        <table class="desktop-table"><thead><tr><th>WS #</th><th>Date</th><th>Venue</th><th>Participants</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th></tr></thead>
-        <tbody id="workshopsTable"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <table class="desktop-table"><thead><tr><th>WS #</th><th>Date</th><th>Venue</th><th>Participants</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th><th>Action</th></tr></thead>
+        <tbody id="workshopsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <div class="mobile-cards" id="workshopsCards"></div>
       </div>
       <div style="margin-top:2rem;">
         <div class="dash-section-header" style="margin-bottom:1rem;">
@@ -766,8 +803,9 @@ body.dark-mode .overview-card-head { background: #2a2018; }
         <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="payNetProfit">—</div></div>
       </div>
       <div class="dash-table-wrap">
-        <table class="desktop-table"><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Category</th><th>Mode</th><th>Amount</th><th>Source</th></tr></thead>
+        <table class="desktop-table"><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Category</th><th>Mode</th><th>Amount</th><th>Action</th></tr></thead>
         <tbody id="paymentsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <div class="mobile-cards" id="paymentsCards"></div>
       </div>
     </section>
 
@@ -784,7 +822,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
         </div>
       </div>
       <div class="dash-table-wrap">
-        <table class="desktop-table"><thead><tr><th>Lead #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th></tr></thead>
+        <table class="desktop-table"><thead><tr><th>Lead #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th><th>Action</th></tr></thead>
         <tbody id="leadsTable"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards" id="leadsCards"></div>
       </div>
@@ -956,7 +994,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
     <div class="form-page-title">Add Payment</div>
     <button class="btn-dash btn-dash-primary" onclick="savePayment()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="pay-date"/></div>
       <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="pay-amount" placeholder="0"/></div>
@@ -983,7 +1021,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
     </div>
     <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" id="pay-desc" placeholder="e.g. Workshop WS-004 booking"/></div>
     <div class="form-group"><label class="form-label">Reference ID</label><input type="text" class="form-input" id="pay-ref" placeholder="e.g. WS-004 or S-001"/></div>
-  </div>
+  </div></div>
 </div>
 
 <!-- Add Lead -->
@@ -993,7 +1031,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
     <div class="form-page-title">Add Lead</div>
     <button class="btn-dash btn-dash-primary" onclick="saveLead()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
       <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="lead-phone" placeholder="10-digit number"/></div>
@@ -1008,7 +1046,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
       <div class="form-group"><label class="form-label">Follow-up Date</label><input type="date" class="form-input" id="lead-followup"/></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="lead-notes" placeholder="Any notes..."/></div>
-  </div>
+  </div></div>
 </div>
 
 <!-- Add Workshop -->
@@ -1018,7 +1056,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
     <div class="form-page-title">Add Workshop</div>
     <button class="btn-dash btn-dash-primary" onclick="saveWorkshop()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="ws-id" placeholder="e.g. WS-004"/></div>
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ws-date"/></div>
@@ -1040,7 +1078,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
       <div class="form-group"><label class="form-label">Porter / Delivery (₹)</label><input type="number" class="form-input" id="ws-porter" placeholder="0"/></div>
       <div class="form-group"><label class="form-label">Snacks / Misc (₹)</label><input type="number" class="form-input" id="ws-misc" placeholder="0"/></div>
     </div>
-  </div>
+  </div></div>
 </div>
 
 <!-- Add Student -->
@@ -1050,7 +1088,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
     <div class="form-page-title">Add Student</div>
     <button class="btn-dash btn-dash-primary" onclick="saveStudent()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
@@ -1070,7 +1108,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
       <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" id="stu-start"/></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="stu-notes" placeholder="Any notes..."/></div>
-  </div>
+  </div></div>
 </div>
 
 <!-- Add Fee Payment -->
@@ -1080,7 +1118,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
     <div class="form-page-title">Add Fee Payment</div>
     <button class="btn-dash btn-dash-primary" onclick="saveFeePayment()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="fee-student" placeholder="e.g. S-001"/></div>
       <div class="form-group"><label class="form-label">Month</label><input type="month" class="form-input" id="fee-month"/></div>
@@ -1094,7 +1132,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
         </select></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="fee-notes" placeholder="Any notes..."/></div>
-  </div>
+  </div></div>
 </div>
 
 <!-- Add Participant -->
@@ -1104,7 +1142,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
     <div class="form-page-title">Add Participant</div>
     <button class="btn-dash btn-dash-primary" onclick="saveParticipant()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
       <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="par-phone" placeholder="10-digit number"/></div>
@@ -1118,7 +1156,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
         </select></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="par-notes" placeholder="Any notes..."/></div>
-  </div>
+  </div></div>
 </div>
 
 <script>
@@ -1335,7 +1373,7 @@ const res = await api('/workshops?order=date:desc' + (showArchivedWorkshops ? '&
     document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
     document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td>${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No workshops yet</td></tr>';
     const wsCardsEl = document.getElementById('workshopsCards');
-    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</span></div></div>`).join('');
+    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card ${w.archived?'archived-row':''}"><div class="m-card-title">${w.id} · ${w.venue||'—'}<span style="float:right;font-size:0.8rem;color:var(--text-light)">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div><div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">🗑 Archive</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading workshops', 'error'); }
 }
 async function loadParticipants() {
@@ -1345,7 +1383,7 @@ const res = await api('/participants?order=created_at:desc' + (showArchivedParti
     const parts = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td>${p.checked_in?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No participants yet</td></tr>';
     const parCards = document.getElementById('participantsCards');
-    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div></div>`).join('');
+    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')">🗑 Archive</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading participants', 'error'); }
 }
 
@@ -1360,7 +1398,7 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
     document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
     document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No students yet</td></tr>';
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div></div>`).join('');
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')">🗑 Archive</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading students', 'error'); }
 }
 async function loadFeePayments() {
@@ -1387,7 +1425,7 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
     document.getElementById('payNetProfit').textContent = fmt(income-expense);
     document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No payments yet</td></tr>';
     const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div></div>`).join('');
+    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')">🗑 Archive</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading payments', 'error'); }
 }
 
@@ -1399,7 +1437,7 @@ const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&in
     const leads = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No leads yet</td></tr>';
     const leadsCards = document.getElementById('leadsCards');
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div></div>`).join('');
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')">🗑 Archive</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading leads', 'error'); }
 }
 
@@ -1427,20 +1465,26 @@ async function loadInsights() {
 
 // ── SYNC ──
 async function syncAll() {
-  showToast('Syncing Razorpay payments...', '');
-  try { await loadPayments(); showToast('Sync complete!', 'success'); }
-  catch(e) { showToast('Sync failed. Try again.', 'error'); }
+  showToast('Fetching latest data from Supabase...', '');
+  try {
+    await loadPayments();
+    showToast('✓ Data synced successfully!', 'success');
+  }
+  catch(e) {
+    console.error('Sync error:', e);
+    showToast('Sync failed — check your connection', 'error');
+  }
 }
 
 // ── SAVE FUNCTIONS ──
 async function savePayment() {
   const body = { id:'PAY-'+Date.now(), date:document.getElementById('pay-date').value, amount:document.getElementById('pay-amount').value, type:document.getElementById('pay-type').value, category:document.getElementById('pay-category').value, payment_mode:document.getElementById('pay-mode').value, payer_name:document.getElementById('pay-name').value, description:document.getElementById('pay-desc').value, reference_id:document.getElementById('pay-ref').value, synced_from_razorpay:false };
-  try { await sbPost('payments', body); closeFormPage('addPayment'); loadPayments(); showToast('Payment saved!','success'); }
+  try { await sbPost('payments', body); closeFormPage('addPayment'); loadPayments(); showToast('✓ Payment saved successfully!','success'); }
   catch(e) { showToast('Error saving payment','error'); }
 }
 async function saveLead() {
   const body = { id:'L-'+String(Date.now()).slice(-3), full_name:document.getElementById('lead-name').value, phone:document.getElementById('lead-phone').value, workshop_attended:document.getElementById('lead-workshop').value, date_added:new Date().toISOString().split('T')[0], estimated_budget:document.getElementById('lead-budget').value, status:document.getElementById('lead-status').value, follow_up_date:document.getElementById('lead-followup').value, referred_friend:false, notes:document.getElementById('lead-notes').value };
-  try { await sbPost('leads', body); closeFormPage('addLead'); loadLeads(); showToast('Lead saved!','success'); }
+  try { await sbPost('leads', body); closeFormPage('addLead'); loadLeads(); showToast('✓ Lead saved successfully!','success'); }
   catch(e) { showToast('Error saving lead','error'); }
 }
 async function saveWorkshop() {
@@ -1448,22 +1492,22 @@ async function saveWorkshop() {
   const venueRent=parseFloat(document.getElementById('ws-venue-rent').value)||0, hpRent=parseFloat(document.getElementById('ws-hp-rent').value)||0, porter=parseFloat(document.getElementById('ws-porter').value)||0, misc=parseFloat(document.getElementById('ws-misc').value)||0;
   const totalPax=bms+upi+rzp, totalRevenue=totalPax*price, totalExpense=venueRent+hpRent+porter+misc, netProfit=totalRevenue-totalExpense;
   const body = { id:document.getElementById('ws-id').value, date:document.getElementById('ws-date').value, venue:document.getElementById('ws-venue').value, bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0 };
-  try { await sbPost('workshops', body); closeFormPage('addWorkshop'); loadWorkshops(); showToast('Workshop saved!','success'); }
+  try { await sbPost('workshops', body); closeFormPage('addWorkshop'); loadWorkshops(); showToast('✓ Workshop saved successfully!','success'); }
   catch(e) { showToast('Error saving workshop','error'); }
 }
 async function saveStudent() {
   const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:document.getElementById('stu-phone').value, email:document.getElementById('stu-email').value, join_date:document.getElementById('stu-start').value, status:document.getElementById('stu-status').value, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value };
-  try { await sbPost('students', body); closeFormPage('addStudent'); loadStudents(); showToast('Student saved!','success'); }
+  try { await sbPost('students', body); closeFormPage('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success'); }
   catch(e) { showToast('Error saving student','error'); }
 }
 async function saveFeePayment() {
   const body = { student_id:document.getElementById('fee-student').value, month:document.getElementById('fee-month').value, amount:parseFloat(document.getElementById('fee-amount').value)||0, payment_mode:document.getElementById('fee-mode').value, notes:document.getElementById('fee-notes').value };
-  try { await sbPost('fee_payments', body); closeFormPage('addFeePayment'); loadFeePayments(); showToast('Fee payment saved!','success'); }
+  try { await sbPost('fee_payments', body); closeFormPage('addFeePayment'); loadFeePayments(); showToast('✓ Fee payment saved!','success'); }
   catch(e) { showToast('Error saving fee payment','error'); }
 }
 async function saveParticipant() {
   const body = { workshop_id:document.getElementById('par-workshop').value, date:new Date().toISOString().split('T')[0], full_name:document.getElementById('par-name').value, phone:document.getElementById('par-phone').value, payment_mode:document.getElementById('par-mode').value, notes:document.getElementById('par-notes').value };
-  try { await sbPost('participants', body); closeFormPage('addParticipant'); loadParticipants(); showToast('Participant saved!','success'); }
+  try { await sbPost('participants', body); closeFormPage('addParticipant'); loadParticipants(); showToast('✓ Participant saved successfully!','success'); }
   catch(e) { showToast('Error saving participant','error'); }
 }
 
@@ -1542,20 +1586,20 @@ async function exportAll() {
 
 // ── ARCHIVE / RESTORE ──
 async function archiveRecord(entity, id, name) {
-  if (!confirm('Archive "' + name + '"? It will be hidden but not deleted. You can restore it anytime.')) return;
+  if (!confirm('Archive "' + name + '"?\nIt will be hidden but not deleted. You can restore it from \"Show archived\".')) return;
   try {
     await api('/' + entity + '/' + id + '/archive', 'POST');
-    showToast(name + ' archived', 'success');
+    showToast('✓ ' + name + ' archived — tap "Show archived" to undo', 'success');
     await reloadEntity(entity);
-  } catch(e) { showToast('Failed to archive', 'error'); }
+  } catch(e) { showToast('Failed to archive — try again', 'error'); }
 }
 
 async function restoreRecord(entity, id) {
   try {
     await api('/' + entity + '/' + id + '/unarchive', 'POST');
-    showToast('Restored successfully', 'success');
+    showToast('✓ Restored successfully!', 'success');
     await reloadEntity(entity);
-  } catch(e) { showToast('Failed to restore', 'error'); }
+  } catch(e) { showToast('Failed to restore — try again', 'error'); }
 }
 
 async function reloadEntity(entity) {
