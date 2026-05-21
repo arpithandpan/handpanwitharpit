@@ -1227,7 +1227,8 @@ async function loadOverview() {
 // ── WORKSHOPS ──
 async function loadWorkshops() {
   try {
-    const res = await api('/workshops?order=date:desc&include_archived=true');
+    const showArchivedWorkshops = document.getElementById('toggle-archived-workshops')?.checked;
+const res = await api('/workshops?order=date:desc' + (showArchivedWorkshops ? '&include_archived=true' : ''));
     const ws = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
     document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td>${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No workshops yet</td></tr>';
@@ -1237,7 +1238,8 @@ async function loadWorkshops() {
 }
 async function loadParticipants() {
   try {
-    const res = await api('/participants?order=created_at:desc&include_archived=true');
+    const showArchivedParticipants = document.getElementById('toggle-archived-participants')?.checked;
+const res = await api('/participants?order=created_at:desc' + (showArchivedParticipants ? '&include_archived=true' : ''));
     const parts = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td>${p.checked_in?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No participants yet</td></tr>';
   } catch(e) { showToast('Error loading participants', 'error'); }
@@ -1246,7 +1248,8 @@ async function loadParticipants() {
 // ── CLASSES ──
 async function loadStudents() {
   try {
-    const res = await api('/students?include_archived=true');
+    const showArchivedStudents = document.getElementById('toggle-archived-students')?.checked;
+const res = await api('/students' + (showArchivedStudents ? '?include_archived=true' : ''));
     const stus = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('classActiveStudents').textContent = stus.filter(s=>s.status==='Active').length;
     document.getElementById('classTotalRevenue').textContent = fmt(stus.reduce((s,st)=>s+Number(st.total_paid||0),0));
@@ -1256,7 +1259,8 @@ async function loadStudents() {
 }
 async function loadFeePayments() {
   try {
-    const res = await api('/fee_payments?order=created_at:desc&include_archived=true');
+    const showArchivedFee = document.getElementById('toggle-archived-fee')?.checked;
+const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ? '&include_archived=true' : ''));
     const fps = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No fee payments yet</td></tr>';
   } catch(e) { showToast('Error loading fee payments', 'error'); }
@@ -1265,7 +1269,8 @@ async function loadFeePayments() {
 // ── PAYMENTS ──
 async function loadPayments() {
   try {
-    const res = await api('/payments?order=date:desc&include_archived=true');
+    const showArchivedPayments = document.getElementById('toggle-archived-payments')?.checked;
+const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&include_archived=true' : ''));
     const pays = Array.isArray(res) ? res : (res.data || []);
     const income = pays.filter(p=>p.type==='income').reduce((s,p)=>s+Number(p.amount),0);
     const expense = pays.filter(p=>p.type==='expense').reduce((s,p)=>s+Number(p.amount),0);
@@ -1281,7 +1286,8 @@ async function loadPayments() {
 // ── LEADS ──
 async function loadLeads() {
   try {
-    const res = await api('/leads?order=created_at:desc&include_archived=true');
+    const showArchivedLeads = document.getElementById('toggle-archived-leads')?.checked;
+const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&include_archived=true' : ''));
     const leads = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${fmtDate(l.date_added)}</td><td>${l.estimated_budget?fmt(l.estimated_budget):'—'}</td><td><span class="badge ${l.status==='Hot'?'badge-red':l.status==='Warm'?'badge-clay':'badge-gray'}">${l.status||'—'}</span></td><td>${fmtDate(l.follow_up_date)}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No leads yet</td></tr>';
   } catch(e) { showToast('Error loading leads', 'error'); }
@@ -1425,7 +1431,7 @@ async function archiveRecord(entity, id, name) {
   try {
     await api('/' + entity + '/' + id + '/archive', 'POST');
     showToast(name + ' archived', 'success');
-    reloadEntity(entity);
+    await reloadEntity(entity);
   } catch(e) { showToast('Failed to archive', 'error'); }
 }
 
@@ -1433,15 +1439,17 @@ async function restoreRecord(entity, id) {
   try {
     await api('/' + entity + '/' + id + '/unarchive', 'POST');
     showToast('Restored successfully', 'success');
-    reloadEntity(entity);
+    await reloadEntity(entity);
   } catch(e) { showToast('Failed to restore', 'error'); }
 }
 
-function reloadEntity(entity) {
-  if (entity === 'workshops' || entity === 'participants') { loadWorkshops(); loadParticipants(); }
-  else if (entity === 'students' || entity === 'fee_payments') { loadStudents(); loadFeePayments(); }
-  else if (entity === 'payments') loadPayments();
-  else if (entity === 'leads') loadLeads();
+async function reloadEntity(entity) {
+  if (entity === 'workshops') { await loadWorkshops(); }
+  else if (entity === 'participants') { await loadParticipants(); }
+  else if (entity === 'students') { await loadStudents(); }
+  else if (entity === 'fee_payments') { await loadFeePayments(); }
+  else if (entity === 'payments') { await loadPayments(); }
+  else if (entity === 'leads') { await loadLeads(); }
 }
 
 // ── TOAST ──
