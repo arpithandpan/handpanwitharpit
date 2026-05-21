@@ -1383,6 +1383,7 @@ async function loadSettings() {
     document.getElementById('health-db').textContent = '● Connected';
     document.getElementById('health-db').className = 'badge badge-green';
     document.getElementById('health-records').textContent = total;
+    document.getElementById('wakeup-btn').style.display = 'none';
 
     const rzpPays = (pays.data||[]).filter(p => p.synced_from_razorpay);
     document.getElementById('rzp-total').textContent = rzpPays.length;
@@ -1390,8 +1391,9 @@ async function loadSettings() {
     const lastPay = rzpPays.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];
     document.getElementById('rzp-last').textContent = lastPay ? fmtDate(lastPay.date) : '—';
   } catch(e) {
-    document.getElementById('health-db').textContent = '● Error';
+    document.getElementById('health-db').textContent = '● Server sleeping';
     document.getElementById('health-db').className = 'badge badge-red';
+    document.getElementById('wakeup-btn').style.display = 'block';
   }
 }
 
@@ -1460,6 +1462,39 @@ async function reloadEntity(entity) {
   else if (entity === 'fee_payments') { await loadFeePayments(); }
   else if (entity === 'payments') { await loadPayments(); }
   else if (entity === 'leads') { await loadLeads(); }
+}
+
+
+async function wakeUpServer() {
+  const btn = document.getElementById('wakeup-btn');
+  const status = document.getElementById('health-db');
+  btn.textContent = '⏳ Waking up...';
+  btn.disabled = true;
+  status.textContent = '● Connecting...';
+  status.className = 'badge badge-clay';
+  try {
+    // Ping the server health endpoint
+    const res = await fetch(API_URL.replace('/api', '') + '/health', { method: 'GET' });
+    if (res.ok) {
+      showToast('Server is awake! Reloading data...', 'success');
+      await loadSettings();
+    } else {
+      throw new Error('Still sleeping');
+    }
+  } catch(e) {
+    // Try the API itself as fallback ping
+    try {
+      await fetch(API_URL + '/workshops', { method: 'GET', headers: { 'x-api-key': API_KEY } });
+      showToast('Server is awake! Reloading data...', 'success');
+      await loadSettings();
+    } catch(e2) {
+      status.textContent = '● Still sleeping';
+      status.className = 'badge badge-red';
+      btn.textContent = '🔄 Try Again';
+      btn.disabled = false;
+      showToast('Server still sleeping. Try again in 30 seconds.', 'error');
+    }
+  }
 }
 
 // ── TOAST ──
