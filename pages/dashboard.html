@@ -476,6 +476,27 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .settings-check-item { font-size: 0.9rem; color: var(--bark); }
 .settings-check-item.pending { color: var(--text-light); }
 
+
+/* ── ARCHIVE ── */
+.btn-archive {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-light); font-size: 1rem; padding: 4px 6px;
+  border-radius: 4px; line-height: 1; transition: color 0.15s, background 0.15s;
+}
+.btn-archive:hover { color: #B43C28; background: #fdf0ee; }
+.btn-restore {
+  background: none; border: none; cursor: pointer;
+  color: var(--moss); font-size: 0.8rem; padding: 4px 8px;
+  border-radius: 4px; font-family: var(--font-body);
+}
+.btn-restore:hover { background: #f0f5ee; }
+.archived-toggle {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.85rem; color: var(--text-light); cursor: pointer;
+}
+.archived-toggle input { cursor: pointer; }
+.archived-row { opacity: 0.5; background: #fafafa; }
+
 </style>
 </head>
 <body>
@@ -1206,36 +1227,36 @@ async function loadOverview() {
 // ── WORKSHOPS ──
 async function loadWorkshops() {
   try {
-    const res = await api('/workshops?order=date:desc');
+    const res = await api('/workshops?order=date:desc&include_archived=true');
     const ws = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
-    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No workshops yet</td></tr>';
+    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td>${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No workshops yet</td></tr>';
     const wsCardsEl = document.getElementById('workshopsCards');
     if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</span></div></div>`).join('');
   } catch(e) { showToast('Error loading workshops', 'error'); }
 }
 async function loadParticipants() {
   try {
-    const res = await api('/participants?order=created_at:desc');
+    const res = await api('/participants?order=created_at:desc&include_archived=true');
     const parts = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td>${p.checked_in?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td style="font-size:0.85rem">${p.notes||'—'}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No participants yet</td></tr>';
+    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td>${p.checked_in?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No participants yet</td></tr>';
   } catch(e) { showToast('Error loading participants', 'error'); }
 }
 
 // ── CLASSES ──
 async function loadStudents() {
   try {
-    const res = await api('/students');
+    const res = await api('/students?include_archived=true');
     const stus = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('classActiveStudents').textContent = stus.filter(s=>s.status==='Active').length;
     document.getElementById('classTotalRevenue').textContent = fmt(stus.reduce((s,st)=>s+Number(st.total_paid||0),0));
     document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No students yet</td></tr>';
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No students yet</td></tr>';
   } catch(e) { showToast('Error loading students', 'error'); }
 }
 async function loadFeePayments() {
   try {
-    const res = await api('/fee_payments?order=created_at:desc');
+    const res = await api('/fee_payments?order=created_at:desc&include_archived=true');
     const fps = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No fee payments yet</td></tr>';
   } catch(e) { showToast('Error loading fee payments', 'error'); }
@@ -1244,14 +1265,14 @@ async function loadFeePayments() {
 // ── PAYMENTS ──
 async function loadPayments() {
   try {
-    const res = await api('/payments?order=date:desc');
+    const res = await api('/payments?order=date:desc&include_archived=true');
     const pays = Array.isArray(res) ? res : (res.data || []);
     const income = pays.filter(p=>p.type==='income').reduce((s,p)=>s+Number(p.amount),0);
     const expense = pays.filter(p=>p.type==='expense').reduce((s,p)=>s+Number(p.amount),0);
     document.getElementById('payTotalIncome').textContent = fmt(income);
     document.getElementById('payTotalExpenses').textContent = fmt(expense);
     document.getElementById('payNetProfit').textContent = fmt(income-expense);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.synced_from_razorpay?'<span class="badge badge-blue">Razorpay</span>':'<span class="badge badge-gray">Manual</span>'}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No payments yet</td></tr>';
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No payments yet</td></tr>';
     const payCards = document.getElementById('paymentsCards');
     if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div></div>`).join('');
   } catch(e) { showToast('Error loading payments', 'error'); }
@@ -1260,9 +1281,9 @@ async function loadPayments() {
 // ── LEADS ──
 async function loadLeads() {
   try {
-    const res = await api('/leads?order=created_at:desc');
+    const res = await api('/leads?order=created_at:desc&include_archived=true');
     const leads = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${fmtDate(l.date_added)}</td><td>${l.estimated_budget?fmt(l.estimated_budget):'—'}</td><td><span class="badge ${l.status==='Hot'?'badge-red':l.status==='Warm'?'badge-clay':'badge-gray'}">${l.status||'—'}</span></td><td>${fmtDate(l.follow_up_date)}</td><td style="font-size:0.85rem">${l.notes||'—'}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No leads yet</td></tr>';
+    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${fmtDate(l.date_added)}</td><td>${l.estimated_budget?fmt(l.estimated_budget):'—'}</td><td><span class="badge ${l.status==='Hot'?'badge-red':l.status==='Warm'?'badge-clay':'badge-gray'}">${l.status||'—'}</span></td><td>${fmtDate(l.follow_up_date)}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No leads yet</td></tr>';
   } catch(e) { showToast('Error loading leads', 'error'); }
 }
 
@@ -1395,6 +1416,32 @@ async function exportData(entity) {
 async function exportAll() {
   const entities = ['workshops','participants','students','payments','leads','fee_payments'];
   for (const e of entities) { await exportData(e); await new Promise(r=>setTimeout(r,300)); }
+}
+
+
+// ── ARCHIVE / RESTORE ──
+async function archiveRecord(entity, id, name) {
+  if (!confirm('Archive "' + name + '"? It will be hidden but not deleted. You can restore it anytime.')) return;
+  try {
+    await api('/' + entity + '/' + id + '/archive', 'POST');
+    showToast(name + ' archived', 'success');
+    reloadEntity(entity);
+  } catch(e) { showToast('Failed to archive', 'error'); }
+}
+
+async function restoreRecord(entity, id) {
+  try {
+    await api('/' + entity + '/' + id + '/unarchive', 'POST');
+    showToast('Restored successfully', 'success');
+    reloadEntity(entity);
+  } catch(e) { showToast('Failed to restore', 'error'); }
+}
+
+function reloadEntity(entity) {
+  if (entity === 'workshops' || entity === 'participants') { loadWorkshops(); loadParticipants(); }
+  else if (entity === 'students' || entity === 'fee_payments') { loadStudents(); loadFeePayments(); }
+  else if (entity === 'payments') loadPayments();
+  else if (entity === 'leads') loadLeads();
 }
 
 // ── TOAST ──
