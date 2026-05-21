@@ -815,6 +815,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
           <div class="settings-health-item">
             <span class="badge badge-green" id="health-db">● Checking...</span>
             <span class="settings-health-label">Database</span>
+            <button id="wakeup-btn" onclick="wakeUpServer()" style="display:none;margin-top:8px;background:#3d2b1f;color:#f5ede4;border:none;border-radius:6px;padding:8px 14px;font-size:0.82rem;cursor:pointer;font-family:var(--font-body);">🔄 Wake Up Server</button>
           </div>
           <div class="settings-health-item">
             <span class="settings-health-val" id="health-records">—</span>
@@ -843,7 +844,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
         <div class="settings-field-group">
           <label class="settings-label">Webhook URL</label>
           <div class="settings-copy-row">
-            <code class="settings-code">https://901e470f-da9b-43dc-9a0a-aa918b394f01-00-2g35cvy2ruzc0.sisko.replit.dev/api/webhooks/razorpay</code>
+            <code class="settings-code">https://your-railway-app.up.railway.app/api/webhooks/razorpay</code>
             <button class="btn-dash btn-dash-outline" onclick="copyWebhook()" style="padding:0.4rem 0.75rem;font-size:0.8rem;white-space:nowrap;">Copy</button>
           </div>
         </div>
@@ -1100,8 +1101,8 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 </div>
 
 <script>
-const API_URL = 'https://901e470f-da9b-43dc-9a0a-aa918b394f01-00-2g35cvy2ruzc0.sisko.replit.dev/api';
-const API_KEY = 'Autumn@963$';
+const SUPABASE_URL = 'https://sabdevsguuobgqjputtv.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_xRwX_jpWmLtNjuQJRyQfGQ_defolODk';
 const DASHBOARD_PASSWORD = 'arpit2026';
 
 // ── AUTH ──
@@ -1134,15 +1135,85 @@ if (sessionStorage.getItem('dash_auth') === '1') {
   }
 }
 
-// ── API ──
+// ── SUPABASE API ──
+const SB_HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY,
+  'Prefer': 'return=representation'
+};
+
+async function sbGet(table, params = '') {
+  // Filter out archived rows: archived is false OR archived is null
+  const archiveFilter = 'or=(archived.is.false,archived.is.null)';
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?select=*&' + archiveFilter + (params ? '&' + params : ''), {
+    headers: SB_HEADERS
+  });
+  if (!res.ok) throw new Error('Supabase error: ' + res.status);
+  const data = await res.json();
+  return { data };
+}
+
+async function sbGetAll(table, params = '') {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?select=*' + (params ? '&' + params : ''), {
+    headers: SB_HEADERS
+  });
+  if (!res.ok) throw new Error('Supabase error: ' + res.status);
+  const data = await res.json();
+  return { data };
+}
+
+async function sbPost(table, body) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+    method: 'POST',
+    headers: SB_HEADERS,
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('Supabase error: ' + res.status);
+  return await res.json();
+}
+
+async function sbPatch(table, id, body) {
+  const idField = table === 'workshops' ? 'id' : 
+                  table === 'participants' ? 'id' :
+                  table === 'students' ? 'id' :
+                  table === 'payments' ? 'id' :
+                  table === 'fee_payments' ? 'id' :
+                  table === 'leads' ? 'id' : 'id';
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?' + idField + '=eq.' + id, {
+    method: 'PATCH',
+    headers: SB_HEADERS,
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('Supabase error: ' + res.status);
+  return await res.json();
+}
+
+// Legacy api() wrapper for backward compat
 async function api(endpoint, method = 'GET', body = null) {
-  const opts = { method, headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY } };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(API_URL + endpoint, opts);
-  if (!res.ok) throw new Error('API error: ' + res.status);
-  const json = await res.json();
-  if (Array.isArray(json)) return { data: json };
-  return json;
+  const parts = endpoint.split('?');
+  const path = parts[0];
+  const query = parts[1] || '';
+  const includeArchived = query.includes('include_archived=true');
+  
+  // Parse table and action from path
+  const segments = path.replace(/^\//, '').split('/');
+  const table = segments[0];
+  
+  // Archive/unarchive actions
+  if (segments[2] === 'archive') return sbPatch(table, segments[1], { archived: true });
+  if (segments[2] === 'unarchive') return sbPatch(table, segments[1], { archived: false });
+  
+  // Order param
+  let orderParam = '';
+  if (query.includes('order=date:desc')) orderParam = 'order=date.desc';
+  else if (query.includes('order=created_at:desc')) orderParam = 'order=created_at.desc';
+  
+  if (method === 'GET') {
+    if (includeArchived) return sbGetAll(table, orderParam);
+    return sbGet(table, orderParam);
+  }
+  if (method === 'POST') return sbPost(table, body);
 }
 
 // ── NAVIGATION ──
@@ -1335,12 +1406,12 @@ async function syncAll() {
 // ── SAVE FUNCTIONS ──
 async function savePayment() {
   const body = { id:'PAY-'+Date.now(), date:document.getElementById('pay-date').value, amount:document.getElementById('pay-amount').value, type:document.getElementById('pay-type').value, category:document.getElementById('pay-category').value, payment_mode:document.getElementById('pay-mode').value, payer_name:document.getElementById('pay-name').value, description:document.getElementById('pay-desc').value, reference_id:document.getElementById('pay-ref').value, synced_from_razorpay:false };
-  try { await api('/payments','POST',body); closeFormPage('addPayment'); loadPayments(); showToast('Payment saved!','success'); }
+  try { await sbPost('payments', body); closeFormPage('addPayment'); loadPayments(); showToast('Payment saved!','success'); }
   catch(e) { showToast('Error saving payment','error'); }
 }
 async function saveLead() {
   const body = { id:'L-'+String(Date.now()).slice(-3), full_name:document.getElementById('lead-name').value, phone:document.getElementById('lead-phone').value, workshop_attended:document.getElementById('lead-workshop').value, date_added:new Date().toISOString().split('T')[0], estimated_budget:document.getElementById('lead-budget').value, status:document.getElementById('lead-status').value, follow_up_date:document.getElementById('lead-followup').value, referred_friend:false, notes:document.getElementById('lead-notes').value };
-  try { await api('/leads','POST',body); closeFormPage('addLead'); loadLeads(); showToast('Lead saved!','success'); }
+  try { await sbPost('leads', body); closeFormPage('addLead'); loadLeads(); showToast('Lead saved!','success'); }
   catch(e) { showToast('Error saving lead','error'); }
 }
 async function saveWorkshop() {
@@ -1348,22 +1419,22 @@ async function saveWorkshop() {
   const venueRent=parseFloat(document.getElementById('ws-venue-rent').value)||0, hpRent=parseFloat(document.getElementById('ws-hp-rent').value)||0, porter=parseFloat(document.getElementById('ws-porter').value)||0, misc=parseFloat(document.getElementById('ws-misc').value)||0;
   const totalPax=bms+upi+rzp, totalRevenue=totalPax*price, totalExpense=venueRent+hpRent+porter+misc, netProfit=totalRevenue-totalExpense;
   const body = { id:document.getElementById('ws-id').value, date:document.getElementById('ws-date').value, venue:document.getElementById('ws-venue').value, bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0 };
-  try { await api('/workshops','POST',body); closeFormPage('addWorkshop'); loadWorkshops(); showToast('Workshop saved!','success'); }
+  try { await sbPost('workshops', body); closeFormPage('addWorkshop'); loadWorkshops(); showToast('Workshop saved!','success'); }
   catch(e) { showToast('Error saving workshop','error'); }
 }
 async function saveStudent() {
   const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:document.getElementById('stu-phone').value, email:document.getElementById('stu-email').value, join_date:document.getElementById('stu-start').value, status:document.getElementById('stu-status').value, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value };
-  try { await api('/students','POST',body); closeFormPage('addStudent'); loadStudents(); showToast('Student saved!','success'); }
+  try { await sbPost('students', body); closeFormPage('addStudent'); loadStudents(); showToast('Student saved!','success'); }
   catch(e) { showToast('Error saving student','error'); }
 }
 async function saveFeePayment() {
   const body = { student_id:document.getElementById('fee-student').value, month:document.getElementById('fee-month').value, amount:parseFloat(document.getElementById('fee-amount').value)||0, payment_mode:document.getElementById('fee-mode').value, notes:document.getElementById('fee-notes').value };
-  try { await api('/fee_payments','POST',body); closeFormPage('addFeePayment'); loadFeePayments(); showToast('Fee payment saved!','success'); }
+  try { await sbPost('fee_payments', body); closeFormPage('addFeePayment'); loadFeePayments(); showToast('Fee payment saved!','success'); }
   catch(e) { showToast('Error saving fee payment','error'); }
 }
 async function saveParticipant() {
   const body = { workshop_id:document.getElementById('par-workshop').value, date:new Date().toISOString().split('T')[0], full_name:document.getElementById('par-name').value, phone:document.getElementById('par-phone').value, payment_mode:document.getElementById('par-mode').value, notes:document.getElementById('par-notes').value };
-  try { await api('/participants','POST',body); closeFormPage('addParticipant'); loadParticipants(); showToast('Participant saved!','success'); }
+  try { await sbPost('participants', body); closeFormPage('addParticipant'); loadParticipants(); showToast('Participant saved!','success'); }
   catch(e) { showToast('Error saving participant','error'); }
 }
 
@@ -1375,8 +1446,8 @@ async function loadSettings() {
     document.getElementById('health-time').textContent = now;
 
     const [ws, parts, stus, pays, leads, fps] = await Promise.all([
-      api('/workshops'), api('/participants'), api('/students'),
-      api('/payments'), api('/leads'), api('/fee_payments')
+      sbGetAll('workshops'), sbGetAll('participants'), sbGetAll('students'),
+      sbGetAll('payments'), sbGetAll('leads'), sbGetAll('fee_payments')
     ]);
     const total = (ws.data||[]).length + (parts.data||[]).length + (stus.data||[]).length +
                   (pays.data||[]).length + (leads.data||[]).length + (fps.data||[]).length;
@@ -1398,25 +1469,17 @@ async function loadSettings() {
 }
 
 function copyWebhook() {
-  navigator.clipboard.writeText('https://901e470f-da9b-43dc-9a0a-aa918b394f01-00-2g35cvy2ruzc0.sisko.replit.dev/api/webhooks/razorpay');
+  showToast('Update this URL after Railway deployment!', ''); navigator.clipboard.writeText('https://your-railway-app.up.railway.app/api/webhooks/razorpay');
   showToast('Webhook URL copied!', 'success');
 }
 
 async function sendTestWebhook() {
-  const ref = document.getElementById('test-ref').value;
-  const amount = document.getElementById('test-amount').value;
-  const name = document.getElementById('test-name').value;
-  try {
-    showToast('Sending test payment...', '');
-    await api('/test-webhook', 'POST', { reference_id: ref, amount: Number(amount), payer_name: name });
-    showToast('Test payment sent!', 'success');
-    loadSettings();
-  } catch(e) { showToast('Test failed — check Replit logs', 'error'); }
+  showToast('Test webhook requires Railway server — coming soon!', '');
 }
 
 async function exportData(entity) {
   try {
-    const res = await api('/' + entity);
+    const res = await sbGetAll(entity);
     const data = Array.isArray(res) ? res : (res.data || []);
     if (!data.length) { showToast('No data to export', ''); return; }
     const headers = Object.keys(data[0]).join(',');
@@ -1466,34 +1529,19 @@ async function reloadEntity(entity) {
 
 
 async function wakeUpServer() {
+  // With Supabase direct connection, server never sleeps
+  // This just retries the connection
   const btn = document.getElementById('wakeup-btn');
-  const status = document.getElementById('health-db');
-  btn.textContent = '⏳ Waking up...';
+  btn.textContent = '⏳ Reconnecting...';
   btn.disabled = true;
-  status.textContent = '● Connecting...';
-  status.className = 'badge badge-clay';
   try {
-    // Ping the server health endpoint
-    const res = await fetch(API_URL.replace('/api', '') + '/health', { method: 'GET' });
-    if (res.ok) {
-      showToast('Server is awake! Reloading data...', 'success');
-      await loadSettings();
-    } else {
-      throw new Error('Still sleeping');
-    }
+    await loadSettings();
+    showToast('Connected!', 'success');
   } catch(e) {
-    // Try the API itself as fallback ping
-    try {
-      await fetch(API_URL + '/workshops', { method: 'GET', headers: { 'x-api-key': API_KEY } });
-      showToast('Server is awake! Reloading data...', 'success');
-      await loadSettings();
-    } catch(e2) {
-      status.textContent = '● Still sleeping';
-      status.className = 'badge badge-red';
-      btn.textContent = '🔄 Try Again';
-      btn.disabled = false;
-      showToast('Server still sleeping. Try again in 30 seconds.', 'error');
-    }
+    document.getElementById('health-db').textContent = '● Error';
+    btn.textContent = '🔄 Try Again';
+    btn.disabled = false;
+    showToast('Check your internet connection', 'error');
   }
 }
 
