@@ -269,9 +269,9 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 }
 .mobile-menu-overlay {
   display: none; position: fixed; inset: 0; background: #f5ede4;
-  z-index: 500; overflow-y: auto;
+  z-index: 500; overflow-y: auto; flex-direction: column;
 }
-.mobile-menu-overlay.open { display: block; }
+.mobile-menu-overlay.open { display: flex; }
 @media (max-width: 900px) {
   .mobile-topbar { display: flex; }
   .dash-root { padding-top: 68px; }
@@ -393,6 +393,37 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   .mobile-cards { display: block; }
   .dash-table-wrap { background: transparent; border: none; overflow: hidden; }
   .dash-table-header { border-radius: 4px; border: 1px solid var(--clay-pale); margin-bottom: 0.75rem; }
+}
+
+
+/* ── INNER FORM PAGES ── */
+.form-page {
+  display: none; position: fixed; inset: 0;
+  background: var(--cream); z-index: 450;
+  overflow-y: auto; padding: 0;
+}
+.form-page.open { display: block; }
+.form-page-header {
+  position: sticky; top: 0; background: var(--cream);
+  border-bottom: 1px solid var(--clay-pale);
+  padding: 1rem 1.5rem; display: flex;
+  align-items: center; justify-content: space-between;
+  z-index: 10;
+}
+.form-page-back {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: none; border: none; cursor: pointer;
+  font-size: 0.95rem; color: var(--text-light);
+  font-family: var(--font-body); padding: 0;
+}
+.form-page-back:hover { color: var(--bark); }
+.form-page-title {
+  font-family: var(--font-body); font-size: 1.1rem;
+  font-weight: 400; color: var(--bark);
+}
+.form-page-body {
+  max-width: 600px; margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
 }
 
 </style>
@@ -664,51 +695,16 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   </main>
 </div>
 
-<!-- ── MODALS ── -->
+<!-- ── FORM PAGES ── -->
 
 <!-- Add Payment -->
-<div class="modal-overlay" id="modal-addPayment">
-  <div class="modal">
-    <div class="modal-drag-handle"><span></span></div>
-    <div class="modal-header">
-      <div class="modal-title">Add Payment</div>
-      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addPayment">
-  <div class="modal">
-    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
-    <div class="modal-title">Add Payment</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="pay-date"/></div>
-      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="pay-amount" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Type</label>
-        <select class="form-input" id="pay-type"><option value="income">Income</option><option value="expense">Expense</option></select></div>
-      <div class="form-group"><label class="form-label">Category</label>
-        <select class="form-input" id="pay-category">
-          <option value="workshop">Workshop</option><option value="class">Class</option>
-          <option value="gig">Gig / Performance</option><option value="sale">Accessory Sale</option>
-          <option value="venue">Venue Rent</option><option value="handpan_rental">Handpan Rental</option>
-          <option value="porter">Porter / Delivery</option><option value="misc">Misc</option>
-        </select></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Payment Mode</label>
-        <select class="form-input" id="pay-mode">
-          <option value="Razorpay">Razorpay</option><option value="UPI">UPI</option>
-          <option value="Cash">Cash</option><option value="BMS">BMS</option>
-          <option value="Wise">Wise</option><option value="Other">Other</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Payer / Payee Name</label><input type="text" class="form-input" id="pay-name" placeholder="Name"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" id="pay-desc" placeholder="e.g. Workshop WS-004 booking"/></div>
-    <div class="form-group"><label class="form-label">Reference ID (Workshop / Student)</label><input type="text" class="form-input" id="pay-ref" placeholder="e.g. WS-004 or S-001"/></div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addPayment')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="savePayment()">Save Payment</button>
-    </div>
+<div class="form-page" id="form-addPayment">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="closeFormPage('addPayment')">← Back</button>
+    <div class="form-page-title">Add Payment</div>
+    <button class="btn-dash btn-dash-primary" onclick="savePayment()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-</div>')">✕</button>
-    </div>
+  <div class="form-page-body">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="pay-date"/></div>
       <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="pay-amount" placeholder="0"/></div>
@@ -727,52 +723,25 @@ tr:hover td { background: rgba(193,127,82,0.04); }
     <div class="form-row">
       <div class="form-group"><label class="form-label">Payment Mode</label>
         <select class="form-input" id="pay-mode">
-          <option value="Razorpay">Razorpay</option><option value="UPI">UPI</option>
-          <option value="Cash">Cash</option><option value="BMS">BMS</option>
-          <option value="Wise">Wise</option><option value="Other">Other</option>
+          <option value="razorpay">Razorpay</option><option value="upi">UPI</option>
+          <option value="cash">Cash</option><option value="bms">BMS</option>
+          <option value="wise">Wise</option><option value="other">Other</option>
         </select></div>
       <div class="form-group"><label class="form-label">Payer / Payee Name</label><input type="text" class="form-input" id="pay-name" placeholder="Name"/></div>
     </div>
     <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" id="pay-desc" placeholder="e.g. Workshop WS-004 booking"/></div>
-    <div class="form-group"><label class="form-label">Reference ID (Workshop / Student)</label><input type="text" class="form-input" id="pay-ref" placeholder="e.g. WS-004 or S-001"/></div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addPayment')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="savePayment()">Save Payment</button>
-    </div>
+    <div class="form-group"><label class="form-label">Reference ID</label><input type="text" class="form-input" id="pay-ref" placeholder="e.g. WS-004 or S-001"/></div>
   </div>
 </div>
 
 <!-- Add Lead -->
-<div class="modal-overlay" id="modal-addLead">
-  <div class="modal">
-    <div class="modal-drag-handle"><span></span></div>
-    <div class="modal-header">
-      <div class="modal-title">Add Lead</div>
-      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addLead">
-  <div class="modal">
-    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
-    <div class="modal-title">Add Lead</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
-      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="lead-phone" placeholder="10-digit number"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop Attended</label><input type="text" class="form-input" id="lead-workshop" placeholder="e.g. WS-003"/></div>
-      <div class="form-group"><label class="form-label">Est. Budget (₹)</label><input type="number" class="form-input" id="lead-budget" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Status</label>
-        <select class="form-input" id="lead-status"><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div>
-      <div class="form-group"><label class="form-label">Follow-up Date</label><input type="date" class="form-input" id="lead-followup"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="lead-notes" placeholder="Any notes..."/></div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addLead')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveLead()">Save Lead</button>
-    </div>
+<div class="form-page" id="form-addLead">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="closeFormPage('addLead')">← Back</button>
+    <div class="form-page-title">Add Lead</div>
+    <button class="btn-dash btn-dash-primary" onclick="saveLead()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-</div>')">✕</button>
-    </div>
+  <div class="form-page-body">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
       <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="lead-phone" placeholder="10-digit number"/></div>
@@ -787,51 +756,17 @@ tr:hover td { background: rgba(193,127,82,0.04); }
       <div class="form-group"><label class="form-label">Follow-up Date</label><input type="date" class="form-input" id="lead-followup"/></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="lead-notes" placeholder="Any notes..."/></div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addLead')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveLead()">Save Lead</button>
-    </div>
   </div>
 </div>
 
 <!-- Add Workshop -->
-<div class="modal-overlay" id="modal-addWorkshop">
-  <div class="modal">
-    <div class="modal-drag-handle"><span></span></div>
-    <div class="modal-header">
-      <div class="modal-title">Add Workshop</div>
-      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addWorkshop">
-  <div class="modal">
-    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
-    <div class="modal-title">Add Workshop</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="ws-id" placeholder="e.g. WS-004"/></div>
-      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ws-date"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Venue</label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">BMS Participants</label><input type="number" class="form-input" id="ws-bms" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">UPI Participants</label><input type="number" class="form-input" id="ws-upi" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Razorpay Participants</label><input type="number" class="form-input" id="ws-rzp" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Price per Head (₹)</label><input type="number" class="form-input" id="ws-price" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Venue Rent (₹)</label><input type="number" class="form-input" id="ws-venue-rent" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Handpan Rental (₹)</label><input type="number" class="form-input" id="ws-hp-rent" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Porter / Delivery (₹)</label><input type="number" class="form-input" id="ws-porter" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Snacks / Misc (₹)</label><input type="number" class="form-input" id="ws-misc" placeholder="0"/></div>
-    </div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addWorkshop')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveWorkshop()">Save Workshop</button>
-    </div>
+<div class="form-page" id="form-addWorkshop">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="closeFormPage('addWorkshop')">← Back</button>
+    <div class="form-page-title">Add Workshop</div>
+    <button class="btn-dash btn-dash-primary" onclick="saveWorkshop()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-</div>')">✕</button>
-    </div>
+  <div class="form-page-body">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="ws-id" placeholder="e.g. WS-004"/></div>
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ws-date"/></div>
@@ -852,772 +787,102 @@ tr:hover td { background: rgba(193,127,82,0.04); }
     <div class="form-row">
       <div class="form-group"><label class="form-label">Porter / Delivery (₹)</label><input type="number" class="form-input" id="ws-porter" placeholder="0"/></div>
       <div class="form-group"><label class="form-label">Snacks / Misc (₹)</label><input type="number" class="form-input" id="ws-misc" placeholder="0"/></div>
-    </div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addWorkshop')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveWorkshop()">Save Workshop</button>
     </div>
   </div>
 </div>
 
 <!-- Add Student -->
-<div class="modal-overlay" id="modal-addStudent">
-  <div class="modal">
-    <div class="modal-drag-handle"><span></span></div>
-    <div class="modal-header">
-      <div class="modal-title">Add Student</div>
-      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addStudent">
-  <div class="modal">
-    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
-    <div class="modal-title">Add Student</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-003"/></div>
-      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Batch ID</label><input type="text" class="form-input" id="stu-batch" placeholder="e.g. BATCH-001"/></div>
-      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="stu-phone" placeholder="Phone number"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Join Date</label><input type="date" class="form-input" id="stu-join"/></div>
-      <div class="form-group"><label class="form-label">Status</label>
-        <select class="form-input" id="stu-status"><option value="Active">Active</option><option value="On Break">On Break</option><option value="Inactive">Inactive</option></select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="stu-notes" placeholder="Any notes..."/></div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addStudent')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveStudent()">Save Student</button>
-    </div>
+<div class="form-page" id="form-addStudent">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="closeFormPage('addStudent')">← Back</button>
+    <div class="form-page-title">Add Student</div>
+    <button class="btn-dash btn-dash-primary" onclick="saveStudent()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-</div>')">✕</button>
-    </div>
+  <div class="form-page-body">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-003"/></div>
+      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Batch ID</label><input type="text" class="form-input" id="stu-batch" placeholder="e.g. BATCH-001"/></div>
-      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="stu-phone" placeholder="Phone number"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="stu-phone" placeholder="10-digit number"/></div>
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="stu-email" placeholder="email@example.com"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Join Date</label><input type="date" class="form-input" id="stu-join"/></div>
+      <div class="form-group"><label class="form-label">Level</label>
+        <select class="form-input" id="stu-level"><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Advanced">Advanced</option></select></div>
       <div class="form-group"><label class="form-label">Status</label>
-        <select class="form-input" id="stu-status"><option value="Active">Active</option><option value="On Break">On Break</option><option value="Inactive">Inactive</option></select></div>
+        <select class="form-input" id="stu-status"><option value="Active">Active</option><option value="On Break">On Break</option><option value="Completed">Completed</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Monthly Fee (₹)</label><input type="number" class="form-input" id="stu-fee" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" id="stu-start"/></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="stu-notes" placeholder="Any notes..."/></div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addStudent')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveStudent()">Save Student</button>
-    </div>
   </div>
 </div>
 
 <!-- Add Fee Payment -->
-<div class="modal-overlay" id="modal-addFeePayment">
-  <div class="modal">
-    <div class="modal-drag-handle"><span></span></div>
-    <div class="modal-header">
-      <div class="modal-title">Add Fee Payment</div>
-      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addFeePayment">
-  <div class="modal">
-    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
-    <div class="modal-title">Add Fee Payment</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Payment ID</label><input type="text" class="form-input" id="fp-id" placeholder="e.g. FP-007"/></div>
-      <div class="form-group"><label class="form-label">Student Name</label><input type="text" class="form-input" id="fp-student" placeholder="Student name"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Batch ID</label><input type="text" class="form-input" id="fp-batch" placeholder="e.g. BATCH-001"/></div>
-      <div class="form-group"><label class="form-label">Month</label><input type="text" class="form-input" id="fp-month" placeholder="e.g. Jun-2026"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Classes</label><input type="number" class="form-input" id="fp-classes" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="fp-amount" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Paid?</label>
-        <select class="form-input" id="fp-paid"><option value="true">Yes</option><option value="false">No</option></select></div>
-      <div class="form-group"><label class="form-label">Payment Date</label><input type="date" class="form-input" id="fp-date"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="fp-notes" placeholder="Any notes..."/></div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addFeePayment')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveFeePayment()">Save</button>
-    </div>
+<div class="form-page" id="form-addFeePayment">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="closeFormPage('addFeePayment')">← Back</button>
+    <div class="form-page-title">Add Fee Payment</div>
+    <button class="btn-dash btn-dash-primary" onclick="saveFeePayment()" style="padding:0.5rem 1.25rem;">Save</button>
   </div>
-</div>')">✕</button>
+  <div class="form-page-body">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="fee-student" placeholder="e.g. S-001"/></div>
+      <div class="form-group"><label class="form-label">Month</label><input type="month" class="form-input" id="fee-month"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Payment ID</label><input type="text" class="form-input" id="fp-id" placeholder="e.g. FP-007"/></div>
-      <div class="form-group"><label class="form-label">Student Name</label><input type="text" class="form-input" id="fp-student" placeholder="Student name"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="fee-amount" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Payment Mode</label>
+        <select class="form-input" id="fee-mode">
+          <option value="upi">UPI</option><option value="cash">Cash</option>
+          <option value="razorpay">Razorpay</option><option value="other">Other</option>
+        </select></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Batch ID</label><input type="text" class="form-input" id="fp-batch" placeholder="e.g. BATCH-001"/></div>
-      <div class="form-group"><label class="form-label">Month</label><input type="text" class="form-input" id="fp-month" placeholder="e.g. Jun-2026"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Classes</label><input type="number" class="form-input" id="fp-classes" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="fp-amount" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Paid?</label>
-        <select class="form-input" id="fp-paid"><option value="true">Yes</option><option value="false">No</option></select></div>
-      <div class="form-group"><label class="form-label">Payment Date</label><input type="date" class="form-input" id="fp-date"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="fp-notes" placeholder="Any notes..."/></div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addFeePayment')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveFeePayment()">Save</button>
-    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="fee-notes" placeholder="Any notes..."/></div>
   </div>
 </div>
 
 <!-- Add Participant -->
-<div class="modal-overlay" id="modal-addParticipant">
-  <div class="modal">
-    <div class="modal-drag-handle"><span></span></div>
-    <div class="modal-header">
-      <div class="modal-title">Add Participant</div>
-      <button class="modal-close-btn" onclick="closeModal('<div class="modal-overlay" id="modal-addParticipant">
-  <div class="modal">
-    <button class="modal-close-btn" onclick="closeModal(this.closest('[id]').id)">✕</button>
-    <div class="modal-title">Add Participant</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Participant ID</label><input type="text" class="form-input" id="par-id" placeholder="e.g. P-0032"/></div>
-      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="par-workshop" placeholder="e.g. WS-004"/></div>
-    </div>
+<div class="form-page" id="form-addParticipant">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="closeFormPage('addParticipant')">← Back</button>
+    <div class="form-page-title">Add Participant</div>
+    <button class="btn-dash btn-dash-primary" onclick="saveParticipant()" style="padding:0.5rem 1.25rem;">Save</button>
+  </div>
+  <div class="form-page-body">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
-      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="par-phone" placeholder="Phone number"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="par-phone" placeholder="10-digit number"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Booking Source</label><input type="text" class="form-input" id="par-source" placeholder="Instagram / BMS / Razorpay"/></div>
-      <div class="form-group"><label class="form-label">Amount Paid (₹)</label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Payment Mode</label>
-        <select class="form-input" id="par-mode"><option value="Razorpay">Razorpay</option><option value="UPI">UPI</option><option value="BMS">BMS</option><option value="Cash">Cash</option></select></div>
-      <div class="form-group"><label class="form-label">Checked In?</label>
-        <select class="form-input" id="par-checkin"><option value="true">Yes</option><option value="false">No</option></select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="par-notes" placeholder="Any notes..."/></div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addParticipant')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveParticipant()">Save Participant</button>
-    </div>
-  </div>
-</div>')">✕</button>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Participant ID</label><input type="text" class="form-input" id="par-id" placeholder="e.g. P-0032"/></div>
       <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="par-workshop" placeholder="e.g. WS-004"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
-      <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="par-phone" placeholder="Phone number"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Booking Source</label><input type="text" class="form-input" id="par-source" placeholder="Instagram / BMS / Razorpay"/></div>
-      <div class="form-group"><label class="form-label">Amount Paid (₹)</label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
       <div class="form-group"><label class="form-label">Payment Mode</label>
-        <select class="form-input" id="par-mode"><option value="Razorpay">Razorpay</option><option value="UPI">UPI</option><option value="BMS">BMS</option><option value="Cash">Cash</option></select></div>
-      <div class="form-group"><label class="form-label">Checked In?</label>
-        <select class="form-input" id="par-checkin"><option value="true">Yes</option><option value="false">No</option></select></div>
+        <select class="form-input" id="par-mode">
+          <option value="razorpay">Razorpay</option><option value="upi">UPI</option>
+          <option value="cash">Cash</option><option value="bms">BMS</option>
+        </select></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="par-notes" placeholder="Any notes..."/></div>
-    <div class="form-actions">
-      <button class="btn-dash btn-dash-outline" onclick="closeModal('addParticipant')">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveParticipant()">Save Participant</button>
-    </div>
   </div>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-
-<!-- Sidebar toggle for mobile -->
-  </nav>
 </div>
 
 <script>
-// ── CONFIG ──
-const API_URL = 'https://901e470f-da9b-43dc-9a0a-aa918b394f01-00-2g35cvy2ruzc0.sisko.replit.dev/api';
-const API_KEY = 'Autumn@963$';
-const DASHBOARD_PASSWORD = 'arpit2026'; // Change this to your own password
-
-// ── AUTH ──
-function doLogin() {
-  const pwd = document.getElementById('loginPassword').value;
-  if (pwd === DASHBOARD_PASSWORD) {
-    sessionStorage.setItem('dash_auth', '1');
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('dashRoot').style.display = 'flex';
-    if (window.innerWidth <= 900) {
-      document.getElementById('mobileTopbar').style.display = 'flex';
-    }
-    loadAll();
-  } else {
-    document.getElementById('loginError').style.display = 'block';
-  }
+// ── FORM PAGE FUNCTIONS ──
+function openFormPage(name) {
+  document.getElementById('form-' + name).classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-
-function logout() {
-  sessionStorage.removeItem('dash_auth');
-  location.reload();
+function closeFormPage(name) {
+  document.getElementById('form-' + name).classList.remove('open');
+  document.body.style.overflow = '';
 }
 
-// Check if already logged in this session
-if (sessionStorage.getItem('dash_auth') === '1') {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('dashRoot').style.display = 'flex';
-  if (window.innerWidth <= 900) {
-    document.getElementById('mobileTopbar').style.display = 'flex';
-  }
-}
-
-// ── API ──
-async function api(endpoint, method = 'GET', body = null) {
-  const opts = {
-    method,
-    headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY }
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(API_URL + endpoint, opts);
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  const json = await res.json();
-  // Handle both array response and {data: [...]} response
-  if (Array.isArray(json)) return { data: json };
-  return json;
-}
-
-// ── NAVIGATION ──
-function showSection(name, el) {
-  document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.dash-nav a').forEach(a => a.classList.remove('active'));
-  document.getElementById('section-' + name).classList.add('active');
-  if (el) el.classList.add('active');
-  // close mobile sidebar
-  document.getElementById('dashSidebar').classList.remove('open');
-  // load section data
-  loadSection(name);
-  return false;
-}
-
-function toggleSidebar() {
-  document.getElementById('dashSidebar').classList.toggle('open');
-}
-
-window.addEventListener('resize', function() {
-  if (sessionStorage.getItem('dash_auth') === '1') {
-    const topbar = document.getElementById('mobileTopbar');
-    if (window.innerWidth <= 900) {
-      topbar.style.display = 'flex';
-    } else {
-      topbar.style.display = 'none';
-      document.getElementById('mobileMenuOverlay').classList.remove('open');
-    }
-  }
-});
-
-function toggleMobileMenu() {
-  const overlay = document.getElementById('mobileMenuOverlay');
-  const btn = document.getElementById('mobileMenuBtn');
-  const spans = btn ? btn.querySelectorAll('span') : [];
-  const isOpen = overlay.classList.contains('open');
-  if (isOpen) {
-    overlay.classList.remove('open');
-    document.body.style.overflow = '';
-    if (spans.length) {
-      spans[0].style.transform = '';
-      spans[1].style.opacity = '';
-      spans[1].style.transform = '';
-      spans[2].style.transform = '';
-    }
-  } else {
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    if (spans.length) {
-      spans[0].style.transform = 'translateY(8px) rotate(45deg)';
-      spans[1].style.opacity = '0';
-      spans[1].style.transform = 'scaleX(0)';
-      spans[2].style.transform = 'translateY(-8px) rotate(-45deg)';
-    }
-  }
-}
-
-// ── LOAD ALL ──
-function loadAll() {
-  loadSection('overview');
-}
-
-function loadSection(name) {
-  if (name === 'overview') loadOverview();
-  else if (name === 'workshops') { loadWorkshops(); loadParticipants(); }
-  else if (name === 'classes') { loadStudents(); loadFeePayments(); }
-  else if (name === 'payments') loadPayments();
-  else if (name === 'leads') loadLeads();
-  else if (name === 'insights') loadInsights();
-}
-
-// ── FORMAT ──
-const fmt = n => '₹' + Number(n || 0).toLocaleString('en-IN');
-const fmtPct = n => (Number(n || 0) * 100).toFixed(1) + '%';
-const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '—';
-
-// ── OVERVIEW ──
-async function loadOverview() {
-  try {
-    const [workshops, participants, students, leads, payments] = await Promise.all([
-      api('/workshops'), api('/participants'), api('/students'), api('/leads'), api('/payments')
-    ]);
-
-    const ws = workshops.data || [];
-    const pays = payments.data || [];
-    const stus = students.data || [];
-    const lds = leads.data || [];
-    const parts = participants.data || [];
-
-    const income = pays.filter(p => p.type === 'income').reduce((s, p) => s + Number(p.amount), 0);
-    const expense = pays.filter(p => p.type === 'expense').reduce((s, p) => s + Number(p.amount), 0);
-    const profit = income - expense;
-    const activeStudents = stus.filter(s => s.status === 'Active').length;
-    const openLeads = lds.filter(l => l.status === 'Hot' || l.status === 'Warm').length;
-    const avgMargin = ws.length ? ws.reduce((s, w) => s + Number(w.margin || 0), 0) / ws.length : 0;
-
-    document.getElementById('stat-revenue').textContent = fmt(income);
-    document.getElementById('stat-expenses').textContent = fmt(expense);
-    document.getElementById('stat-profit').textContent = fmt(profit);
-    document.getElementById('stat-workshops').textContent = ws.length;
-    document.getElementById('stat-participants').textContent = parts.length;
-    document.getElementById('stat-students').textContent = activeStudents;
-    document.getElementById('stat-leads').textContent = openLeads;
-    document.getElementById('stat-margin').textContent = fmtPct(avgMargin);
-
-    // Recent workshops
-    const wsTbody = document.getElementById('overviewWorkshops');
-    wsTbody.innerHTML = ws.slice(0,5).map(w => `
-      <tr>
-        <td><strong>${w.id}</strong></td>
-        <td>${fmtDate(w.date)}</td>
-        <td>${w.total_pax || 0}</td>
-        <td>${fmt(w.total_revenue)}</td>
-        <td style="color:var(--moss)">${fmt(w.net_profit)}</td>
-      </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-light);">No workshops yet</td></tr>';
-
-    // Recent payments
-    const payTbody = document.getElementById('overviewPayments');
-    const recentPays = pays.filter(p => p.type === 'income').slice(-8).reverse();
-    payTbody.innerHTML = recentPays.map(p => `
-      <tr>
-        <td>${fmtDate(p.date)}</td>
-        <td>${p.payer_name || '—'}</td>
-        <td style="color:var(--moss)">${fmt(p.amount)}</td>
-        <td><span class="badge badge-clay">${p.payment_mode || '—'}</span></td>
-      </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-light);">No payments yet</td></tr>';
-
-  } catch(e) { showToast('Error loading overview', 'error'); }
-}
-
-// ── WORKSHOPS ──
-async function loadWorkshops() {
-  try {
-    const res = await api('/workshops?order=date:desc');
-    const ws = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
-    document.getElementById('workshopsTable').innerHTML = ws.map(w => `
-      <tr>
-        <td><strong>${w.id}</strong></td>
-        <td>${fmtDate(w.date)}</td>
-        <td>${w.venue || '—'}</td>
-        <td>${w.total_pax || 0}</td>
-        <td>${fmt(w.total_revenue)}</td>
-        <td>${fmt(w.total_expense)}</td>
-        <td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td>
-        <td>${fmtPct(w.margin)}</td>
-      </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--text-light);">No workshops yet</td></tr>';
-    // Add mobile cards for workshops
-    const wsCardsEl = document.getElementById('workshopsCards');
-    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `
-      <div class="m-card">
-        <div class="m-card-title">${w.id} · ${w.venue||'—'}</div>
-        <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(w.date)}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div>
-      </div>`).join('') || '<p style="text-align:center;color:var(--text-light);padding:2rem">No workshops yet</p>';
-  } catch(e) { showToast('Error loading workshops', 'error'); }
-}
-
-async function loadParticipants() {
-  try {
-    const res = await api('/participants?order=created_at:desc');
-    const parts = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('participantsTable').innerHTML = parts.map(p => `
-      <tr>
-        <td>${p.id}</td>
-        <td><strong>${p.full_name || '—'}</strong></td>
-        <td>${p.phone || '—'}</td>
-        <td>${p.workshop_id || '—'}</td>
-        <td>${fmt(p.amount_paid)}</td>
-        <td><span class="badge badge-clay">${p.payment_mode || '—'}</span></td>
-        <td>${p.checked_in ? '<span class="badge badge-green">Yes</span>' : '<span class="badge badge-gray">No</span>'}</td>
-        <td>${p.interested_in_handpan || '—'}</td>
-        <td style="font-size:0.85rem;color:var(--text-light)">${p.notes || '—'}</td>
-      </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text-light);">No participants yet</td></tr>';
-  } catch(e) { showToast('Error loading participants', 'error'); }
-}
-
-// ── CLASSES ──
-async function loadStudents() {
-  try {
-    const res = await api('/students');
-    const stus = Array.isArray(res) ? res : (res.data || []);
-    const active = stus.filter(s => s.status === 'Active').length;
-    const onBreak = stus.filter(s => s.status === 'On Break').length;
-    const totalPaid = stus.reduce((s, st) => s + Number(st.total_paid || 0), 0);
-    document.getElementById('classActiveStudents').textContent = active;
-    document.getElementById('classTotalRevenue').textContent = fmt(totalPaid);
-    document.getElementById('classOnBreak').textContent = onBreak;
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `
-      <tr>
-        <td>${s.id}</td>
-        <td><strong>${s.full_name}</strong></td>
-        <td>${s.batch_id || '—'}</td>
-        <td>${s.phone || '—'}</td>
-        <td>${fmtDate(s.join_date)}</td>
-        <td><span class="badge ${s.status === 'Active' ? 'badge-green' : s.status === 'On Break' ? 'badge-clay' : 'badge-gray'}">${s.status}</span></td>
-        <td>${s.total_classes || 0}</td>
-        <td style="color:var(--moss)">${fmt(s.total_paid)}</td>
-        <td style="font-size:0.85rem;color:var(--text-light)">${s.notes || '—'}</td>
-      </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text-light);">No students yet</td></tr>';
-  } catch(e) { showToast('Error loading students', 'error'); }
-}
-
-async function loadFeePayments() {
-  try {
-    const res = await api('/fee_payments?order=created_at:desc');
-    const fps = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `
-      <tr>
-        <td>${f.id}</td>
-        <td><strong>${f.student_name}</strong></td>
-        <td>${f.batch_id}</td>
-        <td>${f.month}</td>
-        <td>${f.classes}</td>
-        <td>${fmt(f.amount)}</td>
-        <td>${f.paid ? '<span class="badge badge-green">Paid</span>' : f.amount == 0 ? '<span class="badge badge-gray">Break</span>' : '<span class="badge badge-red">Pending</span>'}</td>
-        <td>${fmtDate(f.payment_date)}</td>
-        <td style="font-size:0.85rem;color:var(--text-light)">${f.notes || '—'}</td>
-      </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text-light);">No fee payments yet</td></tr>';
-  } catch(e) { showToast('Error loading fee payments', 'error'); }
-}
-
-// ── PAYMENTS ──
-async function loadPayments() {
-  try {
-    const res = await api('/payments?order=date:desc');
-    const pays = Array.isArray(res) ? res : (res.data || []);
-    const income = pays.filter(p => p.type === 'income').reduce((s, p) => s + Number(p.amount), 0);
-    const expense = pays.filter(p => p.type === 'expense').reduce((s, p) => s + Number(p.amount), 0);
-    document.getElementById('payTotalIncome').textContent = fmt(income);
-    document.getElementById('payTotalExpenses').textContent = fmt(expense);
-    document.getElementById('payNetProfit').textContent = fmt(income - expense);
-    const payRows = pays.map(p => `
-      <tr>
-        <td>${fmtDate(p.date)}</td>
-        <td>${p.description || p.payer_name || '—'}</td>
-        <td><span class="badge ${p.type === 'income' ? 'badge-green' : 'badge-red'}">${p.type}</span></td>
-        <td><span class="badge badge-gray">${p.category || '—'}</span></td>
-        <td><span class="badge badge-clay">${p.payment_mode || '—'}</span></td>
-        <td style="font-weight:500;color:${p.type === 'income' ? 'var(--moss)' : '#B43C28'}">${p.type === 'income' ? '+' : '-'}${fmt(p.amount)}</td>
-        <td>${p.synced_from_razorpay ? '<span class="badge badge-blue">Razorpay</span>' : '<span class="badge badge-gray">Manual</span>'}</td>
-      </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text-light);">No payments yet</td></tr>';
-    document.getElementById('paymentsTable').innerHTML = payRows;
-    // Mobile cards
-    const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => `
-      <div class="m-card">
-        <div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)} &nbsp;<span class="badge badge-clay" style="font-size:0.7rem">${p.payment_mode||'—'}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Type</span><span class="m-card-val"><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></span></div>
-      </div>`).join('') || '<p style="text-align:center;color:var(--text-light);padding:2rem">No payments yet</p>';
-  } catch(e) { showToast('Error loading payments', 'error'); }
-}
-
-// ── LEADS ──
-async function loadLeads() {
-  try {
-    const res = await api('/leads?order=created_at:desc');
-    const leads = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('leadsTable').innerHTML = leads.map(l => `
-      <tr>
-        <td>${l.id}</td>
-        <td><strong>${l.full_name}</strong></td>
-        <td>${l.phone || '—'}</td>
-        <td>${l.workshop_attended || '—'}</td>
-        <td>${fmtDate(l.date_added)}</td>
-        <td>${l.estimated_budget ? fmt(l.estimated_budget) : '—'}</td>
-        <td><span class="badge ${l.status === 'Hot' ? 'badge-red' : l.status === 'Warm' ? 'badge-clay' : 'badge-gray'}">${l.status || '—'}</span></td>
-        <td>${fmtDate(l.follow_up_date)}</td>
-        <td>${l.referred_friend ? '<span class="badge badge-green">Yes</span>' : '<span class="badge badge-gray">No</span>'}</td>
-        <td style="font-size:0.85rem;color:var(--text-light)">${l.notes || '—'}</td>
-      </tr>`).join('') || '<tr><td colspan="10" style="text-align:center;color:var(--text-light);">No leads yet</td></tr>';
-  } catch(e) { showToast('Error loading leads', 'error'); }
-}
-
-// ── INSIGHTS ──
-async function loadInsights() {
-  try {
-    const [workshops, payments, leads] = await Promise.all([
-      api('/workshops'), api('/payments'), api('/leads')
-    ]);
-    const ws = workshops.data || [];
-    const pays = payments.data || [];
-    const lds = leads.data || [];
-
-    // Best workshop by profit
-    const bestWs = ws.sort((a,b) => Number(b.net_profit) - Number(a.net_profit))[0];
-    document.getElementById('ins-best-ws').textContent = bestWs ? bestWs.id + ' · ' + fmt(bestWs.net_profit) : '—';
-
-    // Best margin
-    const bestMargin = ws.sort((a,b) => Number(b.margin) - Number(a.margin))[0];
-    document.getElementById('ins-best-margin').textContent = bestMargin ? fmtPct(bestMargin.margin) + ' (' + bestMargin.id + ')' : '—';
-
-    // Avg participants
-    const avgPax = ws.length ? Math.round(ws.reduce((s, w) => s + Number(w.total_pax || 0), 0) / ws.length) : 0;
-    document.getElementById('ins-avg-pax').textContent = avgPax;
-
-    // Revenue by category
-    const wsRev = pays.filter(p => p.type === 'income' && p.category === 'workshop').reduce((s, p) => s + Number(p.amount), 0);
-    const classRev = pays.filter(p => p.type === 'income' && p.category === 'class').reduce((s, p) => s + Number(p.amount), 0);
-    document.getElementById('ins-ws-rev').textContent = fmt(wsRev);
-    document.getElementById('ins-class-rev').textContent = fmt(classRev);
-
-    // Lead conversion
-    const hotLeads = lds.filter(l => l.status === 'Hot').length;
-    document.getElementById('ins-lead-conv').textContent = lds.length ? hotLeads + ' / ' + lds.length : '—';
-
-    // Charts
-    buildChartWorkshops(ws);
-    buildChartCategories(pays);
-
-  } catch(e) { showToast('Error loading insights', 'error'); }
-}
-
-function buildChartWorkshops(ws) {
-  const max = Math.max(...ws.map(w => Number(w.total_revenue || 0)));
-  document.getElementById('chartWorkshops').innerHTML = ws.map(w => {
-    const h = max ? Math.round((Number(w.total_revenue) / max) * 100) : 0;
-    return `<div class="chart-bar-wrap">
-      <div class="chart-bar-val">${fmt(w.total_revenue)}</div>
-      <div class="chart-bar" style="height:${h}%"></div>
-      <div class="chart-bar-label">${w.id}</div>
-    </div>`;
-  }).join('');
-}
-
-function buildChartCategories(pays) {
-  const cats = {};
-  pays.filter(p => p.type === 'income').forEach(p => {
-    cats[p.category] = (cats[p.category] || 0) + Number(p.amount);
-  });
-  const entries = Object.entries(cats).sort((a,b) => b[1]-a[1]);
-  const max = Math.max(...entries.map(e => e[1]));
-  document.getElementById('chartCategories').innerHTML = entries.map(([cat, val]) => {
-    const h = max ? Math.round((val / max) * 100) : 0;
-    return `<div class="chart-bar-wrap">
-      <div class="chart-bar-val">${fmt(val)}</div>
-      <div class="chart-bar" style="height:${h}%;background:var(--moss)"></div>
-      <div class="chart-bar-label">${cat}</div>
-    </div>`;
-  }).join('');
-}
-
-// ── SYNC RAZORPAY ──
-async function syncAll() {
-  showToast('Syncing Razorpay payments...', '');
-  try {
-    // In production this will call the Razorpay sync endpoint
-    // For now just refresh payments
-    await loadPayments();
-    showToast('Sync complete!', 'success');
-  } catch(e) {
-    showToast('Sync failed. Try again.', 'error');
-  }
-}
-
-// ── MODALS ──
-function openModal(name) {
-  document.getElementById('modal-' + name).classList.add('open');
-}
-function closeModal(name) {
-  document.getElementById('modal-' + name).classList.remove('open');
-}
-// Close modal on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
-});
-
-// ── SAVE FUNCTIONS ──
-async function savePayment() {
-  const body = {
-    id: 'PAY-' + Date.now(),
-    date: document.getElementById('pay-date').value,
-    amount: document.getElementById('pay-amount').value,
-    type: document.getElementById('pay-type').value,
-    category: document.getElementById('pay-category').value,
-    payment_mode: document.getElementById('pay-mode').value,
-    payer_name: document.getElementById('pay-name').value,
-    description: document.getElementById('pay-desc').value,
-    reference_id: document.getElementById('pay-ref').value,
-    synced_from_razorpay: false
-  };
-  try {
-    await api('/payments', 'POST', body);
-    closeModal('addPayment');
-    loadPayments();
-    showToast('Payment saved!', 'success');
-  } catch(e) { showToast('Error saving payment', 'error'); }
-}
-
-async function saveLead() {
-  const body = {
-    id: 'L-' + String(Date.now()).slice(-3),
-    full_name: document.getElementById('lead-name').value,
-    phone: document.getElementById('lead-phone').value,
-    workshop_attended: document.getElementById('lead-workshop').value,
-    date_added: new Date().toISOString().split('T')[0],
-    estimated_budget: document.getElementById('lead-budget').value,
-    status: document.getElementById('lead-status').value,
-    follow_up_date: document.getElementById('lead-followup').value,
-    referred_friend: false,
-    notes: document.getElementById('lead-notes').value
-  };
-  try {
-    await api('/leads', 'POST', body);
-    closeModal('addLead');
-    loadLeads();
-    showToast('Lead saved!', 'success');
-  } catch(e) { showToast('Error saving lead', 'error'); }
-}
-
-async function saveWorkshop() {
-  const bms = parseInt(document.getElementById('ws-bms').value) || 0;
-  const upi = parseInt(document.getElementById('ws-upi').value) || 0;
-  const rzp = parseInt(document.getElementById('ws-rzp').value) || 0;
-  const price = parseFloat(document.getElementById('ws-price').value) || 0;
-  const venueRent = parseFloat(document.getElementById('ws-venue-rent').value) || 0;
-  const hpRent = parseFloat(document.getElementById('ws-hp-rent').value) || 0;
-  const porter = parseFloat(document.getElementById('ws-porter').value) || 0;
-  const misc = parseFloat(document.getElementById('ws-misc').value) || 0;
-  const totalPax = bms + upi + rzp;
-  const totalRevenue = totalPax * price;
-  const totalExpense = venueRent + hpRent + porter + misc;
-  const netProfit = totalRevenue - totalExpense;
-  const margin = totalRevenue ? netProfit / totalRevenue : 0;
-  const body = {
-    id: document.getElementById('ws-id').value,
-    date: document.getElementById('ws-date').value,
-    venue: document.getElementById('ws-venue').value,
-    bms_pax: bms, upi_pax: upi, razorpay_pax: rzp,
-    total_pax: totalPax, price_per_head: price,
-    venue_rent: venueRent, handpan_rental: hpRent,
-    porter_delivery: porter, snacks_misc: misc,
-    total_expense: totalExpense, total_revenue: totalRevenue,
-    net_profit: netProfit, margin: margin
-  };
-  try {
-    await api('/workshops', 'POST', body);
-    closeModal('addWorkshop');
-    loadWorkshops();
-    showToast('Workshop saved!', 'success');
-  } catch(e) { showToast('Error saving workshop', 'error'); }
-}
-
-async function saveStudent() {
-  const body = {
-    id: document.getElementById('stu-id').value,
-    full_name: document.getElementById('stu-name').value,
-    batch_id: document.getElementById('stu-batch').value,
-    phone: document.getElementById('stu-phone').value,
-    join_date: document.getElementById('stu-join').value,
-    status: document.getElementById('stu-status').value,
-    total_classes: 0, total_paid: 0,
-    notes: document.getElementById('stu-notes').value
-  };
-  try {
-    await api('/students', 'POST', body);
-    closeModal('addStudent');
-    loadStudents();
-    showToast('Student saved!', 'success');
-  } catch(e) { showToast('Error saving student', 'error'); }
-}
-
-async function saveFeePayment() {
-  const body = {
-    id: document.getElementById('fp-id').value,
-    student_name: document.getElementById('fp-student').value,
-    batch_id: document.getElementById('fp-batch').value,
-    month: document.getElementById('fp-month').value,
-    classes: parseInt(document.getElementById('fp-classes').value) || 0,
-    amount: parseFloat(document.getElementById('fp-amount').value) || 0,
-    paid: document.getElementById('fp-paid').value === 'true',
-    payment_date: document.getElementById('fp-date').value,
-    notes: document.getElementById('fp-notes').value
-  };
-  try {
-    await api('/fee_payments', 'POST', body);
-    closeModal('addFeePayment');
-    loadFeePayments();
-    showToast('Fee payment saved!', 'success');
-  } catch(e) { showToast('Error saving fee payment', 'error'); }
-}
-
-async function saveParticipant() {
-  const body = {
-    id: document.getElementById('par-id').value,
-    workshop_id: document.getElementById('par-workshop').value,
-    date: new Date().toISOString().split('T')[0],
-    full_name: document.getElementById('par-name').value,
-    phone: document.getElementById('par-phone').value,
-    booking_source: document.getElementById('par-source').value,
-    amount_paid: parseFloat(document.getElementById('par-amount').value) || 0,
-    payment_mode: document.getElementById('par-mode').value,
-    checked_in: document.getElementById('par-checkin').value === 'true',
-    notes: document.getElementById('par-notes').value
-  };
-  try {
-    await api('/participants', 'POST', body);
-    closeModal('addParticipant');
-    loadParticipants();
-    showToast('Participant saved!', 'success');
-  } catch(e) { showToast('Error saving participant', 'error'); }
-}
-
-// ── TOAST ──
-function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (type ? ' ' + type : '');
-  setTimeout(() => { t.className = 'toast'; }, 3000);
-}
-
-// ── MOBILE NAV ──
-
-// Load if already authenticated
-if (sessionStorage.getItem('dash_auth') === '1') {
-  loadAll();
-}
-
-
-
+// Keep backward compat for any openModal calls
+function openModal(name) { openFormPage(name); }
+function closeModal(name) { closeFormPage(name); }
 </script>
 </body>
 </html>
