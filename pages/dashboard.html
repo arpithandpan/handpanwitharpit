@@ -268,10 +268,10 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 /* Mobile top bar */
 .mobile-topbar {
   display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
-  background: #3d2b1f; padding: 14px 16px;
+  background: #3d2b1f !important; padding: 14px 16px;
   align-items: center; justify-content: space-between;
   width: 100%; box-sizing: border-box; overflow: hidden;
-  border-bottom: none;
+  border-bottom: none !important; box-shadow: none !important;
 }
 .mobile-topbar.menu-open .topbar-logo { opacity: 0; pointer-events: none; }
 .mobile-topbar.menu-open .topbar-bell { opacity: 0; pointer-events: none; }
@@ -849,7 +849,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 </div>
 
 <div class="mobile-menu-overlay" id="mobileMenuOverlay">
-  <nav style="display:flex;flex-direction:column;gap:0;padding:76px 0 2rem;">
+  <nav style="display:flex;flex-direction:column;gap:0;padding:76px 0 2rem;align-items:stretch;">
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('overview',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       Overview
@@ -1590,6 +1590,7 @@ function toggleMobileMenu() {
     overlay.classList.remove('open');
     if (topbar) topbar.classList.remove('menu-open');
     document.body.style.overflow = '';
+    document.body.style.background = '';
     if (l1) {
       l1.style.transform = '';
       l1.style.background = '#e8d5c0';
@@ -1605,6 +1606,7 @@ function toggleMobileMenu() {
     overlay.classList.add('open');
     if (topbar) topbar.classList.add('menu-open');
     document.body.style.overflow = 'hidden';
+    document.body.style.background = '#1a1208';
     if (l1) {
       l1.style.transform = 'translateY(7px) rotate(45deg)';
       l1.style.background = '#e8d5c0';
