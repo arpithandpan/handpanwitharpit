@@ -337,17 +337,18 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 /* Notification toast */
 .toast {
-  position: fixed; bottom: 2rem; right: 2rem;
-  background: var(--bark); color: var(--clay-pale);
-  padding: 0.9rem 1.5rem; border-radius: 4px;
-  font-size: 0.9rem; z-index: 99999;
-  transform: translateY(100px); opacity: 0;
-  transition: all 0.3s; pointer-events: none;
+  position: fixed; top: 1.25rem; left: 50%; transform: translateX(-50%) translateY(-80px);
+  background: #2e2418; color: #c8935a;
+  border: 1px solid rgba(200,147,90,0.3);
+  padding: 0.75rem 1.4rem; border-radius: 8px;
+  font-size: 0.9rem; font-weight: 500; z-index: 99999;
+  opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: none; white-space: nowrap;
   max-width: calc(100vw - 2rem);
 }
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.success { background: var(--moss); }
-.toast.error { background: #B43C28; }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.success { background: #2a3d1e; color: #a8cc7a; border-color: rgba(138,170,110,0.35); }
+.toast.error { background: #3d1e1e; color: #e87a6a; border-color: rgba(180,60,40,0.35); }
 
 
 /* Mobile top bar */
@@ -654,8 +655,8 @@ body.dark-mode .btn-dash-danger { color: #e87a60; border-color: rgba(220,100,80,
 body.dark-mode .btn-dash-danger:hover { background: rgba(180,80,60,0.15); border-color: #e87a60; }
 body.dark-mode .btn-dash-save { background: #c8935a; color: #1a1410; }
 body.dark-mode .btn-dash-save:hover { background: #dba870; }
-body.dark-mode .btn-archive { color: #7a6354; background: transparent; border: none; }
-body.dark-mode .btn-archive:hover { color: #e87a60; background: rgba(180,80,60,0.15); }
+body.dark-mode .btn-archive { color: #7a6354; border-color: rgba(200,147,90,0.2); background: transparent; }
+body.dark-mode .btn-archive:hover { color: #dba870; border-color: rgba(200,147,90,0.45); background: rgba(200,147,90,0.06); }
 body.dark-mode .btn-restore { color: #8aaa6e; background: transparent; }
 body.dark-mode .btn-restore:hover { background: rgba(138,170,110,0.15); }
 body.dark-mode .badge-green { background: rgba(138,170,110,0.18); color: #8aaa6e; }
@@ -679,6 +680,10 @@ body.dark-mode td strong { color: #e8d5c0; }
 body.dark-mode tr:hover td { background: rgba(200,147,90,0.04); }
 body.dark-mode .stat-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
 body.dark-mode .stat-label { color: #7a6354; }
+body.dark-mode .stat-value { color: #e8d5c0; }
+body.dark-mode .stat-value.green { color: #8aaa6e; }
+body.dark-mode .stat-value.clay { color: #c8935a; }
+body.dark-mode .stat-sub { color: #9a7d63; }
 body.dark-mode .m-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
 body.dark-mode .m-card-title { color: #e8d5c0; border-bottom-color: rgba(200,147,90,0.15); }
 body.dark-mode .m-card-label { color: #7a6354; }
@@ -807,12 +812,14 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 
 /* ── ARCHIVE / CHECKIN BUTTONS ── */
 .btn-archive {
-  background: none; border: none; cursor: pointer;
-  padding: 8px; border-radius: 6px; color: var(--text-light);
-  transition: all 0.15s; display: inline-flex; align-items: center; justify-content: center;
-  min-width: 36px; min-height: 36px;
+  background: transparent; cursor: pointer; border-radius: 6px;
+  border: 1px solid rgba(200,147,90,0.25); color: var(--text-light);
+  transition: all 0.15s; display: inline-flex; align-items: center;
+  gap: 5px; padding: 6px 10px; font-size: 0.78rem; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  font-family: var(--font-body); min-height: 36px; white-space: nowrap;
 }
-.btn-archive:hover { color: #B43C28; background: rgba(180,60,40,0.08); }
+.btn-archive:hover { border-color: rgba(200,147,90,0.5); color: var(--bark); background: rgba(200,147,90,0.06); }
 .btn-restore {
   background: none; border: 1px solid rgba(122,140,106,0.4);
   color: var(--moss); border-radius: 4px; cursor: pointer;
@@ -1623,18 +1630,18 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
   <div style="background:var(--cream);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
     <div style="padding:1.5rem 1.5rem 0;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
-        <div style="width:36px;height:36px;border-radius:50%;background:rgba(180,60,40,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B43C28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(193,127,82,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         </div>
         <div id="archiveConfirmTitle" style="font-size:1rem;font-weight:600;color:var(--bark);">Hide this record?</div>
       </div>
       <p style="font-size:0.9rem;color:var(--text-light);line-height:1.5;margin:0 0 1.25rem;">
-        <span id="archiveConfirmDesc"><strong id="archiveConfirmName" style="color:var(--bark);"></strong> will be hidden from the list. It won't be deleted — restore it anytime from "Show archived".</span>
+        <span id="archiveConfirmDesc">This record will be hidden from your list. You can restore it anytime by turning on "Show archived."</span>
       </p>
     </div>
     <div style="display:flex;border-top:1px solid var(--clay-pale);">
       <button onclick="closeArchiveConfirm()" style="flex:1;padding:0.9rem;background:transparent;border:none;border-right:1px solid var(--clay-pale);font-size:0.9rem;color:var(--text-light);cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Cancel</button>
-      <button id="archiveConfirmBtn" onclick="confirmArchive()" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:0.9rem;color:#B43C28;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Hide it</button>
+      <button id="archiveConfirmBtn" onclick="confirmArchive()" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:0.9rem;color:#c8935a;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Hide it</button>
     </div>
   </div>
 </div>
@@ -1810,6 +1817,7 @@ function tryCloseFormPage(name) {
   if (isFormDirty(name)) {
     _pendingCloseForm = name;
     document.getElementById('unsavedModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   } else {
     closeFormPage(name);
   }
@@ -1817,11 +1825,13 @@ function tryCloseFormPage(name) {
 
 function unsavedKeepEditing() {
   document.getElementById('unsavedModal').style.display = 'none';
+  document.body.style.overflow = '';
   _pendingCloseForm = null;
 }
 
 function unsavedDiscard() {
   document.getElementById('unsavedModal').style.display = 'none';
+  document.body.style.overflow = '';
   if (_pendingCloseForm) {
     closeFormPage(_pendingCloseForm);
     resetForm(_pendingCloseForm);
@@ -1847,10 +1857,14 @@ function customConfirm(title, desc) {
     document.getElementById('customConfirmDesc').textContent = desc;
     document.getElementById('customConfirmOkBtn').onclick = () => { customConfirmClose(); resolve(true); };
     document.getElementById('customConfirmModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   });
 }
 function customConfirmCancel() { customConfirmClose(); if (_customConfirmResolve) _customConfirmResolve(false); }
-function customConfirmClose() { document.getElementById('customConfirmModal').style.display = 'none'; }
+function customConfirmClose() {
+  document.getElementById('customConfirmModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
 
 if (sessionStorage.getItem('dash_auth') === '1') {
   document.getElementById('loginScreen').style.display = 'none';
@@ -2139,13 +2153,13 @@ async function loadWorkshops() {
 const res = await api('/workshops?order=date:desc' + (showArchivedWorkshops ? '&include_archived=true' : ''));
     const ws = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
-    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.5rem;align-items:center;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="white-space:nowrap;">✓ Check-in</button><button class="btn-archive" onclick="deleteRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.5rem;align-items:center;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="white-space:nowrap;">✓ Check-in</button><button class="btn-archive" onclick="deleteRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">🎵</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No workshops yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Add your first workshop to start tracking participants and revenue.</div>
     </td></tr>`;
     const wsCardsEl = document.getElementById('workshopsCards');
-    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card ${w.archived?'archived-row':''}"><div class="m-card-title">${w.id} · ${w.venue||'—'}<span style="float:right;font-size:0.8rem;color:var(--text-light)">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div><div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="">✓ Check-in</button><button class="btn-archive" onclick="deleteRecord('workshops','${w.id}','Workshop ${w.id}')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card ${w.archived?'archived-row':''}"><div class="m-card-title">${w.id} · ${w.venue||'—'}<span style="float:right;font-size:0.8rem;color:var(--text-light)">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div><div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="">✓ Check-in</button><button class="btn-archive" onclick="deleteRecord('workshops','${w.id}','Workshop ${w.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading workshops', 'error'); }
 }
 async function loadParticipants() {
@@ -2153,13 +2167,13 @@ async function loadParticipants() {
     const showArchivedParticipants = document.getElementById('toggle-archived-participants')?.checked;
 const res = await api('/participants?order=created_at:desc' + (showArchivedParticipants ? '&include_archived=true' : ''));
     const parts = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},this)">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},this)">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">👥</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No participants yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Participants will appear here once added or when a Razorpay payment is received.</div>
     </td></tr>`;
     const parCards = document.getElementById('participantsCards');
-    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;"><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${p.full_name||p.id}')">${p.checked_in?'✓ Checked in':'Check in'}</button>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('participants','${p.id}','${p.full_name||p.id}')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;"><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${p.full_name||p.id}')">${p.checked_in?'✓ Checked in':'Check in'}</button>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('participants','${p.id}','${p.full_name||p.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading participants', 'error'); }
 }
 
@@ -2172,13 +2186,13 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
     document.getElementById('classActiveStudents').textContent = stus.filter(s=>s.status==='Active').length;
     document.getElementById('classTotalRevenue').textContent = fmt(stus.reduce((s,st)=>s+Number(st.total_paid||0),0));
     document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('students','${s.id}','${s.full_name}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('students','${s.id}','${s.full_name}')" title="Archive"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">🎓</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No students yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Add your first student to start tracking classes and fee payments.</div>
     </td></tr>`;
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('students','${s.id}','${s.full_name}')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('students','${s.id}','${s.full_name}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading students', 'error'); }
 }
 async function loadFeePayments() {
@@ -2186,7 +2200,7 @@ async function loadFeePayments() {
     const showArchivedFee = document.getElementById('toggle-archived-fee')?.checked;
 const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ? '&include_archived=true' : ''));
     const fps = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')" title="Archive"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">📋</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No fee payments yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Fee payments will appear here once you add students and log their monthly fees.</div>
@@ -2207,13 +2221,13 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
     document.getElementById('payTotalIncome').textContent = fmt(income);
     document.getElementById('payTotalExpenses').textContent = fmt(expense);
     document.getElementById('payNetProfit').textContent = fmt(income-expense);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">💳</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No payments yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Razorpay payments sync automatically. You can also add manual payments.</div>
     </td></tr>`;
     const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading payments', 'error'); }
 }
 
@@ -2223,13 +2237,13 @@ async function loadLeads() {
     const showArchivedLeads = document.getElementById('toggle-archived-leads')?.checked;
 const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&include_archived=true' : ''));
     const leads = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('leads','${l.id}','${l.full_name}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('leads','${l.id}','${l.full_name}')" title="Archive"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">💬</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No leads yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Track potential students and handpan buyers who attended your workshops.</div>
     </td></tr>`;
     const leadsCards = document.getElementById('leadsCards');
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('leads','${l.id}','${l.full_name}')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="deleteRecord('leads','${l.id}','${l.full_name}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading leads', 'error'); }
 }
 
@@ -2462,15 +2476,16 @@ async function confirmDelete() {
 let _archivePending = null;
 function archiveRecord(entity, id, name) {
   _archivePending = { entity, id, name };
-  document.getElementById('archiveConfirmTitle').textContent = 'Hide this record?';
-  document.getElementById('archiveConfirmName').textContent = name;
-  document.getElementById('archiveConfirmDesc').innerHTML = '<strong id="archiveConfirmName" style="color:var(--bark);">' + name + '</strong> will be hidden from the list. It will not be deleted — restore it anytime from "Show archived".';
+  document.getElementById('archiveConfirmTitle').textContent = 'Hide "' + name + '"?';
+  document.getElementById('archiveConfirmDesc').textContent = 'This record will be hidden from your list. You can restore it anytime by turning on "Show archived."';
   document.getElementById('archiveConfirmBtn').textContent = 'Hide it';
   document.getElementById('archiveConfirmBtn').onclick = confirmArchive;
   document.getElementById('archiveConfirmModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
 function closeArchiveConfirm() {
   document.getElementById('archiveConfirmModal').style.display = 'none';
+  document.body.style.overflow = '';
   _archivePending = null;
 }
 async function confirmArchive() {
@@ -2668,16 +2683,14 @@ function fmtDateTime(ts) {
 let _checkInPending = null;
 function toggleCheckIn(id, currentState, name) {
   if (currentState) {
-    // Checking OUT — show confirmation
     _checkInPending = { id, name };
-    document.getElementById('archiveConfirmName').textContent = name;
     document.getElementById('archiveConfirmTitle').textContent = 'Remove check-in?';
     document.getElementById('archiveConfirmDesc').textContent = name + ' will be marked as not checked in.';
     document.getElementById('archiveConfirmBtn').textContent = 'Remove';
     document.getElementById('archiveConfirmBtn').onclick = confirmCheckOut;
     document.getElementById('archiveConfirmModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   } else {
-    // Checking IN — no confirmation needed
     doCheckIn(id, true, name);
   }
 }
