@@ -614,7 +614,14 @@ body.dark-mode .modal { background: #231c16; }
 body.dark-mode .modal-title { color: #e8d5c0; }
 body.dark-mode .modal-close-btn { background: #2a2018; color: #e8d5c0; }
 body.dark-mode .mobile-topbar { background: #0e0b08; }
+body.dark-mode .mobile-menu-overlay { background: #f5ede4 !important; }
 body.dark-mode .mobile-menu-overlay a { color: #3d2b1f !important; }
+body.dark-mode .mobile-menu-overlay nav a { color: #3d2b1f !important; }
+body.dark-mode .mobile-menu-overlay div { border-color: rgba(61,43,31,0.15) !important; }
+body.dark-mode .mobile-topbar.menu-open { background: #f5ede4 !important; }
+body.dark-mode .mobile-topbar.menu-open #menuLine1,
+body.dark-mode .mobile-topbar.menu-open #menuLine2,
+body.dark-mode .mobile-topbar.menu-open #menuLine3 { background: #3d2b1f !important; }
 body.dark-mode #darkModeToggle { background: var(--clay) !important; }
 body.dark-mode #darkModeKnob { transform: translateX(24px); background: #fff; }
 body.dark-mode .dash-sidebar { background: #0e0b08; }
@@ -836,9 +843,9 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
     <span style="font-size:18px;font-weight:500;color:#e8d5c0;">Arpit's Studio</span>
   </div>
   <button id="mobileMenuBtn" onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;width:44px;height:44px;" aria-label="Toggle menu">
-    <span id="menuLine1" style="display:block;width:22px;height:2px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
-    <span id="menuLine2" style="display:block;width:22px;height:2px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
-    <span id="menuLine3" style="display:block;width:22px;height:2px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
+    <span id="menuLine1" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
+    <span id="menuLine2" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
+    <span id="menuLine3" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
   </button>
 </div>
 
@@ -1559,12 +1566,32 @@ function toggleMobileMenu() {
     overlay.classList.remove('open');
     if (topbar) topbar.classList.remove('menu-open');
     document.body.style.overflow = '';
-    if (l1) { l1.style.transform=''; l1.style.background=''; l1.style.width=''; l2.style.opacity='1'; l2.style.transform=''; l3.style.transform=''; l3.style.background=''; l3.style.width=''; }
+    if (l1) {
+      l1.style.transform = '';
+      l1.style.background = '#e8d5c0';
+      l1.style.width = '22px';
+      l2.style.opacity = '1';
+      l2.style.transform = '';
+      l2.style.background = '#e8d5c0';
+      l3.style.transform = '';
+      l3.style.background = '#e8d5c0';
+      l3.style.width = '22px';
+    }
   } else {
     overlay.classList.add('open');
     if (topbar) topbar.classList.add('menu-open');
     document.body.style.overflow = 'hidden';
-    if (l1) { l1.style.transform='translateY(7px) rotate(45deg)'; l1.style.background='#3d2b1f'; l1.style.width='24px'; l2.style.opacity='0'; l2.style.transform='scaleX(0)'; l3.style.transform='translateY(-7px) rotate(-45deg)'; l3.style.background='#3d2b1f'; l3.style.width='24px'; }
+    if (l1) {
+      l1.style.transform = 'translateY(7px) rotate(45deg)';
+      l1.style.background = '#3d2b1f';
+      l1.style.width = '24px';
+      l2.style.opacity = '0';
+      l2.style.transform = 'scaleX(0)';
+      l2.style.background = '#3d2b1f';
+      l3.style.transform = 'translateY(-7px) rotate(-45deg)';
+      l3.style.background = '#3d2b1f';
+      l3.style.width = '24px';
+    }
   }
 }
 window.addEventListener('resize', function() {
