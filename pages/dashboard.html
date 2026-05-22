@@ -894,26 +894,23 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 .checkin-card-name { font-size: 1rem; font-weight: 500; color: var(--bark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .checkin-card-meta { font-size: 0.8rem; color: var(--text-light); margin-top: 3px; }
 .checkin-card-meta span { margin-right: 0.75rem; }
-.btn-checkin-big {
-  flex-shrink: 0; border-radius: 20px; cursor: pointer;
-  font-size: 0.78rem; font-weight: 500; font-family: var(--font-body);
-  padding: 0.4rem 1rem; transition: all 0.2s; white-space: nowrap;
+.checkin-cb {
+  width: 30px; height: 30px; border-radius: 6px; flex-shrink: 0;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 2px solid rgba(200,147,90,0.4);
+  transition: background 0.12s, border-color 0.12s;
   touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 }
-.btn-checkin-big.unchecked {
-  background: transparent; border: 1.5px solid var(--clay-pale); color: var(--text-light);
-}
-.btn-checkin-big.unchecked:hover { border-color: var(--clay); color: var(--clay); }
-.btn-checkin-big.checked {
-  background: rgba(122,140,106,0.15); border: 1.5px solid var(--moss); color: var(--moss);
-}
+.checkin-cb.checked { background: #c8935a; border-color: #c8935a; }
+.checkin-cb svg { display: none; }
+.checkin-cb.checked svg { display: block; }
 .checkin-empty { text-align: center; padding: 4rem 1.5rem; color: var(--text-light); font-size: 0.95rem; }
 body.dark-mode .checkin-screen { background: #1a1410; }
 body.dark-mode .checkin-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
 body.dark-mode .checkin-card.is-checked { border-color: rgba(138,170,110,0.2); }
 body.dark-mode .checkin-card-name { color: #e8d5c0; }
-body.dark-mode .btn-checkin-big.unchecked { border-color: rgba(200,147,90,0.3); color: #9a7d63; }
-body.dark-mode .btn-checkin-big.checked { background: rgba(138,170,110,0.12); border-color: #8aaa6e; color: #8aaa6e; }
+body.dark-mode .checkin-cb { border-color: rgba(200,147,90,0.35); }
+body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a; }
 
 </style>
 </head>
@@ -2558,11 +2555,12 @@ function renderCheckinGrid() {
           <span>${fmt(p.amount_paid)} · ${p.payment_mode || '—'}</span>
         </div>
       </div>
-      <button class="btn-checkin-big ${p.checked_in ? 'checked' : 'unchecked'}"
-        id="cb-${p.id}"
+      <div class="checkin-cb ${p.checked_in ? 'checked' : ''}" id="cb-${p.id}"
         onclick="checkinModeToggle('${p.id}', ${p.checked_in}, '${(p.full_name||'').replace(/'/g,"\\'")}')">
-        ${p.checked_in ? '✓ In' : 'Check in'}
-      </button>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <polyline points="3,8 7,12 13,4" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
     </div>
   `).join('');
 }
@@ -2572,23 +2570,24 @@ async function checkinModeToggle(id, currentState, name) {
   const card = document.getElementById('cc-' + id);
   const btn = document.getElementById('cb-' + id);
 
-  // Instant in-place update — no grid re-render, no position change
-  if (card && btn) {
-    card.classList.toggle('is-checked', newState);
-    btn.className = 'btn-checkin-big ' + (newState ? 'checked' : 'unchecked');
-    btn.textContent = newState ? '✓ In' : 'Check in';
-    btn.onclick = () => checkinModeToggle(id, newState, name);
-  }
+  // Disable immediately to prevent double-tap
+  if (btn) btn.style.pointerEvents = 'none';
 
-  // Update local data
-  const idx = _checkinParticipants.findIndex(p => p.id === id);
-  if (idx > -1) _checkinParticipants[idx].checked_in = newState;
+  // Force DOM paint on next frame — visual change before any async work
+  requestAnimationFrame(() => {
+    if (card && btn) {
+      card.classList.toggle('is-checked', newState);
+      btn.classList.toggle('checked', newState);
+      btn.onclick = () => checkinModeToggle(id, newState, name);
+      btn.style.pointerEvents = '';
+    }
+    const idx = _checkinParticipants.findIndex(p => p.id === id);
+    if (idx > -1) _checkinParticipants[idx].checked_in = newState;
+    const checkedCount = _checkinParticipants.filter(p => p.checked_in).length;
+    document.getElementById('checkinCounter').textContent = checkedCount + ' / ' + _checkinParticipants.length + ' checked in';
+  });
 
-  // Update counter
-  const checkedCount = _checkinParticipants.filter(p => p.checked_in).length;
-  document.getElementById('checkinCounter').textContent = checkedCount + ' / ' + _checkinParticipants.length + ' checked in';
-
-  // Persist to Supabase in background
+  // Persist to Supabase in background — completely decoupled from UI
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?id=eq.' + id, {
       method: 'PATCH',
@@ -2596,18 +2595,19 @@ async function checkinModeToggle(id, currentState, name) {
       body: JSON.stringify({ checked_in: newState })
     });
     if (!res.ok) throw new Error('Failed');
-    showToast(newState ? '✓ ' + name + ' checked in!' : '↩ Removed for ' + name, newState ? 'success' : '');
   } catch(e) {
-    // Revert card visually on failure
-    if (card && btn) {
-      card.classList.toggle('is-checked', currentState);
-      btn.className = 'btn-checkin-big ' + (currentState ? 'checked' : 'unchecked');
-      btn.textContent = currentState ? '✓ In' : 'Check in';
-      btn.onclick = () => checkinModeToggle(id, currentState, name);
-    }
-    if (idx > -1) _checkinParticipants[idx].checked_in = currentState;
-    const revertCount = _checkinParticipants.filter(p => p.checked_in).length;
-    document.getElementById('checkinCounter').textContent = revertCount + ' / ' + _checkinParticipants.length + ' checked in';
+    // Revert visually on failure
+    requestAnimationFrame(() => {
+      if (card && btn) {
+        card.classList.toggle('is-checked', currentState);
+        btn.classList.toggle('checked', currentState);
+        btn.onclick = () => checkinModeToggle(id, currentState, name);
+      }
+      const idx = _checkinParticipants.findIndex(p => p.id === id);
+      if (idx > -1) _checkinParticipants[idx].checked_in = currentState;
+      const revertCount = _checkinParticipants.filter(p => p.checked_in).length;
+      document.getElementById('checkinCounter').textContent = revertCount + ' / ' + _checkinParticipants.length + ' checked in';
+    });
     showToast('Failed to update check-in', 'error');
   }
 }
