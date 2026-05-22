@@ -131,21 +131,50 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .badge-gray  { background: rgba(100,100,100,0.1); color: var(--text-light); }
 .badge-blue  { background: rgba(70,100,160,0.1); color: #4664A0; }
 
-/* Buttons */
+/* ── UNIFIED BUTTON SYSTEM ── */
 .btn-dash {
   font-family: var(--font-body); font-size: 0.85rem; font-weight: 500;
   letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 0.6rem 1.25rem; border-radius: 3px; cursor: pointer;
+  padding: 0.6rem 1.25rem; border-radius: 4px; cursor: pointer;
   border: none; transition: all 0.2s; text-decoration: none;
   display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 38px;
 }
-.btn-dash-primary { background: var(--bark); color: var(--clay-pale); }
-.btn-dash-primary:hover { background: var(--clay); }
-.btn-dash-outline { background: transparent; color: var(--bark); border: 1px solid var(--clay-pale); }
-.btn-dash-outline:hover { border-color: var(--clay); color: var(--clay); }
-.btn-dash-sm { padding: 0.4rem 0.9rem; font-size: 0.78rem; }
+/* Primary — dark fill, used for the main action on each page */
+.btn-dash-primary { background: var(--bark); color: var(--clay-pale); border: none; }
+.btn-dash-primary:hover { background: var(--clay); color: var(--cream); }
+/* Outline — secondary actions, always alongside or below a primary */
+.btn-dash-outline { background: transparent; color: var(--bark); border: 1px solid rgba(193,127,82,0.5); }
+.btn-dash-outline:hover { border-color: var(--clay); color: var(--clay); background: rgba(193,127,82,0.06); }
+/* Ghost — low-hierarchy actions like export tiles in Settings */
+.btn-dash-ghost {
+  background: var(--sand); color: var(--bark);
+  border: 1px solid rgba(193,127,82,0.45); border-radius: 4px;
+  text-align: left; font-family: var(--font-body);
+  font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em;
+  text-transform: uppercase; cursor: pointer;
+  padding: 0.65rem 1rem; transition: background 0.15s, border-color 0.15s;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.btn-dash-ghost:hover { background: rgba(193,127,82,0.12); border-color: var(--clay); }
+/* Sync — green-tinted, used only for refresh/sync actions */
 .btn-dash-sync { background: rgba(122,140,106,0.15); color: var(--moss); border: 1px solid rgba(122,140,106,0.3); }
 .btn-dash-sync:hover { background: rgba(122,140,106,0.25); }
+/* Danger — destructive actions like Clear all */
+.btn-dash-danger { background: transparent; color: #B43C28; border: 1px solid rgba(180,60,40,0.3); }
+.btn-dash-danger:hover { background: rgba(180,60,40,0.06); border-color: #B43C28; }
+/* Size modifier */
+.btn-dash-sm { padding: 0.4rem 0.9rem; font-size: 0.78rem; min-height: 32px; }
+/* Save — used on dark form-page headers, always clay-coloured so it pops on both light/dark headers */
+.btn-dash-save {
+  background: var(--clay); color: #fff; border: none;
+  font-family: var(--font-body); font-size: 0.85rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.5rem 1.25rem; border-radius: 4px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  transition: background 0.2s;
+}
+.btn-dash-save:hover { background: #dba870; }
 
 /* Forms / Modal */
 .modal-overlay {
@@ -507,13 +536,6 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .settings-export-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;
 }
-.settings-export-btn {
-  background: var(--sand); border: 1px solid var(--clay-pale); border-radius: 6px;
-  padding: 0.65rem 1rem; font-size: 0.85rem; color: var(--bark);
-  cursor: pointer; text-align: left; font-family: var(--font-body);
-  transition: background 0.15s;
-}
-.settings-export-btn:hover { background: var(--clay-pale); }
 .settings-mvp-bar-wrap { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
 .settings-checklist { display: flex; flex-direction: column; gap: 0.5rem; }
 .settings-check-item { font-size: 0.9rem; color: var(--bark); }
@@ -552,7 +574,6 @@ body.dark-mode .login-screen { background: #0a0806; }
 body.dark-mode #darkModeToggle { background: var(--clay) !important; }
 body.dark-mode #darkModeKnob { transform: translateX(24px); background: #fff; }
 body.dark-mode .settings-code { background: #2a2018; color: #e8d5c0; }
-body.dark-mode .settings-export-btn { background: #2a2018; color: #e8d5c0; }
 body.dark-mode .overview-card-head { background: #2a2018; }
 
 
@@ -564,16 +585,20 @@ body.dark-mode .notif-time { color: #7a6354; }
 body.dark-mode .notif-unread-dot { background: #c8935a; }
 body.dark-mode .btn-checkin { border-color: rgba(200,147,90,0.3); color: #9a7d63; }
 body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border-color: #8aaa6e; color: #8aaa6e; }
-body.dark-mode .btn-archive { color: #7a6354; }
-body.dark-mode .btn-archive:hover { color: #e87a60; background: rgba(180,80,60,0.12); }
 body.dark-mode #archiveConfirmModal > div { background: #231c16; }
 /* ── DARK MODE: comprehensive button + UI fixes ── */
 body.dark-mode .btn-dash-primary { background: #c8935a; color: #1a1410; border: none; }
 body.dark-mode .btn-dash-primary:hover { background: #dba870; color: #1a1410; }
-body.dark-mode .btn-dash-outline { color: #e8d5c0; border-color: rgba(200,147,90,0.45); background: transparent; }
-body.dark-mode .btn-dash-outline:hover { border-color: #c8935a; color: #c8935a; background: rgba(200,147,90,0.08); }
-body.dark-mode .btn-dash-sync { background: rgba(138,170,110,0.15); color: #8aaa6e; border-color: rgba(138,170,110,0.35); }
-body.dark-mode .btn-dash-sync:hover { background: rgba(138,170,110,0.25); }
+body.dark-mode .btn-dash-outline { color: #e8d5c0; border-color: rgba(200,147,90,0.65); background: transparent; }
+body.dark-mode .btn-dash-outline:hover { border-color: #c8935a; color: #c8935a; background: rgba(200,147,90,0.1); }
+body.dark-mode .btn-dash-ghost { background: #2a2018; color: #dba870; border-color: rgba(200,147,90,0.5); }
+body.dark-mode .btn-dash-ghost:hover { background: #352818; border-color: #c8935a; color: #e8d5c0; }
+body.dark-mode .btn-dash-sync { background: rgba(138,170,110,0.18); color: #8aaa6e; border-color: rgba(138,170,110,0.5); }
+body.dark-mode .btn-dash-sync:hover { background: rgba(138,170,110,0.28); }
+body.dark-mode .btn-dash-danger { color: #e87a60; border-color: rgba(220,100,80,0.6); background: transparent; }
+body.dark-mode .btn-dash-danger:hover { background: rgba(180,80,60,0.15); border-color: #e87a60; }
+body.dark-mode .btn-dash-save { background: #c8935a; color: #1a1410; }
+body.dark-mode .btn-dash-save:hover { background: #dba870; }
 body.dark-mode .btn-archive { color: #7a6354; background: transparent; border: none; }
 body.dark-mode .btn-archive:hover { color: #e87a60; background: rgba(180,80,60,0.15); }
 body.dark-mode .btn-restore { color: #8aaa6e; background: transparent; }
@@ -609,8 +634,6 @@ body.dark-mode .toggle-track::after { background: #7a6354; }
 body.dark-mode .settings-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
 body.dark-mode .settings-card-title { color: #e8d5c0; }
 body.dark-mode .settings-card-sub { color: #7a6354; }
-body.dark-mode .settings-export-btn { background: #2a2018; color: #c4a882; border-color: rgba(200,147,90,0.2); }
-body.dark-mode .settings-export-btn:hover { background: rgba(200,147,90,0.12); color: #e8d5c0; }
 body.dark-mode .settings-code { background: #2a2018; color: #c4a882; border: 1px solid rgba(200,147,90,0.2); }
 body.dark-mode .settings-health-val { color: #e8d5c0; }
 body.dark-mode .settings-health-label { color: #7a6354; }
@@ -641,25 +664,8 @@ body.dark-mode .dash-main { background: #1a1410; }
 body.dark-mode .login-screen { background: #0a0806; }
 body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 
-/* ── ARCHIVE ── */
-.btn-archive {
-  background: none; border: none; cursor: pointer;
-  color: var(--text-light); font-size: 1rem; padding: 4px 6px;
-  border-radius: 4px; line-height: 1; transition: color 0.15s, background 0.15s;
-}
-.btn-archive:hover { color: #B43C28; background: #fdf0ee; }
-.btn-restore {
-  background: none; border: none; cursor: pointer;
-  color: var(--moss); font-size: 0.8rem; padding: 4px 8px;
-  border-radius: 4px; font-family: var(--font-body);
-}
-.btn-restore:hover { background: #f0f5ee; }
-.archived-toggle {
-  display: flex; align-items: center; gap: 0.6rem;
-  font-size: 0.85rem; color: var(--text-light); cursor: pointer;
-  user-select: none;
-}
-.archived-row { opacity: 0.5; }
+
+
 
 
 /* ── MOBILE SPECIFIC FIXES ── */
@@ -772,16 +778,6 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 .btn-checkin:hover { border-color: var(--clay); color: var(--clay); }
 .btn-checkin.checked:hover { background: rgba(180,60,40,0.08); border-color: #B43C28; color: #B43C28; }
 
-/* ── LARGER BUTTONS GLOBALLY ── */
-.btn-dash {
-  font-family: var(--font-body); font-size: 0.88rem; font-weight: 500;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  padding: 0.7rem 1.4rem; border-radius: 4px; cursor: pointer;
-  border: none; transition: all 0.2s; text-decoration: none;
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  min-height: 44px;
-}
-.btn-dash-sm { padding: 0.5rem 1rem; font-size: 0.8rem; min-height: 38px; }
 
 /* Archived toggle — checkbox style */
 .archived-toggle {
@@ -835,7 +831,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
     <div class="form-group">
       <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" style="text-align:center;letter-spacing:0.15em;background:rgba(255,255,255,0.08);border:1px solid rgba(200,147,90,0.3);color:#e8d5c0;"/>
     </div>
-    <button class="btn-dash btn-dash-primary" style="width:100%;justify-content:center;padding:1rem;font-size:0.95rem;background:#c8935a;color:#3d2b1f;border:none;font-weight:600;letter-spacing:0.12em;" onclick="doLogin()">LET'S GO</button>
+    <button class="btn-dash btn-dash-primary" style="width:100%;justify-content:center;padding:1rem;font-size:0.95rem;" onclick="doLogin()">LET'S GO</button>
     <div class="login-error" id="loginError">Incorrect password. Try again.</div>
   </div>
 </div>
@@ -1125,7 +1121,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
         </div>
         <div style="display:flex;gap:0.75rem;align-items:center;">
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="markAllRead()">✓ Mark all read</button>
-          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="clearAllNotifications()" style="color:#B43C28;border-color:rgba(180,60,40,0.3);">Clear all</button>
+          <button class="btn-dash btn-dash-danger btn-dash-sm" onclick="clearAllNotifications()">Clear all</button>
         </div>
       </div>
       <div class="dash-table-wrap" style="border-radius:8px;">
@@ -1201,7 +1197,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
             <span class="settings-health-label">Total Records</span>
           </div>
         </div>
-        <button onclick="loadAll();showToast('✓ All data refreshed!','success');" class="btn-dash btn-dash-primary" style="padding:0.6rem 1.25rem;">↻ Refresh All Data</button>
+        <button onclick="loadAll();showToast('✓ All data refreshed!','success');" class="btn-dash btn-dash-sync">↻ Refresh All Data</button>
       </div>
 
       <!-- Razorpay -->
@@ -1217,7 +1213,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
           <label class="settings-label">Active Webhook URL</label>
           <div class="settings-copy-row">
             <code class="settings-code">https://handpan-webhook-server-production.up.railway.app/api/webhooks/razorpay</code>
-            <button class="btn-dash btn-dash-outline" onclick="copyWebhook()" style="padding:0.4rem 0.75rem;font-size:0.85rem;white-space:nowrap;">Copy</button>
+            <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="copyWebhook()">Copy</button>
           </div>
         </div>
         <div class="settings-health-grid" style="grid-template-columns:repeat(3,1fr);">
@@ -1246,12 +1242,12 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
           </div>
         </div>
         <div class="settings-export-grid">
-          <button class="settings-export-btn" onclick="exportData('workshops')">⬇ Workshops</button>
-          <button class="settings-export-btn" onclick="exportData('participants')">⬇ Participants</button>
-          <button class="settings-export-btn" onclick="exportData('students')">⬇ Students</button>
-          <button class="settings-export-btn" onclick="exportData('payments')">⬇ Payments</button>
-          <button class="settings-export-btn" onclick="exportData('leads')">⬇ Leads</button>
-          <button class="settings-export-btn" onclick="exportData('fee_payments')">⬇ Fee Payments</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('workshops')">⬇ Workshops</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('participants')">⬇ Participants</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('students')">⬇ Students</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('payments')">⬇ Payments</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('leads')">⬇ Leads</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('fee_payments')">⬇ Fee Payments</button>
         </div>
         <button class="btn-dash btn-dash-primary" onclick="exportAll()" style="width:100%;margin-top:1rem;justify-content:center;">⬇ Export Everything</button>
       </div>
@@ -1268,7 +1264,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   <div class="form-page-header">
     <button class="form-page-back" onclick="closeFormPage('addPayment')">← Back</button>
     <div class="form-page-title">Add Payment</div>
-    <button class="btn-dash" onclick="savePayment()" style="padding:0.5rem 1.25rem;background:#c8935a;color:#3d2b1f;border:none;font-weight:600;">Save</button>
+    <button class="btn-dash-save" onclick="savePayment()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
@@ -1305,7 +1301,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   <div class="form-page-header">
     <button class="form-page-back" onclick="closeFormPage('addLead')">← Back</button>
     <div class="form-page-title">Add Lead</div>
-    <button class="btn-dash" onclick="saveLead()" style="padding:0.5rem 1.25rem;background:#c8935a;color:#3d2b1f;border:none;font-weight:600;">Save</button>
+    <button class="btn-dash-save" onclick="saveLead()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
@@ -1330,7 +1326,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   <div class="form-page-header">
     <button class="form-page-back" onclick="closeFormPage('addWorkshop')">← Back</button>
     <div class="form-page-title">Add Workshop</div>
-    <button class="btn-dash" onclick="saveWorkshop()" style="padding:0.5rem 1.25rem;background:#c8935a;color:#3d2b1f;border:none;font-weight:600;">Save</button>
+    <button class="btn-dash-save" onclick="saveWorkshop()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
@@ -1362,7 +1358,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   <div class="form-page-header">
     <button class="form-page-back" onclick="closeFormPage('addStudent')">← Back</button>
     <div class="form-page-title">Add Student</div>
-    <button class="btn-dash" onclick="saveStudent()" style="padding:0.5rem 1.25rem;background:#c8935a;color:#3d2b1f;border:none;font-weight:600;">Save</button>
+    <button class="btn-dash-save" onclick="saveStudent()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
@@ -1392,7 +1388,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   <div class="form-page-header">
     <button class="form-page-back" onclick="closeFormPage('addFeePayment')">← Back</button>
     <div class="form-page-title">Add Fee Payment</div>
-    <button class="btn-dash" onclick="saveFeePayment()" style="padding:0.5rem 1.25rem;background:#c8935a;color:#3d2b1f;border:none;font-weight:600;">Save</button>
+    <button class="btn-dash-save" onclick="saveFeePayment()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
@@ -1416,7 +1412,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   <div class="form-page-header">
     <button class="form-page-back" onclick="closeFormPage('addParticipant')">← Back</button>
     <div class="form-page-title">Add Participant</div>
-    <button class="btn-dash" onclick="saveParticipant()" style="padding:0.5rem 1.25rem;background:#c8935a;color:#3d2b1f;border:none;font-weight:600;">Save</button>
+    <button class="btn-dash-save" onclick="saveParticipant()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
