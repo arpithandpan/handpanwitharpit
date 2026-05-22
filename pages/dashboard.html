@@ -536,7 +536,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 .modal { padding: 1.5rem; }
   .modal-title { font-size: 1.2rem; }
   /* Login box */
-  .login-box { padding: 2rem 1.5rem; }
+  .login-box { padding: 2rem 1.5rem; max-width: 78vw; }
   .login-title { font-size: 1.3rem; }
 }
 
@@ -604,9 +604,10 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   display: flex; align-items: center; gap: 0.5rem;
   background: transparent; border: 1.5px solid rgba(232,213,192,0.45); cursor: pointer;
   font-size: 0.9rem; color: #e8d5c0;
-  font-family: var(--font-body); padding: 0.5rem 1rem;
+  font-family: var(--font-body); padding: 0 1.25rem;
   border-radius: 4px; font-weight: 500; letter-spacing: 0.05em;
   text-transform: uppercase; transition: border-color 0.2s, background 0.2s;
+  min-height: 48px;
 }
 .form-page-back:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
 .form-page-title {
@@ -722,7 +723,8 @@ body.dark-mode .btn-dash-danger { color: #e87a60; border-color: rgba(220,100,80,
 body.dark-mode .btn-dash-danger:hover { background: rgba(180,80,60,0.15); border-color: #e87a60; }
 body.dark-mode .btn-dash-save { background: #c8935a; color: #1a1410; }
 body.dark-mode .btn-dash-save:hover { background: #dba870; }
-body.dark-mode .btn-archive { color: #7a6354; border-color: rgba(200,147,90,0.2); background: transparent; }
+body.dark-mode .btn-archive { color: #e8d5c0; border-color: rgba(200,147,90,0.65); background: transparent; }
+body.dark-mode .btn-archive:hover { border-color: #c8935a; color: #c8935a; background: rgba(200,147,90,0.1); }
 body.dark-mode .btn-archive:hover { color: #dba870; border-color: rgba(200,147,90,0.45); background: rgba(200,147,90,0.06); }
 body.dark-mode .btn-restore { color: #8aaa6e; background: transparent; }
 body.dark-mode .btn-restore:hover { background: rgba(138,170,110,0.15); }
@@ -806,7 +808,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
   .dash-section-subtitle { font-size: 0.85rem; margin-top: 0.25rem; display: block; clear: both; }
   .settings-card { padding: 1.25rem; }
   .settings-copy-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-  .settings-copy-row .btn-dash { width: 100%; justify-content: center; }
+  .settings-copy-row .btn-dash { width: auto; justify-content: center; }
   .settings-export-grid { grid-template-columns: 1fr 1fr; }
   .settings-health-grid { grid-template-columns: 1fr 1fr; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
@@ -879,14 +881,14 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 
 /* ── ARCHIVE / CHECKIN BUTTONS ── */
 .btn-archive {
-  background: transparent; cursor: pointer; border-radius: 6px;
-  border: 1px solid rgba(200,147,90,0.25); color: var(--text-light);
+  background: transparent; cursor: pointer; border-radius: 4px;
+  border: 1px solid rgba(200,147,90,0.5); color: var(--bark);
   transition: all 0.15s; display: inline-flex; align-items: center;
   gap: 5px; padding: 6px 10px; font-size: 0.78rem; font-weight: 500;
   letter-spacing: 0.06em; text-transform: uppercase;
-  font-family: var(--font-body); min-height: 36px; white-space: nowrap;
+  font-family: var(--font-body); min-height: 48px; white-space: nowrap;
 }
-.btn-archive:hover { border-color: rgba(200,147,90,0.5); color: var(--bark); background: rgba(200,147,90,0.06); }
+.btn-archive:hover { border-color: var(--clay); color: var(--clay); background: rgba(200,147,90,0.06); }
 .btn-restore {
   background: none; border: 1px solid rgba(122,140,106,0.4);
   color: var(--moss); border-radius: 4px; cursor: pointer;
@@ -939,16 +941,30 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 }
 .checkin-screen.open { display: flex; }
 .checkin-header {
-  background: #3d2b1f; padding: 1rem 1.25rem;
-  display: flex; flex-direction: column; gap: 0.6rem;
+  background: #3d2b1f; padding: 0.85rem 1.25rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
   flex-shrink: 0;
-  padding-top: max(1rem, env(safe-area-inset-top));
+  padding-top: max(0.85rem, env(safe-area-inset-top));
 }
 .checkin-header-row2 {
   display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;
 }
+.checkin-counter {
+  background: rgba(200,147,90,0.15); border: 1px solid rgba(200,147,90,0.3);
+  border-radius: 20px; padding: 0 0.9rem;
+  font-size: 0.85rem; font-weight: 600; color: #c8935a;
+  letter-spacing: 0.05em; min-height: 48px; display: flex; align-items: center;
+}
+.checkin-close {
+  background: transparent; border: 1.5px solid rgba(232,213,192,0.35);
+  border-radius: 4px; color: #e8d5c0; cursor: pointer;
+  font-size: 0.8rem; font-family: var(--font-body);
+  padding: 0 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+  transition: border-color 0.2s, background 0.2s; min-height: 48px;
+}
+.checkin-close:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
 @media (max-width: 900px) {
-  .checkin-header { padding-top: calc(68px + 0.75rem); }
+  .checkin-header { padding-top: calc(68px + 0.5rem); }
 }
 .checkin-header-left { display: flex; flex-direction: column; gap: 2px; }
 .checkin-header-title { font-size: 1rem; font-weight: 500; color: #e8d5c0; letter-spacing: 0.04em; }
@@ -975,13 +991,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 0.75rem;
 }
-.checkin-card {
-  background: white; border: 1px solid var(--clay-pale);
-  border-radius: 8px; padding: 1rem 1.25rem;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem; transition: opacity 0.2s, border-color 0.2s;
-}
-.checkin-card.is-checked { opacity: 0.55; border-color: rgba(122,140,106,0.3); }
+.checkin-card { background: var(--card, #231c16); border: 1px solid rgba(200,147,90,0.18); border-radius: 8px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .checkin-card-info { flex: 1; min-width: 0; }
 .checkin-card-name { font-size: 1rem; font-weight: 500; color: var(--bark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .checkin-card-meta { font-size: 0.8rem; color: var(--text-light); margin-top: 3px; }
@@ -1054,7 +1064,6 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <button class="pin-key" onclick="pinPress('0')">0</button>
       <button class="pin-key key-del" onclick="pinDelete()">⌫</button>
     </div>
-    <div class="pin-hint" id="pinHint">Enters automatically on 6th digit</div>
     <div class="pin-lockout" id="pinLockout"></div>
   </div>
 </div>
@@ -1114,7 +1123,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
     </a>
-    <div style="padding:1.5rem 2.5rem;display:flex;flex-direction:column;gap:1.25rem;margin-top:0.5rem;">
+    <div style="padding:1.5rem 2.5rem;display:flex;flex-direction:column;gap:1.25rem;margin-top:0.5rem;border-top:1px solid rgba(200,147,90,0.15);">
       <a href="https://arpitpandey.com" style="font-size:1rem;color:#c8935a;text-decoration:none;display:flex;align-items:center;gap:0.6rem;" onclick="toggleMobileMenu()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         arpitpandey.com
@@ -1344,7 +1353,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <div class="dash-section-title">Notifications</div>
           <div class="dash-section-subtitle">All activity and alerts from your dashboard</div>
         </div>
-        <div style="display:flex;gap:0.75rem;align-items:center;">
+        <div id="notifActions" style="display:flex;gap:0.75rem;align-items:center;">
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="markAllRead()">✓ Mark all read</button>
           <button class="btn-dash btn-dash-danger btn-dash-sm" onclick="clearAllNotifications()">Clear all</button>
         </div>
@@ -1936,8 +1945,8 @@ function startLockout() {
       updatePinDots();
       setNumpadDisabled(false);
       lockoutEl.style.display = 'none';
-      document.getElementById('pinHint').style.display = 'block';
-      document.getElementById('pinHint').textContent = 'Enters automatically on 6th digit';
+      
+      
       document.getElementById('pinHint').style.color = 'rgba(200,147,90,0.4)';
     } else {
       lockoutEl.textContent = 'Too many attempts. Try again in ' + seconds + 's';
@@ -2262,7 +2271,17 @@ window.addEventListener('resize', function() {
 
 // ── LOAD ──
 function loadAll() { loadSection('overview'); }
-function syncAll() { showLoader('Refreshing data...'); loadSection('overview'); showToast('↻ Data refreshed', 'success'); setTimeout(hideLoader, 1500); }
+async function syncAll() {
+  showLoader('Refreshing data...');
+  try {
+    await loadSection('overview');
+    showToast('↻ Data refreshed', 'success');
+  } catch(e) {
+    showToast('Refresh failed — check your connection', 'error');
+  } finally {
+    hideLoader();
+  }
+}
 function loadSection(name) {
   if (name === 'overview') loadOverview();
   else if (name === 'workshops') { loadWorkshops(); loadParticipants(); }
@@ -2848,25 +2867,35 @@ document.addEventListener('touchmove', function(e) {
 
 // ── NOTIFICATIONS ──
 async function loadNotifications() {
+  document.getElementById('notificationsContainer').innerHTML = '<div class="notif-empty"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>';
+  if (document.getElementById('notifActions')) document.getElementById('notifActions').style.display = 'none';
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
     const res = await fetch(SUPABASE_URL + '/rest/v1/notifications?select=*&order=created_at.desc&limit=50', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+      signal: controller.signal
     });
+    clearTimeout(timeout);
     if (!res.ok) throw new Error('Failed');
     const data = await res.json();
     renderNotifications(data || []);
     updateNotifBadge(data || []);
   } catch(e) {
-    document.getElementById('notificationsContainer').innerHTML = '<div class="notif-empty">Could not load notifications. Check your connection.</div>';
+    document.getElementById('notificationsContainer').innerHTML = '<div class="notif-empty">🔔 No notifications yet.<br><small>Payment events and system alerts will appear here.</small></div>';
+    if (document.getElementById('notifActions')) document.getElementById('notifActions').style.display = 'none';
   }
 }
 
 function renderNotifications(items) {
   const el = document.getElementById('notificationsContainer');
+  const actions = document.getElementById('notifActions');
   if (!items.length) {
     el.innerHTML = '<div class="notif-empty">🔔 No notifications yet.<br><small>Payment events and system alerts will appear here.</small></div>';
+    if (actions) actions.style.display = 'none';
     return;
   }
+  if (actions) actions.style.display = 'flex';
   el.innerHTML = items.map(n => `
     <div class="notif-item ${n.read?'':'unread'}" onclick="markRead(${n.id})">
       <div class="notif-icon ${n.type||'info'}">${n.type==='payment'?'💰':n.type==='warning'?'⚠️':n.type==='error'?'❌':'ℹ️'}</div>
@@ -3023,8 +3052,8 @@ function renderCheckinGrid() {
     document.getElementById('checkinGrid').innerHTML = '<div class="checkin-empty">No participants found for this workshop.</div>';
     return;
   }
-  // Sort once on initial render only — unchecked first, then checked
-  const sorted = [...parts].sort((a, b) => (a.checked_in === b.checked_in) ? 0 : a.checked_in ? 1 : -1);
+  // No sorting — cards stay in original order always
+  const sorted = [...parts];
   document.getElementById('checkinGrid').innerHTML = sorted.map(p => `
     <div class="checkin-card ${p.checked_in ? 'is-checked' : ''}" id="cc-${p.id}">
       <div class="checkin-card-info">
