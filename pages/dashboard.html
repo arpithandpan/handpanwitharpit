@@ -9,6 +9,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../css/style.css"/>
 <style>
+
+/* ── KILL THE STRIP ── */
+.mobile-topbar, .mobile-topbar * { border-bottom: none !important; box-shadow: none !important; }
+.mobile-menu-overlay { border-top: none !important; }
+body.menu-is-open { background: #1a1208 !important; }
+body.menu-is-open .dash-root { background: #1a1208 !important; }
+
 /* ── GLOBAL OVERFLOW FIX ── */
 html, body { overflow-x: hidden !important; max-width: 100vw; }
 
@@ -849,7 +856,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 </div>
 
 <div class="mobile-menu-overlay" id="mobileMenuOverlay">
-  <nav style="display:flex;flex-direction:column;gap:0;padding:76px 0 2rem;align-items:stretch;">
+  <nav style="display:flex;flex-direction:column;gap:0;padding:68px 0 2rem;align-items:stretch;">
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('overview',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       Overview
@@ -1591,6 +1598,7 @@ function toggleMobileMenu() {
     if (topbar) topbar.classList.remove('menu-open');
     document.body.style.overflow = '';
     document.body.style.background = '';
+    document.body.classList.remove('menu-is-open');
     if (l1) {
       l1.style.transform = '';
       l1.style.background = '#e8d5c0';
@@ -1607,6 +1615,7 @@ function toggleMobileMenu() {
     if (topbar) topbar.classList.add('menu-open');
     document.body.style.overflow = 'hidden';
     document.body.style.background = '#1a1208';
+    document.body.classList.add('menu-is-open');
     if (l1) {
       l1.style.transform = 'translateY(7px) rotate(45deg)';
       l1.style.background = '#e8d5c0';
