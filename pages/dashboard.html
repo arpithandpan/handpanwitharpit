@@ -1424,7 +1424,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           </div>
           <div class="connector-right">
             <span class="badge badge-green" id="health-db">● Connected</span>
-            <button class="connector-btn" id="sb-btn" onclick="testConnectorHealth('sb')">Test</button>
+            <button class="connector-btn reconnect" id="sb-btn" onclick="testConnectorHealth('sb')" style="display:none;">↻ Reconnect</button>
           </div>
         </div>
 
@@ -1439,7 +1439,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           </div>
           <div class="connector-right">
             <span class="badge badge-green" id="rzp-health-badge">● Active</span>
-            <button class="connector-btn" id="rzp-btn" onclick="testConnectorHealth('rzp')">Test</button>
+            <button class="connector-btn reconnect" id="rzp-btn" onclick="testConnectorHealth('rzp')" style="display:none;">↻ Reconnect</button>
           </div>
         </div>
 
@@ -1454,7 +1454,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           </div>
           <div class="connector-right">
             <span class="badge badge-green" id="rw-health-badge">● Online</span>
-            <button class="connector-btn" id="rw-btn" onclick="testConnectorHealth('rw')">Test</button>
+            <button class="connector-btn reconnect" id="rw-btn" onclick="testConnectorHealth('rw')" style="display:none;">↻ Reconnect</button>
           </div>
         </div>
 
@@ -1469,7 +1469,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           </div>
           <div class="connector-right">
             <span class="badge badge-green" id="site-health-badge">● Online</span>
-            <button class="connector-btn" id="site-btn" onclick="testConnectorHealth('site')">Test</button>
+            <button class="connector-btn reconnect" id="site-btn" onclick="testConnectorHealth('site')" style="display:none;">↻ Reconnect</button>
           </div>
         </div>
 
@@ -2731,19 +2731,10 @@ function setConnectorState(id, state, detail) {
     badgeEl.className = 'badge ' + (state === 'connected' ? 'badge-green' : state === 'checking' ? 'badge-clay' : 'badge-red');
   }
   if (btnEl) {
-    if (state === 'offline') {
-      btnEl.textContent = '↻ Reconnect';
-      btnEl.className = 'connector-btn reconnect';
-      btnEl.onclick = () => testConnectorHealth(id);
-    } else if (state === 'checking') {
-      btnEl.textContent = '...';
-      btnEl.disabled = true;
-    } else {
-      btnEl.textContent = 'Test';
-      btnEl.className = 'connector-btn';
-      btnEl.disabled = false;
-      btnEl.onclick = () => testConnectorHealth(id);
-    }
+    // Only show Reconnect button when offline
+    btnEl.style.display = state === 'offline' ? 'inline-flex' : 'none';
+    btnEl.disabled = state === 'checking';
+    btnEl.textContent = state === 'checking' ? '...' : '↻ Reconnect';
   }
 }
 
