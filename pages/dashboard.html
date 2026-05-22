@@ -2547,7 +2547,7 @@ function renderCheckinGrid() {
     document.getElementById('checkinGrid').innerHTML = '<div class="checkin-empty">No participants found for this workshop.</div>';
     return;
   }
-  // Sort: unchecked first, then checked
+  // Sort once on initial render only — unchecked first, then checked
   const sorted = [...parts].sort((a, b) => (a.checked_in === b.checked_in) ? 0 : a.checked_in ? 1 : -1);
   document.getElementById('checkinGrid').innerHTML = sorted.map(p => `
     <div class="checkin-card ${p.checked_in ? 'is-checked' : ''}" id="cc-${p.id}">
@@ -2559,6 +2559,7 @@ function renderCheckinGrid() {
         </div>
       </div>
       <button class="btn-checkin-big ${p.checked_in ? 'checked' : 'unchecked'}"
+        id="cb-${p.id}"
         onclick="checkinModeToggle('${p.id}', ${p.checked_in}, '${(p.full_name||'').replace(/'/g,"\\'")}')">
         ${p.checked_in ? '✓ In' : 'Check in'}
       </button>
@@ -2567,20 +2568,46 @@ function renderCheckinGrid() {
 }
 
 async function checkinModeToggle(id, currentState, name) {
-  // Optimistic update — flip immediately for snappy feel
+  const newState = !currentState;
+  const card = document.getElementById('cc-' + id);
+  const btn = document.getElementById('cb-' + id);
+
+  // Instant in-place update — no grid re-render, no position change
+  if (card && btn) {
+    card.classList.toggle('is-checked', newState);
+    btn.className = 'btn-checkin-big ' + (newState ? 'checked' : 'unchecked');
+    btn.textContent = newState ? '✓ In' : 'Check in';
+    btn.onclick = () => checkinModeToggle(id, newState, name);
+  }
+
+  // Update local data
   const idx = _checkinParticipants.findIndex(p => p.id === id);
-  if (idx > -1) { _checkinParticipants[idx].checked_in = !currentState; renderCheckinGrid(); }
+  if (idx > -1) _checkinParticipants[idx].checked_in = newState;
+
+  // Update counter
+  const checkedCount = _checkinParticipants.filter(p => p.checked_in).length;
+  document.getElementById('checkinCounter').textContent = checkedCount + ' / ' + _checkinParticipants.length + ' checked in';
+
+  // Persist to Supabase in background
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?id=eq.' + id, {
       method: 'PATCH',
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ checked_in: !currentState })
+      body: JSON.stringify({ checked_in: newState })
     });
     if (!res.ok) throw new Error('Failed');
-    showToast(!currentState ? '✓ ' + name + ' checked in!' : '↩ Check-in removed for ' + name, !currentState ? 'success' : '');
+    showToast(newState ? '✓ ' + name + ' checked in!' : '↩ Removed for ' + name, newState ? 'success' : '');
   } catch(e) {
-    // Revert optimistic update on failure
-    if (idx > -1) { _checkinParticipants[idx].checked_in = currentState; renderCheckinGrid(); }
+    // Revert card visually on failure
+    if (card && btn) {
+      card.classList.toggle('is-checked', currentState);
+      btn.className = 'btn-checkin-big ' + (currentState ? 'checked' : 'unchecked');
+      btn.textContent = currentState ? '✓ In' : 'Check in';
+      btn.onclick = () => checkinModeToggle(id, currentState, name);
+    }
+    if (idx > -1) _checkinParticipants[idx].checked_in = currentState;
+    const revertCount = _checkinParticipants.filter(p => p.checked_in).length;
+    document.getElementById('checkinCounter').textContent = revertCount + ' / ' + _checkinParticipants.length + ' checked in';
     showToast('Failed to update check-in', 'error');
   }
 }
