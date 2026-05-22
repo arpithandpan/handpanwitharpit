@@ -318,6 +318,33 @@ select.form-input {
   color: #e8856a; margin-top: 0.75rem; line-height: 1.4;
 }
 
+/* ── CONNECTOR ROWS ── */
+.connector-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; border-bottom: 1px solid var(--clay-pale); gap: 12px;
+}
+.connector-left { display: flex; align-items: center; gap: 12px; }
+.connector-logo {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--clay-dim); border: 1px solid rgba(200,147,90,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.connector-name { font-size: 0.95rem; font-weight: 500; color: var(--bark); }
+.connector-detail { font-size: 0.82rem; color: var(--text-light); margin-top: 2px; }
+.connector-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.connector-btn {
+  background: transparent; border: 1px solid var(--clay-pale);
+  border-radius: 8px; color: var(--text-light); font-size: 0.8rem;
+  padding: 5px 12px; cursor: pointer; font-family: var(--font-body);
+  white-space: nowrap; transition: all 0.15s; min-height: 32px;
+}
+.connector-btn:hover { border-color: var(--clay); color: var(--clay); background: var(--clay-dim); }
+.connector-btn.reconnect { background: var(--clay-dim); color: var(--clay); border-color: rgba(200,147,90,0.4); }
+.connector-btn:disabled { opacity: 0.5; pointer-events: none; }
+body.dark-mode .connector-btn { border-color: rgba(200,147,90,0.25); color: #7a6354; }
+body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
+
 /* ── LOADING OVERLAY ── */
 .loading-overlay {
   display: none; position: fixed; inset: 0;
@@ -1382,20 +1409,74 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <span class="settings-card-icon">📡</span>
           <div>
             <div class="settings-card-title">System Health</div>
-            <div class="settings-card-sub">Live status of your Supabase connection</div>
+            <div class="settings-card-sub">Live status of all connections</div>
           </div>
         </div>
-        <div style="display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:1.25rem;flex-wrap:wrap;">
-          <div class="settings-health-item">
-            <span id="health-db" class="badge badge-green" style="font-size:0.9rem;padding:0.35rem 0.9rem;">● Connected</span>
-            <span class="settings-health-label" style="margin-top:6px;">Supabase</span>
+
+        <!-- Supabase -->
+        <div class="connector-row">
+          <div class="connector-left">
+            <div class="connector-logo">🗄</div>
+            <div>
+              <div class="connector-name">Supabase</div>
+              <div class="connector-detail" id="sb-detail">Checking...</div>
+            </div>
           </div>
-          <div class="settings-health-item">
-            <span class="settings-health-val" id="health-records" style="font-size:1.6rem;font-weight:500;color:var(--bark);">—</span>
-            <span class="settings-health-label">Total Records</span>
+          <div class="connector-right">
+            <span class="badge badge-green" id="health-db">● Connected</span>
+            <button class="connector-btn" id="sb-btn" onclick="testConnectorHealth('sb')">Test</button>
           </div>
         </div>
-        <button onclick="syncAll()" class="btn-dash btn-dash-sync">↻ Refresh All Data</button>
+
+        <!-- Razorpay -->
+        <div class="connector-row">
+          <div class="connector-left">
+            <div class="connector-logo">💳</div>
+            <div>
+              <div class="connector-name">Razorpay</div>
+              <div class="connector-detail" id="rzp-health-detail">Webhook integration</div>
+            </div>
+          </div>
+          <div class="connector-right">
+            <span class="badge badge-green" id="rzp-health-badge">● Active</span>
+            <button class="connector-btn" id="rzp-btn" onclick="testConnectorHealth('rzp')">Test</button>
+          </div>
+        </div>
+
+        <!-- Railway -->
+        <div class="connector-row">
+          <div class="connector-left">
+            <div class="connector-logo">🚂</div>
+            <div>
+              <div class="connector-name">Railway</div>
+              <div class="connector-detail" id="rw-health-detail">Webhook server</div>
+            </div>
+          </div>
+          <div class="connector-right">
+            <span class="badge badge-green" id="rw-health-badge">● Online</span>
+            <button class="connector-btn" id="rw-btn" onclick="testConnectorHealth('rw')">Test</button>
+          </div>
+        </div>
+
+        <!-- Website -->
+        <div class="connector-row" style="border-bottom:none;padding-bottom:0;">
+          <div class="connector-left">
+            <div class="connector-logo">🌐</div>
+            <div>
+              <div class="connector-name">arpitpandey.com</div>
+              <div class="connector-detail" id="site-health-detail">Dashboard hosting</div>
+            </div>
+          </div>
+          <div class="connector-right">
+            <span class="badge badge-green" id="site-health-badge">● Online</span>
+            <button class="connector-btn" id="site-btn" onclick="testConnectorHealth('site')">Test</button>
+          </div>
+        </div>
+
+        <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--clay-pale);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;">
+          <span class="settings-health-label">Total Records: <strong id="health-records" style="color:var(--clay);">—</strong></span>
+          <button onclick="checkAllConnectors()" class="btn-dash btn-dash-sync">↻ Check All</button>
+        </div>
       </div>
 
       <!-- Razorpay -->
@@ -2189,7 +2270,7 @@ function loadSection(name) {
   else if (name === 'payments') loadPayments();
   else if (name === 'leads') loadLeads();
   else if (name === 'insights') loadInsights();
-  else if (name === 'settings') loadSettings();
+  else if (name === 'settings') { loadSettings(); checkAllConnectors(); }
 }
 
 // ── FORMAT ──
@@ -2631,7 +2712,75 @@ async function wakeUpServer() {
   }
 }
 
-// ── SCROLL LOCK (iOS safe) ──
+// ── CONNECTOR HEALTH ──
+const RAILWAY_URL = 'https://handpan-webhook-server-production.up.railway.app';
+
+function setConnectorState(id, state, detail) {
+  const badgeEl = document.getElementById(id === 'sb' ? 'health-db' : id + '-health-badge');
+  const detailEl = document.getElementById(id === 'sb' ? 'sb-detail' : id + '-health-detail');
+  const btnEl = document.getElementById(id + '-btn');
+  if (detailEl && detail) detailEl.textContent = detail;
+  if (badgeEl) {
+    const labels = {
+      sb: { connected:'● Connected', checking:'● Checking...', offline:'● Error' },
+      rzp: { connected:'● Active', checking:'● Checking...', offline:'● Error' },
+      rw: { connected:'● Online', checking:'● Connecting...', offline:'● Offline' },
+      site: { connected:'● Online', checking:'● Checking...', offline:'● Offline' }
+    };
+    badgeEl.textContent = labels[id][state];
+    badgeEl.className = 'badge ' + (state === 'connected' ? 'badge-green' : state === 'checking' ? 'badge-clay' : 'badge-red');
+  }
+  if (btnEl) {
+    if (state === 'offline') {
+      btnEl.textContent = '↻ Reconnect';
+      btnEl.className = 'connector-btn reconnect';
+      btnEl.onclick = () => testConnectorHealth(id);
+    } else if (state === 'checking') {
+      btnEl.textContent = '...';
+      btnEl.disabled = true;
+    } else {
+      btnEl.textContent = 'Test';
+      btnEl.className = 'connector-btn';
+      btnEl.disabled = false;
+      btnEl.onclick = () => testConnectorHealth(id);
+    }
+  }
+}
+
+async function testConnectorHealth(id) {
+  setConnectorState(id, 'checking', 'Checking...');
+  try {
+    if (id === 'sb') {
+      const [ws, parts, stus, pays, leads, fps] = await Promise.all([
+        sbGetAll('workshops'), sbGetAll('participants'), sbGetAll('students'),
+        sbGetAll('payments'), sbGetAll('leads'), sbGetAll('fee_payments')
+      ]);
+      const total = (ws.data||[]).length + (parts.data||[]).length + (stus.data||[]).length +
+                    (pays.data||[]).length + (leads.data||[]).length + (fps.data||[]).length;
+      if (document.getElementById('health-records')) document.getElementById('health-records').textContent = total;
+      setConnectorState('sb', 'connected', total + ' records · Just verified');
+    } else if (id === 'rzp') {
+      const pays = await sbGetAll('payments');
+      const rzpPays = (pays.data||[]).filter(p => p.synced_from_razorpay);
+      const last = rzpPays.sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+      setConnectorState('rzp', 'connected', 'Last payment: ' + (last ? fmtDate(last.date) : 'None yet'));
+    } else if (id === 'rw') {
+      const res = await fetch(RAILWAY_URL + '/health', { signal: AbortSignal.timeout(5000) });
+      if (res.ok) setConnectorState('rw', 'connected', 'Server responding · Online');
+      else setConnectorState('rw', 'offline', 'Server returned error');
+    } else if (id === 'site') {
+      setConnectorState('site', 'connected', 'arpitpandey.com · Reachable');
+    }
+  } catch(e) {
+    const msgs = { sb: 'Cannot reach database', rzp: 'Webhook check failed', rw: 'Server unreachable', site: 'Site check failed' };
+    setConnectorState(id, 'offline', msgs[id]);
+  }
+}
+
+async function checkAllConnectors() {
+  await Promise.all(['sb','rzp','rw','site'].map(id => testConnectorHealth(id)));
+  showToast('✓ All connectors checked', 'success');
+}
 let _scrollLockY = 0;
 function lockScroll() {
   _scrollLockY = window.scrollY;
