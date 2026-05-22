@@ -337,9 +337,10 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   position: fixed; bottom: 2rem; right: 2rem;
   background: var(--bark); color: var(--clay-pale);
   padding: 0.9rem 1.5rem; border-radius: 4px;
-  font-size: 0.9rem; z-index: 999;
+  font-size: 0.9rem; z-index: 99999;
   transform: translateY(100px); opacity: 0;
-  transition: all 0.3s;
+  transition: all 0.3s; pointer-events: none;
+  max-width: calc(100vw - 2rem);
 }
 .toast.show { transform: translateY(0); opacity: 1; }
 .toast.success { background: var(--moss); }
@@ -631,6 +632,7 @@ body.dark-mode .btn-checkin { border-color: rgba(200,147,90,0.3); color: #9a7d63
 body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border-color: #8aaa6e; color: #8aaa6e; }
 body.dark-mode #archiveConfirmModal > div { background: #231c16; }
 body.dark-mode #customConfirmModal > div { background: #231c16; }
+body.dark-mode #unsavedModal > div { background: #231c16; }
 /* ── DARK MODE: comprehensive button + UI fixes ── */
 body.dark-mode .btn-dash-primary { background: #c8935a; color: #1a1410; border: none; }
 body.dark-mode .btn-dash-primary:hover { background: #dba870; color: #1a1410; }
@@ -721,7 +723,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
   .dash-section-header > div:last-child, .dash-section-header > button { width: 100%; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .dash-section-header > button { width: auto; }
   .dash-section-title { font-size: 1.5rem; }
-  .dash-section-subtitle { font-size: 0.85rem; margin-top: 0.2rem; }
+  .dash-section-subtitle { font-size: 0.85rem; margin-top: 0.25rem; display: block; clear: both; }
   .settings-card { padding: 1.25rem; }
   .settings-copy-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .settings-copy-row .btn-dash { width: 100%; justify-content: center; }
@@ -855,9 +857,12 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 .checkin-screen.open { display: flex; }
 .checkin-header {
   background: #3d2b1f; padding: 1rem 1.25rem;
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; flex-direction: column; gap: 0.6rem;
   flex-shrink: 0;
   padding-top: max(1rem, env(safe-area-inset-top));
+}
+.checkin-header-row2 {
+  display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;
 }
 @media (max-width: 900px) {
   .checkin-header { padding-top: calc(68px + 0.75rem); }
@@ -1099,13 +1104,15 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <div class="overview-row">
         <div class="overview-card">
           <div class="overview-card-head">Recent Workshops</div>
-          <table><thead><tr><th>Workshop</th><th>Date</th><th>Pax</th><th>Revenue</th><th>Profit</th></tr></thead>
+          <table class="desktop-table"><thead><tr><th>Workshop</th><th>Date</th><th>Pax</th><th>Revenue</th><th>Profit</th></tr></thead>
           <tbody id="overviewWorkshops"><tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+          <div class="mobile-cards" id="overviewWorkshopsCards"></div>
         </div>
         <div class="overview-card">
           <div class="overview-card-head">Recent Payments</div>
-          <table><thead><tr><th>Date</th><th>Name</th><th>Amount</th><th>Mode</th></tr></thead>
+          <table class="desktop-table"><thead><tr><th>Date</th><th>Name</th><th>Amount</th><th>Mode</th></tr></thead>
           <tbody id="overviewPayments"><tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+          <div class="mobile-cards" id="overviewPaymentsCards"></div>
         </div>
       </div>
     </section>
@@ -1397,7 +1404,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 <!-- Add Payment -->
 <div class="form-page" id="form-addPayment">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addPayment')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addPayment')">← Back</button>
     <div class="form-page-title">Add Payment</div>
     <button class="btn-dash-save" onclick="savePayment()">Save</button>
   </div>
@@ -1434,7 +1441,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 <!-- Add Lead -->
 <div class="form-page" id="form-addLead">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addLead')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addLead')">← Back</button>
     <div class="form-page-title">Add Lead</div>
     <button class="btn-dash-save" onclick="saveLead()">Save</button>
   </div>
@@ -1444,7 +1451,8 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="lead-phone" placeholder="10-digit number"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop Attended</label><input type="text" class="form-input" id="lead-workshop" placeholder="e.g. WS-003"/></div>
+      <div class="form-group"><label class="form-label">Workshop Attended</label>
+        <select class="form-input" id="lead-workshop"><option value="">Loading workshops...</option></select></div>
       <div class="form-group"><label class="form-label">Est. Budget (₹)</label><input type="number" class="form-input" id="lead-budget" placeholder="0"/></div>
     </div>
     <div class="form-row">
@@ -1459,7 +1467,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 <!-- Add Workshop -->
 <div class="form-page" id="form-addWorkshop">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addWorkshop')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addWorkshop')">← Back</button>
     <div class="form-page-title">Add Workshop</div>
     <button class="btn-dash-save" onclick="saveWorkshop()">Save</button>
   </div>
@@ -1491,7 +1499,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 <!-- Add Student -->
 <div class="form-page" id="form-addStudent">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addStudent')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addStudent')">← Back</button>
     <div class="form-page-title">Add Student</div>
     <button class="btn-dash-save" onclick="saveStudent()">Save</button>
   </div>
@@ -1521,13 +1529,14 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 <!-- Add Fee Payment -->
 <div class="form-page" id="form-addFeePayment">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addFeePayment')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addFeePayment')">← Back</button>
     <div class="form-page-title">Add Fee Payment</div>
     <button class="btn-dash-save" onclick="saveFeePayment()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="fee-student" placeholder="e.g. S-001"/></div>
+      <div class="form-group"><label class="form-label">Student</label>
+        <select class="form-input" id="fee-student"><option value="">Loading students...</option></select></div>
       <div class="form-group"><label class="form-label">Month</label><input type="month" class="form-input" id="fee-month"/></div>
     </div>
     <div class="form-row">
@@ -1545,7 +1554,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 <!-- Add Participant -->
 <div class="form-page" id="form-addParticipant">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addParticipant')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addParticipant')">← Back</button>
     <div class="form-page-title">Add Participant</div>
     <button class="btn-dash-save" onclick="saveParticipant()">Save</button>
   </div>
@@ -1555,7 +1564,8 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="par-phone" placeholder="10-digit number"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="par-workshop" placeholder="e.g. WS-004"/></div>
+      <div class="form-group"><label class="form-label">Workshop</label>
+        <select class="form-input" id="par-workshop"><option value="">Loading workshops...</option></select></div>
       <div class="form-group"><label class="form-label">Amount Paid (₹)</label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
     </div>
     <div class="form-row">
@@ -1581,7 +1591,24 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="par-notes" placeholder="Any notes..."/></div>
   </div></div>
 
-<!-- ── ARCHIVE CONFIRM MODAL ── -->
+<!-- ── UNSAVED CHANGES MODAL ── -->
+<div id="unsavedModal" style="display:none;position:fixed;inset:0;background:rgba(61,43,31,0.55);z-index:20000;align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:var(--cream);border-radius:12px;width:100%;max-width:320px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div style="padding:1.5rem 1.5rem 0;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(193,127,82,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c17f52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div style="font-size:1rem;font-weight:600;color:var(--bark);">Unsaved changes</div>
+      </div>
+      <p style="font-size:0.9rem;color:var(--text-light);line-height:1.5;margin:0 0 1.25rem;">You've started filling this form. If you go back now your changes will be lost.</p>
+    </div>
+    <div style="display:flex;border-top:1px solid var(--clay-pale);">
+      <button onclick="unsavedKeepEditing()" style="flex:1;padding:0.9rem;background:transparent;border:none;border-right:1px solid var(--clay-pale);font-size:0.9rem;color:var(--bark);font-weight:600;cursor:pointer;font-family:var(--font-body);">Keep editing</button>
+      <button onclick="unsavedDiscard()" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:0.9rem;color:#B43C28;cursor:pointer;font-family:var(--font-body);">Discard & go back</button>
+    </div>
+  </div>
+</div>
 <div id="archiveConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(61,43,31,0.5);z-index:600;align-items:center;justify-content:center;padding:1.5rem;">
   <div style="background:var(--cream);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
     <div style="padding:1.5rem 1.5rem 0;">
@@ -1624,13 +1651,14 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 </div>
 
 <!-- ── CHECK-IN MODE ── -->
+<div id="toast"></div>
 <div class="checkin-screen" id="checkinScreen">
   <div class="checkin-header">
     <div class="checkin-header-left">
       <div class="checkin-header-title" id="checkinTitle">Check-in</div>
       <div class="checkin-header-sub" id="checkinSub"></div>
     </div>
-    <div style="display:flex;align-items:center;gap:0.75rem;">
+    <div class="checkin-header-row2">
       <div class="checkin-counter" id="checkinCounter">0 / 0</div>
       <button class="checkin-close" onclick="closeCheckinMode()">✕ Close</button>
     </div>
@@ -1747,7 +1775,60 @@ function logout() {
   location.reload();
 }
 
-// ── CUSTOM CONFIRM ──
+// ── UNSAVED CHANGES GUARD ──
+// Text/number/date/tel inputs to check per form (selects are always at a default so we ignore them)
+const FORM_FIELDS = {
+  addPayment:     ['pay-date','pay-amount','pay-name','pay-desc','pay-ref'],
+  addLead:        ['lead-name','lead-phone','lead-budget','lead-followup','lead-notes'],
+  addWorkshop:    ['ws-date','ws-venue','ws-bms','ws-upi','ws-rzp','ws-price','ws-venue-rent','ws-hp-rent','ws-porter','ws-misc'],
+  addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-notes'],
+  addFeePayment:  ['fee-month','fee-amount','fee-notes'],
+  addParticipant: ['par-name','par-phone','par-amount','par-date','par-notes']
+};
+
+function isFormDirty(formName) {
+  const fields = FORM_FIELDS[formName] || [];
+  return fields.some(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim() !== '';
+  });
+}
+
+let _pendingCloseForm = null;
+
+function tryCloseFormPage(name) {
+  if (isFormDirty(name)) {
+    _pendingCloseForm = name;
+    document.getElementById('unsavedModal').style.display = 'flex';
+  } else {
+    closeFormPage(name);
+  }
+}
+
+function unsavedKeepEditing() {
+  document.getElementById('unsavedModal').style.display = 'none';
+  _pendingCloseForm = null;
+}
+
+function unsavedDiscard() {
+  document.getElementById('unsavedModal').style.display = 'none';
+  if (_pendingCloseForm) {
+    closeFormPage(_pendingCloseForm);
+    resetForm(_pendingCloseForm);
+    _pendingCloseForm = null;
+  }
+}
+
+function resetForm(formName) {
+  const fields = FORM_FIELDS[formName] || [];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  // Also clear auto-filled IDs so they regenerate next open
+  if (formName === 'addWorkshop') { const el = document.getElementById('ws-id'); if (el) el.value = ''; }
+  if (formName === 'addStudent') { const el = document.getElementById('stu-id'); if (el) el.value = ''; }
+}
 let _customConfirmResolve = null;
 function customConfirm(title, desc) {
   return new Promise(resolve => {
@@ -1868,9 +1949,70 @@ function showSection(name, el) {
 function toggleSidebar() { document.getElementById('dashSidebar').classList.toggle('open'); }
 
 // ── FORM PAGES ──
-function openFormPage(name) {
+async function openFormPage(name) {
   document.getElementById('form-' + name).classList.add('open');
   document.body.style.overflow = 'hidden';
+  // Populate dropdowns and auto-fill IDs per form
+  if (name === 'addParticipant') {
+    await populateWorkshopDropdown('par-workshop');
+  } else if (name === 'addLead') {
+    await populateWorkshopDropdown('lead-workshop');
+  } else if (name === 'addFeePayment') {
+    await populateStudentDropdown('fee-student');
+  } else if (name === 'addWorkshop') {
+    await autoFillNextId('workshops', 'ws-id', 'WS-', 3);
+  } else if (name === 'addStudent') {
+    await autoFillNextId('students', 'stu-id', 'S-', 3);
+  }
+}
+
+async function populateWorkshopDropdown(selectId) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/workshops?select=id,venue,date&archived=neq.true&order=date.desc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const ws = await res.json();
+    sel.innerHTML = '<option value="">Select workshop...</option>' +
+      ws.map(w => `<option value="${w.id}">${w.id} — ${w.venue || ''} (${fmtDate(w.date)})</option>`).join('');
+  } catch(e) {
+    sel.innerHTML = '<option value="">Could not load workshops</option>';
+  }
+}
+
+async function populateStudentDropdown(selectId) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/students?select=id,full_name&archived=neq.true&order=full_name.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const stus = await res.json();
+    sel.innerHTML = '<option value="">Select student...</option>' +
+      stus.map(s => `<option value="${s.id}">${s.full_name} (${s.id})</option>`).join('');
+  } catch(e) {
+    sel.innerHTML = '<option value="">Could not load students</option>';
+  }
+}
+
+async function autoFillNextId(table, inputId, prefix, padLength) {
+  const el = document.getElementById(inputId);
+  if (!el || el.value) return; // Don't overwrite if already filled
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?select=id&order=created_at.desc&limit=1', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const rows = await res.json();
+    let nextNum = 1;
+    if (rows.length) {
+      // Extract number from last ID e.g. "WS-003" → 3
+      const lastId = rows[0].id || '';
+      const match = lastId.match(/(\d+)$/);
+      if (match) nextNum = parseInt(match[1]) + 1;
+    }
+    el.value = prefix + String(nextNum).padStart(padLength, '0');
+  } catch(e) { /* leave blank if fails */ }
 }
 function closeFormPage(name) {
   document.getElementById('form-' + name).classList.remove('open');
@@ -1932,7 +2074,7 @@ window.addEventListener('resize', function() {
 });
 
 // ── LOAD ──
-function loadAll() { loadSection('overview'); }
+function loadAll() { loadSection('overview'); showToast('↻ Data refreshed', 'success'); }
 function loadSection(name) {
   if (name === 'overview') loadOverview();
   else if (name === 'workshops') { loadWorkshops(); loadParticipants(); }
@@ -1969,6 +2111,13 @@ async function loadOverview() {
     document.getElementById('stat-margin').textContent = fmtPct(avgMargin);
     document.getElementById('overviewWorkshops').innerHTML = ws.slice(0,5).map(w => `<tr><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td style="color:var(--moss)">${fmt(w.net_profit)}</td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center">No workshops yet</td></tr>';
     document.getElementById('overviewPayments').innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<tr><td>${fmtDate(p.date)}</td><td>${p.payer_name||'—'}</td><td style="color:var(--moss)">${fmt(p.amount)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td></tr>`).join('') || '<tr><td colspan="4" style="text-align:center">No payments yet</td></tr>';
+
+    // Mobile cards for overview
+    const owc = document.getElementById('overviewWorkshopsCards');
+    if (owc) owc.innerHTML = ws.slice(0,5).map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}<span style="float:right;font-size:0.8rem;color:var(--text-light)">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div></div>`).join('') || '<div style="padding:1.5rem;text-align:center;color:var(--text-light)">No workshops yet</div>';
+
+    const opc = document.getElementById('overviewPaymentsCards');
+    if (opc) opc.innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<div class="m-card"><div class="m-card-title" style="color:var(--moss)">${fmt(p.amount)}<span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Name</span><span class="m-card-val">${p.payer_name||'—'}</span></div></div>`).join('') || '<div style="padding:1.5rem;text-align:center;color:var(--text-light)">No payments yet</div>';
   } catch(e) { showToast('Error loading overview', 'error'); }
 }
 
@@ -2112,13 +2261,13 @@ async function syncAll() {
 async function savePayment() {
   try {
     const body = { id:'PAY-'+Date.now(), date:document.getElementById('pay-date').value, amount:document.getElementById('pay-amount').value, type:document.getElementById('pay-type').value, category:document.getElementById('pay-category').value, payment_mode:document.getElementById('pay-mode').value, payer_name:document.getElementById('pay-name').value, description:document.getElementById('pay-desc').value, reference_id:document.getElementById('pay-ref').value, synced_from_razorpay:false };
-    await sbPost('payments', body); closeFormPage('addPayment'); loadPayments(); showToast('✓ Payment saved successfully!','success');
+    await sbPost('payments', body); closeFormPage('addPayment'); resetForm('addPayment'); loadPayments(); showToast('✓ Payment saved successfully!','success');
   } catch(e) { console.error('savePayment error:', e); showToast('Error saving payment: ' + e.message,'error'); }
 }
 async function saveLead() {
   try {
     const body = { id:'L-'+String(Date.now()).slice(-3), full_name:document.getElementById('lead-name').value, phone:document.getElementById('lead-phone').value, workshop_attended:document.getElementById('lead-workshop').value, date_added:new Date().toISOString().split('T')[0], estimated_budget:document.getElementById('lead-budget').value, status:document.getElementById('lead-status').value, follow_up_date:document.getElementById('lead-followup').value, referred_friend:false, notes:document.getElementById('lead-notes').value };
-    await sbPost('leads', body); closeFormPage('addLead'); loadLeads(); showToast('✓ Lead saved successfully!','success');
+    await sbPost('leads', body); closeFormPage('addLead'); resetForm('addLead'); loadLeads(); showToast('✓ Lead saved successfully!','success');
   } catch(e) { console.error('saveLead error:', e); showToast('Error saving lead: ' + e.message,'error'); }
 }
 async function saveWorkshop() {
@@ -2127,13 +2276,13 @@ async function saveWorkshop() {
     const venueRent=parseFloat(document.getElementById('ws-venue-rent').value)||0, hpRent=parseFloat(document.getElementById('ws-hp-rent').value)||0, porter=parseFloat(document.getElementById('ws-porter').value)||0, misc=parseFloat(document.getElementById('ws-misc').value)||0;
     const totalPax=bms+upi+rzp, totalRevenue=totalPax*price, totalExpense=venueRent+hpRent+porter+misc, netProfit=totalRevenue-totalExpense;
     const body = { id:document.getElementById('ws-id').value, date:document.getElementById('ws-date').value, venue:document.getElementById('ws-venue').value, bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0 };
-    await sbPost('workshops', body); closeFormPage('addWorkshop'); loadWorkshops(); showToast('✓ Workshop saved successfully!','success');
+    await sbPost('workshops', body); closeFormPage('addWorkshop'); resetForm('addWorkshop'); loadWorkshops(); showToast('✓ Workshop saved successfully!','success');
   } catch(e) { console.error('saveWorkshop error:', e); showToast('Error saving workshop: ' + e.message,'error'); }
 }
 async function saveStudent() {
   try {
     const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:document.getElementById('stu-phone').value, email:document.getElementById('stu-email').value, join_date:document.getElementById('stu-start').value, status:document.getElementById('stu-status').value, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value };
-    await sbPost('students', body); closeFormPage('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
+    await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
   } catch(e) { console.error('saveStudent error:', e); showToast('Error saving student: ' + e.message,'error'); }
 }
 async function saveFeePayment() {
@@ -2154,6 +2303,7 @@ async function saveFeePayment() {
     };
     await sbPost('fee_payments', body);
     closeFormPage('addFeePayment');
+    resetForm('addFeePayment');
     loadFeePayments();
     showToast('✓ Fee payment saved!', 'success');
   } catch(e) {
@@ -2184,6 +2334,7 @@ async function saveParticipant() {
     };
     await sbPost('participants', body);
     closeFormPage('addParticipant');
+    resetForm('addParticipant');
     loadParticipants();
     showToast('✓ Participant added successfully!', 'success');
   } catch(e) {
@@ -2231,6 +2382,7 @@ function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   const isDark = document.body.classList.contains('dark-mode');
   localStorage.setItem('darkMode', isDark ? '1' : '0');
+  showToast(isDark ? '🌙 Dark mode on' : '☀️ Light mode on', '');
 }
 
 // Apply dark mode — on by default, unless user explicitly turned it off
@@ -2260,8 +2412,10 @@ async function exportData(entity) {
 }
 
 async function exportAll() {
+  showToast('Exporting all data...', '');
   const entities = ['workshops','participants','students','payments','leads','fee_payments'];
   for (const e of entities) { await exportData(e); await new Promise(r=>setTimeout(r,300)); }
+  showToast('✓ All data exported!', 'success');
 }
 
 
@@ -2285,7 +2439,12 @@ async function confirmArchive() {
   const { entity, id, name } = _archivePending;
   closeArchiveConfirm();
   try {
-    await api('/' + entity + '/' + id + '/archive', 'POST');
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + entity + '?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ archived: true })
+    });
+    if (!res.ok) throw new Error('Failed');
     showToast('✓ ' + name + ' hidden — toggle "Show archived" to restore', 'success');
     await reloadEntity(entity);
   } catch(e) { showToast('Failed to hide record — try again', 'error'); }
@@ -2293,7 +2452,12 @@ async function confirmArchive() {
 
 async function restoreRecord(entity, id) {
   try {
-    await api('/' + entity + '/' + id + '/unarchive', 'POST');
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + entity + '?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ archived: false })
+    });
+    if (!res.ok) throw new Error('Failed');
     showToast('✓ Restored successfully!', 'success');
     await reloadEntity(entity);
   } catch(e) { showToast('Failed to restore — try again', 'error'); }
@@ -2329,9 +2493,11 @@ async function wakeUpServer() {
 // ── TOAST ──
 function showToast(msg, type) {
   const t = document.getElementById('toast');
+  if (!t) return;
   t.textContent = msg;
   t.className = 'toast show' + (type ? ' ' + type : '');
-  setTimeout(() => { t.className = 'toast'; }, 3000);
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = 'toast'; }, 3000);
 }
 
 // ── LOGIN RIPPLES ──
