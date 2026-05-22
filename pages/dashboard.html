@@ -2181,7 +2181,7 @@ window.addEventListener('resize', function() {
 
 // ── LOAD ──
 function loadAll() { loadSection('overview'); }
-function syncAll() { loadSection('overview'); showToast('↻ Data refreshed', 'success'); }
+function syncAll() { showLoader('Refreshing data...'); loadSection('overview'); showToast('↻ Data refreshed', 'success'); setTimeout(hideLoader, 1500); }
 function loadSection(name) {
   if (name === 'overview') loadOverview();
   else if (name === 'workshops') { loadWorkshops(); loadParticipants(); }
@@ -2199,7 +2199,6 @@ const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', {day:'2-digit',
 
 // ── OVERVIEW ──
 async function loadOverview() {
-  showLoader('Loading...');
   try {
     const [workshops, participants, students, leads, payments] = await Promise.all([
       api('/workshops'), api('/participants'), api('/students'), api('/leads'), api('/payments')
@@ -2231,7 +2230,6 @@ async function loadOverview() {
 
 // ── WORKSHOPS ──
 async function loadWorkshops() {
-  showLoader('Loading workshops...');
   try {
     const showArchivedWorkshops = document.getElementById('toggle-archived-workshops')?.checked;
 const res = await api('/workshops?order=date:desc' + (showArchivedWorkshops ? '&include_archived=true' : ''));
@@ -2247,7 +2245,6 @@ const res = await api('/workshops?order=date:desc' + (showArchivedWorkshops ? '&
   } catch(e) { showToast('Error loading workshops', 'error'); } finally { hideLoader(); }
 }
 async function loadParticipants() {
-  showLoader('Loading...');
   try {
     const showArchivedParticipants = document.getElementById('toggle-archived-participants')?.checked;
 const res = await api('/participants?order=created_at:desc' + (showArchivedParticipants ? '&include_archived=true' : ''));
@@ -2264,7 +2261,6 @@ const res = await api('/participants?order=created_at:desc' + (showArchivedParti
 
 // ── CLASSES ──
 async function loadStudents() {
-  showLoader('Loading...');
   try {
     const showArchivedStudents = document.getElementById('toggle-archived-students')?.checked;
 const res = await api('/students' + (showArchivedStudents ? '?include_archived=true' : ''));
@@ -2282,7 +2278,6 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
   } catch(e) { showToast('Error loading students', 'error'); } finally { hideLoader(); }
 }
 async function loadFeePayments() {
-  showLoader('Loading...');
   try {
     const showArchivedFee = document.getElementById('toggle-archived-fee')?.checked;
 const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ? '&include_archived=true' : ''));
@@ -2299,7 +2294,6 @@ const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ?
 
 // ── PAYMENTS ──
 async function loadPayments() {
-  showLoader('Loading...');
   try {
     const showArchivedPayments = document.getElementById('toggle-archived-payments')?.checked;
 const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&include_archived=true' : ''));
@@ -2321,7 +2315,6 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
 
 // ── LEADS ──
 async function loadLeads() {
-  showLoader('Loading...');
   try {
     const showArchivedLeads = document.getElementById('toggle-archived-leads')?.checked;
 const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&include_archived=true' : ''));
