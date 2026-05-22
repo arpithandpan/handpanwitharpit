@@ -2,13 +2,24 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <title>Dashboard | Handpan with Arpit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../css/style.css"/>
 <style>
+
+/* ── KILL THE STRIP ── */
+.mobile-topbar, .mobile-topbar * { border-bottom: none !important; box-shadow: none !important; }
+.mobile-menu-overlay { border-top: none !important; }
+body.menu-is-open { background: #1a1208 !important; }
+body.menu-is-open .login-screen { visibility: hidden !important; }
+body.menu-is-open .dash-root { visibility: hidden !important; }
+
+/* ── GLOBAL OVERFLOW FIX ── */
+html, body { overflow-x: hidden !important; max-width: 100vw; }
+
 /* ── DASHBOARD LAYOUT ── */
 .dash-root { display: flex; min-height: 100vh; padding-top: 0; }
 
@@ -45,21 +56,26 @@
 }
 
 /* Section panels */
-.dash-section { display: none; padding: 2.5rem 3rem; }
+.dash-section { display: none; padding: 3rem 3.5rem; }
 .dash-section.active { display: block; }
 
 /* Section header */
 .dash-section-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 2rem; padding-bottom: 1.5rem;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 2.5rem; padding-bottom: 1.75rem;
   border-bottom: 1px solid var(--clay-pale);
+  flex-wrap: wrap; gap: 1.25rem;
+}
+.dash-section-header > div:first-child {
+  display: flex; flex-direction: column; gap: 0;
 }
 .dash-section-title {
   font-family: var(--font-body); font-size: 1.8rem; font-weight: 400;
-  color: var(--bark);
+  color: var(--bark); display: block; width: 100%;
 }
 .dash-section-subtitle {
-  font-size: 0.9rem; color: var(--text-light); margin-top: 0.25rem;
+  font-size: 1rem; color: var(--text-light); margin-top: 0.35rem;
+  display: block; width: 100%; clear: both;
 }
 
 /* Stat cards */
@@ -69,12 +85,13 @@
 }
 .stat-card {
   background: white; border: 1px solid var(--clay-pale);
-  border-radius: 4px; padding: 1.5rem;
+  border-radius: 12px; padding: 1.75rem;
   transition: box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(61,43,31,0.05);
 }
-.stat-card:hover { box-shadow: 0 4px 20px rgba(61,43,31,0.08); }
+.stat-card:hover { box-shadow: 0 6px 24px rgba(61,43,31,0.1); }
 .stat-label {
-  font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase;
+  font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--text-light); margin-bottom: 0.75rem;
 }
 .stat-value {
@@ -83,10 +100,10 @@
 }
 .stat-value.green { color: var(--moss); }
 .stat-value.clay { color: var(--clay); }
-.stat-sub { font-size: 0.9rem; color: var(--text-light); margin-top: 0.4rem; }
+.stat-sub { font-size: 1rem; color: var(--text-light); margin-top: 0.4rem; }
 
 /* Tables */
-.dash-table-wrap { background: white; border: 1px solid var(--clay-pale); border-radius: 4px; overflow: hidden; }
+.dash-table-wrap { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; overflow: hidden; }
 .dash-table-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--clay-pale);
@@ -95,7 +112,7 @@
 .dash-table-header-title { font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bark); font-weight: 500; }
 table { width: 100%; border-collapse: collapse; }
 th {
-  font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-size: 0.88rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--text-light); font-weight: 500;
   padding: 1rem 1.25rem; text-align: left;
   background: var(--sand); border-bottom: 1px solid var(--clay-pale);
@@ -110,7 +127,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 /* Badges */
 .badge {
-  display: inline-block; font-size: 0.75rem; letter-spacing: 0.08em;
+  display: inline-block; font-size: 0.82rem; letter-spacing: 0.08em;
   text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 20px;
 }
 .badge-green { background: rgba(122,140,106,0.15); color: var(--moss); }
@@ -119,21 +136,51 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .badge-gray  { background: rgba(100,100,100,0.1); color: var(--text-light); }
 .badge-blue  { background: rgba(70,100,160,0.1); color: #4664A0; }
 
-/* Buttons */
+/* ── UNIFIED BUTTON SYSTEM ── */
 .btn-dash {
   font-family: var(--font-body); font-size: 0.85rem; font-weight: 500;
   letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 0.6rem 1.25rem; border-radius: 3px; cursor: pointer;
+  padding: 0.6rem 1.25rem; border-radius: 4px; cursor: pointer;
   border: none; transition: all 0.2s; text-decoration: none;
   display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 48px; white-space: nowrap;
 }
-.btn-dash-primary { background: var(--bark); color: var(--clay-pale); }
-.btn-dash-primary:hover { background: var(--clay); }
-.btn-dash-outline { background: transparent; color: var(--bark); border: 1px solid var(--clay-pale); }
-.btn-dash-outline:hover { border-color: var(--clay); color: var(--clay); }
-.btn-dash-sm { padding: 0.4rem 0.9rem; font-size: 0.78rem; }
+/* Primary — dark fill, used for the main action on each page */
+.btn-dash-primary { background: var(--bark); color: var(--clay-pale); border: none; }
+.btn-dash-primary:hover { background: var(--clay); color: var(--cream); }
+/* Outline — secondary actions, always alongside or below a primary */
+.btn-dash-outline { background: transparent; color: var(--bark); border: 1px solid rgba(193,127,82,0.5); }
+.btn-dash-outline:hover { border-color: var(--clay); color: var(--clay); background: rgba(193,127,82,0.06); }
+/* Ghost — low-hierarchy actions like export tiles in Settings */
+.btn-dash-ghost {
+  background: var(--sand); color: var(--bark);
+  border: 1px solid rgba(193,127,82,0.45); border-radius: 4px;
+  text-align: left; font-family: var(--font-body);
+  font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em;
+  text-transform: uppercase; cursor: pointer;
+  padding: 0.65rem 1rem; transition: background 0.15s, border-color 0.15s;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 48px; white-space: nowrap;
+}
+.btn-dash-ghost:hover { background: rgba(193,127,82,0.12); border-color: var(--clay); }
+/* Sync — green-tinted, used only for refresh/sync actions */
 .btn-dash-sync { background: rgba(122,140,106,0.15); color: var(--moss); border: 1px solid rgba(122,140,106,0.3); }
 .btn-dash-sync:hover { background: rgba(122,140,106,0.25); }
+/* Danger — destructive actions like Clear all */
+.btn-dash-danger { background: transparent; color: #B43C28; border: 1px solid rgba(180,60,40,0.3); }
+.btn-dash-danger:hover { background: rgba(180,60,40,0.06); border-color: #B43C28; }
+/* Size modifier */
+.btn-dash-sm { padding: 0.4rem 0.9rem; font-size: 0.85rem; min-height: 40px; }
+/* Save — used on dark form-page headers, always clay-coloured so it pops on both light/dark headers */
+.btn-dash-save {
+  background: var(--clay); color: #fff; border: none;
+  font-family: var(--font-body); font-size: 0.85rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.6rem 1.25rem; border-radius: 4px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  transition: background 0.2s; min-height: 48px; white-space: nowrap;
+}
+.btn-dash-save:hover { background: #dba870; }
 
 /* Forms / Modal */
 .modal-overlay {
@@ -179,14 +226,27 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 }
 .modal-title { font-family: var(--font-body); font-size: 1.4rem; font-weight: 400; color: var(--bark); margin-bottom: 0; }
 .form-group { margin-bottom: 1.25rem; }
-.form-label { display: block; font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bark); margin-bottom: 0.5rem; font-weight: 500; }
+.form-label { display: block; font-size: 0.95rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bark); margin-bottom: 0.5rem; font-weight: 500; }
 .form-input {
   width: 100%; padding: 0.8rem 1rem;
   font-family: var(--font-body); font-size: 1rem; color: var(--text-dark);
   background: white; border: 1.5px solid var(--clay-pale); border-radius: 3px;
-  transition: border-color 0.2s; outline: none;
+  transition: border-color 0.2s; outline: none; min-height: 48px;
+  color-scheme: light;
 }
 .form-input:focus { border-color: var(--clay); }
+/* Hide number input spinners */
+.form-input[type="number"]::-webkit-inner-spin-button,
+.form-input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.form-input[type="number"] { -moz-appearance: textfield; }
+/* Custom select chevron */
+select.form-input {
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9' stroke='%23c8935a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
+}
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
 
@@ -202,8 +262,8 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 }
 
 .login-box {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(200,147,90,0.35);
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(200,147,90,0.55);
   border-radius: 12px;
   padding: 2.5rem; width: 340px; max-width: 90vw;
   text-align: center; position: relative; z-index: 1;
@@ -213,7 +273,73 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .login-sub { font-size: 0.95rem; color: rgba(200,147,90,0.65); margin-bottom: 2rem; }
 .login-error { color: #e8856a; font-size: 0.9rem; margin-top: 0.75rem; display: none; }
 
-/* Loading spinner */
+/* ── PIN PAD ── */
+.pin-dots { display: flex; justify-content: center; gap: 12px; margin-bottom: 1.5rem; }
+.pin-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1.5px solid rgba(200,147,90,0.45);
+  background: transparent; transition: background 0.15s, border-color 0.15s;
+}
+.pin-dot.filled { background: #c8935a; border-color: #c8935a; }
+.pin-dot.error { background: #B43C28; border-color: #B43C28; }
+@keyframes pin-shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.pin-dots.shake { animation: pin-shake 0.35s ease; }
+.pin-numpad {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; width: 100%; margin-bottom: 0.75rem;
+}
+.pin-key {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(200,147,90,0.2);
+  border-radius: 8px; padding: 0.75rem 0;
+  font-size: 1.1rem; font-weight: 400;
+  color: #e8d5c0; cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.pin-key:active { background: rgba(200,147,90,0.2); }
+.pin-key.key-del {
+  background: transparent; border: none;
+  color: rgba(200,147,90,0.65); font-size: 1.4rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.pin-key.key-del:active { color: rgba(200,147,90,0.95); }
+.pin-hint { font-size: 0.9rem; color: rgba(200,147,90,0.55); letter-spacing: 0.03em; margin-top: 0.5rem; }
+.pin-lockout {
+  display: none; font-size: 0.9rem;
+  color: #e8856a; margin-top: 0.75rem; line-height: 1.4;
+}
+
+/* ── LOADING OVERLAY ── */
+.loading-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(10,7,4,0.75); z-index: 50000;
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 1rem;
+  backdrop-filter: blur(2px);
+}
+.loading-overlay.active { display: flex; }
+@keyframes handpan-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.loading-logo {
+  animation: handpan-spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  opacity: 0.9;
+}
+.loading-text {
+  font-size: 0.85rem; color: rgba(200,147,90,0.7);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--font-body);
+}
 .loading { text-align: center; padding: 3rem; color: var(--text-light); }
 .spinner {
   width: 32px; height: 32px; border: 2px solid var(--clay-pale);
@@ -236,42 +362,64 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .chart-bar-val { font-size: 0.78rem; color: var(--bark); font-weight: 500; }
 
 /* Overview quick stats row */
-.overview-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
-.overview-card { background: white; border: 1px solid var(--clay-pale); border-radius: 4px; overflow: hidden; }
-.overview-card-head { background: var(--sand); padding: 1rem 1.5rem; border-bottom: 1px solid var(--clay-pale); font-size: 0.82rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bark); }
+.overview-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem; margin-top: 2.5rem; }
+.overview-card { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(61,43,31,0.05); }
+.overview-card-head { background: var(--sand); padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--clay-pale); font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bark); }
 
 /* Insight tiles */
-.insight-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-bottom: 2rem; }
-.insight-tile { background: white; border: 1px solid var(--clay-pale); border-radius: 4px; padding: 1.5rem; }
+.insight-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
+.insight-tile { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; padding: 1.75rem; box-shadow: 0 2px 8px rgba(61,43,31,0.05); }
 .insight-tile-label { font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.5rem; }
 .insight-tile-val { font-size: 1.6rem; font-weight: 400; color: var(--bark); }
 .insight-tile-sub { font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem; }
 
 /* Notification toast */
 .toast {
-  position: fixed; bottom: 2rem; right: 2rem;
-  background: var(--bark); color: var(--clay-pale);
-  padding: 0.9rem 1.5rem; border-radius: 4px;
-  font-size: 0.9rem; z-index: 999;
-  transform: translateY(100px); opacity: 0;
-  transition: all 0.3s;
+  position: fixed; top: 1.25rem; left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  background: #2e2418; color: #c8935a;
+  border: 1px solid rgba(200,147,90,0.3);
+  padding: 0.75rem 1.5rem; border-radius: 12px;
+  font-size: 0.9rem; font-weight: 500; z-index: 99999;
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+  pointer-events: none; white-space: nowrap;
+  max-width: 380px;
 }
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.success { background: var(--moss); }
-.toast.error { background: #B43C28; }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.success { background: #2a3d1e; color: #a8cc7a; border-color: rgba(138,170,110,0.35); }
+.toast.error { background: #3d1e1e; color: #e87a6a; border-color: rgba(180,60,40,0.35); }
 
 
 /* Mobile top bar */
 .mobile-topbar {
-  display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 400;
-  background: #3d2b1f; padding: 18px 20px;
+  display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+  background: #3d2b1f !important; padding: 14px 16px;
   align-items: center; justify-content: space-between;
+  width: 100%; box-sizing: border-box; overflow: hidden;
+  border-bottom: none !important; box-shadow: none !important;
 }
+.mobile-topbar.menu-open .topbar-logo { opacity: 0; pointer-events: none; }
+.mobile-topbar.menu-open .topbar-bell { opacity: 0; pointer-events: none; }
+.mobile-topbar.menu-open { background: #1a1208 !important; border-bottom: none !important; box-shadow: none !important; }
+.mobile-topbar { background: #3d2b1f !important; }
+.mobile-topbar.menu-open #mobileMenuBtn { opacity: 1 !important; }
 .mobile-menu-overlay {
-  display: none; position: fixed; inset: 0; background: #f5ede4;
-  z-index: 500; overflow-y: auto; flex-direction: column;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #1a1208;
+  z-index: 9999;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-direction: column;
+  pointer-events: none;
 }
-.mobile-menu-overlay.open { display: flex; }
+.mobile-menu-overlay.open { display: flex; pointer-events: auto; }
+
 @media (max-width: 900px) {
   .mobile-topbar { display: flex; }
   .dash-root { padding-top: 68px; }
@@ -291,7 +439,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 /* Tablet (max 1024px) */
 @media (max-width: 1024px) {
   .stats-grid { grid-template-columns: repeat(2,1fr); }
-  .dash-section { padding: 2rem; }
+  .dash-section { padding: 2.5rem; }
 }
 
 /* Mobile & small tablet (max 900px) */
@@ -299,13 +447,13 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   .dash-sidebar { transform: translateX(-100%); }
   .dash-sidebar.open { transform: translateX(0); }
   .dash-main { margin-left: 0; }
-  .dash-section { padding: 1.25rem; }
+  .dash-section { padding: 1.5rem; }
   .dash-section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  .stats-grid { grid-template-columns: repeat(2,1fr); gap: 0.75rem; }
-  .stat-card { padding: 1rem; }
+  .stats-grid { grid-template-columns: repeat(2,1fr); gap: 1rem; }
+  .stat-card { padding: 1.25rem; border-radius: 10px; }
   .stat-value { font-size: 1.5rem; }
   .chart-grid { grid-template-columns: 1fr; }
-  .insight-grid { grid-template-columns: repeat(2,1fr); gap: 0.75rem; }
+  .insight-grid { grid-template-columns: repeat(2,1fr); gap: 1rem; }
   .overview-row { grid-template-columns: 1fr; }
   .dash-sidebar-toggle { display: flex; align-items: center; justify-content: center; }
   .form-row { grid-template-columns: 1fr; }
@@ -319,16 +467,16 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 /* Small mobile (max 500px) */
 @media (max-width: 500px) {
-  .dash-section { padding: 1rem; }
-  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-  .stat-card { padding: 0.85rem; }
+  .dash-section { padding: 1.25rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .stat-card { padding: 1rem; border-radius: 10px; }
   .stat-value { font-size: 1.3rem; }
-  .stat-label { font-size: 0.72rem; }
+  .stat-label { font-size: 0.85rem; }
   .insight-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
   .insight-tile { padding: 1rem; }
   .insight-tile-val { font-size: 1.3rem; }
   .dash-section-title { font-size: 1.4rem; }
-  .btn-dash { font-size: 0.78rem; padding: 0.5rem 0.9rem; }
+  .btn-dash { font-size: 0.78rem; padding: 0.5rem 0.9rem; min-height: 48px; }
   .modal-drag-handle {
   display: none; justify-content: center;
   padding: 10px 0 4px; margin: 0 -1.5rem;
@@ -375,17 +523,21 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 /* ── MOBILE CARDS (replaces tables on small screens) ── */
 .mobile-cards { display: none; }
+@media (max-width: 900px) {
+  .mobile-cards { display: block; padding: 0.25rem 0; }
+}
 .m-card {
   background: white; border: 1px solid var(--clay-pale);
-  border-radius: 4px; padding: 1rem; margin-bottom: 0.75rem;
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;
+  box-shadow: 0 2px 8px rgba(61,43,31,0.06);
 }
 .m-card-row {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 0.25rem 0;
+  padding: 0.45rem 0;
 }
-.m-card-label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
-.m-card-val { font-size: 0.9rem; color: var(--text-dark); text-align: right; max-width: 60%; }
-.m-card-title { font-size: 1rem; font-weight: 500; color: var(--bark); margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--clay-pale); }
+.m-card-label { font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
+.m-card-val { font-size: 1.05rem; color: var(--text-dark); text-align: right; max-width: 60%; }
+.m-card-title { font-size: 1.1rem; font-weight: 500; color: var(--bark); margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--clay-pale); }
 .m-card-divider { height: 1px; background: rgba(193,127,82,0.08); margin: 0.4rem 0; }
 
 @media (max-width: 900px) {
@@ -398,31 +550,41 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 /* ── INNER FORM PAGES ── */
 .form-page {
-  display: none; position: fixed; inset: 0;
-  background: var(--cream); z-index: 450;
-  overflow-y: auto; padding: 0;
-  -webkit-overflow-scrolling: touch;
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%; height: 100%;
+  background: var(--cream); z-index: 10001;
+  overflow: hidden; padding: 0;
+  touch-action: none;
+  -webkit-overflow-scrolling: none;
+  overscroll-behavior: none;
 }
-.form-page.open { display: block; }
+.form-page.open { display: flex; flex-direction: column; }
 .form-page-header {
-  position: sticky; top: 0; background: var(--cream);
-  border-bottom: 2px solid var(--clay-pale);
-  padding: 1rem 1.5rem; display: flex;
+  flex-shrink: 0;
+  background: #3d2b1f;
+  border-bottom: none;
+  padding: 0.85rem 1.25rem; display: flex;
   align-items: center; justify-content: space-between;
   z-index: 10;
 }
+.form-page-scroll {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
 .form-page-back {
   display: flex; align-items: center; gap: 0.5rem;
-  background: var(--bark); border: none; cursor: pointer;
-  font-size: 0.9rem; color: var(--clay-pale);
+  background: transparent; border: 1.5px solid rgba(232,213,192,0.45); cursor: pointer;
+  font-size: 0.9rem; color: #e8d5c0;
   font-family: var(--font-body); padding: 0.5rem 1rem;
   border-radius: 4px; font-weight: 500; letter-spacing: 0.05em;
-  text-transform: uppercase;
+  text-transform: uppercase; transition: border-color 0.2s, background 0.2s;
 }
-.form-page-back:hover { background: var(--clay); }
+.form-page-back:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
 .form-page-title {
   font-family: var(--font-body); font-size: 1.1rem;
-  font-weight: 400; color: var(--bark);
+  font-weight: 400; color: #e8d5c0;
 }
 .form-page-body {
   max-width: 600px; margin: 0 auto;
@@ -433,14 +595,15 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 /* ── SETTINGS ── */
 .settings-card {
   background: #fff; border: 1px solid var(--clay-pale);
-  border-radius: 8px; padding: 1.5rem; margin-bottom: 1.25rem;
+  border-radius: 12px; padding: 1.75rem; margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(61,43,31,0.05);
 }
 .settings-card-header {
   display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.25rem;
 }
 .settings-card-icon { font-size: 1.2rem; margin-top: 2px; }
 .settings-card-title { font-size: 1rem; font-weight: 600; color: var(--bark); }
-.settings-card-sub { font-size: 0.85rem; color: var(--text-light); margin-top: 2px; }
+.settings-card-sub { font-size: 0.9rem; color: var(--text-light); margin-top: 2px; }
 .settings-profile { display: flex; align-items: center; gap: 1rem; }
 .settings-avatar {
   width: 48px; height: 48px; border-radius: 50%;
@@ -455,9 +618,9 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 }
 .settings-health-item { display: flex; flex-direction: column; gap: 4px; }
 .settings-health-val { font-size: 1.1rem; font-weight: 500; color: var(--bark); }
-.settings-health-label { font-size: 0.75rem; color: var(--text-light); letter-spacing: 0.04em; }
+.settings-health-label { font-size: 0.85rem; color: var(--text-light); letter-spacing: 0.04em; }
 .settings-field-group { display: flex; flex-direction: column; gap: 0.5rem; }
-.settings-label { font-size: 0.75rem; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; }
+.settings-label { font-size: 0.85rem; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; }
 .settings-code {
   font-size: 0.78rem; background: var(--sand); padding: 0.5rem 0.75rem;
   border-radius: 4px; word-break: break-all; flex: 1; color: var(--bark);
@@ -467,13 +630,6 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .settings-export-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;
 }
-.settings-export-btn {
-  background: var(--sand); border: 1px solid var(--clay-pale); border-radius: 6px;
-  padding: 0.65rem 1rem; font-size: 0.85rem; color: var(--bark);
-  cursor: pointer; text-align: left; font-family: var(--font-body);
-  transition: background 0.15s;
-}
-.settings-export-btn:hover { background: var(--clay-pale); }
 .settings-mvp-bar-wrap { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
 .settings-checklist { display: flex; flex-direction: column; gap: 0.5rem; }
 .settings-check-item { font-size: 0.9rem; color: var(--bark); }
@@ -482,8 +638,8 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 /* ── DARK MODE ── */
 body.dark-mode {
-  --cream: #1a1410;
-  --sand: #231c16;
+  --cream: #120e0a;
+  --sand: #1e1710;
   --bark: #e8d5c0;
   --clay: #c8935a;
   --clay-pale: rgba(200,147,90,0.25);
@@ -500,40 +656,326 @@ body.dark-mode .settings-card,
 body.dark-mode .chart-box,
 body.dark-mode .insight-tile,
 body.dark-mode .overview-card,
-body.dark-mode .m-card { background: #231c16; border-color: rgba(200,147,90,0.2); }
+body.dark-mode .m-card { background: #231c16; border-color: rgba(200,147,90,0.2); box-shadow: 0 2px 10px rgba(0,0,0,0.25); }
 body.dark-mode table thead th { background: #2a2018; }
-body.dark-mode .form-input { background: #2a2018; border-color: rgba(200,147,90,0.25); color: #e8d5c0; }
+body.dark-mode .form-input { background: #2a2018; border-color: rgba(200,147,90,0.25); color: #e8d5c0; color-scheme: dark; }
 body.dark-mode .form-page,
-body.dark-mode .form-page-header { background: #1a1410; }
-body.dark-mode .mobile-menu-overlay { background: #1a1410; }
+
+body.dark-mode .mobile-menu-overlay { background: #120e0a; }
 body.dark-mode .mobile-topbar { background: #0e0b08; }
-body.dark-mode .dash-main { background: #1a1410; }
+body.dark-mode .dash-main { background: #0f0c09; }
 body.dark-mode .login-screen { background: #0a0806; }
 body.dark-mode #darkModeToggle { background: var(--clay) !important; }
-body.dark-mode #darkModeKnob { transform: translateX(24px); background: #fff; }
+body.dark-mode #darkModeKnob { transform: translateX(28px); background: #fff; }
 body.dark-mode .settings-code { background: #2a2018; color: #e8d5c0; }
-body.dark-mode .settings-export-btn { background: #2a2018; color: #e8d5c0; }
 body.dark-mode .overview-card-head { background: #2a2018; }
 
-/* ── ARCHIVE ── */
+
+
+body.dark-mode .notif-item.unread { background: rgba(200,147,90,0.07); }
+body.dark-mode .notif-item:hover { background: rgba(200,147,90,0.05); }
+body.dark-mode .notif-msg { color: #e8d5c0; }
+body.dark-mode .notif-time { color: #7a6354; }
+body.dark-mode .notif-unread-dot { background: #c8935a; }
+body.dark-mode .btn-checkin { border-color: rgba(200,147,90,0.3); color: #9a7d63; }
+body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border-color: #8aaa6e; color: #8aaa6e; }
+body.dark-mode #archiveConfirmModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.45); }
+body.dark-mode #customConfirmModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.45); }
+body.dark-mode #unsavedModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.45); }
+/* ── DARK MODE: comprehensive button + UI fixes ── */
+body.dark-mode .btn-dash-primary { background: #c8935a; color: #1a1410; border: none; }
+body.dark-mode .btn-dash-primary:hover { background: #dba870; color: #1a1410; }
+body.dark-mode .btn-dash-outline { color: #e8d5c0; border-color: rgba(200,147,90,0.65); background: transparent; }
+body.dark-mode .btn-dash-outline:hover { border-color: #c8935a; color: #c8935a; background: rgba(200,147,90,0.1); }
+body.dark-mode .btn-dash-ghost { background: #2a2018; color: #dba870; border-color: rgba(200,147,90,0.5); }
+body.dark-mode .btn-dash-ghost:hover { background: #352818; border-color: #c8935a; color: #e8d5c0; }
+body.dark-mode .btn-dash-sync { background: rgba(138,170,110,0.18); color: #8aaa6e; border-color: rgba(138,170,110,0.5); }
+body.dark-mode .btn-dash-sync:hover { background: rgba(138,170,110,0.28); }
+body.dark-mode .btn-dash-danger { color: #e87a60; border-color: rgba(220,100,80,0.6); background: transparent; }
+body.dark-mode .btn-dash-danger:hover { background: rgba(180,80,60,0.15); border-color: #e87a60; }
+body.dark-mode .btn-dash-save { background: #c8935a; color: #1a1410; }
+body.dark-mode .btn-dash-save:hover { background: #dba870; }
+body.dark-mode .btn-archive { color: #7a6354; border-color: rgba(200,147,90,0.2); background: transparent; }
+body.dark-mode .btn-archive:hover { color: #dba870; border-color: rgba(200,147,90,0.45); background: rgba(200,147,90,0.06); }
+body.dark-mode .btn-restore { color: #8aaa6e; background: transparent; }
+body.dark-mode .btn-restore:hover { background: rgba(138,170,110,0.15); }
+body.dark-mode .badge-green { background: rgba(138,170,110,0.18); color: #8aaa6e; }
+body.dark-mode .badge-clay { background: rgba(200,147,90,0.18); color: #dba870; }
+body.dark-mode .badge-red { background: rgba(180,80,60,0.18); color: #e87a60; }
+body.dark-mode .badge-gray { background: rgba(180,160,140,0.12); color: #a08878; }
+body.dark-mode .badge-blue { background: rgba(70,100,180,0.18); color: #7a9de0; }
+body.dark-mode .form-page-back { background: transparent; color: #e8d5c0; border: 1.5px solid rgba(232,213,192,0.35); }
+body.dark-mode .form-page-back:hover { background: rgba(232,213,192,0.08); border-color: rgba(232,213,192,0.7); }
+body.dark-mode .form-page-header { background: #3d2b1f; border-bottom: none; }
+body.dark-mode .form-page-title { color: #e8d5c0; }
+body.dark-mode .form-page, body.dark-mode .form-page-scroll { background: #1a1410; }
+body.dark-mode .form-label { color: #c8935a; }
+body.dark-mode .dash-section-title { color: #e8d5c0; }
+body.dark-mode .dash-section-subtitle { color: #7a6354; }
+body.dark-mode .dash-section-header { border-bottom-color: rgba(200,147,90,0.18); }
+body.dark-mode .dash-table-header { background: #2a2018; border-bottom-color: rgba(200,147,90,0.15); }
+body.dark-mode .dash-table-header-title { color: #c8935a; }
+body.dark-mode td { border-bottom-color: rgba(200,147,90,0.07); color: #c4a882; }
+body.dark-mode td strong { color: #e8d5c0; }
+body.dark-mode tr:hover td { background: rgba(200,147,90,0.04); }
+body.dark-mode .stat-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .stat-label { color: #7a6354; }
+body.dark-mode .stat-value { color: #e8d5c0; }
+body.dark-mode .stat-value.green { color: #8aaa6e; }
+body.dark-mode .stat-value.clay { color: #c8935a; }
+body.dark-mode .stat-sub { color: #9a7d63; }
+body.dark-mode .m-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .m-card-title { color: #e8d5c0; border-bottom-color: rgba(200,147,90,0.15); }
+body.dark-mode .m-card-label { color: #7a6354; }
+body.dark-mode .m-card-val { color: #c4a882; }
+body.dark-mode .archived-toggle { color: #7a6354; }
+body.dark-mode .toggle-track { background: rgba(200,147,90,0.2); border-color: rgba(200,147,90,0.2); }
+body.dark-mode .toggle-track::after { background: #7a6354; }
+body.dark-mode .settings-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .settings-card-title { color: #e8d5c0; }
+body.dark-mode .settings-card-sub { color: #7a6354; }
+body.dark-mode .settings-code { background: #2a2018; color: #c4a882; border: 1px solid rgba(200,147,90,0.2); }
+body.dark-mode .settings-health-val { color: #e8d5c0; }
+body.dark-mode .settings-health-label { color: #7a6354; }
+body.dark-mode .settings-label { color: #7a6354; }
+body.dark-mode .settings-profile-name { color: #e8d5c0; }
+body.dark-mode .settings-profile-email { color: #7a6354; }
+body.dark-mode .chart-box { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .chart-box-title { color: #7a6354; }
+body.dark-mode .insight-tile { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .insight-tile-label { color: #7a6354; }
+body.dark-mode .insight-tile-val { color: #e8d5c0; }
+body.dark-mode .overview-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .overview-card-head { background: #2a2018; color: #c8935a; border-bottom-color: rgba(200,147,90,0.15); }
+body.dark-mode .modal { background: #231c16; }
+body.dark-mode .modal-title { color: #e8d5c0; }
+body.dark-mode .modal-close-btn { background: #2a2018; color: #e8d5c0; }
+body.dark-mode .mobile-topbar { background: #0e0b08; }
+body.dark-mode .mobile-menu-overlay { background: #1a1208 !important; }
+body.dark-mode .mobile-menu-overlay a { color: #e8d5c0 !important; }
+
+body.dark-mode .mobile-topbar.menu-open #menuLine1,
+body.dark-mode .mobile-topbar.menu-open #menuLine2,
+body.dark-mode .mobile-topbar.menu-open #menuLine3 { background: #e8d5c0 !important; }
+body.dark-mode #darkModeToggle { background: var(--clay) !important; }
+body.dark-mode #darkModeKnob { transform: translateX(28px); background: #fff; }
+body.dark-mode .dash-sidebar { background: #0e0b08; }
+body.dark-mode .dash-main { background: #0f0c09; }
+body.dark-mode .login-screen { background: #0a0806; }
+body.dark-mode .login-box { background: rgba(255,255,255,0.05); border-color: rgba(200,147,90,0.4); }
+body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
+
+
+
+
+
+/* ── MOBILE SPECIFIC FIXES ── */
+@media (max-width: 900px) {
+  .dash-section-header { flex-direction: column; align-items: flex-start; }
+  .dash-section-header > div:first-child { width: 100%; }
+  .dash-section-header > div:last-child, .dash-section-header > button { width: 100%; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .dash-section-header > button { width: auto; }
+  .dash-section-title { font-size: 1.5rem; }
+  .dash-section-subtitle { font-size: 0.85rem; margin-top: 0.25rem; display: block; clear: both; }
+  .settings-card { padding: 1.25rem; }
+  .settings-copy-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .settings-copy-row .btn-dash { width: 100%; justify-content: center; }
+  .settings-export-grid { grid-template-columns: 1fr 1fr; }
+  .settings-health-grid { grid-template-columns: 1fr 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .form-page-header { padding: 0.75rem 1rem; }
+  .form-page-back { padding: 0.45rem 0.85rem; font-size: 0.82rem; }
+  .form-page-title { font-size: 0.95rem; }
+  .form-page-body { padding: 1.25rem 1rem 3rem; }
+  .dash-section-header > div[style*="display:flex"] { flex-wrap: wrap; }
+  .archived-toggle { font-size: 0.82rem; }
+  .btn-dash-sm { font-size: 0.78rem; padding: 0.4rem 0.75rem; }
+  .overview-card table { min-width: unset; }
+  .overview-card th, .overview-card td { padding: 0.6rem 0.75rem; font-size: 0.82rem; }
+  .overview-card .mobile-cards { padding: 0.75rem; }
+  #archiveConfirmModal { padding: 1rem; }
+}
+@media (max-width: 500px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .stat-card { padding: 1rem; border-radius: 10px; }
+  .stat-value { font-size: 1.4rem; }
+  .stat-label { font-size: 0.85rem; }
+  .m-card { padding: 1rem 1.25rem; border-radius: 10px; margin-bottom: 1rem; }
+  .m-card-title { font-size: 0.95rem; }
+  .m-card-label { font-size: 0.85rem; }
+  .m-card-val { font-size: 1rem; }
+  .settings-export-grid { grid-template-columns: 1fr; }
+  .btn-dash { font-size: 0.8rem; padding: 0.5rem 0.85rem; min-height: 48px; }
+  .dash-section { padding: 1.1rem; }
+}
+
+
+/* ── NOTIFICATIONS ── */
+.notif-bell-wrap {
+  position: relative; display: inline-flex; align-items: center;
+}
+.notif-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: #B43C28; color: white;
+  font-size: 0.65rem; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: none; align-items: center; justify-content: center;
+  line-height: 1;
+}
+.notif-badge.show { display: flex; }
+.notif-item {
+  display: flex; gap: 0.75rem; align-items: flex-start;
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--clay-pale);
+  transition: background 0.15s; cursor: pointer;
+}
+.notif-item:hover { background: rgba(193,127,82,0.04); }
+.notif-item.unread { background: rgba(193,127,82,0.06); }
+.notif-item:last-child { border-bottom: none; }
+.notif-icon {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.notif-icon.payment { background: rgba(122,140,106,0.15); }
+.notif-icon.warning { background: rgba(180,60,40,0.1); }
+.notif-icon.info { background: rgba(193,127,82,0.12); }
+.notif-icon.error { background: rgba(180,60,40,0.15); }
+.notif-msg { font-size: 0.9rem; color: var(--text-dark); line-height: 1.4; flex: 1; }
+.notif-time { font-size: 0.75rem; color: var(--text-light); margin-top: 0.25rem; }
+.notif-unread-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--clay); flex-shrink: 0; margin-top: 6px;
+}
+.notif-empty {
+  text-align: center; padding: 3rem 1.5rem;
+  color: var(--text-light); font-size: 0.9rem;
+}
+
+/* ── ARCHIVE / CHECKIN BUTTONS ── */
 .btn-archive {
-  background: none; border: none; cursor: pointer;
-  color: var(--text-light); font-size: 1rem; padding: 4px 6px;
-  border-radius: 4px; line-height: 1; transition: color 0.15s, background 0.15s;
+  background: transparent; cursor: pointer; border-radius: 6px;
+  border: 1px solid rgba(200,147,90,0.25); color: var(--text-light);
+  transition: all 0.15s; display: inline-flex; align-items: center;
+  gap: 5px; padding: 6px 10px; font-size: 0.78rem; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  font-family: var(--font-body); min-height: 36px; white-space: nowrap;
 }
-.btn-archive:hover { color: #B43C28; background: #fdf0ee; }
+.btn-archive:hover { border-color: rgba(200,147,90,0.5); color: var(--bark); background: rgba(200,147,90,0.06); }
 .btn-restore {
-  background: none; border: none; cursor: pointer;
-  color: var(--moss); font-size: 0.8rem; padding: 4px 8px;
-  border-radius: 4px; font-family: var(--font-body);
+  background: none; border: 1px solid rgba(122,140,106,0.4);
+  color: var(--moss); border-radius: 4px; cursor: pointer;
+  padding: 0.3rem 0.65rem; font-size: 0.8rem;
+  font-family: var(--font-body); transition: all 0.15s;
+  min-height: 32px;
 }
-.btn-restore:hover { background: #f0f5ee; }
+.btn-restore:hover { background: rgba(122,140,106,0.1); }
+.btn-checkin {
+  background: none; border: 1.5px solid var(--clay-pale);
+  border-radius: 20px; cursor: pointer; padding: 0.25rem 0.75rem;
+  font-size: 0.78rem; color: var(--text-light); font-family: var(--font-body);
+  transition: all 0.2s; white-space: nowrap; min-height: 32px;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+}
+.btn-checkin.checked {
+  background: rgba(122,140,106,0.12); border-color: var(--moss);
+  color: var(--moss); font-weight: 500;
+}
+.btn-checkin:hover { border-color: var(--clay); color: var(--clay); }
+.btn-checkin.checked:hover { background: rgba(180,60,40,0.08); border-color: #B43C28; color: #B43C28; }
+
+
+/* Archived toggle — checkbox style */
 .archived-toggle {
-  display: flex; align-items: center; gap: 0.5rem;
-  font-size: 0.85rem; color: var(--text-light); cursor: pointer;
+  display: flex; align-items: center; gap: 0.6rem;
+  font-size: 0.9rem; color: var(--text-light); cursor: pointer;
+  user-select: none; white-space: nowrap;
 }
-.archived-toggle input { cursor: pointer; }
-.archived-row { opacity: 0.5; background: #fafafa; }
+.archived-toggle input[type="checkbox"] {
+  width: 20px; height: 20px; cursor: pointer;
+  accent-color: var(--clay); flex-shrink: 0;
+}
+.archived-row { opacity: 0.5; }
+
+/* Notification dark mode */
+body.dark-mode .notif-item.unread { background: rgba(200,147,90,0.07); }
+body.dark-mode .notif-item:hover { background: rgba(200,147,90,0.05); }
+body.dark-mode .notif-msg { color: #e8d5c0; }
+body.dark-mode .notif-icon.payment { background: rgba(138,170,110,0.15); }
+body.dark-mode .notif-icon.warning { background: rgba(180,80,60,0.15); }
+body.dark-mode .btn-checkin { border-color: rgba(200,147,90,0.3); color: #9a7d63; }
+body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border-color: #8aaa6e; color: #8aaa6e; }
+
+/* ── CHECK-IN MODE ── */
+.checkin-screen {
+  display: none; position: fixed; inset: 0;
+  background: var(--cream); z-index: 10001;
+  flex-direction: column; overflow: hidden;
+}
+.checkin-screen.open { display: flex; }
+.checkin-header {
+  background: #3d2b1f; padding: 1rem 1.25rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
+  flex-shrink: 0;
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+.checkin-header-row2 {
+  display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;
+}
+@media (max-width: 900px) {
+  .checkin-header { padding-top: calc(68px + 0.75rem); }
+}
+.checkin-header-left { display: flex; flex-direction: column; gap: 2px; }
+.checkin-header-title { font-size: 1rem; font-weight: 500; color: #e8d5c0; letter-spacing: 0.04em; }
+.checkin-header-sub { font-size: 0.8rem; color: rgba(200,147,90,0.7); }
+.checkin-counter {
+  background: rgba(200,147,90,0.15); border: 1px solid rgba(200,147,90,0.3);
+  border-radius: 20px; padding: 0.3rem 0.9rem;
+  font-size: 0.85rem; font-weight: 600; color: #c8935a;
+  letter-spacing: 0.05em;
+}
+.checkin-close {
+  background: transparent; border: 1.5px solid rgba(232,213,192,0.35);
+  border-radius: 4px; color: #e8d5c0; cursor: pointer;
+  font-size: 0.8rem; font-family: var(--font-body);
+  padding: 0.4rem 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+  transition: border-color 0.2s, background 0.2s;
+}
+.checkin-close:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
+.checkin-body {
+  flex: 1; overflow-y: auto; padding: 1.25rem;
+  -webkit-overflow-scrolling: touch;
+}
+.checkin-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+.checkin-card {
+  background: white; border: 1px solid var(--clay-pale);
+  border-radius: 8px; padding: 1rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; transition: opacity 0.2s, border-color 0.2s;
+}
+.checkin-card.is-checked { opacity: 0.55; border-color: rgba(122,140,106,0.3); }
+.checkin-card-info { flex: 1; min-width: 0; }
+.checkin-card-name { font-size: 1rem; font-weight: 500; color: var(--bark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.checkin-card-meta { font-size: 0.8rem; color: var(--text-light); margin-top: 3px; }
+.checkin-card-meta span { margin-right: 0.75rem; }
+.checkin-cb {
+  width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 2px solid rgba(200,147,90,0.4);
+  transition: background 0.12s, border-color 0.12s;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.checkin-cb.checked { background: #c8935a; border-color: #c8935a; }
+.checkin-cb svg { display: none; }
+.checkin-cb.checked svg { display: block; }
+.checkin-empty { text-align: center; padding: 4rem 1.5rem; color: var(--text-light); font-size: 0.95rem; }
+body.dark-mode .checkin-screen { background: #1a1410; }
+body.dark-mode .checkin-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
+body.dark-mode .checkin-card.is-checked { border-color: rgba(138,170,110,0.2); }
+body.dark-mode .checkin-card-name { color: #e8d5c0; }
+body.dark-mode .checkin-cb { border-color: rgba(200,147,90,0.35); }
+body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a; }
 
 </style>
 </head>
@@ -562,12 +1004,31 @@ body.dark-mode .overview-card-head { background: #2a2018; }
       </div>
     </div>
     <div class="login-title">Arpit's Studio</div>
-    <div class="login-sub">The numbers behind the notes</div>
-    <div class="form-group">
-      <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" style="text-align:center;letter-spacing:0.15em;background:rgba(255,255,255,0.08);border:1px solid rgba(200,147,90,0.3);color:#e8d5c0;"/>
+    <div class="login-sub">Enter your 6-digit PIN</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+      <div class="pin-dot" id="pd4"></div>
+      <div class="pin-dot" id="pd5"></div>
     </div>
-    <button class="btn-dash btn-dash-primary" style="width:100%;justify-content:center;padding:1rem;font-size:0.95rem;background:#c8935a;color:#3d2b1f;border:none;font-weight:600;letter-spacing:0.12em;" onclick="doLogin()">LET'S GO</button>
-    <div class="login-error" id="loginError">Incorrect password. Try again.</div>
+    <div class="pin-numpad">
+      <button class="pin-key" onclick="pinPress('1')">1</button>
+      <button class="pin-key" onclick="pinPress('2')">2</button>
+      <button class="pin-key" onclick="pinPress('3')">3</button>
+      <button class="pin-key" onclick="pinPress('4')">4</button>
+      <button class="pin-key" onclick="pinPress('5')">5</button>
+      <button class="pin-key" onclick="pinPress('6')">6</button>
+      <button class="pin-key" onclick="pinPress('7')">7</button>
+      <button class="pin-key" onclick="pinPress('8')">8</button>
+      <button class="pin-key" onclick="pinPress('9')">9</button>
+      <button class="pin-key key-del" disabled></button>
+      <button class="pin-key" onclick="pinPress('0')">0</button>
+      <button class="pin-key key-del" onclick="pinDelete()">⌫</button>
+    </div>
+    <div class="pin-hint" id="pinHint">Enters automatically on 6th digit</div>
+    <div class="pin-lockout" id="pinLockout"></div>
   </div>
 </div>
 
@@ -576,7 +1037,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
 
 <!-- ── DASHBOARD ROOT ── -->
 <div class="mobile-topbar" id="mobileTopbar" style="display:none;">
-  <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="showSection('overview',null);toggleMobileMenu&&document.getElementById('mobileMenuOverlay').classList.remove('open');">
+  <div class="topbar-logo" style="display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity 0.15s;" onclick="showSection('overview',null);toggleMobileMenu&&document.getElementById('mobileMenuOverlay').classList.remove('open');">
     <svg width="30" height="30" viewBox="0 0 48 48" fill="none">
       <rect x="4" y="4" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
       <rect x="26" y="4" width="18" height="18" rx="4" fill="#c8935a" opacity="0.9"/>
@@ -585,33 +1046,58 @@ body.dark-mode .overview-card-head { background: #2a2018; }
     </svg>
     <span style="font-size:18px;font-weight:500;color:#e8d5c0;">Arpit's Studio</span>
   </div>
-  <button id="mobileMenuBtn" onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;flex-direction:column;gap:6px;" aria-label="Open menu">
-    <span style="display:block;width:22px;height:2px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
-    <span style="display:block;width:22px;height:2px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
-    <span style="display:block;width:22px;height:2px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
+  <button id="mobileMenuBtn" onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;width:44px;height:44px;" aria-label="Toggle menu">
+    <span id="menuLine1" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
+    <span id="menuLine2" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
+    <span id="menuLine3" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
   </button>
 </div>
 
-<div class="mobile-menu-overlay" id="mobileMenuOverlay" style="position:fixed;">
-
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid rgba(193,127,82,0.15);">
-    <span style="font-size:18px;font-weight:500;color:#3d2b1f;letter-spacing:0.05em;">Menu</span>
-    <button onclick="toggleMobileMenu()" style="width:44px;height:44px;border-radius:50%;background:#3d2b1f;border:none;cursor:pointer;font-size:1.3rem;color:#f5ede4;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(61,43,31,0.2);">✕</button>
-  </div>
-
-  <nav style="display:flex;flex-direction:column;gap:1.5rem;padding:2rem 2rem 2rem;">
-    <a href="#" style="font-size:22px;color:#c8935a;text-decoration:none;font-weight:500;" onclick="showSection('overview',this);toggleMobileMenu()">Overview</a>
-    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('workshops',this);toggleMobileMenu()">Workshops</a>
-    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('classes',this);toggleMobileMenu()">Classes</a>
-    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('payments',this);toggleMobileMenu()">Payments</a>
-    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('leads',this);toggleMobileMenu()">Leads</a>
-    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('insights',this);toggleMobileMenu()">Insights</a>
-    <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('settings',this);toggleMobileMenu()">Settings</a>
-    <div style="border-top:0.5px solid #d4b99a;padding-top:1.25rem;display:flex;flex-direction:column;gap:1rem;">
-      <a href="https://arpitpandey.com" style="font-size:20px;color:#9c7a5e;text-decoration:none;" onclick="toggleMobileMenu()">← arpitpandey.com</a>
-      <a href="#" style="font-size:20px;color:#9c7a5e;text-decoration:none;" onclick="logout();toggleMobileMenu()">Logout</a>
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+  <div class="mob-nav" style="display:flex;flex-direction:column;gap:0;padding:68px 0 2rem;align-items:stretch;">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('overview',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Overview
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('workshops',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      Workshops
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('classes',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Classes
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('payments',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Payments
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('leads',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Leads
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('insights',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Insights
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('notifications',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Notifications
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('settings',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+    <div style="padding:1.5rem 2.5rem;display:flex;flex-direction:column;gap:1.25rem;margin-top:0.5rem;">
+      <a href="https://arpitpandey.com" style="font-size:1rem;color:#c8935a;text-decoration:none;display:flex;align-items:center;gap:0.6rem;" onclick="toggleMobileMenu()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        arpitpandey.com
+      </a>
+      <a href="#" style="font-size:1rem;color:#c8935a;text-decoration:none;display:flex;align-items:center;gap:0.6rem;" onclick="logout();toggleMobileMenu()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </a>
     </div>
-  </nav>
+  </div>
 </div>
 
 <div class="dash-root" id="dashRoot" style="display:none;">
@@ -634,6 +1120,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
       <li><a href="#" onclick="showSection('payments',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span> Payments</a></li>
       <li><a href="#" onclick="showSection('leads',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Leads</a></li>
       <li><a href="#" onclick="showSection('insights',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Insights</a></li>
+      <li><a href="#" onclick="showSection('notifications',this)"><span class="icon"><span class="notif-bell-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-badge" id="sidebarNotifBadge"></span></span></span> Notifications</a></li>
       <li><a href="#" onclick="showSection('settings',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Settings</a></li>
     </ul>
     <div class="dash-nav-divider"></div>
@@ -656,7 +1143,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
           <div class="dash-section-title">Overview</div>
           <div class="dash-section-subtitle">Your business at a glance</div>
         </div>
-        <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Sync Razorpay</button>
+        <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Refresh Data</button>
       </div>
       <div class="stats-grid" id="overviewStats">
         <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value clay" id="stat-revenue">—</div><div class="stat-sub">All time</div></div>
@@ -673,13 +1160,15 @@ body.dark-mode .overview-card-head { background: #2a2018; }
       <div class="overview-row">
         <div class="overview-card">
           <div class="overview-card-head">Recent Workshops</div>
-          <table><thead><tr><th>Workshop</th><th>Date</th><th>Pax</th><th>Revenue</th><th>Profit</th></tr></thead>
+          <table class="desktop-table"><thead><tr><th>Workshop</th><th>Date</th><th>Pax</th><th>Revenue</th><th>Profit</th></tr></thead>
           <tbody id="overviewWorkshops"><tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+          <div class="mobile-cards" id="overviewWorkshopsCards"></div>
         </div>
         <div class="overview-card">
           <div class="overview-card-head">Recent Payments</div>
-          <table><thead><tr><th>Date</th><th>Name</th><th>Amount</th><th>Mode</th></tr></thead>
+          <table class="desktop-table"><thead><tr><th>Date</th><th>Name</th><th>Amount</th><th>Mode</th></tr></thead>
           <tbody id="overviewPayments"><tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+          <div class="mobile-cards" id="overviewPaymentsCards"></div>
         </div>
       </div>
     </section>
@@ -697,8 +1186,9 @@ body.dark-mode .overview-card-head { background: #2a2018; }
         </div>
       </div>
       <div class="dash-table-wrap">
-        <table class="desktop-table"><thead><tr><th>WS #</th><th>Date</th><th>Venue</th><th>Participants</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th></tr></thead>
-        <tbody id="workshopsTable"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <table class="desktop-table"><thead><tr><th>WS #</th><th>Date</th><th>Venue</th><th>Participants</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th><th>Action</th></tr></thead>
+        <tbody id="workshopsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <div class="mobile-cards" id="workshopsCards"></div>
       </div>
       <div style="margin-top:2rem;">
         <div class="dash-section-header" style="margin-bottom:1rem;">
@@ -706,7 +1196,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openModal('addParticipant')">+ Add Participant</button>
         </div>
         <div class="dash-table-wrap">
-          <table class="desktop-table"><thead><tr><th>P #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Amount</th><th>Mode</th><th>Checked In</th><th>Interested</th><th>Notes</th></tr></thead>
+          <table class="desktop-table"><thead><tr><th>P #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Amount</th><th>Mode</th><th>Check In</th><th>Action</th></tr></thead>
           <tbody id="participantsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
           <div class="mobile-cards" id="participantsCards"></div>
         </div>
@@ -741,7 +1231,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
           <span class="dash-table-header-title">Fee Payments</span>
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openModal('addFeePayment')">+ Add Fee Payment</button>
         </div>
-        <table class="desktop-table"><thead><tr><th>FP #</th><th>Student</th><th>Batch</th><th>Month</th><th>Classes</th><th>Amount</th><th>Paid</th><th>Date</th><th>Notes</th></tr></thead>
+        <table class="desktop-table"><thead><tr><th>FP #</th><th>Student</th><th>Batch</th><th>Month</th><th>Classes</th><th>Amount</th><th>Paid</th><th>Date</th><th>Action</th></tr></thead>
         <tbody id="feePaymentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards" id="feePaymentsCards"></div>
       </div>
@@ -755,7 +1245,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
           <div class="dash-section-subtitle">All income and expenses</div>
         </div>
         <div style="display:flex;gap:0.75rem;">
-          <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Sync Razorpay</button>
+          <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Refresh Data</button>
           <label class="archived-toggle"><input type="checkbox" id="toggle-archived-payments" onchange="loadPayments()"> Show archived</label>
           <button class="btn-dash btn-dash-primary" onclick="openModal('addPayment')">+ Add Payment</button>
         </div>
@@ -766,8 +1256,9 @@ body.dark-mode .overview-card-head { background: #2a2018; }
         <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="payNetProfit">—</div></div>
       </div>
       <div class="dash-table-wrap">
-        <table class="desktop-table"><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Category</th><th>Mode</th><th>Amount</th><th>Source</th></tr></thead>
+        <table class="desktop-table"><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Category</th><th>Mode</th><th>Amount</th><th>Action</th></tr></thead>
         <tbody id="paymentsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <div class="mobile-cards" id="paymentsCards"></div>
       </div>
     </section>
 
@@ -784,7 +1275,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
         </div>
       </div>
       <div class="dash-table-wrap">
-        <table class="desktop-table"><thead><tr><th>Lead #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th></tr></thead>
+        <table class="desktop-table"><thead><tr><th>Lead #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th><th>Action</th></tr></thead>
         <tbody id="leadsTable"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards" id="leadsCards"></div>
       </div>
@@ -814,6 +1305,26 @@ body.dark-mode .overview-card-head { background: #2a2018; }
         <div class="chart-box">
           <div class="chart-box-title">Income by Category</div>
           <div class="chart-bars" id="chartCategories"></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── NOTIFICATIONS ── -->
+    <section class="dash-section" id="section-notifications">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Notifications</div>
+          <div class="dash-section-subtitle">All activity and alerts from your dashboard</div>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:center;">
+          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="markAllRead()">✓ Mark all read</button>
+          <button class="btn-dash btn-dash-danger btn-dash-sm" onclick="clearAllNotifications()">Clear all</button>
+        </div>
+      </div>
+      <div class="dash-table-wrap" style="border-radius:8px;">
+        <div id="notificationsContainer">
+          <div class="notif-empty"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>
         </div>
       </div>
     </section>
@@ -859,8 +1370,8 @@ body.dark-mode .overview-card-head { background: #2a2018; }
             <div style="font-size:0.95rem;font-weight:500;color:var(--bark);">Dark Mode</div>
             <div style="font-size:0.85rem;color:var(--text-light);margin-top:2px;">Switch between light and dark theme</div>
           </div>
-          <button id="darkModeToggle" onclick="toggleDarkMode()" style="width:52px;height:28px;border-radius:14px;background:var(--clay-pale);border:none;cursor:pointer;position:relative;transition:background 0.3s;">
-            <span id="darkModeKnob" style="position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--bark);transition:transform 0.3s;"></span>
+          <button id="darkModeToggle" onclick="toggleDarkMode()" style="width:60px;height:32px;border-radius:16px;background:var(--clay-pale);border:none;cursor:pointer;position:relative;transition:background 0.3s;">
+            <span id="darkModeKnob" style="position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:var(--bark);transition:transform 0.3s;"></span>
           </button>
         </div>
       </div>
@@ -871,23 +1382,20 @@ body.dark-mode .overview-card-head { background: #2a2018; }
           <span class="settings-card-icon">📡</span>
           <div>
             <div class="settings-card-title">System Health</div>
-            <div class="settings-card-sub">Live status of your data connection</div>
+            <div class="settings-card-sub">Live status of your Supabase connection</div>
           </div>
         </div>
-        <div class="settings-health-grid" style="grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
+        <div style="display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:1.25rem;flex-wrap:wrap;">
           <div class="settings-health-item">
-            <span class="badge badge-green" id="health-db" style="font-size:0.9rem;padding:0.3rem 0.8rem;">● Checking...</span>
-            <span class="settings-health-label" style="margin-top:6px;">Database</span>
+            <span id="health-db" class="badge badge-green" style="font-size:0.9rem;padding:0.35rem 0.9rem;">● Connected</span>
+            <span class="settings-health-label" style="margin-top:6px;">Supabase</span>
           </div>
           <div class="settings-health-item">
-            <span class="settings-health-val" id="health-records" style="font-size:1.4rem;">—</span>
+            <span class="settings-health-val" id="health-records" style="font-size:1.6rem;font-weight:500;color:var(--bark);">—</span>
             <span class="settings-health-label">Total Records</span>
           </div>
         </div>
-        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-          <button onclick="wakeUpServer()" id="wakeup-btn" style="background:var(--bark);color:var(--clay-pale);border:none;border-radius:6px;padding:0.6rem 1.25rem;font-size:0.9rem;cursor:pointer;font-family:var(--font-body);font-weight:500;">🔄 Reconnect &amp; Reload</button>
-          <button onclick="loadAll();showToast('Data refreshed!','success');" style="background:transparent;color:var(--bark);border:1.5px solid var(--clay-pale);border-radius:6px;padding:0.6rem 1.25rem;font-size:0.9rem;cursor:pointer;font-family:var(--font-body);">↻ Refresh All Data</button>
-        </div>
+        <button onclick="syncAll()" class="btn-dash btn-dash-sync">↻ Refresh All Data</button>
       </div>
 
       <!-- Razorpay -->
@@ -903,7 +1411,7 @@ body.dark-mode .overview-card-head { background: #2a2018; }
           <label class="settings-label">Active Webhook URL</label>
           <div class="settings-copy-row">
             <code class="settings-code">https://handpan-webhook-server-production.up.railway.app/api/webhooks/razorpay</code>
-            <button class="btn-dash btn-dash-outline" onclick="copyWebhook()" style="padding:0.4rem 0.75rem;font-size:0.85rem;white-space:nowrap;">Copy</button>
+            <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="copyWebhook()">Copy</button>
           </div>
         </div>
         <div class="settings-health-grid" style="grid-template-columns:repeat(3,1fr);">
@@ -932,14 +1440,14 @@ body.dark-mode .overview-card-head { background: #2a2018; }
           </div>
         </div>
         <div class="settings-export-grid">
-          <button class="settings-export-btn" onclick="exportData('workshops')">⬇ Workshops</button>
-          <button class="settings-export-btn" onclick="exportData('participants')">⬇ Participants</button>
-          <button class="settings-export-btn" onclick="exportData('students')">⬇ Students</button>
-          <button class="settings-export-btn" onclick="exportData('payments')">⬇ Payments</button>
-          <button class="settings-export-btn" onclick="exportData('leads')">⬇ Leads</button>
-          <button class="settings-export-btn" onclick="exportData('fee_payments')">⬇ Fee Payments</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('workshops')">⬇ Workshops</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('participants')">⬇ Participants</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('students')">⬇ Students</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('payments')">⬇ Payments</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('leads')">⬇ Leads</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('fee_payments')">⬇ Fee Payments</button>
         </div>
-        <button class="btn-dash btn-dash-primary" onclick="exportAll()" style="width:100%;margin-top:1rem;justify-content:center;">⬇ Export Everything</button>
+        <button class="btn-dash btn-dash-primary" onclick="exportAll()" style="margin-top:1rem;">⬇ Export Everything</button>
       </div>
 
     </section>
@@ -952,11 +1460,11 @@ body.dark-mode .overview-card-head { background: #2a2018; }
 <!-- Add Payment -->
 <div class="form-page" id="form-addPayment">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addPayment')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addPayment')">← Back</button>
     <div class="form-page-title">Add Payment</div>
-    <button class="btn-dash btn-dash-primary" onclick="savePayment()" style="padding:0.5rem 1.25rem;">Save</button>
+    <button class="btn-dash-save" onclick="savePayment()">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="pay-date"/></div>
       <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="pay-amount" placeholder="0"/></div>
@@ -983,23 +1491,24 @@ body.dark-mode .overview-card-head { background: #2a2018; }
     </div>
     <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-input" id="pay-desc" placeholder="e.g. Workshop WS-004 booking"/></div>
     <div class="form-group"><label class="form-label">Reference ID</label><input type="text" class="form-input" id="pay-ref" placeholder="e.g. WS-004 or S-001"/></div>
-  </div>
+  </div></div>
 </div>
 
 <!-- Add Lead -->
 <div class="form-page" id="form-addLead">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addLead')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addLead')">← Back</button>
     <div class="form-page-title">Add Lead</div>
-    <button class="btn-dash btn-dash-primary" onclick="saveLead()" style="padding:0.5rem 1.25rem;">Save</button>
+    <button class="btn-dash-save" onclick="saveLead()">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
       <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="lead-phone" placeholder="10-digit number"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop Attended</label><input type="text" class="form-input" id="lead-workshop" placeholder="e.g. WS-003"/></div>
+      <div class="form-group"><label class="form-label">Workshop Attended</label>
+        <select class="form-input" id="lead-workshop"><option value="">Loading workshops...</option></select></div>
       <div class="form-group"><label class="form-label">Est. Budget (₹)</label><input type="number" class="form-input" id="lead-budget" placeholder="0"/></div>
     </div>
     <div class="form-row">
@@ -1008,19 +1517,31 @@ body.dark-mode .overview-card-head { background: #2a2018; }
       <div class="form-group"><label class="form-label">Follow-up Date</label><input type="date" class="form-input" id="lead-followup"/></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="lead-notes" placeholder="Any notes..."/></div>
-  </div>
+  </div></div>
 </div>
 
 <!-- Add Workshop -->
 <div class="form-page" id="form-addWorkshop">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addWorkshop')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addWorkshop')">← Back</button>
     <div class="form-page-title">Add Workshop</div>
-    <button class="btn-dash btn-dash-primary" onclick="saveWorkshop()" style="padding:0.5rem 1.25rem;">Save</button>
+    <button class="btn-dash-save" onclick="saveWorkshop()">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="ws-id" placeholder="e.g. WS-004"/></div>
+      <div class="form-group"><label class="form-label">Workshop ID</label>
+        <select class="form-input" id="ws-id">
+          <option value="">Select ID...</option>
+          <option>WS-001</option><option>WS-002</option><option>WS-003</option>
+          <option>WS-004</option><option>WS-005</option><option>WS-006</option>
+          <option>WS-007</option><option>WS-008</option><option>WS-009</option>
+          <option>WS-010</option><option>WS-011</option><option>WS-012</option>
+          <option>WS-013</option><option>WS-014</option><option>WS-015</option>
+          <option>WS-016</option><option>WS-017</option><option>WS-018</option>
+          <option>WS-019</option><option>WS-020</option><option>WS-021</option>
+          <option>WS-022</option><option>WS-023</option><option>WS-024</option>
+          <option>WS-025</option>
+        </select></div>
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ws-date"/></div>
     </div>
     <div class="form-group"><label class="form-label">Venue</label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
@@ -1040,17 +1561,17 @@ body.dark-mode .overview-card-head { background: #2a2018; }
       <div class="form-group"><label class="form-label">Porter / Delivery (₹)</label><input type="number" class="form-input" id="ws-porter" placeholder="0"/></div>
       <div class="form-group"><label class="form-label">Snacks / Misc (₹)</label><input type="number" class="form-input" id="ws-misc" placeholder="0"/></div>
     </div>
-  </div>
+  </div></div>
 </div>
 
 <!-- Add Student -->
 <div class="form-page" id="form-addStudent">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addStudent')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addStudent')">← Back</button>
     <div class="form-page-title">Add Student</div>
-    <button class="btn-dash btn-dash-primary" onclick="saveStudent()" style="padding:0.5rem 1.25rem;">Save</button>
+    <button class="btn-dash-save" onclick="saveStudent()">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
@@ -1070,20 +1591,35 @@ body.dark-mode .overview-card-head { background: #2a2018; }
       <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" id="stu-start"/></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="stu-notes" placeholder="Any notes..."/></div>
-  </div>
+  </div></div>
 </div>
 
 <!-- Add Fee Payment -->
 <div class="form-page" id="form-addFeePayment">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addFeePayment')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addFeePayment')">← Back</button>
     <div class="form-page-title">Add Fee Payment</div>
-    <button class="btn-dash btn-dash-primary" onclick="saveFeePayment()" style="padding:0.5rem 1.25rem;">Save</button>
+    <button class="btn-dash-save" onclick="saveFeePayment()">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="fee-student" placeholder="e.g. S-001"/></div>
-      <div class="form-group"><label class="form-label">Month</label><input type="month" class="form-input" id="fee-month"/></div>
+      <div class="form-group"><label class="form-label">Student</label>
+        <select class="form-input" id="fee-student"><option value="">Loading students...</option></select></div>
+      <div class="form-group"><label class="form-label">Month</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <select class="form-input" id="fee-month-m">
+            <option value="01">January</option><option value="02">February</option>
+            <option value="03">March</option><option value="04">April</option>
+            <option value="05">May</option><option value="06">June</option>
+            <option value="07">July</option><option value="08">August</option>
+            <option value="09">September</option><option value="10">October</option>
+            <option value="11">November</option><option value="12">December</option>
+          </select>
+          <select class="form-input" id="fee-month-y">
+            <option value="2024">2024</option><option value="2025">2025</option>
+            <option value="2026" selected>2026</option><option value="2027">2027</option>
+          </select>
+        </div></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="fee-amount" placeholder="0"/></div>
@@ -1094,42 +1630,195 @@ body.dark-mode .overview-card-head { background: #2a2018; }
         </select></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="fee-notes" placeholder="Any notes..."/></div>
-  </div>
+  </div></div>
 </div>
 
 <!-- Add Participant -->
 <div class="form-page" id="form-addParticipant">
   <div class="form-page-header">
-    <button class="form-page-back" onclick="closeFormPage('addParticipant')">← Back</button>
+    <button class="form-page-back" onclick="tryCloseFormPage('addParticipant')">← Back</button>
     <div class="form-page-title">Add Participant</div>
-    <button class="btn-dash btn-dash-primary" onclick="saveParticipant()" style="padding:0.5rem 1.25rem;">Save</button>
+    <button class="btn-dash-save" onclick="saveParticipant()">Save</button>
   </div>
-  <div class="form-page-body">
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
       <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="par-phone" placeholder="10-digit number"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop ID</label><input type="text" class="form-input" id="par-workshop" placeholder="e.g. WS-004"/></div>
+      <div class="form-group"><label class="form-label">Workshop</label>
+        <select class="form-input" id="par-workshop"><option value="">Loading workshops...</option></select></div>
+      <div class="form-group"><label class="form-label">Amount Paid (₹)</label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
       <div class="form-group"><label class="form-label">Payment Mode</label>
         <select class="form-input" id="par-mode">
-          <option value="razorpay">Razorpay</option><option value="upi">UPI</option>
-          <option value="cash">Cash</option><option value="bms">BMS</option>
+          <option value="UPI">UPI</option><option value="Razorpay">Razorpay</option>
+          <option value="Cash">Cash</option><option value="BMS">BMS</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Booking Source</label>
+        <select class="form-input" id="par-source">
+          <option value="Instagram">Instagram</option><option value="BMS">BMS</option>
+          <option value="Razorpay">Razorpay</option><option value="UPI">UPI</option>
+          <option value="Referral">Referral</option><option value="Other">Other</option>
         </select></div>
     </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Interested in Handpan</label>
+        <select class="form-input" id="par-interested">
+          <option value="Maybe">Maybe</option><option value="Yes">Yes</option><option value="No">No</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="par-date"/></div>
+    </div>
     <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="par-notes" placeholder="Any notes..."/></div>
+  </div></div>
+</div>
+
+<!-- ── UNSAVED CHANGES MODAL ── -->
+<div id="unsavedModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:30000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:var(--cream);border-radius:12px;width:100%;max-width:320px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div style="padding:1.5rem 1.5rem 0;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c17f52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div style="font-size:1.15rem;font-weight:600;color:var(--bark);">Unsaved changes</div>
+      </div>
+      <p style="font-size:1rem;color:var(--text-light);line-height:1.6;margin:0 0 1.25rem;">You've started filling this form. If you go back now your changes will be lost.</p>
+    </div>
+    <div style="display:flex;border-top:1px solid var(--clay-pale);">
+      <button onclick="unsavedKeepEditing()" style="flex:1;padding:0.9rem;background:transparent;border:none;border-right:1px solid var(--clay-pale);font-size:0.9rem;color:var(--bark);font-weight:600;cursor:pointer;font-family:var(--font-body);">Keep editing</button>
+      <button onclick="unsavedDiscard()" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:0.9rem;color:#B43C28;cursor:pointer;font-family:var(--font-body);">Discard & go back</button>
+    </div>
+  </div>
+</div>
+<div id="archiveConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:30000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:var(--cream);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+    <div style="padding:1.5rem 1.5rem 0;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div id="archiveConfirmTitle" style="font-size:1.15rem;font-weight:600;color:var(--bark);">Hide this record?</div>
+      </div>
+      <p style="font-size:1rem;color:var(--text-light);line-height:1.6;margin:0 0 1.25rem;">
+        <span id="archiveConfirmDesc">This record will be hidden from your list. You can restore it anytime by turning on "Show archived."</span>
+      </p>
+    </div>
+    <div style="display:flex;border-top:1px solid var(--clay-pale);">
+      <button onclick="closeArchiveConfirm()" style="flex:1;padding:0.9rem;background:transparent;border:none;border-right:1px solid var(--clay-pale);font-size:1rem;color:var(--text-light);cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Cancel</button>
+      <button id="archiveConfirmBtn" onclick="confirmArchive()" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:1rem;color:#c8935a;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Hide it</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CUSTOM CONFIRM MODAL ── -->
+<div id="customConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:30000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:var(--cream);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+    <div style="padding:1.5rem 1.5rem 0;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B43C28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div id="customConfirmTitle" style="font-size:1.15rem;font-weight:600;color:var(--bark);">Are you sure?</div>
+      </div>
+      <p id="customConfirmDesc" style="font-size:1rem;color:var(--text-light);line-height:1.6;margin:0 0 1.25rem;">This action cannot be undone.</p>
+    </div>
+    <div style="display:flex;border-top:1px solid var(--clay-pale);">
+      <button onclick="customConfirmCancel()" style="flex:1;padding:0.9rem;background:transparent;border:none;border-right:1px solid var(--clay-pale);font-size:1rem;color:var(--text-light);cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Cancel</button>
+      <button id="customConfirmOkBtn" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:0.9rem;color:#B43C28;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Confirm</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ── LOADING OVERLAY ── -->
+<div class="loading-overlay" id="loadingOverlay">
+  <svg class="loading-logo" width="52" height="52" viewBox="0 0 48 48" fill="none">
+    <rect x="4" y="4" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
+    <rect x="26" y="4" width="18" height="18" rx="4" fill="#c8935a" opacity="0.9"/>
+    <rect x="4" y="26" width="18" height="18" rx="4" fill="#c8935a" opacity="0.5"/>
+    <rect x="26" y="26" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
+  </svg>
+  <div class="loading-text" id="loadingText">Loading...</div>
+</div>
+
+<!-- ── CHECK-IN MODE ── -->
+<div id="toast"></div>
+<div class="checkin-screen" id="checkinScreen">
+  <div class="checkin-header">
+    <div class="checkin-header-left">
+      <div class="checkin-header-title" id="checkinTitle">Check-in</div>
+      <div class="checkin-header-sub" id="checkinSub"></div>
+    </div>
+    <div class="checkin-header-row2">
+      <div class="checkin-counter" id="checkinCounter">0 / 0</div>
+      <button class="checkin-close" onclick="closeCheckinMode()">✕ Close</button>
+    </div>
+  </div>
+  <div class="checkin-body">
+    <div class="checkin-grid" id="checkinGrid">
+      <div class="checkin-empty">Loading participants...</div>
+    </div>
   </div>
 </div>
 
 <script>
 const SUPABASE_URL = 'https://sabdevsguuobgqjputtv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_xRwX_jpWmLtNjuQJRyQfGQ_defolODk';
-const DASHBOARD_PASSWORD = 'arpit2026';
+const DASHBOARD_PIN = '031990';
 
-// ── AUTH ──
+// ── PIN AUTH ──
+let pinValue = '';
+let pinAttempts = 0;
+const PIN_MAX_ATTEMPTS = 5;
+const PIN_LOCKOUT_SECONDS = 30;
+let pinLockoutTimer = null;
+
+function pinPress(digit) {
+  if (pinValue.length >= 6) return;
+  pinValue += digit;
+  updatePinDots();
+  if (pinValue.length === 6) {
+    setTimeout(doLogin, 120);
+  }
+}
+
+function pinDelete() {
+  if (!pinValue.length) return;
+  pinValue = pinValue.slice(0, -1);
+  updatePinDots();
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 6; i++) {
+    const dot = document.getElementById('pd' + i);
+    dot.classList.toggle('filled', i < pinValue.length);
+    dot.classList.remove('error');
+  }
+}
+
+function pinShakeError() {
+  const dots = document.getElementById('pinDots');
+  for (let i = 0; i < 6; i++) {
+    document.getElementById('pd' + i).classList.add('error');
+  }
+  dots.classList.add('shake');
+  setTimeout(() => {
+    dots.classList.remove('shake');
+    pinValue = '';
+    updatePinDots();
+  }, 400);
+}
+
+function setNumpadDisabled(disabled) {
+  document.querySelectorAll('.pin-key').forEach(k => k.disabled = disabled);
+}
+
 function doLogin() {
-  const pwd = document.getElementById('loginPassword').value;
-  if (pwd === DASHBOARD_PASSWORD) {
+  if (pinValue === DASHBOARD_PIN) {
+    pinAttempts = 0;
     sessionStorage.setItem('dash_auth', '1');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashRoot').style.display = 'flex';
@@ -1138,14 +1827,120 @@ function doLogin() {
     }
     loadAll();
   } else {
-    document.getElementById('loginError').style.display = 'block';
+    pinAttempts++;
+    pinShakeError();
+    const remaining = PIN_MAX_ATTEMPTS - pinAttempts;
+    if (pinAttempts >= PIN_MAX_ATTEMPTS) {
+      startLockout();
+    } else {
+      document.getElementById('pinHint').textContent = remaining + ' attempt' + (remaining === 1 ? '' : 's') + ' remaining';
+      document.getElementById('pinHint').style.color = '#e8856a';
+    }
   }
 }
-document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function startLockout() {
+  setNumpadDisabled(true);
+  document.getElementById('pinHint').style.display = 'none';
+  const lockoutEl = document.getElementById('pinLockout');
+  lockoutEl.style.display = 'block';
+  let seconds = PIN_LOCKOUT_SECONDS;
+  lockoutEl.textContent = 'Too many attempts. Try again in ' + seconds + 's';
+  pinLockoutTimer = setInterval(() => {
+    seconds--;
+    if (seconds <= 0) {
+      clearInterval(pinLockoutTimer);
+      pinAttempts = 0;
+      pinValue = '';
+      updatePinDots();
+      setNumpadDisabled(false);
+      lockoutEl.style.display = 'none';
+      document.getElementById('pinHint').style.display = 'block';
+      document.getElementById('pinHint').textContent = 'Enters automatically on 6th digit';
+      document.getElementById('pinHint').style.color = 'rgba(200,147,90,0.4)';
+    } else {
+      lockoutEl.textContent = 'Too many attempts. Try again in ' + seconds + 's';
+    }
+  }, 1000);
+}
 
 function logout() {
   sessionStorage.removeItem('dash_auth');
   location.reload();
+}
+
+// ── UNSAVED CHANGES GUARD ──
+// Text/number/date/tel inputs to check per form (selects are always at a default so we ignore them)
+const FORM_FIELDS = {
+  addPayment:     ['pay-date','pay-amount','pay-name','pay-desc','pay-ref'],
+  addLead:        ['lead-name','lead-phone','lead-budget','lead-followup','lead-notes'],
+  addWorkshop:    ['ws-date','ws-venue','ws-bms','ws-upi','ws-rzp','ws-price','ws-venue-rent','ws-hp-rent','ws-porter','ws-misc'],
+  addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-notes'],
+  addFeePayment:  ['fee-amount','fee-notes'],
+  addParticipant: ['par-name','par-phone','par-amount','par-date','par-notes']
+};
+
+function isFormDirty(formName) {
+  const fields = FORM_FIELDS[formName] || [];
+  return fields.some(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim() !== '';
+  });
+}
+
+let _pendingCloseForm = null;
+
+function tryCloseFormPage(name) {
+  if (isFormDirty(name)) {
+    _pendingCloseForm = name;
+    document.getElementById('unsavedModal').style.display = 'flex';
+    lockScroll();
+  } else {
+    closeFormPage(name);
+  }
+}
+
+function unsavedKeepEditing() {
+  document.getElementById('unsavedModal').style.display = 'none';
+  unlockScroll();
+  _pendingCloseForm = null;
+}
+
+function unsavedDiscard() {
+  document.getElementById('unsavedModal').style.display = 'none';
+  unlockScroll();
+  if (_pendingCloseForm) {
+    closeFormPage(_pendingCloseForm);
+    resetForm(_pendingCloseForm);
+    _pendingCloseForm = null;
+  }
+}
+
+function resetForm(formName) {
+  const fields = FORM_FIELDS[formName] || [];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  // Also clear auto-filled IDs so they regenerate next open
+  if (formName === 'addWorkshop') { const el = document.getElementById('ws-id'); if (el) el.value = ''; }
+  if (formName === 'addStudent') { const el = document.getElementById('stu-id'); if (el) el.value = ''; }
+}
+let _customConfirmResolve = null;
+function customConfirm(title, desc) {
+  return new Promise(resolve => {
+    _customConfirmResolve = resolve;
+    document.getElementById('customConfirmTitle').textContent = title;
+    document.getElementById('customConfirmDesc').textContent = desc;
+    document.getElementById('customConfirmOkBtn').onclick = () => { customConfirmClose(); resolve(true); };
+    document.getElementById('customConfirmModal').style.display = 'flex';
+    lockScroll();
+  });
+}
+function customConfirmCancel() { customConfirmClose(); if (_customConfirmResolve) _customConfirmResolve(false); }
+function customConfirmClose() {
+  document.getElementById('customConfirmModal').style.display = 'none';
+  unlockScroll();
 }
 
 if (sessionStorage.getItem('dash_auth') === '1') {
@@ -1190,8 +1985,13 @@ async function sbPost(table, body) {
     headers: SB_HEADERS,
     body: JSON.stringify(body)
   });
-  if (!res.ok) throw new Error('Supabase error: ' + res.status);
-  return await res.json();
+  if (!res.ok) {
+    let errMsg = 'Supabase error: ' + res.status;
+    try { const errBody = await res.json(); errMsg += ' — ' + (errBody.message || errBody.error || JSON.stringify(errBody)); } catch(_) {}
+    throw new Error(errMsg);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : {};
 }
 
 async function sbPatch(table, id, body) {
@@ -1250,13 +2050,79 @@ function showSection(name, el) {
 function toggleSidebar() { document.getElementById('dashSidebar').classList.toggle('open'); }
 
 // ── FORM PAGES ──
-function openFormPage(name) {
+async function openFormPage(name) {
   document.getElementById('form-' + name).classList.add('open');
-  document.body.style.overflow = 'hidden';
+  lockScroll();
+  // Populate dropdowns and auto-fill IDs per form
+  if (name === 'addParticipant') {
+    await populateWorkshopDropdown('par-workshop');
+  } else if (name === 'addLead') {
+    await populateWorkshopDropdown('lead-workshop');
+  } else if (name === 'addFeePayment') {
+    await populateStudentDropdown('fee-student');
+  } else if (name === 'addWorkshop') {
+    await autoFillNextId('workshops', 'ws-id', 'WS-', 3);
+  } else if (name === 'addStudent') {
+    await autoFillNextId('students', 'stu-id', 'S-', 3);
+  }
+}
+
+async function populateWorkshopDropdown(selectId) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/workshops?select=id,venue,date&archived=neq.true&order=date.desc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const ws = await res.json();
+    sel.innerHTML = '<option value="">Select workshop...</option>' +
+      ws.map(w => `<option value="${w.id}">${w.id} — ${w.venue || ''} (${fmtDate(w.date)})</option>`).join('');
+  } catch(e) {
+    sel.innerHTML = '<option value="">Could not load workshops</option>';
+  }
+}
+
+async function populateStudentDropdown(selectId) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/students?select=id,full_name&archived=neq.true&order=full_name.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const stus = await res.json();
+    sel.innerHTML = '<option value="">Select student...</option>' +
+      stus.map(s => `<option value="${s.id}">${s.full_name} (${s.id})</option>`).join('');
+  } catch(e) {
+    sel.innerHTML = '<option value="">Could not load students</option>';
+  }
+}
+
+async function autoFillNextId(table, inputId, prefix, padLength) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?select=id&order=created_at.desc&limit=1', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const rows = await res.json();
+    let nextNum = 1;
+    if (rows.length) {
+      const lastId = rows[0].id || '';
+      const match = lastId.match(/(\d+)$/);
+      if (match) nextNum = parseInt(match[1]) + 1;
+    }
+    const nextId = prefix + String(nextNum).padStart(padLength, '0');
+    // Works for both input and select
+    if (el.tagName === 'SELECT') {
+      el.value = nextId;
+    } else {
+      if (!el.value) el.value = nextId;
+    }
+  } catch(e) { /* leave as-is if fails */ }
 }
 function closeFormPage(name) {
   document.getElementById('form-' + name).classList.remove('open');
-  document.body.style.overflow = '';
+  unlockScroll();
 }
 function openModal(name) { openFormPage(name); }
 function closeModal(name) { closeFormPage(name); }
@@ -1264,17 +2130,45 @@ function closeModal(name) { closeFormPage(name); }
 // ── MOBILE MENU ──
 function toggleMobileMenu() {
   const overlay = document.getElementById('mobileMenuOverlay');
-  const btn = document.getElementById('mobileMenuBtn');
-  const spans = btn ? btn.querySelectorAll('span') : [];
+  const topbar = document.getElementById('mobileTopbar');
   const isOpen = overlay.classList.contains('open');
+  const l1 = document.getElementById('menuLine1');
+  const l2 = document.getElementById('menuLine2');
+  const l3 = document.getElementById('menuLine3');
   if (isOpen) {
     overlay.classList.remove('open');
-    document.body.style.overflow = '';
-    if (spans.length) { spans[0].style.transform=''; spans[1].style.opacity=''; spans[1].style.transform=''; spans[2].style.transform=''; }
+    if (topbar) topbar.classList.remove('menu-open');
+    unlockScroll();
+    document.body.style.background = '';
+    document.body.classList.remove('menu-is-open');
+    if (l1) {
+      l1.style.transform = '';
+      l1.style.background = '#e8d5c0';
+      l1.style.width = '22px';
+      l2.style.opacity = '1';
+      l2.style.transform = '';
+      l2.style.background = '#e8d5c0';
+      l3.style.transform = '';
+      l3.style.background = '#e8d5c0';
+      l3.style.width = '22px';
+    }
   } else {
     overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    if (spans.length) { spans[0].style.transform='translateY(8px) rotate(45deg)'; spans[1].style.opacity='0'; spans[1].style.transform='scaleX(0)'; spans[2].style.transform='translateY(-8px) rotate(-45deg)'; }
+    if (topbar) topbar.classList.add('menu-open');
+    lockScroll();
+    document.body.style.background = '#1a1208';
+    document.body.classList.add('menu-is-open');
+    if (l1) {
+      l1.style.transform = 'translateY(7px) rotate(45deg)';
+      l1.style.background = '#e8d5c0';
+      l1.style.width = '24px';
+      l2.style.opacity = '0';
+      l2.style.transform = 'scaleX(0)';
+      l2.style.background = '#e8d5c0';
+      l3.style.transform = 'translateY(-7px) rotate(-45deg)';
+      l3.style.background = '#e8d5c0';
+      l3.style.width = '24px';
+    }
   }
 }
 window.addEventListener('resize', function() {
@@ -1287,6 +2181,7 @@ window.addEventListener('resize', function() {
 
 // ── LOAD ──
 function loadAll() { loadSection('overview'); }
+function syncAll() { showLoader('Refreshing data...'); loadSection('overview'); showToast('↻ Data refreshed', 'success'); setTimeout(hideLoader, 1500); }
 function loadSection(name) {
   if (name === 'overview') loadOverview();
   else if (name === 'workshops') { loadWorkshops(); loadParticipants(); }
@@ -1323,7 +2218,14 @@ async function loadOverview() {
     document.getElementById('stat-margin').textContent = fmtPct(avgMargin);
     document.getElementById('overviewWorkshops').innerHTML = ws.slice(0,5).map(w => `<tr><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td style="color:var(--moss)">${fmt(w.net_profit)}</td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center">No workshops yet</td></tr>';
     document.getElementById('overviewPayments').innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<tr><td>${fmtDate(p.date)}</td><td>${p.payer_name||'—'}</td><td style="color:var(--moss)">${fmt(p.amount)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td></tr>`).join('') || '<tr><td colspan="4" style="text-align:center">No payments yet</td></tr>';
-  } catch(e) { showToast('Error loading overview', 'error'); }
+
+    // Mobile cards for overview
+    const owc = document.getElementById('overviewWorkshopsCards');
+    if (owc) owc.innerHTML = ws.slice(0,5).map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">${fmtDate(w.date)}</div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div></div>`).join('') || '<div style="padding:1.5rem;text-align:center;color:var(--text-light)">No workshops yet</div>';
+
+    const opc = document.getElementById('overviewPaymentsCards');
+    if (opc) opc.innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<div class="m-card"><div class="m-card-title" style="color:var(--moss)">${fmt(p.amount)}<span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Name</span><span class="m-card-val">${p.payer_name||'—'}</span></div></div>`).join('') || '<div style="padding:1.5rem;text-align:center;color:var(--text-light)">No payments yet</div>';
+  } catch(e) { showToast('Error loading overview', 'error'); } finally { hideLoader(); }
 }
 
 // ── WORKSHOPS ──
@@ -1333,20 +2235,28 @@ async function loadWorkshops() {
 const res = await api('/workshops?order=date:desc' + (showArchivedWorkshops ? '&include_archived=true' : ''));
     const ws = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
-    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td>${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No workshops yet</td></tr>';
+    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.5rem;align-items:center;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="white-space:nowrap;">✓ Check-in</button><button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+      <div style="font-size:2rem;margin-bottom:0.75rem;">🎵</div>
+      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No workshops yet</div>
+      <div style="font-size:0.85rem;color:var(--text-light);">Add your first workshop to start tracking participants and revenue.</div>
+    </td></tr>`;
     const wsCardsEl = document.getElementById('workshopsCards');
-    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</span></div></div>`).join('');
-  } catch(e) { showToast('Error loading workshops', 'error'); }
+    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card ${w.archived?'archived-row':''}"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">${fmtDate(w.date)}</div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div><div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="">✓ Check-in</button><button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
+  } catch(e) { showToast('Error loading workshops', 'error'); } finally { hideLoader(); }
 }
 async function loadParticipants() {
   try {
     const showArchivedParticipants = document.getElementById('toggle-archived-participants')?.checked;
 const res = await api('/participants?order=created_at:desc' + (showArchivedParticipants ? '&include_archived=true' : ''));
     const parts = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td>${p.checked_in?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No participants yet</td></tr>';
+    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},this)">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;">
+      <div style="font-size:2rem;margin-bottom:0.75rem;">👥</div>
+      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No participants yet</div>
+      <div style="font-size:0.85rem;color:var(--text-light);">Participants will appear here once added or when a Razorpay payment is received.</div>
+    </td></tr>`;
     const parCards = document.getElementById('participantsCards');
-    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div></div>`).join('');
-  } catch(e) { showToast('Error loading participants', 'error'); }
+    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;"><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${p.full_name||p.id}')">${p.checked_in?'✓ Checked in':'Check in'}</button>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
+  } catch(e) { showToast('Error loading participants', 'error'); } finally { hideLoader(); }
 }
 
 // ── CLASSES ──
@@ -1358,20 +2268,28 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
     document.getElementById('classActiveStudents').textContent = stus.filter(s=>s.status==='Active').length;
     document.getElementById('classTotalRevenue').textContent = fmt(stus.reduce((s,st)=>s+Number(st.total_paid||0),0));
     document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No students yet</td></tr>';
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+      <div style="font-size:2rem;margin-bottom:0.75rem;">🎓</div>
+      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No students yet</div>
+      <div style="font-size:0.85rem;color:var(--text-light);">Add your first student to start tracking classes and fee payments.</div>
+    </td></tr>`;
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div></div>`).join('');
-  } catch(e) { showToast('Error loading students', 'error'); }
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
+  } catch(e) { showToast('Error loading students', 'error'); } finally { hideLoader(); }
 }
 async function loadFeePayments() {
   try {
     const showArchivedFee = document.getElementById('toggle-archived-fee')?.checked;
 const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ? '&include_archived=true' : ''));
     const fps = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No fee payments yet</td></tr>';
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+      <div style="font-size:2rem;margin-bottom:0.75rem;">📋</div>
+      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No fee payments yet</div>
+      <div style="font-size:0.85rem;color:var(--text-light);">Fee payments will appear here once you add students and log their monthly fees.</div>
+    </td></tr>`;
     const fpCards = document.getElementById('feePaymentsCards');
     if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card"><div class="m-card-title">${f.student_name} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${f.month}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmt(f.amount)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div></div>`).join('');
-  } catch(e) { showToast('Error loading fee payments', 'error'); }
+  } catch(e) { showToast('Error loading fee payments', 'error'); } finally { hideLoader(); }
 }
 
 // ── PAYMENTS ──
@@ -1385,10 +2303,14 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
     document.getElementById('payTotalIncome').textContent = fmt(income);
     document.getElementById('payTotalExpenses').textContent = fmt(expense);
     document.getElementById('payNetProfit').textContent = fmt(income-expense);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No payments yet</td></tr>';
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+      <div style="font-size:2rem;margin-bottom:0.75rem;">💳</div>
+      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No payments yet</div>
+      <div style="font-size:0.85rem;color:var(--text-light);">Razorpay payments sync automatically. You can also add manual payments.</div>
+    </td></tr>`;
     const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div></div>`).join('');
-  } catch(e) { showToast('Error loading payments', 'error'); }
+    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
+  } catch(e) { showToast('Error loading payments', 'error'); } finally { hideLoader(); }
 }
 
 // ── LEADS ──
@@ -1397,10 +2319,14 @@ async function loadLeads() {
     const showArchivedLeads = document.getElementById('toggle-archived-leads')?.checked;
 const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&include_archived=true' : ''));
     const leads = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive">🗑</button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No leads yet</td></tr>';
+    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+      <div style="font-size:2rem;margin-bottom:0.75rem;">💬</div>
+      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No leads yet</div>
+      <div style="font-size:0.85rem;color:var(--text-light);">Track potential students and handpan buyers who attended your workshops.</div>
+    </td></tr>`;
     const leadsCards = document.getElementById('leadsCards');
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div></div>`).join('');
-  } catch(e) { showToast('Error loading leads', 'error'); }
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
+  } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
 
 // ── INSIGHTS ──
@@ -1422,49 +2348,106 @@ async function loadInsights() {
     const cats = {}; pays.filter(p=>p.type==='income').forEach(p=>{cats[p.category]=(cats[p.category]||0)+Number(p.amount);});
     const entries = Object.entries(cats).sort((a,b)=>b[1]-a[1]); const maxC = Math.max(...entries.map(e=>e[1]));
     document.getElementById('chartCategories').innerHTML = entries.map(([cat,val])=>`<div class="chart-bar-wrap"><div class="chart-bar-val">${fmt(val)}</div><div class="chart-bar" style="height:${maxC?Math.round(val/maxC*100):0}%;background:var(--moss)"></div><div class="chart-bar-label">${cat}</div></div>`).join('');
-  } catch(e) { showToast('Error loading insights', 'error'); }
+  } catch(e) { showToast('Error loading insights', 'error'); } finally { hideLoader(); }
 }
 
 // ── SYNC ──
 async function syncAll() {
-  showToast('Syncing Razorpay payments...', '');
-  try { await loadPayments(); showToast('Sync complete!', 'success'); }
-  catch(e) { showToast('Sync failed. Try again.', 'error'); }
+  showToast('Refreshing payments data...', '');
+  try {
+    await loadPayments();
+    showToast('✓ Payments refreshed!', 'success');
+  }
+  catch(e) {
+    console.error('Refresh error:', e);
+    showToast('Refresh failed — check your connection', 'error');
+  }
 }
 
 // ── SAVE FUNCTIONS ──
 async function savePayment() {
-  const body = { id:'PAY-'+Date.now(), date:document.getElementById('pay-date').value, amount:document.getElementById('pay-amount').value, type:document.getElementById('pay-type').value, category:document.getElementById('pay-category').value, payment_mode:document.getElementById('pay-mode').value, payer_name:document.getElementById('pay-name').value, description:document.getElementById('pay-desc').value, reference_id:document.getElementById('pay-ref').value, synced_from_razorpay:false };
-  try { await sbPost('payments', body); closeFormPage('addPayment'); loadPayments(); showToast('Payment saved!','success'); }
-  catch(e) { showToast('Error saving payment','error'); }
+  try {
+    const body = { id:'PAY-'+Date.now(), date:document.getElementById('pay-date').value, amount:document.getElementById('pay-amount').value, type:document.getElementById('pay-type').value, category:document.getElementById('pay-category').value, payment_mode:document.getElementById('pay-mode').value, payer_name:document.getElementById('pay-name').value, description:document.getElementById('pay-desc').value, reference_id:document.getElementById('pay-ref').value, synced_from_razorpay:false };
+    await sbPost('payments', body); closeFormPage('addPayment'); resetForm('addPayment'); loadPayments(); showToast('✓ Payment saved successfully!','success');
+  } catch(e) { console.error('savePayment error:', e); showToast('Error saving payment: ' + e.message,'error'); }
 }
 async function saveLead() {
-  const body = { id:'L-'+String(Date.now()).slice(-3), full_name:document.getElementById('lead-name').value, phone:document.getElementById('lead-phone').value, workshop_attended:document.getElementById('lead-workshop').value, date_added:new Date().toISOString().split('T')[0], estimated_budget:document.getElementById('lead-budget').value, status:document.getElementById('lead-status').value, follow_up_date:document.getElementById('lead-followup').value, referred_friend:false, notes:document.getElementById('lead-notes').value };
-  try { await sbPost('leads', body); closeFormPage('addLead'); loadLeads(); showToast('Lead saved!','success'); }
-  catch(e) { showToast('Error saving lead','error'); }
+  try {
+    const body = { id:'L-'+String(Date.now()).slice(-3), full_name:document.getElementById('lead-name').value, phone:document.getElementById('lead-phone').value, workshop_attended:document.getElementById('lead-workshop').value, date_added:new Date().toISOString().split('T')[0], estimated_budget:document.getElementById('lead-budget').value, status:document.getElementById('lead-status').value, follow_up_date:document.getElementById('lead-followup').value, referred_friend:false, notes:document.getElementById('lead-notes').value };
+    await sbPost('leads', body); closeFormPage('addLead'); resetForm('addLead'); loadLeads(); showToast('✓ Lead saved successfully!','success');
+  } catch(e) { console.error('saveLead error:', e); showToast('Error saving lead: ' + e.message,'error'); }
 }
 async function saveWorkshop() {
-  const bms=parseInt(document.getElementById('ws-bms').value)||0, upi=parseInt(document.getElementById('ws-upi').value)||0, rzp=parseInt(document.getElementById('ws-rzp').value)||0, price=parseFloat(document.getElementById('ws-price').value)||0;
-  const venueRent=parseFloat(document.getElementById('ws-venue-rent').value)||0, hpRent=parseFloat(document.getElementById('ws-hp-rent').value)||0, porter=parseFloat(document.getElementById('ws-porter').value)||0, misc=parseFloat(document.getElementById('ws-misc').value)||0;
-  const totalPax=bms+upi+rzp, totalRevenue=totalPax*price, totalExpense=venueRent+hpRent+porter+misc, netProfit=totalRevenue-totalExpense;
-  const body = { id:document.getElementById('ws-id').value, date:document.getElementById('ws-date').value, venue:document.getElementById('ws-venue').value, bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0 };
-  try { await sbPost('workshops', body); closeFormPage('addWorkshop'); loadWorkshops(); showToast('Workshop saved!','success'); }
-  catch(e) { showToast('Error saving workshop','error'); }
+  try {
+    const bms=parseInt(document.getElementById('ws-bms').value)||0, upi=parseInt(document.getElementById('ws-upi').value)||0, rzp=parseInt(document.getElementById('ws-rzp').value)||0, price=parseFloat(document.getElementById('ws-price').value)||0;
+    const venueRent=parseFloat(document.getElementById('ws-venue-rent').value)||0, hpRent=parseFloat(document.getElementById('ws-hp-rent').value)||0, porter=parseFloat(document.getElementById('ws-porter').value)||0, misc=parseFloat(document.getElementById('ws-misc').value)||0;
+    const totalPax=bms+upi+rzp, totalRevenue=totalPax*price, totalExpense=venueRent+hpRent+porter+misc, netProfit=totalRevenue-totalExpense;
+    const body = { id:document.getElementById('ws-id').value, date:document.getElementById('ws-date').value, venue:document.getElementById('ws-venue').value, bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0 };
+    await sbPost('workshops', body); closeFormPage('addWorkshop'); resetForm('addWorkshop'); loadWorkshops(); showToast('✓ Workshop saved successfully!','success');
+  } catch(e) { console.error('saveWorkshop error:', e); showToast('Error saving workshop: ' + e.message,'error'); }
 }
 async function saveStudent() {
-  const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:document.getElementById('stu-phone').value, email:document.getElementById('stu-email').value, join_date:document.getElementById('stu-start').value, status:document.getElementById('stu-status').value, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value };
-  try { await sbPost('students', body); closeFormPage('addStudent'); loadStudents(); showToast('Student saved!','success'); }
-  catch(e) { showToast('Error saving student','error'); }
+  try {
+    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:document.getElementById('stu-phone').value, email:document.getElementById('stu-email').value, join_date:document.getElementById('stu-start').value, status:document.getElementById('stu-status').value, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value };
+    await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
+  } catch(e) { console.error('saveStudent error:', e); showToast('Error saving student: ' + e.message,'error'); }
 }
 async function saveFeePayment() {
-  const body = { student_id:document.getElementById('fee-student').value, month:document.getElementById('fee-month').value, amount:parseFloat(document.getElementById('fee-amount').value)||0, payment_mode:document.getElementById('fee-mode').value, notes:document.getElementById('fee-notes').value };
-  try { await sbPost('fee_payments', body); closeFormPage('addFeePayment'); loadFeePayments(); showToast('Fee payment saved!','success'); }
-  catch(e) { showToast('Error saving fee payment','error'); }
+  try {
+    const existing = await sbGetAll('fee_payments');
+    const count = (existing.data || []).length;
+    const nextNum = String(count + 1).padStart(4, '0');
+    const id = 'FP-' + nextNum;
+    const body = {
+      id,
+      student_id: document.getElementById('fee-student').value,
+      month: (document.getElementById('fee-month-y').value || '2026') + '-' + (document.getElementById('fee-month-m').value || '01'),
+      amount: parseFloat(document.getElementById('fee-amount').value) || 0,
+      payment_mode: document.getElementById('fee-mode').value,
+      notes: document.getElementById('fee-notes').value || null,
+      paid: true,
+      payment_date: new Date().toISOString().split('T')[0]
+    };
+    await sbPost('fee_payments', body);
+    closeFormPage('addFeePayment');
+    resetForm('addFeePayment');
+    loadFeePayments();
+    showToast('✓ Fee payment saved!', 'success');
+  } catch(e) {
+    console.error('saveFeePayment error:', e);
+    showToast('Error saving fee payment: ' + e.message, 'error');
+  }
 }
 async function saveParticipant() {
-  const body = { workshop_id:document.getElementById('par-workshop').value, date:new Date().toISOString().split('T')[0], full_name:document.getElementById('par-name').value, phone:document.getElementById('par-phone').value, payment_mode:document.getElementById('par-mode').value, notes:document.getElementById('par-notes').value };
-  try { await sbPost('participants', body); closeFormPage('addParticipant'); loadParticipants(); showToast('Participant saved!','success'); }
-  catch(e) { showToast('Error saving participant','error'); }
+  try {
+    const existing = await sbGetAll('participants');
+    const count = (existing.data || []).length;
+    const nextNum = String(count + 1).padStart(4, '0');
+    const id = 'P-' + nextNum;
+    const dateVal = document.getElementById('par-date').value || new Date().toISOString().split('T')[0];
+    const body = {
+      id,
+      workshop_id: document.getElementById('par-workshop').value,
+      date: dateVal,
+      full_name: document.getElementById('par-name').value,
+      phone: document.getElementById('par-phone').value || null,
+      amount_paid: parseFloat(document.getElementById('par-amount').value) || 0,
+      payment_mode: document.getElementById('par-mode').value,
+      booking_source: document.getElementById('par-source').value,
+      interested_in_handpan: document.getElementById('par-interested').value,
+      notes: document.getElementById('par-notes').value || null,
+      checked_in: false,
+      archived: false
+    };
+    await sbPost('participants', body);
+    closeFormPage('addParticipant');
+    resetForm('addParticipant');
+    loadParticipants();
+    showToast('✓ Participant added successfully!', 'success');
+  } catch(e) {
+    console.error('saveParticipant error:', e);
+    showToast('Error saving participant: ' + e.message, 'error');
+  }
 }
 
 
@@ -1506,10 +2489,11 @@ function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   const isDark = document.body.classList.contains('dark-mode');
   localStorage.setItem('darkMode', isDark ? '1' : '0');
+  showToast(isDark ? '🌙 Dark mode on' : '☀️ Light mode on', '');
 }
 
-// Apply saved dark mode preference
-if (localStorage.getItem('darkMode') === '1') {
+// Apply dark mode — on by default, unless user explicitly turned it off
+if (localStorage.getItem('darkMode') !== '0') {
   document.body.classList.add('dark-mode');
 }
 
@@ -1535,27 +2519,84 @@ async function exportData(entity) {
 }
 
 async function exportAll() {
+  showToast('Exporting all data...', '');
   const entities = ['workshops','participants','students','payments','leads','fee_payments'];
   for (const e of entities) { await exportData(e); await new Promise(r=>setTimeout(r,300)); }
+  showToast('✓ All data exported!', 'success');
 }
 
 
-// ── ARCHIVE / RESTORE ──
-async function archiveRecord(entity, id, name) {
-  if (!confirm('Archive "' + name + '"? It will be hidden but not deleted. You can restore it anytime.')) return;
+// ── DELETE ──
+let _deletePending = null;
+function deleteRecord(entity, id, name) {
+  _deletePending = { entity, id, name };
+  customConfirm(
+    'Delete "' + name + '"?',
+    'This will permanently delete this record and cannot be undone.'
+  ).then(ok => {
+    if (!ok) { _deletePending = null; return; }
+    confirmDelete();
+  });
+}
+async function confirmDelete() {
+  if (!_deletePending) return;
+  const { entity, id, name } = _deletePending;
+  _deletePending = null;
   try {
-    await api('/' + entity + '/' + id + '/archive', 'POST');
-    showToast(name + ' archived', 'success');
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + entity + '?id=eq.' + id, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!res.ok) throw new Error('Failed');
+    showToast('✓ ' + name + ' deleted', 'success');
     await reloadEntity(entity);
-  } catch(e) { showToast('Failed to archive', 'error'); }
+  } catch(e) {
+    console.error('deleteRecord error:', e);
+    showToast('Failed to delete — try again', 'error');
+  }
+}
+let _archivePending = null;
+function archiveRecord(entity, id, name) {
+  _archivePending = { entity, id, name };
+  document.getElementById('archiveConfirmTitle').textContent = 'Hide "' + name + '"?';
+  document.getElementById('archiveConfirmDesc').textContent = 'This record will be hidden from your list. You can restore it anytime by turning on "Show archived."';
+  document.getElementById('archiveConfirmBtn').textContent = 'Hide it';
+  document.getElementById('archiveConfirmBtn').onclick = confirmArchive;
+  document.getElementById('archiveConfirmModal').style.display = 'flex';
+  lockScroll();
+}
+function closeArchiveConfirm() {
+  document.getElementById('archiveConfirmModal').style.display = 'none';
+  unlockScroll();
+  _archivePending = null;
+}
+async function confirmArchive() {
+  if (!_archivePending) return;
+  const { entity, id, name } = _archivePending;
+  closeArchiveConfirm();
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + entity + '?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ archived: true })
+    });
+    if (!res.ok) throw new Error('Failed');
+    showToast('✓ ' + name + ' hidden — toggle "Show archived" to restore', 'success');
+    await reloadEntity(entity);
+  } catch(e) { showToast('Failed to hide record — try again', 'error'); }
 }
 
 async function restoreRecord(entity, id) {
   try {
-    await api('/' + entity + '/' + id + '/unarchive', 'POST');
-    showToast('Restored successfully', 'success');
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + entity + '?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ archived: false })
+    });
+    if (!res.ok) throw new Error('Failed');
+    showToast('✓ Restored successfully!', 'success');
     await reloadEntity(entity);
-  } catch(e) { showToast('Failed to restore', 'error'); }
+  } catch(e) { showToast('Failed to restore — try again', 'error'); }
 }
 
 async function reloadEntity(entity) {
@@ -1585,15 +2626,47 @@ async function wakeUpServer() {
   }
 }
 
+// ── SCROLL LOCK (iOS safe) ──
+let _scrollLockY = 0;
+function lockScroll() {
+  _scrollLockY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${_scrollLockY}px`;
+  document.body.style.width = '100%';
+}
+function unlockScroll() {
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+  window.scrollTo(0, _scrollLockY);
+}
+function showLoader(text = 'Loading...') {
+  document.getElementById('loadingText').textContent = text;
+  document.getElementById('loadingOverlay').classList.add('active');
+  lockScroll();
+}
+function hideLoader() {
+  document.getElementById('loadingOverlay').classList.remove('active');
+  unlockScroll();
+}
+
 // ── TOAST ──
 function showToast(msg, type) {
   const t = document.getElementById('toast');
+  if (!t) return;
   t.textContent = msg;
   t.className = 'toast show' + (type ? ' ' + type : '');
-  setTimeout(() => { t.className = 'toast'; }, 3000);
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = 'toast'; }, 3000);
 }
 
-// ── LOGIN RIPPLES ──
+// ── PIN KEYBOARD SUPPORT ──
+document.addEventListener('keydown', function(e) {
+  const loginScreen = document.getElementById('loginScreen');
+  if (!loginScreen || loginScreen.style.display === 'none') return;
+  if (e.key >= '0' && e.key <= '9') { pinPress(e.key); }
+  else if (e.key === 'Backspace') { pinDelete(); }
+});
 (function() {
   const svg = document.getElementById('loginRippleSvg');
   const screen = document.getElementById('loginScreen');
@@ -1618,6 +2691,261 @@ function showToast(msg, type) {
 })();
 
 if (sessionStorage.getItem('dash_auth') === '1') { loadAll(); }
+
+// ── PREVENT FORM PAGE DRAG ──
+document.addEventListener('touchmove', function(e) {
+  const formPage = e.target.closest('.form-page');
+  const scrollArea = e.target.closest('.form-page-scroll');
+  if (formPage && !scrollArea) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+// ── NOTIFICATIONS ──
+async function loadNotifications() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/notifications?select=*&order=created_at.desc&limit=50', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!res.ok) throw new Error('Failed');
+    const data = await res.json();
+    renderNotifications(data || []);
+    updateNotifBadge(data || []);
+  } catch(e) {
+    document.getElementById('notificationsContainer').innerHTML = '<div class="notif-empty">Could not load notifications. Check your connection.</div>';
+  }
+}
+
+function renderNotifications(items) {
+  const el = document.getElementById('notificationsContainer');
+  if (!items.length) {
+    el.innerHTML = '<div class="notif-empty">🔔 No notifications yet.<br><small>Payment events and system alerts will appear here.</small></div>';
+    return;
+  }
+  el.innerHTML = items.map(n => `
+    <div class="notif-item ${n.read?'':'unread'}" onclick="markRead(${n.id})">
+      <div class="notif-icon ${n.type||'info'}">${n.type==='payment'?'💰':n.type==='warning'?'⚠️':n.type==='error'?'❌':'ℹ️'}</div>
+      <div style="flex:1;">
+        <div class="notif-msg">${n.message||'—'}</div>
+        <div class="notif-time">${fmtDateTime(n.created_at)}</div>
+      </div>
+      ${!n.read?'<div class="notif-unread-dot"></div>':''}
+    </div>
+  `).join('');
+}
+
+function updateNotifBadge(items) {
+  const unread = items.filter(n => !n.read).length;
+  ['sidebarNotifBadge','mobileNotifBadge','mobileMenuNotifBadge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (unread > 0) { el.textContent = unread > 9 ? '9+' : unread; el.classList.add('show'); }
+    else { el.classList.remove('show'); }
+  });
+}
+
+async function markRead(id) {
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/notifications?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ read: true })
+    });
+    loadNotifications();
+  } catch(e) {}
+}
+
+async function markAllRead() {
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/notifications?read=eq.false', {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ read: true })
+    });
+    showToast('✓ All notifications marked as read', 'success');
+    loadNotifications();
+  } catch(e) { showToast('Failed to update notifications', 'error'); }
+}
+
+async function clearAllNotifications() {
+  const ok = await customConfirm('Clear all notifications?', 'This cannot be undone.');
+  if (!ok) return;
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/notifications?id=neq.0', {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    showToast('✓ All notifications cleared', 'success');
+    loadNotifications();
+  } catch(e) { showToast('Failed to clear notifications', 'error'); }
+}
+
+function fmtDateTime(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  const now = new Date();
+  const diff = Math.floor((now - d) / 1000);
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+// ── CHECK IN ──
+let _checkInPending = null;
+function toggleCheckIn(id, currentState, name) {
+  if (currentState) {
+    _checkInPending = { id, name };
+    document.getElementById('archiveConfirmTitle').textContent = 'Remove check-in?';
+    document.getElementById('archiveConfirmDesc').textContent = name + ' will be marked as not checked in.';
+    document.getElementById('archiveConfirmBtn').textContent = 'Remove';
+    document.getElementById('archiveConfirmBtn').onclick = confirmCheckOut;
+    document.getElementById('archiveConfirmModal').style.display = 'flex';
+    lockScroll();
+  } else {
+    doCheckIn(id, true, name);
+  }
+}
+
+async function doCheckIn(id, state, name) {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/participants?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ checked_in: state })
+    });
+    if (!res.ok) throw new Error('Failed');
+    showToast(state ? '✓ ' + name + ' checked in!' : '✓ Check-in removed', 'success');
+    await loadParticipants();
+    // Also add a notification
+    await fetch(SUPABASE_URL + '/rest/v1/notifications', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'info', message: state ? '✅ ' + name + ' checked in to workshop' : '↩ Check-in removed for ' + name, read: false })
+    });
+  } catch(e) { showToast('Failed to update check-in', 'error'); }
+}
+
+async function confirmCheckOut() {
+  if (!_checkInPending) return;
+  closeArchiveConfirm();
+  await doCheckIn(_checkInPending.id, false, _checkInPending.name);
+  _checkInPending = null;
+}
+
+// ── CHECK-IN MODE ──
+let _checkinWorkshopId = null;
+let _checkinInterval = null;
+let _checkinParticipants = [];
+
+async function openCheckinMode(wsId, venue, date) {
+  _checkinWorkshopId = wsId;
+  document.getElementById('checkinTitle').textContent = venue + ' · ' + wsId;
+  document.getElementById('checkinSub').textContent = date;
+  document.getElementById('checkinScreen').classList.add('open');
+  lockScroll();
+  await refreshCheckinGrid();
+  // Auto-refresh every 10 seconds
+  _checkinInterval = setInterval(refreshCheckinGrid, 10000);
+}
+
+function closeCheckinMode() {
+  document.getElementById('checkinScreen').classList.remove('open');
+  unlockScroll();
+  _checkinWorkshopId = null;
+  _checkinParticipants = [];
+  if (_checkinInterval) { clearInterval(_checkinInterval); _checkinInterval = null; }
+}
+
+async function refreshCheckinGrid() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&workshop_id=eq.' + _checkinWorkshopId + '&archived=neq.true&order=full_name.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!res.ok) throw new Error('Failed');
+    _checkinParticipants = await res.json();
+    renderCheckinGrid();
+  } catch(e) {
+    document.getElementById('checkinGrid').innerHTML = '<div class="checkin-empty">Could not load participants. Check your connection.</div>';
+  }
+}
+
+function renderCheckinGrid() {
+  const parts = _checkinParticipants;
+  const checkedCount = parts.filter(p => p.checked_in).length;
+  document.getElementById('checkinCounter').textContent = checkedCount + ' / ' + parts.length + ' checked in';
+  if (!parts.length) {
+    document.getElementById('checkinGrid').innerHTML = '<div class="checkin-empty">No participants found for this workshop.</div>';
+    return;
+  }
+  // Sort once on initial render only — unchecked first, then checked
+  const sorted = [...parts].sort((a, b) => (a.checked_in === b.checked_in) ? 0 : a.checked_in ? 1 : -1);
+  document.getElementById('checkinGrid').innerHTML = sorted.map(p => `
+    <div class="checkin-card ${p.checked_in ? 'is-checked' : ''}" id="cc-${p.id}">
+      <div class="checkin-card-info">
+        <div class="checkin-card-name">${p.full_name || '—'}</div>
+        <div class="checkin-card-meta">
+          <span>${p.phone || '—'}</span>
+          <span>${fmt(p.amount_paid)} · ${p.payment_mode || '—'}</span>
+        </div>
+      </div>
+      <div class="checkin-cb ${p.checked_in ? 'checked' : ''}" id="cb-${p.id}"
+        onclick="checkinModeToggle('${p.id}', ${p.checked_in}, '${(p.full_name||'').replace(/'/g,"\\'")}')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <polyline points="3,8 7,12 13,4" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function checkinModeToggle(id, currentState, name) {
+  const newState = !currentState;
+  const card = document.getElementById('cc-' + id);
+  const btn = document.getElementById('cb-' + id);
+
+  // Disable immediately to prevent double-tap
+  if (btn) btn.style.pointerEvents = 'none';
+
+  // Force DOM paint on next frame — visual change before any async work
+  requestAnimationFrame(() => {
+    if (card && btn) {
+      card.classList.toggle('is-checked', newState);
+      btn.classList.toggle('checked', newState);
+      btn.onclick = () => checkinModeToggle(id, newState, name);
+      btn.style.pointerEvents = '';
+    }
+    const idx = _checkinParticipants.findIndex(p => p.id === id);
+    if (idx > -1) _checkinParticipants[idx].checked_in = newState;
+    const checkedCount = _checkinParticipants.filter(p => p.checked_in).length;
+    document.getElementById('checkinCounter').textContent = checkedCount + ' / ' + _checkinParticipants.length + ' checked in';
+  });
+
+  // Persist to Supabase in background — completely decoupled from UI
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/participants?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ checked_in: newState })
+    });
+    if (!res.ok) throw new Error('Failed');
+  } catch(e) {
+    // Revert visually on failure
+    requestAnimationFrame(() => {
+      if (card && btn) {
+        card.classList.toggle('is-checked', currentState);
+        btn.classList.toggle('checked', currentState);
+        btn.onclick = () => checkinModeToggle(id, currentState, name);
+      }
+      const idx = _checkinParticipants.findIndex(p => p.id === id);
+      if (idx > -1) _checkinParticipants[idx].checked_in = currentState;
+      const revertCount = _checkinParticipants.filter(p => p.checked_in).length;
+      document.getElementById('checkinCounter').textContent = revertCount + ' / ' + _checkinParticipants.length + ' checked in';
+    });
+    showToast('Failed to update check-in', 'error');
+  }
+}
+
 </script>
 </body>
 </html>
