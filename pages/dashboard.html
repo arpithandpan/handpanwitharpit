@@ -535,6 +535,17 @@ body.dark-mode .settings-export-btn { background: #2a2018; color: #e8d5c0; }
 body.dark-mode .overview-card-head { background: #2a2018; }
 
 
+
+body.dark-mode .notif-item.unread { background: rgba(200,147,90,0.07); }
+body.dark-mode .notif-item:hover { background: rgba(200,147,90,0.05); }
+body.dark-mode .notif-msg { color: #e8d5c0; }
+body.dark-mode .notif-time { color: #7a6354; }
+body.dark-mode .notif-unread-dot { background: #c8935a; }
+body.dark-mode .btn-checkin { border-color: rgba(200,147,90,0.3); color: #9a7d63; }
+body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border-color: #8aaa6e; color: #8aaa6e; }
+body.dark-mode .btn-archive { color: #7a6354; }
+body.dark-mode .btn-archive:hover { color: #e87a60; background: rgba(180,80,60,0.12); }
+body.dark-mode #archiveConfirmModal > div { background: #231c16; }
 /* ── DARK MODE: comprehensive button + UI fixes ── */
 body.dark-mode .btn-dash-primary { background: #c8935a; color: #1a1410; border: none; }
 body.dark-mode .btn-dash-primary:hover { background: #dba870; color: #1a1410; }
@@ -624,22 +635,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
   font-size: 0.85rem; color: var(--text-light); cursor: pointer;
   user-select: none;
 }
-.archived-toggle input[type="checkbox"] { display: none; }
-.toggle-track {
-  width: 36px; height: 20px; border-radius: 10px;
-  background: var(--clay-pale); border: 1.5px solid var(--clay-pale);
-  position: relative; transition: background 0.2s; flex-shrink: 0;
-  cursor: pointer;
-}
-.toggle-track::after {
-  content: ''; position: absolute; top: 2px; left: 2px;
-  width: 14px; height: 14px; border-radius: 50%;
-  background: var(--text-light); transition: transform 0.2s, background 0.2s;
-}
-.archived-toggle input:checked + .toggle-track { background: var(--clay); border-color: var(--clay); }
-.archived-toggle input:checked + .toggle-track::after { transform: translateX(16px); background: white; }
-.archived-row { opacity: 0.5; background: #fafafa; }
-body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
+.archived-row { opacity: 0.5; }
 
 
 /* ── MOBILE SPECIFIC FIXES ── */
@@ -680,6 +676,109 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
   .btn-dash { font-size: 0.8rem; padding: 0.5rem 0.85rem; }
   .dash-section { padding: 0.85rem; }
 }
+
+
+/* ── NOTIFICATIONS ── */
+.notif-bell-wrap {
+  position: relative; display: inline-flex; align-items: center;
+}
+.notif-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: #B43C28; color: white;
+  font-size: 0.65rem; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: none; align-items: center; justify-content: center;
+  line-height: 1;
+}
+.notif-badge.show { display: flex; }
+.notif-item {
+  display: flex; gap: 0.75rem; align-items: flex-start;
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--clay-pale);
+  transition: background 0.15s; cursor: pointer;
+}
+.notif-item:hover { background: rgba(193,127,82,0.04); }
+.notif-item.unread { background: rgba(193,127,82,0.06); }
+.notif-item:last-child { border-bottom: none; }
+.notif-icon {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.notif-icon.payment { background: rgba(122,140,106,0.15); }
+.notif-icon.warning { background: rgba(180,60,40,0.1); }
+.notif-icon.info { background: rgba(193,127,82,0.12); }
+.notif-icon.error { background: rgba(180,60,40,0.15); }
+.notif-msg { font-size: 0.9rem; color: var(--text-dark); line-height: 1.4; flex: 1; }
+.notif-time { font-size: 0.75rem; color: var(--text-light); margin-top: 0.25rem; }
+.notif-unread-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--clay); flex-shrink: 0; margin-top: 6px;
+}
+.notif-empty {
+  text-align: center; padding: 3rem 1.5rem;
+  color: var(--text-light); font-size: 0.9rem;
+}
+
+/* ── ARCHIVE / CHECKIN BUTTONS ── */
+.btn-archive {
+  background: none; border: none; cursor: pointer;
+  padding: 8px; border-radius: 6px; color: var(--text-light);
+  transition: all 0.15s; display: inline-flex; align-items: center; justify-content: center;
+  min-width: 36px; min-height: 36px;
+}
+.btn-archive:hover { color: #B43C28; background: rgba(180,60,40,0.08); }
+.btn-restore {
+  background: none; border: 1px solid rgba(122,140,106,0.4);
+  color: var(--moss); border-radius: 4px; cursor: pointer;
+  padding: 0.3rem 0.65rem; font-size: 0.8rem;
+  font-family: var(--font-body); transition: all 0.15s;
+  min-height: 32px;
+}
+.btn-restore:hover { background: rgba(122,140,106,0.1); }
+.btn-checkin {
+  background: none; border: 1.5px solid var(--clay-pale);
+  border-radius: 20px; cursor: pointer; padding: 0.25rem 0.75rem;
+  font-size: 0.78rem; color: var(--text-light); font-family: var(--font-body);
+  transition: all 0.2s; white-space: nowrap; min-height: 32px;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+}
+.btn-checkin.checked {
+  background: rgba(122,140,106,0.12); border-color: var(--moss);
+  color: var(--moss); font-weight: 500;
+}
+.btn-checkin:hover { border-color: var(--clay); color: var(--clay); }
+.btn-checkin.checked:hover { background: rgba(180,60,40,0.08); border-color: #B43C28; color: #B43C28; }
+
+/* ── LARGER BUTTONS GLOBALLY ── */
+.btn-dash {
+  font-family: var(--font-body); font-size: 0.88rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.7rem 1.4rem; border-radius: 4px; cursor: pointer;
+  border: none; transition: all 0.2s; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px;
+}
+.btn-dash-sm { padding: 0.5rem 1rem; font-size: 0.8rem; min-height: 38px; }
+
+/* Archived toggle — checkbox style */
+.archived-toggle {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-size: 0.9rem; color: var(--text-light); cursor: pointer;
+  user-select: none; white-space: nowrap;
+}
+.archived-toggle input[type="checkbox"] {
+  width: 17px; height: 17px; cursor: pointer;
+  accent-color: var(--clay); flex-shrink: 0;
+}
+.archived-row { opacity: 0.5; }
+
+/* Notification dark mode */
+body.dark-mode .notif-item.unread { background: rgba(200,147,90,0.07); }
+body.dark-mode .notif-item:hover { background: rgba(200,147,90,0.05); }
+body.dark-mode .notif-msg { color: #e8d5c0; }
+body.dark-mode .notif-icon.payment { background: rgba(138,170,110,0.15); }
+body.dark-mode .notif-icon.warning { background: rgba(180,80,60,0.15); }
+body.dark-mode .btn-checkin { border-color: rgba(200,147,90,0.3); color: #9a7d63; }
+body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border-color: #8aaa6e; color: #8aaa6e; }
 
 </style>
 </head>
@@ -780,6 +879,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
       <li><a href="#" onclick="showSection('payments',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span> Payments</a></li>
       <li><a href="#" onclick="showSection('leads',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Leads</a></li>
       <li><a href="#" onclick="showSection('insights',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Insights</a></li>
+      <li><a href="#" onclick="showSection('notifications',this)"><span class="icon"><span class="notif-bell-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-badge" id="sidebarNotifBadge"></span></span></span> Notifications</a></li>
       <li><a href="#" onclick="showSection('settings',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Settings</a></li>
     </ul>
     <div class="dash-nav-divider"></div>
@@ -838,7 +938,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
           <div class="dash-section-subtitle" id="workshopCount">Loading...</div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;">
-          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-workshops" onchange="loadWorkshops()"><span class="toggle-track"></span> Show archived</label>
+          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-workshops" onchange="loadWorkshops()"> Show archived</label>
           <button class="btn-dash btn-dash-primary" onclick="openModal('addWorkshop')">+ Add Workshop</button>
         </div>
       </div>
@@ -853,7 +953,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openModal('addParticipant')">+ Add Participant</button>
         </div>
         <div class="dash-table-wrap">
-          <table class="desktop-table"><thead><tr><th>P #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Amount</th><th>Mode</th><th>Checked In</th><th>Interested</th><th>Notes</th></tr></thead>
+          <table class="desktop-table"><thead><tr><th>P #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Amount</th><th>Mode</th><th>Check In</th><th>Action</th></tr></thead>
           <tbody id="participantsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
           <div class="mobile-cards" id="participantsCards"></div>
         </div>
@@ -868,7 +968,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
           <div class="dash-section-subtitle">Online students and fee tracking</div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;">
-          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-students" onchange="loadStudents()"><span class="toggle-track"></span> Show archived</label>
+          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-students" onchange="loadStudents()"> Show archived</label>
           <button class="btn-dash btn-dash-primary" onclick="openModal('addStudent')">+ Add Student</button>
         </div>
       </div>
@@ -903,7 +1003,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
         </div>
         <div style="display:flex;gap:0.75rem;">
           <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Refresh Data</button>
-          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-payments" onchange="loadPayments()"><span class="toggle-track"></span> Show archived</label>
+          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-payments" onchange="loadPayments()"> Show archived</label>
           <button class="btn-dash btn-dash-primary" onclick="openModal('addPayment')">+ Add Payment</button>
         </div>
       </div>
@@ -927,7 +1027,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
           <div class="dash-section-subtitle">People interested in buying a handpan</div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;">
-          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-leads" onchange="loadLeads()"><span class="toggle-track"></span> Show archived</label>
+          <label class="archived-toggle"><input type="checkbox" id="toggle-archived-leads" onchange="loadLeads()"> Show archived</label>
           <button class="btn-dash btn-dash-primary" onclick="openModal('addLead')">+ Add Lead</button>
         </div>
       </div>
@@ -962,6 +1062,26 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
         <div class="chart-box">
           <div class="chart-box-title">Income by Category</div>
           <div class="chart-bars" id="chartCategories"></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── NOTIFICATIONS ── -->
+    <section class="dash-section" id="section-notifications">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Notifications</div>
+          <div class="dash-section-subtitle">All activity and alerts from your dashboard</div>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:center;">
+          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="markAllRead()">✓ Mark all read</button>
+          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="clearAllNotifications()" style="color:#B43C28;border-color:rgba(180,60,40,0.3);">Clear all</button>
+        </div>
+      </div>
+      <div class="dash-table-wrap" style="border-radius:8px;">
+        <div id="notificationsContainer">
+          <div class="notif-empty"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>
         </div>
       </div>
     </section>
@@ -1273,15 +1393,15 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.05); }
         <div style="width:36px;height:36px;border-radius:50%;background:rgba(180,60,40,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B43C28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
         </div>
-        <div style="font-size:1rem;font-weight:600;color:var(--bark);">Hide this record?</div>
+        <div id="archiveConfirmTitle" style="font-size:1rem;font-weight:600;color:var(--bark);">Hide this record?</div>
       </div>
       <p style="font-size:0.9rem;color:var(--text-light);line-height:1.5;margin:0 0 1.25rem;">
-        <strong id="archiveConfirmName" style="color:var(--bark);"></strong> will be hidden from the list. It won't be deleted — restore it anytime from "Show archived".
+        <span id="archiveConfirmDesc"><strong id="archiveConfirmName" style="color:var(--bark);"></strong> will be hidden from the list. It won't be deleted — restore it anytime from "Show archived".</span>
       </p>
     </div>
     <div style="display:flex;border-top:1px solid var(--clay-pale);">
       <button onclick="closeArchiveConfirm()" style="flex:1;padding:0.9rem;background:transparent;border:none;border-right:1px solid var(--clay-pale);font-size:0.9rem;color:var(--text-light);cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Cancel</button>
-      <button onclick="confirmArchive()" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:0.9rem;color:#B43C28;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Hide it</button>
+      <button id="archiveConfirmBtn" onclick="confirmArchive()" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:0.9rem;color:#B43C28;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Hide it</button>
     </div>
   </div>
 </div>
@@ -1500,9 +1620,9 @@ async function loadWorkshops() {
 const res = await api('/workshops?order=date:desc' + (showArchivedWorkshops ? '&include_archived=true' : ''));
     const ws = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
-    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td>${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No workshops yet</td></tr>';
+    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td>${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No workshops yet</td></tr>';
     const wsCardsEl = document.getElementById('workshopsCards');
-    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card ${w.archived?'archived-row':''}"><div class="m-card-title">${w.id} · ${w.venue||'—'}<span style="float:right;font-size:0.8rem;color:var(--text-light)">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div><div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide</button>`}</div></div>`).join('');
+    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card ${w.archived?'archived-row':''}"><div class="m-card-title">${w.id} · ${w.venue||'—'}<span style="float:right;font-size:0.8rem;color:var(--text-light)">${fmtDate(w.date)}</span></div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div><div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading workshops', 'error'); }
 }
 async function loadParticipants() {
@@ -1510,9 +1630,9 @@ async function loadParticipants() {
     const showArchivedParticipants = document.getElementById('toggle-archived-participants')?.checked;
 const res = await api('/participants?order=created_at:desc' + (showArchivedParticipants ? '&include_archived=true' : ''));
     const parts = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td>${p.checked_in?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No participants yet</td></tr>';
+    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,\'')}')">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">No participants yet</td></tr>';
     const parCards = document.getElementById('participantsCards');
-    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide</button>`}</div></div>`).join('');
+    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div><div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;flex-wrap:wrap;"><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,\'')}')">${p.checked_in?'✓ Checked in':'Check in'}</button>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading participants', 'error'); }
 }
 
@@ -1525,9 +1645,9 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
     document.getElementById('classActiveStudents').textContent = stus.filter(s=>s.status==='Active').length;
     document.getElementById('classTotalRevenue').textContent = fmt(stus.reduce((s,st)=>s+Number(st.total_paid||0),0));
     document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No students yet</td></tr>';
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No students yet</td></tr>';
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide</button>`}</div></div>`).join('');
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading students', 'error'); }
 }
 async function loadFeePayments() {
@@ -1535,7 +1655,7 @@ async function loadFeePayments() {
     const showArchivedFee = document.getElementById('toggle-archived-fee')?.checked;
 const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ? '&include_archived=true' : ''));
     const fps = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No fee payments yet</td></tr>';
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">No fee payments yet</td></tr>';
     const fpCards = document.getElementById('feePaymentsCards');
     if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card"><div class="m-card-title">${f.student_name} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${f.month}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmt(f.amount)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div></div>`).join('');
   } catch(e) { showToast('Error loading fee payments', 'error'); }
@@ -1552,9 +1672,9 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
     document.getElementById('payTotalIncome').textContent = fmt(income);
     document.getElementById('payTotalExpenses').textContent = fmt(expense);
     document.getElementById('payNetProfit').textContent = fmt(income-expense);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No payments yet</td></tr>';
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No payments yet</td></tr>';
     const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide</button>`}</div></div>`).join('');
+    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading payments', 'error'); }
 }
 
@@ -1564,9 +1684,9 @@ async function loadLeads() {
     const showArchivedLeads = document.getElementById('toggle-archived-leads')?.checked;
 const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&include_archived=true' : ''));
     const leads = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No leads yet</td></tr>';
+    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">No leads yet</td></tr>';
     const leadsCards = document.getElementById('leadsCards');
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide</button>`}</div></div>`).join('');
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading leads', 'error'); }
 }
 
@@ -1717,9 +1837,12 @@ async function exportAll() {
 let _archivePending = null;
 function archiveRecord(entity, id, name) {
   _archivePending = { entity, id, name };
+  document.getElementById('archiveConfirmTitle').textContent = 'Hide this record?';
   document.getElementById('archiveConfirmName').textContent = name;
-  const modal = document.getElementById('archiveConfirmModal');
-  modal.style.display = 'flex';
+  document.getElementById('archiveConfirmDesc').innerHTML = '<strong id="archiveConfirmName" style="color:var(--bark);">' + name + '</strong> will be hidden from the list. It won't be deleted — restore it anytime from "Show archived".';
+  document.getElementById('archiveConfirmBtn').textContent = 'Hide it';
+  document.getElementById('archiveConfirmBtn').onclick = confirmArchive;
+  document.getElementById('archiveConfirmModal').style.display = 'flex';
 }
 function closeArchiveConfirm() {
   document.getElementById('archiveConfirmModal').style.display = 'none';
@@ -1804,6 +1927,129 @@ function showToast(msg, type) {
 })();
 
 if (sessionStorage.getItem('dash_auth') === '1') { loadAll(); }
+
+// ── NOTIFICATIONS ──
+async function loadNotifications() {
+  try {
+    const { data, error } = await window._sb
+      .from('notifications')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    renderNotifications(data || []);
+    updateNotifBadge(data || []);
+  } catch(e) {
+    document.getElementById('notificationsContainer').innerHTML = '<div class="notif-empty">Could not load notifications.</div>';
+  }
+}
+
+function renderNotifications(items) {
+  const el = document.getElementById('notificationsContainer');
+  if (!items.length) {
+    el.innerHTML = '<div class="notif-empty">🔔 No notifications yet.<br><small>Payment events and system alerts will appear here.</small></div>';
+    return;
+  }
+  el.innerHTML = items.map(n => `
+    <div class="notif-item ${n.read?'':'unread'}" onclick="markRead(${n.id})">
+      <div class="notif-icon ${n.type||'info'}">${n.type==='payment'?'💰':n.type==='warning'?'⚠️':n.type==='error'?'❌':'ℹ️'}</div>
+      <div style="flex:1;">
+        <div class="notif-msg">${n.message||'—'}</div>
+        <div class="notif-time">${fmtDateTime(n.created_at)}</div>
+      </div>
+      ${!n.read?'<div class="notif-unread-dot"></div>':''}
+    </div>
+  `).join('');
+}
+
+function updateNotifBadge(items) {
+  const unread = items.filter(n => !n.read).length;
+  ['sidebarNotifBadge','mobileNotifBadge','mobileMenuNotifBadge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (unread > 0) { el.textContent = unread > 9 ? '9+' : unread; el.classList.add('show'); }
+    else { el.classList.remove('show'); }
+  });
+}
+
+async function markRead(id) {
+  try {
+    await window._sb.from('notifications').update({ read: true }).eq('id', id);
+    loadNotifications();
+  } catch(e) {}
+}
+
+async function markAllRead() {
+  try {
+    await window._sb.from('notifications').update({ read: true }).eq('read', false);
+    showToast('✓ All notifications marked as read', 'success');
+    loadNotifications();
+  } catch(e) { showToast('Failed to update notifications', 'error'); }
+}
+
+async function clearAllNotifications() {
+  if (!confirm('Clear all notifications? This cannot be undone.')) return;
+  try {
+    await window._sb.from('notifications').delete().neq('id', 0);
+    showToast('✓ All notifications cleared', 'success');
+    loadNotifications();
+  } catch(e) { showToast('Failed to clear notifications', 'error'); }
+}
+
+function fmtDateTime(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  const now = new Date();
+  const diff = Math.floor((now - d) / 1000);
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+// ── CHECK IN ──
+let _checkInPending = null;
+function toggleCheckIn(id, currentState, name) {
+  if (currentState) {
+    // Checking OUT — show confirmation
+    _checkInPending = { id, name };
+    document.getElementById('archiveConfirmName').textContent = name;
+    document.getElementById('archiveConfirmTitle').textContent = 'Remove check-in?';
+    document.getElementById('archiveConfirmDesc').textContent = name + ' will be marked as not checked in.';
+    document.getElementById('archiveConfirmBtn').textContent = 'Remove';
+    document.getElementById('archiveConfirmBtn').onclick = confirmCheckOut;
+    document.getElementById('archiveConfirmModal').style.display = 'flex';
+  } else {
+    // Checking IN — no confirmation needed
+    doCheckIn(id, true, name);
+  }
+}
+
+async function doCheckIn(id, state, name) {
+  try {
+    const { error } = await window._sb.from('participants').update({ checked_in: state }).eq('id', id);
+    if (error) throw error;
+    showToast(state ? '✓ ' + name + ' checked in!' : '✓ Check-in removed', 'success');
+    await loadParticipants();
+    // Also add a notification
+    await window._sb.from('notifications').insert({
+      type: 'info',
+      message: state ? '✅ ' + name + ' checked in to workshop' : '↩ Check-in removed for ' + name,
+      read: false
+    });
+  } catch(e) { showToast('Failed to update check-in', 'error'); }
+}
+
+async function confirmCheckOut() {
+  if (!_checkInPending) return;
+  closeArchiveConfirm();
+  await doCheckIn(_checkInPending.id, false, _checkInPending.name);
+  _checkInPending = null;
+}
+
+// ── ADD NOTIFICATION LOGGING TO CLIENT ACTIONS ──
+const _origSaveToast = showToast;
+
 </script>
 </body>
 </html>
