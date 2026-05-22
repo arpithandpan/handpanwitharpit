@@ -428,10 +428,13 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 /* ── INNER FORM PAGES ── */
 .form-page {
-  display: none; position: fixed; inset: 0;
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%; height: 100%;
   background: var(--cream); z-index: 10001;
   overflow: hidden; padding: 0;
   touch-action: none;
+  -webkit-overflow-scrolling: none;
+  overscroll-behavior: none;
 }
 .form-page.open { display: flex; flex-direction: column; }
 .form-page-header {
@@ -443,8 +446,10 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   z-index: 10;
 }
 .form-page-scroll {
-  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 .form-page-back {
   display: flex; align-items: center; gap: 0.5rem;
@@ -1999,6 +2004,15 @@ function showToast(msg, type) {
 })();
 
 if (sessionStorage.getItem('dash_auth') === '1') { loadAll(); }
+
+// ── PREVENT FORM PAGE DRAG ──
+document.addEventListener('touchmove', function(e) {
+  const formPage = e.target.closest('.form-page');
+  const scrollArea = e.target.closest('.form-page-scroll');
+  if (formPage && !scrollArea) {
+    e.preventDefault();
+  }
+}, { passive: false });
 
 // ── NOTIFICATIONS ──
 async function loadNotifications() {
