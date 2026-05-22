@@ -2455,7 +2455,7 @@ async function saveParticipant() {
 async function loadSettings() {
   try {
     const now = new Date().toLocaleTimeString('en-IN');
-    document.getElementById('health-time').textContent = now;
+    if (document.getElementById('health-time')) document.getElementById('health-time').textContent = now;
 
     const [ws, parts, stus, pays, leads, fps] = await Promise.all([
       sbGetAll('workshops'), sbGetAll('participants'), sbGetAll('students'),
@@ -2463,20 +2463,25 @@ async function loadSettings() {
     ]);
     const total = (ws.data||[]).length + (parts.data||[]).length + (stus.data||[]).length +
                   (pays.data||[]).length + (leads.data||[]).length + (fps.data||[]).length;
-    document.getElementById('health-db').textContent = '● Connected';
-    document.getElementById('health-db').className = 'badge badge-green';
-    document.getElementById('health-records').textContent = total;
-    document.getElementById('wakeup-btn').style.display = 'none';
+    if (document.getElementById('health-db')) {
+      document.getElementById('health-db').textContent = '● Connected';
+      document.getElementById('health-db').className = 'badge badge-green';
+    }
+    if (document.getElementById('health-records')) document.getElementById('health-records').textContent = total;
+    if (document.getElementById('wakeup-btn')) document.getElementById('wakeup-btn').style.display = 'none';
 
     const rzpPays = (pays.data||[]).filter(p => p.synced_from_razorpay);
-    document.getElementById('rzp-total').textContent = rzpPays.length;
-    document.getElementById('rzp-mapped').textContent = rzpPays.filter(p=>p.reference_id).length;
+    if (document.getElementById('rzp-total')) document.getElementById('rzp-total').textContent = rzpPays.length;
+    if (document.getElementById('rzp-mapped')) document.getElementById('rzp-mapped').textContent = rzpPays.filter(p=>p.reference_id).length;
     const lastPay = rzpPays.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];
-    document.getElementById('rzp-last').textContent = lastPay ? fmtDate(lastPay.date) : '—';
+    if (document.getElementById('rzp-last')) document.getElementById('rzp-last').textContent = lastPay ? fmtDate(lastPay.date) : '—';
   } catch(e) {
-    document.getElementById('health-db').textContent = '● Server sleeping';
-    document.getElementById('health-db').className = 'badge badge-red';
-    document.getElementById('wakeup-btn').style.display = 'block';
+    console.error('loadSettings error:', e);
+    if (document.getElementById('health-db')) {
+      document.getElementById('health-db').textContent = '● Connection error';
+      document.getElementById('health-db').className = 'badge badge-red';
+    }
+    if (document.getElementById('wakeup-btn')) document.getElementById('wakeup-btn').style.display = 'block';
   }
 }
 
