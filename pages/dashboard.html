@@ -2270,7 +2270,7 @@ function loadSection(name) {
   else if (name === 'payments') loadPayments();
   else if (name === 'leads') loadLeads();
   else if (name === 'insights') loadInsights();
-  else if (name === 'settings') { loadSettings(); checkAllConnectors(); }
+  else if (name === 'settings') { loadSettings(); checkAllConnectors(true); }
 }
 
 // ── FORMAT ──
@@ -2768,9 +2768,9 @@ async function testConnectorHealth(id) {
   }
 }
 
-async function checkAllConnectors() {
+async function checkAllConnectors(silent = false) {
   await Promise.all(['sb','rzp','rw','site'].map(id => testConnectorHealth(id)));
-  showToast('✓ All connectors checked', 'success');
+  if (!silent) showToast('✓ All connectors checked', 'success');
 }
 let _scrollLockY = 0;
 function lockScroll() {
