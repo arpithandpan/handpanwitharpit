@@ -275,17 +275,36 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .mobile-menu-overlay {
   display: none;
   position: fixed;
-  top: 68px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: #f5ede4;
-  z-index: 399;
+  z-index: 9999;
   overflow-y: auto;
   overflow-x: hidden;
   flex-direction: column;
 }
 .mobile-menu-overlay.open { display: flex; }
+.mobile-menu-close-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  background: #3d2b1f;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  color: #e8d5c0;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  font-weight: 400;
+}
+.mobile-menu-close-btn.show { display: flex; }
 @media (max-width: 900px) {
   .mobile-topbar { display: flex; }
   .dash-root { padding-top: 68px; }
@@ -835,8 +854,10 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   </button>
 </div>
 
+<button class="mobile-menu-close-btn" id="floatingCloseBtn" onclick="toggleMobileMenu()">✕</button>
+
 <div class="mobile-menu-overlay" id="mobileMenuOverlay">
-  <nav style="display:flex;flex-direction:column;gap:1.5rem;padding:2rem 1.5rem;">
+  <nav style="display:flex;flex-direction:column;gap:1.5rem;padding:5rem 2rem 2rem;">
     <a href="#" style="font-size:22px;color:#c8935a;text-decoration:none;font-weight:500;" onclick="showSection('overview',this);toggleMobileMenu()">Overview</a>
     <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('workshops',this);toggleMobileMenu()">Workshops</a>
     <a href="#" style="font-size:22px;color:#3d2b1f;text-decoration:none;" onclick="showSection('classes',this);toggleMobileMenu()">Classes</a>
@@ -1543,19 +1564,19 @@ function closeModal(name) { closeFormPage(name); }
 // ── MOBILE MENU ──
 function toggleMobileMenu() {
   const overlay = document.getElementById('mobileMenuOverlay');
-  const btn = document.getElementById('mobileMenuBtn');
+  const closeBtn = document.getElementById('floatingCloseBtn');
+  const topbar = document.getElementById('mobileTopbar');
   const isOpen = overlay.classList.contains('open');
-  const l1 = document.getElementById('menuLine1');
-  const l2 = document.getElementById('menuLine2');
-  const l3 = document.getElementById('menuLine3');
   if (isOpen) {
     overlay.classList.remove('open');
+    if (closeBtn) closeBtn.classList.remove('show');
+    if (topbar) topbar.style.display = 'flex';
     document.body.style.overflow = '';
-    if (l1) { l1.style.transform=''; l2.style.opacity='1'; l2.style.transform=''; l3.style.transform=''; }
   } else {
     overlay.classList.add('open');
+    if (closeBtn) closeBtn.classList.add('show');
+    if (topbar) topbar.style.display = 'none';
     document.body.style.overflow = 'hidden';
-    if (l1) { l1.style.transform='translateY(7px) rotate(45deg)'; l2.style.opacity='0'; l2.style.transform='scaleX(0)'; l3.style.transform='translateY(-7px) rotate(-45deg)'; }
   }
 }
 window.addEventListener('resize', function() {
