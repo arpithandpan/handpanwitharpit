@@ -243,8 +243,8 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 }
 
 .login-box {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(200,147,90,0.35);
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(200,147,90,0.55);
   border-radius: 12px;
   padding: 2.5rem; width: 340px; max-width: 90vw;
   text-align: center; position: relative; z-index: 1;
@@ -253,6 +253,49 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .login-title { font-family: var(--font-body); font-size: 1.6rem; font-weight: 400; color: #e8d5c0; margin-bottom: 0.5rem; }
 .login-sub { font-size: 0.95rem; color: rgba(200,147,90,0.65); margin-bottom: 2rem; }
 .login-error { color: #e8856a; font-size: 0.9rem; margin-top: 0.75rem; display: none; }
+
+/* ── PIN PAD ── */
+.pin-dots { display: flex; justify-content: center; gap: 12px; margin-bottom: 1.5rem; }
+.pin-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1.5px solid rgba(200,147,90,0.45);
+  background: transparent; transition: background 0.15s, border-color 0.15s;
+}
+.pin-dot.filled { background: #c8935a; border-color: #c8935a; }
+.pin-dot.error { background: #B43C28; border-color: #B43C28; }
+@keyframes pin-shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.pin-dots.shake { animation: pin-shake 0.35s ease; }
+.pin-numpad {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; width: 100%; margin-bottom: 0.75rem;
+}
+.pin-key {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(200,147,90,0.2);
+  border-radius: 8px; padding: 0.75rem 0;
+  font-size: 1.1rem; font-weight: 400;
+  color: #e8d5c0; cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pin-key:active { background: rgba(200,147,90,0.2); }
+.pin-key.key-del {
+  background: transparent; border: none;
+  color: rgba(200,147,90,0.55); font-size: 1rem;
+}
+.pin-key.key-del:active { color: rgba(200,147,90,0.9); }
+.pin-hint { font-size: 0.72rem; color: rgba(200,147,90,0.4); letter-spacing: 0.05em; margin-top: 0.25rem; }
+.pin-lockout {
+  display: none; font-size: 0.85rem;
+  color: #e8856a; margin-top: 0.5rem; line-height: 1.4;
+}
 
 /* Loading spinner */
 .loading { text-align: center; padding: 3rem; color: var(--text-light); }
@@ -586,6 +629,7 @@ body.dark-mode .notif-unread-dot { background: #c8935a; }
 body.dark-mode .btn-checkin { border-color: rgba(200,147,90,0.3); color: #9a7d63; }
 body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border-color: #8aaa6e; color: #8aaa6e; }
 body.dark-mode #archiveConfirmModal > div { background: #231c16; }
+body.dark-mode #customConfirmModal > div { background: #231c16; }
 /* ── DARK MODE: comprehensive button + UI fixes ── */
 body.dark-mode .btn-dash-primary { background: #c8935a; color: #1a1410; border: none; }
 body.dark-mode .btn-dash-primary:hover { background: #dba870; color: #1a1410; }
@@ -662,6 +706,7 @@ body.dark-mode #darkModeKnob { transform: translateX(24px); background: #fff; }
 body.dark-mode .dash-sidebar { background: #0e0b08; }
 body.dark-mode .dash-main { background: #1a1410; }
 body.dark-mode .login-screen { background: #0a0806; }
+body.dark-mode .login-box { background: rgba(255,255,255,0.05); border-color: rgba(200,147,90,0.4); }
 body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 
 
@@ -827,12 +872,31 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
       </div>
     </div>
     <div class="login-title">Arpit's Studio</div>
-    <div class="login-sub">The numbers behind the notes</div>
-    <div class="form-group">
-      <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" style="text-align:center;letter-spacing:0.15em;background:rgba(255,255,255,0.08);border:1px solid rgba(200,147,90,0.3);color:#e8d5c0;"/>
+    <div class="login-sub">Enter your 6-digit PIN</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+      <div class="pin-dot" id="pd4"></div>
+      <div class="pin-dot" id="pd5"></div>
     </div>
-    <button class="btn-dash btn-dash-primary" style="width:100%;justify-content:center;padding:1rem;font-size:0.95rem;" onclick="doLogin()">LET'S GO</button>
-    <div class="login-error" id="loginError">Incorrect password. Try again.</div>
+    <div class="pin-numpad">
+      <button class="pin-key" onclick="pinPress('1')">1</button>
+      <button class="pin-key" onclick="pinPress('2')">2</button>
+      <button class="pin-key" onclick="pinPress('3')">3</button>
+      <button class="pin-key" onclick="pinPress('4')">4</button>
+      <button class="pin-key" onclick="pinPress('5')">5</button>
+      <button class="pin-key" onclick="pinPress('6')">6</button>
+      <button class="pin-key" onclick="pinPress('7')">7</button>
+      <button class="pin-key" onclick="pinPress('8')">8</button>
+      <button class="pin-key" onclick="pinPress('9')">9</button>
+      <button class="pin-key key-del" disabled></button>
+      <button class="pin-key" onclick="pinPress('0')">0</button>
+      <button class="pin-key key-del" onclick="pinDelete()">⌫</button>
+    </div>
+    <div class="pin-hint" id="pinHint">Enters automatically on 6th digit</div>
+    <div class="pin-lockout" id="pinLockout"></div>
   </div>
 </div>
 
@@ -1451,17 +1515,82 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   </div>
 </div>
 
+<!-- ── CUSTOM CONFIRM MODAL ── -->
+<div id="customConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(61,43,31,0.5);z-index:700;align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:var(--cream);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+    <div style="padding:1.5rem 1.5rem 0;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(180,60,40,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B43C28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div id="customConfirmTitle" style="font-size:1rem;font-weight:600;color:var(--bark);">Are you sure?</div>
+      </div>
+      <p id="customConfirmDesc" style="font-size:0.9rem;color:var(--text-light);line-height:1.5;margin:0 0 1.25rem;">This action cannot be undone.</p>
+    </div>
+    <div style="display:flex;border-top:1px solid var(--clay-pale);">
+      <button onclick="customConfirmCancel()" style="flex:1;padding:0.9rem;background:transparent;border:none;border-right:1px solid var(--clay-pale);font-size:0.9rem;color:var(--text-light);cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Cancel</button>
+      <button id="customConfirmOkBtn" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:0.9rem;color:#B43C28;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Confirm</button>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <script>
 const SUPABASE_URL = 'https://sabdevsguuobgqjputtv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_xRwX_jpWmLtNjuQJRyQfGQ_defolODk';
-const DASHBOARD_PASSWORD = 'arpit2026';
+const DASHBOARD_PIN = '031990';
 
-// ── AUTH ──
+// ── PIN AUTH ──
+let pinValue = '';
+let pinAttempts = 0;
+const PIN_MAX_ATTEMPTS = 5;
+const PIN_LOCKOUT_SECONDS = 30;
+let pinLockoutTimer = null;
+
+function pinPress(digit) {
+  if (pinValue.length >= 6) return;
+  pinValue += digit;
+  updatePinDots();
+  if (pinValue.length === 6) {
+    setTimeout(doLogin, 120);
+  }
+}
+
+function pinDelete() {
+  if (!pinValue.length) return;
+  pinValue = pinValue.slice(0, -1);
+  updatePinDots();
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 6; i++) {
+    const dot = document.getElementById('pd' + i);
+    dot.classList.toggle('filled', i < pinValue.length);
+    dot.classList.remove('error');
+  }
+}
+
+function pinShakeError() {
+  const dots = document.getElementById('pinDots');
+  for (let i = 0; i < 6; i++) {
+    document.getElementById('pd' + i).classList.add('error');
+  }
+  dots.classList.add('shake');
+  setTimeout(() => {
+    dots.classList.remove('shake');
+    pinValue = '';
+    updatePinDots();
+  }, 400);
+}
+
+function setNumpadDisabled(disabled) {
+  document.querySelectorAll('.pin-key').forEach(k => k.disabled = disabled);
+}
+
 function doLogin() {
-  const pwd = document.getElementById('loginPassword').value;
-  if (pwd === DASHBOARD_PASSWORD) {
+  if (pinValue === DASHBOARD_PIN) {
+    pinAttempts = 0;
     sessionStorage.setItem('dash_auth', '1');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashRoot').style.display = 'flex';
@@ -1470,15 +1599,61 @@ function doLogin() {
     }
     loadAll();
   } else {
-    document.getElementById('loginError').style.display = 'block';
+    pinAttempts++;
+    pinShakeError();
+    const remaining = PIN_MAX_ATTEMPTS - pinAttempts;
+    if (pinAttempts >= PIN_MAX_ATTEMPTS) {
+      startLockout();
+    } else {
+      document.getElementById('pinHint').textContent = remaining + ' attempt' + (remaining === 1 ? '' : 's') + ' remaining';
+      document.getElementById('pinHint').style.color = '#e8856a';
+    }
   }
 }
-document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function startLockout() {
+  setNumpadDisabled(true);
+  document.getElementById('pinHint').style.display = 'none';
+  const lockoutEl = document.getElementById('pinLockout');
+  lockoutEl.style.display = 'block';
+  let seconds = PIN_LOCKOUT_SECONDS;
+  lockoutEl.textContent = 'Too many attempts. Try again in ' + seconds + 's';
+  pinLockoutTimer = setInterval(() => {
+    seconds--;
+    if (seconds <= 0) {
+      clearInterval(pinLockoutTimer);
+      pinAttempts = 0;
+      pinValue = '';
+      updatePinDots();
+      setNumpadDisabled(false);
+      lockoutEl.style.display = 'none';
+      document.getElementById('pinHint').style.display = 'block';
+      document.getElementById('pinHint').textContent = 'Enters automatically on 6th digit';
+      document.getElementById('pinHint').style.color = 'rgba(200,147,90,0.4)';
+    } else {
+      lockoutEl.textContent = 'Too many attempts. Try again in ' + seconds + 's';
+    }
+  }, 1000);
+}
 
 function logout() {
   sessionStorage.removeItem('dash_auth');
   location.reload();
 }
+
+// ── CUSTOM CONFIRM ──
+let _customConfirmResolve = null;
+function customConfirm(title, desc) {
+  return new Promise(resolve => {
+    _customConfirmResolve = resolve;
+    document.getElementById('customConfirmTitle').textContent = title;
+    document.getElementById('customConfirmDesc').textContent = desc;
+    document.getElementById('customConfirmOkBtn').onclick = () => { customConfirmClose(); resolve(true); };
+    document.getElementById('customConfirmModal').style.display = 'flex';
+  });
+}
+function customConfirmCancel() { customConfirmClose(); if (_customConfirmResolve) _customConfirmResolve(false); }
+function customConfirmClose() { document.getElementById('customConfirmModal').style.display = 'none'; }
 
 if (sessionStorage.getItem('dash_auth') === '1') {
   document.getElementById('loginScreen').style.display = 'none';
@@ -2101,7 +2276,8 @@ async function markAllRead() {
 }
 
 async function clearAllNotifications() {
-  if (!confirm('Clear all notifications? This cannot be undone.')) return;
+  const ok = await customConfirm('Clear all notifications?', 'This cannot be undone.');
+  if (!ok) return;
   try {
     await fetch(SUPABASE_URL + '/rest/v1/notifications?id=neq.0', {
       method: 'DELETE',
