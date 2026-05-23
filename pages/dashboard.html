@@ -1462,14 +1462,14 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <div class="dash-section-title">Notifications</div>
           <div class="dash-section-subtitle">All activity and alerts from your dashboard</div>
         </div>
-        <div id="notifActions" style="display:flex;gap:0.75rem;align-items:center;">
+        <div id="notifActions" style="display:none;gap:0.75rem;align-items:center;">
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="markAllRead()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Mark all read</button>
           <button class="btn-dash btn-dash-danger btn-dash-sm" onclick="clearAllNotifications()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Clear all</button>
         </div>
       </div>
       <div class="dash-table-wrap" style="border-radius:8px;">
         <div id="notificationsContainer">
-          <div class="notif-empty"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>
+          <div class="notif-empty" style="padding:2.5rem 1rem;text-align:center;"><div style="font-size:2rem;margin-bottom:0.75rem;">🔔</div><div style="color:var(--bark);font-weight:500;margin-bottom:0.4rem;">No notifications yet</div><div style="font-size:0.85rem;color:var(--text-light);">Activity and alerts from your dashboard will appear here.</div></div>
         </div>
       </div>
     </section>
@@ -3307,23 +3307,28 @@ document.addEventListener('touchmove', function(e) {
 
 // ── NOTIFICATIONS ──
 async function loadNotifications() {
-  document.getElementById('notificationsContainer').innerHTML = '<div class="notif-empty"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>';
-  if (document.getElementById('notifActions')) document.getElementById('notifActions').style.display = 'none';
+  const container = document.getElementById('notificationsContainer');
+  const actions = document.getElementById('notifActions');
+  const emptyState = '<div class="notif-empty" style="padding:2.5rem 1rem;text-align:center;"><div style="font-size:2rem;margin-bottom:0.75rem;">🔔</div><div style="color:var(--bark);font-weight:500;margin-bottom:0.4rem;">No notifications yet</div><div style="font-size:0.85rem;color:var(--text-light);">Activity and alerts from your dashboard will appear here.</div></div>';
+  if (actions) actions.style.display = 'none';
+  container.innerHTML = '<div class="notif-empty"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>';
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
+    const timeout = setTimeout(() => controller.abort(), 6000);
     const res = await fetch(SUPABASE_URL + '/rest/v1/notifications?select=*&order=created_at.desc&limit=50', {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
       signal: controller.signal
     });
     clearTimeout(timeout);
-    if (!res.ok) throw new Error('Failed');
+    if (!res.ok) { container.innerHTML = emptyState; return; }
     const data = await res.json();
-    renderNotifications(data || []);
-    updateNotifBadge(data || []);
+    // Handle Supabase schema error (returns object with 'code' instead of array)
+    if (!Array.isArray(data)) { container.innerHTML = emptyState; return; }
+    if (!data.length) { container.innerHTML = emptyState; return; }
+    renderNotifications(data);
+    updateNotifBadge(data);
   } catch(e) {
-    document.getElementById('notificationsContainer').innerHTML = '<div class="notif-empty" style="padding:2.5rem 1rem;text-align:center;"><div style="font-size:2rem;margin-bottom:0.75rem;">🔔</div><div style="color:var(--bark);font-weight:500;margin-bottom:0.4rem;">No notifications yet</div><div style="font-size:0.85rem;color:var(--text-light);">Activity and alerts from your dashboard will appear here.</div></div>';
-    if (document.getElementById('notifActions')) document.getElementById('notifActions').style.display = 'none';
+    container.innerHTML = emptyState;
   }
 }
 
