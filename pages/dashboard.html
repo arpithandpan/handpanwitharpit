@@ -410,8 +410,9 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   font-size: 0.9rem; font-weight: 500; z-index: 99999;
   opacity: 0;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
-  pointer-events: none; white-space: nowrap;
-  max-width: 380px;
+  pointer-events: none;
+  max-width: 380px; text-align: center;
+  white-space: normal; word-break: break-word;
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 .toast.success { background: #2a3d1e; color: #a8cc7a; border-color: rgba(138,170,110,0.35); }
@@ -890,13 +891,14 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 }
 .btn-archive:hover { border-color: var(--clay); color: var(--clay); background: rgba(200,147,90,0.06); }
 .btn-restore {
-  background: none; border: 1px solid rgba(122,140,106,0.4);
+  background: transparent; border: 1px solid rgba(122,170,94,0.5);
   color: var(--moss); border-radius: 4px; cursor: pointer;
-  padding: 0.3rem 0.65rem; font-size: 0.8rem;
+  padding: 0 0.85rem; font-size: 0.78rem;
   font-family: var(--font-body); transition: all 0.15s;
-  min-height: 32px;
+  min-height: 48px; display: inline-flex; align-items: center; gap: 6px;
+  letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
 }
-.btn-restore:hover { background: rgba(122,140,106,0.1); }
+.btn-restore:hover { background: rgba(122,170,94,0.1); border-color: var(--moss); }
 .btn-checkin {
   background: none; border: 1.5px solid var(--clay-pale);
   border-radius: 20px; cursor: pointer; padding: 0.25rem 0.75rem;
@@ -1119,6 +1121,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       Notifications
     </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('bin',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      Bin <span class="notif-badge" id="mobileBinBadge" style="position:relative;top:0;right:0;margin-left:6px;"></span>
+    </a>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(200,147,90,0.1);" onclick="showSection('settings',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
@@ -1157,6 +1163,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <li><a href="#" onclick="showSection('leads',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Leads</a></li>
       <li><a href="#" onclick="showSection('insights',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Insights</a></li>
       <li><a href="#" onclick="showSection('notifications',this)"><span class="icon"><span class="notif-bell-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-badge" id="sidebarNotifBadge"></span></span></span> Notifications</a></li>
+      <li><a href="#" onclick="showSection('bin',this)"><span class="icon"><span class="notif-bell-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg><span class="notif-badge" id="sidebarBinBadge"></span></span></span> Bin</a></li>
       <li><a href="#" onclick="showSection('settings',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Settings</a></li>
     </ul>
     <div class="dash-nav-divider"></div>
@@ -1362,6 +1369,25 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <div id="notificationsContainer">
           <div class="notif-empty"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>
         </div>
+      </div>
+    </section>
+
+    <!-- ── BIN ── -->
+    <section class="dash-section" id="section-bin">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Bin</div>
+          <div class="dash-section-subtitle">Items moved to bin. Restore or delete permanently.</div>
+        </div>
+        <div style="display:flex;gap:2rem;align-items:center;">
+          <button class="btn-dash btn-dash-sync" onclick="loadBin()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-7.68"/></svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+      <div id="binContainer">
+        <div class="notif-empty">🗑 Bin is empty.<br><small>Items you move to bin will appear here.</small></div>
       </div>
     </section>
 
@@ -1787,17 +1813,17 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     <div style="padding:1.5rem 1.5rem 0;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
         <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </div>
-        <div id="archiveConfirmTitle" style="font-size:1.15rem;font-weight:600;color:var(--bark);">Hide this record?</div>
+        <div id="archiveConfirmTitle" style="font-size:1.15rem;font-weight:600;color:var(--bark);">Move to Bin?</div>
       </div>
       <p style="font-size:1rem;color:var(--text-light);line-height:1.6;margin:0 0 1.25rem;">
-        <span id="archiveConfirmDesc">This record will be hidden from your list. You can restore it anytime by turning on "Show archived."</span>
+        <span id="archiveConfirmDesc">This record will be moved to Bin. You can restore it or delete it permanently from there.</span>
       </p>
     </div>
     <div style="display:flex;border-top:1px solid var(--clay-pale);">
       <button onclick="closeArchiveConfirm()" style="flex:1;padding:0.9rem;background:transparent;border:none;border-right:1px solid var(--clay-pale);font-size:1rem;color:var(--text-light);cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Cancel</button>
-      <button id="archiveConfirmBtn" onclick="confirmArchive()" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:1rem;color:#c8935a;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Hide it</button>
+      <button id="archiveConfirmBtn" onclick="confirmArchive()" style="flex:1;padding:0.9rem;background:transparent;border:none;font-size:1rem;color:#c8935a;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.05em;">Move to Bin</button>
     </div>
   </div>
 </div>
@@ -1821,6 +1847,27 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
   </div>
 </div>
 
+</div>
+
+<!-- ── PERMANENT DELETE CONFIRM MODAL ── -->
+<div id="deleteForeverModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:30000;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(2px);">
+  <div style="background:#3d2c1e;border:1px solid rgba(200,147,90,0.45);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="padding:1.5rem 1.5rem 1rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(180,60,40,0.18);border:1.5px solid rgba(180,60,40,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e87a6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </div>
+        <div id="deleteForeverTitle" style="font-size:1.15rem;font-weight:600;color:var(--bark);">Delete permanently?</div>
+      </div>
+      <p style="font-size:1rem;color:var(--text-light);line-height:1.6;margin:0 0 1.25rem;">
+        <span id="deleteForeverDesc">This will remove this record from your system forever. This cannot be undone.</span>
+      </p>
+    </div>
+    <div style="display:flex;border-top:1px solid var(--clay-pale);">
+      <button onclick="closeDeleteForever()" style="flex:1;padding:1rem;background:transparent;border:none;border-right:1px solid var(--clay-pale);font-size:1rem;color:var(--text-light);cursor:pointer;font-family:var(--font-body);">Cancel</button>
+      <button id="deleteForeverBtn" onclick="confirmDeleteForever()" style="flex:1;padding:1rem;background:transparent;border:none;font-size:1rem;color:#e87a6a;font-weight:600;cursor:pointer;font-family:var(--font-body);">Delete Forever</button>
+    </div>
+  </div>
 </div>
 
 <!-- ── LOADING OVERLAY ── -->
@@ -1916,6 +1963,7 @@ function doLogin() {
       document.getElementById('mobileTopbar').style.display = 'flex';
     }
     loadAll();
+  loadBinCount();
   } else {
     pinAttempts++;
     pinShakeError();
@@ -2289,6 +2337,7 @@ function loadSection(name) {
   else if (name === 'payments') loadPayments();
   else if (name === 'leads') loadLeads();
   else if (name === 'insights') loadInsights();
+  else if (name === 'bin') { loadBin(); }
   else if (name === 'settings') { loadSettings(); checkAllConnectors(true); }
 }
 
@@ -2335,13 +2384,13 @@ async function loadWorkshops() {
 const res = await api('/workshops?order=date:desc' + (showArchivedWorkshops ? '&include_archived=true' : ''));
     const ws = Array.isArray(res) ? res : (res.data || []);
     document.getElementById('workshopCount').textContent = ws.length + ' workshops total';
-    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.5rem;align-items:center;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="white-space:nowrap;">✓ Check-in</button><button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('workshopsTable').innerHTML = ws.map(w => `<tr class="${w.archived?'archived-row':''}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.5rem;align-items:center;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="white-space:nowrap;">✓ Check-in</button><button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">🎵</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No workshops yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Add your first workshop to start tracking participants and revenue.</div>
     </td></tr>`;
     const wsCardsEl = document.getElementById('workshopsCards');
-    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card ${w.archived?'archived-row':''}"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">${fmtDate(w.date)}</div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div><div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="">✓ Check-in</button><button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
+    if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `<div class="m-card ${w.archived?'archived-row':''}"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">${fmtDate(w.date)}</div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div><div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshops','${w.id}')">↩ Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="">✓ Check-in</button><button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading workshops', 'error'); } finally { hideLoader(); }
 }
 async function loadParticipants() {
@@ -2349,13 +2398,13 @@ async function loadParticipants() {
     const showArchivedParticipants = document.getElementById('toggle-archived-participants')?.checked;
 const res = await api('/participants?order=created_at:desc' + (showArchivedParticipants ? '&include_archived=true' : ''));
     const parts = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},this)">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('participantsTable').innerHTML = parts.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},this)">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</td></tr>`).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">👥</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No participants yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Participants will appear here once added or when a Razorpay payment is received.</div>
     </td></tr>`;
     const parCards = document.getElementById('participantsCards');
-    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;"><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${p.full_name||p.id}')">${p.checked_in?'✓ Checked in':'Check in'}</button>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
+    if (parCards) parCards.innerHTML = parts.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;"><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${p.full_name||p.id}')">${p.checked_in?'✓ Checked in':'Check in'}</button>${p.archived?`<button class="btn-restore" onclick="restoreRecord('participants','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${p.full_name||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading participants', 'error'); } finally { hideLoader(); }
 }
 
@@ -2368,13 +2417,13 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
     document.getElementById('classActiveStudents').textContent = stus.filter(s=>s.status==='Active').length;
     document.getElementById('classTotalRevenue').textContent = fmt(stus.reduce((s,st)=>s+Number(st.total_paid||0),0));
     document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">🎓</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No students yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Add your first student to start tracking classes and fee payments.</div>
     </td></tr>`;
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading students', 'error'); } finally { hideLoader(); }
 }
 async function loadFeePayments() {
@@ -2382,7 +2431,7 @@ async function loadFeePayments() {
     const showArchivedFee = document.getElementById('toggle-archived-fee')?.checked;
 const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ? '&include_archived=true' : ''));
     const fps = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">📋</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No fee payments yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Fee payments will appear here once you add students and log their monthly fees.</div>
@@ -2403,13 +2452,13 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
     document.getElementById('payTotalIncome').textContent = fmt(income);
     document.getElementById('payTotalExpenses').textContent = fmt(expense);
     document.getElementById('payNetProfit').textContent = fmt(income-expense);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">💳</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No payments yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Razorpay payments sync automatically. You can also add manual payments.</div>
     </td></tr>`;
     const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
+    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading payments', 'error'); } finally { hideLoader(); }
 }
 
@@ -2419,13 +2468,13 @@ async function loadLeads() {
     const showArchivedLeads = document.getElementById('toggle-archived-leads')?.checked;
 const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&include_archived=true' : ''));
     const leads = Array.isArray(res) ? res : (res.data || []);
-    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')" title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">💬</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No leads yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Track potential students and handpan buyers who attended your workshops.</div>
     </td></tr>`;
     const leadsCards = document.getElementById('leadsCards');
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Hide</button>`}</div></div>`).join('');
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')">↩ Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Bin</button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
 
@@ -2453,14 +2502,14 @@ async function loadInsights() {
 
 // ── SYNC ──
 async function syncAll() {
-  showToast('Refreshing payments data...', '');
+  showLoader('Refreshing data...');
   try {
-    await loadPayments();
-    showToast('✓ Payments refreshed!', 'success');
-  }
-  catch(e) {
-    console.error('Refresh error:', e);
+    await loadSection('overview');
+    showToast('✓ Data refreshed', 'success');
+  } catch(e) {
     showToast('Refresh failed — check your connection', 'error');
+  } finally {
+    hideLoader();
   }
 }
 
@@ -2663,9 +2712,9 @@ async function confirmDelete() {
 let _archivePending = null;
 function archiveRecord(entity, id, name) {
   _archivePending = { entity, id, name };
-  document.getElementById('archiveConfirmTitle').textContent = 'Hide "' + name + '"?';
-  document.getElementById('archiveConfirmDesc').textContent = 'This record will be hidden from your list. You can restore it anytime by turning on "Show archived."';
-  document.getElementById('archiveConfirmBtn').textContent = 'Hide it';
+  document.getElementById('archiveConfirmTitle').textContent = 'Move "' + name + '" to Bin?';
+  document.getElementById('archiveConfirmDesc').textContent = 'This record will be moved to Bin. You can restore it or delete it permanently from there.';
+  document.getElementById('archiveConfirmBtn').textContent = 'Move to Bin';
   document.getElementById('archiveConfirmBtn').onclick = confirmArchive;
   document.getElementById('archiveConfirmModal').style.display = 'flex';
   lockScroll();
@@ -2686,7 +2735,7 @@ async function confirmArchive() {
       body: JSON.stringify({ archived: true })
     });
     if (!res.ok) throw new Error('Failed');
-    showToast('✓ ' + name + ' hidden — toggle "Show archived" to restore', 'success');
+    showToast('✓ Moved to Bin', 'success'); updateBinBadge();
     await reloadEntity(entity);
   } catch(e) { showToast('Failed to hide record — try again', 'error'); }
 }
@@ -2729,6 +2778,139 @@ async function wakeUpServer() {
     btn.disabled = false;
     showToast('Check your internet connection', 'error');
   }
+}
+
+// ── BIN ──
+const BIN_TABLES = [
+  { key: 'workshops', label: 'Workshop', nameField: 'venue' },
+  { key: 'participants', label: 'Participant', nameField: 'full_name' },
+  { key: 'students', label: 'Student', nameField: 'full_name' },
+  { key: 'payments', label: 'Payment', nameField: 'payer_name' },
+  { key: 'leads', label: 'Lead', nameField: 'full_name' },
+  { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' }
+];
+
+async function loadBin() {
+  const container = document.getElementById('binContainer');
+  if (!container) return;
+  container.innerHTML = '<div class="notif-empty"><div class="spinner" style="margin-bottom:1rem;"></div>Loading bin...</div>';
+  try {
+    let allItems = [];
+    for (const t of BIN_TABLES) {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/' + t.key + '?select=*&archived=eq.true&order=created_at.desc', {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      });
+      if (!res.ok) continue;
+      const rows = await res.json();
+      rows.forEach(r => allItems.push({ ...r, _table: t.key, _label: t.label, _name: r[t.nameField] || r.id || '—' }));
+    }
+    updateBinBadge(allItems.length);
+    if (!allItems.length) {
+      container.innerHTML = '<div class="notif-empty">🗑 Bin is empty.<br><small>Items you move to bin will appear here.</small></div>';
+      return;
+    }
+    const groups = {};
+    allItems.forEach(item => {
+      if (!groups[item._label]) groups[item._label] = [];
+      groups[item._label].push(item);
+    });
+    container.innerHTML = Object.entries(groups).map(([label, items]) => `
+      <div style="margin-bottom:2rem;">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem;">${label}s (${items.length})</div>
+        <div class="dash-table-wrap">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead><tr>
+              <th style="text-align:left;padding:0.75rem 1rem;font-size:0.82rem;color:var(--text-light);font-weight:500;letter-spacing:0.1em;text-transform:uppercase;">Name</th>
+              <th style="text-align:left;padding:0.75rem 1rem;font-size:0.82rem;color:var(--text-light);font-weight:500;letter-spacing:0.1em;text-transform:uppercase;">ID</th>
+              <th style="text-align:right;padding:0.75rem 1rem;font-size:0.82rem;color:var(--text-light);font-weight:500;letter-spacing:0.1em;text-transform:uppercase;">Actions</th>
+            </tr></thead>
+            <tbody>${items.map(item => `
+              <tr style="border-top:1px solid var(--clay-pale);">
+                <td style="padding:0.85rem 1rem;font-weight:500;color:var(--bark);">${item._name}</td>
+                <td style="padding:0.85rem 1rem;color:var(--text-light);font-size:0.9rem;">${item.id||'—'}</td>
+                <td style="padding:0.85rem 1rem;text-align:right;">
+                  <div style="display:inline-flex;gap:0.75rem;flex-wrap:wrap;">
+                    <button class="btn-restore" onclick="restoreBinItem('${item._table}','${item.id}','${(item._name||'').replace(/'/g,'\\\'')}')" style="min-height:48px;display:inline-flex;align-items:center;gap:6px;padding:0 1rem;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                      Restore
+                    </button>
+                    <button class="btn-dash btn-dash-danger btn-dash-sm" onclick="promptDeleteForever('${item._table}','${item.id}','${(item._name||'').replace(/'/g,'\\\'')}')" style="min-height:48px;display:inline-flex;align-items:center;gap:6px;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                      Delete Forever
+                    </button>
+                  </div>
+                </td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    container.innerHTML = '<div class="notif-empty">Could not load bin. Check your connection.</div>';
+  }
+}
+
+async function restoreBinItem(table, id, name) {
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ archived: false })
+    });
+    showToast('✓ ' + name + ' restored', 'success');
+    loadBin();
+  } catch(e) { showToast('Failed to restore', 'error'); }
+}
+
+let _deleteForeverPending = null;
+function promptDeleteForever(table, id, name) {
+  _deleteForeverPending = { table, id, name };
+  document.getElementById('deleteForeverTitle').textContent = 'Delete "' + name + '" forever?';
+  document.getElementById('deleteForeverDesc').textContent = 'This will permanently remove this record from your system. This cannot be undone.';
+  document.getElementById('deleteForeverModal').style.display = 'flex';
+  lockScroll();
+}
+function closeDeleteForever() {
+  document.getElementById('deleteForeverModal').style.display = 'none';
+  unlockScroll();
+  _deleteForeverPending = null;
+}
+async function confirmDeleteForever() {
+  if (!_deleteForeverPending) return;
+  const { table, id, name } = _deleteForeverPending;
+  closeDeleteForever();
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    showToast('✓ ' + name + ' deleted permanently', 'success');
+    loadBin();
+  } catch(e) { showToast('Failed to delete permanently', 'error'); }
+}
+
+function updateBinBadge(count) {
+  ['sidebarBinBadge','mobileBinBadge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (count > 0) { el.textContent = count > 99 ? '99+' : count; el.classList.add('show'); }
+    else { el.classList.remove('show'); }
+  });
+}
+
+async function loadBinCount() {
+  try {
+    let total = 0;
+    for (const t of BIN_TABLES) {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/' + t.key + '?select=id&archived=eq.true', {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Prefer': 'count=exact', 'Range': '0-0' }
+      });
+      const h = res.headers.get('content-range');
+      if (h) total += parseInt(h.split('/')[1]) || 0;
+    }
+    updateBinBadge(total);
+  } catch(e) {}
 }
 
 // ── CONNECTOR HEALTH ──
