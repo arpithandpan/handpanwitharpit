@@ -20,6 +20,11 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 /* ── GLOBAL OVERFLOW FIX ── */
 html, body { overflow-x: hidden !important; max-width: 100vw; }
 
+/* ── HIDE WORKSHOP MOBILE CARDS ON DESKTOP ── */
+@media (min-width: 901px) {
+  #workshopsCards, #participantsCards { display: none !important; }
+}
+
 /* ── DASHBOARD LAYOUT ── */
 .dash-root { display: flex; min-height: 100vh; padding-top: 0; }
 
@@ -1031,17 +1036,32 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 
 <!-- ── LOGIN SCREEN ── -->
 <div class="login-screen" id="loginScreen">
-  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice" fill="none">
-    <!-- Top waves -->
-    <path d="M0 0 C150 0 300 80 450 60 C550 48 600 20 600 0 L600 0 L0 0Z" fill="rgba(200,147,90,0.13)"/>
-    <path d="M0 0 C100 30 250 100 400 80 C500 65 580 30 600 0 L600 0 L0 0Z" fill="rgba(200,147,90,0.08)"/>
-    <path d="M0 0 C200 0 350 60 500 40 C560 32 600 10 600 0 L0 0Z" fill="rgba(160,100,40,0.07)"/>
-    <ellipse cx="300" cy="-60" rx="320" ry="120" fill="rgba(180,120,60,0.1)"/>
-    <!-- Bottom waves -->
-    <path d="M0 900 C150 900 300 820 450 840 C550 852 600 880 600 900 L0 900Z" fill="rgba(200,147,90,0.13)"/>
-    <path d="M0 900 C100 870 250 800 400 820 C500 835 580 870 600 900 L0 900Z" fill="rgba(200,147,90,0.08)"/>
-    <path d="M0 900 C200 900 350 840 500 860 C560 868 600 890 600 900 L0 900Z" fill="rgba(160,100,40,0.07)"/>
-    <ellipse cx="300" cy="960" rx="320" ry="120" fill="rgba(180,120,60,0.1)"/>
+  <svg id="loginRippleSvg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:hidden;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" fill="none">
+    <defs>
+      <radialGradient id="orbA1" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#c8935a" stop-opacity="0.38"/>
+        <stop offset="100%" stop-color="#c8935a" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="orbA2" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#8b5e3c" stop-opacity="0.32"/>
+        <stop offset="100%" stop-color="#8b5e3c" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="orbA3" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#e8d5c0" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#e8d5c0" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <style>
+      @keyframes floatOrb1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(4px,-6px)} }
+      @keyframes floatOrb2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-4px,5px)} }
+      @keyframes floatOrb3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(3px,4px)} }
+      .orb1{animation:floatOrb1 9s ease-in-out infinite; transform-origin:15% 20%}
+      .orb2{animation:floatOrb2 12s ease-in-out infinite; transform-origin:80% 75%}
+      .orb3{animation:floatOrb3 7s ease-in-out infinite; transform-origin:78% 12%}
+    </style>
+    <ellipse class="orb1" cx="15" cy="20" rx="38" ry="38" fill="url(#orbA1)"/>
+    <ellipse class="orb2" cx="82" cy="78" rx="42" ry="42" fill="url(#orbA2)"/>
+    <ellipse class="orb3" cx="78" cy="12" rx="24" ry="24" fill="url(#orbA3)"/>
   </svg>
   <div class="login-box">
     <div class="login-logo">
