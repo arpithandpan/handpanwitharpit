@@ -20,10 +20,13 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 /* ── GLOBAL OVERFLOW FIX ── */
 html, body { overflow-x: hidden !important; max-width: 100vw; }
 
-/* ── HIDE WORKSHOP MOBILE CARDS ON DESKTOP ── */
+/* ── HIDE MOBILE CARDS ON DESKTOP ── */
 @media (min-width: 901px) {
-  #workshopsCards, #participantsCards { display: none !important; }
+  #workshopsCards, #participantsCards, #studentsCards, #feePaymentsCards { display: none !important; }
 }
+
+/* ── VIEWER ROLE: admin-only elements hidden by JS, shown by default ── */
+.admin-only { display: inline-flex; }
 
 /* ── DASHBOARD LAYOUT ── */
 .dash-root { display: flex; min-height: 100vh; padding-top: 0; }
@@ -957,10 +960,10 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 }
 .checkin-screen.open { display: flex; }
 .checkin-header {
-  background: #3d2b1f; padding: 0.85rem 1.25rem;
-  display: flex; flex-direction: column; gap: 0.5rem;
+  background: #3d2b1f; padding: 0.75rem 1.25rem;
+  display: flex; flex-direction: column; gap: 0.4rem;
   flex-shrink: 0;
-  padding-top: max(0.85rem, env(safe-area-inset-top));
+  padding-top: max(0.75rem, env(safe-area-inset-top));
 }
 .checkin-header-row2 {
   display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;
@@ -1194,15 +1197,27 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     </div>
     <ul class="dash-nav">
       <li><a href="#" class="active" onclick="showSection('overview',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span> Overview</a></li>
+    </ul>
+    <div class="dash-nav-divider"></div>
+    <div class="dash-sidebar-title">Workshops</div>
+    <ul class="dash-nav">
       <li><a href="#" onclick="showSection('workshops',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span> Workshops</a></li>
       <li><a href="#" onclick="showSection('participants',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Participants</a></li>
+    </ul>
+    <div class="dash-nav-divider"></div>
+    <div class="dash-sidebar-title">Classes</div>
+    <ul class="dash-nav">
       <li><a href="#" onclick="showSection('classes',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Classes</a></li>
+      <li><a href="#" onclick="showSection('fee-payments',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span> Fee Payments</a></li>
+    </ul>
+    <div class="dash-nav-divider"></div>
+    <ul class="dash-nav">
       <li><a href="#" onclick="showSection('payments',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span> Payments</a></li>
       <li><a href="#" onclick="showSection('leads',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Leads</a></li>
       <li><a href="#" onclick="showSection('insights',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Insights</a></li>
       <li><a href="#" onclick="showSection('notifications',this)"><span class="icon"><span class="notif-bell-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-badge" id="sidebarNotifBadge"></span></span></span> Notifications</a></li>
       <li><a href="#" onclick="showSection('bin',this)"><span class="icon"><span class="notif-bell-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg><span class="notif-badge" id="sidebarBinBadge"></span></span></span> Bin</a></li>
-      <li><a href="#" onclick="showSection('settings',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Settings</a></li>
+      <li class="admin-only"><a href="#" onclick="showSection('settings',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Settings</a></li>
     </ul>
     <div class="dash-nav-divider"></div>
     <ul class="dash-nav">
@@ -1210,6 +1225,8 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     </ul>
     <div class="dash-nav-divider"></div>
     <div style="padding:0 1.5rem 1.5rem;">
+      <div id="sidebarRoleBadge" style="display:inline-block;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:20px;margin-bottom:0.75rem;background:rgba(193,127,82,0.15);color:var(--clay);border:1px solid rgba(193,127,82,0.3);">Admin</div>
+      <br/>
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
     </div>
   </aside>
@@ -1262,7 +1279,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <div class="dash-section-subtitle" id="workshopCount">Loading...</div>
         </div>
         <div style="display:flex;align-items:center;gap:2rem;">
-          <button class="btn-dash btn-dash-primary" onclick="openModal('addWorkshop')">
+          <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addWorkshop')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add Workshop
           </button>
@@ -1283,7 +1300,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <div class="dash-section-subtitle" id="participantCount">Loading...</div>
         </div>
         <div style="display:flex;align-items:center;gap:2rem;">
-          <button class="btn-dash btn-dash-primary" onclick="openModal('addParticipant')">
+          <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addParticipant')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add Participant
           </button>
@@ -1301,10 +1318,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <div class="dash-section-header">
         <div>
           <div class="dash-section-title">Classes</div>
-          <div class="dash-section-subtitle">Online students and fee tracking</div>
+          <div class="dash-section-subtitle">Online students</div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;">
-          <button class="btn-dash btn-dash-primary" onclick="openModal('addStudent')">+ Add Student</button>
+          <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addStudent')">+ Add Student</button>
         </div>
       </div>
       <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
@@ -1312,17 +1329,26 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <div class="stat-card"><div class="stat-label">Total Classes Revenue</div><div class="stat-value green" id="classTotalRevenue">—</div></div>
         <div class="stat-card"><div class="stat-label">Students on Break</div><div class="stat-value" id="classOnBreak">—</div></div>
       </div>
-      <div class="dash-table-wrap" style="margin-bottom:2rem;">
+      <div class="dash-table-wrap">
         <div class="dash-table-header"><span class="dash-table-header-title">Students</span></div>
         <table class="desktop-table"><thead><tr><th>S #</th><th>Name</th><th>Batch</th><th>Phone</th><th>Joined</th><th>Status</th><th>Classes</th><th>Total Paid</th><th>Notes</th></tr></thead>
         <tbody id="studentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards" id="studentsCards"></div>
       </div>
-      <div class="dash-table-wrap">
-        <div class="dash-table-header">
-          <span class="dash-table-header-title">Fee Payments</span>
-          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openModal('addFeePayment')">+ Add Fee Payment</button>
+    </section>
+
+    <!-- ── FEE PAYMENTS ── -->
+    <section class="dash-section" id="section-fee-payments">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Fee Payments</div>
+          <div class="dash-section-subtitle">Monthly fee tracking</div>
         </div>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addFeePayment')">+ Add Fee Payment</button>
+        </div>
+      </div>
+      <div class="dash-table-wrap">
         <table class="desktop-table"><thead><tr><th>FP #</th><th>Student</th><th>Batch</th><th>Month</th><th>Classes</th><th>Amount</th><th>Paid</th><th>Date</th><th>Action</th></tr></thead>
         <tbody id="feePaymentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards" id="feePaymentsCards"></div>
@@ -1338,7 +1364,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         </div>
         <div style="display:flex;gap:0.75rem;">
           <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Refresh Data</button>
-          <button class="btn-dash btn-dash-primary" onclick="openModal('addPayment')">+ Add Payment</button>
+          <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addPayment')">+ Add Payment</button>
         </div>
       </div>
       <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
@@ -1361,7 +1387,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <div class="dash-section-subtitle">People interested in buying a handpan</div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;">
-          <button class="btn-dash btn-dash-primary" onclick="openModal('addLead')">+ Add Lead</button>
+          <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addLead')">+ Add Lead</button>
         </div>
       </div>
       <div class="dash-table-wrap">
@@ -1440,7 +1466,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 
     <!-- ── SETTINGS ── -->
     <section class="dash-section" id="section-settings">
-      <div class="dash-section-header">
+      <div class="dash-section-header" style="border-bottom:none;">
         <div>
           <div class="dash-section-title">Settings</div>
           <div class="dash-section-subtitle">Manage your dashboard preferences</div>
@@ -1952,6 +1978,21 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 const SUPABASE_URL = 'https://sabdevsguuobgqjputtv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_xRwX_jpWmLtNjuQJRyQfGQ_defolODk';
 const DASHBOARD_PIN = '031990';
+const VIEWER_PIN = '123456';
+let currentRole = 'admin';
+
+function isAdmin() { return currentRole === 'admin'; }
+
+function applyRole() {
+  const badge = document.getElementById('sidebarRoleBadge');
+  if (isAdmin()) {
+    document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+    if (badge) { badge.textContent = 'Admin'; badge.style.background = 'rgba(193,127,82,0.15)'; badge.style.color = 'var(--clay)'; badge.style.borderColor = 'rgba(193,127,82,0.3)'; }
+  } else {
+    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+    if (badge) { badge.textContent = 'Viewer'; badge.style.background = 'rgba(122,140,106,0.15)'; badge.style.color = 'var(--moss)'; badge.style.borderColor = 'rgba(122,140,106,0.3)'; }
+  }
+}
 
 // ── PIN AUTH ──
 let pinValue = '';
@@ -1998,16 +2039,25 @@ function setNumpadDisabled(disabled) {
 
 function doLogin() {
   if (pinValue === DASHBOARD_PIN) {
+    currentRole = 'admin';
     sessionStorage.setItem('dash_auth', '1');
+    sessionStorage.setItem('dash_role', 'admin');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashRoot').style.display = 'flex';
     loadAll();
     loadBinCount();
+    applyRole();
+  } else if (pinValue === VIEWER_PIN) {
+    currentRole = 'viewer';
+    sessionStorage.setItem('dash_auth', '1');
+    sessionStorage.setItem('dash_role', 'viewer');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashRoot').style.display = 'flex';
+    loadAll();
+    loadBinCount();
+    applyRole();
   } else {
-    pinValue = '';
-    updatePinDots();
-    const box = document.getElementById('loginBox');
-    if (box) { box.classList.add('shake'); setTimeout(() => box.classList.remove('shake'), 600); }
+    pinShakeError();
   }
 }
 
@@ -2400,7 +2450,7 @@ async function loadWorkshops() {
     const TRASH_BTN = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
 
     const tbl = document.getElementById('workshopsTable');
-    if (tbl) tbl.innerHTML = ws.map(w => `<tr><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;"><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="white-space:nowrap;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Check-in</button><button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">${TRASH_BTN}</button></td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No workshops yet</td></tr>`;
+    if (tbl) tbl.innerHTML = ws.map(w => `<tr><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.5rem;align-items:center;flex-wrap:nowrap;"><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')" style="white-space:nowrap;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Check-in</button><button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">${TRASH_BTN}</button></td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No workshops yet</td></tr>`;
 
     const wsCardsEl = document.getElementById('workshopsCards');
     if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `
@@ -3153,30 +3203,12 @@ document.addEventListener('keydown', function(e) {
   if (e.key >= '0' && e.key <= '9') { pinPress(e.key); }
   else if (e.key === 'Backspace') { pinDelete(); }
 });
-(function() {
-  const svg = document.getElementById('loginRippleSvg');
-  const screen = document.getElementById('loginScreen');
-  if (!svg || !screen) return;
-  function spawnRipple() {
-    const W = screen.offsetWidth, H = screen.offsetHeight;
-    const x = Math.random()*W, y = Math.random()*H;
-    const dur = 5+Math.random()*4, waves = 1+Math.floor(Math.random()*3);
-    for (let i=0;i<waves;i++) {
-      const delay = i*(dur/waves);
-      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
-      c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',5);
-      c.setAttribute('fill','none'); c.setAttribute('stroke','rgba(200,147,90,0.55)');
-      c.setAttribute('stroke-width',(0.6+Math.random()*0.8).toFixed(1));
-      c.style.animation = 'ripple-expand '+dur+'s '+delay+'s ease-out forwards';
-      svg.appendChild(c);
-      setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},(dur+delay)*1000+200);
-    }
-  }
-  function scheduleNext(){var gap=1500+Math.random()*2000;setTimeout(function(){spawnRipple();scheduleNext();},gap);}
-  spawnRipple();spawnRipple();spawnRipple();scheduleNext();
-})();
 
-if (sessionStorage.getItem('dash_auth') === '1') { loadAll(); }
+if (sessionStorage.getItem('dash_auth') === '1') {
+  currentRole = sessionStorage.getItem('dash_role') || 'admin';
+  loadAll();
+  applyRole();
+}
 
 // ── PREVENT FORM PAGE DRAG ──
 document.addEventListener('touchmove', function(e) {
