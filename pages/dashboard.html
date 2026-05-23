@@ -273,6 +273,7 @@ select.form-input {
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 40px;
+  cursor: pointer;
 }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
@@ -425,8 +426,8 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 
 /* Overview quick stats row */
 .overview-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem; margin-top: 2.5rem; }
-.overview-card { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(61,43,31,0.05); }
-.overview-card-head { background: var(--sand); padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--clay-pale); font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bark); }
+.overview-card { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; box-shadow: 0 2px 8px rgba(61,43,31,0.05); }
+.overview-card-head { padding: 0 0 0.75rem; font-size: 0.82rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bark); font-weight: 600; }
 
 /* Insight tiles */
 .insight-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
@@ -438,22 +439,21 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 /* Notification toast */
 .toast {
   position: fixed; top: 1.25rem; left: 50%;
-  margin-left: -190px; width: 380px;
-  transform: translateY(-80px);
-  background: #2e2418; color: #c8935a;
+  transform: translate(-50%, -80px);
+  width: auto; max-width: calc(100vw - 2rem);
+  background: rgba(46,36,24,0.92); color: #c8935a;
   border: none;
-  padding: 0.75rem 1.5rem; border-radius: 12px;
-  font-size: 0.9rem; font-weight: 500; z-index: 99999;
+  padding: 0.65rem 1.25rem; border-radius: 10px;
+  font-size: 0.88rem; font-weight: 500; z-index: 99999;
   opacity: 0;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
   pointer-events: none;
-  max-width: calc(100vw - 2rem); text-align: center;
-  white-space: normal; word-break: break-word;
+  text-align: center; white-space: nowrap;
 }
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.success { background: #d4edbb; color: #27500a; border: none; }
-.toast.error { background: #f9c9c9; color: #791f1f; border: none; }
-.toast.warning { background: #faeeda; color: #633806; border: none; }
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+.toast.success { background: rgba(212,237,187,0.88); color: #27500a; }
+.toast.error { background: rgba(249,201,201,0.88); color: #791f1f; }
+.toast.warning { background: rgba(250,238,218,0.88); color: #633806; }
 
 
 /* Mobile top bar */
@@ -813,7 +813,7 @@ body.dark-mode .insight-tile { background: #231c16; border-color: rgba(200,147,9
 body.dark-mode .insight-tile-label { color: #7a6354; }
 body.dark-mode .insight-tile-val { color: #e8d5c0; }
 body.dark-mode .overview-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
-body.dark-mode .overview-card-head { background: #2a2018; color: #c8935a; border-bottom-color: rgba(200,147,90,0.15); }
+body.dark-mode .overview-card-head { color: #c8935a; }
 body.dark-mode .modal { background: #231c16; }
 body.dark-mode .modal-title { color: #e8d5c0; }
 body.dark-mode .modal-close-btn { background: #2a2018; color: #e8d5c0; }
@@ -2430,7 +2430,21 @@ window.addEventListener('resize', function() {
 });
 
 // ── LOAD ──
-function loadAll() { loadSection('overview'); }
+function loadAll() {
+  const saved = sessionStorage.getItem('dash_section') || 'overview';
+  loadSection(saved);
+  if (saved !== 'overview') {
+    setTimeout(() => {
+      const sectionEl = document.getElementById('section-' + saved);
+      if (sectionEl) {
+        document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+        sectionEl.classList.add('active');
+        const navLink = document.querySelector(`.dash-nav a[onclick*="'${saved}'"]`);
+        if (navLink) { document.querySelectorAll('.dash-nav a').forEach(a => a.classList.remove('active')); navLink.classList.add('active'); }
+      }
+    }, 50);
+  }
+}
 async function syncAll() {
   showLoader('Refreshing data...');
   try {
@@ -2446,11 +2460,13 @@ function loadSection(name) {
   if (name === 'overview') loadOverview();
   else if (name === 'workshops') { loadWorkshops(); }
   else if (name === 'participants') { loadParticipants(); }
-  else if (name === 'classes') { loadStudents(); loadFeePayments(); }
+  else if (name === 'classes') { loadStudents(); }
+  else if (name === 'fee-payments') { loadFeePayments(); }
   else if (name === 'payments') loadPayments();
   else if (name === 'leads') loadLeads();
   else if (name === 'insights') loadInsights();
   else if (name === 'bin') { loadBin(); }
+  else if (name === 'notifications') { loadNotifications(); }
   else if (name === 'settings') { loadSettings(); checkAllConnectors(true); }
 }
 
@@ -2677,7 +2693,7 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
       <div style="font-size:0.85rem;color:var(--text-light);">Add your first student to start tracking classes and fee payments.</div>
     </td></tr>`;
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (stuCards) stuCards.innerHTML = `<div style="font-size:0.78rem;font-weight:600;color:var(--clay);letter-spacing:0.12em;text-transform:uppercase;padding:0.5rem 0.25rem 0.75rem;">Students</div>` + stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading students', 'error'); } finally { hideLoader(); }
 }
 async function loadFeePayments() {
@@ -3281,19 +3297,8 @@ document.addEventListener('keydown', function(e) {
 
 if (sessionStorage.getItem('dash_auth') === '1') {
   currentRole = sessionStorage.getItem('dash_role') || 'admin';
-  const lastSection = sessionStorage.getItem('dash_section') || 'overview';
   loadAll();
   applyRole();
-  const sectionEl = document.getElementById('section-' + lastSection);
-  if (sectionEl && lastSection !== 'overview') {
-    setTimeout(() => {
-      document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
-      sectionEl.classList.add('active');
-      loadSection(lastSection);
-      const navLink = document.querySelector(`.dash-nav a[onclick*="'${lastSection}'"]`);
-      if (navLink) { document.querySelectorAll('.dash-nav a').forEach(a => a.classList.remove('active')); navLink.classList.add('active'); }
-    }, 100);
-  }
 }
 
 // ── PREVENT FORM PAGE DRAG ──
