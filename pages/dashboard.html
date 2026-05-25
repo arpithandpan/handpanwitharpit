@@ -80,27 +80,36 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
   color: var(--text-light); pointer-events: none;
 }
 
-/* Mobile search button */
-.mobile-search-btn {
-  background: transparent; border: none; color: #e8d5c0;
-  padding: 8px; cursor: pointer; display: flex; align-items: center;
+/* ── MOBILE TOPBAR SEARCH (inline expand) ── */
+.topbar-search-expanded {
+  display: none; position: absolute; inset: 0;
+  background: #3d2b1f; align-items: center; gap: 0.75rem;
+  padding: 0 1rem; z-index: 10;
 }
-
-/* Global search overlay for mobile */
-.mobile-search-overlay {
-  display: none; position: fixed; inset: 0; z-index: 9998;
-  background: rgba(14,11,8,0.96); padding: 1rem;
-  flex-direction: column; gap: 0.75rem;
+.topbar-search-expanded.open { display: flex; }
+.topbar-search-expanded input {
+  flex: 1; background: rgba(200,147,90,0.1); border: 1px solid rgba(200,147,90,0.3);
+  border-radius: 8px; color: #e8d5c0; font-size: 1rem;
+  padding: 0.6rem 1rem 0.6rem 2.5rem; outline: none;
+  font-family: var(--font-body);
 }
-.mobile-search-overlay.open { display: flex; }
-.mobile-search-overlay-input {
-  width: 100%; padding: 0.85rem 1rem 0.85rem 2.75rem;
-  background: rgba(200,147,90,0.1); border: 1px solid rgba(200,147,90,0.3);
-  border-radius: 10px; color: #e8d5c0; font-size: 1rem;
-  outline: none; font-family: var(--font-body);
+.topbar-search-expanded input::placeholder { color: rgba(200,147,90,0.4); }
+.topbar-search-icon-abs {
+  position: absolute; left: 2.1rem; top: 50%; transform: translateY(-50%);
+  color: rgba(200,147,90,0.5); pointer-events: none;
 }
-.mobile-search-overlay-input::placeholder { color: rgba(200,147,90,0.4); }
-.mobile-search-results { flex: 1; overflow-y: auto; }
+.topbar-search-cancel {
+  background: transparent; border: none; color: #c8935a;
+  font-size: 0.9rem; padding: 0.5rem; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-body);
+}
+.mobile-search-dropdown {
+  position: fixed; left: 0; right: 0; top: 68px;
+  background: #1a1108; border-bottom: 1px solid rgba(200,147,90,0.2);
+  z-index: 9997; max-height: calc(100vh - 68px); overflow-y: auto;
+  display: none;
+}
+.mobile-search-dropdown.open { display: block; }
 
 /* ── ICON ACTION BUTTONS WITH TOOLTIPS ── */
 .icon-action-btn {
@@ -1215,8 +1224,8 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 
 
 <!-- ── DASHBOARD ROOT ── -->
-<div class="mobile-topbar" id="mobileTopbar" style="display:none;">
-  <div class="topbar-logo" style="display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity 0.15s;" onclick="showSection('overview',null);toggleMobileMenu&&document.getElementById('mobileMenuOverlay').classList.remove('open');">
+<div class="mobile-topbar" id="mobileTopbar" style="display:none;position:relative;">
+  <div class="topbar-logo" style="display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity 0.15s;" onclick="showSection('overview',null);document.getElementById('mobileMenuOverlay').classList.remove('open');">
     <svg width="30" height="30" viewBox="0 0 48 48" fill="none">
       <rect x="4" y="4" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
       <rect x="26" y="4" width="18" height="18" rx="4" fill="#c8935a" opacity="0.9"/>
@@ -1226,7 +1235,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     <span style="font-size:18px;font-weight:500;color:#e8d5c0;">Arpit's Studio</span>
   </div>
   <div style="display:flex;align-items:center;gap:4px;">
-    <button class="mobile-search-btn" onclick="openMobileSearch()" aria-label="Search">
+    <button style="background:none;border:none;cursor:pointer;padding:8px;color:#e8d5c0;display:flex;align-items:center;" onclick="openMobileSearch()" aria-label="Search">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
     <button id="mobileMenuBtn" onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;width:44px;height:44px;" aria-label="Toggle menu">
@@ -1235,21 +1244,16 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <span id="menuLine3" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
     </button>
   </div>
+  <!-- Inline search expansion -->
+  <div class="topbar-search-expanded" id="topbarSearchExpanded">
+    <svg class="topbar-search-icon-abs" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="mobileSearchInput" placeholder="Search participants, payments..." autocomplete="off" oninput="handleMobileSearch(this.value)" onkeydown="if(event.key==='Escape')closeMobileSearch()"/>
+    <button class="topbar-search-cancel" onclick="closeMobileSearch()">Cancel</button>
+  </div>
 </div>
 
-<!-- Mobile Search Overlay -->
-<div class="mobile-search-overlay" id="mobileSearchOverlay">
-  <div style="display:flex;align-items:center;gap:0.75rem;">
-    <div style="position:relative;flex:1;">
-      <svg style="position:absolute;left:0.875rem;top:50%;transform:translateY(-50%);color:rgba(200,147,90,0.5);pointer-events:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" class="mobile-search-overlay-input" id="mobileSearchInput" placeholder="Search anything..." autocomplete="off" oninput="handleMobileSearch(this.value)" onkeydown="handleMobileSearchKey(event)"/>
-    </div>
-    <button onclick="closeMobileSearch()" style="background:transparent;border:none;color:rgba(200,147,90,0.7);font-size:0.9rem;padding:0.5rem;cursor:pointer;white-space:nowrap;">Cancel</button>
-  </div>
-  <div class="mobile-search-results" id="mobileSearchResults">
-    <div style="padding:2rem;text-align:center;color:rgba(200,147,90,0.4);font-size:0.9rem;">Start typing to search...</div>
-  </div>
-</div>
+<!-- Mobile search results dropdown -->
+<div class="mobile-search-dropdown" id="mobileSearchDropdown"></div>
 
 <div class="mobile-menu-overlay" id="mobileMenuOverlay">
   <div class="mob-nav" style="display:flex;flex-direction:column;gap:0;padding:68px 0 2rem;align-items:stretch;">
@@ -3830,6 +3834,22 @@ function highlight(text, query) {
   return String(text||'').replace(re, '<span class="search-highlight">$1</span>');
 }
 
+async function ensureSearchCache() {
+  const totalCached = Object.values(_recordCache).reduce((sum, entity) => sum + Object.keys(entity||{}).length, 0);
+  if (totalCached < 3) {
+    try {
+      const [parts, stus, leads, pays, fps] = await Promise.all([
+        api('/participants'), api('/students'), api('/leads'), api('/payments'), api('/fee_payments')
+      ]);
+      (Array.isArray(parts)?parts:(parts.data||[])).forEach(r => cacheRecord('participants', r));
+      (Array.isArray(stus)?stus:(stus.data||[])).forEach(r => cacheRecord('students', r));
+      (Array.isArray(leads)?leads:(leads.data||[])).forEach(r => cacheRecord('leads', r));
+      (Array.isArray(pays)?pays:(pays.data||[])).forEach(r => cacheRecord('payments', r));
+      (Array.isArray(fps)?fps:(fps.data||[])).forEach(r => cacheRecord('fee_payments', r));
+    } catch(e) { /* silent */ }
+  }
+}
+
 function getSearchData() {
   const data = [];
   const cache = _recordCache;
@@ -3864,34 +3884,30 @@ function searchData(query) {
   ).slice(0, 30);
 }
 
-function renderSearchResults(results, query, containerId) {
-  const container = document.getElementById(containerId);
-  if (!results.length) {
-    container.innerHTML = '<div class="search-no-results">No results for "' + query + '"</div>';
-    return;
-  }
+function buildResultsHTML(results, query) {
+  if (!results.length) return `<div class="search-no-results">No results for "${query}"</div>`;
   const groups = {};
   const labels = { workshops:'Workshops', participants:'Participants', classes:'Classes', 'fee-payments':'Fee Payments', payments:'Payments', leads:'Leads' };
   results.forEach(r => { if (!groups[r.entity]) groups[r.entity] = []; groups[r.entity].push(r); });
   let html = '';
   Object.entries(groups).forEach(([entity, items]) => {
     html += `<div class="search-group-label">${labels[entity]||entity}</div>`;
-    items.forEach((item, i) => {
-      html += `<div class="search-result-item" onclick="goToSearchResult('${entity}','${item.id}')" data-idx="${i}">
+    items.forEach(item => {
+      html += `<div class="search-result-item" onclick="goToSearchResult('${entity}','${item.id}')">
         <span class="search-result-icon">${item.icon}</span>
         <div><div class="search-result-name">${highlight(item.name, query)}</div><div class="search-result-meta">${highlight(item.meta, query)}</div></div>
       </div>`;
     });
   });
-  container.innerHTML = html;
-  _searchFocusIdx = -1;
+  return html;
 }
 
-function handleGlobalSearch(query) {
+async function handleGlobalSearch(query) {
   const dropdown = document.getElementById('globalSearchDropdown');
   if (!query || query.length < 2) { dropdown.classList.remove('open'); return; }
+  await ensureSearchCache();
   const results = searchData(query);
-  renderSearchResults(results, query, 'globalSearchDropdown');
+  dropdown.innerHTML = buildResultsHTML(results, query);
   dropdown.classList.add('open');
 }
 
@@ -3909,32 +3925,57 @@ function handleSearchKey(e) {
   else if (e.key === 'Enter' && _searchFocusIdx >= 0) { items[_searchFocusIdx]?.click(); }
 }
 
+document.addEventListener('click', e => {
+  const wrap = document.querySelector('.global-search-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('globalSearchDropdown')?.classList.remove('open');
+  }
+  const mob = document.getElementById('mobileSearchDropdown');
+  const expanded = document.getElementById('topbarSearchExpanded');
+  if (mob && expanded && !expanded.contains(e.target) && !mob.contains(e.target)) {
+    mob.classList.remove('open');
+  }
+});
+
+function openMobileSearch() {
+  document.getElementById('topbarSearchExpanded').classList.add('open');
+  setTimeout(() => document.getElementById('mobileSearchInput').focus(), 50);
+}
+
+function closeMobileSearch() {
+  document.getElementById('topbarSearchExpanded').classList.remove('open');
+  document.getElementById('mobileSearchDropdown').classList.remove('open');
+  document.getElementById('mobileSearchInput').value = '';
+}
+
+async function handleMobileSearch(query) {
+  const dropdown = document.getElementById('mobileSearchDropdown');
+  if (!query || query.length < 2) { dropdown.classList.remove('open'); return; }
+  await ensureSearchCache();
+  const results = searchData(query);
+  dropdown.innerHTML = buildResultsHTML(results, query);
+  dropdown.classList.add('open');
+}
+
 function goToSearchResult(entity, id) {
-  document.getElementById('globalSearchDropdown').classList.remove('open');
+  document.getElementById('globalSearchDropdown')?.classList.remove('open');
   document.getElementById('globalSearchInput').value = '';
-  document.getElementById('mobileSearchOverlay').classList.remove('open');
-  showSection(entity, document.querySelector(`.dash-nav a[onclick*="'${entity}'"]`));
+  closeMobileSearch();
+  const navLink = document.querySelector(`.dash-nav a[onclick*="'${entity}'"]`);
+  showSection(entity, navLink);
   setTimeout(() => {
     const rows = document.querySelectorAll(`#section-${entity} tr, #section-${entity} .m-card`);
     rows.forEach(row => {
       if (row.textContent.includes(id)) {
         row.scrollIntoView({ behavior:'smooth', block:'center' });
-        row.style.background = 'rgba(200,147,90,0.12)';
-        setTimeout(() => row.style.background = '', 2000);
+        row.style.transition = 'background 0.3s';
+        row.style.background = 'rgba(200,147,90,0.15)';
+        setTimeout(() => { row.style.background = ''; }, 2000);
       }
     });
   }, 400);
 }
 
-// Close dropdown on outside click
-document.addEventListener('click', e => {
-  const wrap = document.querySelector('.global-search-wrap');
-  if (wrap && !wrap.contains(e.target)) {
-    document.getElementById('globalSearchDropdown').classList.remove('open');
-  }
-});
-
-// Per-section filter
 function filterSection(section, query) {
   const q = query.toLowerCase().trim();
   const tableMap = { workshops:'workshopsTable', participants:'participantsTable', classes:'studentsTable', 'fee-payments':'feePaymentsTable', payments:'paymentsTable', leads:'leadsTable' };
@@ -3942,11 +3983,11 @@ function filterSection(section, query) {
   const tbl = document.getElementById(tableMap[section]);
   if (tbl) {
     let visible = 0;
-    tbl.querySelectorAll('tr').forEach(row => {
+    tbl.querySelectorAll('tr:not(.search-empty-row)').forEach(row => {
       if (!q || row.textContent.toLowerCase().includes(q)) { row.style.display=''; visible++; }
       else row.style.display = 'none';
     });
-    const empty = tbl.querySelector('.search-empty-row');
+    let empty = tbl.querySelector('.search-empty-row');
     if (!visible && q) {
       if (!empty) { const r=document.createElement('tr'); r.className='search-empty-row'; r.innerHTML=`<td colspan="20" style="text-align:center;padding:2rem;color:var(--text-light);">No results for "${query}"</td>`; tbl.appendChild(r); }
     } else { if (empty) empty.remove(); }
@@ -3959,27 +4000,6 @@ function filterSection(section, query) {
   }
 }
 
-// Mobile search
-function openMobileSearch() {
-  document.getElementById('mobileSearchOverlay').classList.add('open');
-  setTimeout(() => document.getElementById('mobileSearchInput').focus(), 100);
-}
-function closeMobileSearch() {
-  document.getElementById('mobileSearchOverlay').classList.remove('open');
-  document.getElementById('mobileSearchInput').value = '';
-  document.getElementById('mobileSearchResults').innerHTML = '<div style="padding:2rem;text-align:center;color:rgba(200,147,90,0.4);font-size:0.9rem;">Start typing to search...</div>';
-}
-function handleMobileSearch(query) {
-  if (!query || query.length < 2) {
-    document.getElementById('mobileSearchResults').innerHTML = '<div style="padding:2rem;text-align:center;color:rgba(200,147,90,0.4);font-size:0.9rem;">Start typing to search...</div>';
-    return;
-  }
-  const results = searchData(query);
-  renderSearchResults(results, query, 'mobileSearchResults');
-}
-function handleMobileSearchKey(e) {
-  if (e.key === 'Escape') closeMobileSearch();
-}
 
 </script>
 </body>
