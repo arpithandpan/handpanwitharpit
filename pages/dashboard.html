@@ -150,6 +150,7 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
 /* ── HIDE MOBILE CARDS ON DESKTOP ── */
 @media (min-width: 901px) {
   #workshopsCards, #participantsCards, #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #overviewWorkshopsCards, #overviewPaymentsCards { display: none !important; }
+  #classes-mobile-heading { display: none !important; }
 }
 
 /* ── VIEWER ROLE: admin-only elements hidden by JS, shown by default ── */
@@ -552,7 +553,12 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   .m-card-val { max-width: 55% !important; text-align: right !important; word-break: break-word !important; }
   .section-search-wrap, .section-search-input { box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; }
   .overview-card { background: transparent !important; border: none !important; box-shadow: none !important; overflow: visible !important; padding: 0 !important; }
-  #section-classes .dash-table-header { display: none !important; }
+  #section-payments { display: flex; flex-direction: column; }
+  #section-payments .dash-section-header { order: 0; }
+  #section-payments .stats-grid { order: 1; }
+  #section-payments .section-search-wrap { order: 2; margin-bottom: 16px; }
+  #section-payments .dash-table-wrap { order: 3; }
+  #section-payments.active { display: flex; }
   .overview-card-head { padding: 0 0 16px 0; background: transparent !important; border-bottom: none !important; color: var(--clay) !important; font-size: 1.125rem !important; letter-spacing: 0.08em !important; text-transform: uppercase !important; font-weight: 400 !important; }
   .overview-card table { display: none !important; }
 }
@@ -646,7 +652,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   .stat-card { padding: 1.25rem; border-radius: 10px; }
   .stat-value { font-size: 1.5rem; }
   .chart-grid { grid-template-columns: 1fr; gap: 16px; }
-  .insight-grid { grid-template-columns: repeat(2,1fr); gap: 16px; margin-bottom: 0; }
+  .insight-grid { grid-template-columns: repeat(2,1fr); gap: 16px; margin-bottom: 32px; }
   .overview-row { grid-template-columns: 1fr; }
   .dash-sidebar-toggle { display: flex; align-items: center; justify-content: center; }
   .form-row { grid-template-columns: 1fr; }
@@ -1557,6 +1563,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" class="section-search-input" id="search-classes" placeholder="Search by name, phone..." autocomplete="off" oninput="filterSection('classes', this.value)"/>
       </div>
+      <div class="mobile-section-heading" id="classes-mobile-heading">Students</div>
       <div class="dash-table-wrap">
         <div class="dash-table-header"><span class="dash-table-header-title">Students</span></div>
         <table class="desktop-table"><thead><tr><th>S #</th><th>Name</th><th>Batch</th><th>Phone</th><th>Joined</th><th>Status</th><th>Classes</th><th>Total Paid</th><th>Notes</th></tr></thead>
@@ -2953,7 +2960,7 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
       <div style="font-size:0.85rem;color:var(--text-light);">Add your first student to start tracking classes and fee payments.</div>
     </td></tr>`;
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = `<div class="mobile-section-heading">Students</div>` + stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading students', 'error'); } finally { hideLoader(); }
 }
 async function loadFeePayments() {
