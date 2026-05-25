@@ -17,6 +17,91 @@ body.menu-is-open { background: #1a1208 !important; }
 body.menu-is-open .login-screen { visibility: hidden !important; }
 body.menu-is-open .dash-root { visibility: hidden !important; }
 
+/* ── SEARCH SYSTEM ── */
+.global-search-wrap {
+  padding: 0 1.5rem 1rem;
+  position: relative;
+}
+.global-search-input {
+  width: 100%; padding: 0.6rem 1rem 0.6rem 2.4rem;
+  background: rgba(200,147,90,0.07); border: 1px solid rgba(200,147,90,0.2);
+  border-radius: 8px; color: #e8d5c0; font-size: 0.88rem;
+  outline: none; transition: border-color 0.2s;
+  font-family: var(--font-body);
+}
+.global-search-input::placeholder { color: rgba(200,147,90,0.4); }
+.global-search-input:focus { border-color: rgba(200,147,90,0.5); background: rgba(200,147,90,0.1); }
+.global-search-icon {
+  position: absolute; left: 2.1rem; top: 50%; transform: translateY(-50%);
+  color: rgba(200,147,90,0.5); pointer-events: none;
+}
+.global-search-dropdown {
+  position: absolute; left: 1.5rem; right: 1.5rem; top: calc(100% - 4px);
+  background: #2a1e12; border: 1px solid rgba(200,147,90,0.25);
+  border-radius: 10px; z-index: 1000; max-height: 420px; overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  display: none;
+}
+.global-search-dropdown.open { display: block; }
+.search-group-label {
+  padding: 0.6rem 1rem 0.3rem;
+  font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(200,147,90,0.5); font-weight: 600;
+  border-top: 1px solid rgba(200,147,90,0.1);
+}
+.search-group-label:first-child { border-top: none; }
+.search-result-item {
+  padding: 0.65rem 1rem; cursor: pointer;
+  display: flex; align-items: center; gap: 0.75rem;
+  transition: background 0.1s;
+}
+.search-result-item:hover, .search-result-item.focused { background: rgba(200,147,90,0.1); }
+.search-result-name { font-size: 0.9rem; color: #e8d5c0; font-weight: 500; }
+.search-result-meta { font-size: 0.78rem; color: rgba(200,147,90,0.55); margin-top: 1px; }
+.search-result-icon { color: rgba(200,147,90,0.5); flex-shrink: 0; }
+.search-no-results { padding: 1.5rem 1rem; text-align: center; color: rgba(200,147,90,0.4); font-size: 0.88rem; }
+.search-highlight { color: #c8935a; font-weight: 600; }
+
+/* Per-section search */
+.section-search-wrap {
+  position: relative; margin-bottom: 1.25rem;
+}
+.section-search-input {
+  width: 100%; padding: 0.6rem 1rem 0.6rem 2.4rem;
+  background: rgba(200,147,90,0.05); border: 1px solid rgba(200,147,90,0.18);
+  border-radius: 8px; color: var(--bark); font-size: 0.88rem;
+  outline: none; transition: border-color 0.2s;
+  font-family: var(--font-body);
+}
+.section-search-input::placeholder { color: var(--text-light); }
+.section-search-input:focus { border-color: var(--clay); }
+.section-search-icon {
+  position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
+  color: var(--text-light); pointer-events: none;
+}
+
+/* Mobile search button */
+.mobile-search-btn {
+  background: transparent; border: none; color: #e8d5c0;
+  padding: 8px; cursor: pointer; display: flex; align-items: center;
+}
+
+/* Global search overlay for mobile */
+.mobile-search-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9998;
+  background: rgba(14,11,8,0.96); padding: 1rem;
+  flex-direction: column; gap: 0.75rem;
+}
+.mobile-search-overlay.open { display: flex; }
+.mobile-search-overlay-input {
+  width: 100%; padding: 0.85rem 1rem 0.85rem 2.75rem;
+  background: rgba(200,147,90,0.1); border: 1px solid rgba(200,147,90,0.3);
+  border-radius: 10px; color: #e8d5c0; font-size: 1rem;
+  outline: none; font-family: var(--font-body);
+}
+.mobile-search-overlay-input::placeholder { color: rgba(200,147,90,0.4); }
+.mobile-search-results { flex: 1; overflow-y: auto; }
+
 /* ── ICON ACTION BUTTONS WITH TOOLTIPS ── */
 .icon-action-btn {
   position: relative; display: inline-flex; align-items: center; justify-content: center;
@@ -1140,11 +1225,30 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     </svg>
     <span style="font-size:18px;font-weight:500;color:#e8d5c0;">Arpit's Studio</span>
   </div>
-  <button id="mobileMenuBtn" onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;width:44px;height:44px;" aria-label="Toggle menu">
-    <span id="menuLine1" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
-    <span id="menuLine2" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
-    <span id="menuLine3" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
-  </button>
+  <div style="display:flex;align-items:center;gap:4px;">
+    <button class="mobile-search-btn" onclick="openMobileSearch()" aria-label="Search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <button id="mobileMenuBtn" onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;width:44px;height:44px;" aria-label="Toggle menu">
+      <span id="menuLine1" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
+      <span id="menuLine2" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
+      <span id="menuLine3" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
+    </button>
+  </div>
+</div>
+
+<!-- Mobile Search Overlay -->
+<div class="mobile-search-overlay" id="mobileSearchOverlay">
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <div style="position:relative;flex:1;">
+      <svg style="position:absolute;left:0.875rem;top:50%;transform:translateY(-50%);color:rgba(200,147,90,0.5);pointer-events:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="mobile-search-overlay-input" id="mobileSearchInput" placeholder="Search anything..." autocomplete="off" oninput="handleMobileSearch(this.value)" onkeydown="handleMobileSearchKey(event)"/>
+    </div>
+    <button onclick="closeMobileSearch()" style="background:transparent;border:none;color:rgba(200,147,90,0.7);font-size:0.9rem;padding:0.5rem;cursor:pointer;white-space:nowrap;">Cancel</button>
+  </div>
+  <div class="mobile-search-results" id="mobileSearchResults">
+    <div style="padding:2rem;text-align:center;color:rgba(200,147,90,0.4);font-size:0.9rem;">Start typing to search...</div>
+  </div>
 </div>
 
 <div class="mobile-menu-overlay" id="mobileMenuOverlay">
@@ -1223,6 +1327,12 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         
       </svg>
       <div style="font-size:17px;font-weight:500;color:#e8d5c0;letter-spacing:0.02em;">Arpit's Studio</div>
+    </div>
+    <!-- Global Search -->
+    <div class="global-search-wrap">
+      <svg class="global-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="global-search-input" id="globalSearchInput" placeholder="Search anything..." autocomplete="off" oninput="handleGlobalSearch(this.value)" onfocus="showGlobalDropdown()" onkeydown="handleSearchKey(event)"/>
+      <div class="global-search-dropdown" id="globalSearchDropdown"></div>
     </div>
     <ul class="dash-nav">
       <li><a href="#" class="active" onclick="showSection('overview',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span> Overview</a></li>
@@ -1314,6 +1424,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           </button>
         </div>
       </div>
+      <div class="section-search-wrap">
+        <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="section-search-input" id="search-workshops" placeholder="Search by venue, date..." autocomplete="off" oninput="filterSection('workshops', this.value)"/>
+      </div>
       <div class="dash-table-wrap desktop-only">
         <table class="desktop-table"><thead><tr><th>WS #</th><th>Date</th><th>Venue</th><th>Participants</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th><th>Action</th></tr></thead>
         <tbody id="workshopsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
@@ -1334,6 +1448,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
             Add Participant
           </button>
         </div>
+      </div>
+      <div class="section-search-wrap">
+        <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="section-search-input" id="search-participants" placeholder="Search by name, phone..." autocomplete="off" oninput="filterSection('participants', this.value)"/>
       </div>
       <div class="dash-table-wrap desktop-only">
         <table class="desktop-table"><thead><tr><th>P #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Amount</th><th>Mode</th><th>Check In</th><th>Action</th></tr></thead>
@@ -1358,6 +1476,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <div class="stat-card"><div class="stat-label">Total Classes Revenue</div><div class="stat-value green" id="classTotalRevenue">—</div></div>
         <div class="stat-card"><div class="stat-label">Students on Break</div><div class="stat-value" id="classOnBreak">—</div></div>
       </div>
+      <div class="section-search-wrap">
+        <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="section-search-input" id="search-classes" placeholder="Search by name, phone..." autocomplete="off" oninput="filterSection('classes', this.value)"/>
+      </div>
       <div class="dash-table-wrap">
         <div class="dash-table-header"><span class="dash-table-header-title">Students</span></div>
         <table class="desktop-table"><thead><tr><th>S #</th><th>Name</th><th>Batch</th><th>Phone</th><th>Joined</th><th>Status</th><th>Classes</th><th>Total Paid</th><th>Notes</th></tr></thead>
@@ -1377,6 +1499,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addFeePayment')">+ Add Fee Payment</button>
         </div>
       </div>
+      <div class="section-search-wrap">
+        <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="section-search-input" id="search-fee-payments" placeholder="Search by student, month..." autocomplete="off" oninput="filterSection('fee-payments', this.value)"/>
+      </div>
       <div class="dash-table-wrap">
         <table class="desktop-table"><thead><tr><th>FP #</th><th>Student</th><th>Batch</th><th>Month</th><th>Classes</th><th>Amount</th><th>Mode</th><th>Paid</th><th>Date</th><th>Action</th></tr></thead>
         <tbody id="feePaymentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
@@ -1395,6 +1521,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <button class="btn-dash btn-dash-sync" onclick="syncAll()">↻ Refresh Data</button>
           <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addPayment')">+ Add Payment</button>
         </div>
+      </div>
+      <div class="section-search-wrap">
+        <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="section-search-input" id="search-payments" placeholder="Search by description, amount..." autocomplete="off" oninput="filterSection('payments', this.value)"/>
       </div>
       <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
         <div class="stat-card"><div class="stat-label">Total Income</div><div class="stat-value clay" id="payTotalIncome">—</div></div>
@@ -1418,6 +1548,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <div style="display:flex;align-items:center;gap:1rem;">
           <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addLead')">+ Add Lead</button>
         </div>
+      </div>
+      <div class="section-search-wrap">
+        <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="section-search-input" id="search-leads" placeholder="Search by name, phone..." autocomplete="off" oninput="filterSection('leads', this.value)"/>
       </div>
       <div class="dash-table-wrap">
         <table class="desktop-table"><thead><tr><th>Lead #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th><th>Action</th></tr></thead>
@@ -3685,6 +3819,166 @@ async function saveEdit() {
   } catch(e) {
     showToast('Error saving changes: ' + e.message, 'error');
   }
+}
+
+// ── SEARCH SYSTEM ──
+let _searchFocusIdx = -1;
+
+function highlight(text, query) {
+  if (!query) return text;
+  const re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+  return String(text||'').replace(re, '<span class="search-highlight">$1</span>');
+}
+
+function getSearchData() {
+  const data = [];
+  const cache = _recordCache;
+  if (cache.workshops) Object.values(cache.workshops).forEach(r => {
+    data.push({ entity:'workshops', id:r.id, name:r.id+' · '+(r.venue||''), meta:fmtDate(r.date), icon:'🎵' });
+  });
+  if (cache.participants) Object.values(cache.participants).forEach(r => {
+    data.push({ entity:'participants', id:r.id, name:r.full_name||r.id, meta:(r.phone||'—')+' · '+(r.workshop_id||''), icon:'👤' });
+  });
+  if (cache.students) Object.values(cache.students).forEach(r => {
+    data.push({ entity:'classes', id:r.id, name:r.full_name||r.id, meta:(r.phone||'—')+' · '+(r.status||''), icon:'🎓' });
+  });
+  if (cache.fee_payments) Object.values(cache.fee_payments).forEach(r => {
+    data.push({ entity:'fee-payments', id:r.id, name:(r.student_name||r.id)+' — '+(r.month||''), meta:fmt(r.amount)+' · '+(r.paid?'Paid':'Pending'), icon:'💳' });
+  });
+  if (cache.payments) Object.values(cache.payments).forEach(r => {
+    data.push({ entity:'payments', id:r.id, name:r.description||r.payer_name||r.id, meta:fmt(r.amount)+' · '+fmtDate(r.date), icon:'💰' });
+  });
+  if (cache.leads) Object.values(cache.leads).forEach(r => {
+    data.push({ entity:'leads', id:r.id, name:r.full_name||r.id, meta:(r.phone||'—')+' · '+(r.status||''), icon:'🔍' });
+  });
+  return data;
+}
+
+function searchData(query) {
+  if (!query || query.length < 2) return [];
+  const q = query.toLowerCase();
+  return getSearchData().filter(r =>
+    (r.name||'').toLowerCase().includes(q) ||
+    (r.meta||'').toLowerCase().includes(q) ||
+    (r.id||'').toLowerCase().includes(q)
+  ).slice(0, 30);
+}
+
+function renderSearchResults(results, query, containerId) {
+  const container = document.getElementById(containerId);
+  if (!results.length) {
+    container.innerHTML = '<div class="search-no-results">No results for "' + query + '"</div>';
+    return;
+  }
+  const groups = {};
+  const labels = { workshops:'Workshops', participants:'Participants', classes:'Classes', 'fee-payments':'Fee Payments', payments:'Payments', leads:'Leads' };
+  results.forEach(r => { if (!groups[r.entity]) groups[r.entity] = []; groups[r.entity].push(r); });
+  let html = '';
+  Object.entries(groups).forEach(([entity, items]) => {
+    html += `<div class="search-group-label">${labels[entity]||entity}</div>`;
+    items.forEach((item, i) => {
+      html += `<div class="search-result-item" onclick="goToSearchResult('${entity}','${item.id}')" data-idx="${i}">
+        <span class="search-result-icon">${item.icon}</span>
+        <div><div class="search-result-name">${highlight(item.name, query)}</div><div class="search-result-meta">${highlight(item.meta, query)}</div></div>
+      </div>`;
+    });
+  });
+  container.innerHTML = html;
+  _searchFocusIdx = -1;
+}
+
+function handleGlobalSearch(query) {
+  const dropdown = document.getElementById('globalSearchDropdown');
+  if (!query || query.length < 2) { dropdown.classList.remove('open'); return; }
+  const results = searchData(query);
+  renderSearchResults(results, query, 'globalSearchDropdown');
+  dropdown.classList.add('open');
+}
+
+function showGlobalDropdown() {
+  const val = document.getElementById('globalSearchInput').value;
+  if (val && val.length >= 2) document.getElementById('globalSearchDropdown').classList.add('open');
+}
+
+function handleSearchKey(e) {
+  const dropdown = document.getElementById('globalSearchDropdown');
+  const items = dropdown.querySelectorAll('.search-result-item');
+  if (e.key === 'Escape') { dropdown.classList.remove('open'); document.getElementById('globalSearchInput').blur(); }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); _searchFocusIdx = Math.min(_searchFocusIdx+1, items.length-1); items.forEach((el,i) => el.classList.toggle('focused', i===_searchFocusIdx)); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); _searchFocusIdx = Math.max(_searchFocusIdx-1, 0); items.forEach((el,i) => el.classList.toggle('focused', i===_searchFocusIdx)); }
+  else if (e.key === 'Enter' && _searchFocusIdx >= 0) { items[_searchFocusIdx]?.click(); }
+}
+
+function goToSearchResult(entity, id) {
+  document.getElementById('globalSearchDropdown').classList.remove('open');
+  document.getElementById('globalSearchInput').value = '';
+  document.getElementById('mobileSearchOverlay').classList.remove('open');
+  showSection(entity, document.querySelector(`.dash-nav a[onclick*="'${entity}'"]`));
+  setTimeout(() => {
+    const rows = document.querySelectorAll(`#section-${entity} tr, #section-${entity} .m-card`);
+    rows.forEach(row => {
+      if (row.textContent.includes(id)) {
+        row.scrollIntoView({ behavior:'smooth', block:'center' });
+        row.style.background = 'rgba(200,147,90,0.12)';
+        setTimeout(() => row.style.background = '', 2000);
+      }
+    });
+  }, 400);
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', e => {
+  const wrap = document.querySelector('.global-search-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('globalSearchDropdown').classList.remove('open');
+  }
+});
+
+// Per-section filter
+function filterSection(section, query) {
+  const q = query.toLowerCase().trim();
+  const tableMap = { workshops:'workshopsTable', participants:'participantsTable', classes:'studentsTable', 'fee-payments':'feePaymentsTable', payments:'paymentsTable', leads:'leadsTable' };
+  const cardMap = { workshops:'workshopsCards', participants:'participantsCards', classes:'studentsCards', 'fee-payments':'feePaymentsCards', payments:'paymentsCards', leads:'leadsCards' };
+  const tbl = document.getElementById(tableMap[section]);
+  if (tbl) {
+    let visible = 0;
+    tbl.querySelectorAll('tr').forEach(row => {
+      if (!q || row.textContent.toLowerCase().includes(q)) { row.style.display=''; visible++; }
+      else row.style.display = 'none';
+    });
+    const empty = tbl.querySelector('.search-empty-row');
+    if (!visible && q) {
+      if (!empty) { const r=document.createElement('tr'); r.className='search-empty-row'; r.innerHTML=`<td colspan="20" style="text-align:center;padding:2rem;color:var(--text-light);">No results for "${query}"</td>`; tbl.appendChild(r); }
+    } else { if (empty) empty.remove(); }
+  }
+  const cards = document.getElementById(cardMap[section]);
+  if (cards) {
+    cards.querySelectorAll('.m-card').forEach(card => {
+      card.style.display = (!q || card.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    });
+  }
+}
+
+// Mobile search
+function openMobileSearch() {
+  document.getElementById('mobileSearchOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('mobileSearchInput').focus(), 100);
+}
+function closeMobileSearch() {
+  document.getElementById('mobileSearchOverlay').classList.remove('open');
+  document.getElementById('mobileSearchInput').value = '';
+  document.getElementById('mobileSearchResults').innerHTML = '<div style="padding:2rem;text-align:center;color:rgba(200,147,90,0.4);font-size:0.9rem;">Start typing to search...</div>';
+}
+function handleMobileSearch(query) {
+  if (!query || query.length < 2) {
+    document.getElementById('mobileSearchResults').innerHTML = '<div style="padding:2rem;text-align:center;color:rgba(200,147,90,0.4);font-size:0.9rem;">Start typing to search...</div>';
+    return;
+  }
+  const results = searchData(query);
+  renderSearchResults(results, query, 'mobileSearchResults');
+}
+function handleMobileSearchKey(e) {
+  if (e.key === 'Escape') closeMobileSearch();
 }
 
 </script>
