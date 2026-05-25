@@ -623,6 +623,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 @media (max-width: 900px) {
   .mobile-topbar { display: flex; }
   .dash-root { padding-top: 68px; }
+  .dash-main { height: calc(100vh - 68px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .dash-sidebar-toggle { display: none !important; }
 }
 
@@ -3551,9 +3552,14 @@ function showToast(msg, type) {
   const t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;
-  t.className = 'toast show' + (type ? ' ' + type : '');
+  t.className = 'toast' + (type ? ' ' + type : '');
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.className = 'toast'; }, 3000);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      t.classList.add('show');
+      t._timer = setTimeout(() => { t.className = 'toast'; }, 3000);
+    });
+  });
 }
 
 // ── PIN KEYBOARD SUPPORT ──
