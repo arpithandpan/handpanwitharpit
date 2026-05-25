@@ -150,6 +150,7 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
 /* ── HIDE MOBILE CARDS ON DESKTOP ── */
 @media (min-width: 901px) {
   #workshopsCards, #participantsCards, #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #overviewWorkshopsCards, #overviewPaymentsCards { display: none !important; }
+  .mobile-search-fullscreen { display: none !important; }
 }
 
 /* ── VIEWER ROLE: admin-only elements hidden by JS, shown by default ── */
@@ -555,9 +556,10 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   #section-payments.active { display: flex; flex-direction: column; }
   #section-classes .dash-table-header { display: none !important; }
   #section-payments .dash-section-header { order: 0; }
-  #section-payments .stats-grid { order: 1; }
+  #section-payments .stats-grid { order: 1; grid-template-columns: repeat(2, 1fr) !important; }
   #section-payments .section-search-wrap { order: 2; margin-bottom: 16px; }
   #section-payments .dash-table-wrap { order: 3; }
+  #section-classes .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .overview-card-head { padding: 0 0 16px 0; background: transparent !important; border-bottom: none !important; color: var(--clay) !important; font-size: 1.125rem !important; letter-spacing: 0.08em !important; text-transform: uppercase !important; font-weight: 400 !important; }
   .overview-card table { display: none !important; }
 }
@@ -2630,6 +2632,8 @@ window.addEventListener('resize', function() {
     if (window.innerWidth <= 900) { topbar.style.display = 'flex'; }
     else {
       topbar.style.display = 'none';
+      const srch = document.getElementById('mobileSearchFullscreen');
+      if (srch && srch.classList.contains('open')) closeMobileSearch();
       const overlay = document.getElementById('mobileMenuOverlay');
       if (overlay.classList.contains('open')) {
         overlay.classList.remove('open');
