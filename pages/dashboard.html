@@ -62,6 +62,70 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 .search-no-results { padding: 1.5rem 1rem; text-align: center; color: rgba(200,147,90,0.4); font-size: 0.88rem; }
 .search-highlight { color: #c8935a; font-weight: 600; }
 
+/* ── FILTER BAR ── */
+.filter-bar {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap; margin-bottom: 16px;
+}
+.filter-pills { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.filter-pills::-webkit-scrollbar { display: none; }
+.filter-pill {
+  background: none; border: 1px solid rgba(193,127,90,0.25);
+  color: rgba(200,147,90,0.55); font-size: 0.75rem; padding: 5px 12px;
+  border-radius: 20px; cursor: pointer; white-space: nowrap;
+  letter-spacing: 0.04em; transition: all 0.15s ease; font-family: var(--font-body);
+}
+.filter-pill:hover { border-color: rgba(193,127,90,0.5); color: rgba(200,147,90,0.8); }
+.filter-pill.active { background: rgba(193,127,90,0.15); border-color: #c8935a; color: #c8935a; }
+.filter-divider { width: 1px; height: 20px; background: rgba(193,127,90,0.2); flex-shrink: 0; }
+.filter-select {
+  background: rgba(193,127,90,0.05); border: 1px solid rgba(193,127,90,0.25);
+  color: rgba(200,147,90,0.7); font-size: 0.78rem; padding: 5px 10px;
+  border-radius: 8px; cursor: pointer; font-family: var(--font-body);
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8935a' opacity='0.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center;
+  padding-right: 24px;
+}
+.filter-select:focus { outline: none; border-color: rgba(193,127,90,0.5); }
+@media (max-width: 900px) {
+  .filter-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+  .filter-select { width: 100%; }
+  .filter-divider { display: none; }
+  .filter-pills { overflow-x: auto; }
+}
+
+/* ── SORT ICONS (desktop table headers) ── */
+.sortable-th { cursor: pointer; user-select: none; }
+.sortable-th:hover { color: rgba(200,147,90,0.8) !important; }
+.sort-arrow { font-size: 0.7rem; opacity: 0.4; margin-left: 3px; }
+.sortable-th.sort-asc .sort-arrow::after { content: '↑'; opacity: 1; }
+.sortable-th.sort-desc .sort-arrow::after { content: '↓'; opacity: 1; }
+.sortable-th:not(.sort-asc):not(.sort-desc) .sort-arrow::after { content: '↕'; }
+
+/* ── MOBILE ··· BOTTOM SHEET ── */
+.m-dots-sheet {
+  display: none; position: fixed; inset: 0; z-index: 9997;
+  background: rgba(10,6,2,0.6); align-items: flex-end;
+}
+.m-dots-sheet.open { display: flex; }
+.m-dots-inner {
+  width: 100%; background: #2a1e12;
+  border-radius: 16px 16px 0 0; padding: 0.75rem 0 2rem;
+  border-top: 1px solid rgba(193,127,90,0.2);
+}
+.m-dots-handle { width: 36px; height: 4px; background: rgba(193,127,90,0.3); border-radius: 2px; margin: 0 auto 1rem; }
+.m-dots-title { font-size: 0.85rem; color: rgba(200,147,90,0.5); padding: 0 1.5rem 0.75rem; border-bottom: 1px solid rgba(193,127,90,0.1); margin-bottom: 0.25rem; }
+.m-dots-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 0.9rem 1.5rem; color: #e8d5c0; font-size: 0.95rem;
+  cursor: pointer; border: none; background: none; width: 100%;
+  text-align: left; font-family: var(--font-body);
+}
+.m-dots-item:hover { background: rgba(193,127,90,0.07); }
+.m-dots-item.danger { color: #c87a7a; }
+.m-dots-item svg { flex-shrink: 0; }
+
 /* Per-section search */
 .section-search-wrap {
   position: relative; margin-bottom: 16px; box-sizing: border-box; width: 100%;
@@ -601,6 +665,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 }
 .mobile-topbar.menu-open .topbar-logo { opacity: 0; pointer-events: none; }
 .mobile-topbar.menu-open .topbar-bell { opacity: 0; pointer-events: none; }
+.mobile-topbar.menu-open #mobileSearchBtn { opacity: 0; pointer-events: none; }
 .mobile-topbar.menu-open { background: #1a1208 !important; border-bottom: none !important; box-shadow: none !important; }
 .mobile-topbar { background: #3d2b1f !important; }
 .mobile-topbar.menu-open #mobileMenuBtn { opacity: 1 !important; }
@@ -1284,7 +1349,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     <span style="font-size:18px;font-weight:500;color:#e8d5c0;">Arpit's Studio</span>
   </div>
   <div style="display:flex;align-items:center;gap:4px;">
-    <button style="background:none;border:none;cursor:pointer;padding:8px;color:#e8d5c0;display:flex;align-items:center;" onclick="openMobileSearch()" aria-label="Search">
+    <button id="mobileSearchBtn" style="background:none;border:none;cursor:pointer;padding:8px;color:#e8d5c0;display:flex;align-items:center;" onclick="openMobileSearch()" aria-label="Search">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
     <button id="mobileMenuBtn" onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;width:44px;height:44px;" aria-label="Toggle menu">
@@ -1292,6 +1357,15 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <span id="menuLine2" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease;"></span>
       <span id="menuLine3" style="display:block;width:22px;height:2.5px;background:#e8d5c0;border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,background 0.2s,width 0.2s;"></span>
     </button>
+  </div>
+</div>
+
+<!-- Mobile ··· Bottom Sheet -->
+<div class="m-dots-sheet" id="mDotsSheet" onclick="closeMDotsSheet(event)">
+  <div class="m-dots-inner">
+    <div class="m-dots-handle"></div>
+    <div class="m-dots-title" id="mDotsTitle"></div>
+    <div id="mDotsItems"></div>
   </div>
 </div>
 
@@ -1511,10 +1585,25 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       </div>
       <div class="section-search-wrap">
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="section-search-input" id="search-workshops" placeholder="Search by venue, date..." autocomplete="off" oninput="filterSection('workshops', this.value)"/>
+        <input type="text" class="section-search-input" id="search-workshops" placeholder="Search by venue, date..." autocomplete="off" oninput="applyFilters('workshops')"/>
+      </div>
+      <div class="filter-bar" id="filter-bar-workshops">
+        <div class="filter-pills">
+          <button class="filter-pill active" onclick="setFilterPill('workshops','year','all',this)">All time</button>
+        </div>
       </div>
       <div class="dash-table-wrap desktop-only">
-        <table class="desktop-table"><thead><tr><th>WS #</th><th>Date</th><th>Venue</th><th>Participants</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th><th>Action</th></tr></thead>
+        <table class="desktop-table"><thead><tr>
+          <th class="sortable-th" onclick="sortTable('workshops','id',this)">WS # <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','date',this)">Date <span class="sort-arrow"></span></th>
+          <th>Venue</th>
+          <th class="sortable-th" onclick="sortTable('workshops','total_pax',this)">Participants <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','total_revenue',this)">Revenue <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','total_expense',this)">Expenses <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','net_profit',this)">Net Profit <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','margin',this)">Margin <span class="sort-arrow"></span></th>
+          <th>Action</th>
+        </tr></thead>
         <tbody id="workshopsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       </div>
       <div class="mobile-cards" id="workshopsCards"></div>
@@ -1536,10 +1625,28 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       </div>
       <div class="section-search-wrap">
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="section-search-input" id="search-participants" placeholder="Search by name, phone..." autocomplete="off" oninput="filterSection('participants', this.value)"/>
+        <input type="text" class="section-search-input" id="search-participants" placeholder="Search by name, phone..." autocomplete="off" oninput="applyFilters('participants')"/>
+      </div>
+      <div class="filter-bar" id="filter-bar-participants">
+        <select class="filter-select" id="filter-participants-workshop" onchange="applyFilters('participants')">
+          <option value="">All workshops</option>
+        </select>
+        <div class="filter-divider"></div>
+        <div class="filter-pills">
+          <button class="filter-pill active" onclick="setFilterPill('participants','checkin','all',this)">All</button>
+          <button class="filter-pill" onclick="setFilterPill('participants','checkin','yes',this)">Checked in</button>
+          <button class="filter-pill" onclick="setFilterPill('participants','checkin','no',this)">Not checked in</button>
+        </div>
       </div>
       <div class="dash-table-wrap desktop-only">
-        <table class="desktop-table"><thead><tr><th>P #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Amount</th><th>Mode</th><th>Check In</th><th>Action</th></tr></thead>
+        <table class="desktop-table"><thead><tr>
+          <th>P #</th>
+          <th class="sortable-th" onclick="sortTable('participants','full_name',this)">Name <span class="sort-arrow"></span></th>
+          <th>Phone</th>
+          <th class="sortable-th" onclick="sortTable('participants','workshop_id',this)">Workshop <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('participants','amount_paid',this)">Amount <span class="sort-arrow"></span></th>
+          <th>Mode</th><th>Check In</th><th>Action</th>
+        </tr></thead>
         <tbody id="participantsTable"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       </div>
       <div class="mobile-cards" id="participantsCards"></div>
@@ -1563,11 +1670,28 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       </div>
             <div class="section-search-wrap">
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="section-search-input" id="search-classes" placeholder="Search by name, phone..." autocomplete="off" oninput="filterSection('classes', this.value)"/>
+        <input type="text" class="section-search-input" id="search-classes" placeholder="Search by name, phone..." autocomplete="off" oninput="applyFilters('classes')"/>
+      </div>
+      <div class="filter-bar" id="filter-bar-classes">
+        <div class="filter-pills">
+          <button class="filter-pill active" onclick="setFilterPill('classes','status','all',this)">All</button>
+          <button class="filter-pill" onclick="setFilterPill('classes','status','Active',this)">Active</button>
+          <button class="filter-pill" onclick="setFilterPill('classes','status','On Break',this)">On break</button>
+          <button class="filter-pill" onclick="setFilterPill('classes','status','Archived',this)">Archived</button>
+        </div>
       </div>
       <div class="dash-table-wrap">
         <div class="dash-table-header" style="display:none"></div>
-        <table class="desktop-table"><thead><tr><th>S #</th><th>Name</th><th>Batch</th><th>Phone</th><th>Joined</th><th>Status</th><th>Classes</th><th>Total Paid</th><th>Notes</th></tr></thead>
+        <table class="desktop-table"><thead><tr>
+          <th>S #</th>
+          <th class="sortable-th" onclick="sortTable('classes','full_name',this)">Name <span class="sort-arrow"></span></th>
+          <th>Batch</th><th>Phone</th>
+          <th class="sortable-th" onclick="sortTable('classes','join_date',this)">Joined <span class="sort-arrow"></span></th>
+          <th>Status</th>
+          <th class="sortable-th" onclick="sortTable('classes','total_classes',this)">Classes <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('classes','total_paid',this)">Total Paid <span class="sort-arrow"></span></th>
+          <th>Notes</th>
+        </tr></thead>
         <tbody id="studentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards" id="studentsCards"></div>
       </div>
@@ -1586,10 +1710,31 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       </div>
       <div class="section-search-wrap">
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="section-search-input" id="search-fee-payments" placeholder="Search by student, month..." autocomplete="off" oninput="filterSection('fee-payments', this.value)"/>
+        <input type="text" class="section-search-input" id="search-fee-payments" placeholder="Search by student, month..." autocomplete="off" oninput="applyFilters('fee-payments')"/>
+      </div>
+      <div class="filter-bar" id="filter-bar-fee-payments">
+        <select class="filter-select" id="filter-fee-student" onchange="applyFilters('fee-payments')">
+          <option value="">All students</option>
+        </select>
+        <div class="filter-divider"></div>
+        <div class="filter-pills">
+          <button class="filter-pill active" onclick="setFilterPill('fee-payments','status','all',this)">All</button>
+          <button class="filter-pill" onclick="setFilterPill('fee-payments','status','paid',this)">Paid</button>
+          <button class="filter-pill" onclick="setFilterPill('fee-payments','status','pending',this)">Pending</button>
+        </div>
       </div>
       <div class="dash-table-wrap">
-        <table class="desktop-table"><thead><tr><th>FP #</th><th>Student</th><th>Batch</th><th>Month</th><th>Classes</th><th>Amount</th><th>Mode</th><th>Paid</th><th>Date</th><th>Action</th></tr></thead>
+        <table class="desktop-table"><thead><tr>
+          <th>FP #</th>
+          <th class="sortable-th" onclick="sortTable('fee-payments','student_name',this)">Student <span class="sort-arrow"></span></th>
+          <th>Batch</th>
+          <th class="sortable-th" onclick="sortTable('fee-payments','month',this)">Month <span class="sort-arrow"></span></th>
+          <th>Classes</th>
+          <th class="sortable-th" onclick="sortTable('fee-payments','amount',this)">Amount <span class="sort-arrow"></span></th>
+          <th>Mode</th><th>Paid</th>
+          <th class="sortable-th" onclick="sortTable('fee-payments','payment_date',this)">Date <span class="sort-arrow"></span></th>
+          <th>Action</th>
+        </tr></thead>
         <tbody id="feePaymentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards" id="feePaymentsCards"></div>
       </div>
@@ -1609,15 +1754,35 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       </div>
       <div class="section-search-wrap">
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="section-search-input" id="search-payments" placeholder="Search by description, amount..." autocomplete="off" oninput="filterSection('payments', this.value)"/>
+        <input type="text" class="section-search-input" id="search-payments" placeholder="Search by description, amount..." autocomplete="off" oninput="applyFilters('payments')"/>
       </div>
       <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
         <div class="stat-card"><div class="stat-label">Total Income</div><div class="stat-value clay" id="payTotalIncome">—</div></div>
         <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" id="payTotalExpenses">—</div></div>
         <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="payNetProfit">—</div></div>
       </div>
+      <div class="filter-bar" id="filter-bar-payments">
+        <div class="filter-pills">
+          <button class="filter-pill active" onclick="setFilterPill('payments','type','all',this)">All</button>
+          <button class="filter-pill" onclick="setFilterPill('payments','type','income',this)">Income</button>
+          <button class="filter-pill" onclick="setFilterPill('payments','type','expense',this)">Expense</button>
+        </div>
+        <div class="filter-divider"></div>
+        <div class="filter-pills">
+          <button class="filter-pill active" onclick="setFilterPill('payments','mode','all',this)">All modes</button>
+          <button class="filter-pill" onclick="setFilterPill('payments','mode','UPI',this)">UPI</button>
+          <button class="filter-pill" onclick="setFilterPill('payments','mode','Cash',this)">Cash</button>
+          <button class="filter-pill" onclick="setFilterPill('payments','mode','BMS',this)">BMS</button>
+          <button class="filter-pill" onclick="setFilterPill('payments','mode','Razorpay',this)">Razorpay</button>
+        </div>
+      </div>
       <div class="dash-table-wrap">
-        <table class="desktop-table"><thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Category</th><th>Mode</th><th>Amount</th><th>Action</th></tr></thead>
+        <table class="desktop-table"><thead><tr>
+          <th class="sortable-th" onclick="sortTable('payments','date',this)">Date <span class="sort-arrow"></span></th>
+          <th>Description</th><th>Type</th><th>Category</th><th>Mode</th>
+          <th class="sortable-th" onclick="sortTable('payments','amount',this)">Amount <span class="sort-arrow"></span></th>
+          <th>Action</th>
+        </tr></thead>
         <tbody id="paymentsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards" id="paymentsCards"></div>
       </div>
@@ -1636,10 +1801,21 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       </div>
       <div class="section-search-wrap">
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="section-search-input" id="search-leads" placeholder="Search by name, phone..." autocomplete="off" oninput="filterSection('leads', this.value)"/>
+        <input type="text" class="section-search-input" id="search-leads" placeholder="Search by name, phone..." autocomplete="off" oninput="applyFilters('leads')"/>
+      </div>
+      <div class="filter-bar" id="filter-bar-leads">
+        <div class="filter-pills">
+          <button class="filter-pill active" onclick="setFilterPill('leads','referred','all',this)">All</button>
+          <button class="filter-pill" onclick="setFilterPill('leads','referred','yes',this)">Referred</button>
+          <button class="filter-pill" onclick="setFilterPill('leads','referred','no',this)">Not referred</button>
+        </div>
       </div>
       <div class="dash-table-wrap">
-        <table class="desktop-table"><thead><tr><th>Lead #</th><th>Name</th><th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th><th>Action</th></tr></thead>
+        <table class="desktop-table"><thead><tr>
+          <th>Lead #</th>
+          <th class="sortable-th" onclick="sortTable('leads','full_name',this)">Name <span class="sort-arrow"></span></th>
+          <th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th><th>Action</th>
+        </tr></thead>
         <tbody id="leadsTable"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards" id="leadsCards"></div>
       </div>
@@ -2785,6 +2961,7 @@ async function loadWorkshops() {
     if (!res.ok) throw new Error('Failed');
     const ws = await res.json();
     ws.forEach(w => cacheRecord('workshops', w));
+    populateWorkshopFilterDropdown(ws);
     document.getElementById('workshopCount').textContent = ws.length + ' workshop' + (ws.length !== 1 ? 's' : '') + ' total';
 
     const TRASH_BTN = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
@@ -2813,16 +2990,14 @@ async function loadWorkshops() {
           <div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div>
           <div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div>
         </div>
-        <div style="padding:0.85rem 1.5rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;">
-          <button class="btn-dash btn-dash-outline btn-dash-sm" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')">
+        <div style="padding:0.85rem 1.5rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;">
+          <button class="btn-dash btn-dash-outline btn-dash-sm" style="flex:1;" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-            View Participants
+            Participants
           </button>
-          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            Check-in
+          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${w.id}','${(w.venue||w.id).replace(/'/g,"\\'")}','workshop',${admin})" aria-label="More actions" style="padding:0.5rem 0.75rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
           </button>
-          ${admin?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openEdit('workshops','${w.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button><button class="btn-archive" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">${TRASH_BTN}</button>`:''}
         </div>
         <div class="ws-pax-section" id="ws-pax-${w.id}">
           <div class="ws-pax-header">
@@ -2922,22 +3097,20 @@ async function loadParticipants() {
     const tbl = document.getElementById('participantsTable');
     const adminP = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP && p.payment_mode !== 'Razorpay UPI'; return `<tr><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},this)">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" title="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No participants yet</td></tr>`;
+    if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP && p.payment_mode !== 'Razorpay UPI'; return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},this)">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" title="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No participants yet</td></tr>`;
 
     const parCards = document.getElementById('participantsCards');
     if (parCards) parCards.innerHTML = parts.map(p => `
-      <div class="m-card" style="margin-bottom:1.25rem;">
+      <div class="m-card" style="margin-bottom:1.25rem;" data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}">
         <div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div>
         <div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
         <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div>
         <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div>
-        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;flex-wrap:wrap;">
-          <button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,"\\'")}')">
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;">
+          <button class="btn-checkin ${p.checked_in?'checked':''}" style="flex:1;" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,"\\'")}')">
             ${p.checked_in?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Checked in':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Check in'}
           </button>
-          ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openEdit('participants','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button><button class="btn-archive" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-          </button>`:''}
+          ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
         </div>
       </div>
     `).join('') || '<div style="padding:2rem;text-align:center;color:var(--text-light);">No participants yet</div>';
@@ -2957,13 +3130,14 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
     document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
     const adminS = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+    populateFeeStudentDropdown(stus);
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">🎓</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No students yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Add your first student to start tracking classes and fee payments.</div>
     </td></tr>`;
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading students', 'error'); } finally { hideLoader(); }
 }
 async function loadFeePayments() {
@@ -2974,7 +3148,7 @@ const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ?
     fps.forEach(f => cacheRecord('fee_payments', f));
     const adminFP = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td><span class="badge badge-clay">${f.payment_mode||'UPI'}</span></td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${adminFP?(f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('fee_payments','${f.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}" data-student="${f.student_name||''}" data-paid="${f.paid}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td><span class="badge badge-clay">${f.payment_mode||'UPI'}</span></td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${adminFP?(f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('fee_payments','${f.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">📋</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No fee payments yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Fee payments will appear here once you add students and log their monthly fees.</div>
@@ -2998,7 +3172,7 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
     document.getElementById('payNetProfit').textContent = fmt(income-expense);
     const adminPay = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;">${p.synced_from_razorpay !== true?`<button class="icon-action-btn" title="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button>`:''}<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}" data-type="${p.type||''}" data-mode="${p.payment_mode||''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;">${p.synced_from_razorpay !== true?`<button class="icon-action-btn" title="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button>`:''}<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">💳</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No payments yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Razorpay payments sync automatically. You can also add manual payments.</div>
@@ -3017,13 +3191,13 @@ const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&in
     leads.forEach(l => cacheRecord('leads', l));
     const adminL = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}" data-referred="${l.referred_friend}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">💬</div>
       <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No leads yet</div>
       <div style="font-size:0.85rem;color:var(--text-light);">Track potential students and handpan buyers who attended your workshops.</div>
     </td></tr>`;
     const leadsCards = document.getElementById('leadsCards');
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" data-referred="${l.referred_friend}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
 
@@ -4124,29 +4298,197 @@ function goToSearchResult(entity, id) {
   }, 100);
 }
 
-function filterSection(section, query) {
-  const q = query.toLowerCase().trim();
+// ── FILTER STATE ──
+const filterState = {
+  workshops: { year: 'all', search: '' },
+  participants: { workshop: '', checkin: 'all', search: '' },
+  classes: { status: 'all', search: '' },
+  'fee-payments': { student: '', status: 'all', search: '' },
+  payments: { type: 'all', mode: 'all', search: '' },
+  leads: { referred: 'all', search: '' }
+};
+
+function setFilterPill(section, key, value, btn) {
+  filterState[section][key] = value;
+  const bar = document.getElementById('filter-bar-' + section);
+  if (bar) {
+    const group = btn.closest('.filter-pills');
+    if (group) group.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  }
+  btn.classList.add('active');
+  applyFilters(section);
+}
+
+function applyFilters(section) {
+  const searchId = { workshops: 'search-workshops', participants: 'search-participants', classes: 'search-classes', 'fee-payments': 'search-fee-payments', payments: 'search-payments', leads: 'search-leads' };
+  const q = (document.getElementById(searchId[section])?.value || '').toLowerCase().trim();
+  filterState[section].search = q;
+
   const tableMap = { workshops:'workshopsTable', participants:'participantsTable', classes:'studentsTable', 'fee-payments':'feePaymentsTable', payments:'paymentsTable', leads:'leadsTable' };
   const cardMap = { workshops:'workshopsCards', participants:'participantsCards', classes:'studentsCards', 'fee-payments':'feePaymentsCards', payments:'paymentsCards', leads:'leadsCards' };
+
+  const st = filterState[section];
   const tbl = document.getElementById(tableMap[section]);
+  const cards = document.getElementById(cardMap[section]);
+
+  function rowMatches(text, data) {
+    if (q && !text.toLowerCase().includes(q)) return false;
+    if (section === 'participants') {
+      const ws = document.getElementById('filter-participants-workshop')?.value || '';
+      if (ws && !data.workshop) return false;
+      if (ws && data.workshop !== ws) return false;
+      if (st.checkin === 'yes' && data.checkin !== 'true') return false;
+      if (st.checkin === 'no' && data.checkin === 'true') return false;
+    }
+    if (section === 'classes') {
+      if (st.status !== 'all' && data.status !== st.status) return false;
+    }
+    if (section === 'fee-payments') {
+      const stu = document.getElementById('filter-fee-student')?.value || '';
+      if (stu && data.student !== stu) return false;
+      if (st.status === 'paid' && data.paid !== 'true') return false;
+      if (st.status === 'pending' && data.paid === 'true') return false;
+    }
+    if (section === 'payments') {
+      if (st.type !== 'all' && data.type !== st.type) return false;
+      if (st.mode !== 'all' && data.mode !== st.mode) return false;
+    }
+    if (section === 'leads') {
+      if (st.referred === 'yes' && data.referred !== 'true') return false;
+      if (st.referred === 'no' && data.referred === 'true') return false;
+    }
+    return true;
+  }
+
   if (tbl) {
     let visible = 0;
     tbl.querySelectorAll('tr:not(.search-empty-row)').forEach(row => {
-      if (!q || row.textContent.toLowerCase().includes(q)) { row.style.display=''; visible++; }
-      else row.style.display = 'none';
+      const data = row.dataset || {};
+      const show = rowMatches(row.textContent, data);
+      row.style.display = show ? '' : 'none';
+      if (show) visible++;
     });
     let empty = tbl.querySelector('.search-empty-row');
-    if (!visible && q) {
-      if (!empty) { const r=document.createElement('tr'); r.className='search-empty-row'; r.innerHTML=`<td colspan="20" style="text-align:center;padding:2rem;color:var(--text-light);">No results for "${query}"</td>`; tbl.appendChild(r); }
+    if (!visible) {
+      if (!empty) { const r = document.createElement('tr'); r.className = 'search-empty-row'; r.innerHTML = `<td colspan="20" style="text-align:center;padding:2rem;color:var(--text-light);">No results found</td>`; tbl.appendChild(r); }
     } else { if (empty) empty.remove(); }
   }
-  const cards = document.getElementById(cardMap[section]);
+
   if (cards) {
     cards.querySelectorAll('.m-card').forEach(card => {
-      card.style.display = (!q || card.textContent.toLowerCase().includes(q)) ? '' : 'none';
+      const data = card.dataset || {};
+      card.style.display = rowMatches(card.textContent, data) ? '' : 'none';
     });
   }
 }
+
+// ── COLUMN SORT ──
+const sortStates = {};
+function sortTable(section, col, thEl) {
+  const tableMap = { workshops:'workshopsTable', participants:'participantsTable', classes:'studentsTable', 'fee-payments':'feePaymentsTable', payments:'paymentsTable', leads:'leadsTable' };
+  const tbl = document.getElementById(tableMap[section]);
+  if (!tbl) return;
+  const prev = sortStates[section] || {};
+  const dir = (prev.col === col && prev.dir === 'asc') ? 'desc' : 'asc';
+  sortStates[section] = { col, dir };
+  const table = tbl.closest('table');
+  if (table) {
+    table.querySelectorAll('.sortable-th').forEach(th => { th.classList.remove('sort-asc','sort-desc'); });
+    thEl.classList.add(dir === 'asc' ? 'sort-asc' : 'sort-desc');
+  }
+  const rows = Array.from(tbl.querySelectorAll('tr:not(.search-empty-row)'));
+  rows.sort((a, b) => {
+    const ai = a.dataset[col] || a.cells[getCellIndex(table, col)]?.textContent || '';
+    const bi = b.dataset[col] || b.cells[getCellIndex(table, col)]?.textContent || '';
+    const an = parseFloat(ai.replace(/[₹,%\s]/g,'').replace(/,/g,''));
+    const bn = parseFloat(bi.replace(/[₹,%\s]/g,'').replace(/,/g,''));
+    if (!isNaN(an) && !isNaN(bn)) return dir === 'asc' ? an - bn : bn - an;
+    return dir === 'asc' ? ai.localeCompare(bi) : bi.localeCompare(ai);
+  });
+  rows.forEach(r => tbl.appendChild(r));
+}
+function getCellIndex(table, col) {
+  const headers = table.querySelectorAll('th');
+  for (let i = 0; i < headers.length; i++) {
+    if (headers[i].textContent.toLowerCase().includes(col.replace('_',' '))) return i;
+  }
+  return 0;
+}
+
+// ── MOBILE ··· BOTTOM SHEET ──
+function openMDotsSheet(id, name, type, isAdmin) {
+  const sheet = document.getElementById('mDotsSheet');
+  const title = document.getElementById('mDotsTitle');
+  const items = document.getElementById('mDotsItems');
+  if (!sheet) return;
+  title.textContent = name;
+  const EDIT_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+  const TRASH_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+  const CHECK_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>`;
+  let html = '';
+  if (type === 'workshop') {
+    html += `<button class="m-dots-item" onclick="closeMDotsSheet();openCheckinMode('${id}','${name}','')">${CHECK_SVG} Check-in</button>`;
+    if (isAdmin) {
+      html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('workshops','${id}')">${EDIT_SVG} Edit</button>`;
+      html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('workshops','${id}','Workshop ${id}')">${TRASH_SVG} Delete</button>`;
+    }
+  } else if (type === 'participant') {
+    html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('participants','${id}')">${EDIT_SVG} Edit</button>`;
+    html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('participants','${id}','${name}')">${TRASH_SVG} Delete</button>`;
+  } else if (type === 'student') {
+    html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('students','${id}')">${EDIT_SVG} Edit</button>`;
+    html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('students','${id}','${name}')">${TRASH_SVG} Delete</button>`;
+  } else if (type === 'fee_payment') {
+    html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('fee_payments','${id}')">${EDIT_SVG} Edit</button>`;
+    html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('fee_payments','${id}','${name}')">${TRASH_SVG} Delete</button>`;
+  } else if (type === 'payment') {
+    html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('payments','${id}')">${EDIT_SVG} Edit</button>`;
+    html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('payments','${id}','${name}')">${TRASH_SVG} Delete</button>`;
+  } else if (type === 'lead') {
+    html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('leads','${id}')">${EDIT_SVG} Edit</button>`;
+    html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('leads','${id}','${name}')">${TRASH_SVG} Delete</button>`;
+  }
+  items.innerHTML = html;
+  sheet.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMDotsSheet(e) {
+  if (e && e.target !== document.getElementById('mDotsSheet')) return;
+  const sheet = document.getElementById('mDotsSheet');
+  if (sheet) sheet.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── POPULATE FILTER DROPDOWNS ──
+function populateWorkshopFilterDropdown(workshops) {
+  const sel = document.getElementById('filter-participants-workshop');
+  if (!sel) return;
+  const existing = Array.from(sel.options).map(o => o.value);
+  workshops.forEach(w => {
+    if (!existing.includes(w.id)) {
+      const opt = document.createElement('option');
+      opt.value = w.id; opt.textContent = w.id + ' · ' + (w.venue || '');
+      sel.appendChild(opt);
+    }
+  });
+}
+
+function populateFeeStudentDropdown(students) {
+  const sel = document.getElementById('filter-fee-student');
+  if (!sel) return;
+  const existing = Array.from(sel.options).map(o => o.value);
+  students.forEach(s => {
+    if (!existing.includes(s.full_name)) {
+      const opt = document.createElement('option');
+      opt.value = s.full_name; opt.textContent = s.full_name;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+function filterSection(section, query) { applyFilters(section); }
+
 
 
 </script>
