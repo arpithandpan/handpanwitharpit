@@ -65,31 +65,32 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 /* ── FILTER BAR ── */
 .filter-bar {
   display: flex; align-items: center; gap: 8px;
-  flex-wrap: wrap; margin-bottom: 16px;
+  flex-wrap: wrap; margin-bottom: 16px; row-gap: 8px;
 }
-.filter-pills { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-.filter-pills::-webkit-scrollbar { display: none; }
+.filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
 .filter-pill {
   background: none; border: 1px solid rgba(193,127,90,0.25);
-  color: rgba(200,147,90,0.55); font-size: 0.75rem; padding: 5px 12px;
+  color: rgba(200,147,90,0.55); font-size: 0.85rem; padding: 0.65rem 1.25rem;
   border-radius: 20px; cursor: pointer; white-space: nowrap;
   letter-spacing: 0.04em; transition: all 0.15s ease; font-family: var(--font-body);
+  min-height: 48px; display: inline-flex; align-items: center;
 }
 .filter-pill:hover { border-color: rgba(193,127,90,0.5); color: rgba(200,147,90,0.8); }
 .filter-pill.active { background: rgba(193,127,90,0.15); border-color: #c8935a; color: #c8935a; }
-.filter-divider { width: 1px; height: 20px; background: rgba(193,127,90,0.2); flex-shrink: 0; }
+.filter-divider { width: 1px; height: 32px; background: rgba(193,127,90,0.2); flex-shrink: 0; }
 .filter-select {
   background: rgba(193,127,90,0.05); border: 1px solid rgba(193,127,90,0.25);
-  color: rgba(200,147,90,0.7); font-size: 0.78rem; padding: 5px 10px;
+  color: rgba(200,147,90,0.7); font-size: 0.85rem; padding: 0.65rem 2.25rem 0.65rem 1rem;
   border-radius: 8px; cursor: pointer; font-family: var(--font-body);
-  appearance: none; -webkit-appearance: none;
+  appearance: none; -webkit-appearance: none; min-height: 48px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8935a' opacity='0.5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 8px center;
-  padding-right: 24px;
+  background-repeat: no-repeat; background-position: right 10px center;
 }
 .filter-select:focus { outline: none; border-color: rgba(193,127,90,0.5); }
 @media (max-width: 900px) {
   .filter-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+  .filter-pills { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .filter-pills::-webkit-scrollbar { display: none; }
   .filter-select { width: 100%; }
   .filter-divider { display: none; }
   .filter-pills { overflow-x: auto; }
@@ -105,39 +106,39 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 .sortable-th.sort-desc .sort-arrow::after { content: '↓'; }
 .sortable-th:not(.sort-asc):not(.sort-desc) .sort-arrow::after { content: '⇅'; font-size: 0.75rem; }
 
-/* ── MOBILE ··· BOTTOM SHEET ── */
-.m-dots-sheet {
-  display: none; position: fixed; inset: 0; z-index: 9997;
-  background: rgba(10,6,2,0.6); align-items: flex-end;
+/* ── ··· POPOVER MENU ── */
+.m-dots-popover {
+  position: fixed; z-index: 9997;
+  background: #2a1e12; border: 1px solid rgba(193,127,90,0.25);
+  border-radius: 10px; padding: 4px 0; min-width: 160px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  display: none;
 }
-.m-dots-sheet.open { display: flex; }
-.m-dots-inner {
-  width: 100%; background: #2a1e12;
-  border-radius: 16px 16px 0 0; padding: 0.75rem 0 2rem;
-  border-top: 1px solid rgba(193,127,90,0.2);
-}
-.m-dots-handle { width: 36px; height: 4px; background: rgba(193,127,90,0.3); border-radius: 2px; margin: 0 auto 1rem; }
-.m-dots-title { font-size: 0.85rem; color: rgba(200,147,90,0.5); padding: 0 1.5rem 0.75rem; border-bottom: 1px solid rgba(193,127,90,0.1); margin-bottom: 0.25rem; }
+.m-dots-popover.open { display: block; }
 .m-dots-item {
-  display: flex; align-items: center; gap: 14px;
-  padding: 0.9rem 1.5rem; color: #e8d5c0; font-size: 0.95rem;
+  display: flex; align-items: center; gap: 10px;
+  padding: 0.7rem 1rem; color: #e8d5c0; font-size: 0.88rem;
   cursor: pointer; border: none; background: none; width: 100%;
-  text-align: left; font-family: var(--font-body);
+  text-align: left; font-family: var(--font-body); white-space: nowrap;
 }
-.m-dots-item:hover { background: rgba(193,127,90,0.07); }
+.m-dots-item:hover { background: rgba(193,127,90,0.1); }
 .m-dots-item.danger { color: #c87a7a; }
 .m-dots-item svg { flex-shrink: 0; }
+.m-dots-backdrop {
+  display: none; position: fixed; inset: 0; z-index: 9996;
+}
+.m-dots-backdrop.open { display: block; }
 
 /* Per-section search */
 .section-search-wrap {
   position: relative; margin-bottom: 16px; box-sizing: border-box; width: 100%;
 }
 .section-search-input {
-  width: 100%; padding: 0.6rem 1rem 0.6rem 2.4rem;
+  width: 100%; padding: 0.85rem 1rem 0.85rem 2.75rem;
   background: rgba(200,147,90,0.05); border: 1px solid rgba(200,147,90,0.18);
-  border-radius: 8px; color: var(--bark); font-size: 0.88rem;
+  border-radius: 8px; color: var(--bark); font-size: 0.95rem;
   outline: none; transition: border-color 0.2s;
-  font-family: var(--font-body);
+  font-family: var(--font-body); min-height: 52px; box-sizing: border-box;
 }
 .section-search-input::placeholder { color: var(--text-light); }
 .section-search-input:focus { border-color: var(--clay); }
@@ -195,11 +196,12 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 /* ── ICON ACTION BUTTONS WITH TOOLTIPS ── */
 .icon-action-btn {
   position: relative; display: inline-flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; border-radius: 6px;
+  width: 44px; height: 44px; border-radius: 8px;
   background: transparent; border: 1px solid rgba(200,147,90,0.3);
   color: var(--text-light); cursor: pointer;
   transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
+.icon-action-btn svg { width: 18px; height: 18px; }
 .icon-action-btn:hover { border-color: var(--clay); color: var(--clay); background: rgba(200,147,90,0.06); }
 .icon-action-btn.danger:hover { border-color: rgba(180,60,40,0.6); color: #c8735a; background: rgba(180,60,40,0.06); }
 .icon-action-btn[title]:hover::after {
@@ -321,9 +323,9 @@ th {
   white-space: nowrap;
 }
 td {
-  padding: 1rem 1.25rem; font-size: 1rem; color: var(--text-mid);
+  padding: 1.1rem 1.25rem; font-size: 1rem; color: var(--text-mid);
   border-bottom: 1px solid rgba(193,127,82,0.08);
-  vertical-align: middle;
+  vertical-align: middle; height: 64px;
 }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: rgba(193,127,82,0.04); }
@@ -373,7 +375,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .btn-dash-danger { background: transparent; color: #B43C28; border: 1px solid rgba(180,60,40,0.3); }
 .btn-dash-danger:hover { background: rgba(180,60,40,0.06); border-color: #B43C28; }
 /* Size modifier */
-.btn-dash-sm { padding: 0.4rem 0.9rem; font-size: 0.85rem; min-height: 40px; }
+.btn-dash-sm { padding: 0.55rem 1rem; font-size: 0.85rem; min-height: 48px; }
 /* Save — used on dark form-page headers, always clay-coloured so it pops on both light/dark headers */
 .btn-dash-save {
   background: var(--clay); color: #fff; border: none;
@@ -1066,7 +1068,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
   .form-page-body { padding: 1.25rem 1rem 3rem; }
   .dash-section-header > div[style*="display:flex"] { flex-wrap: wrap; }
   .archived-toggle { font-size: 0.82rem; }
-  .btn-dash-sm { font-size: 0.78rem; padding: 0.4rem 0.75rem; }
+  .btn-dash-sm { font-size: 0.8rem; padding: 0.55rem 0.85rem; min-height: 48px; }
   .overview-card table { min-width: unset; }
   .overview-card th, .overview-card td { padding: 0.6rem 0.75rem; font-size: 0.82rem; }
   .overview-card
@@ -1148,10 +1150,10 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 .btn-restore:hover { background: rgba(122,170,94,0.1); border-color: var(--moss); }
 .btn-checkin {
   background: none; border: 1.5px solid var(--clay-pale);
-  border-radius: 20px; cursor: pointer; padding: 0.25rem 0.75rem;
-  font-size: 0.78rem; color: var(--text-light); font-family: var(--font-body);
-  transition: all 0.2s; white-space: nowrap; min-height: 32px;
-  display: inline-flex; align-items: center; gap: 0.35rem;
+  border-radius: 20px; cursor: pointer; padding: 0.5rem 1.1rem;
+  font-size: 0.85rem; color: var(--text-light); font-family: var(--font-body);
+  transition: all 0.2s; white-space: nowrap; min-height: 48px;
+  display: inline-flex; align-items: center; gap: 0.4rem;
 }
 .btn-checkin.checked {
   background: rgba(122,140,106,0.12); border-color: var(--moss);
@@ -1362,13 +1364,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
   </div>
 </div>
 
-<!-- Mobile ··· Bottom Sheet -->
-<div class="m-dots-sheet" id="mDotsSheet" onclick="closeMDotsSheet(event)">
-  <div class="m-dots-inner">
-    <div class="m-dots-handle"></div>
-    <div class="m-dots-title" id="mDotsTitle"></div>
-    <div id="mDotsItems"></div>
-  </div>
+<!-- ··· Popover Menu -->
+<div class="m-dots-backdrop" id="mDotsBackdrop" onclick="closeMDotsSheet()"></div>
+<div class="m-dots-popover" id="mDotsSheet">
+  <div id="mDotsItems"></div>
 </div>
 
 <!-- Mobile Full-Screen Search -->
@@ -3032,11 +3031,11 @@ async function loadWorkshops() {
           <div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div>
         </div>
         <div style="padding:0.85rem 1.5rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;">
-          <button class="btn-dash btn-dash-outline btn-dash-sm" style="flex:1;" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')">
+          <button class="btn-dash btn-dash-outline btn-dash-sm" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             Participants
           </button>
-          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${w.id}','${(w.venue||w.id).replace(/'/g,"\\'")}','workshop',${admin})" aria-label="More actions" style="padding:0.5rem 0.75rem;">
+          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${w.id}','${(w.venue||w.id).replace(/'/g,"\\'")}','workshop',${admin},this)" aria-label="More actions" style="padding:0.5rem 0.75rem;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
           </button>
         </div>
@@ -3151,7 +3150,7 @@ async function loadParticipants() {
           <button class="btn-checkin ${p.checked_in?'checked':''}" style="flex:1;" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,"\\'")}')">
             ${p.checked_in?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Checked in':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Check in'}
           </button>
-          ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
+          ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true,this)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
         </div>
       </div>
     `).join('') || '<div style="padding:2rem;text-align:center;color:var(--text-light);">No participants yet</div>';
@@ -4583,15 +4582,16 @@ function getCellIndex(table, col) {
 }
 
 // ── MOBILE ··· BOTTOM SHEET ──
-function openMDotsSheet(id, name, type, isAdmin) {
-  const sheet = document.getElementById('mDotsSheet');
-  const title = document.getElementById('mDotsTitle');
+function openMDotsSheet(id, name, type, isAdmin, btnEl) {
+  const popover = document.getElementById('mDotsSheet');
+  const backdrop = document.getElementById('mDotsBackdrop');
   const items = document.getElementById('mDotsItems');
-  if (!sheet) return;
-  title.textContent = name;
-  const EDIT_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-  const TRASH_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
-  const CHECK_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>`;
+  if (!popover) return;
+
+  const EDIT_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+  const TRASH_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+  const CHECK_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>`;
+
   let html = '';
   if (type === 'workshop') {
     html += `<button class="m-dots-item" onclick="closeMDotsSheet();openCheckinMode('${id}','${name}','')">${CHECK_SVG} Check-in</button>`;
@@ -4616,15 +4616,29 @@ function openMDotsSheet(id, name, type, isAdmin) {
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('leads','${id}','${name}')">${TRASH_SVG} Delete</button>`;
   }
   items.innerHTML = html;
-  sheet.classList.add('open');
-  document.body.style.overflow = 'hidden';
+
+  popover.classList.add('open');
+  backdrop.classList.add('open');
+
+  // Position near the button
+  if (btnEl) {
+    const rect = btnEl.getBoundingClientRect();
+    const popW = 170;
+    const popH = items.children.length * 46 + 8;
+    let left = rect.right - popW;
+    let top = rect.bottom + 6;
+    if (left < 8) left = 8;
+    if (top + popH > window.innerHeight - 8) top = rect.top - popH - 6;
+    popover.style.left = left + 'px';
+    popover.style.top = top + 'px';
+  }
 }
 
 function closeMDotsSheet(e) {
-  if (e && e.target !== document.getElementById('mDotsSheet')) return;
-  const sheet = document.getElementById('mDotsSheet');
-  if (sheet) sheet.classList.remove('open');
-  document.body.style.overflow = '';
+  const popover = document.getElementById('mDotsSheet');
+  const backdrop = document.getElementById('mDotsBackdrop');
+  if (popover) popover.classList.remove('open');
+  if (backdrop) backdrop.classList.remove('open');
 }
 
 // ── POPULATE FILTER DROPDOWNS ──
