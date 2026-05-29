@@ -135,13 +135,13 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 }
 .section-search-input {
   width: 100%; padding: 0.85rem 1rem 0.85rem 2.75rem;
-  background: rgba(200,147,90,0.05); border: 1px solid rgba(200,147,90,0.18);
+  background: rgba(255, 245, 225, 0.07); border: 1px solid rgba(200,147,90,0.35);
   border-radius: 8px; color: var(--bark); font-size: 0.95rem;
   outline: none; transition: border-color 0.2s;
   font-family: var(--font-body); min-height: 52px; box-sizing: border-box;
 }
-.section-search-input::placeholder { color: var(--text-light); }
-.section-search-input:focus { border-color: var(--clay); }
+.section-search-input::placeholder { color: rgba(200,147,90,0.45); }
+.section-search-input:focus { border-color: var(--clay); background: rgba(255,245,225,0.1); }
 .section-search-icon {
   position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
   color: var(--text-light); pointer-events: none;
@@ -161,13 +161,13 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
   padding-top: max(0.875rem, env(safe-area-inset-top));
 }
 .mobile-search-fs-input {
-  flex: 1; min-width: 0; width: 100%; background: rgba(200,147,90,0.1); border: 1px solid rgba(200,147,90,0.25);
+  flex: 1; min-width: 0; width: 100%; background: rgba(255,245,225,0.08); border: 1px solid rgba(200,147,90,0.35);
   border-radius: 8px; color: #e8d5c0; font-size: 1rem;
   padding: 0.65rem 1rem 0.65rem 2.5rem; outline: none;
   font-family: var(--font-body); box-sizing: border-box;
 }
-.mobile-search-fs-input::placeholder { color: rgba(200,147,90,0.4); }
-.mobile-search-fs-input:focus { border-color: rgba(200,147,90,0.45); }
+.mobile-search-fs-input::placeholder { color: rgba(200,147,90,0.5); }
+.mobile-search-fs-input:focus { border-color: rgba(200,147,90,0.6); background: rgba(255,245,225,0.1); }
 .mobile-search-fs-icon {
   position: absolute; left: 1.85rem;
   color: rgba(200,147,90,0.5); pointer-events: none;
@@ -307,7 +307,8 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
 .stat-sub { font-size: 1rem; color: var(--text-light); margin-top: 0.4rem; }
 
 /* Tables */
-.dash-table-wrap { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; overflow: hidden; }
+.dash-table-wrap { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+td { white-space: nowrap; }
 .dash-table-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--clay-pale);
@@ -440,6 +441,9 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   color-scheme: light;
 }
 .form-input:focus { border-color: var(--clay); }
+textarea.form-input {
+  resize: vertical; min-height: 96px; line-height: 1.6;
+}
 /* Hide number input spinners */
 .form-input[type="number"]::-webkit-inner-spin-button,
 .form-input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -1150,10 +1154,11 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 .btn-restore:hover { background: rgba(122,170,94,0.1); border-color: var(--moss); }
 .btn-checkin {
   background: none; border: 1.5px solid var(--clay-pale);
-  border-radius: 20px; cursor: pointer; padding: 0.5rem 1.1rem;
+  border-radius: 20px; cursor: pointer; padding: 0.5rem 1.25rem;
   font-size: 0.85rem; color: var(--text-light); font-family: var(--font-body);
   transition: all 0.2s; white-space: nowrap; min-height: 48px;
   display: inline-flex; align-items: center; gap: 0.4rem;
+  width: auto; align-self: flex-start;
 }
 .btn-checkin.checked {
   background: rgba(122,140,106,0.12); border-color: var(--moss);
@@ -1342,7 +1347,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 
 
 <!-- ── DASHBOARD ROOT ── -->
-<div class="mobile-topbar" id="mobileTopbar" style="display:none;position:relative;">
+<div class="mobile-topbar" id="mobileTopbar" style="display:none;">
   <div class="topbar-logo" style="display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity 0.15s;" onclick="showSection('overview',null);document.getElementById('mobileMenuOverlay').classList.remove('open');">
     <svg width="30" height="30" viewBox="0 0 48 48" fill="none">
       <rect x="4" y="4" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
@@ -2167,7 +2172,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <select class="form-input" id="lead-status"><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div>
       <div class="form-group"><label class="form-label">Follow-up Date</label><input type="date" class="form-input" id="lead-followup"/></div>
     </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="lead-notes" placeholder="Any notes..."/></div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="lead-notes" placeholder="Any notes..." rows="3"></textarea></div>
   </div></div>
 </div>
 
@@ -2241,7 +2246,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <div class="form-group"><label class="form-label">Monthly Fee (₹)</label><input type="number" class="form-input" id="stu-fee" placeholder="0"/></div>
       <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" id="stu-start"/></div>
     </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="stu-notes" placeholder="Any notes..."/></div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="stu-notes" placeholder="Any notes..." rows="3"></textarea></div>
   </div></div>
 </div>
 
@@ -2280,7 +2285,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <option value="Cash">Cash</option><option value="Other">Other</option>
         </select></div>
     </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="fee-notes" placeholder="Any notes..."/></div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="fee-notes" placeholder="Any notes..." rows="3"></textarea></div>
   </div></div>
 </div>
 
@@ -2321,7 +2326,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         </select></div>
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="par-date"/></div>
     </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="par-notes" placeholder="Any notes..."/></div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="par-notes" placeholder="Any notes..." rows="3"></textarea></div>
   </div></div>
 </div>
 
@@ -3146,8 +3151,8 @@ async function loadParticipants() {
         <div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
         <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div>
         <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div>
-        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;">
-          <button class="btn-checkin ${p.checked_in?'checked':''}" style="flex:1;" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,"\\'")}')">
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+          <button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,"\\'")}')">
             ${p.checked_in?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Checked in':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Check in'}
           </button>
           ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true,this)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
@@ -4091,7 +4096,10 @@ function openEdit(entity, id) {
 }
 
 function buildEditForm(entity, r) {
-  const fi = (label, id, type='text', val='', extra='') => `<div class="form-group"><label class="form-label">${label}</label><input type="${type}" class="form-input" id="ef-${id}" value="${(val||'').toString().replace(/"/g,'&quot;')}" ${extra}/></div>`;
+  const fi = (label, id, type='text', val='', extra='') => `${type === 'textarea'
+    ? `<textarea class="form-input" id="ef-${id}" rows="3" ${extra}>${(val||'').toString().replace(/</g,'&lt;')}</textarea>`
+    : `<input type="${type}" class="form-input" id="ef-${id}" value="${(val||'').toString().replace(/\"/g,'&quot;')}" ${extra}/>`}
+</div>`;
   const sel = (label, id, opts, val='') => `<div class="form-group"><label class="form-label">${label}</label><select class="form-input" id="ef-${id}">${opts.map(([v,t])=>`<option value="${v}"${v==val?' selected':''}>${t}</option>`).join('')}</select></div>`;
   const row = (...items) => `<div class="form-row">${items.join('')}</div>`;
   const readOnly = (label, val) => `<div class="form-group"><label class="form-label">${label}</label><input type="text" class="form-input" value="${val||'—'}" disabled style="opacity:0.5;cursor:not-allowed;"/></div>`;
@@ -4110,7 +4118,7 @@ function buildEditForm(entity, r) {
     ${row(sel('Payment Mode','par-mode',[['Razorpay UPI','Razorpay UPI'],['UPI','UPI'],['Cash','Cash'],['BMS','BMS']],r.payment_mode),
           sel('Booking Source','par-source',[['Instagram','Instagram'],['BMS','BMS'],['Razorpay','Razorpay'],['UPI','UPI'],['Referral','Referral'],['Other','Other']],r.booking_source))}
     ${row(sel('Interested in Handpan','par-interested',[['Maybe','Maybe'],['Yes','Yes'],['No','No']],r.interested_in_handpan), fi('Date','par-date','date',r.date))}
-    ${fi('Notes','par-notes','text',r.notes)}`;
+    ${fi('Notes','par-notes','textarea',r.notes)}`;
 
   if (entity === 'students') return `
     ${row(readOnly('Student ID', r.id), fi('Full Name','stu-name','text',r.full_name))}
@@ -4118,13 +4126,13 @@ function buildEditForm(entity, r) {
     ${row(sel('Status','stu-status',[['Active','Active'],['On Break','On Break'],['Completed','Completed']],r.status),
           fi('Start Date','stu-start','date',r.join_date))}
     ${row(fi('Monthly Fee (₹)','stu-fee','number',r.monthly_fee||0), sel('Level','stu-level',[['Beginner','Beginner'],['Intermediate','Intermediate'],['Advanced','Advanced']],r.level))}
-    ${fi('Notes','stu-notes','text',r.notes)}`;
+    ${fi('Notes','stu-notes','textarea',r.notes)}`;
 
   if (entity === 'fee_payments') return `
     ${row(readOnly('FP ID', r.id), readOnly('Student', r.student_name||r.student_id))}
     ${row(fi('Amount (₹)','fee-amount','number',r.amount), sel('Payment Mode','fee-mode',[['Razorpay UPI','Razorpay UPI'],['UPI','UPI'],['Cash','Cash'],['Other','Other']],r.payment_mode))}
     ${row(fi('Payment Date','fee-date','date',r.payment_date), sel('Paid','fee-paid',[['true','Paid'],['false','Pending']],String(r.paid)))}
-    ${fi('Notes','fee-notes','text',r.notes)}`;
+    ${fi('Notes','fee-notes','textarea',r.notes)}`;
 
   if (entity === 'payments') return `
     ${row(fi('Date','pay-date','date',r.date), fi('Amount (₹)','pay-amount','number',r.amount))}
@@ -4140,7 +4148,7 @@ function buildEditForm(entity, r) {
     ${row(readOnly('Workshop', r.workshop_attended), fi('Est. Budget (₹)','lead-budget','number',r.estimated_budget))}
     ${row(sel('Status','lead-status',[['Hot','Hot'],['Warm','Warm'],['Cold','Cold']],r.status),
           fi('Follow-up Date','lead-followup','date',r.follow_up_date))}
-    ${fi('Notes','lead-notes','text',r.notes)}`;
+    ${fi('Notes','lead-notes','textarea',r.notes)}`;
 
   return '<p style="color:var(--text-light);padding:1rem;">No editable fields.</p>';
 }
