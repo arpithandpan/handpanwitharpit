@@ -3798,6 +3798,24 @@ async function loadBin() {
             </tbody>
           </table>
         </div>
+        <div class="mobile-cards">
+          ${items.map(item => `
+            <div class="m-card">
+              <div class="m-card-title">${item._name}</div>
+              <div class="m-card-row"><span class="m-card-label">Type</span><span class="m-card-val">${label}</span></div>
+              <div class="m-card-row"><span class="m-card-label">ID</span><span class="m-card-val">${item.id||'—'}</span></div>
+              <div style="padding-top:1rem;margin-top:0.75rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;justify-content:flex-end;">
+                <button class="btn-restore" onclick="restoreBinItem('${item._table}','${item.id}','${(item._name||'').replace(/'/g,'\\\'')}')" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 1rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                  Restore
+                </button>
+                <button class="btn-dash btn-dash-danger btn-dash-sm" onclick="promptDeleteForever('${item._table}','${item.id}','${(item._name||'').replace(/'/g,'\\\'')}')" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                  Delete Forever
+                </button>
+              </div>
+            </div>`).join('')}
+        </div>
       </div>
     `).join('');
   } catch(e) {
