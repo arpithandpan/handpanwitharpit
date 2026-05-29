@@ -987,7 +987,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 .settings-copy-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.25rem; }
 .settings-divider { border: none; border-top: 1px solid var(--clay-pale); margin: 1.25rem 0; }
 .settings-export-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;
 }
 .settings-mvp-bar-wrap { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
 .settings-checklist { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -1462,7 +1462,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     <button class="mobile-search-fs-cancel" onclick="closeMobileSearch()">Cancel</button>
   </div>
   <div class="mobile-search-fs-body" id="mobileSearchBody">
-    ${EMPTY_STATES.search}
+    <div id="mobileSearchEmptyDefault"></div>
   </div>
 </div>
 
@@ -2513,6 +2513,55 @@ let currentRole = 'admin';
 
 function isAdmin() { return currentRole === 'admin'; }
 
+// ── VIEWER DUMMY DATA ──
+const DUMMY = {
+  workshops: [
+    { id:'WS-001', venue:'Creative Bloom Koramangala', date:'2026-01-18', total_pax:12, total_revenue:15600, total_expense:7200, net_profit:8400, margin:53.8, archived:false },
+    { id:'WS-002', venue:'Creative Bloom Indiranagar', date:'2026-02-22', total_pax:9, total_revenue:11700, total_expense:5800, net_profit:5900, margin:50.4, archived:false },
+    { id:'WS-003', venue:'Creative Bloom Whitefield', date:'2026-04-05', total_pax:15, total_revenue:19500, total_expense:8900, net_profit:10600, margin:54.4, archived:false },
+  ],
+  participants: [
+    { id:'P-0001', full_name:'Meera Krishnan', phone:'9845001122', workshop_id:'WS-001', amount_paid:1300, payment_mode:'UPI', checked_in:true, archived:false, date:'2026-01-18' },
+    { id:'P-0002', full_name:'Rahul Sharma', phone:'9900112233', workshop_id:'WS-001', amount_paid:1300, payment_mode:'BMS', checked_in:true, archived:false, date:'2026-01-18' },
+    { id:'P-0003', full_name:'Priya Nair', phone:'9876543210', workshop_id:'WS-001', amount_paid:1300, payment_mode:'BMS', checked_in:true, archived:false, date:'2026-01-18' },
+    { id:'P-0004', full_name:'Arjun Reddy', phone:'', workshop_id:'WS-001', amount_paid:1300, payment_mode:'BMS', checked_in:false, archived:false, date:'2026-01-18' },
+    { id:'P-0005', full_name:'Sneha Patel', phone:'', workshop_id:'WS-002', amount_paid:1300, payment_mode:'UPI', checked_in:true, archived:false, date:'2026-02-22' },
+    { id:'P-0006', full_name:'Vikram Singh', phone:'9901234567', workshop_id:'WS-002', amount_paid:1300, payment_mode:'Cash', checked_in:true, archived:false, date:'2026-02-22' },
+    { id:'P-0007', full_name:'Ananya Mehta', phone:'9812345678', workshop_id:'WS-002', amount_paid:1300, payment_mode:'BMS', checked_in:true, archived:false, date:'2026-02-22' },
+    { id:'P-0008', full_name:'Rohan Iyer', phone:'', workshop_id:'WS-003', amount_paid:1300, payment_mode:'UPI', checked_in:true, archived:false, date:'2026-04-05' },
+    { id:'P-0009', full_name:'Kavya Menon', phone:'9890123456', workshop_id:'WS-003', amount_paid:1300, payment_mode:'BMS', checked_in:true, archived:false, date:'2026-04-05' },
+    { id:'P-0010', full_name:'Aditya Kumar', phone:'9988776655', workshop_id:'WS-003', amount_paid:1300, payment_mode:'UPI', checked_in:false, archived:false, date:'2026-04-05' },
+  ],
+  students: [
+    { id:'S-001', full_name:'Divya Ramesh', phone:'9845112233', email:'', batch_id:'BATCH-001', join_date:'2026-01-10', status:'Active', total_classes:11, total_paid:8250, notes:'Making great progress', archived:false },
+    { id:'S-002', full_name:'Karthik Balan', phone:'9900223344', email:'', batch_id:'BATCH-001', join_date:'2026-02-01', status:'On Break', total_classes:4, total_paid:3000, notes:'Travelling for 2 months', archived:false },
+  ],
+  fee_payments: [
+    { id:'FP-001', student_name:'Divya Ramesh', batch_id:'BATCH-001', month:'Jan-2026', amount:750, payment_mode:'UPI', paid:true, payment_date:'2026-01-10', notes:'', archived:false },
+    { id:'FP-002', student_name:'Divya Ramesh', batch_id:'BATCH-001', month:'Feb-2026', amount:750, payment_mode:'UPI', paid:true, payment_date:'2026-02-08', notes:'', archived:false },
+    { id:'FP-003', student_name:'Divya Ramesh', batch_id:'BATCH-001', month:'Mar-2026', amount:750, payment_mode:'Cash', paid:true, payment_date:'2026-03-06', notes:'', archived:false },
+    { id:'FP-004', student_name:'Karthik Balan', batch_id:'BATCH-001', month:'Jan-2026', amount:750, payment_mode:'UPI', paid:true, payment_date:'2026-01-12', notes:'', archived:false },
+    { id:'FP-005', student_name:'Karthik Balan', batch_id:'BATCH-001', month:'Feb-2026', amount:750, payment_mode:'UPI', paid:true, payment_date:'2026-02-10', notes:'', archived:false },
+  ],
+  payments: [
+    { id:'PAY-001', date:'2026-01-18', description:'Workshop revenue - WS-001', type:'income', category:'workshop', payment_mode:'UPI', amount:15600, payer_name:'Workshop WS-001', archived:false },
+    { id:'PAY-002', date:'2026-01-20', description:'Venue rental - Koramangala', type:'expense', category:'venue', payment_mode:'Cash', amount:4500, payer_name:'', archived:false },
+    { id:'PAY-003', date:'2026-01-22', description:'Sound equipment rental', type:'expense', category:'equipment', payment_mode:'Cash', amount:2700, payer_name:'', archived:false },
+    { id:'PAY-004', date:'2026-02-22', description:'Workshop revenue - WS-002', type:'income', category:'workshop', payment_mode:'UPI', amount:11700, payer_name:'Workshop WS-002', archived:false },
+    { id:'PAY-005', date:'2026-02-24', description:'Venue rental - Indiranagar', type:'expense', category:'venue', payment_mode:'Cash', amount:3800, payer_name:'', archived:false },
+    { id:'PAY-006', date:'2026-03-01', description:'Monthly class fees', type:'income', category:'classes', payment_mode:'UPI', amount:1500, payer_name:'Students', archived:false },
+    { id:'PAY-007', date:'2026-04-05', description:'Workshop revenue - WS-003', type:'income', category:'workshop', payment_mode:'UPI', amount:19500, payer_name:'Workshop WS-003', archived:false },
+    { id:'PAY-008', date:'2026-04-06', description:'Venue rental - Whitefield', type:'expense', category:'venue', payment_mode:'Cash', amount:5200, payer_name:'', archived:false },
+    { id:'PAY-009', date:'2026-04-08', description:'Marketing & printing', type:'expense', category:'marketing', payment_mode:'UPI', amount:1200, payer_name:'', archived:false },
+    { id:'PAY-010', date:'2026-04-10', description:'Monthly class fees', type:'income', category:'classes', payment_mode:'UPI', amount:2250, payer_name:'Students', archived:false },
+  ],
+  leads: [
+    { id:'L-001', full_name:'Pooja Verma', phone:'9876001122', workshop_attended:'WS-002', date_added:'2026-02-22', estimated_budget:45000, status:'Hot', follow_up_date:'2026-05-15', referred_friend:true, notes:'Very interested, needs time to decide', archived:false },
+    { id:'L-002', full_name:'Nikhil Joshi', phone:'9900334455', workshop_attended:'WS-003', date_added:'2026-04-05', estimated_budget:50000, status:'Warm', follow_up_date:'2026-06-01', referred_friend:false, notes:'Comparing with other instruments', archived:false },
+    { id:'L-003', full_name:'Shreya Das', phone:'', workshop_attended:'WS-001', date_added:'2026-01-18', estimated_budget:40000, status:'Cold', follow_up_date:'', referred_friend:false, notes:'Not sure yet', archived:false },
+  ],
+};
+
 function applyRole() {
   const badge = document.getElementById('sidebarRoleBadge');
   if (isAdmin()) {
@@ -3016,11 +3065,17 @@ const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', {day:'2-digit',
 // ── OVERVIEW ──
 async function loadOverview() {
   try {
-    const [workshops, participants, students, leads, payments] = await Promise.all([
-      api('/workshops'), api('/participants'), api('/students'), api('/leads'), api('/payments')
-    ]);
-    const ws = workshops.data || []; const pays = payments.data || [];
-    const stus = students.data || []; const lds = leads.data || []; const parts = participants.data || [];
+    let ws, pays, stus, lds, parts;
+    if (currentRole === 'viewer') {
+      ws = DUMMY.workshops; pays = DUMMY.payments;
+      stus = DUMMY.students; lds = DUMMY.leads; parts = DUMMY.participants;
+    } else {
+      const [workshops, participants, students, leads, payments] = await Promise.all([
+        api('/workshops'), api('/participants'), api('/students'), api('/leads'), api('/payments')
+      ]);
+      ws = workshops.data || []; pays = payments.data || [];
+      stus = students.data || []; lds = leads.data || []; parts = participants.data || [];
+    }
     const income = pays.filter(p => p.type === 'income').reduce((s, p) => s + Number(p.amount), 0);
     const expense = pays.filter(p => p.type === 'expense').reduce((s, p) => s + Number(p.amount), 0);
     document.getElementById('stat-revenue').textContent = fmt(income);
@@ -3047,11 +3102,13 @@ async function loadOverview() {
 // ── WORKSHOPS ──
 async function loadWorkshops() {
   try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/workshops?select=*&archived=eq.false&order=date.desc', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-    });
-    if (!res.ok) throw new Error('Failed');
-    const ws = await res.json();
+    const ws = currentRole === 'viewer' ? DUMMY.workshops : await (async () => {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/workshops?select=*&archived=eq.false&order=date.desc', {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      });
+      if (!res.ok) throw new Error('Failed');
+      return await res.json();
+    })();
     ws.forEach(w => cacheRecord('workshops', w));
     populateWorkshopFilterDropdown(ws);
     populateLeadsWorkshopDropdown(ws);
@@ -3181,11 +3238,13 @@ function openParticipantForWorkshop(wsId) {
 }
 async function loadParticipants() {
   try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&archived=eq.false&order=created_at.desc', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-    });
-    if (!res.ok) throw new Error('Failed');
-    const parts = await res.json();
+    const parts = currentRole === 'viewer' ? DUMMY.participants : await (async () => {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&archived=eq.false&order=created_at.desc', {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      });
+      if (!res.ok) throw new Error('Failed');
+      return await res.json();
+    })();
     parts.forEach(p => cacheRecord('participants', p));
 
     const countEl = document.getElementById('participantCount');
@@ -3221,9 +3280,11 @@ async function loadParticipants() {
 // ── CLASSES ──
 async function loadStudents() {
   try {
-    const showArchivedStudents = document.getElementById('toggle-archived-students')?.checked;
-const res = await api('/students' + (showArchivedStudents ? '?include_archived=true' : ''));
-    const stus = Array.isArray(res) ? res : (res.data || []);
+    const stus = currentRole === 'viewer' ? DUMMY.students : await (async () => {
+      const showArchivedStudents = document.getElementById('toggle-archived-students')?.checked;
+      const res = await api('/students' + (showArchivedStudents ? '?include_archived=true' : ''));
+      return Array.isArray(res) ? res : (res.data || []);
+    })();
     stus.forEach(s => cacheRecord('students', s));
     document.getElementById('classActiveStudents').textContent = stus.filter(s=>s.status==='Active').length;
     document.getElementById('classTotalRevenue').textContent = fmt(stus.reduce((s,st)=>s+Number(st.total_paid||0),0));
@@ -3233,9 +3294,7 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
     populateFeeStudentDropdown(stus);
     populateClassesBatchDropdown(stus);
     document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
-      <div style="font-size:2rem;margin-bottom:0.75rem;">🎓</div>
       ${EMPTY_STATES.students}
-      <div style="font-size:0.85rem;color:var(--text-light);">Add your first student to start tracking classes and fee payments.</div>
     </td></tr>`;
     const stuCards = document.getElementById('studentsCards');
     if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
@@ -3243,17 +3302,17 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
 }
 async function loadFeePayments() {
   try {
-    const showArchivedFee = document.getElementById('toggle-archived-fee')?.checked;
-const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ? '&include_archived=true' : ''));
-    const fps = Array.isArray(res) ? res : (res.data || []);
+    const fps = currentRole === 'viewer' ? DUMMY.fee_payments : await (async () => {
+      const showArchivedFee = document.getElementById('toggle-archived-fee')?.checked;
+      const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ? '&include_archived=true' : ''));
+      return Array.isArray(res) ? res : (res.data || []);
+    })();
     fps.forEach(f => cacheRecord('fee_payments', f));
     const adminFP = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     populateFeeMonthDropdown(fps);
     document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${f.month||''}" data-mode="${f.payment_mode||''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td><span class="badge badge-clay">${f.payment_mode||'UPI'}</span></td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${adminFP?(f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('fee_payments','${f.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
-      <div style="font-size:2rem;margin-bottom:0.75rem;">📋</div>
       ${EMPTY_STATES.fee_payments}
-      <div style="font-size:0.85rem;color:var(--text-light);">Fee payments will appear here once you add students and log their monthly fees.</div>
     </td></tr>`;
     const fpCards = document.getElementById('feePaymentsCards');
     if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card"><div class="m-card-title">${f.student_name} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${f.month}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmt(f.amount)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div></div>`).join('');
@@ -3263,9 +3322,11 @@ const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ?
 // ── PAYMENTS ──
 async function loadPayments() {
   try {
-    const showArchivedPayments = document.getElementById('toggle-archived-payments')?.checked;
-const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&include_archived=true' : ''));
-    const pays = Array.isArray(res) ? res : (res.data || []);
+    const pays = currentRole === 'viewer' ? DUMMY.payments : await (async () => {
+      const showArchivedPayments = document.getElementById('toggle-archived-payments')?.checked;
+      const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&include_archived=true' : ''));
+      return Array.isArray(res) ? res : (res.data || []);
+    })();
     pays.forEach(p => cacheRecord('payments', p));
     const income = pays.filter(p=>p.type==='income').reduce((s,p)=>s+Number(p.amount),0);
     const expense = pays.filter(p=>p.type==='expense').reduce((s,p)=>s+Number(p.amount),0);
@@ -3276,9 +3337,7 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     populatePaymentsCategoryDropdown(pays);
     document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}" data-type="${p.type||''}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;">${p.synced_from_razorpay !== true?`<button class="icon-action-btn" title="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button>`:''}<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
-      <div style="font-size:2rem;margin-bottom:0.75rem;">💳</div>
       ${EMPTY_STATES.payments}
-      <div style="font-size:0.85rem;color:var(--text-light);">Razorpay payments sync automatically. You can also add manual payments.</div>
     </td></tr>`;
     const payCards = document.getElementById('paymentsCards');
     if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
@@ -3288,16 +3347,16 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
 // ── LEADS ──
 async function loadLeads() {
   try {
-    const showArchivedLeads = document.getElementById('toggle-archived-leads')?.checked;
-const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&include_archived=true' : ''));
-    const leads = Array.isArray(res) ? res : (res.data || []);
+    const leads = currentRole === 'viewer' ? DUMMY.leads : await (async () => {
+      const showArchivedLeads = document.getElementById('toggle-archived-leads')?.checked;
+      const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&include_archived=true' : ''));
+      return Array.isArray(res) ? res : (res.data || []);
+    })();
     leads.forEach(l => cacheRecord('leads', l));
     const adminL = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
-      <div style="font-size:2rem;margin-bottom:0.75rem;">💬</div>
       ${EMPTY_STATES.leads}
-      <div style="font-size:0.85rem;color:var(--text-light);">Track potential students and handpan buyers who attended your workshops.</div>
     </td></tr>`;
     const leadsCards = document.getElementById('leadsCards');
     if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
@@ -3307,8 +3366,13 @@ const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&in
 // ── INSIGHTS ──
 async function loadInsights() {
   try {
-    const [workshops, payments, leads] = await Promise.all([api('/workshops'), api('/payments'), api('/leads')]);
-    const ws = workshops.data || []; const pays = payments.data || []; const lds = leads.data || [];
+    let ws, pays, lds;
+    if (currentRole === 'viewer') {
+      ws = DUMMY.workshops; pays = DUMMY.payments; lds = DUMMY.leads;
+    } else {
+      const [workshops, payments, leads] = await Promise.all([api('/workshops'), api('/payments'), api('/leads')]);
+      ws = workshops.data || []; pays = payments.data || []; lds = leads.data || [];
+    }
     const bestWs = [...ws].sort((a,b)=>Number(b.net_profit)-Number(a.net_profit))[0];
     document.getElementById('ins-best-ws').textContent = bestWs ? bestWs.id+' · '+fmt(bestWs.net_profit) : '—';
     const bestMargin = [...ws].sort((a,b)=>Number(b.margin)-Number(a.margin))[0];
@@ -4253,6 +4317,15 @@ function highlight(text, query) {
 }
 
 async function ensureSearchCache() {
+  if (currentRole === 'viewer') {
+    DUMMY.workshops.forEach(r => cacheRecord('workshops', r));
+    DUMMY.participants.forEach(r => cacheRecord('participants', r));
+    DUMMY.students.forEach(r => cacheRecord('students', r));
+    DUMMY.payments.forEach(r => cacheRecord('payments', r));
+    DUMMY.fee_payments.forEach(r => cacheRecord('fee_payments', r));
+    DUMMY.leads.forEach(r => cacheRecord('leads', r));
+    return;
+  }
   const totalCached = Object.values(_recordCache).reduce((sum, entity) => sum + Object.keys(entity||{}).length, 0);
   if (totalCached < 3) {
     try {
@@ -4765,12 +4838,16 @@ if (document.readyState === 'loading') {
     initFormSelects();
     const el = document.getElementById('section-search-empty-default');
     if (el) el.innerHTML = EMPTY_STATES.search;
+    const mob = document.getElementById('mobileSearchEmptyDefault');
+    if (mob) mob.innerHTML = EMPTY_STATES.search;
   });
 } else {
   initStaticDropdowns();
   initFormSelects();
   const el = document.getElementById('section-search-empty-default');
   if (el) el.innerHTML = EMPTY_STATES.search;
+  const mob = document.getElementById('mobileSearchEmptyDefault');
+  if (mob) mob.innerHTML = EMPTY_STATES.search;
 }
 
 function populateWorkshopFilterDropdown(workshops) {
@@ -4833,109 +4910,55 @@ function populatePaymentsCategoryDropdown(payments) {
 // ── EMPTY STATES ──
 const EMPTY_STATES = {
   search: `<div class="empty-state">
-    <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="32" cy="32" r="20" stroke="#c8935a" stroke-width="2.5" fill="none"/>
-      <line x1="46" y1="46" x2="60" y2="60" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M24 32 Q32 24 40 32" stroke="#c8935a" stroke-width="2" stroke-linecap="round" fill="none"/>
-      <circle cx="32" cy="36" r="1.5" fill="#c8935a"/>
-    </svg>
+    <div style="font-size:3rem;margin-bottom:0.5rem;">🔍</div>
     <div class="empty-state-title">Start typing to search</div>
     <div class="empty-state-sub">Search across workshops, participants, students, payments and leads</div>
   </div>`,
 
   search_noresults: (q) => `<div class="empty-state">
-    <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
-      <circle cx="32" cy="32" r="20" stroke="#c8935a" stroke-width="2.5" fill="none"/>
-      <line x1="46" y1="46" x2="60" y2="60" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="26" y1="26" x2="38" y2="38" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
-      <line x1="38" y1="26" x2="26" y2="38" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
-    </svg>
+    <div style="font-size:3rem;margin-bottom:0.5rem;">😕</div>
     <div class="empty-state-title">No results for "${q}"</div>
     <div class="empty-state-sub">Try a different name, number or keyword</div>
   </div>`,
 
   workshops: `<div class="empty-state">
-    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-      <rect x="10" y="30" width="60" height="36" rx="4" stroke="#c8935a" stroke-width="2.5" fill="none"/>
-      <path d="M10 40 L40 20 L70 40" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <rect x="30" y="46" width="20" height="20" rx="2" stroke="#c8935a" stroke-width="2" fill="none"/>
-      <path d="M25 20 L25 14 M35 20 L35 14" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="55" cy="44" r="1.5" fill="#c8935a"/>
-      <circle cx="55" cy="50" r="1.5" fill="#c8935a"/>
-      <circle cx="55" cy="56" r="1.5" fill="#c8935a"/>
-    </svg>
+    <div style="font-size:3rem;margin-bottom:0.5rem;">🎵</div>
     <div class="empty-state-title">No workshops yet</div>
     <div class="empty-state-sub">Add your first workshop to start tracking revenue and participants</div>
   </div>`,
 
   participants: `<div class="empty-state">
-    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-      <circle cx="30" cy="28" r="10" stroke="#c8935a" stroke-width="2.5" fill="none"/>
-      <path d="M10 62 C10 50 20 44 30 44 C40 44 50 50 50 62" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-      <circle cx="56" cy="30" r="7" stroke="#c8935a" stroke-width="2" stroke-dasharray="3 2" fill="none"/>
-      <path d="M48 60 C48 51 52 47 56 47 C60 47 64 51 64 60" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2" fill="none"/>
-      <line x1="56" y1="22" x2="56" y2="24" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
-    </svg>
+    <div style="font-size:3rem;margin-bottom:0.5rem;">👥</div>
     <div class="empty-state-title">No participants yet</div>
     <div class="empty-state-sub">Add participants to track attendance and payments for your workshops</div>
   </div>`,
 
   students: `<div class="empty-state">
-    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-      <path d="M40 16 L68 28 L40 40 L12 28 Z" stroke="#c8935a" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
-      <path d="M20 34 L20 52 C20 58 29 64 40 64 C51 64 60 58 60 52 L60 34" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-      <line x1="68" y1="28" x2="68" y2="50" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="68" cy="53" r="3" fill="#c8935a"/>
-    </svg>
+    <div style="font-size:3rem;margin-bottom:0.5rem;">🎓</div>
     <div class="empty-state-title">No students yet</div>
     <div class="empty-state-sub">Enroll your first student to track classes and fee payments</div>
   </div>`,
 
   payments: `<div class="empty-state">
-    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-      <rect x="10" y="24" width="60" height="40" rx="6" stroke="#c8935a" stroke-width="2.5" fill="none"/>
-      <line x1="10" y1="36" x2="70" y2="36" stroke="#c8935a" stroke-width="2.5"/>
-      <circle cx="26" cy="52" r="5" stroke="#c8935a" stroke-width="2" fill="none"/>
-      <circle cx="38" cy="52" r="5" stroke="#c8935a" stroke-width="2" fill="none"/>
-      <path d="M50 16 L50 10 M58 18 L62 14 M62 26 L68 26" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
-    </svg>
+    <div style="font-size:3rem;margin-bottom:0.5rem;">💳</div>
     <div class="empty-state-title">No payments yet</div>
     <div class="empty-state-sub">Record income and expenses to track your business finances</div>
   </div>`,
 
   fee_payments: `<div class="empty-state">
-    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-      <rect x="16" y="12" width="48" height="58" rx="4" stroke="#c8935a" stroke-width="2.5" fill="none"/>
-      <line x1="26" y1="28" x2="54" y2="28" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
-      <line x1="26" y1="38" x2="54" y2="38" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
-      <line x1="26" y1="48" x2="42" y2="48" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="54" cy="58" r="10" fill="#1a1208" stroke="#7a8c6a" stroke-width="2.5"/>
-      <path d="M50 58 L53 61 L58 55" stroke="#7a8c6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+    <div style="font-size:3rem;margin-bottom:0.5rem;">📋</div>
     <div class="empty-state-title">No fee payments yet</div>
     <div class="empty-state-sub">Track monthly fee payments for your online students here</div>
   </div>`,
 
   leads: `<div class="empty-state">
-    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-      <path d="M40 68 C40 68 14 50 14 32 C14 21 26 12 40 20 C54 12 66 21 66 32 C66 50 40 68 40 68 Z" stroke="#c8935a" stroke-width="2.5" fill="none"/>
-      <circle cx="40" cy="32" r="8" stroke="#c8935a" stroke-width="2" fill="none"/>
-      <circle cx="40" cy="32" r="2" fill="#c8935a"/>
-    </svg>
+    <div style="font-size:3rem;margin-bottom:0.5rem;">📍</div>
     <div class="empty-state-title">No leads yet</div>
     <div class="empty-state-sub">Track people interested in buying a handpan and follow up with them</div>
   </div>`,
 
   insights: `<div class="empty-state">
-    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-      <rect x="12" y="50" width="12" height="18" rx="2" stroke="#c8935a" stroke-width="2.5" fill="none"/>
-      <rect x="30" y="36" width="12" height="32" rx="2" stroke="#c8935a" stroke-width="2.5" fill="none"/>
-      <rect x="48" y="22" width="12" height="46" rx="2" stroke="#c8935a" stroke-width="2.5" fill="none"/>
-      <path d="M14 46 L32 30 L50 18" stroke="#7a8c6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="14" cy="46" r="2.5" fill="#7a8c6a"/>
-      <circle cx="32" cy="30" r="2.5" fill="#7a8c6a"/>
-      <circle cx="50" cy="18" r="2.5" fill="#7a8c6a"/>
-    </svg>
+    <div style="font-size:3rem;margin-bottom:0.5rem;">📊</div>
     <div class="empty-state-title">Not enough data yet</div>
     <div class="empty-state-sub">Add workshops and payments to see your business insights here</div>
   </div>`,
