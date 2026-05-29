@@ -5058,50 +5058,57 @@ function makeDatePicker(nativeInput) {
     const selected = parseVal();
 
     let html = `<div class="dp-header">
-      <button class="dp-nav-btn" onclick="this.closest('.date-picker-cal')._dp.prevMonth()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="dp-nav-btn" data-dp="prev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
       <span class="dp-month-label">${MONTHS[viewMonth]} ${viewYear}</span>
-      <button class="dp-nav-btn" onclick="this.closest('.date-picker-cal')._dp.nextMonth()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button class="dp-nav-btn" data-dp="next"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
     <div class="dp-weekdays">${DAYS.map(d=>`<div class="dp-weekday">${d}</div>`).join('')}</div>
     <div class="dp-days">`;
 
-    // Prev month days
     for (let i = firstDay - 1; i >= 0; i--) {
-      html += `<button class="dp-day other-month">${daysInPrev - i}</button>`;
+      html += `<button class="dp-day other-month" disabled>${daysInPrev - i}</button>`;
     }
-    // Current month
     for (let d = 1; d <= daysInMonth; d++) {
       const isToday = d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear();
       const isSel = selected && d === selected.getDate() && viewMonth === selected.getMonth() && viewYear === selected.getFullYear();
-      html += `<button class="dp-day${isToday?' today':''}${isSel?' selected':''}" onclick="this.closest('.date-picker-cal')._dp.selectDay(${d})">${d}</button>`;
+      html += `<button class="dp-day${isToday?' today':''}${isSel?' selected':''}" data-dp="day" data-day="${d}">${d}</button>`;
     }
-    // Next month days
     const remaining = 42 - firstDay - daysInMonth;
     for (let d = 1; d <= remaining; d++) {
-      html += `<button class="dp-day other-month">${d}</button>`;
+      html += `<button class="dp-day other-month" disabled>${d}</button>`;
     }
 
     html += `</div><div class="dp-footer">
-      <button class="dp-footer-btn" onclick="this.closest('.date-picker-cal')._dp.clear()">Clear</button>
-      <button class="dp-footer-btn" onclick="this.closest('.date-picker-cal')._dp.selectToday()">Today</button>
+      <button class="dp-footer-btn" data-dp="clear">Clear</button>
+      <button class="dp-footer-btn" data-dp="today">Today</button>
     </div>`;
 
     cal.innerHTML = html;
-    cal._dp = dp;
   }
 
-  const dp = {
-    prevMonth() { viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; } renderCal(); },
-    nextMonth() { viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; } renderCal(); },
-    selectDay(d) {
+  // Single delegated click handler on cal — avoids inline onclick + dp hoisting issues
+  cal.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const t = e.target.closest('[data-dp]');
+    if (!t) return;
+    const action = t.dataset.dp;
+    if (action === 'prev') { viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; } renderCal(); }
+    else if (action === 'next') { viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; } renderCal(); }
+    else if (action === 'day') {
+      const d = parseInt(t.dataset.day);
       const date = new Date(viewYear, viewMonth, d);
       nativeInput.value = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
       nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
       updateBtn(); closeDP();
-    },
-    selectToday() { dp.selectDay(today.getDate()); viewYear = today.getFullYear(); viewMonth = today.getMonth(); },
-    clear() { nativeInput.value = ''; nativeInput.dispatchEvent(new Event('change', { bubbles: true })); updateBtn(); closeDP(); }
-  };
+    }
+    else if (action === 'clear') { nativeInput.value = ''; nativeInput.dispatchEvent(new Event('change', { bubbles: true })); updateBtn(); closeDP(); }
+    else if (action === 'today') {
+      const date = today;
+      nativeInput.value = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+      nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
+      updateBtn(); closeDP();
+    }
+  });
 
   function openDP() {
     document.querySelectorAll('.date-picker-cal.open').forEach(c => { c.classList.remove('open'); c.previousElementSibling?.classList.remove('open'); });
