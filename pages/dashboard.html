@@ -276,6 +276,7 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
 @media (min-width: 901px) {
   #workshopsCards, #participantsCards, #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #overviewWorkshopsCards, #overviewPaymentsCards { display: none !important; }
   .mobile-search-fullscreen { display: none !important; }
+  .mobile-only { display: none !important; }
 }
 
 /* ── VIEWER ROLE: admin-only elements hidden by JS, shown by default ── */
@@ -754,6 +755,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   .overview-row { gap: 48px; margin-top: 0; margin-left: 0; margin-right: 0; }
   /* Hide desktop tables, show mobile cards */
   .desktop-only { display: none !important; }
+  .mobile-only { display: flex !important; }
   .dash-table-wrap table, .dash-table-wrap .desktop-table { display: none !important; }
   .dash-table-wrap { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; width: 100% !important; box-sizing: border-box !important; overflow: hidden !important; }
   #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #workshopsCards, #participantsCards { display: flex !important; }
@@ -3771,7 +3773,7 @@ async function loadBin() {
     container.innerHTML = Object.entries(groups).map(([label, items]) => `
       <div style="margin-bottom:2rem;">
         <div style="font-size:0.85rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem;">${label}s (${items.length})</div>
-        <div class="dash-table-wrap" style="overflow-x:auto;">
+        <div class="dash-table-wrap desktop-only" style="overflow-x:auto;">
           <table style="width:100%;border-collapse:collapse;min-width:320px;">
             <thead><tr>
               <th style="text-align:left;padding:0.75rem 1rem;font-size:0.82rem;color:var(--text-light);font-weight:500;letter-spacing:0.1em;text-transform:uppercase;">Name</th>
@@ -3798,7 +3800,7 @@ async function loadBin() {
             </tbody>
           </table>
         </div>
-        <div class="mobile-cards">
+        <div class="mobile-cards mobile-only">
           ${items.map(item => `
             <div class="m-card">
               <div class="m-card-title">${item._name}</div>
