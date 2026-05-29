@@ -499,6 +499,52 @@ textarea.form-input {
 /* Hide native selects - replaced by custom */
 select.form-input { display: none; }
 
+/* ── CUSTOM DATE PICKER ── */
+.date-picker-wrap { position: relative; width: 100%; }
+.date-picker-btn {
+  width: 100%; min-height: 52px; padding: 0 1rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  background: white; border: 1.5px solid var(--clay-pale); border-radius: 3px;
+  font-family: var(--font-body); font-size: 1rem; color: var(--text-dark);
+  cursor: pointer; text-align: left; transition: border-color 0.2s;
+}
+.date-picker-btn:hover { border-color: var(--clay); }
+.date-picker-btn.open { border-color: var(--clay); }
+.date-picker-btn .dp-placeholder { color: #aaa; }
+.date-picker-btn svg { flex-shrink: 0; color: var(--clay); opacity: 0.6; }
+.date-picker-cal {
+  display: none; position: absolute; top: calc(100% + 4px); left: 0;
+  background: #2a1e12; border: 1px solid rgba(193,127,90,0.3);
+  border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 9999; padding: 1rem; width: 300px; user-select: none;
+}
+.date-picker-cal.open { display: block; }
+.dp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.dp-month-label { font-size: 1rem; font-weight: 600; color: #e8d5c0; padding: 4px 8px; border-radius: 6px; }
+.dp-nav-btn {
+  background: none; border: 1px solid rgba(193,127,90,0.25); color: #c8935a;
+  width: 36px; height: 36px; border-radius: 8px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: background 0.15s;
+}
+.dp-nav-btn:hover { background: rgba(193,127,90,0.15); }
+.dp-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 0.5rem; }
+.dp-weekday { text-align: center; font-size: 0.78rem; font-weight: 600; color: rgba(200,147,90,0.55); padding: 4px 0; }
+.dp-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.dp-day {
+  text-align: center; padding: 8px 2px; border-radius: 8px;
+  font-size: 0.9rem; color: #e8d5c0; cursor: pointer;
+  transition: background 0.1s; border: none; background: none;
+  font-family: var(--font-body); width: 100%;
+}
+.dp-day:hover { background: rgba(193,127,90,0.15); }
+.dp-day.today { color: #c8935a; font-weight: 700; }
+.dp-day.selected { background: #c8935a !important; color: #1a1208 !important; font-weight: 700; }
+.dp-day.other-month { color: rgba(200,147,90,0.3); }
+.dp-footer { display: flex; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(193,127,90,0.15); }
+.dp-footer-btn { background: none; border: none; font-family: var(--font-body); font-size: 0.9rem; color: #c8935a; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.15s; }
+.dp-footer-btn:hover { background: rgba(193,127,90,0.12); }
+body.dark-mode .date-picker-btn { background: #2a2018; border-color: rgba(200,147,90,0.25); color: #e8d5c0; }
+
 /* ── CUSTOM FORM SELECT ── */
 .form-select-wrap { position: relative; width: 100%; }
 .form-select-btn {
@@ -2844,7 +2890,7 @@ async function openFormPage(name) {
   } else if (name === 'addStudent') {
     await autoFillNextId('students', 'stu-id', 'S-', 3);
   }
-  setTimeout(initFormSelects, 80);
+  setTimeout(() => { initFormSelects(); initDatePickers(); }, 80);
 }
 
 async function populateWorkshopDropdown(selectId) {
@@ -4211,7 +4257,7 @@ function openEdit(entity, id) {
   const title = { workshops:'Edit Workshop', participants:'Edit Participant', students:'Edit Student', fee_payments:'Edit Fee Payment', payments:'Edit Payment', leads:'Edit Lead' }[entity] || 'Edit';
   document.getElementById('editFormTitle').textContent = title;
   document.getElementById('editFormBody').innerHTML = buildEditForm(entity, record);
-  setTimeout(initFormSelects, 50);
+  setTimeout(() => { initFormSelects(); initDatePickers(); }, 50);
   openFormPage('editRecord');
 }
 
@@ -4835,7 +4881,7 @@ function initStaticDropdowns() {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initStaticDropdowns();
-    initFormSelects();
+    initFormSelects(); initDatePickers();
     const el = document.getElementById('section-search-empty-default');
     if (el) el.innerHTML = EMPTY_STATES.search;
     const mob = document.getElementById('mobileSearchEmptyDefault');
@@ -4843,7 +4889,7 @@ if (document.readyState === 'loading') {
   });
 } else {
   initStaticDropdowns();
-  initFormSelects();
+  initFormSelects(); initDatePickers();
   const el = document.getElementById('section-search-empty-default');
   if (el) el.innerHTML = EMPTY_STATES.search;
   const mob = document.getElementById('mobileSearchEmptyDefault');
@@ -4964,6 +5010,134 @@ const EMPTY_STATES = {
   </div>`,
 };
 
+// ── CUSTOM DATE PICKER ──
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+function makeDatePicker(nativeInput) {
+  if (!nativeInput || nativeInput.dataset.dpCustomized) return;
+  nativeInput.dataset.dpCustomized = '1';
+  nativeInput.style.display = 'none';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'date-picker-wrap';
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'date-picker-btn';
+
+  const cal = document.createElement('div');
+  cal.className = 'date-picker-cal';
+
+  let viewYear, viewMonth, selectedDate = null;
+
+  const today = new Date();
+
+  function parseVal() {
+    const v = nativeInput.value;
+    if (v) { const [y,m,d] = v.split('-').map(Number); return new Date(y, m-1, d); }
+    return null;
+  }
+
+  function formatDisplay(d) {
+    if (!d) return null;
+    return d.getDate().toString().padStart(2,'0') + ' ' + MONTHS[d.getMonth()].slice(0,3) + ' ' + d.getFullYear();
+  }
+
+  function updateBtn() {
+    const d = parseVal();
+    btn.innerHTML = d
+      ? `<span>${formatDisplay(d)}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`
+      : `<span class="dp-placeholder">Select date</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
+  }
+
+  function renderCal() {
+    const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const daysInPrev = new Date(viewYear, viewMonth, 0).getDate();
+    const selected = parseVal();
+
+    let html = `<div class="dp-header">
+      <button class="dp-nav-btn" onclick="this.closest('.date-picker-cal')._dp.prevMonth()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <span class="dp-month-label">${MONTHS[viewMonth]} ${viewYear}</span>
+      <button class="dp-nav-btn" onclick="this.closest('.date-picker-cal')._dp.nextMonth()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+    <div class="dp-weekdays">${DAYS.map(d=>`<div class="dp-weekday">${d}</div>`).join('')}</div>
+    <div class="dp-days">`;
+
+    // Prev month days
+    for (let i = firstDay - 1; i >= 0; i--) {
+      html += `<button class="dp-day other-month">${daysInPrev - i}</button>`;
+    }
+    // Current month
+    for (let d = 1; d <= daysInMonth; d++) {
+      const isToday = d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear();
+      const isSel = selected && d === selected.getDate() && viewMonth === selected.getMonth() && viewYear === selected.getFullYear();
+      html += `<button class="dp-day${isToday?' today':''}${isSel?' selected':''}" onclick="this.closest('.date-picker-cal')._dp.selectDay(${d})">${d}</button>`;
+    }
+    // Next month days
+    const remaining = 42 - firstDay - daysInMonth;
+    for (let d = 1; d <= remaining; d++) {
+      html += `<button class="dp-day other-month">${d}</button>`;
+    }
+
+    html += `</div><div class="dp-footer">
+      <button class="dp-footer-btn" onclick="this.closest('.date-picker-cal')._dp.clear()">Clear</button>
+      <button class="dp-footer-btn" onclick="this.closest('.date-picker-cal')._dp.selectToday()">Today</button>
+    </div>`;
+
+    cal.innerHTML = html;
+    cal._dp = dp;
+  }
+
+  const dp = {
+    prevMonth() { viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; } renderCal(); },
+    nextMonth() { viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; } renderCal(); },
+    selectDay(d) {
+      const date = new Date(viewYear, viewMonth, d);
+      nativeInput.value = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+      nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
+      updateBtn(); closeDP();
+    },
+    selectToday() { dp.selectDay(today.getDate()); viewYear = today.getFullYear(); viewMonth = today.getMonth(); },
+    clear() { nativeInput.value = ''; nativeInput.dispatchEvent(new Event('change', { bubbles: true })); updateBtn(); closeDP(); }
+  };
+
+  function openDP() {
+    document.querySelectorAll('.date-picker-cal.open').forEach(c => { c.classList.remove('open'); c.previousElementSibling?.classList.remove('open'); });
+    const sel = parseVal() || today;
+    viewYear = sel.getFullYear(); viewMonth = sel.getMonth();
+    renderCal();
+    // Position above if no space below
+    const rect = btn.getBoundingClientRect();
+    if (window.innerHeight - rect.bottom < 320) {
+      cal.style.top = 'auto'; cal.style.bottom = 'calc(100% + 4px)';
+    } else { cal.style.top = 'calc(100% + 4px)'; cal.style.bottom = 'auto'; }
+    cal.classList.add('open'); btn.classList.add('open');
+  }
+
+  function closeDP() { cal.classList.remove('open'); btn.classList.remove('open'); }
+
+  btn.onclick = (e) => { e.stopPropagation(); cal.classList.contains('open') ? closeDP() : openDP(); };
+
+  updateBtn();
+  wrap.appendChild(btn);
+  wrap.appendChild(cal);
+  nativeInput.parentNode.insertBefore(wrap, nativeInput.nextSibling);
+}
+
+function initDatePickers() {
+  document.querySelectorAll('input[type="date"]:not([data-dp-customized])').forEach(makeDatePicker);
+}
+
+// Close date pickers on outside click
+document.addEventListener('click', () => {
+  document.querySelectorAll('.date-picker-cal.open').forEach(c => {
+    c.classList.remove('open');
+    c.previousElementSibling?.classList.remove('open');
+  });
+});
+
 // ── CUSTOM FORM SELECTS ──
 function makeFormSelect(nativeSelect) {
   if (!nativeSelect || nativeSelect.dataset.customized) return;
@@ -5045,7 +5219,7 @@ function initFormSelects() {
 const _origOpenModal = window.openModal;
 window.openModal = function(...args) {
   const r = _origOpenModal?.apply(this, args);
-  setTimeout(initFormSelects, 50);
+  setTimeout(() => { initFormSelects(); initDatePickers(); }, 50);
   return r;
 };
 
