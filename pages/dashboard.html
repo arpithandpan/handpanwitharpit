@@ -25,15 +25,15 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 .global-search-input {
   width: 100%; padding: 0.6rem 1rem 0.6rem 2.4rem;
   background: rgba(200,147,90,0.07); border: 1px solid rgba(200,147,90,0.2);
-  border-radius: 8px; color: #e8d5c0; font-size: 0.88rem;
+  border-radius: 8px; color: #e8d5c0; font-size: 1.15rem;
   outline: none; transition: border-color 0.2s;
   font-family: var(--font-body);
 }
-.global-search-input::placeholder { color: rgba(200,147,90,0.4); }
-.global-search-input:focus { border-color: rgba(200,147,90,0.5); background: rgba(200,147,90,0.1); }
+.global-search-input::placeholder { color: rgba(200,147,90,0.65); }
+.global-search-input:focus { border-color: rgba(200,147,90,0.7); background: rgba(200,147,90,0.1); }
 .global-search-icon {
   position: absolute; left: 2.1rem; top: 50%; transform: translateY(-50%);
-  color: rgba(200,147,90,0.5); pointer-events: none;
+  color: rgba(200,147,90,0.7); pointer-events: none;
 }
 .global-search-dropdown {
   position: absolute; left: 1.5rem; right: 1.5rem; top: calc(100% - 4px);
@@ -45,8 +45,8 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 .global-search-dropdown.open { display: block; }
 .search-group-label {
   padding: 0.6rem 1rem 0.3rem;
-  font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(200,147,90,0.5); font-weight: 600;
+  font-size: 1.15rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(200,147,90,0.7); font-weight: 600;
   border-top: 1px solid rgba(200,147,90,0.1);
 }
 .search-group-label:first-child { border-top: none; }
@@ -56,10 +56,19 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
   transition: background 0.1s;
 }
 .search-result-item:hover, .search-result-item.focused { background: rgba(200,147,90,0.1); }
-.search-result-name { font-size: 0.9rem; color: #e8d5c0; font-weight: 500; }
-.search-result-meta { font-size: 0.78rem; color: rgba(200,147,90,0.55); margin-top: 1px; }
-.search-result-icon { color: rgba(200,147,90,0.5); flex-shrink: 0; }
-.search-no-results { padding: 1.5rem 1rem; text-align: center; color: rgba(200,147,90,0.4); font-size: 0.88rem; }
+.search-result-name { font-size: 1.05rem; color: #e8d5c0; font-weight: 500; }
+.search-result-meta { font-size: 0.92rem; color: rgba(200,147,90,0.75); margin-top: 1px; }
+.search-result-icon { color: rgba(200,147,90,0.7); flex-shrink: 0; }
+.search-no-results { padding: 1.5rem 1rem; text-align: center; color: rgba(200,147,90,0.65); font-size: 1.15rem; }
+
+/* ── EMPTY STATES ── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 4rem 2rem; text-align: center; gap: 1rem;
+}
+.empty-state svg { opacity: 0.55; margin-bottom: 0.5rem; }
+.empty-state-title { font-size: 1.15rem; font-weight: 500; color: var(--bark); }
+.empty-state-sub { font-size: 1rem; color: var(--text-light); max-width: 280px; line-height: 1.5; }
 .search-highlight { color: #c8935a; font-weight: 600; }
 
 /* ── FILTER BAR ── */
@@ -70,7 +79,7 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
 .filter-pill {
   background: none; border: 1px solid rgba(193,127,90,0.25);
-  color: rgba(200,147,90,0.55); font-size: 0.85rem; padding: 0.65rem 1.25rem;
+  color: rgba(200,147,90,0.75); font-size: 1.15rem; padding: 0.65rem 1.25rem;
   border-radius: 20px; cursor: pointer; white-space: nowrap;
   letter-spacing: 0.04em; transition: all 0.15s ease; font-family: var(--font-body);
   min-height: 48px; display: inline-flex; align-items: center;
@@ -78,15 +87,47 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 .filter-pill:hover { border-color: rgba(193,127,90,0.5); color: rgba(200,147,90,0.8); }
 .filter-pill.active { background: rgba(193,127,90,0.15); border-color: #c8935a; color: #c8935a; }
 .filter-divider { width: 1px; height: 32px; background: rgba(193,127,90,0.2); flex-shrink: 0; }
-.filter-select {
-  background: rgba(193,127,90,0.05); border: 1px solid rgba(193,127,90,0.25);
-  color: rgba(200,147,90,0.7); font-size: 0.85rem; padding: 0.65rem 2.25rem 0.65rem 1rem;
-  border-radius: 8px; cursor: pointer; font-family: var(--font-body);
-  appearance: none; -webkit-appearance: none; min-height: 48px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8935a' opacity='0.5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center;
+/* ── CUSTOM DROPDOWN ── */
+.custom-select-wrap { position: relative; display: inline-block; }
+.custom-select-btn {
+  display: inline-flex; align-items: center; justify-content: space-between;
+  gap: 8px; min-height: 48px; padding: 0 1rem;
+  background: rgba(255,245,225,0.07); border: 1px solid rgba(193,127,90,0.35);
+  border-radius: 8px; color: rgba(200,147,90,0.85); font-size: 1.15rem;
+  font-family: var(--font-body); cursor: pointer; white-space: nowrap;
+  transition: border-color 0.15s, background 0.15s; min-width: 140px;
 }
-.filter-select:focus { outline: none; border-color: rgba(193,127,90,0.5); }
+.custom-select-btn:hover { border-color: #c8935a; background: rgba(255,245,225,0.1); }
+.custom-select-btn.open { border-color: #c8935a; }
+.custom-select-btn svg { flex-shrink: 0; opacity: 0.6; transition: transform 0.2s; }
+.custom-select-btn.open svg { transform: rotate(180deg); opacity: 1; }
+.custom-select-menu {
+  display: none; position: absolute; top: calc(100% + 6px); left: 0;
+  min-width: 100%; background: #2a1e12; border: 1px solid rgba(193,127,90,0.3);
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  z-index: 9000; padding: 4px 0; max-height: 260px; overflow-y: auto;
+}
+.custom-select-menu.open { display: block; }
+.custom-select-option {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0.75rem 1rem; font-size: 1.05rem; color: #e8d5c0;
+  cursor: pointer; white-space: nowrap; transition: background 0.1s;
+  min-height: 48px; font-family: var(--font-body);
+}
+.custom-select-option:hover { background: rgba(193,127,90,0.12); }
+.custom-select-option.selected { color: #c8935a; }
+.custom-select-option.selected::before {
+  content: ''; display: inline-block; width: 6px; height: 6px;
+  border-radius: 50%; background: #c8935a; flex-shrink: 0;
+}
+.custom-select-option:not(.selected)::before {
+  content: ''; display: inline-block; width: 6px; height: 6px; flex-shrink: 0;
+}
+@media (max-width: 900px) {
+  .custom-select-btn { min-width: unset; width: 100%; }
+  .custom-select-wrap { width: 100%; }
+  .custom-select-menu { min-width: 200px; }
+}
 @media (max-width: 900px) {
   .filter-bar { flex-direction: column; align-items: stretch; gap: 8px; }
   .filter-pills { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
@@ -98,13 +139,13 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 
 /* ── SORT ICONS (desktop table headers) ── */
 .sortable-th { cursor: pointer; user-select: none; }
-.sortable-th:hover { color: rgba(200,147,90,0.8) !important; }
-.sort-arrow { font-size: 0.8rem; opacity: 0.35; margin-left: 4px; color: #c8935a; }
+.sortable-th:hover { color: rgba(200,147,90,0.9) !important; }
+.sort-arrow { display: inline-flex; align-items: center; margin-left: 5px; opacity: 0.35; color: #c8935a; vertical-align: middle; transition: opacity 0.15s; }
 .sortable-th:hover .sort-arrow { opacity: 0.7; }
 .sortable-th.sort-asc .sort-arrow, .sortable-th.sort-desc .sort-arrow { opacity: 1; }
-.sortable-th.sort-asc .sort-arrow::after { content: '↑'; }
-.sortable-th.sort-desc .sort-arrow::after { content: '↓'; }
-.sortable-th:not(.sort-asc):not(.sort-desc) .sort-arrow::after { content: '⇅'; font-size: 0.75rem; }
+.sortable-th.sort-asc .sort-arrow::after { content: ''; }
+.sortable-th.sort-desc .sort-arrow::after { content: ''; }
+.sortable-th:not(.sort-asc):not(.sort-desc) .sort-arrow::after { content: ''; }
 
 /* ── ··· POPOVER MENU ── */
 .m-dots-popover {
@@ -117,7 +158,7 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 .m-dots-popover.open { display: block; }
 .m-dots-item {
   display: flex; align-items: center; gap: 10px;
-  padding: 0.7rem 1rem; color: #e8d5c0; font-size: 0.88rem;
+  padding: 0.7rem 1rem; color: #e8d5c0; font-size: 1.15rem;
   cursor: pointer; border: none; background: none; width: 100%;
   text-align: left; font-family: var(--font-body); white-space: nowrap;
 }
@@ -135,12 +176,12 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 }
 .section-search-input {
   width: 100%; padding: 0.85rem 1rem 0.85rem 2.75rem;
-  background: rgba(255, 245, 225, 0.07); border: 1px solid rgba(200,147,90,0.35);
-  border-radius: 8px; color: var(--bark); font-size: 0.95rem;
+  background: rgba(255, 245, 225, 0.07); border: 1px solid rgba(200,147,90,0.6);
+  border-radius: 8px; color: var(--bark); font-size: 1.15rem;
   outline: none; transition: border-color 0.2s;
   font-family: var(--font-body); min-height: 52px; box-sizing: border-box;
 }
-.section-search-input::placeholder { color: rgba(200,147,90,0.45); }
+.section-search-input::placeholder { color: rgba(200,147,90,0.65); }
 .section-search-input:focus { border-color: var(--clay); background: rgba(255,245,225,0.1); }
 .section-search-icon {
   position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
@@ -161,20 +202,20 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
   padding-top: max(0.875rem, env(safe-area-inset-top));
 }
 .mobile-search-fs-input {
-  flex: 1; min-width: 0; width: 100%; background: rgba(255,245,225,0.08); border: 1px solid rgba(200,147,90,0.35);
-  border-radius: 8px; color: #e8d5c0; font-size: 1rem;
+  flex: 1; min-width: 0; width: 100%; background: rgba(255,245,225,0.08); border: 1px solid rgba(200,147,90,0.6);
+  border-radius: 8px; color: #e8d5c0; font-size: 1.15rem;
   padding: 0.65rem 1rem 0.65rem 2.5rem; outline: none;
   font-family: var(--font-body); box-sizing: border-box;
 }
-.mobile-search-fs-input::placeholder { color: rgba(200,147,90,0.5); }
+.mobile-search-fs-input::placeholder { color: rgba(200,147,90,0.7); }
 .mobile-search-fs-input:focus { border-color: rgba(200,147,90,0.6); background: rgba(255,245,225,0.1); }
 .mobile-search-fs-icon {
   position: absolute; left: 1.85rem;
-  color: rgba(200,147,90,0.5); pointer-events: none;
+  color: rgba(200,147,90,0.7); pointer-events: none;
 }
 .mobile-search-fs-cancel {
   background: transparent; border: none; color: #c8935a;
-  font-size: 0.9rem; padding: 0.5rem 0.25rem; cursor: pointer;
+  font-size: 1.05rem; padding: 0.5rem 0.25rem; cursor: pointer;
   white-space: nowrap; font-family: var(--font-body); flex-shrink: 0;
 }
 .mobile-search-fs-body {
@@ -183,7 +224,7 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 .mobile-search-fs-empty {
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; height: 60%; gap: 0.5rem;
-  color: rgba(200,147,90,0.4); text-align: center; padding: 2rem;
+  color: rgba(200,147,90,0.65); text-align: center; padding: 2rem;
 }
 .mobile-search-fs-result-item {
   display: flex; align-items: center; gap: 12px;
@@ -213,6 +254,7 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 }
 
 /* ── GLOBAL OVERFLOW FIX ── */
+html { font-size: 16px; }
 html, body { overflow-x: hidden !important; max-width: 100vw; }
 
 /* ── HIDE MOBILE CARDS ON DESKTOP ── */
@@ -237,30 +279,31 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
   transition: transform 0.3s;
 }
 .dash-sidebar-title {
-  font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-size: 1.05rem; letter-spacing: 0.2em; text-transform: uppercase;
   color: rgba(240,219,200,0.35); padding: 0 1.5rem; margin-bottom: 1rem;
 }
 .dash-nav { list-style: none; }
 .dash-nav li a {
   display: flex; align-items: center; gap: 0.75rem;
   padding: 0.85rem 1.5rem;
-  font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 1.15rem; letter-spacing: 0.08em; text-transform: uppercase;
   color: rgba(240,219,200,0.6); text-decoration: none;
   transition: all 0.2s; border-left: 2px solid transparent;
 }
 .dash-nav li a:hover { color: var(--clay-light); background: rgba(193,127,82,0.08); }
 .dash-nav li a.active { color: var(--clay-light); border-left-color: var(--clay); background: rgba(193,127,82,0.12); }
-.dash-nav li a .icon { font-size: 1rem; width: 18px; text-align: center; }
+.dash-nav li a .icon { font-size: 1.15rem; width: 18px; text-align: center; }
 .dash-nav-divider { height: 1px; background: rgba(193,127,82,0.15); margin: 1rem 1.5rem; }
 
 /* Main content */
 .dash-main {
   margin-left: 240px; flex: 1;
   background: var(--cream); min-height: 100vh;
+  min-width: 0; overflow-x: hidden;
 }
 
 /* Section panels */
-.dash-section { display: none; padding: 3rem 3.5rem; }
+.dash-section { display: none; padding: 3rem 3.5rem; min-width: 0; }
 .dash-section.active { display: block; }
 
 /* Section header */
@@ -278,7 +321,7 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
   color: var(--bark); display: block; width: 100%;
 }
 .dash-section-subtitle {
-  font-size: 1rem; color: var(--text-light); margin-top: 0.35rem;
+  font-size: 1.15rem; color: var(--text-light); margin-top: 0.35rem;
   display: block; width: 100%; clear: both;
 }
 
@@ -295,8 +338,8 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
 }
 .stat-card:hover { box-shadow: 0 6px 24px rgba(61,43,31,0.1); }
 .stat-label {
-  font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--text-light); margin-bottom: 0.75rem;
+  font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-light); margin-bottom: 0.75rem; font-weight: 500;
 }
 .stat-value {
   font-family: var(--font-body); font-size: 2.1rem; font-weight: 400;
@@ -304,21 +347,21 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
 }
 .stat-value.green { color: var(--moss); }
 .stat-value.clay { color: var(--clay); }
-.stat-sub { font-size: 1rem; color: var(--text-light); margin-top: 0.4rem; }
+.stat-sub { font-size: 1.15rem; color: var(--text-light); margin-top: 0.4rem; }
 
 /* Tables */
-.dash-table-wrap { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.dash-table-wrap { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
 td { white-space: nowrap; }
 .dash-table-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--clay-pale);
   background: var(--sand);
 }
-.dash-table-header-title { font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bark); font-weight: 500; }
+.dash-table-header-title { font-size: 1.05rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bark); font-weight: 500; }
 table { width: 100%; border-collapse: collapse; }
 th {
-  font-size: 0.88rem; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--text-light); font-weight: 500;
+  font-size: 0.88rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-light); font-weight: 600;
   padding: 1rem 1.25rem; text-align: left;
   background: var(--sand); border-bottom: 1px solid var(--clay-pale);
   white-space: nowrap;
@@ -328,12 +371,17 @@ td {
   border-bottom: 1px solid rgba(193,127,82,0.08);
   vertical-align: middle; height: 64px;
 }
+td {
+  padding: 1.1rem 1.25rem; font-size: 1.15rem; color: var(--text-mid);
+  border-bottom: 1px solid rgba(193,127,82,0.08);
+  vertical-align: middle; height: 64px;
+}
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: rgba(193,127,82,0.04); }
 
 /* Badges */
 .badge {
-  display: inline-block; font-size: 0.82rem; letter-spacing: 0.08em;
+  display: inline-block; font-size: 1.15rem; letter-spacing: 0.08em;
   text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 20px;
 }
 .badge-green { background: rgba(122,140,106,0.15); color: var(--moss); }
@@ -344,7 +392,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 /* ── UNIFIED BUTTON SYSTEM ── */
 .btn-dash {
-  font-family: var(--font-body); font-size: 0.85rem; font-weight: 500;
+  font-family: var(--font-body); font-size: 1.15rem; font-weight: 500;
   letter-spacing: 0.1em; text-transform: uppercase;
   padding: 0.6rem 1.25rem; border-radius: 4px; cursor: pointer;
   border: none; transition: all 0.2s; text-decoration: none;
@@ -362,7 +410,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   background: var(--sand); color: var(--bark);
   border: 1px solid rgba(193,127,82,0.45); border-radius: 4px;
   text-align: left; font-family: var(--font-body);
-  font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em;
+  font-size: 1.15rem; font-weight: 500; letter-spacing: 0.06em;
   text-transform: uppercase; cursor: pointer;
   padding: 0.65rem 1rem; transition: background 0.15s, border-color 0.15s;
   display: inline-flex; align-items: center; gap: 0.5rem;
@@ -376,11 +424,11 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .btn-dash-danger { background: transparent; color: #B43C28; border: 1px solid rgba(180,60,40,0.3); }
 .btn-dash-danger:hover { background: rgba(180,60,40,0.06); border-color: #B43C28; }
 /* Size modifier */
-.btn-dash-sm { padding: 0.55rem 1rem; font-size: 0.85rem; min-height: 48px; }
+.btn-dash-sm { padding: 0.55rem 1rem; font-size: 1.15rem; min-height: 48px; }
 /* Save — used on dark form-page headers, always clay-coloured so it pops on both light/dark headers */
 .btn-dash-save {
   background: var(--clay); color: #fff; border: none;
-  font-family: var(--font-body); font-size: 0.85rem; font-weight: 600;
+  font-family: var(--font-body); font-size: 1.15rem; font-weight: 600;
   letter-spacing: 0.1em; text-transform: uppercase;
   padding: 0.6rem 1.25rem; border-radius: 4px; cursor: pointer;
   display: inline-flex; align-items: center; gap: 0.5rem;
@@ -408,7 +456,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 }
 .modal-close-btn {
   width: 32px; height: 32px; border-radius: 50%;
-  background: var(--sand); border: none; font-size: 1.1rem;
+  background: var(--sand); border: none; font-size: 1.15rem;
   color: var(--bark); cursor: pointer; line-height: 1;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
@@ -430,12 +478,12 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   max-height: 90vh; overflow-y: auto;
   box-shadow: 0 20px 60px rgba(61,43,31,0.2);
 }
-.modal-title { font-family: var(--font-body); font-size: 1.4rem; font-weight: 400; color: var(--bark); margin-bottom: 0; }
+.modal-title { font-family: var(--font-body); font-size: 1.45rem; font-weight: 400; color: var(--bark); margin-bottom: 0; }
 .form-group { margin-bottom: 1.25rem; }
-.form-label { display: block; font-size: 0.95rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bark); margin-bottom: 0.5rem; font-weight: 500; }
+.form-label { display: block; font-size: 1.15rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bark); margin-bottom: 0.5rem; font-weight: 500; }
 .form-input {
   width: 100%; padding: 0.8rem 1rem;
-  font-family: var(--font-body); font-size: 1rem; color: var(--text-dark);
+  font-family: var(--font-body); font-size: 1.15rem; color: var(--text-dark);
   background: white; border: 1.5px solid var(--clay-pale); border-radius: 3px;
   transition: border-color 0.2s; outline: none; min-height: 48px;
   color-scheme: light;
@@ -448,15 +496,44 @@ textarea.form-input {
 .form-input[type="number"]::-webkit-inner-spin-button,
 .form-input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .form-input[type="number"] { -moz-appearance: textfield; }
-/* Custom select chevron */
-select.form-input {
-  appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9' stroke='%23c8935a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 40px;
-  cursor: pointer;
+/* Hide native selects - replaced by custom */
+select.form-input { display: none; }
+
+/* ── CUSTOM FORM SELECT ── */
+.form-select-wrap { position: relative; width: 100%; }
+.form-select-btn {
+  width: 100%; min-height: 52px; padding: 0 1rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  background: white; border: 1.5px solid var(--clay-pale); border-radius: 3px;
+  font-family: var(--font-body); font-size: 1.15rem; color: var(--text-dark);
+  cursor: pointer; text-align: left; transition: border-color 0.2s;
 }
+.form-select-btn:hover { border-color: var(--clay); }
+.form-select-btn.open { border-color: var(--clay); }
+.form-select-btn svg { flex-shrink: 0; color: var(--clay); opacity: 0.6; transition: transform 0.2s; }
+.form-select-btn.open svg { transform: rotate(180deg); opacity: 1; }
+.form-select-menu {
+  display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: white; border: 1.5px solid var(--clay-pale); border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(61,43,31,0.15); z-index: 9999;
+  max-height: 240px; overflow-y: auto;
+}
+.form-select-menu.open { display: block; }
+.form-select-opt {
+  padding: 0.85rem 1rem; font-size: 1.15rem; color: var(--text-dark);
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
+  min-height: 52px; font-family: var(--font-body);
+  transition: background 0.1s; border-bottom: 1px solid rgba(193,127,82,0.08);
+}
+.form-select-opt:last-child { border-bottom: none; }
+.form-select-opt:hover { background: rgba(193,127,82,0.06); }
+.form-select-opt.selected { color: var(--clay); font-weight: 500; }
+.form-select-opt.selected::before { content: '✓'; font-size: 1.15rem; color: var(--clay); }
+.form-select-opt:not(.selected)::before { content: ''; display: inline-block; width: 1em; }
+body.dark-mode .form-select-btn { background: #2a2018; border-color: rgba(200,147,90,0.25); color: #e8d5c0; }
+body.dark-mode .form-select-menu { background: #2a2018; border-color: rgba(200,147,90,0.25); }
+body.dark-mode .form-select-opt { color: #e8d5c0; border-bottom-color: rgba(193,127,82,0.1); }
+body.dark-mode .form-select-opt:hover { background: rgba(193,127,82,0.1); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
 
@@ -473,21 +550,21 @@ select.form-input {
 
 .login-box {
   background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(200,147,90,0.55);
+  border: 1px solid rgba(200,147,90,0.75);
   border-radius: 12px;
   padding: 2.5rem; width: 340px; max-width: 90vw;
   text-align: center; position: relative; z-index: 1;
 }
 .login-logo { margin: 0 auto 1.5rem; }
-.login-title { font-family: var(--font-body); font-size: 1.6rem; font-weight: 400; color: #e8d5c0; margin-bottom: 0.5rem; }
-.login-sub { font-size: 0.95rem; color: rgba(200,147,90,0.65); margin-bottom: 2rem; }
-.login-error { color: #e8856a; font-size: 0.9rem; margin-top: 0.75rem; display: none; }
+.login-title { font-family: var(--font-body); font-size: 1.7rem; font-weight: 400; color: #e8d5c0; margin-bottom: 0.5rem; }
+.login-sub { font-size: 1.15rem; color: rgba(200,147,90,0.65); margin-bottom: 2rem; }
+.login-error { color: #e8856a; font-size: 1.05rem; margin-top: 0.75rem; display: none; }
 
 /* ── PIN PAD ── */
 .pin-dots { display: flex; justify-content: center; gap: 12px; margin-bottom: 1.5rem; }
 .pin-dot {
   width: 14px; height: 14px; border-radius: 50%;
-  border: 1.5px solid rgba(200,147,90,0.45);
+  border: 1.5px solid rgba(200,147,90,0.65);
   background: transparent; transition: background 0.15s, border-color 0.15s;
 }
 .pin-dot.filled { background: #c8935a; border-color: #c8935a; }
@@ -508,7 +585,7 @@ select.form-input {
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(200,147,90,0.2);
   border-radius: 8px; padding: 0.75rem 0;
-  font-size: 1.1rem; font-weight: 400;
+  font-size: 1.15rem; font-weight: 400;
   color: #e8d5c0; cursor: pointer;
   font-family: var(--font-body);
   transition: background 0.1s;
@@ -518,11 +595,11 @@ select.form-input {
 .pin-key:active { background: rgba(200,147,90,0.2); }
 .pin-key.key-del {
   background: transparent; border: none;
-  color: rgba(200,147,90,0.65); font-size: 1.4rem;
+  color: rgba(200,147,90,0.65); font-size: 1.45rem;
   display: flex; align-items: center; justify-content: center;
 }
 .pin-key.key-del:active { color: rgba(200,147,90,0.95); }
-.pin-hint { font-size: 0.9rem; color: rgba(200,147,90,0.55); letter-spacing: 0.03em; margin-top: 0.5rem; }
+.pin-hint { font-size: 1.05rem; color: rgba(200,147,90,0.75); letter-spacing: 0.03em; margin-top: 0.5rem; }
 
 
 /* ── EXPANDABLE PARTICIPANTS ── */
@@ -548,17 +625,17 @@ select.form-input {
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; flex-shrink: 0;
 }
-.connector-name { font-size: 0.95rem; font-weight: 500; color: var(--bark); }
-.connector-detail { font-size: 0.82rem; color: var(--text-light); margin-top: 2px; }
+.connector-name { font-size: 1.15rem; font-weight: 500; color: var(--bark); }
+.connector-detail { font-size: 1.15rem; color: var(--text-light); margin-top: 2px; }
 .connector-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .connector-btn {
   background: transparent; border: 1px solid var(--clay-pale);
-  border-radius: 8px; color: var(--text-light); font-size: 0.8rem;
+  border-radius: 8px; color: var(--text-light); font-size: 1.15rem;
   padding: 5px 12px; cursor: pointer; font-family: var(--font-body);
   white-space: nowrap; transition: all 0.15s; min-height: 32px;
 }
 .connector-btn:hover { border-color: var(--clay); color: var(--clay); background: var(--clay-dim); }
-.connector-btn.reconnect { background: var(--clay-dim); color: var(--clay); border-color: rgba(200,147,90,0.4); }
+.connector-btn.reconnect { background: var(--clay-dim); color: var(--clay); border-color: rgba(200,147,90,0.65); }
 .connector-btn:disabled { opacity: 0.5; pointer-events: none; }
 body.dark-mode .connector-btn { border-color: rgba(200,147,90,0.25); color: #7a6354; }
 body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
@@ -581,7 +658,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   opacity: 0.9;
 }
 .loading-text {
-  font-size: 0.85rem; color: rgba(200,147,90,0.7);
+  font-size: 1.15rem; color: rgba(200,147,90,0.7);
   letter-spacing: 0.1em; text-transform: uppercase;
   font-family: var(--font-body);
 }
@@ -599,17 +676,17 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   background: white; border: 1px solid var(--clay-pale); border-radius: 4px;
   padding: 1.5rem;
 }
-.chart-box-title { font-size: 0.82rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); margin-bottom: 1.25rem; }
+.chart-box-title { font-size: 1.15rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); margin-bottom: 1.25rem; }
 .chart-bars { display: flex; align-items: flex-end; gap: 0.5rem; height: 120px; }
 .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; height: 100%; justify-content: flex-end; }
 .chart-bar { width: 100%; background: var(--clay); border-radius: 2px 2px 0 0; min-height: 4px; transition: height 0.5s ease; }
-.chart-bar-label { font-size: 0.75rem; color: var(--text-light); white-space: nowrap; }
-.chart-bar-val { font-size: 0.78rem; color: var(--bark); font-weight: 500; }
+.chart-bar-label { font-size: 1.05rem; color: var(--text-light); white-space: nowrap; }
+.chart-bar-val { font-size: 0.92rem; color: var(--bark); font-weight: 500; }
 
 /* Overview quick stats row */
 .overview-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem; margin-top: 2.5rem; }
 .overview-card { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(61,43,31,0.05); }
-.overview-card-head { padding: 1rem 1.5rem 0.75rem; font-size: 0.82rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bark); font-weight: 600; }
+.overview-card-head { padding: 1rem 1.5rem 0.75rem; font-size: 1.15rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bark); font-weight: 600; }
 @media (max-width: 900px) {
   #allStatsWrap { display: flex !important; flex-direction: column; gap: 16px; margin-bottom: 48px !important; }
   #allStatsWrap .stats-grid { margin: 0 !important; }
@@ -632,16 +709,16 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   #section-payments .section-search-wrap { order: 2; margin-bottom: 16px; }
   #section-payments .dash-table-wrap { order: 3; }
   #section-classes .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  .overview-card-head { padding: 0 0 16px 0; background: transparent !important; border-bottom: none !important; color: var(--clay) !important; font-size: 1.125rem !important; letter-spacing: 0.08em !important; text-transform: uppercase !important; font-weight: 400 !important; }
+  .overview-card-head { padding: 0 0 16px 0; background: transparent !important; border-bottom: none !important; color: var(--clay) !important; font-size: 1.25rem !important; letter-spacing: 0.08em !important; text-transform: uppercase !important; font-weight: 400 !important; }
   .overview-card table { display: none !important; }
 }
 
 /* Insight tiles */
 .insight-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
 .insight-tile { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; padding: 1.75rem; box-shadow: 0 2px 8px rgba(61,43,31,0.05); }
-.insight-tile-label { font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.5rem; }
-.insight-tile-val { font-size: 1.6rem; font-weight: 400; color: var(--bark); }
-.insight-tile-sub { font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem; }
+.insight-tile-label { font-size: 0.92rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.5rem; }
+.insight-tile-val { font-size: 1.7rem; font-weight: 400; color: var(--bark); }
+.insight-tile-sub { font-size: 1.15rem; color: var(--text-light); margin-top: 0.25rem; }
 
 /* Notification toast */
 .toast {
@@ -651,7 +728,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   background: rgba(46,36,24,0.92); color: #c8935a;
   border: none;
   padding: 0.65rem 1.25rem; border-radius: 10px;
-  font-size: 0.88rem; font-weight: 500; z-index: 99999;
+  font-size: 1.15rem; font-weight: 500; z-index: 99999;
   opacity: 0;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
   pointer-events: none;
@@ -706,7 +783,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   bottom: 1.5rem; right: 1.5rem; z-index: 300;
   width: 48px; height: 48px; border-radius: 50%;
   background: var(--bark); color: var(--clay-pale);
-  border: none; cursor: pointer; font-size: 1.2rem;
+  border: none; cursor: pointer; font-size: 1.25rem;
   box-shadow: 0 4px 20px rgba(61,43,31,0.3);
 }
 
@@ -725,7 +802,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   .dash-section-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.5rem; padding-bottom: 1.25rem; }
   .stats-grid { grid-template-columns: repeat(2,1fr); gap: 16px; margin-bottom: 32px; }
   .stat-card { padding: 1.25rem; border-radius: 10px; }
-  .stat-value { font-size: 1.5rem; }
+  .stat-value { font-size: 1.55rem; }
   .chart-grid { grid-template-columns: 1fr; gap: 16px; }
   .insight-grid { grid-template-columns: repeat(2,1fr); gap: 16px; margin-bottom: 32px; }
   .overview-row { grid-template-columns: 1fr; }
@@ -734,7 +811,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   /* Make tables scrollable on mobile */
   .dash-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { min-width: 600px; }
-  th, td { padding: 0.75rem 1rem; font-size: 0.85rem; }
+  th, td { padding: 0.75rem 1rem; font-size: 1.15rem; }
   /* Stack dashboard section header buttons */
   .dash-section-header > div:last-child { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 }
@@ -745,13 +822,13 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   .dash-section-header { margin-bottom: 1.25rem; padding-bottom: 1rem; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
   .stat-card { padding: 1rem; border-radius: 10px; }
-  .stat-value { font-size: 1.3rem; }
-  .stat-label { font-size: 0.85rem; }
+  .stat-value { font-size: 1.35rem; }
+  .stat-label { font-size: 1.15rem; }
   .insight-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
   .insight-tile { padding: 1rem; }
-  .insight-tile-val { font-size: 1.3rem; }
-  .dash-section-title { font-size: 1.4rem; }
-  .btn-dash { font-size: 0.78rem; padding: 0.5rem 0.9rem; min-height: 48px; }
+  .insight-tile-val { font-size: 1.35rem; }
+  .dash-section-title { font-size: 1.45rem; }
+  .btn-dash { font-size: 0.92rem; padding: 0.5rem 0.9rem; min-height: 48px; }
 }
 .modal-drag-handle {
   display: none; justify-content: center;
@@ -766,7 +843,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 }
 .modal-close-btn {
   width: 32px; height: 32px; border-radius: 50%;
-  background: var(--sand); border: none; font-size: 1.1rem;
+  background: var(--sand); border: none; font-size: 1.15rem;
   color: var(--bark); cursor: pointer; line-height: 1;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
@@ -781,16 +858,16 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   }
   .modal-drag-handle { display: flex; }
   .modal-header { padding: 0.75rem 0 1rem; }
-  .modal-title { font-size: 1.2rem; }
+  .modal-title { font-size: 1.25rem; }
   .login-box { padding: 2rem 1.5rem; max-width: 88vw; }
-  .login-title { font-size: 1.3rem; }
+  .login-title { font-size: 1.35rem; }
 }
 
 /* Mobile table cards */
 @media (max-width: 700px) {
   .dash-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { min-width: 520px; }
-  th, td { padding: 0.65rem 0.75rem; font-size: 0.82rem; }
+  th, td { padding: 0.65rem 0.75rem; font-size: 1.15rem; }
 }
 
 
@@ -812,11 +889,11 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   padding: 0.45rem 0;
 }
 .m-card-label { font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
-.m-card-val { font-size: 1.05rem; color: var(--text-dark); text-align: right; max-width: 60%; }
-.m-card-title { font-size: 1.1rem; font-weight: 500; color: var(--bark); margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--clay-pale); }
+.m-card-val { font-size: 1.05rem; color: var(--text-dark); text-align: right; max-width: 60%; font-weight: 500; }
+.m-card-title { font-size: 1.15rem; font-weight: 600; color: var(--bark); margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--clay-pale); }
 .m-card-divider { height: 1px; background: rgba(193,127,82,0.08); margin: 0.4rem 0; }
 .mobile-section-heading {
-  font-size: 1.125rem; font-weight: 400; color: var(--clay);
+  font-size: 1.25rem; font-weight: 400; color: var(--clay);
   text-transform: uppercase; letter-spacing: 0.08em;
   padding: 0; margin: 0 0 16px 0;
 }
@@ -857,7 +934,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 .form-page-back {
   display: flex; align-items: center; gap: 0.5rem;
   background: transparent; border: 1.5px solid rgba(232,213,192,0.45); cursor: pointer;
-  font-size: 0.9rem; color: #e8d5c0;
+  font-size: 1.05rem; color: #e8d5c0;
   font-family: var(--font-body); padding: 0 1.25rem;
   border-radius: 4px; font-weight: 500; letter-spacing: 0.05em;
   text-transform: uppercase; transition: border-color 0.2s, background 0.2s;
@@ -865,7 +942,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 }
 .form-page-back:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
 .form-page-title {
-  font-family: var(--font-body); font-size: 1.1rem;
+  font-family: var(--font-body); font-size: 1.15rem;
   font-weight: 400; color: #e8d5c0;
 }
 .form-page-body {
@@ -883,28 +960,28 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 .settings-card-header {
   display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.25rem;
 }
-.settings-card-icon { font-size: 1.2rem; margin-top: 2px; }
-.settings-card-title { font-size: 1rem; font-weight: 600; color: var(--bark); }
-.settings-card-sub { font-size: 0.9rem; color: var(--text-light); margin-top: 2px; }
+.settings-card-icon { font-size: 1.25rem; margin-top: 2px; }
+.settings-card-title { font-size: 1.15rem; font-weight: 600; color: var(--bark); }
+.settings-card-sub { font-size: 1.05rem; color: var(--text-light); margin-top: 2px; }
 .settings-profile { display: flex; align-items: center; gap: 1rem; }
 .settings-avatar {
   width: 48px; height: 48px; border-radius: 50%;
   background: var(--clay); color: #fff;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1rem; font-weight: 600; flex-shrink: 0;
+  font-size: 1.15rem; font-weight: 600; flex-shrink: 0;
 }
-.settings-profile-name { font-size: 1rem; font-weight: 500; color: var(--bark); }
-.settings-profile-email { font-size: 0.85rem; color: var(--text-light); }
+.settings-profile-name { font-size: 1.15rem; font-weight: 500; color: var(--bark); }
+.settings-profile-email { font-size: 1.15rem; color: var(--text-light); }
 .settings-health-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;
 }
 .settings-health-item { display: flex; flex-direction: column; gap: 4px; }
-.settings-health-val { font-size: 1.1rem; font-weight: 500; color: var(--bark); }
-.settings-health-label { font-size: 0.85rem; color: var(--text-light); letter-spacing: 0.04em; }
+.settings-health-val { font-size: 1.15rem; font-weight: 500; color: var(--bark); }
+.settings-health-label { font-size: 1.15rem; color: var(--text-light); letter-spacing: 0.04em; }
 .settings-field-group { display: flex; flex-direction: column; gap: 0.5rem; }
-.settings-label { font-size: 0.85rem; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; }
+.settings-label { font-size: 1.15rem; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; }
 .settings-code {
-  font-size: 0.78rem; background: var(--sand); padding: 0.5rem 0.75rem;
+  font-size: 0.92rem; background: var(--sand); padding: 0.5rem 0.75rem;
   border-radius: 4px; word-break: break-all; flex: 1; color: var(--bark);
 }
 .settings-copy-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.25rem; }
@@ -914,7 +991,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 }
 .settings-mvp-bar-wrap { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
 .settings-checklist { display: flex; flex-direction: column; gap: 0.5rem; }
-.settings-check-item { font-size: 0.9rem; color: var(--bark); }
+.settings-check-item { font-size: 1.05rem; color: var(--bark); }
 .settings-check-item.pending { color: var(--text-light); }
 
 
@@ -961,15 +1038,15 @@ body.dark-mode .notif-time { color: #7a6354; }
 body.dark-mode .notif-unread-dot { background: #c8935a; }
 body.dark-mode .btn-checkin { border-color: rgba(200,147,90,0.3); color: #9a7d63; }
 body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border-color: #8aaa6e; color: #8aaa6e; }
-body.dark-mode #archiveConfirmModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.45); }
-body.dark-mode #customConfirmModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.45); }
-body.dark-mode #unsavedModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.45); }
+body.dark-mode #archiveConfirmModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.65); }
+body.dark-mode #customConfirmModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.65); }
+body.dark-mode #unsavedModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.65); }
 /* ── DARK MODE: comprehensive button + UI fixes ── */
 body.dark-mode .btn-dash-primary { background: #c8935a; color: #1a1410; border: none; }
 body.dark-mode .btn-dash-primary:hover { background: #dba870; color: #1a1410; }
 body.dark-mode .btn-dash-outline { color: #e8d5c0; border-color: rgba(200,147,90,0.65); background: transparent; }
 body.dark-mode .btn-dash-outline:hover { border-color: #c8935a; color: #c8935a; background: rgba(200,147,90,0.1); }
-body.dark-mode .btn-dash-ghost { background: #2a2018; color: #dba870; border-color: rgba(200,147,90,0.5); }
+body.dark-mode .btn-dash-ghost { background: #2a2018; color: #dba870; border-color: rgba(200,147,90,0.7); }
 body.dark-mode .btn-dash-ghost:hover { background: #352818; border-color: #c8935a; color: #e8d5c0; }
 body.dark-mode .btn-dash-sync { background: rgba(138,170,110,0.18); color: #8aaa6e; border-color: rgba(138,170,110,0.5); }
 body.dark-mode .btn-dash-sync:hover { background: rgba(138,170,110,0.28); }
@@ -979,7 +1056,7 @@ body.dark-mode .btn-dash-save { background: #c8935a; color: #1a1410; }
 body.dark-mode .btn-dash-save:hover { background: #dba870; }
 body.dark-mode .btn-archive { color: #e8d5c0; border-color: rgba(200,147,90,0.65); background: transparent; }
 body.dark-mode .btn-archive:hover { border-color: #c8935a; color: #c8935a; background: rgba(200,147,90,0.1); }
-body.dark-mode .btn-archive:hover { color: #dba870; border-color: rgba(200,147,90,0.45); background: rgba(200,147,90,0.06); }
+body.dark-mode .btn-archive:hover { color: #dba870; border-color: rgba(200,147,90,0.65); background: rgba(200,147,90,0.06); }
 body.dark-mode .btn-restore { color: #8aaa6e; background: transparent; }
 body.dark-mode .btn-restore:hover { background: rgba(138,170,110,0.15); }
 body.dark-mode .badge-green { background: rgba(138,170,110,0.18); color: #8aaa6e; }
@@ -1045,7 +1122,7 @@ body.dark-mode #darkModeKnob { transform: translateX(28px); background: #fff; }
 body.dark-mode .dash-sidebar { background: #0e0b08; }
 body.dark-mode .dash-main { background: #0f0c09; }
 body.dark-mode .login-screen { background: #0a0806; }
-body.dark-mode .login-box { background: rgba(255,255,255,0.05); border-color: rgba(200,147,90,0.4); }
+body.dark-mode .login-box { background: rgba(255,255,255,0.05); border-color: rgba(200,147,90,0.65); }
 body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 
 
@@ -1058,8 +1135,8 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
   .dash-section-header > div:first-child { width: 100%; }
   .dash-section-header > div:last-child, .dash-section-header > button { width: 100%; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .dash-section-header > button { width: auto; }
-  .dash-section-title { font-size: 1.5rem; }
-  .dash-section-subtitle { font-size: 0.85rem; margin-top: 0.25rem; display: block; clear: both; }
+  .dash-section-title { font-size: 1.55rem; }
+  .dash-section-subtitle { font-size: 1.15rem; margin-top: 0.25rem; display: block; clear: both; }
   .settings-card { padding: 1.25rem; }
   .settings-copy-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .settings-copy-row .btn-dash { width: auto; justify-content: center; }
@@ -1067,28 +1144,28 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
   .settings-health-grid { grid-template-columns: 1fr 1fr; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
   .form-page-header { padding: 0.75rem 1rem; }
-  .form-page-back { padding: 0.45rem 0.85rem; font-size: 0.82rem; }
-  .form-page-title { font-size: 0.95rem; }
+  .form-page-back { padding: 0.45rem 0.85rem; font-size: 1.15rem; }
+  .form-page-title { font-size: 1.15rem; }
   .form-page-body { padding: 1.25rem 1rem 3rem; }
   .dash-section-header > div[style*="display:flex"] { flex-wrap: wrap; }
-  .archived-toggle { font-size: 0.82rem; }
-  .btn-dash-sm { font-size: 0.8rem; padding: 0.55rem 0.85rem; min-height: 48px; }
+  .archived-toggle { font-size: 1.15rem; }
+  .btn-dash-sm { font-size: 1.15rem; padding: 0.55rem 0.85rem; min-height: 48px; }
   .overview-card table { min-width: unset; }
-  .overview-card th, .overview-card td { padding: 0.6rem 0.75rem; font-size: 0.82rem; }
+  .overview-card th, .overview-card td { padding: 0.6rem 0.75rem; font-size: 1.15rem; }
   .overview-card
   #archiveConfirmModal { padding: 1rem; }
 }
 @media (max-width: 500px) {
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
   .stat-card { padding: 1rem; border-radius: 10px; }
-  .stat-value { font-size: 1.4rem; }
-  .stat-label { font-size: 0.85rem; }
+  .stat-value { font-size: 1.45rem; }
+  .stat-label { font-size: 1.15rem; }
   .m-card { padding: 1rem 1.25rem; border-radius: 10px; margin-bottom: 0; }
-  .m-card-title { font-size: 0.95rem; }
-  .m-card-label { font-size: 0.85rem; }
-  .m-card-val { font-size: 1rem; }
+  .m-card-title { font-size: 1.15rem; }
+  .m-card-label { font-size: 1.15rem; }
+  .m-card-val { font-size: 1.15rem; }
   .settings-export-grid { grid-template-columns: 1fr; }
-  .btn-dash { font-size: 0.8rem; padding: 0.5rem 0.85rem; min-height: 48px; }
+  .btn-dash { font-size: 1.15rem; padding: 0.5rem 0.85rem; min-height: 48px; }
   .dash-section { padding: 1.25rem; box-sizing: border-box; overflow-x: hidden; }
 }
 
@@ -1116,29 +1193,29 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 .notif-item:last-child { border-bottom: none; }
 .notif-icon {
   width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
 }
 .notif-icon.payment { background: rgba(122,140,106,0.15); }
 .notif-icon.warning { background: rgba(180,60,40,0.1); }
 .notif-icon.info { background: rgba(193,127,82,0.12); }
 .notif-icon.error { background: rgba(180,60,40,0.15); }
-.notif-msg { font-size: 0.9rem; color: var(--text-dark); line-height: 1.4; flex: 1; }
-.notif-time { font-size: 0.75rem; color: var(--text-light); margin-top: 0.25rem; }
+.notif-msg { font-size: 1.05rem; color: var(--text-dark); line-height: 1.4; flex: 1; }
+.notif-time { font-size: 1.05rem; color: var(--text-light); margin-top: 0.25rem; }
 .notif-unread-dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--clay); flex-shrink: 0; margin-top: 6px;
 }
 .notif-empty {
   text-align: center; padding: 3rem 1.5rem;
-  color: var(--text-light); font-size: 0.9rem;
+  color: var(--text-light); font-size: 1.05rem;
 }
 
 /* ── ARCHIVE / CHECKIN BUTTONS ── */
 .btn-archive {
   background: transparent; cursor: pointer; border-radius: 4px;
-  border: 1px solid rgba(200,147,90,0.5); color: var(--bark);
+  border: 1px solid rgba(200,147,90,0.7); color: var(--bark);
   transition: all 0.15s; display: inline-flex; align-items: center;
-  gap: 5px; padding: 6px 10px; font-size: 0.78rem; font-weight: 500;
+  gap: 5px; padding: 6px 10px; font-size: 0.92rem; font-weight: 500;
   letter-spacing: 0.06em; text-transform: uppercase;
   font-family: var(--font-body); min-height: 48px; white-space: nowrap;
 }
@@ -1146,7 +1223,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 .btn-restore {
   background: transparent; border: 1px solid rgba(122,170,94,0.5);
   color: var(--moss); border-radius: 4px; cursor: pointer;
-  padding: 0 0.85rem; font-size: 0.78rem;
+  padding: 0 0.85rem; font-size: 0.92rem;
   font-family: var(--font-body); transition: all 0.15s;
   min-height: 48px; display: inline-flex; align-items: center; gap: 6px;
   letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
@@ -1155,7 +1232,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 .btn-checkin {
   background: none; border: 1.5px solid var(--clay-pale);
   border-radius: 20px; cursor: pointer; padding: 0.5rem 1.25rem;
-  font-size: 0.85rem; color: var(--text-light); font-family: var(--font-body);
+  font-size: 1.15rem; color: var(--text-light); font-family: var(--font-body);
   transition: all 0.2s; white-space: nowrap; min-height: 48px;
   display: inline-flex; align-items: center; gap: 0.4rem;
   width: auto; align-self: flex-start;
@@ -1171,7 +1248,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 /* Archived toggle — checkbox style */
 .archived-toggle {
   display: flex; align-items: center; gap: 0.6rem;
-  font-size: 0.9rem; color: var(--text-light); cursor: pointer;
+  font-size: 1.05rem; color: var(--text-light); cursor: pointer;
   user-select: none; white-space: nowrap;
 }
 .archived-toggle input[type="checkbox"] {
@@ -1208,13 +1285,13 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 .checkin-counter {
   background: rgba(200,147,90,0.15); border: 1px solid rgba(200,147,90,0.3);
   border-radius: 20px; padding: 0 0.9rem;
-  font-size: 0.85rem; font-weight: 600; color: #c8935a;
+  font-size: 1.15rem; font-weight: 600; color: #c8935a;
   letter-spacing: 0.05em; min-height: 48px; display: flex; align-items: center;
 }
 .checkin-close {
   background: transparent; border: 1.5px solid rgba(232,213,192,0.35);
   border-radius: 4px; color: #e8d5c0; cursor: pointer;
-  font-size: 0.8rem; font-family: var(--font-body);
+  font-size: 1.15rem; font-family: var(--font-body);
   padding: 0 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
   transition: border-color 0.2s, background 0.2s; min-height: 48px;
 }
@@ -1223,18 +1300,18 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   .checkin-header { padding-top: max(1rem, env(safe-area-inset-top)); }
 }
 .checkin-header-left { display: flex; flex-direction: column; gap: 2px; }
-.checkin-header-title { font-size: 1rem; font-weight: 500; color: #e8d5c0; letter-spacing: 0.04em; }
-.checkin-header-sub { font-size: 0.8rem; color: rgba(200,147,90,0.7); }
+.checkin-header-title { font-size: 1.15rem; font-weight: 500; color: #e8d5c0; letter-spacing: 0.04em; }
+.checkin-header-sub { font-size: 1.15rem; color: rgba(200,147,90,0.7); }
 .checkin-counter {
   background: rgba(200,147,90,0.15); border: 1px solid rgba(200,147,90,0.3);
   border-radius: 20px; padding: 0.3rem 0.9rem;
-  font-size: 0.85rem; font-weight: 600; color: #c8935a;
+  font-size: 1.15rem; font-weight: 600; color: #c8935a;
   letter-spacing: 0.05em;
 }
 .checkin-close {
   background: transparent; border: 1.5px solid rgba(232,213,192,0.35);
   border-radius: 4px; color: #e8d5c0; cursor: pointer;
-  font-size: 0.8rem; font-family: var(--font-body);
+  font-size: 1.15rem; font-family: var(--font-body);
   padding: 0.4rem 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
   transition: border-color 0.2s, background 0.2s;
 }
@@ -1249,25 +1326,25 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 }
 .checkin-card { background: var(--card, #231c16); border: 1px solid rgba(200,147,90,0.18); border-radius: 8px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .checkin-card-info { flex: 1; min-width: 0; }
-.checkin-card-name { font-size: 1rem; font-weight: 500; color: var(--bark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.checkin-card-meta { font-size: 0.8rem; color: var(--text-light); margin-top: 3px; }
+.checkin-card-name { font-size: 1.15rem; font-weight: 500; color: var(--bark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.checkin-card-meta { font-size: 1.15rem; color: var(--text-light); margin-top: 3px; }
 .checkin-card-meta span { margin-right: 0.75rem; }
 .checkin-cb {
   width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  background: transparent; border: 2px solid rgba(200,147,90,0.4);
+  background: transparent; border: 2px solid rgba(200,147,90,0.65);
   transition: background 0.12s, border-color 0.12s;
   touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 }
 .checkin-cb.checked { background: #c8935a; border-color: #c8935a; }
 .checkin-cb svg { display: none; }
 .checkin-cb.checked svg { display: block; }
-.checkin-empty { text-align: center; padding: 4rem 1.5rem; color: var(--text-light); font-size: 0.95rem; }
+.checkin-empty { text-align: center; padding: 4rem 1.5rem; color: var(--text-light); font-size: 1.15rem; }
 body.dark-mode .checkin-screen { background: #1a1410; }
 body.dark-mode .checkin-card { background: #231c16; border-color: rgba(200,147,90,0.18); }
 body.dark-mode .checkin-card.is-checked { border-color: rgba(138,170,110,0.2); }
 body.dark-mode .checkin-card-name { color: #e8d5c0; }
-body.dark-mode .checkin-cb { border-color: rgba(200,147,90,0.35); }
+body.dark-mode .checkin-cb { border-color: rgba(200,147,90,0.6); }
 body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a; }
 
 </style>
@@ -1379,16 +1456,13 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 <div class="mobile-search-fullscreen" id="mobileSearchFullscreen">
   <div class="mobile-search-fs-header">
     <div style="position:relative;flex:1;">
-      <svg class="mobile-search-fs-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(200,147,90,0.5);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg class="mobile-search-fs-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(200,147,90,0.7);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" class="mobile-search-fs-input" id="mobileSearchInput" placeholder="Search participants, payments..." autocomplete="off" oninput="handleMobileSearch(this.value)" onkeydown="if(event.key==='Escape')closeMobileSearch()"/>
     </div>
     <button class="mobile-search-fs-cancel" onclick="closeMobileSearch()">Cancel</button>
   </div>
   <div class="mobile-search-fs-body" id="mobileSearchBody">
-    <div class="mobile-search-fs-empty">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(200,147,90,0.3)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <div style="font-size:0.95rem;color:rgba(200,147,90,0.5);margin-top:0.5rem;">Start typing to search</div>
-    </div>
+    ${EMPTY_STATES.search}
   </div>
 </div>
 
@@ -1399,7 +1473,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       Overview
     </a>
     <div style="height:1px;background:rgba(193,127,82,0.2);margin:0.5rem 2.5rem;"></div>
-    <div style="padding:0.75rem 2.5rem 0.25rem;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(200,147,90,0.5);font-weight:500;">Workshops</div>
+    <div style="padding:0.75rem 2.5rem 0.25rem;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(200,147,90,0.7);font-weight:500;">Workshops</div>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:0.85rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('workshops',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       Workshops
@@ -1409,7 +1483,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       Participants
     </a>
     <div style="height:1px;background:rgba(193,127,82,0.2);margin:0.5rem 2.5rem;"></div>
-    <div style="padding:0.75rem 2.5rem 0.25rem;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(200,147,90,0.5);font-weight:500;">Classes</div>
+    <div style="padding:0.75rem 2.5rem 0.25rem;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(200,147,90,0.7);font-weight:500;">Classes</div>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:0.85rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('classes',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Classes
@@ -1521,18 +1595,14 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         </div>
       </div>
       <div style="position:relative;margin-bottom:2rem;">
-        <svg style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);pointer-events:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(200,147,90,0.5)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);pointer-events:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(200,147,90,0.7)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="sectionSearchInput" placeholder="Search participants, workshops, payments, leads..." autocomplete="off"
           style="width:100%;padding:0.9rem 1rem 0.9rem 3rem;background:rgba(200,147,90,0.06);border:1.5px solid rgba(200,147,90,0.25);border-radius:10px;color:var(--bark);font-size:1rem;outline:none;font-family:var(--font-body);box-sizing:border-box;"
           oninput="handleSectionSearch(this.value)"
           onkeydown="if(event.key==='Escape'){this.value='';handleSectionSearch('');}"/>
       </div>
       <div id="sectionSearchResults">
-        <div style="text-align:center;padding:3rem 1rem;color:var(--text-light);">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(200,147,90,0.3)" stroke-width="1.5" style="margin-bottom:1rem;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.4rem;">Start typing to search</div>
-          <div style="font-size:0.85rem;">Search across participants, workshops, students, payments and leads</div>
-        </div>
+        <div id="section-search-empty-default"></div>
       </div>
     </section>
 
@@ -1600,14 +1670,14 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       </div>
       <div class="dash-table-wrap desktop-only">
         <table class="desktop-table"><thead><tr>
-          <th class="sortable-th" onclick="sortTable('workshops','id',this)">WS # <span class="sort-arrow"></span></th>
-          <th class="sortable-th" onclick="sortTable('workshops','date',this)">Date <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','id',this)">WS # <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','date',this)">Date <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Venue</th>
-          <th class="sortable-th" onclick="sortTable('workshops','total_pax',this)">Participants <span class="sort-arrow"></span></th>
-          <th class="sortable-th" onclick="sortTable('workshops','total_revenue',this)">Revenue <span class="sort-arrow"></span></th>
-          <th class="sortable-th" onclick="sortTable('workshops','total_expense',this)">Expenses <span class="sort-arrow"></span></th>
-          <th class="sortable-th" onclick="sortTable('workshops','net_profit',this)">Net Profit <span class="sort-arrow"></span></th>
-          <th class="sortable-th" onclick="sortTable('workshops','margin',this)">Margin <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','total_pax',this)">Participants <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','total_revenue',this)">Revenue <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','total_expense',this)">Expenses <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','net_profit',this)">Net Profit <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
+          <th class="sortable-th" onclick="sortTable('workshops','margin',this)">Margin <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Action</th>
         </tr></thead>
         <tbody id="workshopsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
@@ -1634,9 +1704,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <input type="text" class="section-search-input" id="search-participants" placeholder="Search by name, phone..." autocomplete="off" oninput="applyFilters('participants')"/>
       </div>
       <div class="filter-bar" id="filter-bar-participants">
-        <select class="filter-select" id="filter-participants-workshop" onchange="applyFilters('participants')">
-          <option value="">All workshops</option>
-        </select>
+        <div id="dd-participants-workshop" class="custom-select-wrap-placeholder"></div>
         <div class="filter-divider"></div>
         <div class="filter-pills">
           <button class="filter-pill active" onclick="setFilterPill('participants','checkin','all',this)">All</button>
@@ -1655,10 +1723,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <div class="dash-table-wrap desktop-only">
         <table class="desktop-table"><thead><tr>
           <th>P #</th>
-          <th class="sortable-th" onclick="sortTable('participants','full_name',this)">Name <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('participants','full_name',this)">Name <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Phone</th>
-          <th class="sortable-th" onclick="sortTable('participants','workshop_id',this)">Workshop <span class="sort-arrow"></span></th>
-          <th class="sortable-th" onclick="sortTable('participants','amount_paid',this)">Amount <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('participants','workshop_id',this)">Workshop <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
+          <th class="sortable-th" onclick="sortTable('participants','amount_paid',this)">Amount <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Mode</th><th>Check In</th><th>Action</th>
         </tr></thead>
         <tbody id="participantsTable"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table>
@@ -1687,9 +1755,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <input type="text" class="section-search-input" id="search-classes" placeholder="Search by name, phone..." autocomplete="off" oninput="applyFilters('classes')"/>
       </div>
       <div class="filter-bar" id="filter-bar-classes">
-        <select class="filter-select" id="filter-classes-batch" onchange="applyFilters('classes')">
-          <option value="">All batches</option>
-        </select>
+        <div id="dd-classes-batch" class="custom-select-wrap-placeholder"></div>
         <div class="filter-divider"></div>
         <div class="filter-pills">
           <button class="filter-pill active" onclick="setFilterPill('classes','status','all',this)">All</button>
@@ -1702,12 +1768,12 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <div class="dash-table-header" style="display:none"></div>
         <table class="desktop-table"><thead><tr>
           <th>S #</th>
-          <th class="sortable-th" onclick="sortTable('classes','full_name',this)">Name <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('classes','full_name',this)">Name <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Batch</th><th>Phone</th>
-          <th class="sortable-th" onclick="sortTable('classes','join_date',this)">Joined <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('classes','join_date',this)">Joined <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Status</th>
-          <th class="sortable-th" onclick="sortTable('classes','total_classes',this)">Classes <span class="sort-arrow"></span></th>
-          <th class="sortable-th" onclick="sortTable('classes','total_paid',this)">Total Paid <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('classes','total_classes',this)">Classes <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
+          <th class="sortable-th" onclick="sortTable('classes','total_paid',this)">Total Paid <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Notes</th>
         </tr></thead>
         <tbody id="studentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
@@ -1731,12 +1797,8 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <input type="text" class="section-search-input" id="search-fee-payments" placeholder="Search by student, month..." autocomplete="off" oninput="applyFilters('fee-payments')"/>
       </div>
       <div class="filter-bar" id="filter-bar-fee-payments">
-        <select class="filter-select" id="filter-fee-student" onchange="applyFilters('fee-payments')">
-          <option value="">All students</option>
-        </select>
-        <select class="filter-select" id="filter-fee-month" onchange="applyFilters('fee-payments')">
-          <option value="">All months</option>
-        </select>
+        <div id="dd-fee-student" class="custom-select-wrap-placeholder"></div>
+        <div id="dd-fee-month" class="custom-select-wrap-placeholder"></div>
         <div class="filter-divider"></div>
         <div class="filter-pills">
           <button class="filter-pill active" onclick="setFilterPill('fee-payments','status','all',this)">All</button>
@@ -1754,13 +1816,13 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <div class="dash-table-wrap">
         <table class="desktop-table"><thead><tr>
           <th>FP #</th>
-          <th class="sortable-th" onclick="sortTable('fee-payments','student_name',this)">Student <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('fee-payments','student_name',this)">Student <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Batch</th>
-          <th class="sortable-th" onclick="sortTable('fee-payments','month',this)">Month <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('fee-payments','month',this)">Month <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Classes</th>
-          <th class="sortable-th" onclick="sortTable('fee-payments','amount',this)">Amount <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('fee-payments','amount',this)">Amount <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Mode</th><th>Paid</th>
-          <th class="sortable-th" onclick="sortTable('fee-payments','payment_date',this)">Date <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('fee-payments','payment_date',this)">Date <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Action</th>
         </tr></thead>
         <tbody id="feePaymentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
@@ -1790,15 +1852,8 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="payNetProfit">—</div></div>
       </div>
       <div class="filter-bar" id="filter-bar-payments">
-        <select class="filter-select" id="filter-payments-period" onchange="applyFilters('payments')">
-          <option value="">All time</option>
-          <option value="this-month">This month</option>
-          <option value="last-month">Last month</option>
-          <option value="this-year">This year</option>
-        </select>
-        <select class="filter-select" id="filter-payments-category" onchange="applyFilters('payments')">
-          <option value="">All categories</option>
-        </select>
+        <div id="dd-payments-period" class="custom-select-wrap-placeholder"></div>
+        <div id="dd-payments-category" class="custom-select-wrap-placeholder"></div>
         <div class="filter-divider"></div>
         <div class="filter-pills">
           <button class="filter-pill active" onclick="setFilterPill('payments','type','all',this)">All</button>
@@ -1817,9 +1872,9 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       </div>
       <div class="dash-table-wrap">
         <table class="desktop-table"><thead><tr>
-          <th class="sortable-th" onclick="sortTable('payments','date',this)">Date <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('payments','date',this)">Date <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Description</th><th>Type</th><th>Category</th><th>Mode</th>
-          <th class="sortable-th" onclick="sortTable('payments','amount',this)">Amount <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('payments','amount',this)">Amount <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Action</th>
         </tr></thead>
         <tbody id="paymentsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
@@ -1843,9 +1898,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <input type="text" class="section-search-input" id="search-leads" placeholder="Search by name, phone..." autocomplete="off" oninput="applyFilters('leads')"/>
       </div>
       <div class="filter-bar" id="filter-bar-leads">
-        <select class="filter-select" id="filter-leads-workshop" onchange="applyFilters('leads')">
-          <option value="">All workshops</option>
-        </select>
+        <div id="dd-leads-workshop" class="custom-select-wrap-placeholder"></div>
         <div class="filter-divider"></div>
         <div class="filter-pills">
           <button class="filter-pill active" onclick="setFilterPill('leads','referred','all',this)">All</button>
@@ -1856,7 +1909,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <div class="dash-table-wrap">
         <table class="desktop-table"><thead><tr>
           <th>Lead #</th>
-          <th class="sortable-th" onclick="sortTable('leads','full_name',this)">Name <span class="sort-arrow"></span></th>
+          <th class="sortable-th" onclick="sortTable('leads','full_name',this)">Name <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th><th>Action</th>
         </tr></thead>
         <tbody id="leadsTable"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody></table>
@@ -2345,7 +2398,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
   <div style="background:var(--cream);border-radius:12px;width:100%;max-width:320px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
     <div style="padding:1.5rem 1.5rem 0;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
-        <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.65);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c17f52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
         <div style="font-size:1.15rem;font-weight:600;color:var(--bark);">Unsaved changes</div>
@@ -2362,7 +2415,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
   <div style="background:var(--cream);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
     <div style="padding:1.5rem 1.5rem 0;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
-        <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.65);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </div>
         <div id="archiveConfirmTitle" style="font-size:1.15rem;font-weight:600;color:var(--bark);">Move to Bin?</div>
@@ -2383,7 +2436,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
   <div style="background:var(--cream);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
     <div style="padding:1.5rem 1.5rem 0;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
-        <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.65);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B43C28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         </div>
         <div id="customConfirmTitle" style="font-size:1.15rem;font-weight:600;color:var(--bark);">Are you sure?</div>
@@ -2401,7 +2454,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 
 <!-- ── PERMANENT DELETE CONFIRM MODAL ── -->
 <div id="deleteForeverModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:30000;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(2px);">
-  <div style="background:#3d2c1e;border:1px solid rgba(200,147,90,0.45);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+  <div style="background:#3d2c1e;border:1px solid rgba(200,147,90,0.65);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
     <div style="padding:1.5rem 1.5rem 1rem;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
         <div style="width:40px;height:40px;border-radius:50%;background:rgba(180,60,40,0.18);border:1.5px solid rgba(180,60,40,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -2514,13 +2567,20 @@ function setNumpadDisabled(disabled) {
   document.querySelectorAll('.pin-key').forEach(k => k.disabled = disabled);
 }
 
+function showDashboard() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashRoot').style.display = 'flex';
+  if (window.innerWidth <= 900) {
+    document.getElementById('mobileTopbar').style.display = 'flex';
+  }
+}
+
 function doLogin() {
   if (pinValue === DASHBOARD_PIN) {
     currentRole = 'admin';
     sessionStorage.setItem('dash_auth', '1');
     sessionStorage.setItem('dash_role', 'admin');
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('dashRoot').style.display = 'flex';
+    showDashboard();
     loadAll();
     loadBinCount();
     applyRole();
@@ -2528,8 +2588,7 @@ function doLogin() {
     currentRole = 'viewer';
     sessionStorage.setItem('dash_auth', '1');
     sessionStorage.setItem('dash_role', 'viewer');
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('dashRoot').style.display = 'flex';
+    showDashboard();
     loadAll();
     loadBinCount();
     applyRole();
@@ -2618,11 +2677,7 @@ function customConfirmClose() {
 }
 
 if (sessionStorage.getItem('dash_auth') === '1') {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('dashRoot').style.display = 'flex';
-  if (window.innerWidth <= 900) {
-    document.getElementById('mobileTopbar').style.display = 'flex';
-  }
+  showDashboard();
 }
 
 // ── SUPABASE API ──
@@ -2740,6 +2795,7 @@ async function openFormPage(name) {
   } else if (name === 'addStudent') {
     await autoFillNextId('students', 'stu-id', 'S-', 3);
   }
+  setTimeout(initFormSelects, 80);
 }
 
 async function populateWorkshopDropdown(selectId) {
@@ -2920,20 +2976,13 @@ async function loadSearchSection() {
 async function handleSectionSearch(query) {
   const results = document.getElementById('sectionSearchResults');
   if (!query || query.length < 2) {
-    results.innerHTML = `<div style="text-align:center;padding:3rem 1rem;color:var(--text-light);">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(200,147,90,0.3)" stroke-width="1.5" style="margin-bottom:1rem;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.4rem;">Start typing to search</div>
-      <div style="font-size:0.85rem;">Search across participants, workshops, students, payments and leads</div>
-    </div>`;
+    results.innerHTML = EMPTY_STATES.search;
     return;
   }
   await ensureSearchCache();
   const items = searchData(query);
   if (!items.length) {
-    results.innerHTML = `<div style="text-align:center;padding:3rem 1rem;color:var(--text-light);">
-      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.4rem;">No results for "${query}"</div>
-      <div style="font-size:0.85rem;">Try searching by name, phone, amount or date</div>
-    </div>`;
+    results.innerHTML = EMPTY_STATES.search_noresults(query);
     return;
   }
   const groups = {};
@@ -2983,8 +3032,8 @@ async function loadOverview() {
     document.getElementById('stat-leads').textContent = lds.filter(l => l.status === 'Hot' || l.status === 'Warm').length;
     const avgMargin = ws.length ? ws.reduce((s, w) => s + Number(w.margin || 0), 0) / ws.length : 0;
     document.getElementById('stat-margin').textContent = fmtPct(avgMargin);
-    document.getElementById('overviewWorkshops').innerHTML = ws.slice(0,5).map(w => `<tr><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td style="color:var(--moss)">${fmt(w.net_profit)}</td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center">No workshops yet</td></tr>';
-    document.getElementById('overviewPayments').innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<tr><td>${fmtDate(p.date)}</td><td>${p.payer_name||'—'}</td><td style="color:var(--moss)">${fmt(p.amount)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td></tr>`).join('') || '<tr><td colspan="4" style="text-align:center">No payments yet</td></tr>';
+    document.getElementById('overviewWorkshops').innerHTML = ws.slice(0,5).map(w => `<tr><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td style="color:var(--moss)">${fmt(w.net_profit)}</td></tr>`).join('') || `<tr><td colspan='5'>${EMPTY_STATES.workshops}</td></tr>`;
+    document.getElementById('overviewPayments').innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<tr><td>${fmtDate(p.date)}</td><td>${p.payer_name||'—'}</td><td style="color:var(--moss)">${fmt(p.amount)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td></tr>`).join('') || `<tr><td colspan='4'>${EMPTY_STATES.payments}</td></tr>`;
 
     // Mobile cards for overview
     const owc = document.getElementById('overviewWorkshopsCards');
@@ -3035,7 +3084,7 @@ async function loadWorkshops() {
           <div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div>
           <div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div>
         </div>
-        <div style="padding:0.85rem 1.5rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;">
+        <div style="padding:0.85rem 1.5rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;justify-content:flex-end;">
           <button class="btn-dash btn-dash-outline btn-dash-sm" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             Participants
@@ -3055,7 +3104,7 @@ async function loadWorkshops() {
           <div id="ws-pax-list-${w.id}"><div class="ws-pax-empty">Loading...</div></div>
         </div>
       </div>
-    `).join('') || '<div style="padding:2rem;text-align:center;color:var(--text-light);">No workshops yet</div>';
+    `).join('') || EMPTY_STATES.workshops;
 
   } catch(e) { showToast('Error loading workshops', 'error'); console.error(e); }
 }
@@ -3122,7 +3171,13 @@ async function toggleWsPaxCheckIn(id, currentState, name, wsId) {
 
 function openParticipantForWorkshop(wsId) {
   openFormPage('addParticipant');
-  setTimeout(() => { const sel = document.getElementById('par-workshop'); if (sel) sel.value = wsId; }, 300);
+  setTimeout(() => {
+    const sel = document.getElementById('par-workshop');
+    if (sel) {
+      sel.value = wsId;
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  }, 300);
 }
 async function loadParticipants() {
   try {
@@ -3151,14 +3206,14 @@ async function loadParticipants() {
         <div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
         <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div>
         <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div>
-        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
           <button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,"\\'")}')">
             ${p.checked_in?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Checked in':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Check in'}
           </button>
           ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true,this)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
         </div>
       </div>
-    `).join('') || '<div style="padding:2rem;text-align:center;color:var(--text-light);">No participants yet</div>';
+    `).join('') || EMPTY_STATES.participants;
 
   } catch(e) { showToast('Error loading participants', 'error'); console.error(e); }
 }
@@ -3179,11 +3234,11 @@ const res = await api('/students' + (showArchivedStudents ? '?include_archived=t
     populateClassesBatchDropdown(stus);
     document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">🎓</div>
-      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No students yet</div>
+      ${EMPTY_STATES.students}
       <div style="font-size:0.85rem;color:var(--text-light);">Add your first student to start tracking classes and fee payments.</div>
     </td></tr>`;
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading students', 'error'); } finally { hideLoader(); }
 }
 async function loadFeePayments() {
@@ -3197,7 +3252,7 @@ const res = await api('/fee_payments?order=created_at:desc' + (showArchivedFee ?
     populateFeeMonthDropdown(fps);
     document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${f.month||''}" data-mode="${f.payment_mode||''}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td><span class="badge badge-clay">${f.payment_mode||'UPI'}</span></td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td>${adminFP?(f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('fee_payments','${f.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">📋</div>
-      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No fee payments yet</div>
+      ${EMPTY_STATES.fee_payments}
       <div style="font-size:0.85rem;color:var(--text-light);">Fee payments will appear here once you add students and log their monthly fees.</div>
     </td></tr>`;
     const fpCards = document.getElementById('feePaymentsCards');
@@ -3222,11 +3277,11 @@ const res = await api('/payments?order=date:desc' + (showArchivedPayments ? '&in
     populatePaymentsCategoryDropdown(pays);
     document.getElementById('paymentsTable').innerHTML = pays.map(p => `<tr class="${p.archived?'archived-row':''}" data-type="${p.type||''}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td><span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span></td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;">${p.synced_from_razorpay !== true?`<button class="icon-action-btn" title="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button>`:''}<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">💳</div>
-      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No payments yet</div>
+      ${EMPTY_STATES.payments}
       <div style="font-size:0.85rem;color:var(--text-light);">Razorpay payments sync automatically. You can also add manual payments.</div>
     </td></tr>`;
     const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading payments', 'error'); } finally { hideLoader(); }
 }
 
@@ -3241,11 +3296,11 @@ const res = await api('/leads?order=created_at:desc' + (showArchivedLeads ? '&in
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       <div style="font-size:2rem;margin-bottom:0.75rem;">💬</div>
-      <div style="font-size:1rem;color:var(--bark);font-weight:500;margin-bottom:0.5rem;">No leads yet</div>
+      ${EMPTY_STATES.leads}
       <div style="font-size:0.85rem;color:var(--text-light);">Track potential students and handpan buyers who attended your workshops.</div>
     </td></tr>`;
     const leadsCards = document.getElementById('leadsCards');
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale)">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('');
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
 
@@ -3773,15 +3828,15 @@ function hideLoader() {
 function showToast(msg, type) {
   const t = document.getElementById('toast');
   if (!t) return;
-  t.textContent = msg;
-  t.className = 'toast' + (type ? ' ' + type : '');
   clearTimeout(t._timer);
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      t.classList.add('show');
-      t._timer = setTimeout(() => { t.className = 'toast'; }, 3000);
-    });
-  });
+  // Strip all classes and force browser to repaint at hidden position
+  t.className = 'toast' + (type ? ' ' + type : '');
+  t.textContent = msg;
+  // Force reflow so the browser registers the reset state before transitioning
+  void t.offsetHeight;
+  // Now add show class — browser will animate from transform:-80px to 0
+  t.classList.add('show');
+  t._timer = setTimeout(() => { t.className = 'toast'; }, 3000);
 }
 
 // ── PIN KEYBOARD SUPPORT ──
@@ -4092,6 +4147,7 @@ function openEdit(entity, id) {
   const title = { workshops:'Edit Workshop', participants:'Edit Participant', students:'Edit Student', fee_payments:'Edit Fee Payment', payments:'Edit Payment', leads:'Edit Lead' }[entity] || 'Edit';
   document.getElementById('editFormTitle').textContent = title;
   document.getElementById('editFormBody').innerHTML = buildEditForm(entity, record);
+  setTimeout(initFormSelects, 50);
   openFormPage('editRecord');
 }
 
@@ -4247,7 +4303,7 @@ function searchData(query) {
 }
 
 function buildResultsHTML(results, query) {
-  if (!results.length) return `<div class="search-no-results">No results for "${query}"</div>`;
+  if (!results.length) return EMPTY_STATES.search_noresults(query);
   const groups = {};
   const labels = { workshops:'Workshops', participants:'Participants', classes:'Classes', 'fee-payments':'Fee Payments', payments:'Payments', leads:'Leads' };
   results.forEach(r => { if (!groups[r.entity]) groups[r.entity] = []; groups[r.entity].push(r); });
@@ -4286,27 +4342,19 @@ function closeMobileSearch() {
   document.getElementById('mobileTopbar').style.display = 'flex';
   const input = document.getElementById('mobileSearchInput');
   if (input) input.value = '';
-  document.getElementById('mobileSearchBody').innerHTML = `<div class="mobile-search-fs-empty">
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(200,147,90,0.3)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <div style="font-size:0.95rem;color:rgba(200,147,90,0.5);margin-top:0.5rem;">Start typing to search</div>
-  </div>`;
+  document.getElementById('mobileSearchBody').innerHTML = EMPTY_STATES.search;
 }
 
 async function handleMobileSearch(query) {
   const body = document.getElementById('mobileSearchBody');
   if (!query || query.length < 2) {
-    body.innerHTML = `<div class="mobile-search-fs-empty">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(200,147,90,0.3)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <div style="font-size:0.95rem;color:rgba(200,147,90,0.5);margin-top:0.5rem;">Start typing to search</div>
-    </div>`;
+    body.innerHTML = EMPTY_STATES.search;
     return;
   }
   await ensureSearchCache();
   const items = searchData(query);
   if (!items.length) {
-    body.innerHTML = `<div class="mobile-search-fs-empty">
-      <div style="font-size:0.95rem;color:rgba(200,147,90,0.5);">No results for "${query}"</div>
-    </div>`;
+    body.innerHTML = EMPTY_STATES.search_noresults(query);
     return;
   }
   const groups = {};
@@ -4314,13 +4362,13 @@ async function handleMobileSearch(query) {
   items.forEach(r => { if (!groups[r.entity]) groups[r.entity] = []; groups[r.entity].push(r); });
   let html = '';
   Object.entries(groups).forEach(([entity, groupItems]) => {
-    html += `<div style="padding:0.75rem 1.25rem 0.25rem;font-size:0.72rem;font-weight:600;color:rgba(200,147,90,0.5);letter-spacing:0.12em;text-transform:uppercase;">${labels[entity]||entity}</div>`;
+    html += `<div style="padding:0.75rem 1.25rem 0.25rem;font-size:0.72rem;font-weight:600;color:rgba(200,147,90,0.7);letter-spacing:0.12em;text-transform:uppercase;">${labels[entity]||entity}</div>`;
     groupItems.forEach(item => {
       html += `<div class="mobile-search-fs-result-item" onclick="goToSearchResult('${entity}','${item.id}')">
         <span style="font-size:1.2rem;flex-shrink:0;">${item.icon}</span>
         <div style="min-width:0;flex:1;">
           <div style="font-size:0.95rem;font-weight:500;color:#e8d5c0;">${highlight(item.name, query)}</div>
-          <div style="font-size:0.82rem;color:rgba(200,147,90,0.55);margin-top:1px;">${highlight(item.meta, query)}</div>
+          <div style="font-size:0.82rem;color:rgba(200,147,90,0.75);margin-top:1px;">${highlight(item.meta, query)}</div>
         </div>
         <svg style="flex-shrink:0;opacity:0.3;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </div>`;
@@ -4406,7 +4454,7 @@ function applyFilters(section) {
     }
 
     if (section === 'participants') {
-      const ws = document.getElementById('filter-participants-workshop')?.value || '';
+      const ws = _dd['participants-workshop']?._getValue() || '';
       if (ws && data.workshop !== ws) return false;
       if (st.checkin === 'yes' && data.checkin !== 'true') return false;
       if (st.checkin === 'no' && data.checkin === 'true') return false;
@@ -4414,14 +4462,14 @@ function applyFilters(section) {
     }
 
     if (section === 'classes') {
-      const batch = document.getElementById('filter-classes-batch')?.value || '';
+      const batch = _dd['classes-batch']?._getValue() || '';
       if (batch && data.batch !== batch) return false;
       if (st.status !== 'all' && data.status !== st.status) return false;
     }
 
     if (section === 'fee-payments') {
-      const stu = document.getElementById('filter-fee-student')?.value || '';
-      const mon = document.getElementById('filter-fee-month')?.value || '';
+      const stu = _dd['fee-student']?._getValue() || '';
+      const mon = _dd['fee-month']?._getValue() || '';
       if (stu && data.student !== stu) return false;
       if (mon && data.month !== mon) return false;
       if (st.status === 'paid' && data.paid !== 'true') return false;
@@ -4432,9 +4480,9 @@ function applyFilters(section) {
     if (section === 'payments') {
       if (st.type !== 'all' && data.type !== st.type) return false;
       if (st.mode !== 'all' && (data.mode || '').toLowerCase() !== st.mode) return false;
-      const cat = document.getElementById('filter-payments-category')?.value || '';
+      const cat = _dd['payments-category']?._getValue() || '';
       if (cat && data.category !== cat) return false;
-      const period = document.getElementById('filter-payments-period')?.value || '';
+      const period = _dd['payments-period']?._getValue() || '';
       if (period) {
         const range = getDateRange(period);
         if (range && data.date) {
@@ -4445,7 +4493,7 @@ function applyFilters(section) {
     }
 
     if (section === 'leads') {
-      const ws = document.getElementById('filter-leads-workshop')?.value || '';
+      const ws = _dd['leads-workshop']?._getValue() || '';
       if (ws && data.workshop !== ws) return false;
       if (st.referred === 'yes' && data.referred !== 'true') return false;
       if (st.referred === 'no' && data.referred === 'true') return false;
@@ -4558,6 +4606,10 @@ function applyFilters(section) {
 
 // ── COLUMN SORT ──
 const sortStates = {};
+const SORT_SVG_DEFAULT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>';
+const SORT_SVG_ASC = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l-8 8h16z" fill="currentColor" stroke="none"/></svg>';
+const SORT_SVG_DESC = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20l8-8H4z" fill="currentColor" stroke="none"/></svg>';
+
 function sortTable(section, col, thEl) {
   const tableMap = { workshops:'workshopsTable', participants:'participantsTable', classes:'studentsTable', 'fee-payments':'feePaymentsTable', payments:'paymentsTable', leads:'leadsTable' };
   const tbl = document.getElementById(tableMap[section]);
@@ -4567,8 +4619,14 @@ function sortTable(section, col, thEl) {
   sortStates[section] = { col, dir };
   const table = tbl.closest('table');
   if (table) {
-    table.querySelectorAll('.sortable-th').forEach(th => { th.classList.remove('sort-asc','sort-desc'); });
+    table.querySelectorAll('.sortable-th').forEach(th => {
+      th.classList.remove('sort-asc','sort-desc');
+      const arrow = th.querySelector('.sort-arrow');
+      if (arrow) arrow.innerHTML = SORT_SVG_DEFAULT;
+    });
     thEl.classList.add(dir === 'asc' ? 'sort-asc' : 'sort-desc');
+    const arrow = thEl.querySelector('.sort-arrow');
+    if (arrow) arrow.innerHTML = dir === 'asc' ? SORT_SVG_ASC : SORT_SVG_DESC;
   }
   const rows = Array.from(tbl.querySelectorAll('tr:not(.search-empty-row)'));
   rows.sort((a, b) => {
@@ -4650,31 +4708,82 @@ function closeMDotsSheet(e) {
 }
 
 // ── POPULATE FILTER DROPDOWNS ──
+// ── CUSTOM DROPDOWN INSTANCES ──
+const _dd = {}; // store references
+
+function initStaticDropdowns() {
+  // Participants workshop dropdown
+  _dd['participants-workshop'] = createCustomSelect('participants-workshop', 'All workshops', [{value:'',label:'All workshops'}], (val) => {
+    applyFilters('participants');
+  });
+  document.getElementById('dd-participants-workshop')?.replaceWith(_dd['participants-workshop']);
+
+  // Classes batch dropdown
+  _dd['classes-batch'] = createCustomSelect('classes-batch', 'All batches', [{value:'',label:'All batches'}], (val) => {
+    applyFilters('classes');
+  });
+  document.getElementById('dd-classes-batch')?.replaceWith(_dd['classes-batch']);
+
+  // Fee student dropdown
+  _dd['fee-student'] = createCustomSelect('fee-student', 'All students', [{value:'',label:'All students'}], (val) => {
+    applyFilters('fee-payments');
+  });
+  document.getElementById('dd-fee-student')?.replaceWith(_dd['fee-student']);
+
+  // Fee month dropdown
+  _dd['fee-month'] = createCustomSelect('fee-month', 'All months', [{value:'',label:'All months'}], (val) => {
+    applyFilters('fee-payments');
+  });
+  document.getElementById('dd-fee-month')?.replaceWith(_dd['fee-month']);
+
+  // Payments period dropdown
+  _dd['payments-period'] = createCustomSelect('payments-period', 'All time', [
+    {value:'',label:'All time'},
+    {value:'this-month',label:'This month'},
+    {value:'last-month',label:'Last month'},
+    {value:'this-year',label:'This year'},
+  ], (val) => { applyFilters('payments'); });
+  document.getElementById('dd-payments-period')?.replaceWith(_dd['payments-period']);
+
+  // Payments category dropdown
+  _dd['payments-category'] = createCustomSelect('payments-category', 'All categories', [{value:'',label:'All categories'}], (val) => {
+    applyFilters('payments');
+  });
+  document.getElementById('dd-payments-category')?.replaceWith(_dd['payments-category']);
+
+  // Leads workshop dropdown
+  _dd['leads-workshop'] = createCustomSelect('leads-workshop', 'All workshops', [{value:'',label:'All workshops'}], (val) => {
+    applyFilters('leads');
+  });
+  document.getElementById('dd-leads-workshop')?.replaceWith(_dd['leads-workshop']);
+}
+
+// Call after DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initStaticDropdowns();
+    initFormSelects();
+    const el = document.getElementById('section-search-empty-default');
+    if (el) el.innerHTML = EMPTY_STATES.search;
+  });
+} else {
+  initStaticDropdowns();
+  initFormSelects();
+  const el = document.getElementById('section-search-empty-default');
+  if (el) el.innerHTML = EMPTY_STATES.search;
+}
+
 function populateWorkshopFilterDropdown(workshops) {
-  const sel = document.getElementById('filter-participants-workshop');
-  if (!sel) return;
-  const existing = Array.from(sel.options).map(o => o.value);
-  workshops.forEach(w => {
-    if (!existing.includes(w.id)) {
-      const opt = document.createElement('option');
-      opt.value = w.id; opt.textContent = w.id + ' · ' + (w.venue || '');
-      sel.appendChild(opt);
-    }
+  ['participants-workshop','leads-workshop'].forEach(id => {
+    const dd = _dd[id];
+    if (!dd) return;
+    workshops.forEach(w => {
+      dd._addOption(w.id, w.id + ' · ' + (w.venue || ''));
+    });
   });
 }
 
-function populateLeadsWorkshopDropdown(workshops) {
-  const sel = document.getElementById('filter-leads-workshop');
-  if (!sel) return;
-  const existing = Array.from(sel.options).map(o => o.value);
-  workshops.forEach(w => {
-    if (!existing.includes(w.id)) {
-      const opt = document.createElement('option');
-      opt.value = w.id; opt.textContent = w.id + ' · ' + (w.venue || '');
-      sel.appendChild(opt);
-    }
-  });
-}
+function populateLeadsWorkshopDropdown(workshops) { /* handled in populateWorkshopFilterDropdown */ }
 
 function populateWorkshopYearFilter(workshops) {
   const container = document.getElementById('filter-ws-years');
@@ -4693,59 +4802,344 @@ function populateWorkshopYearFilter(workshops) {
 }
 
 function populateFeeStudentDropdown(students) {
-  const sel = document.getElementById('filter-fee-student');
-  if (!sel) return;
-  const existing = Array.from(sel.options).map(o => o.value);
+  const dd = _dd['fee-student'];
+  if (!dd) return;
   students.forEach(s => {
-    if (s.full_name && !existing.includes(s.full_name)) {
-      const opt = document.createElement('option');
-      opt.value = s.full_name; opt.textContent = s.full_name;
-      sel.appendChild(opt);
-    }
+    if (s.full_name) dd._addOption(s.full_name, s.full_name);
   });
 }
 
 function populateFeeMonthDropdown(feePayments) {
-  const sel = document.getElementById('filter-fee-month');
-  if (!sel) return;
-  const existing = Array.from(sel.options).map(o => o.value);
+  const dd = _dd['fee-month'];
+  if (!dd) return;
   const months = [...new Set(feePayments.map(f => f.month).filter(Boolean))].sort().reverse();
-  months.forEach(m => {
-    if (!existing.includes(m)) {
-      const opt = document.createElement('option');
-      opt.value = m; opt.textContent = m;
-      sel.appendChild(opt);
-    }
-  });
+  months.forEach(m => dd._addOption(m, m));
 }
 
 function populateClassesBatchDropdown(students) {
-  const sel = document.getElementById('filter-classes-batch');
-  if (!sel) return;
-  const existing = Array.from(sel.options).map(o => o.value);
+  const dd = _dd['classes-batch'];
+  if (!dd) return;
   const batches = [...new Set(students.map(s => s.batch_id).filter(Boolean))].sort();
-  batches.forEach(b => {
-    if (!existing.includes(b)) {
-      const opt = document.createElement('option');
-      opt.value = b; opt.textContent = b;
-      sel.appendChild(opt);
-    }
-  });
+  batches.forEach(b => dd._addOption(b, b));
 }
 
 function populatePaymentsCategoryDropdown(payments) {
-  const sel = document.getElementById('filter-payments-category');
-  if (!sel) return;
-  const existing = Array.from(sel.options).map(o => o.value);
+  const dd = _dd['payments-category'];
+  if (!dd) return;
   const cats = [...new Set(payments.map(p => p.category).filter(Boolean))].sort();
-  cats.forEach(c => {
-    if (!existing.includes(c)) {
-      const opt = document.createElement('option');
-      opt.value = c; opt.textContent = c;
-      sel.appendChild(opt);
-    }
-  });
+  cats.forEach(c => dd._addOption(c, c));
 }
+
+// ── EMPTY STATES ──
+const EMPTY_STATES = {
+  search: `<div class="empty-state">
+    <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="20" stroke="#c8935a" stroke-width="2.5" fill="none"/>
+      <line x1="46" y1="46" x2="60" y2="60" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M24 32 Q32 24 40 32" stroke="#c8935a" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle cx="32" cy="36" r="1.5" fill="#c8935a"/>
+    </svg>
+    <div class="empty-state-title">Start typing to search</div>
+    <div class="empty-state-sub">Search across workshops, participants, students, payments and leads</div>
+  </div>`,
+
+  search_noresults: (q) => `<div class="empty-state">
+    <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+      <circle cx="32" cy="32" r="20" stroke="#c8935a" stroke-width="2.5" fill="none"/>
+      <line x1="46" y1="46" x2="60" y2="60" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="26" y1="26" x2="38" y2="38" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
+      <line x1="38" y1="26" x2="26" y2="38" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="empty-state-title">No results for "${q}"</div>
+    <div class="empty-state-sub">Try a different name, number or keyword</div>
+  </div>`,
+
+  workshops: `<div class="empty-state">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <rect x="10" y="30" width="60" height="36" rx="4" stroke="#c8935a" stroke-width="2.5" fill="none"/>
+      <path d="M10 40 L40 20 L70 40" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <rect x="30" y="46" width="20" height="20" rx="2" stroke="#c8935a" stroke-width="2" fill="none"/>
+      <path d="M25 20 L25 14 M35 20 L35 14" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="55" cy="44" r="1.5" fill="#c8935a"/>
+      <circle cx="55" cy="50" r="1.5" fill="#c8935a"/>
+      <circle cx="55" cy="56" r="1.5" fill="#c8935a"/>
+    </svg>
+    <div class="empty-state-title">No workshops yet</div>
+    <div class="empty-state-sub">Add your first workshop to start tracking revenue and participants</div>
+  </div>`,
+
+  participants: `<div class="empty-state">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <circle cx="30" cy="28" r="10" stroke="#c8935a" stroke-width="2.5" fill="none"/>
+      <path d="M10 62 C10 50 20 44 30 44 C40 44 50 50 50 62" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <circle cx="56" cy="30" r="7" stroke="#c8935a" stroke-width="2" stroke-dasharray="3 2" fill="none"/>
+      <path d="M48 60 C48 51 52 47 56 47 C60 47 64 51 64 60" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2" fill="none"/>
+      <line x1="56" y1="22" x2="56" y2="24" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="empty-state-title">No participants yet</div>
+    <div class="empty-state-sub">Add participants to track attendance and payments for your workshops</div>
+  </div>`,
+
+  students: `<div class="empty-state">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <path d="M40 16 L68 28 L40 40 L12 28 Z" stroke="#c8935a" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+      <path d="M20 34 L20 52 C20 58 29 64 40 64 C51 64 60 58 60 52 L60 34" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <line x1="68" y1="28" x2="68" y2="50" stroke="#c8935a" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="68" cy="53" r="3" fill="#c8935a"/>
+    </svg>
+    <div class="empty-state-title">No students yet</div>
+    <div class="empty-state-sub">Enroll your first student to track classes and fee payments</div>
+  </div>`,
+
+  payments: `<div class="empty-state">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <rect x="10" y="24" width="60" height="40" rx="6" stroke="#c8935a" stroke-width="2.5" fill="none"/>
+      <line x1="10" y1="36" x2="70" y2="36" stroke="#c8935a" stroke-width="2.5"/>
+      <circle cx="26" cy="52" r="5" stroke="#c8935a" stroke-width="2" fill="none"/>
+      <circle cx="38" cy="52" r="5" stroke="#c8935a" stroke-width="2" fill="none"/>
+      <path d="M50 16 L50 10 M58 18 L62 14 M62 26 L68 26" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="empty-state-title">No payments yet</div>
+    <div class="empty-state-sub">Record income and expenses to track your business finances</div>
+  </div>`,
+
+  fee_payments: `<div class="empty-state">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <rect x="16" y="12" width="48" height="58" rx="4" stroke="#c8935a" stroke-width="2.5" fill="none"/>
+      <line x1="26" y1="28" x2="54" y2="28" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
+      <line x1="26" y1="38" x2="54" y2="38" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
+      <line x1="26" y1="48" x2="42" y2="48" stroke="#c8935a" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="54" cy="58" r="10" fill="#1a1208" stroke="#7a8c6a" stroke-width="2.5"/>
+      <path d="M50 58 L53 61 L58 55" stroke="#7a8c6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="empty-state-title">No fee payments yet</div>
+    <div class="empty-state-sub">Track monthly fee payments for your online students here</div>
+  </div>`,
+
+  leads: `<div class="empty-state">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <path d="M40 68 C40 68 14 50 14 32 C14 21 26 12 40 20 C54 12 66 21 66 32 C66 50 40 68 40 68 Z" stroke="#c8935a" stroke-width="2.5" fill="none"/>
+      <circle cx="40" cy="32" r="8" stroke="#c8935a" stroke-width="2" fill="none"/>
+      <circle cx="40" cy="32" r="2" fill="#c8935a"/>
+    </svg>
+    <div class="empty-state-title">No leads yet</div>
+    <div class="empty-state-sub">Track people interested in buying a handpan and follow up with them</div>
+  </div>`,
+
+  insights: `<div class="empty-state">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <rect x="12" y="50" width="12" height="18" rx="2" stroke="#c8935a" stroke-width="2.5" fill="none"/>
+      <rect x="30" y="36" width="12" height="32" rx="2" stroke="#c8935a" stroke-width="2.5" fill="none"/>
+      <rect x="48" y="22" width="12" height="46" rx="2" stroke="#c8935a" stroke-width="2.5" fill="none"/>
+      <path d="M14 46 L32 30 L50 18" stroke="#7a8c6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="14" cy="46" r="2.5" fill="#7a8c6a"/>
+      <circle cx="32" cy="30" r="2.5" fill="#7a8c6a"/>
+      <circle cx="50" cy="18" r="2.5" fill="#7a8c6a"/>
+    </svg>
+    <div class="empty-state-title">Not enough data yet</div>
+    <div class="empty-state-sub">Add workshops and payments to see your business insights here</div>
+  </div>`,
+};
+
+// ── CUSTOM FORM SELECTS ──
+function makeFormSelect(nativeSelect) {
+  if (!nativeSelect || nativeSelect.dataset.customized) return;
+  nativeSelect.dataset.customized = '1';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'form-select-wrap';
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'form-select-btn';
+
+  const menu = document.createElement('div');
+  menu.className = 'form-select-menu';
+
+  function getLabel() {
+    const sel = nativeSelect.options[nativeSelect.selectedIndex];
+    return sel ? sel.text : '';
+  }
+
+  function buildMenu() {
+    menu.innerHTML = '';
+    Array.from(nativeSelect.options).forEach((opt, i) => {
+      const div = document.createElement('div');
+      div.className = 'form-select-opt' + (nativeSelect.selectedIndex === i ? ' selected' : '');
+      div.textContent = opt.text;
+      div.onclick = (e) => {
+        e.stopPropagation();
+        nativeSelect.selectedIndex = i;
+        nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        btn.querySelector('.fs-label').textContent = opt.text;
+        menu.querySelectorAll('.form-select-opt').forEach((d, j) => d.classList.toggle('selected', j === i));
+        closeMenu();
+      };
+      menu.appendChild(div);
+    });
+  }
+
+  btn.innerHTML = `<span class="fs-label">${getLabel()}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+  buildMenu();
+
+  function openMenu() {
+    document.querySelectorAll('.form-select-menu.open').forEach(m => {
+      m.classList.remove('open');
+      m.previousElementSibling?.classList.remove('open');
+    });
+    buildMenu(); // rebuild in case options changed
+    menu.classList.add('open');
+    btn.classList.add('open');
+    // Flip above if no room below
+    const rect = btn.getBoundingClientRect();
+    if (window.innerHeight - rect.bottom < 220) {
+      menu.style.top = 'auto';
+      menu.style.bottom = 'calc(100% + 4px)';
+    } else {
+      menu.style.top = 'calc(100% + 4px)';
+      menu.style.bottom = 'auto';
+    }
+  }
+  function closeMenu() { menu.classList.remove('open'); btn.classList.remove('open'); }
+
+  btn.onclick = (e) => { e.stopPropagation(); menu.classList.contains('open') ? closeMenu() : openMenu(); };
+
+  // Keep custom select in sync if native value is changed programmatically
+  nativeSelect.addEventListener('change', () => {
+    btn.querySelector('.fs-label').textContent = getLabel();
+  });
+
+  nativeSelect.parentNode.insertBefore(wrap, nativeSelect.nextSibling);
+  wrap.appendChild(btn);
+  wrap.appendChild(menu);
+}
+
+function initFormSelects() {
+  document.querySelectorAll('select.form-input:not([data-customized])').forEach(makeFormSelect);
+}
+
+// Re-run after modals open to catch dynamically added selects
+const _origOpenModal = window.openModal;
+window.openModal = function(...args) {
+  const r = _origOpenModal?.apply(this, args);
+  setTimeout(initFormSelects, 50);
+  return r;
+};
+
+// Close form selects on outside click
+document.addEventListener('click', () => {
+  document.querySelectorAll('.form-select-menu.open').forEach(m => {
+    m.classList.remove('open');
+    m.previousElementSibling?.classList.remove('open');
+  });
+});
+
+// ── CUSTOM DROPDOWN ──
+function createCustomSelect(id, placeholder, options, onChange) {
+  const wrap = document.createElement('div');
+  wrap.className = 'custom-select-wrap';
+  wrap.dataset.selectId = id;
+
+  const btn = document.createElement('button');
+  btn.className = 'custom-select-btn';
+  btn.type = 'button';
+  btn.innerHTML = `<span class="custom-select-label">${placeholder}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+
+  const menu = document.createElement('div');
+  menu.className = 'custom-select-menu';
+
+  let currentValue = '';
+
+  function buildOptions(opts) {
+    menu.innerHTML = '';
+    opts.forEach(({ value, label }) => {
+      const opt = document.createElement('div');
+      opt.className = 'custom-select-option' + (value === currentValue ? ' selected' : '');
+      opt.textContent = label;
+      opt.dataset.value = value;
+      opt.onclick = (e) => {
+        e.stopPropagation();
+        currentValue = value;
+        btn.querySelector('.custom-select-label').textContent = label;
+        menu.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        closeMenu();
+        onChange(value);
+      };
+      menu.appendChild(opt);
+    });
+  }
+
+  function openMenu() {
+    // Close all other open menus
+    document.querySelectorAll('.custom-select-menu.open').forEach(m => {
+      m.classList.remove('open');
+      m.previousElementSibling?.classList.remove('open');
+    });
+    menu.classList.add('open');
+    btn.classList.add('open');
+    // Position above if not enough space below
+    const rect = btn.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    if (spaceBelow < 200) {
+      menu.style.top = 'auto';
+      menu.style.bottom = 'calc(100% + 6px)';
+    } else {
+      menu.style.top = 'calc(100% + 6px)';
+      menu.style.bottom = 'auto';
+    }
+  }
+
+  function closeMenu() {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+  }
+
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    menu.classList.contains('open') ? closeMenu() : openMenu();
+  };
+
+  buildOptions(options);
+  wrap.appendChild(btn);
+  wrap.appendChild(menu);
+
+  wrap._setValue = (val, label) => {
+    currentValue = val;
+    btn.querySelector('.custom-select-label').textContent = label || val || placeholder;
+    menu.querySelectorAll('.custom-select-option').forEach(o => {
+      o.classList.toggle('selected', o.dataset.value === val);
+    });
+  };
+  wrap._addOption = (value, label) => {
+    if (menu.querySelector(`[data-value="${value}"]`)) return;
+    const opt = document.createElement('div');
+    opt.className = 'custom-select-option';
+    opt.textContent = label;
+    opt.dataset.value = value;
+    opt.onclick = (e) => {
+      e.stopPropagation();
+      currentValue = value;
+      btn.querySelector('.custom-select-label').textContent = label;
+      menu.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      closeMenu();
+      onChange(value);
+    };
+    menu.appendChild(opt);
+  };
+  wrap._getValue = () => currentValue;
+
+  return wrap;
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', () => {
+  document.querySelectorAll('.custom-select-menu.open').forEach(m => {
+    m.classList.remove('open');
+    m.previousElementSibling?.classList.remove('open');
+  });
+});
 
 function filterSection(section, query) { applyFilters(section); }
 
