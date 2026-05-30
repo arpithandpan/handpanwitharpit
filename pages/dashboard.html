@@ -5206,8 +5206,39 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
   }
 
   if (window.innerWidth <= 900) {
-    // Mobile: use shared bottom sheet
-    openMobilePicker(name, (body) => { body.innerHTML = html; });
+    openMobilePicker(name, (body) => {
+      // Build actions array and create buttons programmatically
+      const actions = [];
+      if (type === 'workshop') {
+        actions.push({ label: `${CHECK_SVG} Check-in`, danger: false, fn: () => openCheckinMode(id, name, '') });
+        if (isAdmin) {
+          actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('workshops', id) });
+          actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('workshops', id, 'Workshop ' + id) });
+        }
+      } else if (type === 'participant') {
+        actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('participants', id) });
+        actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('participants', id, name) });
+      } else if (type === 'student') {
+        actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('students', id) });
+        actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('students', id, name) });
+      } else if (type === 'fee_payment') {
+        actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('fee_payments', id) });
+        actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('fee_payments', id, name) });
+      } else if (type === 'payment') {
+        actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('payments', id) });
+        actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('payments', id, name) });
+      } else if (type === 'lead') {
+        actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('leads', id) });
+        actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('leads', id, name) });
+      }
+      actions.forEach(({ label, danger, fn }) => {
+        const btn = document.createElement('button');
+        btn.className = 'm-dots-item' + (danger ? ' danger' : '');
+        btn.innerHTML = label;
+        btn.onclick = () => { closeMobilePicker(); setTimeout(fn, 50); };
+        body.appendChild(btn);
+      });
+    });
     return;
   }
 
