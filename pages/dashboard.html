@@ -10,6 +10,11 @@
 <link rel="stylesheet" href="../css/style.css"/>
 <style>
 
+/* ── PREVENT DOUBLE-TAP ZOOM ON INTERACTIVE ELEMENTS ── */
+button, a, input, select, textarea, [role="button"], label {
+  touch-action: manipulation;
+}
+
 /* ── KILL THE STRIP ── */
 .mobile-topbar, .mobile-topbar * { border-bottom: none !important; box-shadow: none !important; }
 .mobile-menu-overlay { border-top: none !important; }
@@ -811,6 +816,8 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 .toast.success { background: rgba(212,237,187,0.88); color: #27500a; }
 .toast.error { background: rgba(249,201,201,0.88); color: #791f1f; }
 .toast.warning { background: rgba(250,238,218,0.88); color: #633806; }
+.toast.dark-theme { background: rgba(30,22,14,0.95); color: #c8935a; border: 1px solid rgba(200,147,90,0.25); }
+.toast.light-theme { background: rgba(255,248,235,0.96); color: #4a2e10; border: 1px solid rgba(200,147,90,0.3); }
 
 
 /* Mobile top bar */
@@ -846,7 +853,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 @media (max-width: 900px) {
   .mobile-topbar { display: flex; }
   .dash-root { padding-top: 68px; }
-  .dash-main { height: calc(100vh - 68px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .dash-main { height: calc(100vh - 68px); overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: env(safe-area-inset-bottom, 0px); }
   .dash-sidebar-toggle { display: none !important; }
 }
 
@@ -887,6 +894,8 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   th, td { padding: 0.75rem 1rem; font-size: 1.15rem; }
   /* Stack dashboard section header buttons */
   .dash-section-header > div:last-child { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  /* Ensure last content isn't clipped during fast scroll */
+  .dash-section { padding-bottom: max(3rem, calc(env(safe-area-inset-bottom) + 2rem)); }
 }
 
 /* Small mobile (max 500px) */
@@ -1010,7 +1019,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   font-size: 1.05rem; color: #e8d5c0;
   font-family: var(--font-body); padding: 0 1.25rem;
   border-radius: 4px; font-weight: 500; letter-spacing: 0.05em;
-  text-transform: uppercase; transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.2s, background 0.2s;
   min-height: 48px;
 }
 .form-page-back:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
@@ -1364,7 +1373,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   background: transparent; border: 1.5px solid rgba(232,213,192,0.35);
   border-radius: 4px; color: #e8d5c0; cursor: pointer;
   font-size: 1.15rem; font-family: var(--font-body);
-  padding: 0 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0 0.8rem; letter-spacing: 0.08em;
   transition: border-color 0.2s, background 0.2s; min-height: 48px;
 }
 .checkin-close:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
@@ -1384,7 +1393,7 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   background: transparent; border: 1.5px solid rgba(232,213,192,0.35);
   border-radius: 4px; color: #e8d5c0; cursor: pointer;
   font-size: 1.15rem; font-family: var(--font-body);
-  padding: 0.4rem 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.4rem 0.8rem; letter-spacing: 0.08em;
   transition: border-color 0.2s, background 0.2s;
 }
 .checkin-close:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
@@ -1583,7 +1592,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     </a>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('bin',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-      Bin <span id="mobileBinCount" style="letter-spacing:0;"></span>
+      Bin<span id="mobileBinCount" style="letter-spacing:0;"></span>
     </a>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('settings',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1640,7 +1649,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <li><a href="#" onclick="showSection('leads',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Leads</a></li>
       <li><a href="#" onclick="showSection('insights',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Insights</a></li>
       <li><a href="#" onclick="showSection('notifications',this)"><span class="icon"><span class="notif-bell-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-badge" id="sidebarNotifBadge"></span></span></span> Notifications</a></li>
-      <li><a href="#" onclick="showSection('bin',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span> Bin <span id="sidebarBinCount" style="letter-spacing:0;"></span></a></li>
+      <li><a href="#" onclick="showSection('bin',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span> Bin <span id="sidebarBinCount" style="letter-spacing:0;font-size:0.85em;"></span></a></li>
       <li class="admin-only"><a href="#" onclick="showSection('settings',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Settings</a></li>
     </ul>
     <div class="dash-nav-divider"></div>
@@ -3069,6 +3078,7 @@ function loadAll() {
 }
 async function syncAll() {
   showLoader('Refreshing data...');
+  Object.keys(_searchFetchedEntities).forEach(k => delete _searchFetchedEntities[k]);
   try {
     await loadSection('overview');
     showToast('↻ Data refreshed', 'success');
@@ -3610,7 +3620,7 @@ function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   const isDark = document.body.classList.contains('dark-mode');
   localStorage.setItem('darkMode', isDark ? '1' : '0');
-  showToast(isDark ? '🌙 Dark mode on' : '☀️ Light mode on', '');
+  showToast(isDark ? '🌙 Dark mode on' : '☀️ Light mode on', isDark ? 'dark-theme' : 'light-theme');
 }
 
 // Apply dark mode — on by default, unless user explicitly turned it off
@@ -3915,7 +3925,7 @@ function updateBinCount(n) {
   ['sidebarBinCount', 'mobileBinCount'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.textContent = count > 0 ? '(' + count + ')' : '';
+    el.textContent = count > 0 ? '\u00a0(' + count + ')' : '';
   });
 }
 
@@ -4450,6 +4460,8 @@ function highlight(text, query) {
   return String(text||'').replace(re, '<span class="search-highlight">$1</span>');
 }
 
+const _searchFetchedEntities = {};
+
 async function ensureSearchCache() {
   if (currentRole === 'viewer') {
     DUMMY.workshops.forEach(r => cacheRecord('workshops', r));
@@ -4460,19 +4472,22 @@ async function ensureSearchCache() {
     DUMMY.leads.forEach(r => cacheRecord('leads', r));
     return;
   }
-  const totalCached = Object.values(_recordCache).reduce((sum, entity) => sum + Object.keys(entity||{}).length, 0);
-  if (totalCached < 3) {
-    try {
-      const [parts, stus, leads, pays, fps] = await Promise.all([
-        api('/participants'), api('/students'), api('/leads'), api('/payments'), api('/fee_payments')
-      ]);
-      (Array.isArray(parts)?parts:(parts.data||[])).forEach(r => cacheRecord('participants', r));
-      (Array.isArray(stus)?stus:(stus.data||[])).forEach(r => cacheRecord('students', r));
-      (Array.isArray(leads)?leads:(leads.data||[])).forEach(r => cacheRecord('leads', r));
-      (Array.isArray(pays)?pays:(pays.data||[])).forEach(r => cacheRecord('payments', r));
-      (Array.isArray(fps)?fps:(fps.data||[])).forEach(r => cacheRecord('fee_payments', r));
-    } catch(e) { /* silent */ }
-  }
+  const toFetch = [];
+  if (!_searchFetchedEntities.workshops) toFetch.push('workshops');
+  if (!_searchFetchedEntities.participants) toFetch.push('participants');
+  if (!_searchFetchedEntities.students) toFetch.push('students');
+  if (!_searchFetchedEntities.leads) toFetch.push('leads');
+  if (!_searchFetchedEntities.payments) toFetch.push('payments');
+  if (!_searchFetchedEntities.fee_payments) toFetch.push('fee_payments');
+  if (!toFetch.length) return;
+  try {
+    const results = await Promise.all(toFetch.map(e => api('/' + e)));
+    toFetch.forEach((entity, i) => {
+      const rows = Array.isArray(results[i]) ? results[i] : (results[i].data || []);
+      rows.forEach(r => cacheRecord(entity, r));
+      _searchFetchedEntities[entity] = true;
+    });
+  } catch(e) { /* silent */ }
 }
 
 function getSearchData() {
@@ -5209,36 +5224,48 @@ function makeDatePicker(nativeInput) {
     const rect = btn.getBoundingClientRect();
     const calW = 300;
     const calH = 360;
+    const isMobile = window.innerWidth <= 900;
 
-    // Vertical: flip above if not enough space below
-    if (window.innerHeight - rect.bottom < calH) {
-      cal.style.top = 'auto'; cal.style.bottom = 'calc(100% + 4px)';
-    } else {
-      cal.style.top = 'calc(100% + 4px)'; cal.style.bottom = 'auto';
-    }
-
-    // Horizontal: align left by default, flip to right-align if overflows right edge
-    // Or if too narrow, go full width on mobile
-    if (window.innerWidth <= 900) {
-      cal.style.left = '0';
-      cal.style.right = '0';
-      cal.style.width = '100%';
+    if (isMobile) {
+      // Use fixed positioning to escape overflow:hidden parents
+      cal.style.position = 'fixed';
+      cal.style.width = Math.min(window.innerWidth - 24, 340) + 'px';
       cal.style.minWidth = 'unset';
+      cal.style.right = 'auto';
+      // Horizontal: align to button left, clamped to viewport
+      let leftPos = rect.left;
+      const calWFixed = Math.min(window.innerWidth - 24, 340);
+      if (leftPos + calWFixed > window.innerWidth - 8) leftPos = window.innerWidth - calWFixed - 8;
+      if (leftPos < 8) leftPos = 8;
+      cal.style.left = leftPos + 'px';
+      // Vertical: below or above button
+      if (window.innerHeight - rect.bottom < calH + 16) {
+        cal.style.top = 'auto';
+        cal.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+      } else {
+        cal.style.top = (rect.bottom + 4) + 'px';
+        cal.style.bottom = 'auto';
+      }
     } else {
+      cal.style.position = 'absolute';
       cal.style.width = calW + 'px';
       cal.style.minWidth = calW + 'px';
-      // Check if it overflows right
-      if (rect.left + calW > window.innerWidth - 8) {
-        cal.style.left = 'auto';
-        cal.style.right = '0';
+      // Vertical: flip above if not enough space below
+      if (window.innerHeight - rect.bottom < calH) {
+        cal.style.top = 'auto'; cal.style.bottom = 'calc(100% + 4px)';
       } else {
-        cal.style.left = '0';
-        cal.style.right = 'auto';
+        cal.style.top = 'calc(100% + 4px)'; cal.style.bottom = 'auto';
+      }
+      // Horizontal: align left, flip right if overflows
+      if (rect.left + calW > window.innerWidth - 8) {
+        cal.style.left = 'auto'; cal.style.right = '0';
+      } else {
+        cal.style.left = '0'; cal.style.right = 'auto';
       }
     }
   }
 
-  function closeDP() { cal.classList.remove('open'); btn.classList.remove('open'); }
+  function closeDP() { cal.classList.remove('open'); btn.classList.remove('open'); cal.style.position = ''; }
 
   btn.onclick = (e) => { e.stopPropagation(); cal.classList.contains('open') ? closeDP() : openDP(); };
 
