@@ -3693,7 +3693,7 @@ async function loadFeePayments() {
       ${EMPTY_STATES.fee_payments}
     </td></tr>`;
     const fpCards = document.getElementById('feePaymentsCards');
-    if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card"><div class="m-card-title">${f.student_name} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${f.month}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmt(f.amount)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.fee_payments + '</div>';
+    if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${f.month||''}" data-mode="${f.payment_mode||''}"><div class="m-card-title">${f.student_name} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${f.month}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmt(f.amount)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.fee_payments + '</div>';
   } catch(e) { showToast('Error loading fee payments', 'error'); } finally { hideLoader(); }
 }
 
@@ -3718,7 +3718,7 @@ async function loadPayments() {
       ${EMPTY_STATES.payments}
     </td></tr>`;
     const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.payments + '</div>';
+    if (payCards) payCards.innerHTML = pays.map(p => `<div class="m-card ${p.archived?'archived-row':''}" data-type="${p.type||''}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.payments + '</div>';
   } catch(e) { showToast('Error loading payments', 'error'); } finally { hideLoader(); }
 }
 
@@ -5050,83 +5050,6 @@ function applyFilters(section) {
 }
 
 // ── COLUMN SORT ──
-
-function setFilterPill(section, key, value, btn) {
-  filterState[section][key] = value;
-  const bar = document.getElementById('filter-bar-' + section);
-  if (bar) {
-    const group = btn.closest('.filter-pills');
-    if (group) group.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-  }
-  btn.classList.add('active');
-  applyFilters(section);
-}
-
-function applyFilters(section) {
-  const searchId = { workshops: 'search-workshops', participants: 'search-participants', classes: 'search-classes', 'fee-payments': 'search-fee-payments', payments: 'search-payments', leads: 'search-leads' };
-  const q = (document.getElementById(searchId[section])?.value || '').toLowerCase().trim();
-  filterState[section].search = q;
-
-  const tableMap = { workshops:'workshopsTable', participants:'participantsTable', classes:'studentsTable', 'fee-payments':'feePaymentsTable', payments:'paymentsTable', leads:'leadsTable' };
-  const cardMap = { workshops:'workshopsCards', participants:'participantsCards', classes:'studentsCards', 'fee-payments':'feePaymentsCards', payments:'paymentsCards', leads:'leadsCards' };
-
-  const st = filterState[section];
-  const tbl = document.getElementById(tableMap[section]);
-  const cards = document.getElementById(cardMap[section]);
-
-  function rowMatches(text, data) {
-    if (q && !text.toLowerCase().includes(q)) return false;
-    if (section === 'participants') {
-      const ws = document.getElementById('filter-participants-workshop')?.value || '';
-      if (ws && !data.workshop) return false;
-      if (ws && data.workshop !== ws) return false;
-      if (st.checkin === 'yes' && data.checkin !== 'true') return false;
-      if (st.checkin === 'no' && data.checkin === 'true') return false;
-      if (st.mode !== 'all' && data.mode !== st.mode) return false;
-    }
-    if (section === 'classes') {
-      if (st.status !== 'all' && data.status !== st.status) return false;
-    }
-    if (section === 'fee-payments') {
-      const stu = document.getElementById('filter-fee-student')?.value || '';
-      if (stu && data.student !== stu) return false;
-      if (st.status === 'paid' && data.paid !== 'true') return false;
-      if (st.status === 'pending' && data.paid === 'true') return false;
-    }
-    if (section === 'payments') {
-      if (st.type !== 'all' && data.type !== st.type) return false;
-      if (st.mode !== 'all' && data.mode !== st.mode) return false;
-    }
-    if (section === 'leads') {
-      if (st.referred === 'yes' && data.referred !== 'true') return false;
-      if (st.referred === 'no' && data.referred === 'true') return false;
-    }
-    return true;
-  }
-
-  if (tbl) {
-    let visible = 0;
-    tbl.querySelectorAll('tr:not(.search-empty-row)').forEach(row => {
-      const data = row.dataset || {};
-      const show = rowMatches(row.textContent, data);
-      row.style.display = show ? '' : 'none';
-      if (show) visible++;
-    });
-    let empty = tbl.querySelector('.search-empty-row');
-    if (!visible) {
-      if (!empty) { const r = document.createElement('tr'); r.className = 'search-empty-row'; r.innerHTML = `<td colspan="20" style="text-align:center;padding:2rem;color:var(--text-light);">No results found</td>`; tbl.appendChild(r); }
-    } else { if (empty) empty.remove(); }
-  }
-
-  if (cards) {
-    cards.querySelectorAll('.m-card').forEach(card => {
-      const data = card.dataset || {};
-      card.style.display = rowMatches(card.textContent, data) ? '' : 'none';
-    });
-  }
-}
-
-// ── COLUMN SORT ──
 const sortStates = {};
 const SORT_SVG_DEFAULT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>';
 const SORT_SVG_ASC = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l-8 8h16z" fill="currentColor" stroke="none"/></svg>';
@@ -5817,8 +5740,16 @@ function selectFilterDd(ddId, val, label, section, key, optEl) {
   const defaultLabels = { 'ws-year':'All time', 'p-checkin':'Check-in', 'p-mode':'Mode', 'c-status':'Status', 'fp-status':'Status', 'fp-mode':'Mode', 'pay-type':'Type', 'pay-mode':'Mode', 'l-referred':'Referred' };
   const isDefault = (val === 'all' || val === '');
   if (btn) {
-    btn.querySelector('span, .filter-dd-label') ? null : null;
-    btn.firstChild.textContent = isDefault ? (defaultLabels[ddId] || label) : label;
+    // Find the text node (first child) — more robust than firstChild alone
+    const labelSpan = btn.querySelector('.filter-dd-label');
+    if (labelSpan) {
+      labelSpan.textContent = isDefault ? (defaultLabels[ddId] || label) : label;
+    } else {
+      // Update first text node directly
+      const textNode = Array.from(btn.childNodes).find(n => n.nodeType === 3);
+      if (textNode) textNode.textContent = (isDefault ? (defaultLabels[ddId] || label) : label) + ' ';
+      else btn.innerHTML = `${isDefault ? (defaultLabels[ddId] || label) : label} <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+    }
     btn.classList.toggle('active', !isDefault);
   }
   // Close menu
@@ -6059,9 +5990,22 @@ function applyFilterSheet() {
 function clearFilterSheet() {
   const section = _filterSheetSection;
   const config = FILTER_SHEET_CONFIG[section] || [];
+  // Reset pending state
   config.forEach(cat => {
     _filterSheetPending[cat.key] = cat.type === 'pill' ? 'all' : '';
   });
+  // Actually apply the clear immediately
+  config.forEach(cat => {
+    if (cat.type === 'pill') {
+      filterState[section][cat.key] = 'all';
+    } else if (cat.type === 'dd' && cat.ddKey && _dd[cat.ddKey]) {
+      const dd = _dd[cat.ddKey];
+      const firstOpt = dd.querySelector('.custom-select-option');
+      dd._setValue('', firstOpt?.textContent || '');
+    }
+  });
+  applyFilters(section);
+  updateFilterBadge(section);
   renderFilterSheetCats();
   renderFilterSheetOpts();
 }
