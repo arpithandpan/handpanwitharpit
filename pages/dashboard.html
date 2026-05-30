@@ -276,7 +276,80 @@ td > .empty-state { padding: 3rem 1rem; white-space: normal; }
 }
 .filter-sheet-apply:active { opacity: 0.85; }
 
-/* ── CUSTOM DROPDOWN (desktop only, kept for _dd compatibility) ── */
+/* ── MOBILE PICKER BOTTOM SHEET (date, select, dots) ── */
+.mobile-picker-backdrop {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  z-index: 10002; opacity: 0; transition: opacity 0.25s ease;
+}
+.mobile-picker-backdrop.open { display: block; opacity: 1; }
+.mobile-picker-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 10003; background: #1e150d;
+  border-radius: 20px 20px 0 0;
+  border-top: 1px solid rgba(193,127,90,0.2);
+  display: flex; flex-direction: column;
+  max-height: 80vh;
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
+}
+.mobile-picker-sheet.open { transform: translateY(0); }
+.mobile-picker-sheet-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem; border-bottom: 1px solid rgba(193,127,90,0.15);
+  flex-shrink: 0;
+}
+.mobile-picker-sheet-title {
+  font-size: 1.05rem; font-weight: 600; color: #e8d5c0;
+  font-family: var(--font-body);
+}
+.mobile-picker-sheet-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(200,147,90,0.15); border: none;
+  color: #e8d5c0; font-size: 1rem; cursor: pointer;
+  touch-action: manipulation; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.mobile-picker-sheet-body {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 0.5rem 0; overscroll-behavior: contain;
+}
+/* Date picker inside sheet */
+.mobile-picker-sheet-body .date-picker-cal {
+  display: block !important; position: static !important;
+  width: 100% !important; box-shadow: none !important;
+  border: none !important; border-radius: 0 !important;
+  background: transparent !important;
+  padding: 0.5rem 1rem 0 !important;
+}
+/* Select options inside sheet */
+.mobile-picker-opt {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0.9rem 1.25rem; min-height: 52px;
+  cursor: pointer; touch-action: manipulation;
+  border-bottom: 1px solid rgba(193,127,90,0.08);
+  font-family: var(--font-body); font-size: 1rem; color: #e8d5c0;
+}
+.mobile-picker-opt:active { background: rgba(193,127,90,0.08); }
+.mobile-picker-opt.selected { color: #c8935a; }
+.mobile-picker-opt-radio {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid rgba(193,127,90,0.4);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.mobile-picker-opt.selected .mobile-picker-opt-radio {
+  border-color: #c8935a; background: #c8935a;
+}
+.mobile-picker-opt-radio-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #1a1208; opacity: 0;
+}
+.mobile-picker-opt.selected .mobile-picker-opt-radio-dot { opacity: 1; }
+/* Dots menu items inside sheet */
+.mobile-picker-sheet-body .m-dots-item {
+  width: 100%; border-bottom: 1px solid rgba(193,127,90,0.08);
+  font-size: 1.05rem; padding: 1rem 1.25rem; min-height: 52px;
+}
 .custom-select-wrap { position: relative; display: inline-block; }
 .custom-select-btn {
   display: inline-flex; align-items: center; justify-content: space-between;
@@ -1695,6 +1768,16 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 <!-- ··· Mobile Filter Bottom Sheet -->
 <div class="filter-sheet-backdrop" id="filterSheetBackdrop" onclick="closeFilterSheet()"></div>
 <div class="filter-sheet" id="filterSheet">
+
+<!-- ··· Mobile Picker Sheet (date, select, dots) -->
+<div class="mobile-picker-backdrop" id="mobilePickerBackdrop" onclick="closeMobilePicker()"></div>
+<div class="mobile-picker-sheet" id="mobilePickerSheet">
+  <div class="mobile-picker-sheet-header">
+    <span class="mobile-picker-sheet-title" id="mobilePickerTitle"></span>
+    <button class="mobile-picker-sheet-close" onclick="closeMobilePicker()">✕</button>
+  </div>
+  <div class="mobile-picker-sheet-body" id="mobilePickerBody"></div>
+</div>
   <div class="filter-sheet-header">
     <span class="filter-sheet-title">Filters</span>
     <button class="filter-sheet-close" onclick="closeFilterSheet()">✕</button>
@@ -5094,11 +5177,6 @@ function getCellIndex(table, col) {
 
 // ── MOBILE ··· BOTTOM SHEET ──
 function openMDotsSheet(id, name, type, isAdmin, btnEl) {
-  const popover = document.getElementById('mDotsSheet');
-  const backdrop = document.getElementById('mDotsBackdrop');
-  const items = document.getElementById('mDotsItems');
-  if (!popover) return;
-
   const EDIT_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
   const TRASH_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
   const CHECK_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>`;
@@ -5126,12 +5204,21 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
     html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('leads','${id}')">${EDIT_SVG} Edit</button>`;
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('leads','${id}','${name}')">${TRASH_SVG} Delete</button>`;
   }
-  items.innerHTML = html;
 
+  if (window.innerWidth <= 900) {
+    // Mobile: use shared bottom sheet
+    openMobilePicker(name, (body) => { body.innerHTML = html; });
+    return;
+  }
+
+  // Desktop: use positioned popover
+  const popover = document.getElementById('mDotsSheet');
+  const backdrop = document.getElementById('mDotsBackdrop');
+  const items = document.getElementById('mDotsItems');
+  if (!popover) return;
+  items.innerHTML = html;
   popover.classList.add('open');
   backdrop.classList.add('open');
-
-  // Position near the button
   if (btnEl) {
     const rect = btnEl.getBoundingClientRect();
     const popW = 170;
@@ -5146,6 +5233,10 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
 }
 
 function closeMDotsSheet(e) {
+  if (window.innerWidth <= 900) {
+    closeMobilePicker();
+    return;
+  }
   const popover = document.getElementById('mDotsSheet');
   const backdrop = document.getElementById('mDotsBackdrop');
   if (popover) popover.classList.remove('open');
@@ -5439,50 +5530,43 @@ function makeDatePicker(nativeInput) {
   });
 
   function openDP() {
-    document.querySelectorAll('.date-picker-cal.open').forEach(c => { c.classList.remove('open'); c.previousElementSibling?.classList.remove('open'); });
     const sel = parseVal() || today;
     viewYear = sel.getFullYear(); viewMonth = sel.getMonth();
-    renderCal();
-    cal.classList.add('open'); btn.classList.add('open');
 
-    // Position: check space below first
-    const rect = btn.getBoundingClientRect();
-    const calW = 300;
-    const calH = 360;
-    const isMobile = window.innerWidth <= 900;
-
-    if (isMobile) {
-      // Use fixed positioning to escape overflow:hidden parents
-      cal.style.position = 'fixed';
-      cal.style.width = Math.min(window.innerWidth - 24, 340) + 'px';
-      cal.style.minWidth = 'unset';
-      cal.style.right = 'auto';
-      // Horizontal: align to button left, clamped to viewport
-      let leftPos = rect.left;
-      const calWFixed = Math.min(window.innerWidth - 24, 340);
-      if (leftPos + calWFixed > window.innerWidth - 8) leftPos = window.innerWidth - calWFixed - 8;
-      if (leftPos < 8) leftPos = 8;
-      cal.style.left = leftPos + 'px';
-      // Vertical: below or above button
-      if (window.innerHeight - rect.bottom < calH + 16) {
-        cal.style.top = 'auto';
-        cal.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
-      } else {
-        cal.style.top = (rect.bottom + 4) + 'px';
-        cal.style.bottom = 'auto';
-      }
+    if (window.innerWidth <= 900) {
+      // Mobile: render calendar inside bottom sheet
+      document.querySelectorAll('.date-picker-cal.open').forEach(c => { c.classList.remove('open'); c.previousElementSibling?.classList.remove('open'); });
+      btn.classList.add('open');
+      openMobilePicker('Select Date', (body) => {
+        renderCal();
+        body.appendChild(cal);
+        cal.classList.add('open');
+        cal.style.position = 'static';
+        cal.style.width = '';
+        cal.style.display = 'block';
+      }, () => {
+        // On close: move cal back to wrap so it's not orphaned
+        wrap.appendChild(cal);
+        cal.classList.remove('open');
+        cal.style.position = '';
+        btn.classList.remove('open');
+      });
     } else {
+      // Desktop: dropdown behaviour
+      document.querySelectorAll('.date-picker-cal.open').forEach(c => { c.classList.remove('open'); c.previousElementSibling?.classList.remove('open'); });
+      renderCal();
+      cal.classList.add('open'); btn.classList.add('open');
       cal.style.position = 'absolute';
-      cal.style.width = calW + 'px';
-      cal.style.minWidth = calW + 'px';
-      // Vertical: flip above if not enough space below
+      cal.style.width = '300px';
+      cal.style.minWidth = '300px';
+      const rect = btn.getBoundingClientRect();
+      const calH = 360;
       if (window.innerHeight - rect.bottom < calH) {
         cal.style.top = 'auto'; cal.style.bottom = 'calc(100% + 4px)';
       } else {
         cal.style.top = 'calc(100% + 4px)'; cal.style.bottom = 'auto';
       }
-      // Horizontal: align left, flip right if overflows
-      if (rect.left + calW > window.innerWidth - 8) {
+      if (rect.left + 300 > window.innerWidth - 8) {
         cal.style.left = 'auto'; cal.style.right = '0';
       } else {
         cal.style.left = '0'; cal.style.right = 'auto';
@@ -5490,7 +5574,13 @@ function makeDatePicker(nativeInput) {
     }
   }
 
-  function closeDP() { cal.classList.remove('open'); btn.classList.remove('open'); cal.style.position = ''; }
+  function closeDP() {
+    if (window.innerWidth <= 900) {
+      closeMobilePicker();
+    } else {
+      cal.classList.remove('open'); btn.classList.remove('open'); cal.style.position = '';
+    }
+  }
 
   btn.onclick = (e) => { e.stopPropagation(); cal.classList.contains('open') ? closeDP() : openDP(); };
 
@@ -5558,14 +5648,34 @@ function makeFormSelect(nativeSelect) {
   buildMenu();
 
   function openMenu() {
+    if (window.innerWidth <= 900) {
+      // Mobile: bottom sheet
+      const label = btn.querySelector('.fs-label')?.textContent || 'Select';
+      openMobilePicker(nativeSelect.dataset.label || label, (body) => {
+        Array.from(nativeSelect.options).forEach((opt, i) => {
+          const div = document.createElement('div');
+          div.className = 'mobile-picker-opt' + (nativeSelect.selectedIndex === i ? ' selected' : '');
+          div.innerHTML = `<div class="mobile-picker-opt-radio"><div class="mobile-picker-opt-radio-dot"></div></div>${opt.text}`;
+          div.onclick = () => {
+            nativeSelect.selectedIndex = i;
+            nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            btn.querySelector('.fs-label').textContent = opt.text;
+            closeMobilePicker();
+          };
+          body.appendChild(div);
+        });
+      });
+      btn.classList.add('open');
+      return;
+    }
+    // Desktop: dropdown
     document.querySelectorAll('.form-select-menu.open').forEach(m => {
       m.classList.remove('open');
       m.previousElementSibling?.classList.remove('open');
     });
-    buildMenu(); // rebuild in case options changed
+    buildMenu();
     menu.classList.add('open');
     btn.classList.add('open');
-    // Flip above if no room below
     const rect = btn.getBoundingClientRect();
     if (window.innerHeight - rect.bottom < 220) {
       menu.style.top = 'auto';
@@ -5706,6 +5816,34 @@ function createCustomSelect(id, placeholder, options, onChange) {
   wrap._getValue = () => currentValue;
 
   return wrap;
+}
+
+// ── MOBILE PICKER SHEET (shared for date, select, dots) ──
+let _mobilePickerOnClose = null;
+
+function openMobilePicker(title, bodyFn, onClose) {
+  const sheet = document.getElementById('mobilePickerSheet');
+  const backdrop = document.getElementById('mobilePickerBackdrop');
+  const titleEl = document.getElementById('mobilePickerTitle');
+  const body = document.getElementById('mobilePickerBody');
+  if (!sheet) return;
+  titleEl.textContent = title;
+  body.innerHTML = '';
+  bodyFn(body);
+  _mobilePickerOnClose = onClose || null;
+  backdrop.classList.add('open');
+  sheet.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMobilePicker() {
+  const sheet = document.getElementById('mobilePickerSheet');
+  const backdrop = document.getElementById('mobilePickerBackdrop');
+  if (!sheet) return;
+  sheet.classList.remove('open');
+  backdrop.classList.remove('open');
+  document.body.style.overflow = '';
+  if (_mobilePickerOnClose) { _mobilePickerOnClose(); _mobilePickerOnClose = null; }
 }
 
 // ── DESKTOP FILTER DROPDOWNS ──
