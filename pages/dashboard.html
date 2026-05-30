@@ -134,24 +134,47 @@ td > .empty-state { padding: 3rem 1rem; white-space: normal; }
 .mobile-filter-btn {
   display: none;
 }
+
+/* Active filter chips (mobile only, shown below filter button) */
+.mobile-active-chips {
+  display: none;
+}
 @media (max-width: 900px) {
-  .filter-bar { margin-bottom: 16px; }
+  .filter-bar { margin-bottom: 16px; flex-wrap: wrap; gap: 8px; align-items: center; }
   /* Hide desktop filter buttons on mobile */
   .filter-dd-wrap { display: none !important; }
   /* Show mobile filter button */
   .mobile-filter-btn {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 0.55rem 1rem; min-height: 44px;
+    padding: 0.55rem 1rem; min-height: 40px;
     background: rgba(255,245,225,0.05); border: 1.5px solid rgba(193,127,90,0.35);
-    border-radius: 22px; color: rgba(200,147,90,0.85); font-size: 1rem;
+    border-radius: 22px; color: rgba(200,147,90,0.85); font-size: 0.95rem;
     font-family: var(--font-body); cursor: pointer; white-space: nowrap;
-    touch-action: manipulation; transition: all 0.15s;
+    touch-action: manipulation; transition: all 0.15s; flex-shrink: 0;
   }
   .mobile-filter-btn.has-active { border-color: #c8935a; color: #c8935a; background: rgba(193,127,90,0.12); }
   .mobile-filter-badge {
     display: inline-flex; align-items: center; justify-content: center;
     width: 18px; height: 18px; border-radius: 50%;
     background: #c8935a; color: #1a1208; font-size: 0.72rem; font-weight: 700;
+  }
+  /* Active chips row */
+  .mobile-active-chips {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  }
+  .mobile-active-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 0.3rem 0.6rem 0.3rem 0.75rem; min-height: 32px;
+    background: rgba(193,127,90,0.18); border: 1px solid #c8935a;
+    border-radius: 16px; color: #c8935a; font-size: 0.88rem;
+    font-family: var(--font-body); white-space: nowrap;
+  }
+  .mobile-active-chip-x {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: rgba(200,147,90,0.25); color: #c8935a;
+    font-size: 0.65rem; cursor: pointer; touch-action: manipulation;
+    flex-shrink: 0; font-style: normal;
   }
 }
 
@@ -167,26 +190,25 @@ td > .empty-state { padding: 3rem 1rem; white-space: normal; }
   border-radius: 20px 20px 0 0;
   border-top: 1px solid rgba(193,127,90,0.2);
   display: flex; flex-direction: column;
-  max-height: 85vh;
+  height: 72vh; /* Fixed height — no jumping */
   transform: translateY(100%);
   transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
 }
 .filter-sheet.open { transform: translateY(0); }
-.filter-sheet-handle {
-  width: 40px; height: 4px; border-radius: 2px;
-  background: rgba(193,127,90,0.3); margin: 10px auto 0;
-}
 .filter-sheet-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0.85rem 1.25rem 0.75rem; border-bottom: 1px solid rgba(193,127,90,0.15);
+  padding: 1rem 1.25rem; border-bottom: 1px solid rgba(193,127,90,0.15);
   flex-shrink: 0;
 }
 .filter-sheet-title { font-size: 1.1rem; font-weight: 600; color: #e8d5c0; }
 .filter-sheet-close {
-  background: none; border: none; color: rgba(200,147,90,0.7);
-  font-size: 1.3rem; cursor: pointer; padding: 4px; touch-action: manipulation;
-  line-height: 1;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(200,147,90,0.15); border: none;
+  color: #e8d5c0; font-size: 1rem; cursor: pointer;
+  touch-action: manipulation; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
 }
+.filter-sheet-close:active { background: rgba(200,147,90,0.28); }
 .filter-sheet-body {
   display: flex; flex: 1; overflow: hidden;
 }
@@ -213,12 +235,6 @@ td > .empty-state { padding: 3rem 1rem; white-space: normal; }
 }
 .filter-sheet-opts {
   flex: 1; overflow-y: auto; padding: 0.5rem 0;
-}
-.filter-sheet-opt-group { padding: 0.5rem 0; }
-.filter-sheet-opt-label {
-  font-size: 0.72rem; font-weight: 600; color: rgba(200,147,90,0.5);
-  letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 0.25rem 1.25rem 0.5rem;
 }
 .filter-sheet-opt {
   display: flex; align-items: center; gap: 12px;
@@ -1679,7 +1695,6 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 <!-- ··· Mobile Filter Bottom Sheet -->
 <div class="filter-sheet-backdrop" id="filterSheetBackdrop" onclick="closeFilterSheet()"></div>
 <div class="filter-sheet" id="filterSheet">
-  <div class="filter-sheet-handle"></div>
   <div class="filter-sheet-header">
     <span class="filter-sheet-title">Filters</span>
     <button class="filter-sheet-close" onclick="closeFilterSheet()">✕</button>
@@ -1910,6 +1925,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           Filters <span class="mobile-filter-badge" id="mobile-filter-badge-workshops" style="display:none"></span>
         </button>
+        <div class="mobile-active-chips" id="mobile-chips-workshops"></div>
         <div class="filter-dd-wrap" id="dd-wrap-ws-year">
           <button class="filter-dd-btn" id="dd-btn-ws-year" onclick="toggleFilterDd('ws-year')">
             All time <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1960,6 +1976,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           Filters <span class="mobile-filter-badge" id="mobile-filter-badge-participants" style="display:none"></span>
         </button>
+        <div class="mobile-active-chips" id="mobile-chips-participants"></div>
         <div id="dd-participants-workshop" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-p-checkin">
           <button class="filter-dd-btn" id="dd-btn-p-checkin" onclick="toggleFilterDd('p-checkin')">
@@ -2035,6 +2052,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           Filters <span class="mobile-filter-badge" id="mobile-filter-badge-classes" style="display:none"></span>
         </button>
+        <div class="mobile-active-chips" id="mobile-chips-classes"></div>
         <div id="dd-classes-batch" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-c-status">
           <button class="filter-dd-btn" id="dd-btn-c-status" onclick="toggleFilterDd('c-status')">
@@ -2091,6 +2109,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           Filters <span class="mobile-filter-badge" id="mobile-filter-badge-fee-payments" style="display:none"></span>
         </button>
+        <div class="mobile-active-chips" id="mobile-chips-fee-payments"></div>
         <div id="dd-fee-student" class="custom-select-wrap-placeholder"></div>
         <div id="dd-fee-month" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-fp-status">
@@ -2169,6 +2188,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           Filters <span class="mobile-filter-badge" id="mobile-filter-badge-payments" style="display:none"></span>
         </button>
+        <div class="mobile-active-chips" id="mobile-chips-payments"></div>
         <div id="dd-payments-period" class="custom-select-wrap-placeholder"></div>
         <div id="dd-payments-category" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-pay-type">
@@ -2240,6 +2260,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           Filters <span class="mobile-filter-badge" id="mobile-filter-badge-leads" style="display:none"></span>
         </button>
+        <div class="mobile-active-chips" id="mobile-chips-leads"></div>
         <div id="dd-leads-workshop" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-l-referred">
           <button class="filter-dd-btn" id="dd-btn-l-referred" onclick="toggleFilterDd('l-referred')">
@@ -4302,18 +4323,25 @@ function showToast(msg, type) {
   const t = document.getElementById('toast');
   if (!t) return;
   clearTimeout(t._timer);
-  // Reset to hidden state explicitly
+  // Kill transition so reset is instant — no sliding from previous position
+  t.style.transition = 'none';
   t.className = 'toast' + (type ? ' ' + type : '');
   t.textContent = msg;
   t.style.transform = 'translateX(-50%) translateY(-80px)';
   t.style.opacity = '0';
-  // Force reflow — browser paints the hidden state
+  // Force reflow — browser paints the hidden state before re-enabling transition
   void t.offsetHeight;
-  // Clear inline styles and let CSS class handle the animation
-  t.style.transform = '';
-  t.style.opacity = '';
+  // Re-enable transition and animate in
+  t.style.transition = '';
   t.classList.add('show');
-  t._timer = setTimeout(() => { t.className = 'toast'; }, 3000);
+  t._timer = setTimeout(() => {
+    t.style.transition = 'none';
+    t.className = 'toast';
+    t.style.transform = 'translateX(-50%) translateY(-80px)';
+    t.style.opacity = '0';
+    void t.offsetHeight;
+    t.style.transition = '';
+  }, 3000);
 }
 
 // ── PIN KEYBOARD SUPPORT ──
@@ -5801,24 +5829,58 @@ function selectFilterDd(ddId, val, label, section, key, optEl) {
 
 function updateFilterBadge(section) {
   const st = filterState[section];
-  const ddVals = {
-    workshops: [],
-    participants: [_dd['participants-workshop']?._getValue()],
-    classes: [_dd['classes-batch']?._getValue()],
-    'fee-payments': [_dd['fee-student']?._getValue(), _dd['fee-month']?._getValue()],
-    payments: [_dd['payments-period']?._getValue(), _dd['payments-category']?._getValue()],
-    leads: [_dd['leads-workshop']?._getValue()],
-  };
-  let count = 0;
-  Object.entries(st).forEach(([k, v]) => {
-    if (k === 'search') return;
-    if (v && v !== 'all') count++;
+  const config = FILTER_SHEET_CONFIG[section] || [];
+  const chips = [];
+
+  config.forEach(cat => {
+    let val, label;
+    if (cat.type === 'pill') {
+      val = st[cat.key];
+      if (val && val !== 'all') {
+        const opt = cat.options.find(o => o.val === val);
+        label = opt ? opt.label : val;
+        chips.push({ key: cat.key, label, section, type: 'pill' });
+      }
+    } else if (cat.type === 'dd' && cat.ddKey) {
+      val = _dd[cat.ddKey]?._getValue() || '';
+      if (val) {
+        const dd = _dd[cat.ddKey];
+        const opt = dd?.querySelector(`.custom-select-option[data-value="${val}"]`);
+        label = opt?.textContent || val;
+        chips.push({ key: cat.key, label, section, type: 'dd', ddKey: cat.ddKey });
+      }
+    }
   });
-  (ddVals[section] || []).forEach(v => { if (v) count++; });
+
+  const count = chips.length;
   const badge = document.getElementById('mobile-filter-badge-' + section);
   const btn = document.getElementById('mobile-filter-btn-' + section);
   if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'inline-flex' : 'none'; }
   if (btn) btn.classList.toggle('has-active', count > 0);
+
+  // Render active chips
+  const chipsEl = document.getElementById('mobile-chips-' + section);
+  if (chipsEl) {
+    chipsEl.innerHTML = '';
+    chips.forEach(chip => {
+      const el = document.createElement('div');
+      el.className = 'mobile-active-chip';
+      el.innerHTML = `${chip.label}<i class="mobile-active-chip-x" onclick="removeFilterChip('${section}','${chip.key}','${chip.type}','${chip.ddKey||''}')">✕</i>`;
+      chipsEl.appendChild(el);
+    });
+  }
+}
+
+function removeFilterChip(section, key, type, ddKey) {
+  if (type === 'pill') {
+    filterState[section][key] = 'all';
+  } else if (type === 'dd' && ddKey && _dd[ddKey]) {
+    const dd = _dd[ddKey];
+    const firstOpt = dd.querySelector('.custom-select-option');
+    dd._setValue('', firstOpt?.textContent || '');
+  }
+  applyFilters(section);
+  updateFilterBadge(section);
 }
 
 // Close desktop filter dropdowns on outside click
