@@ -4323,20 +4323,23 @@ function showToast(msg, type) {
   const t = document.getElementById('toast');
   if (!t) return;
   clearTimeout(t._timer);
-  // Kill transition so reset is instant — no sliding from previous position
+  // Kill transition and remove .show so element snaps to hidden position
   t.style.transition = 'none';
+  t.classList.remove('show');
   t.className = 'toast' + (type ? ' ' + type : '');
   t.textContent = msg;
   t.style.transform = 'translateX(-50%) translateY(-80px)';
   t.style.opacity = '0';
-  // Force reflow — browser paints the hidden state before re-enabling transition
+  // Force reflow — browser registers the hidden state
   void t.offsetHeight;
-  // Re-enable transition and animate in
+  // Clear inline overrides and re-enable transition, then animate in
   t.style.transition = '';
+  t.style.transform = '';
+  t.style.opacity = '';
   t.classList.add('show');
   t._timer = setTimeout(() => {
     t.style.transition = 'none';
-    t.className = 'toast';
+    t.classList.remove('show');
     t.style.transform = 'translateX(-50%) translateY(-80px)';
     t.style.opacity = '0';
     void t.offsetHeight;
