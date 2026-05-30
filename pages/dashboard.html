@@ -83,22 +83,184 @@ td > .empty-state { padding: 3rem 1rem; white-space: normal; }
 .search-highlight { color: #c8935a; font-weight: 600; }
 
 /* ── FILTER BAR ── */
+/* ── FILTER BAR (desktop) ── */
 .filter-bar {
-  display: flex; align-items: center; gap: 10px;
-  flex-wrap: wrap; margin-bottom: 24px; row-gap: 10px;
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap; margin-bottom: 20px;
 }
-.filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
-.filter-pill {
-  background: none; border: 1px solid rgba(193,127,90,0.25);
-  color: rgba(200,147,90,0.75); font-size: 1.15rem; padding: 0.65rem 1.25rem;
-  border-radius: 20px; cursor: pointer; white-space: nowrap;
-  letter-spacing: 0.02em; transition: all 0.15s ease; font-family: var(--font-body);
-  min-height: 48px; display: inline-flex; align-items: center;
+/* Legacy pills hidden — replaced by filter-dd-btn */
+.filter-pills { display: none; }
+.filter-divider { display: none; }
+.filter-pill { display: none; }
+
+/* Desktop filter dropdown buttons */
+.filter-dd-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0.45rem 0.85rem; min-height: 40px;
+  background: rgba(255,245,225,0.05); border: 1px solid rgba(193,127,90,0.3);
+  border-radius: 20px; color: rgba(200,147,90,0.8); font-size: 0.95rem;
+  font-family: var(--font-body); cursor: pointer; white-space: nowrap;
+  transition: all 0.15s ease; touch-action: manipulation;
 }
-.filter-pill:hover { border-color: rgba(193,127,90,0.5); color: rgba(200,147,90,0.8); }
-.filter-pill.active { background: rgba(193,127,90,0.15); border-color: #c8935a; color: #c8935a; }
-.filter-divider { width: 1px; height: 32px; background: rgba(193,127,90,0.2); flex-shrink: 0; }
-/* ── CUSTOM DROPDOWN ── */
+.filter-dd-btn:hover { border-color: #c8935a; color: #c8935a; background: rgba(193,127,90,0.08); }
+.filter-dd-btn.active { background: rgba(193,127,90,0.15); border-color: #c8935a; color: #c8935a; }
+.filter-dd-btn svg { opacity: 0.6; transition: transform 0.2s; flex-shrink: 0; }
+.filter-dd-btn.open svg { transform: rotate(180deg); opacity: 1; }
+
+/* Desktop filter dropdown menu */
+.filter-dd-menu {
+  display: none; position: absolute; top: calc(100% + 6px); left: 0;
+  min-width: 180px; background: #2a1e12; border: 1px solid rgba(193,127,90,0.3);
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  z-index: 9000; padding: 4px 0; max-height: 260px; overflow-y: auto;
+}
+.filter-dd-menu.open { display: block; }
+.filter-dd-wrap { position: relative; display: inline-block; }
+.filter-dd-option {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0.65rem 1rem; font-size: 1rem; color: #e8d5c0;
+  cursor: pointer; white-space: nowrap; transition: background 0.1s;
+  min-height: 44px; font-family: var(--font-body); touch-action: manipulation;
+}
+.filter-dd-option:hover { background: rgba(193,127,90,0.12); }
+.filter-dd-option.selected { color: #c8935a; }
+.filter-dd-option::before {
+  content: ''; display: inline-block; width: 6px; height: 6px;
+  border-radius: 50%; flex-shrink: 0; background: transparent;
+}
+.filter-dd-option.selected::before { background: #c8935a; }
+
+/* Mobile filter button */
+.mobile-filter-btn {
+  display: none;
+}
+@media (max-width: 900px) {
+  .filter-bar { margin-bottom: 16px; }
+  /* Hide desktop filter buttons on mobile */
+  .filter-dd-wrap { display: none !important; }
+  /* Show mobile filter button */
+  .mobile-filter-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 0.55rem 1rem; min-height: 44px;
+    background: rgba(255,245,225,0.05); border: 1.5px solid rgba(193,127,90,0.35);
+    border-radius: 22px; color: rgba(200,147,90,0.85); font-size: 1rem;
+    font-family: var(--font-body); cursor: pointer; white-space: nowrap;
+    touch-action: manipulation; transition: all 0.15s;
+  }
+  .mobile-filter-btn.has-active { border-color: #c8935a; color: #c8935a; background: rgba(193,127,90,0.12); }
+  .mobile-filter-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #c8935a; color: #1a1208; font-size: 0.72rem; font-weight: 700;
+  }
+}
+
+/* ── MOBILE FILTER BOTTOM SHEET ── */
+.filter-sheet-backdrop {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  z-index: 10000; opacity: 0; transition: opacity 0.25s ease;
+}
+.filter-sheet-backdrop.open { display: block; opacity: 1; }
+.filter-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 10001; background: #1e150d;
+  border-radius: 20px 20px 0 0;
+  border-top: 1px solid rgba(193,127,90,0.2);
+  display: flex; flex-direction: column;
+  max-height: 85vh;
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
+}
+.filter-sheet.open { transform: translateY(0); }
+.filter-sheet-handle {
+  width: 40px; height: 4px; border-radius: 2px;
+  background: rgba(193,127,90,0.3); margin: 10px auto 0;
+}
+.filter-sheet-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.25rem 0.75rem; border-bottom: 1px solid rgba(193,127,90,0.15);
+  flex-shrink: 0;
+}
+.filter-sheet-title { font-size: 1.1rem; font-weight: 600; color: #e8d5c0; }
+.filter-sheet-close {
+  background: none; border: none; color: rgba(200,147,90,0.7);
+  font-size: 1.3rem; cursor: pointer; padding: 4px; touch-action: manipulation;
+  line-height: 1;
+}
+.filter-sheet-body {
+  display: flex; flex: 1; overflow: hidden;
+}
+.filter-sheet-cats {
+  width: 110px; flex-shrink: 0;
+  border-right: 1px solid rgba(193,127,90,0.15);
+  overflow-y: auto; background: rgba(0,0,0,0.15);
+}
+.filter-sheet-cat {
+  display: block; width: 100%; padding: 1rem 0.85rem;
+  background: none; border: none; text-align: left;
+  font-family: var(--font-body); font-size: 0.92rem; color: rgba(200,147,90,0.65);
+  cursor: pointer; border-left: 3px solid transparent;
+  touch-action: manipulation; transition: all 0.15s; min-height: 48px;
+  position: relative;
+}
+.filter-sheet-cat.active {
+  color: #c8935a; background: rgba(193,127,90,0.08);
+  border-left-color: #c8935a; font-weight: 600;
+}
+.filter-sheet-cat-dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: #c8935a; margin-left: 4px; vertical-align: middle;
+}
+.filter-sheet-opts {
+  flex: 1; overflow-y: auto; padding: 0.5rem 0;
+}
+.filter-sheet-opt-group { padding: 0.5rem 0; }
+.filter-sheet-opt-label {
+  font-size: 0.72rem; font-weight: 600; color: rgba(200,147,90,0.5);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.25rem 1.25rem 0.5rem;
+}
+.filter-sheet-opt {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0.85rem 1.25rem; min-height: 48px;
+  cursor: pointer; touch-action: manipulation; transition: background 0.1s;
+}
+.filter-sheet-opt:active { background: rgba(193,127,90,0.08); }
+.filter-sheet-opt-radio {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid rgba(193,127,90,0.4);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.filter-sheet-opt.selected .filter-sheet-opt-radio {
+  border-color: #c8935a; background: #c8935a;
+}
+.filter-sheet-opt-radio-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #1a1208; opacity: 0;
+}
+.filter-sheet-opt.selected .filter-sheet-opt-radio-dot { opacity: 1; }
+.filter-sheet-opt-text { font-size: 1rem; color: #e8d5c0; font-family: var(--font-body); }
+.filter-sheet-opt.selected .filter-sheet-opt-text { color: #c8935a; font-weight: 500; }
+.filter-sheet-footer {
+  display: flex; align-items: center; gap: 12px;
+  padding: 1rem 1.25rem; padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(193,127,90,0.15); flex-shrink: 0;
+}
+.filter-sheet-clear {
+  background: none; border: none; font-family: var(--font-body);
+  font-size: 1rem; color: #c8935a; cursor: pointer;
+  touch-action: manipulation; padding: 0.5rem; min-height: 48px;
+}
+.filter-sheet-apply {
+  flex: 1; background: #c8935a; border: none; border-radius: 10px;
+  font-family: var(--font-body); font-size: 1rem; font-weight: 600;
+  color: #1a1208; cursor: pointer; touch-action: manipulation;
+  min-height: 48px; transition: opacity 0.15s;
+}
+.filter-sheet-apply:active { opacity: 0.85; }
+
+/* ── CUSTOM DROPDOWN (desktop only, kept for _dd compatibility) ── */
 .custom-select-wrap { position: relative; display: inline-block; }
 .custom-select-btn {
   display: inline-flex; align-items: center; justify-content: space-between;
@@ -135,26 +297,7 @@ td > .empty-state { padding: 3rem 1rem; white-space: normal; }
   content: ''; display: inline-block; width: 6px; height: 6px; flex-shrink: 0;
 }
 @media (max-width: 900px) {
-  .custom-select-btn { min-width: unset; width: 100%; }
-  .custom-select-wrap { width: 100%; }
-  .custom-select-menu { min-width: 200px; }
-}
-@media (max-width: 900px) {
-  .filter-bar { flex-direction: column; align-items: stretch; gap: 12px; }
-  .filter-pills {
-    flex-wrap: nowrap !important;
-    overflow-x: scroll !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    display: flex !important;
-    width: 100% !important;
-    padding-bottom: 4px !important;
-    box-sizing: border-box !important;
-  }
-  .filter-pills::-webkit-scrollbar { display: none !important; }
-  .filter-pill { flex-shrink: 0 !important; }
-  .filter-select { width: 100%; }
-  .filter-divider { display: none; }
+  .custom-select-wrap { display: none !important; }
 }
 
 /* ── SORT ICONS (desktop table headers) ── */
@@ -1533,6 +1676,24 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
   <div id="mDotsItems"></div>
 </div>
 
+<!-- ··· Mobile Filter Bottom Sheet -->
+<div class="filter-sheet-backdrop" id="filterSheetBackdrop" onclick="closeFilterSheet()"></div>
+<div class="filter-sheet" id="filterSheet">
+  <div class="filter-sheet-handle"></div>
+  <div class="filter-sheet-header">
+    <span class="filter-sheet-title">Filters</span>
+    <button class="filter-sheet-close" onclick="closeFilterSheet()">✕</button>
+  </div>
+  <div class="filter-sheet-body">
+    <div class="filter-sheet-cats" id="filterSheetCats"></div>
+    <div class="filter-sheet-opts" id="filterSheetOpts"></div>
+  </div>
+  <div class="filter-sheet-footer">
+    <button class="filter-sheet-clear" onclick="clearFilterSheet()">Clear Filters</button>
+    <button class="filter-sheet-apply" onclick="applyFilterSheet()">Apply</button>
+  </div>
+</div>
+
 <!-- Mobile Full-Screen Search -->
 <div class="mobile-search-fullscreen" id="mobileSearchFullscreen">
   <div class="mobile-search-fs-header">
@@ -1592,7 +1753,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     </a>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('bin',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-      Bin<span id="mobileBinCount" style="letter-spacing:0;"></span>
+      <span id="mobileBinLabel" style="letter-spacing:0;">Bin</span>
     </a>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('settings',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1745,7 +1906,17 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <input type="text" class="section-search-input" id="search-workshops" placeholder="Search by venue, date..." autocomplete="off" oninput="applyFilters('workshops')"/>
       </div>
       <div class="filter-bar" id="filter-bar-workshops">
-        <div class="filter-pills" id="filter-ws-years">
+        <button class="mobile-filter-btn" id="mobile-filter-btn-workshops" onclick="openFilterSheet('workshops')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filters <span class="mobile-filter-badge" id="mobile-filter-badge-workshops" style="display:none"></span>
+        </button>
+        <div class="filter-dd-wrap" id="dd-wrap-ws-year">
+          <button class="filter-dd-btn" id="dd-btn-ws-year" onclick="toggleFilterDd('ws-year')">
+            All time <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-ws-year"></div>
+        </div>
+        <div class="filter-pills" id="filter-ws-years" style="display:none">
           <button class="filter-pill active" onclick="setFilterPill('workshops','year','all',this)">All time</button>
         </div>
       </div>
@@ -1785,15 +1956,39 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <input type="text" class="section-search-input" id="search-participants" placeholder="Search by name, phone..." autocomplete="off" oninput="applyFilters('participants')"/>
       </div>
       <div class="filter-bar" id="filter-bar-participants">
+        <button class="mobile-filter-btn" id="mobile-filter-btn-participants" onclick="openFilterSheet('participants')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filters <span class="mobile-filter-badge" id="mobile-filter-badge-participants" style="display:none"></span>
+        </button>
         <div id="dd-participants-workshop" class="custom-select-wrap-placeholder"></div>
-        <div class="filter-divider"></div>
-        <div class="filter-pills">
+        <div class="filter-dd-wrap" id="dd-wrap-p-checkin">
+          <button class="filter-dd-btn" id="dd-btn-p-checkin" onclick="toggleFilterDd('p-checkin')">
+            Check-in <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-p-checkin">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('p-checkin','all','All','participants','checkin',this)">All</div>
+            <div class="filter-dd-option" data-val="yes" onclick="selectFilterDd('p-checkin','yes','Checked in','participants','checkin',this)">Checked in</div>
+            <div class="filter-dd-option" data-val="no" onclick="selectFilterDd('p-checkin','no','Not checked in','participants','checkin',this)">Not checked in</div>
+          </div>
+        </div>
+        <div class="filter-dd-wrap" id="dd-wrap-p-mode">
+          <button class="filter-dd-btn" id="dd-btn-p-mode" onclick="toggleFilterDd('p-mode')">
+            Mode <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-p-mode">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('p-mode','all','Mode','participants','mode',this)">All modes</div>
+            <div class="filter-dd-option" data-val="UPI" onclick="selectFilterDd('p-mode','UPI','UPI','participants','mode',this)">UPI</div>
+            <div class="filter-dd-option" data-val="Razorpay UPI" onclick="selectFilterDd('p-mode','Razorpay UPI','Razorpay','participants','mode',this)">Razorpay</div>
+            <div class="filter-dd-option" data-val="BMS" onclick="selectFilterDd('p-mode','BMS','BMS','participants','mode',this)">BMS</div>
+            <div class="filter-dd-option" data-val="Cash" onclick="selectFilterDd('p-mode','Cash','Cash','participants','mode',this)">Cash</div>
+          </div>
+        </div>
+        <div class="filter-pills" style="display:none">
           <button class="filter-pill active" onclick="setFilterPill('participants','checkin','all',this)">All</button>
           <button class="filter-pill" onclick="setFilterPill('participants','checkin','yes',this)">Checked in</button>
           <button class="filter-pill" onclick="setFilterPill('participants','checkin','no',this)">Not checked in</button>
         </div>
-        <div class="filter-divider"></div>
-        <div class="filter-pills">
+        <div class="filter-pills" style="display:none">
           <button class="filter-pill active" onclick="setFilterPill('participants','mode','all',this)">All modes</button>
           <button class="filter-pill" onclick="setFilterPill('participants','mode','UPI',this)">UPI</button>
           <button class="filter-pill" onclick="setFilterPill('participants','mode','Razorpay UPI',this)">Razorpay</button>
@@ -1836,9 +2031,23 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <input type="text" class="section-search-input" id="search-classes" placeholder="Search by name, phone..." autocomplete="off" oninput="applyFilters('classes')"/>
       </div>
       <div class="filter-bar" id="filter-bar-classes">
+        <button class="mobile-filter-btn" id="mobile-filter-btn-classes" onclick="openFilterSheet('classes')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filters <span class="mobile-filter-badge" id="mobile-filter-badge-classes" style="display:none"></span>
+        </button>
         <div id="dd-classes-batch" class="custom-select-wrap-placeholder"></div>
-        <div class="filter-divider"></div>
-        <div class="filter-pills">
+        <div class="filter-dd-wrap" id="dd-wrap-c-status">
+          <button class="filter-dd-btn" id="dd-btn-c-status" onclick="toggleFilterDd('c-status')">
+            Status <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-c-status">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('c-status','all','Status','classes','status',this)">All</div>
+            <div class="filter-dd-option" data-val="Active" onclick="selectFilterDd('c-status','Active','Active','classes','status',this)">Active</div>
+            <div class="filter-dd-option" data-val="On Break" onclick="selectFilterDd('c-status','On Break','On Break','classes','status',this)">On Break</div>
+            <div class="filter-dd-option" data-val="Archived" onclick="selectFilterDd('c-status','Archived','Archived','classes','status',this)">Archived</div>
+          </div>
+        </div>
+        <div class="filter-pills" style="display:none">
           <button class="filter-pill active" onclick="setFilterPill('classes','status','all',this)">All</button>
           <button class="filter-pill" onclick="setFilterPill('classes','status','Active',this)">Active</button>
           <button class="filter-pill" onclick="setFilterPill('classes','status','On Break',this)">On break</button>
@@ -1878,16 +2087,39 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <input type="text" class="section-search-input" id="search-fee-payments" placeholder="Search by student, month..." autocomplete="off" oninput="applyFilters('fee-payments')"/>
       </div>
       <div class="filter-bar" id="filter-bar-fee-payments">
+        <button class="mobile-filter-btn" id="mobile-filter-btn-fee-payments" onclick="openFilterSheet('fee-payments')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filters <span class="mobile-filter-badge" id="mobile-filter-badge-fee-payments" style="display:none"></span>
+        </button>
         <div id="dd-fee-student" class="custom-select-wrap-placeholder"></div>
         <div id="dd-fee-month" class="custom-select-wrap-placeholder"></div>
-        <div class="filter-divider"></div>
-        <div class="filter-pills">
+        <div class="filter-dd-wrap" id="dd-wrap-fp-status">
+          <button class="filter-dd-btn" id="dd-btn-fp-status" onclick="toggleFilterDd('fp-status')">
+            Status <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-fp-status">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('fp-status','all','Status','fee-payments','status',this)">All</div>
+            <div class="filter-dd-option" data-val="paid" onclick="selectFilterDd('fp-status','paid','Paid','fee-payments','status',this)">Paid</div>
+            <div class="filter-dd-option" data-val="pending" onclick="selectFilterDd('fp-status','pending','Pending','fee-payments','status',this)">Pending</div>
+          </div>
+        </div>
+        <div class="filter-dd-wrap" id="dd-wrap-fp-mode">
+          <button class="filter-dd-btn" id="dd-btn-fp-mode" onclick="toggleFilterDd('fp-mode')">
+            Mode <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-fp-mode">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('fp-mode','all','Mode','fee-payments','mode',this)">All modes</div>
+            <div class="filter-dd-option" data-val="UPI" onclick="selectFilterDd('fp-mode','UPI','UPI','fee-payments','mode',this)">UPI</div>
+            <div class="filter-dd-option" data-val="Razorpay UPI" onclick="selectFilterDd('fp-mode','Razorpay UPI','Razorpay','fee-payments','mode',this)">Razorpay</div>
+            <div class="filter-dd-option" data-val="Cash" onclick="selectFilterDd('fp-mode','Cash','Cash','fee-payments','mode',this)">Cash</div>
+          </div>
+        </div>
+        <div class="filter-pills" style="display:none">
           <button class="filter-pill active" onclick="setFilterPill('fee-payments','status','all',this)">All</button>
           <button class="filter-pill" onclick="setFilterPill('fee-payments','status','paid',this)">Paid</button>
           <button class="filter-pill" onclick="setFilterPill('fee-payments','status','pending',this)">Pending</button>
         </div>
-        <div class="filter-divider"></div>
-        <div class="filter-pills">
+        <div class="filter-pills" style="display:none">
           <button class="filter-pill active" onclick="setFilterPill('fee-payments','mode','all',this)">All modes</button>
           <button class="filter-pill" onclick="setFilterPill('fee-payments','mode','UPI',this)">UPI</button>
           <button class="filter-pill" onclick="setFilterPill('fee-payments','mode','Razorpay UPI',this)">Razorpay</button>
@@ -1933,16 +2165,41 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="payNetProfit">—</div></div>
       </div>
       <div class="filter-bar" id="filter-bar-payments">
+        <button class="mobile-filter-btn" id="mobile-filter-btn-payments" onclick="openFilterSheet('payments')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filters <span class="mobile-filter-badge" id="mobile-filter-badge-payments" style="display:none"></span>
+        </button>
         <div id="dd-payments-period" class="custom-select-wrap-placeholder"></div>
         <div id="dd-payments-category" class="custom-select-wrap-placeholder"></div>
-        <div class="filter-divider"></div>
-        <div class="filter-pills">
+        <div class="filter-dd-wrap" id="dd-wrap-pay-type">
+          <button class="filter-dd-btn" id="dd-btn-pay-type" onclick="toggleFilterDd('pay-type')">
+            Type <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-pay-type">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('pay-type','all','Type','payments','type',this)">All</div>
+            <div class="filter-dd-option" data-val="income" onclick="selectFilterDd('pay-type','income','Income','payments','type',this)">Income</div>
+            <div class="filter-dd-option" data-val="expense" onclick="selectFilterDd('pay-type','expense','Expense','payments','type',this)">Expense</div>
+          </div>
+        </div>
+        <div class="filter-dd-wrap" id="dd-wrap-pay-mode">
+          <button class="filter-dd-btn" id="dd-btn-pay-mode" onclick="toggleFilterDd('pay-mode')">
+            Mode <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-pay-mode">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('pay-mode','all','Mode','payments','mode',this)">All modes</div>
+            <div class="filter-dd-option" data-val="upi" onclick="selectFilterDd('pay-mode','upi','UPI','payments','mode',this)">UPI</div>
+            <div class="filter-dd-option" data-val="razorpay" onclick="selectFilterDd('pay-mode','razorpay','Razorpay','payments','mode',this)">Razorpay</div>
+            <div class="filter-dd-option" data-val="cash" onclick="selectFilterDd('pay-mode','cash','Cash','payments','mode',this)">Cash</div>
+            <div class="filter-dd-option" data-val="bms" onclick="selectFilterDd('pay-mode','bms','BMS','payments','mode',this)">BMS</div>
+            <div class="filter-dd-option" data-val="wise" onclick="selectFilterDd('pay-mode','wise','Wise','payments','mode',this)">Wise</div>
+          </div>
+        </div>
+        <div class="filter-pills" style="display:none">
           <button class="filter-pill active" onclick="setFilterPill('payments','type','all',this)">All</button>
           <button class="filter-pill" onclick="setFilterPill('payments','type','income',this)">Income</button>
           <button class="filter-pill" onclick="setFilterPill('payments','type','expense',this)">Expense</button>
         </div>
-        <div class="filter-divider"></div>
-        <div class="filter-pills">
+        <div class="filter-pills" style="display:none">
           <button class="filter-pill active" onclick="setFilterPill('payments','mode','all',this)">All modes</button>
           <button class="filter-pill" onclick="setFilterPill('payments','mode','upi',this)">UPI</button>
           <button class="filter-pill" onclick="setFilterPill('payments','mode','razorpay',this)">Razorpay</button>
@@ -1979,9 +2236,22 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <input type="text" class="section-search-input" id="search-leads" placeholder="Search by name, phone..." autocomplete="off" oninput="applyFilters('leads')"/>
       </div>
       <div class="filter-bar" id="filter-bar-leads">
+        <button class="mobile-filter-btn" id="mobile-filter-btn-leads" onclick="openFilterSheet('leads')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filters <span class="mobile-filter-badge" id="mobile-filter-badge-leads" style="display:none"></span>
+        </button>
         <div id="dd-leads-workshop" class="custom-select-wrap-placeholder"></div>
-        <div class="filter-divider"></div>
-        <div class="filter-pills">
+        <div class="filter-dd-wrap" id="dd-wrap-l-referred">
+          <button class="filter-dd-btn" id="dd-btn-l-referred" onclick="toggleFilterDd('l-referred')">
+            Referred <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-l-referred">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('l-referred','all','Referred','leads','referred',this)">All</div>
+            <div class="filter-dd-option" data-val="yes" onclick="selectFilterDd('l-referred','yes','Referred','leads','referred',this)">Referred</div>
+            <div class="filter-dd-option" data-val="no" onclick="selectFilterDd('l-referred','no','Not referred','leads','referred',this)">Not referred</div>
+          </div>
+        </div>
+        <div class="filter-pills" style="display:none">
           <button class="filter-pill active" onclick="setFilterPill('leads','referred','all',this)">All</button>
           <button class="filter-pill" onclick="setFilterPill('leads','referred','yes',this)">Referred</button>
           <button class="filter-pill" onclick="setFilterPill('leads','referred','no',this)">Not referred</button>
@@ -3922,11 +4192,10 @@ function openBinDotsMenu(table, id, name, btnEl) {
 // ── BIN COUNT ──
 function updateBinCount(n) {
   const count = parseInt(n) || 0;
-  ['sidebarBinCount', 'mobileBinCount'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = count > 0 ? '\u00a0(' + count + ')' : '';
-  });
+  const mobileLabel = document.getElementById('mobileBinLabel');
+  if (mobileLabel) mobileLabel.textContent = count > 0 ? 'Bin (' + count + ')' : 'Bin';
+  const sidebarEl = document.getElementById('sidebarBinCount');
+  if (sidebarEl) sidebarEl.textContent = count > 0 ? '(' + count + ')' : '';
 }
 
 async function loadBinCount() {
@@ -5025,6 +5294,8 @@ function populateWorkshopYearFilter(workshops) {
       container.appendChild(btn);
     }
   });
+  // Also populate the new desktop dd + mobile sheet
+  populateWsYearFilter(years);
 }
 
 function populateFeeStudentDropdown(students) {
@@ -5483,17 +5754,276 @@ function createCustomSelect(id, placeholder, options, onChange) {
   return wrap;
 }
 
-// Close dropdowns when clicking outside
-document.addEventListener('click', () => {
-  document.querySelectorAll('.custom-select-menu.open').forEach(m => {
-    m.classList.remove('open');
-    m.previousElementSibling?.classList.remove('open');
+// ── DESKTOP FILTER DROPDOWNS ──
+function toggleFilterDd(ddId) {
+  const menu = document.getElementById('dd-menu-' + ddId);
+  const btn = document.getElementById('dd-btn-' + ddId);
+  if (!menu) return;
+  const isOpen = menu.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.filter-dd-menu.open').forEach(m => m.classList.remove('open'));
+  document.querySelectorAll('.filter-dd-btn.open').forEach(b => b.classList.remove('open'));
+  if (!isOpen) {
+    menu.classList.add('open');
+    btn?.classList.add('open');
+    // Position: flip above if not enough space below
+    const rect = btn.getBoundingClientRect();
+    if (window.innerHeight - rect.bottom < 220) {
+      menu.style.top = 'auto'; menu.style.bottom = 'calc(100% + 6px)';
+    } else {
+      menu.style.top = 'calc(100% + 6px)'; menu.style.bottom = 'auto';
+    }
+  }
+}
+
+function selectFilterDd(ddId, val, label, section, key, optEl) {
+  // Update option UI
+  const menu = document.getElementById('dd-menu-' + ddId);
+  if (menu) menu.querySelectorAll('.filter-dd-option').forEach(o => o.classList.remove('selected'));
+  optEl.classList.add('selected');
+  // Update button label + active state
+  const btn = document.getElementById('dd-btn-' + ddId);
+  const defaultLabels = { 'ws-year':'All time', 'p-checkin':'Check-in', 'p-mode':'Mode', 'c-status':'Status', 'fp-status':'Status', 'fp-mode':'Mode', 'pay-type':'Type', 'pay-mode':'Mode', 'l-referred':'Referred' };
+  const isDefault = (val === 'all' || val === '');
+  if (btn) {
+    btn.querySelector('span, .filter-dd-label') ? null : null;
+    btn.firstChild.textContent = isDefault ? (defaultLabels[ddId] || label) : label;
+    btn.classList.toggle('active', !isDefault);
+  }
+  // Close menu
+  menu?.classList.remove('open');
+  btn?.classList.remove('open');
+  // Apply filter
+  filterState[section][key] = val;
+  applyFilters(section);
+  updateFilterBadge(section);
+}
+
+function updateFilterBadge(section) {
+  const st = filterState[section];
+  const ddVals = {
+    workshops: [],
+    participants: [_dd['participants-workshop']?._getValue()],
+    classes: [_dd['classes-batch']?._getValue()],
+    'fee-payments': [_dd['fee-student']?._getValue(), _dd['fee-month']?._getValue()],
+    payments: [_dd['payments-period']?._getValue(), _dd['payments-category']?._getValue()],
+    leads: [_dd['leads-workshop']?._getValue()],
+  };
+  let count = 0;
+  Object.entries(st).forEach(([k, v]) => {
+    if (k === 'search') return;
+    if (v && v !== 'all') count++;
   });
+  (ddVals[section] || []).forEach(v => { if (v) count++; });
+  const badge = document.getElementById('mobile-filter-badge-' + section);
+  const btn = document.getElementById('mobile-filter-btn-' + section);
+  if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'inline-flex' : 'none'; }
+  if (btn) btn.classList.toggle('has-active', count > 0);
+}
+
+// Close desktop filter dropdowns on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.filter-dd-wrap')) {
+    document.querySelectorAll('.filter-dd-menu.open').forEach(m => m.classList.remove('open'));
+    document.querySelectorAll('.filter-dd-btn.open').forEach(b => b.classList.remove('open'));
+  }
 });
 
+// ── MOBILE FILTER BOTTOM SHEET ──
+let _filterSheetSection = null;
+let _filterSheetPending = {}; // pending selections before Apply
+let _filterSheetActiveCat = null;
+
+const FILTER_SHEET_CONFIG = {
+  workshops: [
+    { key: 'year', label: 'Year', type: 'pill', options: [] }, // populated dynamically
+  ],
+  participants: [
+    { key: 'workshop', label: 'Workshop', type: 'dd', ddKey: 'participants-workshop' },
+    { key: 'checkin', label: 'Check-in', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'yes', label: 'Checked in' }, { val: 'no', label: 'Not checked in' }
+    ]},
+    { key: 'mode', label: 'Mode', type: 'pill', options: [
+      { val: 'all', label: 'All modes' }, { val: 'UPI', label: 'UPI' }, { val: 'Razorpay UPI', label: 'Razorpay' }, { val: 'BMS', label: 'BMS' }, { val: 'Cash', label: 'Cash' }
+    ]},
+  ],
+  classes: [
+    { key: 'batch', label: 'Batch', type: 'dd', ddKey: 'classes-batch' },
+    { key: 'status', label: 'Status', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'Active', label: 'Active' }, { val: 'On Break', label: 'On Break' }, { val: 'Archived', label: 'Archived' }
+    ]},
+  ],
+  'fee-payments': [
+    { key: 'student', label: 'Student', type: 'dd', ddKey: 'fee-student' },
+    { key: 'month', label: 'Month', type: 'dd', ddKey: 'fee-month' },
+    { key: 'status', label: 'Status', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'paid', label: 'Paid' }, { val: 'pending', label: 'Pending' }
+    ]},
+    { key: 'mode', label: 'Mode', type: 'pill', options: [
+      { val: 'all', label: 'All modes' }, { val: 'UPI', label: 'UPI' }, { val: 'Razorpay UPI', label: 'Razorpay' }, { val: 'Cash', label: 'Cash' }
+    ]},
+  ],
+  payments: [
+    { key: 'period', label: 'Period', type: 'dd', ddKey: 'payments-period' },
+    { key: 'category', label: 'Category', type: 'dd', ddKey: 'payments-category' },
+    { key: 'type', label: 'Type', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'income', label: 'Income' }, { val: 'expense', label: 'Expense' }
+    ]},
+    { key: 'mode', label: 'Mode', type: 'pill', options: [
+      { val: 'all', label: 'All modes' }, { val: 'upi', label: 'UPI' }, { val: 'razorpay', label: 'Razorpay' }, { val: 'cash', label: 'Cash' }, { val: 'bms', label: 'BMS' }, { val: 'wise', label: 'Wise' }
+    ]},
+  ],
+  leads: [
+    { key: 'workshop', label: 'Workshop', type: 'dd', ddKey: 'leads-workshop' },
+    { key: 'referred', label: 'Referred', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'yes', label: 'Referred' }, { val: 'no', label: 'Not referred' }
+    ]},
+  ],
+};
+
+function openFilterSheet(section) {
+  _filterSheetSection = section;
+  // Copy current state into pending
+  _filterSheetPending = {};
+  const st = filterState[section] || {};
+  Object.entries(st).forEach(([k, v]) => { if (k !== 'search') _filterSheetPending[k] = v; });
+  // Also copy dd values
+  const config = FILTER_SHEET_CONFIG[section] || [];
+  config.forEach(cat => {
+    if (cat.type === 'dd' && cat.ddKey) {
+      _filterSheetPending[cat.key] = _dd[cat.ddKey]?._getValue() || '';
+    }
+  });
+
+  _filterSheetActiveCat = config[0]?.key || null;
+  renderFilterSheetCats();
+  renderFilterSheetOpts();
+
+  document.getElementById('filterSheetBackdrop').classList.add('open');
+  document.getElementById('filterSheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFilterSheet() {
+  document.getElementById('filterSheetBackdrop').classList.remove('open');
+  document.getElementById('filterSheet').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderFilterSheetCats() {
+  const section = _filterSheetSection;
+  const config = FILTER_SHEET_CONFIG[section] || [];
+  const catsEl = document.getElementById('filterSheetCats');
+  catsEl.innerHTML = '';
+  config.forEach(cat => {
+    const isActive = cat.key === _filterSheetActiveCat;
+    const hasVal = _filterSheetPending[cat.key] && _filterSheetPending[cat.key] !== 'all' && _filterSheetPending[cat.key] !== '';
+    const btn = document.createElement('button');
+    btn.className = 'filter-sheet-cat' + (isActive ? ' active' : '');
+    btn.innerHTML = cat.label + (hasVal ? '<span class="filter-sheet-cat-dot"></span>' : '');
+    btn.onclick = () => { _filterSheetActiveCat = cat.key; renderFilterSheetCats(); renderFilterSheetOpts(); };
+    catsEl.appendChild(btn);
+  });
+}
+
+function renderFilterSheetOpts() {
+  const section = _filterSheetSection;
+  const config = FILTER_SHEET_CONFIG[section] || [];
+  const cat = config.find(c => c.key === _filterSheetActiveCat) || config[0];
+  const optsEl = document.getElementById('filterSheetOpts');
+  optsEl.innerHTML = '';
+
+  if (!cat) return;
+
+  if (cat.type === 'pill') {
+    const currentVal = _filterSheetPending[cat.key] || 'all';
+    cat.options.forEach(opt => {
+      const div = document.createElement('div');
+      div.className = 'filter-sheet-opt' + (opt.val === currentVal ? ' selected' : '');
+      div.innerHTML = `<div class="filter-sheet-opt-radio"><div class="filter-sheet-opt-radio-dot"></div></div><span class="filter-sheet-opt-text">${opt.label}</span>`;
+      div.onclick = () => {
+        _filterSheetPending[cat.key] = opt.val;
+        renderFilterSheetOpts();
+        renderFilterSheetCats();
+      };
+      optsEl.appendChild(div);
+    });
+  } else if (cat.type === 'dd') {
+    // Show options from the _dd component
+    const dd = _dd[cat.ddKey];
+    const currentVal = _filterSheetPending[cat.key] || '';
+    if (dd) {
+      const opts = dd.querySelectorAll ? dd.querySelectorAll('.custom-select-option') : [];
+      const allOpt = document.createElement('div');
+      allOpt.className = 'filter-sheet-opt' + (currentVal === '' ? ' selected' : '');
+      allOpt.innerHTML = `<div class="filter-sheet-opt-radio"><div class="filter-sheet-opt-radio-dot"></div></div><span class="filter-sheet-opt-text">All</span>`;
+      allOpt.onclick = () => { _filterSheetPending[cat.key] = ''; renderFilterSheetOpts(); renderFilterSheetCats(); };
+      optsEl.appendChild(allOpt);
+      opts.forEach(o => {
+        if (!o.dataset.value) return;
+        const div = document.createElement('div');
+        div.className = 'filter-sheet-opt' + (o.dataset.value === currentVal ? ' selected' : '');
+        div.innerHTML = `<div class="filter-sheet-opt-radio"><div class="filter-sheet-opt-radio-dot"></div></div><span class="filter-sheet-opt-text">${o.textContent}</span>`;
+        div.onclick = () => { _filterSheetPending[cat.key] = o.dataset.value; renderFilterSheetOpts(); renderFilterSheetCats(); };
+        optsEl.appendChild(div);
+      });
+    }
+  }
+}
+
+function applyFilterSheet() {
+  const section = _filterSheetSection;
+  const config = FILTER_SHEET_CONFIG[section] || [];
+  // Apply pending to filterState and _dd
+  config.forEach(cat => {
+    const val = _filterSheetPending[cat.key];
+    if (cat.type === 'pill') {
+      filterState[section][cat.key] = val || 'all';
+    } else if (cat.type === 'dd' && cat.ddKey && _dd[cat.ddKey]) {
+      const dd = _dd[cat.ddKey];
+      const opts = dd.querySelectorAll('.custom-select-option');
+      const match = Array.from(opts).find(o => o.dataset.value === val);
+      dd._setValue(val || '', match?.textContent || dd.querySelector('.custom-select-option')?.textContent || '');
+    }
+  });
+  applyFilters(section);
+  updateFilterBadge(section);
+  closeFilterSheet();
+}
+
+function clearFilterSheet() {
+  const section = _filterSheetSection;
+  const config = FILTER_SHEET_CONFIG[section] || [];
+  config.forEach(cat => {
+    _filterSheetPending[cat.key] = cat.type === 'pill' ? 'all' : '';
+  });
+  renderFilterSheetCats();
+  renderFilterSheetOpts();
+}
+
+// Populate workshops year filter dynamically (called from loadWorkshops)
+function populateWsYearFilter(years) {
+  // Desktop dd
+  const menu = document.getElementById('dd-menu-ws-year');
+  if (menu) {
+    menu.innerHTML = `<div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('ws-year','all','All time','workshops','year',this)">All time</div>`;
+    years.forEach(y => {
+      const div = document.createElement('div');
+      div.className = 'filter-dd-option';
+      div.dataset.val = y;
+      div.textContent = y;
+      div.onclick = function() { selectFilterDd('ws-year', y, y, 'workshops', 'year', this); };
+      menu.appendChild(div);
+    });
+  }
+  // Mobile sheet config
+  const cfg = FILTER_SHEET_CONFIG.workshops.find(c => c.key === 'year');
+  if (cfg) {
+    cfg.options = [{ val: 'all', label: 'All time' }, ...years.map(y => ({ val: y, label: y }))];
+  }
+}
+
 function filterSection(section, query) { applyFilters(section); }
-
-
 
 </script>
 </body>
