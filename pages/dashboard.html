@@ -6314,8 +6314,8 @@ async function loadUnassignedPayments() {
   try {
     let items = [];
     try {
-      const res = await sbGetAll('unassigned_payments', '?status=eq.pending&order=date.desc');
-      items = Array.isArray(res) ? res : (res && Array.isArray(res.data) ? res.data : []);
+      const res = await sbGetAll('unassigned_payments', 'status=eq.pending&order=date.desc');
+      items = (res && Array.isArray(res.data)) ? res.data : [];
     } catch(fetchErr) {
       console.warn('loadUnassignedPayments fetch error:', fetchErr);
       items = [];
