@@ -6310,14 +6310,8 @@ let _currentAssignName = '';
 
 async function loadUnassignedPayments() {
   try {
-    const { data, error } = await window._supabase
-      .from('unassigned_payments')
-      .select('*')
-      .eq('status', 'pending')
-      .order('date', { ascending: false });
-
-    if (error) throw error;
-    const items = data || [];
+    const data = await sbGet('unassigned_payments', '?status=eq.pending&order=date.desc');
+    const items = Array.isArray(data) ? data : [];
 
     // Update badges
     updateUnassignedBadge(items.length);
@@ -6395,43 +6389,43 @@ async function saveAssignPayment() {
 
   try {
     if (type === 'ignore') {
-      await window._supabase.from('unassigned_payments').update({ status: 'ignored' }).eq('id', _currentAssignId);
+      await sbPatch('unassigned_payments', _currentAssignId, { status: 'ignored' });
       showToast('Payment dismissed', 'success');
     } else if (type === 'workshop') {
       // Create payment record as workshop income
       const payId = 'PAY-' + Date.now();
-      await window._supabase.from('payments').insert({
+      await sbPost('payments', {
         id: payId, amount: _currentAssignAmount, payer_name: _currentAssignName,
         type: 'income', category: 'workshop', payment_mode: 'Razorpay UPI',
         date: new Date().toISOString().split('T')[0],
         description: notes || `Assigned from unassigned payment ${_currentAssignId}`,
         synced_from_razorpay: true
       });
-      await window._supabase.from('unassigned_payments').update({ status: 'assigned', notes: notes || null }).eq('id', _currentAssignId);
+      await sbPatch('unassigned_payments', _currentAssignId, { status: 'assigned', notes: notes || null });
       showToast('✓ Assigned to Workshops', 'success');
       loadPayments();
     } else if (type === 'classes') {
       const payId = 'PAY-' + Date.now();
-      await window._supabase.from('payments').insert({
+      await sbPost('payments', {
         id: payId, amount: _currentAssignAmount, payer_name: _currentAssignName,
         type: 'income', category: 'class', payment_mode: 'Razorpay UPI',
         date: new Date().toISOString().split('T')[0],
         description: notes || `Assigned from unassigned payment ${_currentAssignId}`,
         synced_from_razorpay: true
       });
-      await window._supabase.from('unassigned_payments').update({ status: 'assigned', notes: notes || null }).eq('id', _currentAssignId);
+      await sbPatch('unassigned_payments', _currentAssignId, { status: 'assigned', notes: notes || null });
       showToast('✓ Assigned to Classes', 'success');
       loadPayments();
     } else if (type === 'general') {
       const payId = 'PAY-' + Date.now();
-      await window._supabase.from('payments').insert({
+      await sbPost('payments', {
         id: payId, amount: _currentAssignAmount, payer_name: _currentAssignName,
         type: 'income', category: 'general', payment_mode: 'Razorpay UPI',
         date: new Date().toISOString().split('T')[0],
         description: notes || `Assigned from unassigned payment ${_currentAssignId}`,
         synced_from_razorpay: true
       });
-      await window._supabase.from('unassigned_payments').update({ status: 'assigned', notes: notes || null }).eq('id', _currentAssignId);
+      await sbPatch('unassigned_payments', _currentAssignId, { status: 'assigned', notes: notes || null });
       showToast('✓ Assigned as General Income', 'success');
       loadPayments();
     }
@@ -6445,49 +6439,6 @@ async function saveAssignPayment() {
 }
 
 </script>
-
-<!-- Assign Unassigned Payment Modal -->
-<div class="modal-overlay" id="assignModal" style="display:none;" onclick="if(event.target===this)closeAssignModal()">
-  <div class="modal-box" style="max-width:480px;">
-    <div class="modal-header">
-      <div class="modal-title">Assign Payment</div>
-      <button class="modal-close" onclick="closeAssignModal()">✕</button>
-    </div>
-    <div class="modal-body" id="assignModalBody">
-      <div id="assignPaymentInfo" style="background:rgba(200,147,90,0.1);border:1px solid rgba(200,147,90,0.25);border-radius:10px;padding:1rem;margin-bottom:1.25rem;">
-        <div style="font-size:1.4rem;font-weight:600;color:var(--clay);margin-bottom:0.25rem;" id="assignAmount"></div>
-        <div style="color:var(--text-light);font-size:0.95rem;" id="assignPayer"></div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Assign to</label>
-        <select class="form-input" id="assignType" onchange="onAssignTypeChange()">
-          <option value="">Select category...</option>
-          <option value="workshop">Workshop — Participant Payment</option>
-          <option value="classes">Classes — Student Fee</option>
-          <option value="general">General Income</option>
-          <option value="ignore">Ignore (dismiss)</option>
-        </select>
-      </div>
-      <div class="form-group" id="assignWorkshopWrap" style="display:none;">
-        <label class="form-label">Workshop</label>
-        <select class="form-input" id="assignWorkshopId"></select>
-      </div>
-      <div class="form-group" id="assignStudentWrap" style="display:none;">
-        <label class="form-label">Student</label>
-        <select class="form-input" id="assignStudentId"></select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Notes (optional)</label>
-        <input type="text" class="form-input" id="assignNotes" placeholder="Any additional notes..."/>
-      </div>
-      <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.25rem;">
-        <button class="btn-dash btn-dash-secondary" onclick="closeAssignModal()">Cancel</button>
-        <button class="btn-dash btn-dash-primary" onclick="confirmAssign()">Assign</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 
 <!-- ── ASSIGN PAYMENT MODAL ── -->
 <div class="modal-overlay" id="modal-assignPayment" onclick="if(event.target===this)closeModal('assignPayment')">
