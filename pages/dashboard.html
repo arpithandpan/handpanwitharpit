@@ -6309,11 +6309,13 @@ let _currentAssignAmount = 0;
 let _currentAssignName = '';
 
 async function loadUnassignedPayments() {
+  const tblEl = document.getElementById('unassignedTable');
+  if (tblEl) tblEl.innerHTML = '<tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr>';
   try {
     let items = [];
     try {
-      const data = await sbGet('unassigned_payments', '?status=eq.pending&order=date.desc');
-      items = Array.isArray(data) ? data : [];
+      const res = await sbGetAll('unassigned_payments', '?status=eq.pending&order=date.desc');
+      items = Array.isArray(res) ? res : (res && Array.isArray(res.data) ? res.data : []);
     } catch(fetchErr) {
       console.warn('loadUnassignedPayments fetch error:', fetchErr);
       items = [];
@@ -6323,7 +6325,7 @@ async function loadUnassignedPayments() {
     updateUnassignedBadge(items.length);
 
     const adminU = isAdmin();
-    const tbl = document.getElementById('unassignedTable');
+    const tbl = tblEl || document.getElementById('unassignedTable');
     const cards = document.getElementById('unassignedCards');
 
     if (tbl) {
