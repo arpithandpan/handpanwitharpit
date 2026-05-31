@@ -1846,7 +1846,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     </a>
     <a href="#" class="admin-only" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('unassigned-payments',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Unassigned <span id="mobileUnassignedBadge" style="display:none;background:var(--clay);color:#1a1208;font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;"></span>
+      Unassigned Payments <span id="mobileUnassignedBadge" style="display:none;background:var(--clay);color:#1a1208;font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;"></span>
     </a>
     <a href="#" class="admin-only" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('unassigned',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -6310,8 +6310,14 @@ let _currentAssignName = '';
 
 async function loadUnassignedPayments() {
   try {
-    const data = await sbGet('unassigned_payments', '?status=eq.pending&order=date.desc');
-    const items = Array.isArray(data) ? data : [];
+    let items = [];
+    try {
+      const data = await sbGet('unassigned_payments', '?status=eq.pending&order=date.desc');
+      items = Array.isArray(data) ? data : [];
+    } catch(fetchErr) {
+      console.warn('loadUnassignedPayments fetch error:', fetchErr);
+      items = [];
+    }
 
     // Update badges
     updateUnassignedBadge(items.length);
