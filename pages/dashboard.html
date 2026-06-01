@@ -2699,6 +2699,44 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 
 <!-- ── FORM PAGES ── -->
 
+<!-- Assign Payment -->
+<div class="form-page" id="form-assignPayment">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="closeFormPage('assignPayment')">← Back</button>
+    <div class="form-page-title">Assign Payment</div>
+    <button class="btn-dash-save" onclick="saveAssignPaymentPage()">Assign</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <div id="assign-page-info" style="background:rgba(200,147,90,0.1);border:1px solid rgba(200,147,90,0.25);border-radius:10px;padding:1rem;font-size:0.95rem;color:var(--clay-light);margin-bottom:1.5rem;"></div>
+    <div class="form-group">
+      <label class="form-label">Assign To</label>
+      <select class="form-input" id="assign-page-type" onchange="onAssignPageTypeChange()">
+        <option value="">Select category...</option>
+        <option value="workshop">Workshop participant</option>
+        <option value="classes">Class fee payment</option>
+        <option value="general">General income</option>
+        <option value="ignore">Skip for now</option>
+      </select>
+    </div>
+    <div class="form-group" id="assign-page-workshop-wrap" style="display:none;">
+      <label class="form-label">Workshop</label>
+      <select class="form-input" id="assign-page-workshop-select">
+        <option value="">Loading workshops...</option>
+      </select>
+    </div>
+    <div class="form-group" id="assign-page-student-wrap" style="display:none;">
+      <label class="form-label">Student</label>
+      <select class="form-input" id="assign-page-student-select">
+        <option value="">Loading students...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes (Optional)</label>
+      <input type="text" class="form-input" id="assign-page-notes" placeholder="e.g. Gig payment, workshop fee..."/>
+    </div>
+  </div></div>
+</div>
+
 <!-- Add Payment -->
 <div class="form-page" id="form-addPayment">
   <div class="form-page-header">
@@ -3203,7 +3241,8 @@ const FORM_FIELDS = {
   addWorkshop:    ['ws-date','ws-venue','ws-bms','ws-upi','ws-rzp','ws-price','ws-venue-rent','ws-hp-rent','ws-porter','ws-misc'],
   addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-notes'],
   addFeePayment:  ['fee-amount','fee-notes'],
-  addParticipant: ['par-name','par-phone','par-amount','par-date','par-notes']
+  addParticipant:  ['par-name','par-phone','par-amount','par-date','par-notes'],
+  assignPayment:   ['assign-page-notes']
 };
 
 function isFormDirty(formName) {
@@ -6445,119 +6484,60 @@ function closeAssignModal() {
   if (window.innerWidth <= 900) closeMobilePicker();
 }
 
-function openAssignPayment(id, amount, name, phone) {
+async function openAssignPayment(id, amount, name, phone) {
   _currentAssignId = id;
   _currentAssignAmount = amount;
   _currentAssignName = name;
 
-  // Populate workshop dropdown
-  const wsSelect = document.getElementById('assign-workshop-select');
-  if (wsSelect) {
-    wsSelect.innerHTML = '<option value="">Select workshop...</option>';
-    if (window._cachedWorkshops) {
-      window._cachedWorkshops.forEach(w => {
-        const opt = document.createElement('option');
-        opt.value = w.id;
-        opt.textContent = `${w.id} · ${fmtDate(w.date)} · ${w.venue || ''}`;
-        wsSelect.appendChild(opt);
-      });
-    }
+  // Set payer info card
+  const infoEl = document.getElementById('assign-page-info');
+  if (infoEl) {
+    infoEl.innerHTML = `<strong>${name || 'Unknown'}</strong>${phone ? ' · ' + phone : ''}<br>Amount: <strong style="color:var(--moss)">+${fmt(amount)}</strong>`;
   }
 
-  // Populate student dropdown
-  const stuSelect = document.getElementById('assign-student-select');
-  if (stuSelect) {
-    stuSelect.innerHTML = '<option value="">Select student...</option>';
-    if (window._cachedStudents) {
-      window._cachedStudents.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.id;
-        opt.textContent = `${s.full_name} · ${s.phone || ''}`;
-        stuSelect.appendChild(opt);
-      });
-    }
-  }
+  // Reset fields
+  const typeEl = document.getElementById('assign-page-type');
+  if (typeEl) typeEl.value = '';
+  const notesEl = document.getElementById('assign-page-notes');
+  if (notesEl) notesEl.value = '';
+  const wsWrap = document.getElementById('assign-page-workshop-wrap');
+  if (wsWrap) wsWrap.style.display = 'none';
+  const stuWrap = document.getElementById('assign-page-student-wrap');
+  if (stuWrap) stuWrap.style.display = 'none';
 
-  if (window.innerWidth <= 900) {
-    // Mobile: use bottom sheet
-    openMobilePicker('Assign Payment', (body) => {
-      body.innerHTML = `
-        <div style="padding:0.5rem 0 1rem;">
-          <div style="background:rgba(200,147,90,0.1);border:1px solid rgba(200,147,90,0.25);border-radius:10px;padding:1rem;font-size:0.95rem;color:var(--clay-light);margin-bottom:1.25rem;">
-            <strong>${name}</strong>${phone ? ' · ' + phone : ''}<br>Amount: <strong style="color:var(--moss)">+${fmt(amount)}</strong>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Assign to</label>
-            <select class="form-input" id="assign-type-mobile" onchange="syncAssignType()">
-              <option value="">Select category...</option>
-              <option value="workshop">Workshop participant</option>
-              <option value="classes">Class fee payment</option>
-              <option value="general">General income</option>
-              <option value="ignore">Skip for now</option>
-            </select>
-          </div>
-          <div class="form-group" id="assign-workshop-wrap-mobile" style="display:none;">
-            <label class="form-label">Workshop</label>
-            <select class="form-input" id="assign-workshop-select-mobile">
-              <option value="">Select workshop...</option>
-              ${(window._cachedWorkshops||[]).map(w => `<option value="${w.id}">${w.id} · ${fmtDate(w.date)} · ${w.venue||''}</option>`).join('')}
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Notes (optional)</label>
-            <input type="text" class="form-input" id="assign-notes-mobile" placeholder="e.g. Gig payment, workshop fee..."/>
-          </div>
-          <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem;">
-            <button class="btn-dash" onclick="closeMobilePicker()">Cancel</button>
-            <button class="btn-dash btn-dash-primary" onclick="saveAssignPaymentMobile()">Assign</button>
-          </div>
-        </div>`;
-    });
-    return;
-  }
+  // Always fetch fresh workshops
+  await populateWorkshopDropdown('assign-page-workshop-select');
+  await populateStudentDropdown('assign-page-student-select');
 
-  // Desktop: use modal
-  document.getElementById('assignPaymentInfo').innerHTML =
-    `<strong>${name}</strong>${phone ? ' · ' + phone : ''}<br>Amount: <strong style="color:var(--moss)">+${fmt(amount)}</strong>`;
-  document.getElementById('assign-type').value = '';
-  document.getElementById('assign-notes').value = '';
-  document.getElementById('assign-workshop-wrap').style.display = 'none';
-  document.getElementById('assign-student-wrap').style.display = 'none';
-  const modal = document.getElementById('modal-assignPayment');
-  if (modal) modal.classList.add('open');
+  // Open as full-page view (same as all other forms)
+  document.getElementById('form-assignPayment').classList.add('open');
+  lockScroll();
+  setTimeout(() => { initFormSelects(); }, 80);
 }
 
-function syncAssignType() {
-  const type = document.getElementById('assign-type-mobile')?.value;
-  const wsWrap = document.getElementById('assign-workshop-wrap-mobile');
+function onAssignPageTypeChange() {
+  const type = document.getElementById('assign-page-type')?.value;
+  const wsWrap = document.getElementById('assign-page-workshop-wrap');
+  const stuWrap = document.getElementById('assign-page-student-wrap');
   if (wsWrap) wsWrap.style.display = type === 'workshop' ? '' : 'none';
+  if (stuWrap) stuWrap.style.display = type === 'classes' ? '' : 'none';
 }
 
-async function saveAssignPaymentMobile() {
-  const type = document.getElementById('assign-type-mobile')?.value;
-  const notes = document.getElementById('assign-notes-mobile')?.value || '';
-  const workshopId = document.getElementById('assign-workshop-select-mobile')?.value || null;
+async function saveAssignPaymentPage() {
+  const type = document.getElementById('assign-page-type')?.value;
+  const notes = document.getElementById('assign-page-notes')?.value || '';
+  const workshopId = document.getElementById('assign-page-workshop-select')?.value || null;
+  const studentId = document.getElementById('assign-page-student-select')?.value || null;
   if (!type) { showToast('Please select a category', 'error'); return; }
-  closeMobilePicker();
-  await _doAssign(type, notes, workshopId);
+  closeFormPage('assignPayment');
+  await _doAssign(type, notes, workshopId, studentId);
 }
 
-function onAssignTypeChange() {
-  const type = document.getElementById('assign-type').value;
-  document.getElementById('assign-workshop-wrap').style.display = type === 'workshop' ? '' : 'none';
-  document.getElementById('assign-student-wrap').style.display = type === 'classes' ? '' : 'none';
-}
+// Keep legacy stubs in case anything still references them
+function onAssignTypeChange() { onAssignPageTypeChange(); }
+async function saveAssignPayment() { await saveAssignPaymentPage(); }
 
-async function saveAssignPayment() {
-  const type = document.getElementById('assign-type').value;
-  const notes = document.getElementById('assign-notes').value;
-  const workshopId = document.getElementById('assign-workshop-select')?.value || null;
-  if (!type) { showToast('Please select a category', 'error'); return; }
-  closeAssignModal();
-  await _doAssign(type, notes, workshopId);
-}
-
-async function _doAssign(type, notes, workshopId) {
+async function _doAssign(type, notes, workshopId, studentId) {
   try {
     if (type === 'ignore') {
       await sbPatch('unassigned_payments', _currentAssignId, { status: 'ignored' });
@@ -6573,7 +6553,7 @@ async function _doAssign(type, notes, workshopId) {
         type: 'income',
         category: categoryMap[type] || type,
         payment_mode: 'Razorpay UPI',
-        reference_id: type === 'workshop' ? (workshopId || null) : null,
+        reference_id: type === 'workshop' ? (workshopId || null) : type === 'classes' ? (studentId || null) : null,
         date: new Date().toISOString().split('T')[0],
         description: notes || `Assigned from unassigned payment ${_currentAssignId}`,
         synced_from_razorpay: true
