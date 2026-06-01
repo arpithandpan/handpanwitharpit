@@ -681,7 +681,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   position: relative; display: inline-flex; align-items: center;
   width: 48px; height: 26px; cursor: pointer; flex-shrink: 0;
 }
-.checkin-label { font-size: 0.85rem; font-family: var(--font-body); color: var(--text-light); }
+.checkin-label { font-size: 0.75rem; font-family: var(--font-body); color: var(--text-light); letter-spacing: 0.02em; }
 .checkin-label[data-checked="1"] { color: var(--moss); font-weight: 500; }
 .checkin-toggle input { 
   opacity: 0; width: 0; height: 0; position: absolute; 
@@ -1653,46 +1653,34 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 }
 .checkin-screen.open { display: flex; }
 .checkin-header {
-  background: #3d2b1f; padding: 0.75rem 1.25rem;
-  display: flex; flex-direction: column; gap: 0.4rem;
+  padding: 0.75rem 1.25rem;
+  display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem;
   flex-shrink: 0;
   padding-top: max(0.75rem, env(safe-area-inset-top));
+  border-bottom: 1px solid rgba(200,147,90,0.15);
 }
 .checkin-header-row2 {
-  display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;
+  display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem; flex-shrink: 0;
 }
-.checkin-counter {
-  background: rgba(200,147,90,0.15); border: 1px solid rgba(200,147,90,0.3);
-  border-radius: 20px; padding: 0 0.9rem;
-  font-size: 1.15rem; font-weight: 600; color: #c8935a;
-  letter-spacing: 0.05em; min-height: 48px; display: flex; align-items: center;
-}
-.checkin-close {
-  background: transparent; border: 1.5px solid rgba(232,213,192,0.35);
-  border-radius: 4px; color: #e8d5c0; cursor: pointer;
-  font-size: 1.15rem; font-family: var(--font-body);
-  padding: 0 0.8rem; letter-spacing: 0.08em;
-  transition: border-color 0.2s, background 0.2s; min-height: 48px;
-}
-.checkin-close:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
+
 @media (max-width: 900px) {
-  .checkin-header { padding-top: max(1rem, env(safe-area-inset-top)); }
+  .checkin-header { padding-top: max(0.75rem, env(safe-area-inset-top)); }
 }
-.checkin-header-left { display: flex; flex-direction: column; gap: 2px; }
-.checkin-header-title { font-size: 1.15rem; font-weight: 500; color: #e8d5c0; letter-spacing: 0.04em; }
-.checkin-header-sub { font-size: 1.15rem; color: rgba(200,147,90,0.7); }
+.checkin-header-left { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.checkin-header-title { font-size: 0.95rem; font-weight: 500; color: #e8d5c0; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.checkin-header-sub { font-size: 0.8rem; color: rgba(200,147,90,0.7); margin-top: 1px; }
 .checkin-counter {
   background: rgba(200,147,90,0.15); border: 1px solid rgba(200,147,90,0.3);
-  border-radius: 20px; padding: 0.3rem 0.9rem;
-  font-size: 1.15rem; font-weight: 600; color: #c8935a;
-  letter-spacing: 0.05em;
+  border-radius: 20px; padding: 0.25rem 0.75rem;
+  font-size: 0.85rem; font-weight: 600; color: #c8935a;
+  letter-spacing: 0.03em; white-space: nowrap;
 }
 .checkin-close {
-  background: transparent; border: 1.5px solid rgba(232,213,192,0.35);
+  background: transparent; border: 1.5px solid rgba(232,213,192,0.25);
   border-radius: 4px; color: #e8d5c0; cursor: pointer;
-  font-size: 1.15rem; font-family: var(--font-body);
-  padding: 0.4rem 0.8rem; letter-spacing: 0.08em;
-  transition: border-color 0.2s, background 0.2s;
+  font-size: 0.85rem; font-family: var(--font-body);
+  padding: 0.3rem 0.6rem; letter-spacing: 0.04em;
+  transition: border-color 0.2s, background 0.2s; white-space: nowrap;
 }
 .checkin-close:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
 .checkin-body {
@@ -1707,10 +1695,12 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
   display: flex; align-items: center; justify-content: center;
   min-height: calc(100vh - 140px);
 }
-.checkin-card { background: var(--card, #231c16); border: 1px solid rgba(200,147,90,0.18); border-radius: 8px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.checkin-card { background: var(--card, #231c16); border: 1px solid rgba(200,147,90,0.18); border-radius: 8px; padding: 0.85rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.checkin-card.is-checked { border-color: rgba(122,140,106,0.35); }
 .checkin-card-info { flex: 1; min-width: 0; }
-.checkin-card-name { font-size: 1.15rem; font-weight: 500; color: var(--bark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.checkin-card-meta { font-size: 1.15rem; color: var(--text-light); margin-top: 3px; }
+.checkin-card-info { flex: 1; min-width: 0; }
+.checkin-card-name { font-size: 0.95rem; font-weight: 500; color: var(--bark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.checkin-card-meta { font-size: 0.78rem; color: var(--text-light); margin-top: 2px; }
 .checkin-card-meta span { margin-right: 0.75rem; }
 .checkin-cb {
   width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
@@ -4931,43 +4921,53 @@ function renderCheckinGrid() {
           <span>${fmt(p.amount_paid)} · ${p.payment_mode || '—'}</span>
         </div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" id="cb-${p.id}" onclick="checkinModeToggle('${p.id}', ${p.checked_in}, '${(p.full_name||'').replace(/'/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0;">
+        <span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span>
+        <label class="checkin-toggle" id="cb-${p.id}" onclick="checkinModeToggle('${p.id}', ${p.checked_in}, '${(p.full_name||'').replace(/'/g,'')}');event.preventDefault();">
+          <input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span>
+        </label>
+      </div>
+    </div>
   `).join('');
 }
 
 async function checkinModeToggle(id, currentState, name) {
   if (currentState) {
-    _checkInPending = { id, name };
     document.getElementById('archiveConfirmTitle').textContent = 'Remove check-in?';
     document.getElementById('archiveConfirmDesc').textContent = name + ' will be marked as not checked in.';
     document.getElementById('archiveConfirmBtn').textContent = 'Remove';
-    document.getElementById('archiveConfirmBtn').onclick = confirmCheckOut;
+    document.getElementById('archiveConfirmBtn').onclick = async () => {
+      closeArchiveConfirm();
+      await _doCheckinModeToggle(id, false, name);
+    };
     document.getElementById('archiveConfirmModal').style.display = 'flex';
     lockScroll();
     return;
   }
-  const newState = true;
+  await _doCheckinModeToggle(id, true, name);
+}
+
+async function _doCheckinModeToggle(id, newState, name) {
   const card = document.getElementById('cc-' + id);
   const btn = document.getElementById('cb-' + id);
+  const currentState = !newState;
 
-  // Disable immediately to prevent double-tap
-  if (btn) btn.style.pointerEvents = 'none';
+  // Immediate visual update
+  if (card) card.classList.toggle('is-checked', newState);
+  if (btn) {
+    const input = btn.querySelector('input[type="checkbox"]');
+    if (input) input.checked = newState;
+    btn.onclick = (e) => { checkinModeToggle(id, newState, name); e.preventDefault(); };
+    const labelSpan = btn.parentElement?.querySelector('.checkin-label');
+    if (labelSpan) { labelSpan.textContent = newState ? 'Checked in' : 'Check-in'; labelSpan.dataset.checked = newState ? '1' : '0'; }
+  }
+  const idx = _checkinParticipants.findIndex(p => p.id === id);
+  if (idx > -1) _checkinParticipants[idx].checked_in = newState;
+  const checkedCount = _checkinParticipants.filter(p => p.checked_in).length;
+  document.getElementById('checkinCounter').textContent = checkedCount + ' / ' + _checkinParticipants.length + ' checked in';
+  showToast(newState ? '\u2713 ' + name + ' checked in!' : '\u2713 Check-in removed', 'success');
 
-  // Force DOM paint on next frame — visual change before any async work
-  requestAnimationFrame(() => {
-    if (card && btn) {
-      card.classList.toggle('is-checked', newState);
-      const input = btn ? btn.querySelector('input[type="checkbox"]') : null;
-      if (input) input.checked = newState;
-      if (btn) { btn.onclick = (e) => { checkinModeToggle(id, newState, name); e.preventDefault(); }; btn.style.pointerEvents = ''; }
-    }
-    const idx = _checkinParticipants.findIndex(p => p.id === id);
-    if (idx > -1) _checkinParticipants[idx].checked_in = newState;
-    const checkedCount = _checkinParticipants.filter(p => p.checked_in).length;
-    document.getElementById('checkinCounter').textContent = checkedCount + ' / ' + _checkinParticipants.length + ' checked in';
-  });
-
-  // Persist to Supabase in background — completely decoupled from UI
+  // Persist to Supabase in background
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?id=eq.' + id, {
       method: 'PATCH',
@@ -4976,23 +4976,22 @@ async function checkinModeToggle(id, currentState, name) {
     });
     if (!res.ok) throw new Error('Failed');
   } catch(e) {
-    // Revert visually on failure
-    requestAnimationFrame(() => {
-      if (card && btn) {
-        card.classList.toggle('is-checked', currentState);
-        const input = btn.querySelector('input[type="checkbox"]');
-        if (input) input.checked = currentState;
-        btn.onclick = (e) => { checkinModeToggle(id, currentState, name); e.preventDefault(); };
-      }
-      const idx = _checkinParticipants.findIndex(p => p.id === id);
-      if (idx > -1) _checkinParticipants[idx].checked_in = currentState;
-      const revertCount = _checkinParticipants.filter(p => p.checked_in).length;
-      document.getElementById('checkinCounter').textContent = revertCount + ' / ' + _checkinParticipants.length + ' checked in';
-    });
+    // Revert on failure
+    if (card) card.classList.toggle('is-checked', currentState);
+    if (btn) {
+      const input = btn.querySelector('input[type="checkbox"]');
+      if (input) input.checked = currentState;
+      btn.onclick = (e) => { checkinModeToggle(id, currentState, name); e.preventDefault(); };
+      const labelSpan = btn.parentElement?.querySelector('.checkin-label');
+      if (labelSpan) { labelSpan.textContent = currentState ? 'Checked in' : 'Check-in'; labelSpan.dataset.checked = currentState ? '1' : '0'; }
+    }
+    const idx2 = _checkinParticipants.findIndex(p => p.id === id);
+    if (idx2 > -1) _checkinParticipants[idx2].checked_in = currentState;
+    const revertCount = _checkinParticipants.filter(p => p.checked_in).length;
+    document.getElementById('checkinCounter').textContent = revertCount + ' / ' + _checkinParticipants.length + ' checked in';
     showToast('Failed to update check-in', 'error');
   }
 }
-
 // ── EDIT SYSTEM ──
 let _editEntity = null;
 let _editId = null;
