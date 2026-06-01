@@ -2394,6 +2394,12 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <div class="dash-section-subtitle">Payments received via general Razorpay link — tap Assign to categorise</div>
         </div>
       </div>
+      <div style="margin-bottom:1rem;">
+        <div style="position:relative;max-width:400px;">
+          <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:0.4;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="unassignedSearch" class="form-input" style="padding-left:2.5rem;" placeholder="Search by name or phone..." oninput="filterUnassigned()"/>
+        </div>
+      </div>
       <div id="unassignedContainer"></div>
     </section>
 
@@ -3671,6 +3677,7 @@ async function loadWorkshops() {
     if (tbl) tbl.innerHTML = ws.map(w => `<tr data-year="${(w.date||'').substring(0,4)}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.4rem;align-items:center;flex-wrap:nowrap;">${admin?`<button class="icon-action-btn" title="Edit" onclick="openEdit('workshops','${w.id}')">${PENCIL}</button>`:''}<button class="icon-action-btn" title="Check-in" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')">${CHECK_ICON}</button>${admin?`<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">${TRASH_ICON}</button>`:''}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No workshops yet</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; } } const _es_workshopsEmptyState = document.getElementById('workshopsEmptyState'); if (_es_workshopsEmptyState) { _es_workshopsEmptyState.innerHTML = EMPTY_STATES.workshops; const _hr = document.getElementById('workshopsTable'); _es_workshopsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
+    window._cachedWorkshops = ws;
     const wsCardsEl = document.getElementById('workshopsCards');
     if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `
       <div class="m-card" id="wscard-${w.id}" style="border-radius:12px;overflow:hidden;padding:0;">
@@ -3839,6 +3846,7 @@ async function loadStudents() {
     document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
     const adminS = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    window._cachedStudents = stus;
     populateFeeStudentDropdown(stus);
     populateClassesBatchDropdown(stus);
     document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
@@ -3890,7 +3898,7 @@ async function loadPayments() {
     const adminPay = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     populatePaymentsCategoryDropdown(pays);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => { const isGenExp = p.is_general_expense; const dataType = isGenExp ? 'general_expense' : (p.type||''); const typeBadge = isGenExp ? `<span class="badge badge-clay">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span>`; return `<tr class="${p.archived?'archived-row':''}" data-type="${dataType}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td>${typeBadge}</td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;">${p.synced_from_razorpay !== true?`<button class="icon-action-btn" title="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button>`:''}<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`; }).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => { const isGenExp = p.is_general_expense; const dataType = isGenExp ? 'general_expense' : (p.type||''); const typeBadge = isGenExp ? `<span class="badge badge-clay">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span>`; return `<tr class="${p.archived?'archived-row':''}" data-type="${dataType}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td>${typeBadge}</td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`; }).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.payments}
     </td></tr>`;
 
@@ -4855,7 +4863,8 @@ function openEdit(entity, id) {
   const record = _recordCache[entity] && _recordCache[entity][id];
   if (!record) { showToast('Could not load record data', 'error'); return; }
   if (entity === 'payments' && record.synced_from_razorpay) {
-    showToast('Razorpay payments cannot be edited', 'warning'); return;
+    // Allow editing category and reference only
+    openReassignPayment(id, record); return;
   }
   if (entity === 'participants' && record.payment_mode === 'Razorpay UPI') {
     showToast('Razorpay UPI entries cannot be edited', 'warning'); return;
@@ -6376,7 +6385,7 @@ async function loadUnassignedPayments() {
           <td>${p.payer_phone||'—'}</td>
           <td style="font-weight:600;color:var(--moss)">+${fmt(p.amount)}</td>
           <td style="font-size:0.8rem;color:var(--text-light)">${p.razorpay_payment_id||'—'}</td>
-          <td>${adminU ? `<button class="btn-dash btn-dash-primary" style="font-size:0.85rem;padding:0.4rem 1rem;" data-assign-id="${p.id}">Assign</button>` : '—'}</td>
+          <td>${adminU ? `<span style="display:flex;gap:0.5rem;"><button class="btn-dash btn-dash-primary" style="font-size:0.85rem;padding:0.4rem 0.85rem;" data-assign-id="${p.id}">Assign</button><button class="icon-action-btn danger" title="Remove" data-remove-id="${p.id}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></span>` : '—'}</td>
         </tr>`).join('')}
       </tbody></table>
     </div>`;
@@ -6388,7 +6397,8 @@ async function loadUnassignedPayments() {
         <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.payer_phone||'—'}</span></div>
         <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div>
         <div class="m-card-row"><span class="m-card-label">Razorpay ID</span><span class="m-card-val" style="font-size:0.78rem">${p.razorpay_payment_id||'—'}</span></div>
-        ${adminU ? `<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">
+        ${adminU ? `<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;">
+          <button class="icon-action-btn danger" title="Remove" data-remove-id="${p.id}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
           <button class="btn-dash btn-dash-primary" data-assign-id="${p.id}">Assign</button>
         </div>` : ''}
       </div>`).join('')}
@@ -6401,6 +6411,15 @@ async function loadUnassignedPayments() {
       btn.addEventListener('click', () => {
         const p = window._unassignedItems[btn.dataset.assignId];
         if (p) openAssignPayment(p.id, p.amount, p.payer_name || '', p.payer_phone || '');
+      });
+    });
+    container.querySelectorAll('[data-remove-id]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.removeId;
+        if (!confirm('Remove this payment from the list?')) return;
+        await sbPatch('unassigned_payments', id, { status: 'removed' });
+        showToast('Payment removed', 'success');
+        loadUnassignedPayments();
       });
     });
 
@@ -6420,10 +6439,84 @@ function updateUnassignedBadge(count) {
   });
 }
 
+function closeAssignModal() {
+  const modal = document.getElementById('modal-assignPayment');
+  if (modal) modal.classList.remove('open');
+  if (window.innerWidth <= 900) closeMobilePicker();
+}
+
 function openAssignPayment(id, amount, name, phone) {
   _currentAssignId = id;
   _currentAssignAmount = amount;
   _currentAssignName = name;
+
+  // Populate workshop dropdown
+  const wsSelect = document.getElementById('assign-workshop-select');
+  if (wsSelect) {
+    wsSelect.innerHTML = '<option value="">Select workshop...</option>';
+    if (window._cachedWorkshops) {
+      window._cachedWorkshops.forEach(w => {
+        const opt = document.createElement('option');
+        opt.value = w.id;
+        opt.textContent = `${w.id} · ${fmtDate(w.date)} · ${w.venue || ''}`;
+        wsSelect.appendChild(opt);
+      });
+    }
+  }
+
+  // Populate student dropdown
+  const stuSelect = document.getElementById('assign-student-select');
+  if (stuSelect) {
+    stuSelect.innerHTML = '<option value="">Select student...</option>';
+    if (window._cachedStudents) {
+      window._cachedStudents.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = `${s.full_name} · ${s.phone || ''}`;
+        stuSelect.appendChild(opt);
+      });
+    }
+  }
+
+  if (window.innerWidth <= 900) {
+    // Mobile: use bottom sheet
+    openMobilePicker('Assign Payment', (body) => {
+      body.innerHTML = `
+        <div style="padding:0.5rem 0 1rem;">
+          <div style="background:rgba(200,147,90,0.1);border:1px solid rgba(200,147,90,0.25);border-radius:10px;padding:1rem;font-size:0.95rem;color:var(--clay-light);margin-bottom:1.25rem;">
+            <strong>${name}</strong>${phone ? ' · ' + phone : ''}<br>Amount: <strong style="color:var(--moss)">+${fmt(amount)}</strong>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assign to</label>
+            <select class="form-input" id="assign-type-mobile" onchange="syncAssignType()">
+              <option value="">Select category...</option>
+              <option value="workshop">Workshop participant</option>
+              <option value="classes">Class fee payment</option>
+              <option value="general">General income</option>
+              <option value="ignore">Skip for now</option>
+            </select>
+          </div>
+          <div class="form-group" id="assign-workshop-wrap-mobile" style="display:none;">
+            <label class="form-label">Workshop</label>
+            <select class="form-input" id="assign-workshop-select-mobile">
+              <option value="">Select workshop...</option>
+              ${(window._cachedWorkshops||[]).map(w => `<option value="${w.id}">${w.id} · ${fmtDate(w.date)} · ${w.venue||''}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notes (optional)</label>
+            <input type="text" class="form-input" id="assign-notes-mobile" placeholder="e.g. Gig payment, workshop fee..."/>
+          </div>
+          <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem;">
+            <button class="btn-dash" onclick="closeMobilePicker()">Cancel</button>
+            <button class="btn-dash btn-dash-primary" onclick="saveAssignPaymentMobile()">Assign</button>
+          </div>
+        </div>`;
+    });
+    return;
+  }
+
+  // Desktop: use modal
   document.getElementById('assignPaymentInfo').innerHTML =
     `<strong>${name}</strong>${phone ? ' · ' + phone : ''}<br>Amount: <strong style="color:var(--moss)">+${fmt(amount)}</strong>`;
   document.getElementById('assign-type').value = '';
@@ -6432,6 +6525,21 @@ function openAssignPayment(id, amount, name, phone) {
   document.getElementById('assign-student-wrap').style.display = 'none';
   const modal = document.getElementById('modal-assignPayment');
   if (modal) modal.classList.add('open');
+}
+
+function syncAssignType() {
+  const type = document.getElementById('assign-type-mobile')?.value;
+  const wsWrap = document.getElementById('assign-workshop-wrap-mobile');
+  if (wsWrap) wsWrap.style.display = type === 'workshop' ? '' : 'none';
+}
+
+async function saveAssignPaymentMobile() {
+  const type = document.getElementById('assign-type-mobile')?.value;
+  const notes = document.getElementById('assign-notes-mobile')?.value || '';
+  const workshopId = document.getElementById('assign-workshop-select-mobile')?.value || null;
+  if (!type) { showToast('Please select a category', 'error'); return; }
+  closeMobilePicker();
+  await _doAssign(type, notes, workshopId);
 }
 
 function onAssignTypeChange() {
@@ -6443,59 +6551,43 @@ function onAssignTypeChange() {
 async function saveAssignPayment() {
   const type = document.getElementById('assign-type').value;
   const notes = document.getElementById('assign-notes').value;
+  const workshopId = document.getElementById('assign-workshop-select')?.value || null;
   if (!type) { showToast('Please select a category', 'error'); return; }
+  closeAssignModal();
+  await _doAssign(type, notes, workshopId);
+}
 
+async function _doAssign(type, notes, workshopId) {
   try {
     if (type === 'ignore') {
       await sbPatch('unassigned_payments', _currentAssignId, { status: 'ignored' });
-      showToast('Payment dismissed', 'success');
-    } else if (type === 'workshop') {
-      // Create payment record as workshop income
+      showToast('Payment skipped', 'success');
+    } else {
+      const categoryMap = { workshop: 'workshop', classes: 'class', general: 'general' };
+      const labelMap = { workshop: 'Workshop', classes: 'Classes', general: 'General Income' };
       const payId = 'PAY-' + Date.now();
       await sbPost('payments', {
-        id: payId, amount: _currentAssignAmount, payer_name: _currentAssignName,
-        type: 'income', category: 'workshop', payment_mode: 'Razorpay UPI',
+        id: payId,
+        amount: _currentAssignAmount,
+        payer_name: _currentAssignName,
+        type: 'income',
+        category: categoryMap[type] || type,
+        payment_mode: 'Razorpay UPI',
+        reference_id: type === 'workshop' ? (workshopId || null) : null,
         date: new Date().toISOString().split('T')[0],
         description: notes || `Assigned from unassigned payment ${_currentAssignId}`,
         synced_from_razorpay: true
       });
       await sbPatch('unassigned_payments', _currentAssignId, { status: 'assigned', notes: notes || null });
-      showToast('✓ Assigned to Workshops', 'success');
-      loadPayments();
-    } else if (type === 'classes') {
-      const payId = 'PAY-' + Date.now();
-      await sbPost('payments', {
-        id: payId, amount: _currentAssignAmount, payer_name: _currentAssignName,
-        type: 'income', category: 'class', payment_mode: 'Razorpay UPI',
-        date: new Date().toISOString().split('T')[0],
-        description: notes || `Assigned from unassigned payment ${_currentAssignId}`,
-        synced_from_razorpay: true
-      });
-      await sbPatch('unassigned_payments', _currentAssignId, { status: 'assigned', notes: notes || null });
-      showToast('✓ Assigned to Classes', 'success');
-      loadPayments();
-    } else if (type === 'general') {
-      const payId = 'PAY-' + Date.now();
-      await sbPost('payments', {
-        id: payId, amount: _currentAssignAmount, payer_name: _currentAssignName,
-        type: 'income', category: 'general', payment_mode: 'Razorpay UPI',
-        date: new Date().toISOString().split('T')[0],
-        description: notes || `Assigned from unassigned payment ${_currentAssignId}`,
-        synced_from_razorpay: true
-      });
-      await sbPatch('unassigned_payments', _currentAssignId, { status: 'assigned', notes: notes || null });
-      showToast('✓ Assigned as General Income', 'success');
+      showToast(`✓ Assigned to ${labelMap[type] || type}`, 'success');
       loadPayments();
     }
-
-    document.getElementById('modal-assignPayment') && document.getElementById('modal-assignPayment').classList.remove('open');
     loadUnassignedPayments();
   } catch (e) {
-    console.error('saveAssignPayment error:', e);
+    console.error('_doAssign error:', e);
     showToast('Error assigning payment: ' + e.message, 'error');
   }
 }
-
 
 // ── HIDE TABLE HEADERS WHEN EMPTY ──
 function updateTableVisibility(tbodyId, wrapClass) {
@@ -6519,14 +6611,63 @@ function setTableContent(tbodyId, html, wrapClass) {
   wrap.style.display = hasData ? '' : 'none';
 }
 
+
+// ── UNASSIGNED PAYMENTS SEARCH FILTER ──
+function filterUnassigned() {
+  const q = (document.getElementById('unassignedSearch')?.value || '').toLowerCase();
+  const rows = document.querySelectorAll('#unassignedContainer tr');
+  rows.forEach(row => {
+    if (row.querySelector('th')) return; // skip header
+    const text = row.textContent.toLowerCase();
+    row.style.display = q && !text.includes(q) ? 'none' : '';
+  });
+  const cards = document.querySelectorAll('#unassignedContainer .m-card');
+  cards.forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = q && !text.includes(q) ? 'none' : '';
+  });
+}
+
+// ── REASSIGN RAZORPAY PAYMENT ──
+let _reassignId = null;
+let _reassignRecord = null;
+
+function openReassignPayment(id, record) {
+  _reassignId = id;
+  _reassignRecord = record;
+  const modal = document.getElementById('modal-reassignPayment');
+  if (!modal) return;
+  document.getElementById('reassignInfo').innerHTML =
+    `<strong>${record.payer_name||'—'}</strong><br>Amount: <strong style="color:var(--moss)">+${fmt(record.amount)}</strong> · ${fmtDate(record.date)}`;
+  document.getElementById('reassign-category').value = record.category || '';
+  document.getElementById('reassign-reference').value = record.reference_id || '';
+  modal.classList.add('open');
+}
+
+async function saveReassign() {
+  const category = document.getElementById('reassign-category').value;
+  const reference = document.getElementById('reassign-reference').value;
+  if (!category) { showToast('Please select a category', 'error'); return; }
+  try {
+    await sbPatch('payments', _reassignId, { category, reference_id: reference || null });
+    document.getElementById('modal-reassignPayment').classList.remove('open');
+    showToast('✓ Payment updated', 'success');
+    loadPayments();
+  } catch(e) {
+    showToast('Error updating payment: ' + e.message, 'error');
+  }
+}
+
 </script>
 
 <!-- ── ASSIGN PAYMENT MODAL ── -->
-<div class="modal-overlay" id="modal-assignPayment" onclick="if(event.target===this)document.getElementById('modal-assignPayment') && document.getElementById('modal-assignPayment').classList.remove('open')">
-  <div class="modal" style="max-width:420px;">
+<div class="modal-overlay" id="modal-assignPayment" onclick="if(event.target===this)closeAssignModal()">
+  <div class="modal" style="max-width:440px;">
     <div class="modal-header">
       <div class="modal-title">Assign Payment</div>
-      <button class="modal-close" onclick="document.getElementById('modal-assignPayment') && document.getElementById('modal-assignPayment').classList.remove('open')">✕</button>
+      <button class="modal-close" onclick="closeAssignModal()" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(200,147,90,0.1);border:none;cursor:pointer;color:var(--clay-light);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
     <div class="modal-body">
       <div style="margin-bottom:1.25rem;">
@@ -6539,25 +6680,65 @@ function setTableContent(tbodyId, html, wrapClass) {
           <option value="workshop">Workshop participant</option>
           <option value="classes">Class fee payment</option>
           <option value="general">General income</option>
-          <option value="ignore">Ignore / dismiss</option>
+          <option value="ignore">Skip for now</option>
         </select>
       </div>
       <div class="form-group" id="assign-workshop-wrap" style="display:none;">
         <label class="form-label">Workshop</label>
-        <div id="assign-workshop-dd" class="custom-select-wrap-placeholder"></div>
+        <select class="form-input" id="assign-workshop-select">
+          <option value="">Loading workshops...</option>
+        </select>
       </div>
       <div class="form-group" id="assign-student-wrap" style="display:none;">
         <label class="form-label">Student</label>
-        <div id="assign-student-dd" class="custom-select-wrap-placeholder"></div>
+        <select class="form-input" id="assign-student-select">
+          <option value="">Loading students...</option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label">Notes (optional)</label>
-        <input type="text" class="form-input" id="assign-notes" placeholder="e.g. Yoga mat purchase, gig payment..."/>
+        <input type="text" class="form-input" id="assign-notes" placeholder="e.g. Gig payment, workshop fee..."/>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-dash" onclick="document.getElementById('modal-assignPayment') && document.getElementById('modal-assignPayment').classList.remove('open')">Cancel</button>
+    <div class="modal-footer" style="justify-content:flex-end;gap:0.75rem;">
+      <button class="btn-dash" onclick="closeAssignModal()">Cancel</button>
       <button class="btn-dash btn-dash-primary" onclick="saveAssignPayment()">Assign</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── REASSIGN PAYMENT MODAL ── -->
+<div class="modal-overlay" id="modal-reassignPayment" onclick="if(event.target===this)document.getElementById('modal-reassignPayment').classList.remove('open')">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-title">Edit Payment Category</div>
+      <button class="modal-close" onclick="document.getElementById('modal-reassignPayment').classList.remove('open')" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(200,147,90,0.1);border:none;cursor:pointer;color:var(--clay-light);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:1.25rem;">
+        <div id="reassignInfo" style="background:rgba(200,147,90,0.1);border:1px solid rgba(200,147,90,0.25);border-radius:10px;padding:1rem;font-size:0.95rem;color:var(--clay-light);"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-input" id="reassign-category">
+          <option value="">Select...</option>
+          <option value="workshop">Workshop</option>
+          <option value="class">Class</option>
+          <option value="general">General income</option>
+          <option value="gig">Gig / Performance</option>
+          <option value="misc">Misc</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reference (optional)</label>
+        <input type="text" class="form-input" id="reassign-reference" placeholder="e.g. WS-004 or student name"/>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:flex-end;gap:0.75rem;">
+      <button class="btn-dash" onclick="document.getElementById('modal-reassignPayment').classList.remove('open')">Cancel</button>
+      <button class="btn-dash btn-dash-primary" onclick="saveReassign()">Save</button>
     </div>
   </div>
 </div>
