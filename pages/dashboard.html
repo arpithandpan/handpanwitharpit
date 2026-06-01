@@ -76,6 +76,8 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 .empty-state-sub { font-size: 1rem; color: var(--text-light); max-width: 280px; line-height: 1.5; }
 /* Table cell wrapping empty state */
 td > .empty-state { padding: 3rem 1rem; white-space: normal; }
+/* Hide table wrapper when showing empty state */
+.dash-table-wrap.hidden-empty { display: none !important; }
 .search-empty-row td, tr:has(.empty-state) td {
   text-align: center !important;
   padding: 0 !important;
@@ -549,6 +551,8 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
 .dash-nav li a:hover { color: var(--clay-light); background: rgba(193,127,82,0.08); }
 .dash-nav li a.active { color: var(--clay-light); border-left-color: var(--clay); background: rgba(193,127,82,0.12); }
 .dash-nav li.admin-only a.active { color: var(--clay-light); border-left-color: var(--clay); background: rgba(193,127,82,0.12); }
+.dash-nav li.admin-only { display: block; }
+.dash-nav li.admin-only a { display: flex; width: 100%; box-sizing: border-box; }
 .dash-nav li a .icon { font-size: 1.15rem; width: 18px; text-align: center; }
 .dash-nav-divider { height: 1px; background: rgba(193,127,82,0.15); margin: 1rem 1.5rem; }
 
@@ -2054,6 +2058,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         </tr></thead>
         <tbody id="workshopsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       </div>
+      <div id="workshopsEmptyState" style="display:none;"></div>
       <div class="mobile-cards" id="workshopsCards"></div>
     </section>
 
@@ -2128,6 +2133,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         </tr></thead>
         <tbody id="participantsTable"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       </div>
+      <div id="participantsEmptyState" style="display:none;"></div>
       <div class="mobile-cards" id="participantsCards"></div>
     </section>
 
@@ -2189,7 +2195,8 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <th>Notes</th>
         </tr></thead>
         <tbody id="studentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
-        <div class="mobile-cards" id="studentsCards"></div>
+        <div id="studentsEmptyState" style="display:none;"></div>
+      <div class="mobile-cards" id="studentsCards"></div>
       </div>
     </section>
 
@@ -2342,7 +2349,8 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <th>Action</th>
         </tr></thead>
         <tbody id="paymentsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
-        <div class="mobile-cards" id="paymentsCards"></div>
+        <div id="paymentsEmptyState" style="display:none;"></div>
+      <div class="mobile-cards" id="paymentsCards"></div>
       </div>
     </section>
 
@@ -2382,13 +2390,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <div class="dash-section-subtitle">Payments received via general Razorpay link — tap Assign to categorise</div>
         </div>
       </div>
-      <div class="dash-table-wrap desktop-only" style="overflow-x:auto;">
-        <table class="desktop-table"><thead><tr>
-          <th>ID</th><th>Date</th><th>Name</th><th>Phone</th><th>Amount</th><th>Razorpay ID</th><th>Action</th>
-        </tr></thead>
-        <tbody id="unassignedTable"><tr><td colspan="7" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No unassigned payments yet 🎉</td></tr></tbody></table>
-      </div>
-      <div class="mobile-cards" id="unassignedCards"></div>
+      <div id="unassignedContainer"></div>
     </section>
 
     <section class="dash-section" id="section-leads">
@@ -2435,7 +2437,8 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th><th>Action</th>
         </tr></thead>
         <tbody id="leadsTable"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody></table>
-        <div class="mobile-cards" id="leadsCards"></div>
+        <div id="leadsEmptyState" style="display:none;"></div>
+      <div class="mobile-cards" id="leadsCards"></div>
       </div>
     </section>
 
@@ -3665,6 +3668,8 @@ async function loadWorkshops() {
     const tbl = document.getElementById('workshopsTable');
     if (tbl) tbl.innerHTML = ws.map(w => `<tr data-year="${(w.date||'').substring(0,4)}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.4rem;align-items:center;flex-wrap:nowrap;">${admin?`<button class="icon-action-btn" title="Edit" onclick="openEdit('workshops','${w.id}')">${PENCIL}</button>`:''}<button class="icon-action-btn" title="Check-in" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')">${CHECK_ICON}</button>${admin?`<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">${TRASH_ICON}</button>`:''}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No workshops yet</td></tr>`;
 
+    if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; } } const _es_workshopsEmptyState = document.getElementById('workshopsEmptyState'); if (_es_workshopsEmptyState) { _es_workshopsEmptyState.innerHTML = EMPTY_STATES.workshops; const _hr = document.getElementById('workshopsTable'); _es_workshopsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
+    const _es_workshopsTable = document.getElementById('workshopsEmptyState'); if (_es_workshopsTable) { const _hasRows2 = document.getElementById('workshopsTable') && document.getElementById('workshopsTable').querySelectorAll('tr').length > 0 && !document.getElementById('workshopsTable').querySelector('[colspan]'); _es_workshopsTable.style.display = _hasRows2 ? 'none' : ''; }
     const wsCardsEl = document.getElementById('workshopsCards');
     if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `
       <div class="m-card" id="wscard-${w.id}" style="border-radius:12px;overflow:hidden;padding:0;">
@@ -3799,6 +3804,8 @@ async function loadParticipants() {
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP && p.payment_mode !== 'Razorpay UPI'; return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},this)">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" title="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No participants yet</td></tr>`;
 
+    if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
+    const _es_participantsTable = document.getElementById('participantsEmptyState'); if (_es_participantsTable) { const _hasRows2 = document.getElementById('participantsTable') && document.getElementById('participantsTable').querySelectorAll('tr').length > 0 && !document.getElementById('participantsTable').querySelector('[colspan]'); _es_participantsTable.style.display = _hasRows2 ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
     if (parCards) parCards.innerHTML = parts.map(p => `
       <div class="m-card" style="margin-bottom:1.25rem;" data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}">
@@ -3837,7 +3844,8 @@ async function loadStudents() {
     document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td>${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td>${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.students}
     </td></tr>`;
-    const stuCards = document.getElementById('studentsCards');
+
+  const _wrap_studentsTable = document.getElementById('studentsTable') && document.getElementById('studentsTable').closest('.dash-table-wrap'); if (_wrap_studentsTable) { const _hasData_studentsTable = document.getElementById('studentsTable').querySelectorAll('tr').length > 0 && !document.getElementById('studentsTable').querySelector('[colspan]'); _wrap_studentsTable.style.display = _hasData_studentsTable ? '' : 'none'; } const _es_studentsEmptyState = document.getElementById('studentsEmptyState'); if (_es_studentsEmptyState) { _es_studentsEmptyState.innerHTML = EMPTY_STATES.students; _es_studentsEmptyState.style.display = _hasData_studentsTable ? 'none' : ''; }    const stuCards = document.getElementById('studentsCards');
     if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
   } catch(e) { showToast('Error loading students', 'error'); } finally { hideLoader(); }
 }
@@ -3880,7 +3888,8 @@ async function loadPayments() {
     document.getElementById('paymentsTable').innerHTML = pays.map(p => { const isGenExp = p.is_general_expense; const dataType = isGenExp ? 'general_expense' : (p.type||''); const typeBadge = isGenExp ? `<span class="badge badge-clay">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span>`; return `<tr class="${p.archived?'archived-row':''}" data-type="${dataType}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td>${typeBadge}</td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td>${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;">${p.synced_from_razorpay !== true?`<button class="icon-action-btn" title="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button>`:''}<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`; }).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.payments}
     </td></tr>`;
-    const payCards = document.getElementById('paymentsCards');
+
+  const _wrap_paymentsTable = document.getElementById('paymentsTable') && document.getElementById('paymentsTable').closest('.dash-table-wrap'); if (_wrap_paymentsTable) { const _hasData_paymentsTable = document.getElementById('paymentsTable').querySelectorAll('tr').length > 0 && !document.getElementById('paymentsTable').querySelector('[colspan]'); _wrap_paymentsTable.style.display = _hasData_paymentsTable ? '' : 'none'; } const _es_paymentsEmptyState = document.getElementById('paymentsEmptyState'); if (_es_paymentsEmptyState) { _es_paymentsEmptyState.innerHTML = EMPTY_STATES.payments; _es_paymentsEmptyState.style.display = _hasData_paymentsTable ? 'none' : ''; }    const payCards = document.getElementById('paymentsCards');
     if (payCards) payCards.innerHTML = pays.map(p => { const isGenExpC = p.is_general_expense; const dataTypeC = isGenExpC ? 'general_expense' : (p.type||''); const typeBadgeC = isGenExpC ? `<span class="badge badge-clay" style="float:right;margin-top:-2px">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span>`; return `<div class="m-card ${p.archived?'archived-row':''}" data-type="${dataTypeC}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}${typeBadgeC}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`; }).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.payments + '</div>';
   } catch(e) { showToast('Error loading payments', 'error'); } finally { hideLoader(); }
 }
@@ -3899,7 +3908,8 @@ async function loadLeads() {
     document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td>${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td>${l.notes||'—'}</td><td>${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" title="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.leads}
     </td></tr>`;
-    const leadsCards = document.getElementById('leadsCards');
+
+  const _wrap_leadsTable = document.getElementById('leadsTable') && document.getElementById('leadsTable').closest('.dash-table-wrap'); if (_wrap_leadsTable) { const _hasData_leadsTable = document.getElementById('leadsTable').querySelectorAll('tr').length > 0 && !document.getElementById('leadsTable').querySelector('[colspan]'); _wrap_leadsTable.style.display = _hasData_leadsTable ? '' : 'none'; } const _es_leadsEmptyState = document.getElementById('leadsEmptyState'); if (_es_leadsEmptyState) { _es_leadsEmptyState.innerHTML = EMPTY_STATES.leads; _es_leadsEmptyState.style.display = _hasData_leadsTable ? 'none' : ''; }    const leadsCards = document.getElementById('leadsCards');
     if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
@@ -5502,6 +5512,11 @@ function populatePaymentsCategoryDropdown(payments) {
 
 // ── EMPTY STATES ──
 const EMPTY_STATES = {
+  unassigned_payments: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">💸</div>
+    <div class="empty-state-title">No unassigned payments</div>
+    <div class="empty-state-sub">Payments received via your general Razorpay link will appear here for you to assign</div>
+  </div>`,
   search: `<div class="empty-state">
     <div style="font-size:3rem;margin-bottom:0.5rem;">🔍</div>
     <div class="empty-state-title">Start typing to search</div>
@@ -6309,15 +6324,12 @@ let _currentAssignAmount = 0;
 let _currentAssignName = '';
 
 async function loadUnassignedPayments() {
-  const tbl = document.getElementById('unassignedTable');
-  const cards = document.getElementById('unassignedCards');
+  const container = document.getElementById('unassignedContainer');
+  if (!container) return;
 
-  const EMPTY_TBL = '<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No unassigned payments yet 🎉</td></tr>';
-  const EMPTY_CARDS = '<div class="mobile-cards-empty">No unassigned payments yet 🎉</div>';
+  const emptyHTML = EMPTY_STATES.unassigned_payments;
 
-  // Show empty state immediately as fallback
-  if (tbl) tbl.innerHTML = EMPTY_TBL;
-  if (cards) cards.innerHTML = EMPTY_CARDS;
+  container.innerHTML = '<div class="empty-state"><div class="spinner"></div></div>';
 
   try {
     const url = 'https://sabdevsguuobgqjputtv.supabase.co/rest/v1/unassigned_payments?select=*&status=eq.pending&order=date.desc';
@@ -6327,24 +6339,35 @@ async function loadUnassignedPayments() {
         'Authorization': 'Bearer sb_publishable_xRwX_jpWmLtNjuQJRyQfGQ_defolODk'
       }
     });
-    if (!res.ok) { console.error('unassigned_payments fetch failed:', res.status); return; }
+
+    if (!res.ok) { container.innerHTML = emptyHTML; return; }
     const items = await res.json();
     updateUnassignedBadge(items.length);
+
+    if (!items.length) { container.innerHTML = emptyHTML; return; }
+
     const adminU = isAdmin();
 
-    if (tbl) {
-      tbl.innerHTML = items.length === 0 ? EMPTY_TBL : items.map(p => `<tr>
-        <td style="font-weight:600;color:var(--clay)">${p.id}</td>
-        <td>${fmtDate(p.date)}</td>
-        <td>${p.payer_name||'—'}</td>
-        <td>${p.payer_phone||'—'}</td>
-        <td style="font-weight:600;color:var(--moss)">+${fmt(p.amount)}</td>
-        <td style="font-size:0.8rem;color:var(--text-light)">${p.razorpay_payment_id||'—'}</td>
-        <td>${adminU ? `<button class="btn-dash btn-dash-primary" style="font-size:0.85rem;padding:0.4rem 1rem;" onclick="openAssignPayment('${p.id}',${p.amount},'${(p.payer_name||'').replace(/'/g,"\'")}','${p.payer_phone||''}')">Assign</button>` : '—'}</td>
-      </tr>`).join('');
-    }
-    if (cards) {
-      cards.innerHTML = items.length === 0 ? EMPTY_CARDS : items.map(p => `<div class="m-card">
+    // Desktop table
+    const desktopHTML = `<div class="dash-table-wrap desktop-only" style="overflow-x:auto;">
+      <table class="desktop-table"><thead><tr>
+        <th>ID</th><th>Date</th><th>Name</th><th>Phone</th><th>Amount</th><th>Razorpay ID</th><th>Action</th>
+      </tr></thead><tbody>
+        ${items.map(p => `<tr>
+          <td style="font-weight:600;color:var(--clay)">${p.id}</td>
+          <td>${fmtDate(p.date)}</td>
+          <td>${p.payer_name||'—'}</td>
+          <td>${p.payer_phone||'—'}</td>
+          <td style="font-weight:600;color:var(--moss)">+${fmt(p.amount)}</td>
+          <td style="font-size:0.8rem;color:var(--text-light)">${p.razorpay_payment_id||'—'}</td>
+          <td>${adminU ? `<button class="btn-dash btn-dash-primary" style="font-size:0.85rem;padding:0.4rem 1rem;" onclick="openAssignPayment('${p.id}',${p.amount},'${(p.payer_name||'').replace(/'/g,"\'")}','${p.payer_phone||''}')">Assign</button>` : '—'}</td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>`;
+
+    // Mobile cards
+    const mobileHTML = `<div class="mobile-cards">
+      ${items.map(p => `<div class="m-card">
         <div class="m-card-title" style="color:var(--moss)">+${fmt(p.amount)}<span style="float:right;font-size:0.8rem;color:var(--clay);font-weight:400">${p.id}</span></div>
         <div class="m-card-row"><span class="m-card-label">Name</span><span class="m-card-val">${p.payer_name||'—'}</span></div>
         <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.payer_phone||'—'}</span></div>
@@ -6353,10 +6376,14 @@ async function loadUnassignedPayments() {
         ${adminU ? `<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">
           <button class="btn-dash btn-dash-primary" onclick="openAssignPayment('${p.id}',${p.amount},'${(p.payer_name||'').replace(/'/g,"\'")}','${p.payer_phone||''}')">Assign</button>
         </div>` : ''}
-      </div>`).join('');
-    }
+      </div>`).join('')}
+    </div>`;
+
+    container.innerHTML = desktopHTML + mobileHTML;
+
   } catch(e) {
     console.error('loadUnassignedPayments error:', e);
+    container.innerHTML = emptyHTML;
   }
 }
 
@@ -6443,6 +6470,29 @@ async function saveAssignPayment() {
     console.error('saveAssignPayment error:', e);
     showToast('Error assigning payment: ' + e.message, 'error');
   }
+}
+
+
+// ── HIDE TABLE HEADERS WHEN EMPTY ──
+function updateTableVisibility(tbodyId, wrapClass) {
+  const tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
+  const wrap = tbody.closest('.' + wrapClass);
+  if (!wrap) return;
+  const isEmpty = tbody.querySelector('.empty-state') || tbody.querySelector('td[colspan]');
+  wrap.style.display = isEmpty ? 'none' : '';
+}
+
+// Override innerHTML setter for table bodies to auto-toggle wrapper visibility
+function setTableContent(tbodyId, html, wrapClass) {
+  const tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
+  tbody.innerHTML = html;
+  const wrap = tbody.closest(wrapClass ? '.' + wrapClass : '.dash-table-wrap');
+  if (!wrap) return;
+  // Check if content is just an empty state
+  const hasData = tbody.querySelectorAll('tr').length > 0 && !tbody.querySelector('.empty-state');
+  wrap.style.display = hasData ? '' : 'none';
 }
 
 </script>
