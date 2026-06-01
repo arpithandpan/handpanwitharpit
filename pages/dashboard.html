@@ -6430,7 +6430,8 @@ function openAssignPayment(id, amount, name, phone) {
   document.getElementById('assign-notes').value = '';
   document.getElementById('assign-workshop-wrap').style.display = 'none';
   document.getElementById('assign-student-wrap').style.display = 'none';
-  openModal('assignPayment');
+  const modal = document.getElementById('modal-assignPayment');
+  if (modal) modal.classList.add('open');
 }
 
 function onAssignTypeChange() {
@@ -6487,7 +6488,7 @@ async function saveAssignPayment() {
       loadPayments();
     }
 
-    closeModal('assignPayment');
+    document.getElementById('modal-assignPayment') && document.getElementById('modal-assignPayment').classList.remove('open');
     loadUnassignedPayments();
   } catch (e) {
     console.error('saveAssignPayment error:', e);
@@ -6521,11 +6522,11 @@ function setTableContent(tbodyId, html, wrapClass) {
 </script>
 
 <!-- ── ASSIGN PAYMENT MODAL ── -->
-<div class="modal-overlay" id="modal-assignPayment" onclick="if(event.target===this)closeModal('assignPayment')">
+<div class="modal-overlay" id="modal-assignPayment" onclick="if(event.target===this)document.getElementById('modal-assignPayment') && document.getElementById('modal-assignPayment').classList.remove('open')">
   <div class="modal" style="max-width:420px;">
     <div class="modal-header">
       <div class="modal-title">Assign Payment</div>
-      <button class="modal-close" onclick="closeModal('assignPayment')">✕</button>
+      <button class="modal-close" onclick="document.getElementById('modal-assignPayment') && document.getElementById('modal-assignPayment').classList.remove('open')">✕</button>
     </div>
     <div class="modal-body">
       <div style="margin-bottom:1.25rem;">
@@ -6555,7 +6556,7 @@ function setTableContent(tbodyId, html, wrapClass) {
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-dash" onclick="closeModal('assignPayment')">Cancel</button>
+      <button class="btn-dash" onclick="document.getElementById('modal-assignPayment') && document.getElementById('modal-assignPayment').classList.remove('open')">Cancel</button>
       <button class="btn-dash btn-dash-primary" onclick="saveAssignPayment()">Assign</button>
     </div>
   </div>
