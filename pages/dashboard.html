@@ -5761,8 +5761,8 @@ function makeDatePicker(nativeInput) {
         cal.style.width = '';
         cal.style.display = 'block';
       }, () => {
-        // On close: move cal back to wrap so it's not orphaned
-        wrap.appendChild(cal);
+        // On close: move cal back to body so it's not orphaned
+        document.body.appendChild(cal);
         cal.classList.remove('open');
         cal.style.position = '';
         cal.style.display = '';
@@ -5804,7 +5804,7 @@ function makeDatePicker(nativeInput) {
 
   updateBtn();
   wrap.appendChild(btn);
-  wrap.appendChild(cal);
+  document.body.appendChild(cal); // append to body so fixed positioning works correctly
   nativeInput.parentNode.insertBefore(wrap, nativeInput.nextSibling);
 }
 
