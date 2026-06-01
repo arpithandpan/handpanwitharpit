@@ -6455,7 +6455,8 @@ async function loadUnassignedPayments() {
     container.querySelectorAll('[data-remove-id]').forEach(btn => {
       btn.addEventListener('click', async () => {
         const id = btn.dataset.removeId;
-        if (!confirm('Remove this payment from the list?')) return;
+        const ok = await customConfirm('Remove this payment?', 'It will be moved out of the unassigned list.');
+        if (!ok) return;
         await sbPatch('unassigned_payments', id, { status: 'removed' });
         showToast('Payment removed', 'success');
         loadUnassignedPayments();
