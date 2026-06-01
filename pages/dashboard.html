@@ -3866,7 +3866,23 @@ async function loadWsPax(wsId) {
 }
 
 async function toggleWsPaxCheckIn(id, currentState, name, wsId) {
-  const newState = !currentState;
+  if (currentState) {
+    _checkInPending = { id, name, wsId, isWsPax: true };
+    document.getElementById('archiveConfirmTitle').textContent = 'Remove check-in?';
+    document.getElementById('archiveConfirmDesc').textContent = name + ' will be marked as not checked in.';
+    document.getElementById('archiveConfirmBtn').textContent = 'Remove';
+    document.getElementById('archiveConfirmBtn').onclick = async () => {
+      closeArchiveConfirm();
+      await _doWsPaxCheckIn(id, false, name, wsId);
+    };
+    document.getElementById('archiveConfirmModal').style.display = 'flex';
+    lockScroll();
+    return;
+  }
+  await _doWsPaxCheckIn(id, true, name, wsId);
+}
+
+async function _doWsPaxCheckIn(id, newState, name, wsId) {
   const cb = document.getElementById('wsp-cb-' + id);
   if (cb) {
     const input = cb.querySelector('input[type="checkbox"]');
@@ -3879,6 +3895,8 @@ async function toggleWsPaxCheckIn(id, currentState, name, wsId) {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ checked_in: newState })
     });
+    showToast(newState ? '✓ ' + name + ' checked in!' : '✓ Check-in removed', 'success');
+    if (wsId) loadWsPax(wsId);
   } catch(e) { console.error('Check-in error:', e); }
 }
 
@@ -4918,7 +4936,17 @@ function renderCheckinGrid() {
 }
 
 async function checkinModeToggle(id, currentState, name) {
-  const newState = !currentState;
+  if (currentState) {
+    _checkInPending = { id, name };
+    document.getElementById('archiveConfirmTitle').textContent = 'Remove check-in?';
+    document.getElementById('archiveConfirmDesc').textContent = name + ' will be marked as not checked in.';
+    document.getElementById('archiveConfirmBtn').textContent = 'Remove';
+    document.getElementById('archiveConfirmBtn').onclick = confirmCheckOut;
+    document.getElementById('archiveConfirmModal').style.display = 'flex';
+    lockScroll();
+    return;
+  }
+  const newState = true;
   const card = document.getElementById('cc-' + id);
   const btn = document.getElementById('cb-' + id);
 
