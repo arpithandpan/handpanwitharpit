@@ -548,6 +548,7 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
 }
 .dash-nav li a:hover { color: var(--clay-light); background: rgba(193,127,82,0.08); }
 .dash-nav li a.active { color: var(--clay-light); border-left-color: var(--clay); background: rgba(193,127,82,0.12); }
+.dash-nav li.admin-only a.active { color: var(--clay-light); border-left-color: var(--clay); background: rgba(193,127,82,0.12); }
 .dash-nav li a .icon { font-size: 1.15rem; width: 18px; text-align: center; }
 .dash-nav-divider { height: 1px; background: rgba(193,127,82,0.15); margin: 1rem 1.5rem; }
 
@@ -2385,7 +2386,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         <table class="desktop-table"><thead><tr>
           <th>ID</th><th>Date</th><th>Name</th><th>Phone</th><th>Amount</th><th>Razorpay ID</th><th>Action</th>
         </tr></thead>
-        <tbody id="unassignedTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <tbody id="unassignedTable"><tr><td colspan="7" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No unassigned payments yet 🎉</td></tr></tbody></table>
       </div>
       <div class="mobile-cards" id="unassignedCards"></div>
     </section>
@@ -3552,8 +3553,7 @@ function loadSection(name) {
   else if (name === 'unassigned-payments') loadUnassignedPayments();
   else if (name === 'insights') loadInsights();
   else if (name === 'bin') { loadBin(); }
-  else if (name === 'notifications') { loadNotifications();
-  loadUnassignedPayments(); }
+  else if (name === 'notifications') { loadNotifications(); }
   else if (name === 'settings') { loadSettings(); checkAllConnectors(true); }
 }
 
