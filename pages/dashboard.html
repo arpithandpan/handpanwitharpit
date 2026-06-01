@@ -1853,10 +1853,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       Unassigned Payments <span id="mobileUnassignedBadge" style="display:none;background:var(--clay);color:#1a1208;font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;"></span>
     </a>
-    <a href="#" class="admin-only" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('unassigned',this);toggleMobileMenu()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Unassigned <span id="mobileUnassignedCount" style="font-size:0.8em;background:rgba(200,100,80,0.25);color:#e07070;border-radius:10px;padding:1px 7px;margin-left:4px;"></span>
-    </a>
+
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('leads',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Leads
@@ -2485,7 +2482,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       </div>
       <div class="dash-table-wrap" style="border-radius:8px;">
         <div id="notificationsContainer">
-          <div class="notif-empty" style="padding:2.5rem 1rem;text-align:center;"><div style="font-size:2rem;margin-bottom:0.75rem;">🔔</div><div style="color:var(--bark);font-weight:500;margin-bottom:0.4rem;">No notifications yet</div><div style="font-size:0.85rem;color:var(--text-light);">Activity and alerts from your dashboard will appear here.</div></div>
+          <div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🔔</div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>
         </div>
       </div>
     </section>
@@ -2505,7 +2502,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         </div>
       </div>
       <div id="binContainer">
-        <div class="notif-empty">🗑 Bin is empty.<br><small>Items you move to bin will appear here.</small></div>
+        <div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🗑️</div><div class="empty-state-title">Bin is empty</div><div class="empty-state-sub">Items you move to bin will appear here</div></div>
       </div>
     </section>
 
@@ -3845,7 +3842,12 @@ async function loadStudents() {
       ${EMPTY_STATES.students}
     </td></tr>`;
 
-  const _wrap_studentsTable = document.getElementById('studentsTable') && document.getElementById('studentsTable').closest('.dash-table-wrap'); if (_wrap_studentsTable) { const _hasData_studentsTable = document.getElementById('studentsTable').querySelectorAll('tr').length > 0 && !document.getElementById('studentsTable').querySelector('[colspan]'); _wrap_studentsTable.style.display = _hasData_studentsTable ? '' : 'none'; } const _es_studentsEmptyState = document.getElementById('studentsEmptyState'); if (_es_studentsEmptyState) { _es_studentsEmptyState.innerHTML = EMPTY_STATES.students; _es_studentsEmptyState.style.display = _hasData_studentsTable ? 'none' : ''; }    const stuCards = document.getElementById('studentsCards');
+  const _t_studentsTable = document.getElementById('studentsTable');
+  const _hd_studentsTable = _t_studentsTable && _t_studentsTable.querySelectorAll('tr').length > 0 && !_t_studentsTable.querySelector('[colspan]');
+  const _w_studentsTable = _t_studentsTable && _t_studentsTable.closest('.dash-table-wrap');
+  if (_w_studentsTable) _w_studentsTable.style.display = _hd_studentsTable ? '' : 'none';
+  const _e_studentsTable = document.getElementById('studentsTableEmptyState');
+  if (_e_studentsTable) { _e_studentsTable.innerHTML = EMPTY_STATES.students; _e_studentsTable.style.display = _hd_studentsTable ? 'none' : ''; }
     if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
   } catch(e) { showToast('Error loading students', 'error'); } finally { hideLoader(); }
 }
@@ -3889,7 +3891,12 @@ async function loadPayments() {
       ${EMPTY_STATES.payments}
     </td></tr>`;
 
-  const _wrap_paymentsTable = document.getElementById('paymentsTable') && document.getElementById('paymentsTable').closest('.dash-table-wrap'); if (_wrap_paymentsTable) { const _hasData_paymentsTable = document.getElementById('paymentsTable').querySelectorAll('tr').length > 0 && !document.getElementById('paymentsTable').querySelector('[colspan]'); _wrap_paymentsTable.style.display = _hasData_paymentsTable ? '' : 'none'; } const _es_paymentsEmptyState = document.getElementById('paymentsEmptyState'); if (_es_paymentsEmptyState) { _es_paymentsEmptyState.innerHTML = EMPTY_STATES.payments; _es_paymentsEmptyState.style.display = _hasData_paymentsTable ? 'none' : ''; }    const payCards = document.getElementById('paymentsCards');
+  const _payTbl = document.getElementById('paymentsTable');
+  const _hasData_payments = _payTbl && _payTbl.querySelectorAll('tr').length > 0 && !_payTbl.querySelector('[colspan]');
+  const _wrap_payments = _payTbl && _payTbl.closest('.dash-table-wrap');
+  if (_wrap_payments) _wrap_payments.style.display = _hasData_payments ? '' : 'none';
+  const _es_payments = document.getElementById('paymentsEmptyState');
+  if (_es_payments) { _es_payments.innerHTML = EMPTY_STATES.payments; _es_payments.style.display = _hasData_payments ? 'none' : ''; }    const payCards = document.getElementById('paymentsCards');
     if (payCards) payCards.innerHTML = pays.map(p => { const isGenExpC = p.is_general_expense; const dataTypeC = isGenExpC ? 'general_expense' : (p.type||''); const typeBadgeC = isGenExpC ? `<span class="badge badge-clay" style="float:right;margin-top:-2px">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span>`; return `<div class="m-card ${p.archived?'archived-row':''}" data-type="${dataTypeC}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}${typeBadgeC}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${p.payment_mode||'—'}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`; }).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.payments + '</div>';
   } catch(e) { showToast('Error loading payments', 'error'); } finally { hideLoader(); }
 }
@@ -3909,7 +3916,12 @@ async function loadLeads() {
       ${EMPTY_STATES.leads}
     </td></tr>`;
 
-  const _wrap_leadsTable = document.getElementById('leadsTable') && document.getElementById('leadsTable').closest('.dash-table-wrap'); if (_wrap_leadsTable) { const _hasData_leadsTable = document.getElementById('leadsTable').querySelectorAll('tr').length > 0 && !document.getElementById('leadsTable').querySelector('[colspan]'); _wrap_leadsTable.style.display = _hasData_leadsTable ? '' : 'none'; } const _es_leadsEmptyState = document.getElementById('leadsEmptyState'); if (_es_leadsEmptyState) { _es_leadsEmptyState.innerHTML = EMPTY_STATES.leads; _es_leadsEmptyState.style.display = _hasData_leadsTable ? 'none' : ''; }    const leadsCards = document.getElementById('leadsCards');
+  const _t_leadsTable = document.getElementById('leadsTable');
+  const _hd_leadsTable = _t_leadsTable && _t_leadsTable.querySelectorAll('tr').length > 0 && !_t_leadsTable.querySelector('[colspan]');
+  const _w_leadsTable = _t_leadsTable && _t_leadsTable.closest('.dash-table-wrap');
+  if (_w_leadsTable) _w_leadsTable.style.display = _hd_leadsTable ? '' : 'none';
+  const _e_leadsTable = document.getElementById('leadsTableEmptyState');
+  if (_e_leadsTable) { _e_leadsTable.innerHTML = EMPTY_STATES.leads; _e_leadsTable.style.display = _hd_leadsTable ? 'none' : ''; }
     if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;padding-top:1rem;margin-top:1rem;">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-archive" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
@@ -4258,7 +4270,7 @@ const BIN_TABLES = [
 async function loadBin() {
   const container = document.getElementById('binContainer');
   if (!container) return;
-  container.innerHTML = '<div class="notif-empty"><div class="spinner" style="margin-bottom:1rem;"></div>Loading bin...</div>';
+  container.innerHTML = '<div class="empty-state"><div class="spinner" style="margin-bottom:1rem;"></div>Loading bin...</div>';
   try {
     let allItems = [];
     for (const t of BIN_TABLES) {
@@ -4271,7 +4283,7 @@ async function loadBin() {
     }
     updateBinCount(allItems.length);
     if (!allItems.length) {
-      container.innerHTML = '<div class="notif-empty">🗑 Bin is empty.<br><small>Items you move to bin will appear here.</small></div>';
+      container.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🗑️</div><div class="empty-state-title">Bin is empty</div><div class="empty-state-sub">Items you move to bin will appear here</div></div>';
       return;
     }
     const groups = {};
@@ -4329,7 +4341,7 @@ async function loadBin() {
       </div>
     `).join('');
   } catch(e) {
-    container.innerHTML = '<div class="notif-empty">Could not load bin. Check your connection.</div>';
+    container.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">⚠️</div><div class="empty-state-title">Could not load bin</div><div class="empty-state-sub">Check your connection and try again</div></div>';
   }
 }
 
@@ -4569,9 +4581,9 @@ document.addEventListener('touchmove', function(e) {
 async function loadNotifications() {
   const container = document.getElementById('notificationsContainer');
   const actions = document.getElementById('notifActions');
-  const emptyState = '<div class="notif-empty" style="padding:2.5rem 1rem;text-align:center;"><div style="font-size:2rem;margin-bottom:0.75rem;">🔔</div><div style="color:var(--bark);font-weight:500;margin-bottom:0.4rem;">No notifications yet</div><div style="font-size:0.85rem;color:var(--text-light);">Activity and alerts from your dashboard will appear here.</div></div>';
+  const emptyState = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🔔</div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>';
   if (actions) actions.style.display = 'none';
-  container.innerHTML = '<div class="notif-empty"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>';
+  container.innerHTML = '<div class="empty-state"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>';
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 6000);
@@ -4596,7 +4608,7 @@ function renderNotifications(items) {
   const el = document.getElementById('notificationsContainer');
   const actions = document.getElementById('notifActions');
   if (!items.length) {
-    el.innerHTML = '<div class="notif-empty">🔔 No notifications yet.<br><small>Payment events and system alerts will appear here.</small></div>';
+    el.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🔔</div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Payment events and system alerts will appear here</div></div>';
     if (actions) actions.style.display = 'none';
     return;
   }
