@@ -2858,6 +2858,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ws-date"/></div>
     </div>
     <div class="form-group"><label class="form-label">Venue</label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
+    <div class="form-group"><label class="form-label">Razorpay Payment Page ID <span style="font-size:0.82rem;color:var(--text-light);font-weight:400;text-transform:none;letter-spacing:0;">(from Razorpay Dashboard — for auto-assigning workshop payments)</span></label><input type="text" class="form-input" id="ws-rzp-page-id" placeholder="e.g. pl_SvhpECu2FHPr3U"/></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">BMS Participants</label><input type="number" class="form-input" id="ws-bms" placeholder="0"/></div>
       <div class="form-group"><label class="form-label">UPI Participants</label><input type="number" class="form-input" id="ws-upi" placeholder="0"/></div>
@@ -3262,7 +3263,7 @@ function logout() {
 const FORM_FIELDS = {
   addPayment:     ['pay-date','pay-amount','pay-name','pay-desc','pay-ref'],
   addLead:        ['lead-name','lead-phone','lead-budget','lead-followup','lead-notes'],
-  addWorkshop:    ['ws-date','ws-venue','ws-bms','ws-upi','ws-rzp','ws-price','ws-venue-rent','ws-hp-rent','ws-porter','ws-misc'],
+  addWorkshop:    ['ws-date','ws-venue','ws-rzp-page-id','ws-bms','ws-upi','ws-rzp','ws-price','ws-venue-rent','ws-hp-rent','ws-porter','ws-misc'],
   addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-notes'],
   addFeePayment:  ['fee-amount','fee-notes'],
   addParticipant:  ['par-name','par-phone','par-amount','par-date','par-notes'],
@@ -4082,7 +4083,8 @@ async function saveWorkshop() {
     const bms=parseInt(document.getElementById('ws-bms').value)||0, upi=parseInt(document.getElementById('ws-upi').value)||0, rzp=parseInt(document.getElementById('ws-rzp').value)||0, price=parseFloat(document.getElementById('ws-price').value)||0;
     const venueRent=parseFloat(document.getElementById('ws-venue-rent').value)||0, hpRent=parseFloat(document.getElementById('ws-hp-rent').value)||0, porter=parseFloat(document.getElementById('ws-porter').value)||0, misc=parseFloat(document.getElementById('ws-misc').value)||0;
     const totalPax=bms+upi+rzp, totalRevenue=totalPax*price, totalExpense=venueRent+hpRent+porter+misc, netProfit=totalRevenue-totalExpense;
-    const body = { id:document.getElementById('ws-id').value, date:document.getElementById('ws-date').value, venue:document.getElementById('ws-venue').value, bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0 };
+    const rzpPageId = (document.getElementById('ws-rzp-page-id')?.value||'').trim()||null;
+    const body = { id:document.getElementById('ws-id').value, date:document.getElementById('ws-date').value, venue:document.getElementById('ws-venue').value, razorpay_page_id:rzpPageId, bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0 };
     await sbPost('workshops', body); closeFormPage('addWorkshop'); resetForm('addWorkshop'); loadWorkshops(); showToast('✓ Workshop saved successfully!','success');
   } catch(e) { console.error('saveWorkshop error:', e); showToast('Error saving workshop: ' + e.message,'error'); }
 }
@@ -4967,6 +4969,7 @@ function buildEditForm(entity, r) {
   if (entity === 'workshops') return `
     ${row(readOnly('Workshop ID', r.id), fi('Date','ws-date','date',r.date))}
     ${fi('Venue','ws-venue','text',r.venue)}
+    <div class="form-group"><label class="form-label">Razorpay Payment Page ID <span style="font-size:0.82rem;color:var(--text-light);font-weight:400;text-transform:none;letter-spacing:0;">(for auto-assigning workshop payments)</span></label><input type="text" class="form-input" id="ws-rzp-page-id" value="${r.razorpay_page_id||''}" placeholder="e.g. pl_SvhpECu2FHPr3U"/></div>
     ${row(fi('BMS Participants','ws-bms','number',r.bms_pax||0), fi('UPI Participants','ws-upi','number',r.upi_pax||0))}
     ${row(fi('Razorpay Participants','ws-rzp','number',r.razorpay_pax||0), fi('Price per Head (₹)','ws-price','number',r.price_per_head||0))}
     ${row(fi('Venue Rent (₹)','ws-venue-rent','number',r.venue_rent||0), fi('Handpan Rental (₹)','ws-hp-rent','number',r.handpan_rental||0))}
@@ -5025,7 +5028,7 @@ async function saveEdit() {
       const bms=parseInt(g('ws-bms'))||0, upi=parseInt(g('ws-upi'))||0, rzp=parseInt(g('ws-rzp'))||0, price=parseFloat(g('ws-price'))||0;
       const venueRent=parseFloat(g('ws-venue-rent'))||0, hpRent=parseFloat(g('ws-hp-rent'))||0, porter=parseFloat(g('ws-porter'))||0, misc=parseFloat(g('ws-misc'))||0;
       const totalPax=bms+upi+rzp, totalRevenue=totalPax*price, totalExpense=venueRent+hpRent+porter+misc, netProfit=totalRevenue-totalExpense;
-      body = { date:gd('ws-date'), venue:g('ws-venue'), bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0 };
+      body = { date:gd('ws-date'), venue:g('ws-venue'), razorpay_page_id:(g('ws-rzp-page-id')||'').trim()||null, bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0 };
     } else if (_editEntity === 'participants') {
       body = { full_name:g('par-name'), phone:g('par-phone')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), date:gd('par-date'), notes:g('par-notes')||null };
     } else if (_editEntity === 'students') {
@@ -5846,10 +5849,17 @@ function initDatePickers() {
 document.addEventListener('scroll', (e) => {
   document.querySelectorAll('.date-picker-cal.open').forEach(c => {
     c.classList.remove('open');
-    // Find the btn that owns this cal (search in all date-picker-wraps)
     document.querySelectorAll('.date-picker-btn.open').forEach(b => b.classList.remove('open'));
   });
 }, true);
+
+// Close date picker on click outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.date-picker-cal') && !e.target.closest('.date-picker-btn')) {
+    document.querySelectorAll('.date-picker-cal.open').forEach(c => c.classList.remove('open'));
+    document.querySelectorAll('.date-picker-btn.open').forEach(b => b.classList.remove('open'));
+  }
+});
 window.addEventListener('scroll', () => {
   document.querySelectorAll('.date-picker-cal.open').forEach(c => {
     c.classList.remove('open');
