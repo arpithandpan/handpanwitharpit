@@ -804,7 +804,7 @@ select.form-input { display: none; }
   display: none; position: fixed;
   background: #2a1e12; border: 1px solid rgba(193,127,90,0.3);
   border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  z-index: 99999; padding: 1rem; width: 300px; user-select: none;
+  z-index: 29000; padding: 1rem; width: 300px; user-select: none;
   box-sizing: border-box;
 }
 .date-picker-cal.open { display: block; }
@@ -1840,7 +1840,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
     <button class="mobile-search-fs-cancel" onclick="closeMobileSearch()">Cancel</button>
   </div>
   <div class="mobile-search-fs-body" id="mobileSearchBody">
-    <div id="mobileSearchEmptyDefault"></div>
+    <div id="mobileSearchEmptyDefault" style="display:flex;flex-direction:column;flex:1;align-items:center;justify-content:center;"></div>
   </div>
 </div>
 
@@ -3281,6 +3281,9 @@ function isFormDirty(formName) {
 let _pendingCloseForm = null;
 
 function tryCloseFormPage(name) {
+  // Always close any open date picker first
+  document.querySelectorAll('.date-picker-cal.open').forEach(c => c.classList.remove('open'));
+  document.querySelectorAll('.date-picker-btn.open').forEach(b => b.classList.remove('open'));
   if (isFormDirty(name)) {
     _pendingCloseForm = name;
     document.getElementById('unsavedModal').style.display = 'flex';
@@ -4848,7 +4851,7 @@ async function refreshCheckinGrid() {
     _checkinParticipants = await res.json();
     renderCheckinGrid();
   } catch(e) {
-    document.getElementById('checkinGrid').innerHTML = '<div class="empty-state"><div style="font-size:2.5rem;margin-bottom:0.5rem;">⚠️</div><div class="empty-state-title">Could not load participants</div><div class="empty-state-sub">Check your connection and try again</div></div>';
+    const _cg1=document.getElementById('checkinGrid'); _cg1.setAttribute('style','display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 140px);'); _cg1.innerHTML = '<div class="empty-state"><div style="font-size:2.5rem;margin-bottom:0.5rem;">⚠️</div><div class="empty-state-title">Could not load participants</div><div class="empty-state-sub">Check your connection and try again</div></div>';
   }
 }
 
@@ -4857,12 +4860,12 @@ function renderCheckinGrid() {
   const checkedCount = parts.filter(p => p.checked_in).length;
   document.getElementById('checkinCounter').textContent = checkedCount + ' / ' + parts.length + ' checked in';
   if (!parts.length) {
-    document.getElementById('checkinGrid').innerHTML = '<div class="empty-state"><div style="font-size:2.5rem;margin-bottom:0.5rem;">👥</div><div class="empty-state-title">No participants yet</div><div class="empty-state-sub">No one has been added to this workshop yet</div></div>';
+    const _cg2=document.getElementById('checkinGrid'); _cg2.setAttribute('style','display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 140px);'); _cg2.innerHTML = '<div class="empty-state"><div style="font-size:2.5rem;margin-bottom:0.5rem;">👥</div><div class="empty-state-title">No participants yet</div><div class="empty-state-sub">No one has been added to this workshop yet</div></div>';
     return;
   }
   // No sorting — cards stay in original order always
   const sorted = [...parts];
-  document.getElementById('checkinGrid').innerHTML = sorted.map(p => `
+  const _cgr=document.getElementById('checkinGrid'); _cgr.setAttribute('style',''); _cgr.innerHTML = sorted.map(p => `
     <div class="checkin-card ${p.checked_in ? 'is-checked' : ''}" id="cc-${p.id}">
       <div class="checkin-card-info">
         <div class="checkin-card-name">${p.full_name || '—'}</div>
@@ -5163,13 +5166,13 @@ function closeMobileSearch() {
   document.getElementById('mobileTopbar').style.display = 'flex';
   const input = document.getElementById('mobileSearchInput');
   if (input) input.value = '';
-  document.getElementById('mobileSearchBody').innerHTML = EMPTY_STATES.search;
+  document.getElementById('mobileSearchBody').innerHTML = `<div style="display:flex;flex-direction:column;flex:1;align-items:center;justify-content:center;height:100%;">${EMPTY_STATES.search}</div>`;
 }
 
 async function handleMobileSearch(query) {
   const body = document.getElementById('mobileSearchBody');
   if (!query || query.length < 2) {
-    body.innerHTML = EMPTY_STATES.search;
+    body.innerHTML = `<div style="display:flex;flex-direction:column;flex:1;align-items:center;justify-content:center;height:100%;">${EMPTY_STATES.search}</div>`;
     return;
   }
   await ensureSearchCache();
