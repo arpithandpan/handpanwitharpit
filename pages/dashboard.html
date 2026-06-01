@@ -2383,7 +2383,6 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           </table>
         </div>
       </div>
-      <div class="mobile-cards" id="unassignedCards"></div>
     </section>
 
     <!-- ── LEADS ── -->
@@ -6343,8 +6342,6 @@ async function loadUnassignedPayments() {
   const container = document.getElementById('unassignedContainer');
   if (!container) return;
 
-  const emptyHTML = EMPTY_STATES.unassigned_payments;
-
   container.innerHTML = '<div class="empty-state"><div class="spinner"></div></div>';
 
   try {
@@ -6356,15 +6353,18 @@ async function loadUnassignedPayments() {
       }
     });
 
-    if (!res.ok) { container.innerHTML = emptyHTML; return; }
+    if (!res.ok) { container.innerHTML = EMPTY_STATES.unassigned_payments; return; }
     const items = await res.json();
     updateUnassignedBadge(items.length);
 
-    if (!items.length) { container.innerHTML = emptyHTML; return; }
+    if (!items.length) { container.innerHTML = EMPTY_STATES.unassigned_payments; return; }
 
     const adminU = isAdmin();
 
-    // Desktop table
+    // Store items globally for the assign button handler
+    window._unassignedItems = {};
+    items.forEach(p => { window._unassignedItems[p.id] = p; });
+
     const desktopHTML = `<div class="dash-table-wrap desktop-only" style="overflow-x:auto;">
       <table class="desktop-table"><thead><tr>
         <th>ID</th><th>Date</th><th>Name</th><th>Phone</th><th>Amount</th><th>Razorpay ID</th><th>Action</th>
@@ -6376,12 +6376,11 @@ async function loadUnassignedPayments() {
           <td>${p.payer_phone||'—'}</td>
           <td style="font-weight:600;color:var(--moss)">+${fmt(p.amount)}</td>
           <td style="font-size:0.8rem;color:var(--text-light)">${p.razorpay_payment_id||'—'}</td>
-          <td>${adminU ? `<button class="btn-dash btn-dash-primary" style="font-size:0.85rem;padding:0.4rem 1rem;" onclick="openAssignPayment('${p.id}',${p.amount},'${(p.payer_name||'').replace(/'/g,"\'")}','${p.payer_phone||''}')">Assign</button>` : '—'}</td>
+          <td>${adminU ? `<button class="btn-dash btn-dash-primary" style="font-size:0.85rem;padding:0.4rem 1rem;" data-assign-id="${p.id}">Assign</button>` : '—'}</td>
         </tr>`).join('')}
       </tbody></table>
     </div>`;
 
-    // Mobile cards
     const mobileHTML = `<div class="mobile-cards">
       ${items.map(p => `<div class="m-card">
         <div class="m-card-title" style="color:var(--moss)">+${fmt(p.amount)}<span style="float:right;font-size:0.8rem;color:var(--clay);font-weight:400">${p.id}</span></div>
@@ -6390,16 +6389,24 @@ async function loadUnassignedPayments() {
         <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div>
         <div class="m-card-row"><span class="m-card-label">Razorpay ID</span><span class="m-card-val" style="font-size:0.78rem">${p.razorpay_payment_id||'—'}</span></div>
         ${adminU ? `<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">
-          <button class="btn-dash btn-dash-primary" onclick="openAssignPayment('${p.id}',${p.amount},'${(p.payer_name||'').replace(/'/g,"\'")}','${p.payer_phone||''}')">Assign</button>
+          <button class="btn-dash btn-dash-primary" data-assign-id="${p.id}">Assign</button>
         </div>` : ''}
       </div>`).join('')}
     </div>`;
 
     container.innerHTML = desktopHTML + mobileHTML;
 
+    // Attach click handlers using data attributes
+    container.querySelectorAll('[data-assign-id]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = window._unassignedItems[btn.dataset.assignId];
+        if (p) openAssignPayment(p.id, p.amount, p.payer_name || '', p.payer_phone || '');
+      });
+    });
+
   } catch(e) {
     console.error('loadUnassignedPayments error:', e);
-    container.innerHTML = emptyHTML;
+    container.innerHTML = EMPTY_STATES.unassigned_payments;
   }
 }
 
