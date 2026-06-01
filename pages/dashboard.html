@@ -775,10 +775,10 @@ select.form-input { display: none; }
 .date-picker-btn .dp-placeholder { color: #aaa; }
 .date-picker-btn svg { flex-shrink: 0; color: var(--clay); opacity: 0.6; }
 .date-picker-cal {
-  display: none; position: absolute; top: calc(100% + 4px); left: 0;
+  display: none; position: fixed;
   background: #2a1e12; border: 1px solid rgba(193,127,90,0.3);
   border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  z-index: 9999; padding: 1rem; width: 300px; user-select: none;
+  z-index: 99999; padding: 1rem; width: 300px; user-select: none;
   box-sizing: border-box;
 }
 .date-picker-cal.open { display: block; }
@@ -1964,10 +1964,9 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <div class="dash-section-subtitle">Find anything across your dashboard</div>
         </div>
       </div>
-      <div style="position:relative;margin-bottom:2rem;">
-        <svg style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);pointer-events:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(200,147,90,0.7)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="sectionSearchInput" placeholder="Search participants, workshops, payments, leads..." autocomplete="off"
-          style="width:100%;padding:0.9rem 1rem 0.9rem 3rem;background:rgba(200,147,90,0.06);border:1.5px solid rgba(200,147,90,0.25);border-radius:10px;color:var(--bark);font-size:1rem;outline:none;font-family:var(--font-body);box-sizing:border-box;"
+      <div class="section-search-wrap" style="margin-bottom:2rem;">
+        <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="section-search-input" id="sectionSearchInput" placeholder="Search participants, workshops, payments, leads..." autocomplete="off"
           oninput="handleSectionSearch(this.value)"
           onkeydown="if(event.key==='Escape'){this.value='';handleSectionSearch('');}"/>
       </div>
@@ -2634,7 +2633,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 
         <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--clay-pale);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;">
           <span class="settings-health-label">Total Records: <strong id="health-records" style="color:var(--clay);">—</strong></span>
-          <button onclick="checkAllConnectors()" class="btn-dash btn-dash-sync">↻ Check All</button>
+          <button onclick="checkAllConnectors()" class="btn-dash btn-dash-outline">↻ Check All</button>
         </div>
       </div>
 
@@ -3077,7 +3076,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
   </div>
   <div class="checkin-body">
     <div class="checkin-grid" id="checkinGrid">
-      <div class="checkin-empty">Loading participants...</div>
+      <div class="empty-state"><div class="spinner"></div></div>
     </div>
   </div>
 </div>
@@ -3682,10 +3681,10 @@ async function loadOverview() {
 
     // Mobile cards for overview
     const owc = document.getElementById('overviewWorkshopsCards');
-    if (owc) owc.innerHTML = ws.slice(0,5).map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">${fmtDate(w.date)}</div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div></div>`).join('') || '<div style="padding:1.5rem;text-align:center;color:var(--text-light)">No workshops yet</div>';
+    if (owc) owc.innerHTML = ws.slice(0,5).map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">${fmtDate(w.date)}</div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div></div>`).join('') || '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">🎵</div><div class="empty-state-title" style="font-size:1rem;">No workshops yet</div></div>';
 
     const opc = document.getElementById('overviewPaymentsCards');
-    if (opc) opc.innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<div class="m-card"><div class="m-card-title" style="color:var(--moss)">${fmt(p.amount)}<span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Name</span><span class="m-card-val">${p.payer_name||'—'}</span></div></div>`).join('') || '<div style="padding:1.5rem;text-align:center;color:var(--text-light)">No payments yet</div>';
+    if (opc) opc.innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<div class="m-card"><div class="m-card-title" style="color:var(--moss)">${fmt(p.amount)}<span class="badge badge-clay" style="float:right">${p.payment_mode||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Name</span><span class="m-card-val">${p.payer_name||'—'}</span></div></div>`).join('') || '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">💳</div><div class="empty-state-title" style="font-size:1rem;">No payments yet</div></div>';
   } catch(e) { showToast('Error loading overview', 'error'); } finally { hideLoader(); }
 }
 
@@ -3712,7 +3711,7 @@ async function loadWorkshops() {
     const admin = isAdmin();
 
     const tbl = document.getElementById('workshopsTable');
-    if (tbl) tbl.innerHTML = ws.map(w => `<tr data-year="${(w.date||'').substring(0,4)}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.4rem;align-items:center;flex-wrap:nowrap;">${admin?`<button class="icon-action-btn" title="Edit" onclick="openEdit('workshops','${w.id}')">${PENCIL}</button>`:''}<button class="icon-action-btn" title="Check-in" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')">${CHECK_ICON}</button>${admin?`<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">${TRASH_ICON}</button>`:''}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No workshops yet</td></tr>`;
+    if (tbl) tbl.innerHTML = ws.map(w => `<tr data-year="${(w.date||'').substring(0,4)}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.4rem;align-items:center;flex-wrap:nowrap;">${admin?`<button class="icon-action-btn" title="Edit" onclick="openEdit('workshops','${w.id}')">${PENCIL}</button>`:''}<button class="icon-action-btn" title="Check-in" onclick="openCheckinMode('${w.id}','${w.venue||w.id}','${fmtDate(w.date)}')">${CHECK_ICON}</button>${admin?`<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">${TRASH_ICON}</button>`:''}</td></tr>`).join('') || `<tr><td colspan="9">${EMPTY_STATES.workshops}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; } } const _es_workshopsEmptyState = document.getElementById('workshopsEmptyState'); if (_es_workshopsEmptyState) { _es_workshopsEmptyState.innerHTML = EMPTY_STATES.workshops; const _hr = document.getElementById('workshopsTable'); _es_workshopsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     window._cachedWorkshops = ws;
@@ -3776,13 +3775,13 @@ async function toggleWsPax(wsId) {
 async function loadWsPax(wsId) {
   const list = document.getElementById('ws-pax-list-' + wsId);
   if (!list) return;
-  list.innerHTML = '<div class="ws-pax-empty"><div class="spinner" style="margin:0 auto 0.5rem;"></div>Loading...</div>';
+  list.innerHTML = '<div class="empty-state" style="padding:2rem 1rem;"><div class="spinner"></div></div>';
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&workshop_id=eq.' + wsId + '&archived=eq.false&order=created_at.asc', {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
     });
     const parts = await res.json();
-    if (!parts.length) { list.innerHTML = '<div class="ws-pax-empty">No participants yet</div>'; return; }
+    if (!parts.length) { list.innerHTML = '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">👥</div><div class="empty-state-title" style="font-size:1rem;">No participants yet</div></div>'; return; }
     const TRASH_BTN = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
     list.innerHTML = parts.map(p => `
       <div class="ws-pax-row">
@@ -3798,7 +3797,7 @@ async function loadWsPax(wsId) {
         </div>
       </div>
     `).join('');
-  } catch(e) { list.innerHTML = '<div class="ws-pax-empty">Failed to load</div>'; }
+  } catch(e) { list.innerHTML = '<div class="empty-state" style="padding:2rem 1rem;"><div class="empty-state-title" style="font-size:1rem;">Failed to load</div></div>'; }
 }
 
 async function toggleWsPaxCheckIn(id, currentState, name, wsId) {
@@ -3848,7 +3847,7 @@ async function loadParticipants() {
     const tbl = document.getElementById('participantsTable');
     const adminP = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP && p.payment_mode !== 'Razorpay UPI'; return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},this)">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" title="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;color:var(--text-light);">No participants yet</td></tr>`;
+    if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP && p.payment_mode !== 'Razorpay UPI'; return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong></td><td>${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${p.payment_mode||'—'}</span></td><td><button class="btn-checkin ${p.checked_in?'checked':''}" onclick="toggleCheckIn('${p.id}',${p.checked_in},this)">${p.checked_in?'✓ Checked in':'Check in'}</button></td><td style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" title="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" title="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="8">${EMPTY_STATES.participants}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
@@ -4667,7 +4666,7 @@ function renderNotifications(items) {
   const el = document.getElementById('notificationsContainer');
   const actions = document.getElementById('notifActions');
   if (!items.length) {
-    el.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🔔</div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Payment events and system alerts will appear here</div></div>';
+    el.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🔔</div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>';
     if (actions) actions.style.display = 'none';
     return;
   }
@@ -4818,7 +4817,7 @@ async function refreshCheckinGrid() {
     _checkinParticipants = await res.json();
     renderCheckinGrid();
   } catch(e) {
-    document.getElementById('checkinGrid').innerHTML = '<div class="checkin-empty">Could not load participants. Check your connection.</div>';
+    document.getElementById('checkinGrid').innerHTML = '<div class="empty-state"><div style="font-size:2.5rem;margin-bottom:0.5rem;">⚠️</div><div class="empty-state-title">Could not load participants</div><div class="empty-state-sub">Check your connection and try again</div></div>';
   }
 }
 
@@ -4827,7 +4826,7 @@ function renderCheckinGrid() {
   const checkedCount = parts.filter(p => p.checked_in).length;
   document.getElementById('checkinCounter').textContent = checkedCount + ' / ' + parts.length + ' checked in';
   if (!parts.length) {
-    document.getElementById('checkinGrid').innerHTML = '<div class="checkin-empty">No participants found for this workshop.</div>';
+    document.getElementById('checkinGrid').innerHTML = '<div class="empty-state"><div style="font-size:2.5rem;margin-bottom:0.5rem;">👥</div><div class="empty-state-title">No participants yet</div><div class="empty-state-sub">No one has been added to this workshop yet</div></div>';
     return;
   }
   // No sorting — cards stay in original order always
@@ -5781,14 +5780,14 @@ function makeDatePicker(nativeInput) {
       const rect = btn.getBoundingClientRect();
       const calH = 360;
       if (window.innerHeight - rect.bottom < calH) {
-        cal.style.top = 'auto'; cal.style.bottom = 'calc(100% + 4px)';
+        cal.style.top = (rect.top - calH - 4) + 'px'; cal.style.bottom = 'auto';
       } else {
-        cal.style.top = 'calc(100% + 4px)'; cal.style.bottom = 'auto';
+        cal.style.top = (rect.bottom + 4) + 'px'; cal.style.bottom = 'auto';
       }
       if (rect.left + 300 > window.innerWidth - 8) {
-        cal.style.left = 'auto'; cal.style.right = '0';
+        cal.style.left = 'auto'; cal.style.right = (window.innerWidth - rect.right) + 'px';
       } else {
-        cal.style.left = '0'; cal.style.right = 'auto';
+        cal.style.left = rect.left + 'px'; cal.style.right = 'auto';
       }
     }
   }
@@ -5797,7 +5796,7 @@ function makeDatePicker(nativeInput) {
     if (window.innerWidth <= 900) {
       closeMobilePicker();
     } else {
-      cal.classList.remove('open'); btn.classList.remove('open'); cal.style.position = '';
+      cal.classList.remove('open'); btn.classList.remove('open');
     }
   }
 
