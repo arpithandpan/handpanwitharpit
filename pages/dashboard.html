@@ -678,7 +678,10 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   position: relative; display: inline-flex; align-items: center;
   width: 48px; height: 26px; cursor: pointer; flex-shrink: 0;
 }
-.checkin-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.checkin-toggle input { 
+  opacity: 0; width: 0; height: 0; position: absolute; 
+  -webkit-appearance: none; appearance: none; pointer-events: none;
+}
 .checkin-toggle-track {
   position: absolute; inset: 0;
   background: rgba(200,147,90,0.2); border-radius: 13px;
@@ -1721,6 +1724,8 @@ body.dark-mode .checkin-card.is-checked { border-color: rgba(138,170,110,0.2); }
 body.dark-mode .checkin-card-name { color: #e8d5c0; }
 body.dark-mode .checkin-cb { border-color: rgba(200,147,90,0.6); }
 body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a; }
+body.dark-mode .checkin-toggle-track { background: rgba(200,147,90,0.15); border-color: rgba(200,147,90,0.3); }
+body.dark-mode .checkin-toggle input:checked + .checkin-toggle-track { background: rgba(122,140,106,0.85); border-color: #7a8c6a; }
 
 </style>
 </head>
@@ -3847,9 +3852,7 @@ async function loadWsPax(wsId) {
           <div class="ws-pax-meta">${fmt(p.amount_paid)} · ${fmtMode(p.payment_mode)}${p.phone ? ' · ' + p.phone : ''}</div>
         </div>
         <div class="ws-pax-right">
-          <div class="checkin-cb ${p.checked_in ? 'checked' : ''}" onclick="toggleWsPaxCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,"\'")}','${wsId}')" id="wsp-cb-${p.id}">
-            ${p.checked_in ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><polyline points="4,10 8,14 16,6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}
-          </div>
+          <label class="checkin-toggle" id="wsp-cb-${p.id}" onclick="toggleWsPaxCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}','${wsId}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>
           <button class="btn-archive" style="min-height:36px;font-size:0.72rem;padding:0 8px;" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\'")}'); setTimeout(()=>loadWsPax('${wsId}'),600);">${TRASH_BTN}</button>
         </div>
       </div>
@@ -3861,9 +3864,9 @@ async function toggleWsPaxCheckIn(id, currentState, name, wsId) {
   const newState = !currentState;
   const cb = document.getElementById('wsp-cb-' + id);
   if (cb) {
-    cb.classList.toggle('checked', newState);
-    cb.innerHTML = newState ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><polyline points="4,10 8,14 16,6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '';
-    cb.onclick = () => toggleWsPaxCheckIn(id, newState, name, wsId);
+    const input = cb.querySelector('input[type="checkbox"]');
+    if (input) input.checked = newState;
+    cb.onclick = (e) => { toggleWsPaxCheckIn(id, newState, name, wsId); e.preventDefault(); };
   }
   try {
     await fetch(SUPABASE_URL + '/rest/v1/participants?id=eq.' + id, {
@@ -3916,8 +3919,6 @@ async function loadParticipants() {
         <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div>
         <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
           <label class="checkin-toggle" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>
-            ${p.checked_in?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Checked in':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Check in'}
-          </button>
           ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true,this)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
         </div>
       </div>
@@ -4904,12 +4905,7 @@ function renderCheckinGrid() {
           <span>${fmt(p.amount_paid)} · ${p.payment_mode || '—'}</span>
         </div>
       </div>
-      <div class="checkin-cb ${p.checked_in ? 'checked' : ''}" id="cb-${p.id}"
-        onclick="checkinModeToggle('${p.id}', ${p.checked_in}, '${(p.full_name||'').replace(/'/g,"\\'")}')">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <polyline points="3,8 7,12 13,4" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
+      <label class="checkin-toggle" id="cb-${p.id}" onclick="checkinModeToggle('${p.id}', ${p.checked_in}, '${(p.full_name||'').replace(/'/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>
     </div>
   `).join('');
 }
@@ -4926,9 +4922,9 @@ async function checkinModeToggle(id, currentState, name) {
   requestAnimationFrame(() => {
     if (card && btn) {
       card.classList.toggle('is-checked', newState);
-      btn.classList.toggle('checked', newState);
-      btn.onclick = () => checkinModeToggle(id, newState, name);
-      btn.style.pointerEvents = '';
+      const input = btn ? btn.querySelector('input[type="checkbox"]') : null;
+      if (input) input.checked = newState;
+      if (btn) { btn.onclick = (e) => { checkinModeToggle(id, newState, name); e.preventDefault(); }; btn.style.pointerEvents = ''; }
     }
     const idx = _checkinParticipants.findIndex(p => p.id === id);
     if (idx > -1) _checkinParticipants[idx].checked_in = newState;
@@ -4949,8 +4945,9 @@ async function checkinModeToggle(id, currentState, name) {
     requestAnimationFrame(() => {
       if (card && btn) {
         card.classList.toggle('is-checked', currentState);
-        btn.classList.toggle('checked', currentState);
-        btn.onclick = () => checkinModeToggle(id, currentState, name);
+        const input = btn.querySelector('input[type="checkbox"]');
+        if (input) input.checked = currentState;
+        btn.onclick = (e) => { checkinModeToggle(id, currentState, name); e.preventDefault(); };
       }
       const idx = _checkinParticipants.findIndex(p => p.id === id);
       if (idx > -1) _checkinParticipants[idx].checked_in = currentState;
