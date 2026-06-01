@@ -1653,34 +1653,35 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 }
 .checkin-screen.open { display: flex; }
 .checkin-header {
-  padding: 0.75rem 1.25rem;
-  display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 1rem 1.25rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
   flex-shrink: 0;
-  padding-top: max(0.75rem, env(safe-area-inset-top));
+  padding-top: max(1rem, env(safe-area-inset-top));
   border-bottom: 1px solid rgba(200,147,90,0.15);
 }
 .checkin-header-row2 {
-  display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
 }
 
 @media (max-width: 900px) {
   .checkin-header { padding-top: max(0.75rem, env(safe-area-inset-top)); }
 }
-.checkin-header-left { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-.checkin-header-title { font-size: 0.95rem; font-weight: 500; color: #e8d5c0; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.checkin-header-sub { font-size: 0.8rem; color: rgba(200,147,90,0.7); margin-top: 1px; }
+.checkin-header-left { display: flex; flex-direction: column; gap: 2px; }
+.checkin-header-title { font-size: 1rem; font-weight: 500; color: #e8d5c0; letter-spacing: 0.02em; line-height: 1.4; }
+.checkin-header-sub { font-size: 0.82rem; color: rgba(200,147,90,0.7); margin-top: 1px; }
 .checkin-counter {
   background: rgba(200,147,90,0.15); border: 1px solid rgba(200,147,90,0.3);
-  border-radius: 20px; padding: 0.25rem 0.75rem;
+  border-radius: 20px; padding: 0.35rem 0.85rem;
   font-size: 0.85rem; font-weight: 600; color: #c8935a;
-  letter-spacing: 0.03em; white-space: nowrap;
+  letter-spacing: 0.03em; white-space: nowrap; display: flex; align-items: center; min-height: 36px;
 }
 .checkin-close {
-  background: transparent; border: 1.5px solid rgba(232,213,192,0.25);
+  background: transparent; border: 1.5px solid rgba(232,213,192,0.3);
   border-radius: 4px; color: #e8d5c0; cursor: pointer;
   font-size: 0.85rem; font-family: var(--font-body);
-  padding: 0.3rem 0.6rem; letter-spacing: 0.04em;
+  padding: 0 0.85rem; letter-spacing: 0.04em;
   transition: border-color 0.2s, background 0.2s; white-space: nowrap;
+  min-height: 44px; display: flex; align-items: center;
 }
 .checkin-close:hover { border-color: rgba(232,213,192,0.8); background: rgba(232,213,192,0.08); }
 .checkin-body {
@@ -3117,13 +3118,13 @@ body.dark-mode .checkin-toggle input:checked + .checkin-toggle-track { backgroun
 <div id="toast"></div>
 <div class="checkin-screen" id="checkinScreen">
   <div class="checkin-header">
+    <div class="checkin-header-row2">
+      <div class="checkin-counter" id="checkinCounter">0 / 0 checked in</div>
+      <button class="checkin-close" onclick="closeCheckinMode()">✕ Close</button>
+    </div>
     <div class="checkin-header-left">
       <div class="checkin-header-title" id="checkinTitle">Check-in</div>
       <div class="checkin-header-sub" id="checkinSub"></div>
-    </div>
-    <div class="checkin-header-row2">
-      <div class="checkin-counter" id="checkinCounter">0 / 0</div>
-      <button class="checkin-close" onclick="closeCheckinMode()">✕ Close</button>
     </div>
   </div>
   <div class="checkin-body">
