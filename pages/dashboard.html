@@ -2364,10 +2364,10 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <div class="dash-section-header">
         <div>
           <div class="dash-section-title">Unassigned Payments</div>
-          <div class="dash-section-sub" id="unassigned-sub">Payments received via Razorpay general link — tap Assign to categorise</div>
+          <div class="dash-section-subtitle" id="unassigned-sub">Payments received via Razorpay general link — tap Assign to categorise</div>
         </div>
         <div class="section-actions">
-          <button class="btn-dash btn-dash-secondary" onclick="loadUnassigned()">
+          <button class="btn-dash btn-dash-sync" onclick="loadUnassigned()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-3.5"/></svg>
             Refresh
           </button>
@@ -2394,11 +2394,9 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           <div class="dash-section-subtitle">Payments received via general Razorpay link — tap Assign to categorise</div>
         </div>
       </div>
-      <div style="margin-bottom:1rem;">
-        <div style="position:relative;max-width:400px;">
-          <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:0.4;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="unassignedSearch" class="form-input" style="padding-left:2.5rem;" placeholder="Search by name or phone..." oninput="filterUnassigned()"/>
-        </div>
+      <div class="section-search-wrap">
+        <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="section-search-input" id="unassignedSearch" placeholder="Search by name or phone..." autocomplete="off" oninput="filterUnassigned()"/>
       </div>
       <div id="unassignedContainer"></div>
     </section>
@@ -3005,7 +3003,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       </p>
     </div>
     <div style="display:flex;border-top:1px solid rgba(193,127,90,0.2);">
-      <button onclick="closeArchiveConfirm()" style="flex:1;padding:1rem;background:transparent;border:none;border-right:1px solid rgba(193,127,90,0.2);font-size:1rem;color:rgba(200,147,90,0.6);cursor:pointer;font-family:var(--font-body);">Cancel</button>
+      <button onclick="closeArchiveConfirm()" style="flex:1;padding:1rem;background:transparent;border:none;border-right:1px solid rgba(193,127,90,0.2);font-size:1rem;color:#c8935a;cursor:pointer;font-family:var(--font-body);">Cancel</button>
       <button id="archiveConfirmBtn" onclick="confirmArchive()" style="flex:1;padding:1rem;background:transparent;border:none;font-size:1rem;color:#c8935a;font-weight:600;cursor:pointer;font-family:var(--font-body);">Move to Bin</button>
     </div>
   </div>
@@ -3292,11 +3290,12 @@ function resetForm(formName) {
   if (formName === 'addStudent') { const el = document.getElementById('stu-id'); if (el) el.value = ''; }
 }
 let _customConfirmResolve = null;
-function customConfirm(title, desc) {
+function customConfirm(title, desc, okLabel = 'Confirm') {
   return new Promise(resolve => {
     _customConfirmResolve = resolve;
     document.getElementById('customConfirmTitle').textContent = title;
     document.getElementById('customConfirmDesc').textContent = desc;
+    document.getElementById('customConfirmOkBtn').textContent = okLabel;
     document.getElementById('customConfirmOkBtn').onclick = () => { customConfirmClose(); resolve(true); };
     document.getElementById('customConfirmModal').style.display = 'flex';
     lockScroll();
@@ -4210,7 +4209,8 @@ function deleteRecord(entity, id, name) {
   _deletePending = { entity, id, name };
   customConfirm(
     'Delete "' + name + '"?',
-    'This will permanently delete this record and cannot be undone.'
+    'This will permanently delete this record and cannot be undone.',
+    'Delete'
   ).then(ok => {
     if (!ok) { _deletePending = null; return; }
     confirmDelete();
@@ -4718,7 +4718,7 @@ async function markAllRead() {
 }
 
 async function binAllNotifications() {
-  const ok = await customConfirm('Move all to bin?', 'You can restore them from the bin later.');
+  const ok = await customConfirm('Move all to bin?', 'You can restore them from the bin later.', 'Move to Bin');
   if (!ok) return;
   try {
     await fetch(SUPABASE_URL + '/rest/v1/notifications?id=neq.0', {
@@ -6435,7 +6435,7 @@ async function loadUnassignedPayments() {
           <td>${p.payer_phone||'—'}</td>
           <td style="font-weight:600;color:var(--moss)">+${fmt(p.amount)}</td>
           <td style="font-size:0.8rem;color:var(--text-light)">${p.razorpay_payment_id||'—'}</td>
-          <td>${adminU ? `<span style="display:flex;gap:0.5rem;"><button class="btn-dash btn-dash-primary" style="font-size:0.85rem;padding:0.4rem 0.85rem;" data-assign-id="${p.id}">Assign</button><button class="icon-action-btn danger" title="Remove" data-remove-id="${p.id}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>` : '—'}</td>
+          <td>${adminU ? `<span style="display:flex;gap:0.5rem;"><button class="btn-dash btn-dash-primary btn-dash-sm" data-assign-id="${p.id}">Assign</button><button class="icon-action-btn danger" title="Remove" data-remove-id="${p.id}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>` : '—'}</td>
         </tr>`).join('')}
       </tbody></table>
     </div>`;
@@ -6467,7 +6467,7 @@ async function loadUnassignedPayments() {
       btn.addEventListener('click', async () => {
         const id = btn.dataset.removeId;
         const p = window._unassignedItems[id];
-        const ok = await customConfirm('Move to bin?', 'You can restore it from the bin later.');
+        const ok = await customConfirm('Move to Bin?', 'This record will be moved to Bin. You can restore it or delete it permanently from there.', 'Move to Bin');
         if (!ok) return;
         try {
           // Create an archived payments record so it appears in the bin
