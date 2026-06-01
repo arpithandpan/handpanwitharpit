@@ -2490,7 +2490,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
         </div>
         <div id="notifActions" style="display:none;gap:0.75rem;align-items:center;">
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="markAllRead()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Mark all read</button>
-          <button class="btn-dash btn-dash-danger btn-dash-sm" onclick="clearAllNotifications()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Clear all</button>
+          <button class="btn-dash btn-dash-outline btn-dash-sm" title="Move all to bin" onclick="binAllNotifications()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
         </div>
       </div>
       <div id="notificationsContainer">
@@ -3024,7 +3024,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
       <p id="customConfirmDesc" style="font-size:1rem;color:rgba(200,147,90,0.7);line-height:1.6;margin:0 0 1.25rem;">This action cannot be undone.</p>
     </div>
     <div style="display:flex;border-top:1px solid rgba(193,127,90,0.2);">
-      <button onclick="customConfirmCancel()" style="flex:1;padding:1rem;background:transparent;border:none;border-right:1px solid rgba(193,127,90,0.2);font-size:1rem;color:rgba(200,147,90,0.6);cursor:pointer;font-family:var(--font-body);">Cancel</button>
+      <button onclick="customConfirmCancel()" style="flex:1;padding:1rem;background:transparent;border:none;border-right:1px solid rgba(193,127,90,0.2);font-size:1rem;color:#c8935a;cursor:pointer;font-family:var(--font-body);">Cancel</button>
       <button id="customConfirmOkBtn" style="flex:1;padding:1rem;background:transparent;border:none;font-size:1rem;color:#c8935a;font-weight:600;cursor:pointer;font-family:var(--font-body);">Confirm</button>
     </div>
   </div>
@@ -4314,7 +4314,8 @@ const BIN_TABLES = [
   { key: 'students', label: 'Student', nameField: 'full_name' },
   { key: 'payments', label: 'Payment', nameField: 'payer_name' },
   { key: 'leads', label: 'Lead', nameField: 'full_name' },
-  { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' }
+  { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' },
+  { key: 'notifications', label: 'Notification', nameField: 'message' }
 ];
 
 async function loadBin() {
@@ -4535,9 +4536,17 @@ async function testConnectorHealth(id) {
       const last = rzpPays.sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
       setConnectorState('rzp', 'connected', 'Last payment: ' + (last ? fmtDate(last.date) : 'None yet'));
     } else if (id === 'rw') {
-      const res = await fetch(RAILWAY_URL + '/health', { signal: AbortSignal.timeout(5000) });
-      if (res.ok) setConnectorState('rw', 'connected', 'Server responding · Online');
-      else setConnectorState('rw', 'offline', 'Server returned error');
+      const res = await fetch(SUPABASE_URL + '/rest/v1/unassigned_payments?select=date,created_at&order=created_at.desc&limit=1', {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      });
+      if (!res.ok) { setConnectorState('rw', 'offline', 'Could not check webhook activity'); return; }
+      const rows = await res.json();
+      if (!rows.length) {
+        setConnectorState('rw', 'connected', 'Configured · No webhooks received yet');
+      } else {
+        const last = rows[0].created_at || rows[0].date;
+        setConnectorState('rw', 'connected', 'Last webhook: ' + fmtDateTime(last));
+      }
     } else if (id === 'site') {
       setConnectorState('site', 'connected', 'arpitpandey.com · Reachable');
     }
@@ -4637,7 +4646,7 @@ async function loadNotifications() {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 6000);
-    const res = await fetch(SUPABASE_URL + '/rest/v1/notifications?select=*&order=created_at.desc&limit=50', {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/notifications?select=*&or=(archived.is.false,archived.is.null)&order=created_at.desc&limit=50', {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
       signal: controller.signal
     });
@@ -4708,17 +4717,19 @@ async function markAllRead() {
   } catch(e) { showToast('Failed to update notifications', 'error'); }
 }
 
-async function clearAllNotifications() {
-  const ok = await customConfirm('Clear all notifications?', 'This cannot be undone.');
+async function binAllNotifications() {
+  const ok = await customConfirm('Move all to bin?', 'You can restore them from the bin later.');
   if (!ok) return;
   try {
     await fetch(SUPABASE_URL + '/rest/v1/notifications?id=neq.0', {
-      method: 'DELETE',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ archived: true })
     });
-    showToast('✓ All notifications cleared', 'success');
+    showToast('✓ Notifications moved to bin', 'success');
+    loadBinCount();
     loadNotifications();
-  } catch(e) { showToast('Failed to clear notifications', 'error'); }
+  } catch(e) { showToast('Failed to move notifications to bin', 'error'); }
 }
 
 function fmtDateTime(ts) {
@@ -6455,10 +6466,30 @@ async function loadUnassignedPayments() {
     container.querySelectorAll('[data-remove-id]').forEach(btn => {
       btn.addEventListener('click', async () => {
         const id = btn.dataset.removeId;
-        const ok = await customConfirm('Remove this payment?', 'It will be moved out of the unassigned list.');
+        const p = window._unassignedItems[id];
+        const ok = await customConfirm('Move to bin?', 'You can restore it from the bin later.');
         if (!ok) return;
-        await sbPatch('unassigned_payments', id, { status: 'removed' });
-        showToast('Payment removed', 'success');
+        try {
+          // Create an archived payments record so it appears in the bin
+          const payId = 'PAY-' + Date.now();
+          await sbPost('payments', {
+            id: payId,
+            amount: p.amount,
+            payer_name: p.payer_name || p.payer_email || 'Unknown',
+            type: 'income',
+            category: 'unassigned',
+            payment_mode: 'Razorpay UPI',
+            date: p.date || new Date().toISOString().split('T')[0],
+            description: 'Unassigned payment — moved to bin',
+            synced_from_razorpay: true,
+            archived: true
+          });
+          await sbPatch('unassigned_payments', id, { status: 'removed' });
+          showToast('✓ Moved to bin', 'success');
+          loadBinCount();
+        } catch(e) {
+          showToast('Error moving to bin: ' + e.message, 'error');
+        }
         loadUnassignedPayments();
       });
     });
