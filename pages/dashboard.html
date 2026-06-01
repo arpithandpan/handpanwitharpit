@@ -70,14 +70,21 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 .empty-state {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 4rem 2rem; text-align: center; gap: 1rem;
-  width: 100%; box-sizing: border-box; margin: 0 auto;
+  width: 100%; min-height: 60vh; box-sizing: border-box; margin: 0 auto;
 }
+/* Table-cell empty state - no min-height needed, smaller padding */
+td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
 .empty-state-title { font-size: 1.15rem; font-weight: 500; color: var(--bark); }
 .empty-state-sub { font-size: 1rem; color: var(--text-light); max-width: 280px; line-height: 1.5; }
-/* Table cell wrapping empty state */
-td > .empty-state { padding: 3rem 1rem; white-space: normal; }
+
 /* Hide table wrapper when showing empty state */
 .dash-table-wrap.hidden-empty { display: none !important; }
+/* Section-level empty state containers */
+[id$="EmptyState"], #unassignedContainer:has(.empty-state),
+#binContainer:has(.empty-state), #notificationsContainer:has(.empty-state) {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 50vh;
+}
 .search-empty-row td, tr:has(.empty-state) td {
   text-align: center !important;
   padding: 0 !important;
@@ -477,7 +484,12 @@ td > .empty-state { padding: 3rem 1rem; white-space: normal; }
 }
 .mobile-search-fs-body {
   flex: 1; overflow-y: auto; padding: 0;
+  display: flex; flex-direction: column;
 }
+.mobile-cards-empty {
+  display: flex; width: 100%;
+}
+.mobile-cards-empty .empty-state { min-height: 50vh; }
 .mobile-search-fs-empty {
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; flex: 1; gap: 0.5rem;
@@ -1657,7 +1669,11 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 }
 .checkin-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 0.75rem;
+  gap: 0.75rem; min-height: 0;
+}
+.checkin-grid:has(.empty-state) {
+  display: flex; align-items: center; justify-content: center;
+  min-height: calc(100vh - 140px);
 }
 .checkin-card { background: var(--card, #231c16); border: 1px solid rgba(200,147,90,0.18); border-radius: 8px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .checkin-card-info { flex: 1; min-width: 0; }
@@ -1981,7 +1997,7 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
           oninput="handleSectionSearch(this.value)"
           onkeydown="if(event.key==='Escape'){this.value='';handleSectionSearch('');}"/>
       </div>
-      <div id="sectionSearchResults" style="display:flex;flex-direction:column;min-height:60vh;">
+      <div id="sectionSearchResults" style="display:flex;flex-direction:column;flex:1;min-height:60vh;">
         <div id="section-search-empty-default"></div>
       </div>
     </section>
@@ -5826,10 +5842,18 @@ function initDatePickers() {
 }
 
 // Close date pickers and popovers on scroll
+// Close date picker on any scroll anywhere
+document.addEventListener('scroll', (e) => {
+  document.querySelectorAll('.date-picker-cal.open').forEach(c => {
+    c.classList.remove('open');
+    // Find the btn that owns this cal (search in all date-picker-wraps)
+    document.querySelectorAll('.date-picker-btn.open').forEach(b => b.classList.remove('open'));
+  });
+}, true);
 window.addEventListener('scroll', () => {
   document.querySelectorAll('.date-picker-cal.open').forEach(c => {
     c.classList.remove('open');
-    c.previousElementSibling?.classList.remove('open');
+    document.querySelectorAll('.date-picker-btn.open').forEach(b => b.classList.remove('open'));
   });
   const popover = document.getElementById('mDotsSheet');
   const backdrop = document.getElementById('mDotsBackdrop');
