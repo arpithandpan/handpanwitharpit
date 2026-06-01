@@ -3857,7 +3857,7 @@ async function loadWsPax(wsId) {
           <div class="ws-pax-meta">${fmt(p.amount_paid)} · ${fmtMode(p.payment_mode)}${p.phone ? ' · ' + p.phone : ''}</div>
         </div>
         <div class="ws-pax-right">
-          <div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" id="wsp-cb-${p.id}" onclick="toggleWsPaxCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}','${wsId}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
+          <div style="display:flex;align-items:center;gap:0.4rem;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" id="wsp-cb-${p.id}" onclick="toggleWsPaxCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}','${wsId}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
           <button class="btn-archive" style="min-height:36px;font-size:0.72rem;padding:0 8px;" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\'")}'); setTimeout(()=>loadWsPax('${wsId}'),600);">${TRASH_BTN}</button>
         </div>
       </div>
@@ -3922,8 +3922,8 @@ async function loadParticipants() {
         <div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
         <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div>
         <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div>
-        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;justify-content:space-between;">
-          <div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:0.5rem;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
           ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true,this)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
         </div>
       </div>
