@@ -105,7 +105,7 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
 /* Desktop filter dropdown buttons */
 .filter-dd-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 0.55rem 1rem; min-height: 42px;
+  padding: 0.55rem 1rem; min-height: 48px;
   background: rgba(255,245,225,0.05); border: 1px solid rgba(193,127,90,0.3);
   border-radius: 20px; color: rgba(200,147,90,0.8); font-size: 0.95rem;
   font-family: var(--font-body); cursor: pointer; white-space: nowrap;
@@ -970,15 +970,15 @@ body.dark-mode .form-select-opt:hover { background: rgba(193,127,82,0.1); }
 
 
 /* ── EXPANDABLE PARTICIPANTS ── */
-.ws-pax-section { border-top: 1px solid rgba(200,147,90,0.12); background: transparent; display: none; }
+.ws-pax-section { border-top: 1px solid rgba(200,147,90,0.15); background: rgba(200,147,90,0.03); display: none; }
 .ws-pax-section.open { display: block; }
-.ws-pax-header { padding: 10px 16px 8px; display: flex; align-items: center; justify-content: space-between; }
-.ws-pax-title { font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: none; letter-spacing: 0.02em; }
-.ws-pax-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-top: 1px solid rgba(200,147,90,0.07); gap: 10px; }
-.ws-pax-name { font-size: 14px; font-weight: 500; color: var(--bark); }
-.ws-pax-meta { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.ws-pax-header { padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+.ws-pax-title { font-size: 0.9rem; font-weight: 600; color: var(--clay-light); text-transform: none; letter-spacing: 0.02em; }
+.ws-pax-row { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem; border-top: 1px solid rgba(200,147,90,0.07); gap: 10px; }
+.ws-pax-name { font-size: 1rem; font-weight: 500; color: var(--bark); }
+.ws-pax-meta { font-size: 0.85rem; color: var(--text-light); margin-top: 3px; }
 .ws-pax-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.ws-pax-empty { padding: 1.25rem 16px; font-size: 13px; color: var(--text-light); text-align: center; }
+.ws-pax-empty { padding: 1.5rem 1.25rem; font-size: 0.9rem; color: var(--text-light); text-align: center; }
 
 /* ── CONNECTOR ROWS ── */
 .connector-row {
@@ -1763,6 +1763,31 @@ body.dark-mode .checkin-toggle input:checked + .checkin-toggle-track { backgroun
   opacity: 0; transition: opacity 0.15s ease; line-height: 1.4;
 }
 #customTooltip.visible { opacity: 1; }
+
+/* ── STICKY ACTION COLUMN ── */
+#workshopsTable th:last-child,
+#workshopsTable td:last-child {
+  position: sticky; right: 0;
+  background: var(--table-row-bg, #1a1208);
+  z-index: 2;
+  border-left: 1px solid rgba(200,147,90,0.12);
+}
+#workshopsTable thead th:last-child {
+  background: var(--table-header, #2a1e12);
+  z-index: 3;
+  border-left: 1px solid rgba(200,147,90,0.12);
+}
+/* Expandable pax row — not sticky, spans full width */
+#workshopsTable tr[id^="ws-pax-tr-"] td {
+  position: static !important;
+  box-shadow: none !important;
+  border-left: none !important;
+  background: rgba(200,147,90,0.03) !important;
+}
+/* Row separators consistent */
+#workshopsTable tbody tr[id^="ws-tr-"] td {
+  border-bottom: 1px solid rgba(200,147,90,0.08);
+}
 </style>
     <ellipse class="orb1" cx="15" cy="20" rx="38" ry="38" fill="url(#orbA1)"/>
     <ellipse class="orb2" cx="82" cy="78" rx="42" ry="42" fill="url(#orbA2)"/>
@@ -3785,7 +3810,7 @@ async function loadWorkshops() {
       const editBtn = admin ? `<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('workshops','${w.id}')">${PENCIL}</button>` : '';
       const delBtn = admin ? `<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">${TRASH_ICON}</button>` : '';
       const addPaxBtn = admin ? `<button class="btn-dash btn-dash-primary btn-dash-sm" onclick="openParticipantForWorkshop('${w.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button>` : '';
-      return `<tr data-year="${(w.date||'').substring(0,4)}" id="ws-tr-${w.id}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td class="td-truncate td-venue" data-tip="${w.venue||''}">${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.4rem;align-items:center;flex-wrap:nowrap;">${editBtn}<button class="btn-dash btn-dash-outline btn-dash-sm" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')" style="font-size:0.78rem;padding:0.3rem 0.65rem;min-height:32px;gap:0.3rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> View ${w.total_pax||0} Participants</button>${delBtn}</td></tr><tr id="ws-pax-tr-${w.id}" style="display:none;"><td colspan="9" style="padding:0;border-top:none;"><div class="ws-pax-section open" id="ws-pax-${w.id}" style="display:block;"><div class="ws-pax-header"><span class="ws-pax-title">Participants — ${w.venue||w.id}</span>${addPaxBtn}</div><div id="ws-pax-list-${w.id}"><div class="ws-pax-empty">Loading...</div></div></div></td></tr>`;
+      return `<tr data-year="${(w.date||'').substring(0,4)}" id="ws-tr-${w.id}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td class="td-truncate td-venue" data-tip="${w.venue||''}">${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.4rem;align-items:center;flex-wrap:nowrap;">${editBtn}<button class="btn-dash btn-dash-outline btn-dash-sm" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')" style="font-size:0.85rem;padding:0.45rem 0.85rem;min-height:36px;gap:0.4rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> View ${w.total_pax||0} Participants</button>${delBtn}</td></tr><tr id="ws-pax-tr-${w.id}" style="display:none;"><td colspan="9" style="padding:0;border-top:none;"><div class="ws-pax-section open" id="ws-pax-${w.id}" style="display:block;"><div class="ws-pax-header"><span class="ws-pax-title">Participants — ${w.venue||w.id}</span>${addPaxBtn}</div><div id="ws-pax-list-${w.id}"><div class="ws-pax-empty">Loading...</div></div></div></td></tr>`;
     }).join('') || `<tr><td colspan="9">${EMPTY_STATES.workshops}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr[id^="ws-tr-"]').length > 0; _wrap.style.display = _hasRows ? '' : 'none'; } } const _es_workshopsEmptyState = document.getElementById('workshopsEmptyState'); if (_es_workshopsEmptyState) { _es_workshopsEmptyState.innerHTML = EMPTY_STATES.workshops; const _hr = document.getElementById('workshopsTable'); _es_workshopsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr[id^="ws-tr-"]').length > 0) ? 'none' : ''; }
