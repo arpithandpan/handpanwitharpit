@@ -3817,7 +3817,7 @@ async function loadWorkshops() {
       const editBtn = admin ? `<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('workshops','${w.id}')">${PENCIL}</button>` : '';
       const delBtn = admin ? `<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">${TRASH_ICON}</button>` : '';
       const addPaxBtn = admin ? `<button class="btn-dash btn-dash-primary btn-dash-sm" onclick="openParticipantForWorkshop('${w.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button>` : '';
-      return `<tr data-year="${(w.date||'').substring(0,4)}" id="ws-tr-${w.id}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td class="td-truncate td-venue" data-tip="${w.venue||''}">${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td class="ws-action-sticky" style="display:flex;gap:0.4rem;align-items:center;flex-wrap:nowrap;">${editBtn}<button class="btn-dash btn-dash-outline btn-dash-sm" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')" style="font-size:0.85rem;padding:0.45rem 0.85rem;min-height:36px;gap:0.4rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> View ${w.total_pax||0} Participants</button>${delBtn}</td></tr><tr id="ws-pax-tr-${w.id}" style="display:none;"><td colspan="9" style="padding:0;border-top:none;"><div class="ws-pax-section open" id="ws-pax-${w.id}" style="display:block;"><div class="ws-pax-header"><span class="ws-pax-title">Participants — ${w.venue||w.id}</span>${addPaxBtn}</div><div id="ws-pax-list-${w.id}"><div class="ws-pax-empty">Loading...</div></div></div></td></tr>`;
+      return `<tr data-year="${(w.date||'').substring(0,4)}" id="ws-tr-${w.id}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td class="td-truncate td-venue" data-tip="${w.venue||''}">${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td class="ws-action-sticky" style="display:flex;gap:0.4rem;align-items:center;flex-wrap:nowrap;">${editBtn}<button class="btn-dash btn-dash-outline btn-dash-sm" id="ws-pax-btn-${w.id}" onclick="openWsPaxModal('${w.id}','${(w.venue||w.id).replace(/'/g,'')}',${w.total_pax||0})" style="font-size:0.85rem;padding:0.45rem 0.85rem;min-height:36px;gap:0.4rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> View ${w.total_pax||0} Participants</button>${delBtn}</td></tr>`;
     }).join('') || `<tr><td colspan="9">${EMPTY_STATES.workshops}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr[id^="ws-tr-"]').length > 0; _wrap.style.display = _hasRows ? '' : 'none'; } } const _es_workshopsEmptyState = document.getElementById('workshopsEmptyState'); if (_es_workshopsEmptyState) { _es_workshopsEmptyState.innerHTML = EMPTY_STATES.workshops; const _hr = document.getElementById('workshopsTable'); _es_workshopsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr[id^="ws-tr-"]').length > 0) ? 'none' : ''; }
@@ -3840,7 +3840,7 @@ async function loadWorkshops() {
           <div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div>
         </div>
         <div style="padding:0.85rem 1.5rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;justify-content:flex-end;">
-          <button class="btn-dash btn-dash-outline btn-dash-sm" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')">
+          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openWsPaxModal('${w.id}','${(w.venue||w.id).replace(/'/g,'')}',${w.total_pax||0})">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             View ${w.total_pax||0} Participants
           </button>
@@ -3848,16 +3848,7 @@ async function loadWorkshops() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
           </button>
         </div>
-        <div class="ws-pax-section" id="ws-pax-${w.id}">
-          <div class="ws-pax-header">
-            <span class="ws-pax-title">Participants</span>
-            <button class="btn-dash btn-dash-primary btn-dash-sm" onclick="openParticipantForWorkshop('${w.id}')">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Add
-            </button>
-          </div>
-          <div id="ws-pax-list-${w.id}"><div class="ws-pax-empty">Loading...</div></div>
-        </div>
+
       </div>
     `).join('') || EMPTY_STATES.workshops;
 
@@ -6900,6 +6891,73 @@ async function saveReassign() {
   document.addEventListener('scroll', () => hideTip(), true);
 })();
 
+
+// ── PARTICIPANTS MODAL ──
+window._wsPaxModalWsId = null;
+
+async function openWsPaxModal(wsId, venueName, paxCount) {
+  window._wsPaxModalWsId = wsId;
+  document.getElementById('wsPaxModalTitle').textContent = 'Participants — ' + (venueName || wsId);
+  document.getElementById('wsPaxModalSub').textContent = (paxCount || 0) + ' participant' + (paxCount !== 1 ? 's' : '');
+  document.getElementById('wsPaxModalBody').innerHTML = '<div class="empty-state" style="min-height:0;padding:3rem 1rem;"><div class="spinner"></div></div>';
+
+  if (window.innerWidth <= 900) {
+    // Mobile: use bottom sheet
+    openMobilePicker('Participants — ' + (venueName || wsId), (body) => {
+      body.innerHTML = '<div class="empty-state" style="min-height:0;padding:3rem 1rem;"><div class="spinner"></div></div>';
+      _loadWsPaxInto(wsId, body, true);
+    });
+  } else {
+    // Desktop: modal
+    const modal = document.getElementById('modal-wsPax');
+    if (modal) { modal.style.display = 'flex'; lockScroll(); }
+    await _loadWsPaxInto(wsId, document.getElementById('wsPaxModalBody'), false);
+  }
+}
+
+function closeWsPaxModal() {
+  const modal = document.getElementById('modal-wsPax');
+  if (modal) modal.style.display = 'none';
+  unlockScroll();
+  window._wsPaxModalWsId = null;
+}
+
+async function _loadWsPaxInto(wsId, container, isMobile) {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&workshop_id=eq.' + wsId + '&archived=eq.false&order=created_at.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const parts = await res.json();
+    if (!parts.length) {
+      container.innerHTML = '<div class="empty-state" style="min-height:0;padding:3rem 1rem;"><div style="font-size:2rem;margin-bottom:0.5rem;">👥</div><div class="empty-state-title" style="font-size:1rem;">No participants yet</div></div>';
+      return;
+    }
+    const TRASH_BTN = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
+    const admin = isAdmin();
+    container.innerHTML = parts.map(p => `
+      <div class="ws-pax-row" id="modal-pax-row-\${p.id}">
+        <div style="flex:1;min-width:0;">
+          <div class="ws-pax-name">\${p.full_name||'—'}</div>
+          <div class="ws-pax-meta">\${fmt(p.amount_paid)} · \${fmtMode(p.payment_mode)}\${p.phone ? ' · ' + p.phone : ''}</div>
+        </div>
+        <div class="ws-pax-right">
+          <div style="display:flex;align-items:center;gap:0.4rem;">
+            <span class="checkin-label" data-checked="\${p.checked_in?1:0}">\${p.checked_in?'Checked in':'Check-in'}</span>
+            <label class="checkin-toggle" id="modal-wsp-cb-\${p.id}" onclick="toggleWsPaxCheckIn('\${p.id}',\${p.checked_in},'\${(p.full_name||p.id).replace(/'/g,'')}','\${wsId}');event.preventDefault();">
+              <input type="checkbox" \${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span>
+            </label>
+          </div>
+          \${admin ? \`<button class="btn-archive" style="min-height:36px;font-size:0.72rem;padding:0 8px;" onclick="archiveRecord('participants','\${p.id}','\${(p.full_name||p.id).replace(/'/g,"\\'")}'); setTimeout(()=>_loadWsPaxInto('\${wsId}',document.getElementById(isMobile?'mobilePickerBody':'wsPaxModalBody'),\${isMobile}),600);">\${TRASH_BTN}</button>\` : ''}
+        </div>
+      </div>
+    `).join('');
+    // Update sub count
+    document.getElementById('wsPaxModalSub').textContent = parts.length + ' participant' + (parts.length !== 1 ? 's' : '');
+  } catch(e) {
+    container.innerHTML = '<div class="ws-pax-empty">Failed to load participants</div>';
+  }
+}
+
 </script>
 
 <!-- ── ASSIGN PAYMENT MODAL ── -->
@@ -6985,5 +7043,26 @@ async function saveReassign() {
   </div>
 </div>
 <div id="customTooltip"></div>
+
+<!-- ── PARTICIPANTS MODAL (desktop) ── -->
+<div class="modal-overlay" id="modal-wsPax" onclick="if(event.target===this)closeWsPaxModal()" style="display:none;">
+  <div class="modal" style="max-width:560px;max-height:80vh;display:flex;flex-direction:column;">
+    <div class="modal-header" style="flex-shrink:0;">
+      <div>
+        <div class="modal-title" id="wsPaxModalTitle">Participants</div>
+        <div style="font-size:0.85rem;color:var(--text-light);margin-top:2px;" id="wsPaxModalSub"></div>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <button class="btn-dash btn-dash-primary btn-dash-sm admin-only" id="wsPaxModalAddBtn" onclick="openParticipantForWorkshop(window._wsPaxModalWsId)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add
+        </button>
+        <button class="modal-close" onclick="closeWsPaxModal()">✕</button>
+      </div>
+    </div>
+    <div style="overflow-y:auto;flex:1;" id="wsPaxModalBody">
+      <div class="empty-state" style="min-height:0;padding:3rem 1rem;"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
