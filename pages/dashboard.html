@@ -6845,6 +6845,7 @@ function openWsPaxPage(wsId, venueName, wsDate) {
 async function loadVPParticipants(wsId) {
   const list = document.getElementById('vpParticipantsList');
   const sub = document.getElementById('vpPageSub');
+  const VP_TRASH = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&workshop_id=eq.' + wsId + '&archived=eq.false&order=created_at.asc', {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
@@ -6926,7 +6927,7 @@ async function loadVPParticipants(wsId) {
         const trashBtn = document.createElement('button');
         trashBtn.className = 'btn-archive';
         trashBtn.style.cssText = 'min-height:36px;font-size:0.72rem;padding:0 8px;';
-        trashBtn.innerHTML = TRASH_ICON;
+        trashBtn.innerHTML = VP_TRASH;
         trashBtn.onclick = function() {
           archiveRecord('participants', p.id, p.full_name || p.id);
           setTimeout(function() { loadVPParticipants(wsId); }, 600);
