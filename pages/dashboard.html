@@ -526,7 +526,7 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
 }
 
 /* ── GLOBAL OVERFLOW FIX ── */
-html { font-size: 16px; }
+html { font-size: 16px; scroll-behavior: smooth; }
 html, body { overflow-x: hidden !important; max-width: 100vw; }
 
 /* ── HIDE MOBILE CARDS ON DESKTOP ── */
@@ -576,6 +576,8 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
   margin-left: 240px; flex: 1;
   background: var(--cream); min-height: 100vh;
   min-width: 0; overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  will-change: scroll-position;
 }
 
 /* Section panels */
@@ -1078,7 +1080,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   .dash-table-wrap table, .dash-table-wrap .desktop-table { display: none !important; }
   .dash-table-wrap { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; width: 100% !important; box-sizing: border-box !important; overflow: hidden !important; }
   #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #workshopsCards, #participantsCards { display: flex !important; }
-  .mobile-cards { display: flex !important; flex-direction: column !important; gap: 16px !important; width: 100% !important; padding: 0 !important; box-sizing: border-box !important; }
+  .mobile-cards { display: flex !important; flex-direction: column !important; gap: 16px !important; width: 100% !important; padding: 0 0 max(2rem, env(safe-area-inset-bottom)) !important; box-sizing: border-box !important; }
   .m-card { box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; margin-bottom: 0 !important; overflow: hidden !important; }
   .m-card-row { box-sizing: border-box !important; width: 100% !important; }
   .m-card-val { max-width: 55% !important; text-align: right !important; word-break: break-word !important; }
@@ -1157,7 +1159,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 @media (max-width: 900px) {
   .mobile-topbar { display: flex; }
   .dash-root { padding-top: 68px; }
-  .dash-main { height: calc(100vh - 68px); overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: env(safe-area-inset-bottom, 0px); scroll-padding-bottom: 2rem; }
+  .dash-main { height: calc(100vh - 68px); overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: env(safe-area-inset-bottom, 0px); scroll-padding-bottom: 2rem; overscroll-behavior-y: contain; will-change: scroll-position; }
   .dash-sidebar-toggle { display: none !important; }
 }
 
@@ -1199,7 +1201,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   /* Stack dashboard section header buttons */
   .dash-section-header > div:last-child { display: flex; flex-wrap: wrap; gap: 0.5rem; }
   /* Ensure last content isn't clipped during fast scroll */
-  .dash-section { padding-bottom: max(5rem, calc(env(safe-area-inset-bottom) + 4rem)) !important; }
+  .dash-section { padding-bottom: max(6rem, calc(env(safe-area-inset-bottom) + 5rem)) !important; }
 }
 
 /* Small mobile (max 500px) */
@@ -1268,7 +1270,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 }
 .mobile-cards {
   display: flex; flex-direction: column; gap: 20px;
-  padding: 0; width: 100%; box-sizing: border-box;
+  padding: 0 0 max(2rem, env(safe-area-inset-bottom)); width: 100%; box-sizing: border-box;
 }
 .m-card-row {
   display: flex; justify-content: space-between; align-items: center;
@@ -1316,6 +1318,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
+  will-change: scroll-position;
 }
 .form-page-back {
   display: flex; align-items: center; gap: 0.5rem;
@@ -1330,10 +1333,11 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 .form-page-title {
   font-family: var(--font-body); font-size: 1.15rem;
   font-weight: 400; color: #e8d5c0;
+  padding-top: 0.85rem;
 }
 .form-page-body {
   max-width: 600px; margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2rem 1.5rem max(5rem, calc(env(safe-area-inset-bottom) + 4rem));
 }
 
 
@@ -1531,7 +1535,7 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
   .form-page-header { padding: 0.75rem 1rem; flex-wrap: wrap; gap: 0; }
   .form-page-back { padding: 0.45rem 0.85rem; font-size: 1.15rem; }
-  .form-page-title { font-size: 1.05rem; width: 100%; order: 3; padding: 0.6rem 0.25rem 0.1rem; text-align: left; }
+  .form-page-title { font-size: 1.05rem; width: 100%; order: 3; padding: 1.1rem 0.25rem 0.1rem; text-align: left; }
   .btn-dash-save { order: 2; }
   .form-page-body { padding: 1.25rem 1rem 3rem; }
   .dash-section-header > div[style*="display:flex"] { flex-wrap: wrap; }
@@ -1695,6 +1699,8 @@ body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border
 .checkin-body {
   flex: 1; overflow-y: auto; padding: 1.25rem;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  will-change: scroll-position;
 }
 .checkin-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -2125,7 +2131,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
         </button>
         <div class="mobile-active-chips" id="mobile-chips-workshops"></div>
         <div class="filter-dd-wrap" id="dd-wrap-ws-year">
-          <button class="filter-dd-btn" id="dd-btn-ws-year" onclick=\"toggleFilterDd('ws-year', event)\">
+          <button class="filter-dd-btn" id="dd-btn-ws-year" onclick="toggleFilterDd('ws-year', event)">
             All time <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="filter-dd-menu" id="dd-menu-ws-year"></div>
@@ -2178,7 +2184,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
         <div class="mobile-active-chips" id="mobile-chips-participants"></div>
         <div id="dd-participants-workshop" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-p-checkin">
-          <button class="filter-dd-btn" id="dd-btn-p-checkin" onclick=\"toggleFilterDd('p-checkin', event)\">
+          <button class="filter-dd-btn" id="dd-btn-p-checkin" onclick="toggleFilterDd('p-checkin', event)">
             Check-in <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="filter-dd-menu" id="dd-menu-p-checkin">
@@ -2188,7 +2194,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
           </div>
         </div>
         <div class="filter-dd-wrap" id="dd-wrap-p-mode">
-          <button class="filter-dd-btn" id="dd-btn-p-mode" onclick=\"toggleFilterDd('p-mode', event)\">
+          <button class="filter-dd-btn" id="dd-btn-p-mode" onclick="toggleFilterDd('p-mode', event)">
             Mode <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="filter-dd-menu" id="dd-menu-p-mode">
@@ -2255,7 +2261,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
         <div class="mobile-active-chips" id="mobile-chips-classes"></div>
         <div id="dd-classes-batch" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-c-status">
-          <button class="filter-dd-btn" id="dd-btn-c-status" onclick=\"toggleFilterDd('c-status', event)\">
+          <button class="filter-dd-btn" id="dd-btn-c-status" onclick="toggleFilterDd('c-status', event)">
             Status <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="filter-dd-menu" id="dd-menu-c-status">
@@ -2314,7 +2320,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
         <div id="dd-fee-student" class="custom-select-wrap-placeholder"></div>
         <div id="dd-fee-month" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-fp-status">
-          <button class="filter-dd-btn" id="dd-btn-fp-status" onclick=\"toggleFilterDd('fp-status', event)\">
+          <button class="filter-dd-btn" id="dd-btn-fp-status" onclick="toggleFilterDd('fp-status', event)">
             Status <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="filter-dd-menu" id="dd-menu-fp-status">
@@ -2324,7 +2330,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
           </div>
         </div>
         <div class="filter-dd-wrap" id="dd-wrap-fp-mode">
-          <button class="filter-dd-btn" id="dd-btn-fp-mode" onclick=\"toggleFilterDd('fp-mode', event)\">
+          <button class="filter-dd-btn" id="dd-btn-fp-mode" onclick="toggleFilterDd('fp-mode', event)">
             Mode <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="filter-dd-menu" id="dd-menu-fp-mode">
@@ -2393,7 +2399,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
         <div id="dd-payments-period" class="custom-select-wrap-placeholder"></div>
         <div id="dd-payments-category" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-pay-type">
-          <button class="filter-dd-btn" id="dd-btn-pay-type" onclick=\"toggleFilterDd('pay-type', event)\">
+          <button class="filter-dd-btn" id="dd-btn-pay-type" onclick="toggleFilterDd('pay-type', event)">
             Type <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="filter-dd-menu" id="dd-menu-pay-type">
@@ -2404,7 +2410,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
           </div>
         </div>
         <div class="filter-dd-wrap" id="dd-wrap-pay-mode">
-          <button class="filter-dd-btn" id="dd-btn-pay-mode" onclick=\"toggleFilterDd('pay-mode', event)\">
+          <button class="filter-dd-btn" id="dd-btn-pay-mode" onclick="toggleFilterDd('pay-mode', event)">
             Mode <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="filter-dd-menu" id="dd-menu-pay-mode">
@@ -2508,7 +2514,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
         <div class="mobile-active-chips" id="mobile-chips-leads"></div>
         <div id="dd-leads-workshop" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-l-referred">
-          <button class="filter-dd-btn" id="dd-btn-l-referred" onclick=\"toggleFilterDd('l-referred', event)\">
+          <button class="filter-dd-btn" id="dd-btn-l-referred" onclick="toggleFilterDd('l-referred', event)">
             Referred <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="filter-dd-menu" id="dd-menu-l-referred">
@@ -3799,13 +3805,16 @@ async function loadOverview() {
 async function loadWorkshops() {
   try {
     const ws = currentRole === 'viewer' ? DUMMY.workshops : await (async () => {
-      const res = await fetch(SUPABASE_URL + '/rest/v1/workshops?select=*&archived=eq.false&order=date.desc', {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/workshops?select=*,participants(count)&participants.archived=eq.false&archived=eq.false&order=date.desc', {
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
       });
       if (!res.ok) throw new Error('Failed');
       return await res.json();
     })();
-    ws.forEach(w => cacheRecord('workshops', w));
+    ws.forEach(w => {
+      w._actual_pax = (w.participants && w.participants[0] && typeof w.participants[0].count === 'number') ? w.participants[0].count : (w.total_pax || 0);
+      cacheRecord('workshops', w);
+    });
     populateWorkshopFilterDropdown(ws);
     populateLeadsWorkshopDropdown(ws);
     populateWorkshopYearFilter(ws);
@@ -3825,7 +3834,7 @@ async function loadWorkshops() {
         + '<td><strong>'+w.id+'</strong></td>'
         + '<td>'+fmtDate(w.date)+'</td>'
         + '<td class="td-truncate td-venue" data-tip="'+(w.venue||'')+'">'+(w.venue||'—')+'</td>'
-        + '<td>'+(w.total_pax||0)+'</td>'
+        + '<td>'+(w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0))+'</td>'
         + '<td>'+fmt(w.total_revenue)+'</td>'
         + '<td>'+fmt(w.total_expense)+'</td>'
         + '<td style="color:var(--moss);font-weight:500">'+fmt(w.net_profit)+'</td>'
@@ -3849,7 +3858,7 @@ async function loadWorkshops() {
               <div style="font-size:17px;font-weight:600;color:var(--bark);">${w.venue||'—'}</div>
               <div style="font-size:12px;color:var(--text-light);margin-top:2px;">${fmtDate(w.date)}</div>
             </div>
-            <span class="badge badge-clay" style="margin-top:2px;">${w.total_pax||0} pax</span>
+            <span class="badge badge-clay" style="margin-top:2px;">${w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0)} pax</span>
           </div>
           <div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div>
           <div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div>
@@ -3859,7 +3868,7 @@ async function loadWorkshops() {
         <div style="padding:0.85rem 1.5rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;justify-content:flex-end;">
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openWsPaxPage('${w.id}','${(w.venue||w.id).replace(/['"]/g,'')}','${fmtDate(w.date)}')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-            View ${w.total_pax||0} Participants
+            View ${w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0)} Participants
           </button>
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${w.id}','${(w.venue||w.id).replace(/'/g,"\\'")}','workshop',${admin},this)" aria-label="More actions" style="padding:0.5rem 0.75rem;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
