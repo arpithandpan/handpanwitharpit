@@ -2797,7 +2797,10 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
     <button class="btn-dash-save admin-only" id="vpAddBtn">+ Add</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;padding-top:0.5rem;">
-    <div style="font-size:0.95rem;color:var(--text-light);margin-top:0.75rem;margin-bottom:1.75rem;font-weight:500;" id="vpPageSub"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem;margin-bottom:1.75rem;">
+      <div style="font-size:0.95rem;color:var(--text-light);font-weight:500;" id="vpPageSub"></div>
+      <div id="vpCheckinCounter" style="display:none;background:rgba(200,147,90,0.12);border:1px solid rgba(200,147,90,0.3);border-radius:20px;padding:0.3rem 0.85rem;font-size:0.85rem;font-weight:600;color:#c8935a;letter-spacing:0.02em;"></div>
+    </div>
     <div id="vpParticipantsList">
       <div class="empty-state" style="min-height:40vh;"><div class="spinner"></div></div>
     </div>
@@ -5572,7 +5575,7 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
 
   let html = '';
   if (type === 'workshop') {
-    html += `<button class="m-dots-item" onclick="closeMDotsSheet();openCheckinMode('${id}','${name}','')">${CHECK_SVG} Check-in</button>`;
+
     if (isAdmin) {
       html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('workshops','${id}')">${EDIT_SVG} Edit</button>`;
       html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('workshops','${id}','Workshop ${id}')">${TRASH_SVG} Delete</button>`;
@@ -5599,7 +5602,7 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
       // Build actions array and create buttons programmatically
       const actions = [];
       if (type === 'workshop') {
-        actions.push({ label: `${CHECK_SVG} Check-in`, danger: false, fn: () => openCheckinMode(id, name, '') });
+
         if (isAdmin) {
           actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('workshops', id) });
           actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('workshops', id, 'Workshop ' + id) });
@@ -6921,6 +6924,22 @@ async function loadVPParticipants(wsId) {
     });
     const parts = await res.json();
     if (sub) sub.textContent = parts.length + ' participant' + (parts.length !== 1 ? 's' : '');
+    function updateVPCheckinCounter() {
+      const counter = document.getElementById('vpCheckinCounter');
+      if (!counter) return;
+      const total = parts.length;
+      const checkedIn = parts.filter(function(p) { return p.checked_in; }).length;
+      if (total > 0) {
+        counter.textContent = checkedIn + ' / ' + total + ' checked in';
+        counter.style.display = '';
+        counter.style.borderColor = checkedIn === total ? 'rgba(122,140,106,0.5)' : 'rgba(200,147,90,0.3)';
+        counter.style.background = checkedIn === total ? 'rgba(122,140,106,0.12)' : 'rgba(200,147,90,0.12)';
+        counter.style.color = checkedIn === total ? 'var(--moss)' : '#c8935a';
+      } else {
+        counter.style.display = 'none';
+      }
+    }
+    updateVPCheckinCounter();
     if (!parts.length) {
       list.innerHTML = '';
       const es = document.createElement('div');
@@ -7017,6 +7036,21 @@ async function loadVPParticipants(wsId) {
 async function doVPToggle(p, wsId, newState, cbInput, labelEl, toggleEl) {
   p.checked_in = newState;
   if (cbInput) cbInput.checked = newState;
+  // Update checkin counter live
+  (function() {
+    const counter = document.getElementById('vpCheckinCounter');
+    if (!counter || counter.style.display === 'none') return;
+    const text = counter.textContent; // "X / Y checked in"
+    const parts2 = text.match(/(\d+) \/ (\d+)/);
+    if (!parts2) return;
+    let checked = parseInt(parts2[1]) + (newState ? 1 : -1);
+    const total = parseInt(parts2[2]);
+    checked = Math.max(0, Math.min(total, checked));
+    counter.textContent = checked + ' / ' + total + ' checked in';
+    counter.style.borderColor = checked === total ? 'rgba(122,140,106,0.5)' : 'rgba(200,147,90,0.3)';
+    counter.style.background = checked === total ? 'rgba(122,140,106,0.12)' : 'rgba(200,147,90,0.12)';
+    counter.style.color = checked === total ? 'var(--moss)' : '#c8935a';
+  })();
   if (labelEl) { labelEl.textContent = newState ? 'Checked in' : 'Check-in'; labelEl.dataset.checked = newState ? '1' : '0'; }
   try {
     await fetch(SUPABASE_URL + '/rest/v1/participants?id=eq.' + p.id, {
