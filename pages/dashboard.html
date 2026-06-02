@@ -1764,27 +1764,30 @@ body.dark-mode .checkin-toggle input:checked + .checkin-toggle-track { backgroun
 }
 #customTooltip.visible { opacity: 1; }
 
-/* ── STICKY ACTION COLUMN ── */
-#workshopsTable {
+/* ── WORKSHOPS TABLE ── */
+.dash-table-wrap table#workshopsTable,
+table#workshopsTable {
   min-width: 1100px;
   table-layout: auto;
 }
-#workshopsTable th:last-child {
-  position: sticky; right: 0;
-  background: #2a1e12;
-  z-index: 3;
-  border-left: 1px solid rgba(200,147,90,0.15);
+/* Sticky action column */
+.ws-action-sticky {
+  position: sticky !important;
+  right: 0 !important;
+  z-index: 3 !important;
+  background: #2a1e12 !important;
+  border-left: 1px solid rgba(200,147,90,0.15) !important;
+  box-shadow: -3px 0 8px rgba(0,0,0,0.3) !important;
 }
-#workshopsTable td:last-child {
-  position: sticky; right: 0;
-  background: #1a1208;
-  z-index: 2;
-  border-left: 1px solid rgba(200,147,90,0.1);
+tbody .ws-action-sticky {
+  background: #1a1208 !important;
+  z-index: 2 !important;
 }
 /* Expandable pax row — not sticky */
 #workshopsTable tr[id^="ws-pax-tr-"] td {
   position: static !important;
   border-left: none !important;
+  box-shadow: none !important;
   background: rgba(200,147,90,0.03) !important;
   z-index: 0 !important;
 }
@@ -2151,7 +2154,7 @@ body.dark-mode .checkin-toggle input:checked + .checkin-toggle-track { backgroun
           <th class="sortable-th" onclick="sortTable('workshops','total_expense',this)">Expenses <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th class="sortable-th" onclick="sortTable('workshops','net_profit',this)">Net Profit <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th class="sortable-th" onclick="sortTable('workshops','margin',this)">Margin <span class="sort-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
-          <th>Action</th>
+          <th class="ws-action-sticky">Action</th>
         </tr></thead>
         <tbody id="workshopsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       </div>
@@ -3814,7 +3817,7 @@ async function loadWorkshops() {
       const editBtn = admin ? `<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('workshops','${w.id}')">${PENCIL}</button>` : '';
       const delBtn = admin ? `<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('workshops','${w.id}','Workshop ${w.id}')">${TRASH_ICON}</button>` : '';
       const addPaxBtn = admin ? `<button class="btn-dash btn-dash-primary btn-dash-sm" onclick="openParticipantForWorkshop('${w.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button>` : '';
-      return `<tr data-year="${(w.date||'').substring(0,4)}" id="ws-tr-${w.id}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td class="td-truncate td-venue" data-tip="${w.venue||''}">${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td style="display:flex;gap:0.4rem;align-items:center;flex-wrap:nowrap;">${editBtn}<button class="btn-dash btn-dash-outline btn-dash-sm" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')" style="font-size:0.85rem;padding:0.45rem 0.85rem;min-height:36px;gap:0.4rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> View ${w.total_pax||0} Participants</button>${delBtn}</td></tr><tr id="ws-pax-tr-${w.id}" style="display:none;"><td colspan="9" style="padding:0;border-top:none;"><div class="ws-pax-section open" id="ws-pax-${w.id}" style="display:block;"><div class="ws-pax-header"><span class="ws-pax-title">Participants — ${w.venue||w.id}</span>${addPaxBtn}</div><div id="ws-pax-list-${w.id}"><div class="ws-pax-empty">Loading...</div></div></div></td></tr>`;
+      return `<tr data-year="${(w.date||'').substring(0,4)}" id="ws-tr-${w.id}"><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td class="td-truncate td-venue" data-tip="${w.venue||''}">${w.venue||'—'}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td>${fmt(w.total_expense)}</td><td style="color:var(--moss);font-weight:500">${fmt(w.net_profit)}</td><td>${fmtPct(w.margin)}</td><td class="ws-action-sticky" style="display:flex;gap:0.4rem;align-items:center;flex-wrap:nowrap;">${editBtn}<button class="btn-dash btn-dash-outline btn-dash-sm" id="ws-pax-btn-${w.id}" onclick="toggleWsPax('${w.id}')" style="font-size:0.85rem;padding:0.45rem 0.85rem;min-height:36px;gap:0.4rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> View ${w.total_pax||0} Participants</button>${delBtn}</td></tr><tr id="ws-pax-tr-${w.id}" style="display:none;"><td colspan="9" style="padding:0;border-top:none;"><div class="ws-pax-section open" id="ws-pax-${w.id}" style="display:block;"><div class="ws-pax-header"><span class="ws-pax-title">Participants — ${w.venue||w.id}</span>${addPaxBtn}</div><div id="ws-pax-list-${w.id}"><div class="ws-pax-empty">Loading...</div></div></div></td></tr>`;
     }).join('') || `<tr><td colspan="9">${EMPTY_STATES.workshops}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr[id^="ws-tr-"]').length > 0; _wrap.style.display = _hasRows ? '' : 'none'; } } const _es_workshopsEmptyState = document.getElementById('workshopsEmptyState'); if (_es_workshopsEmptyState) { _es_workshopsEmptyState.innerHTML = EMPTY_STATES.workshops; const _hr = document.getElementById('workshopsTable'); _es_workshopsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr[id^="ws-tr-"]').length > 0) ? 'none' : ''; }
