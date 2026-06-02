@@ -1765,26 +1765,30 @@ body.dark-mode .checkin-toggle input:checked + .checkin-toggle-track { backgroun
 #customTooltip.visible { opacity: 1; }
 
 /* ── STICKY ACTION COLUMN ── */
-#workshopsTable th:last-child,
+#workshopsTable {
+  min-width: 1100px;
+  table-layout: auto;
+}
+#workshopsTable th:last-child {
+  position: sticky; right: 0;
+  background: #2a1e12;
+  z-index: 3;
+  border-left: 1px solid rgba(200,147,90,0.15);
+}
 #workshopsTable td:last-child {
   position: sticky; right: 0;
-  background: var(--table-row-bg, #1a1208);
+  background: #1a1208;
   z-index: 2;
-  border-left: 1px solid rgba(200,147,90,0.12);
+  border-left: 1px solid rgba(200,147,90,0.1);
 }
-#workshopsTable thead th:last-child {
-  background: var(--table-header, #2a1e12);
-  z-index: 3;
-  border-left: 1px solid rgba(200,147,90,0.12);
-}
-/* Expandable pax row — not sticky, spans full width */
+/* Expandable pax row — not sticky */
 #workshopsTable tr[id^="ws-pax-tr-"] td {
   position: static !important;
-  box-shadow: none !important;
   border-left: none !important;
   background: rgba(200,147,90,0.03) !important;
+  z-index: 0 !important;
 }
-/* Row separators consistent */
+/* Row separators */
 #workshopsTable tbody tr[id^="ws-tr-"] td {
   border-bottom: 1px solid rgba(200,147,90,0.08);
 }
@@ -3862,15 +3866,18 @@ async function toggleWsPax(wsId) {
   const btn = document.getElementById('ws-pax-btn-' + wsId);
   const desktopRow = document.getElementById('ws-pax-tr-' + wsId);
   if (!section) return;
-  const isOpen = section.classList.contains('open') || (desktopRow && desktopRow.style.display !== 'none');
+  // Use a data attribute as single source of truth for open state
+  const isOpen = section.dataset.paxOpen === '1';
   const PAX_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>';
   const HIDE_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>';
   if (isOpen) {
+    section.dataset.paxOpen = '0';
     section.classList.remove('open');
     if (desktopRow) desktopRow.style.display = 'none';
     const paxCount = section.querySelectorAll('.ws-pax-row').length;
     if (btn) btn.innerHTML = PAX_ICON + ' View ' + (paxCount > 0 ? paxCount + ' ' : '') + 'Participants';
   } else {
+    section.dataset.paxOpen = '1';
     section.classList.add('open');
     if (desktopRow) desktopRow.style.display = '';
     if (btn) btn.innerHTML = HIDE_ICON + ' Hide Participants';
