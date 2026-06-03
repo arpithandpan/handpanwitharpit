@@ -3909,18 +3909,17 @@ async function loadWsPax(wsId) {
     if (!parts.length) { list.innerHTML = '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">👥</div><div class="empty-state-title" style="font-size:1rem;">No participants yet</div></div>'; return; }
     const TRASH_BTN = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
     list.innerHTML = parts.map(p => `
-      <div class="ws-pax-row">
-        <div style="flex:1;">
+      <div class="ws-pax-row" style="flex-direction:column;gap:0;padding:0;align-items:stretch;">
+        <div style="padding:1rem 1.25rem 0.6rem;">
           <div class="ws-pax-name">${p.full_name||'—'}</div>
           ${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.78rem;color:var(--text-light);opacity:0.7;margin-top:2px;">Booked as: ' + p.razorpay_name + '</div>' : ''}
-          <div class="ws-pax-meta">${fmt(p.amount_paid)} · ${fmtMode(p.payment_mode)}${p.phone ? ' · ' + p.phone : ''}</div>
-          ${p.email ? '<div style="font-size:0.85rem;color:var(--text-light);margin-top:5px;word-break:break-all;">📧 ' + p.email + '</div>' : ''}
-          ${p.bringing_own_handpan ? '<div style="font-size:0.85rem;color:var(--text-light);margin-top:4px;">🥁 Own handpan: <strong style=\"color:var(--bark);\">' + p.bringing_own_handpan + '</strong></div>' : ''}
-          ${p.photo_video_consent ? '<div style="font-size:0.85rem;color:var(--text-light);margin-top:4px;">📸 Photo/video: <strong style=\"color:var(--bark);\">' + p.photo_video_consent + '</strong></div>' : ''}
+          <div class="ws-pax-meta" style="margin-top:3px;">${fmt(p.amount_paid)} · ${fmtMode(p.payment_mode)}${p.phone ? ' · ' + p.phone : ''}</div>
         </div>
-        <div class="ws-pax-right">
-          <div style="display:flex;align-items:center;gap:0.4rem;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" id="wsp-cb-${p.id}" onclick="toggleWsPaxCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}','${wsId}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
-          <button class="btn-archive" style="width:48px;height:48px;min-height:48px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\'")}'); setTimeout(()=>loadWsPax('${wsId}'),600);">${TRASH_BTN}</button>
+        ${(p.email || p.bringing_own_handpan || p.photo_video_consent) ? `<div style="border-top:1px solid rgba(200,147,90,0.1);padding:0.6rem 1.25rem;display:flex;flex-direction:column;gap:6px;">${p.email ? '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><span style="font-size:0.8rem;color:var(--text-light);flex-shrink:0;">Email</span><span style="font-size:0.8rem;color:var(--clay-light);text-align:right;word-break:break-all;">' + p.email + '</span></div>' : ''}${p.bringing_own_handpan ? '<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:0.8rem;color:var(--text-light);">Own handpan</span><span style="font-size:0.8rem;font-weight:600;color:var(--bark);">' + p.bringing_own_handpan + '</span></div>' : ''}${p.photo_video_consent ? '<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:0.8rem;color:var(--text-light);">Photo/video</span><span style="font-size:0.8rem;font-weight:600;color:var(--bark);">' + p.photo_video_consent + '</span></div>' : ''}</div>` : ''}
+        <div style="border-top:1px solid rgba(200,147,90,0.1);padding:0.65rem 1.25rem;display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:0.5rem;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" id="wsp-cb-${p.id}" onclick="toggleWsPaxCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}','${wsId}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
+          <button class="btn-archive" style="width:48px;height:48px;min-height:48px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')
+; setTimeout(()=>loadWsPax('${wsId}'),600);">${TRASH_BTN}</button>
         </div>
       </div>
     `).join('');
@@ -3998,15 +3997,22 @@ async function loadParticipants() {
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; setSearchFilterVisibility('participants', _hasRows); } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
     if (parCards) parCards.innerHTML = parts.map(p => `
-      <div class="m-card" style="margin-bottom:1.25rem;" data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}">
-        <div class="m-card-title">${p.full_name||'—'} <span class="badge badge-clay" style="float:right">${fmtMode(p.payment_mode)}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div>
-        <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div>
-        ${p.email ? '<div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val" style="word-break:break-all;font-size:0.85rem;">' + p.email + '</span></div>' : ''}
-        ${p.bringing_own_handpan ? '<div class="m-card-row"><span class="m-card-label">🥁 Own Handpan</span><span class="m-card-val">' + p.bringing_own_handpan + '</span></div>' : ''}
-        ${p.photo_video_consent ? '<div class="m-card-row"><span class="m-card-label">📸 Photo/Video</span><span class="m-card-val">' + p.photo_video_consent + '</span></div>' : ''}
-        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;align-items:center;justify-content:space-between;">
+      <div class="m-card" style="margin-bottom:1.25rem;padding:0;" data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}">
+        <div style="padding:1rem 1.25rem 0.6rem;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div class="m-card-title" style="margin:0;">${p.full_name||'—'}</div>
+            <span class="badge badge-clay">${fmtMode(p.payment_mode)}</span>
+          </div>
+          <div class="m-card-row" style="padding:4px 0 0;"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
+          <div class="m-card-row" style="padding:2px 0;"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div>
+          <div class="m-card-row" style="padding:2px 0;"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div>
+        </div>
+        ${(p.email || p.bringing_own_handpan || p.photo_video_consent) ? `<div style="border-top:1px solid rgba(200,147,90,0.1);padding:0.6rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
+          ${p.email ? '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><span style="font-size:0.8rem;color:var(--text-light);flex-shrink:0;">Email</span><span style="font-size:0.8rem;color:var(--clay-light);text-align:right;word-break:break-all;">' + p.email + '</span></div>' : ''}
+          ${p.bringing_own_handpan ? '<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:0.8rem;color:var(--text-light);">Own handpan</span><span style="font-size:0.8rem;font-weight:600;color:var(--bark);">' + p.bringing_own_handpan + '</span></div>' : ''}
+          ${p.photo_video_consent ? '<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:0.8rem;color:var(--text-light);">Photo/video</span><span style="font-size:0.8rem;font-weight:600;color:var(--bark);">' + p.photo_video_consent + '</span></div>' : ''}
+        </div>` : ''}
+        <div style="border-top:1px solid rgba(200,147,90,0.1);padding:0.65rem 1.25rem;display:flex;align-items:center;justify-content:space-between;">
           <div style="display:flex;align-items:center;gap:0.5rem;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
           ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true,this)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
         </div>
@@ -6981,45 +6987,57 @@ async function loadVPParticipants(wsId) {
     parts.forEach(function(p) {
       const row = document.createElement('div');
       row.className = 'ws-pax-row';
+      row.style.cssText = 'flex-direction:column;gap:0;padding:0;align-items:stretch;';
       row.id = 'vp-row-' + p.id;
 
-      const info = document.createElement('div');
-      info.style.cssText = 'flex:1;min-width:0;';
+      // Top: name + meta
+      const topDiv = document.createElement('div');
+      topDiv.style.cssText = 'padding:1rem 1.25rem 0.6rem;';
       const nameEl = document.createElement('div');
       nameEl.className = 'ws-pax-name';
       nameEl.textContent = p.full_name || '—';
-      const metaEl = document.createElement('div');
-      metaEl.className = 'ws-pax-meta';
-      metaEl.textContent = fmt(p.amount_paid) + ' · ' + fmtMode(p.payment_mode) + (p.phone ? ' · ' + p.phone : '');
-      info.appendChild(nameEl);
+      topDiv.appendChild(nameEl);
       if (p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name) {
         const rzpEl = document.createElement('div');
         rzpEl.style.cssText = 'font-size:0.78rem;color:var(--text-light);opacity:0.7;margin-top:2px;';
         rzpEl.textContent = 'Booked as: ' + p.razorpay_name;
-        info.appendChild(rzpEl);
+        topDiv.appendChild(rzpEl);
       }
-      info.appendChild(metaEl);
-      if (p.email) {
-        const emailEl = document.createElement('div');
-        emailEl.style.cssText = 'font-size:0.85rem;color:var(--text-light);margin-top:5px;word-break:break-all;';
-        emailEl.textContent = '📧 ' + p.email;
-        info.appendChild(emailEl);
-      }
-      if (p.bringing_own_handpan) {
-        const hpEl = document.createElement('div');
-        hpEl.style.cssText = 'font-size:0.85rem;color:var(--text-light);margin-top:4px;';
-        hpEl.innerHTML = '🥁 Own handpan: <strong style="color:var(--bark)">' + p.bringing_own_handpan + '</strong>';
-        info.appendChild(hpEl);
-      }
-      if (p.photo_video_consent) {
-        const pvEl = document.createElement('div');
-        pvEl.style.cssText = 'font-size:0.85rem;color:var(--text-light);margin-top:4px;';
-        pvEl.innerHTML = '📸 Photo/video: <strong style="color:var(--bark)">' + p.photo_video_consent + '</strong>';
-        info.appendChild(pvEl);
+      const metaEl = document.createElement('div');
+      metaEl.className = 'ws-pax-meta';
+      metaEl.style.marginTop = '3px';
+      metaEl.textContent = fmt(p.amount_paid) + ' · ' + fmtMode(p.payment_mode) + (p.phone ? ' · ' + p.phone : '');
+      topDiv.appendChild(metaEl);
+      row.appendChild(topDiv);
+
+      // Middle: email/handpan/photo
+      if (p.email || p.bringing_own_handpan || p.photo_video_consent) {
+        const infoDiv = document.createElement('div');
+        infoDiv.style.cssText = 'border-top:1px solid rgba(200,147,90,0.1);padding:0.6rem 1.25rem;display:flex;flex-direction:column;gap:6px;';
+        if (p.email) {
+          const emailRow = document.createElement('div');
+          emailRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;';
+          emailRow.innerHTML = '<span style="font-size:0.8rem;color:var(--text-light);flex-shrink:0;">Email</span><span style="font-size:0.8rem;color:var(--clay-light);text-align:right;word-break:break-all;">' + p.email + '</span>';
+          infoDiv.appendChild(emailRow);
+        }
+        if (p.bringing_own_handpan) {
+          const hpRow = document.createElement('div');
+          hpRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;';
+          hpRow.innerHTML = '<span style="font-size:0.8rem;color:var(--text-light);">Own handpan</span><span style="font-size:0.8rem;font-weight:600;color:var(--bark);">' + p.bringing_own_handpan + '</span>';
+          infoDiv.appendChild(hpRow);
+        }
+        if (p.photo_video_consent) {
+          const pvRow = document.createElement('div');
+          pvRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;';
+          pvRow.innerHTML = '<span style="font-size:0.8rem;color:var(--text-light);">Photo/video</span><span style="font-size:0.8rem;font-weight:600;color:var(--bark);">' + p.photo_video_consent + '</span>';
+          infoDiv.appendChild(pvRow);
+        }
+        row.appendChild(infoDiv);
       }
 
+      const info = document.createElement('div'); // unused placeholder
       const right = document.createElement('div');
-      right.className = 'ws-pax-right';
+      right.style.cssText = 'border-top:1px solid rgba(200,147,90,0.1);padding:0.65rem 1.25rem;display:flex;align-items:center;justify-content:space-between;';
 
       const toggleWrap = document.createElement('div');
       toggleWrap.style.cssText = 'display:flex;align-items:center;gap:0.4rem;';
@@ -7074,7 +7092,6 @@ async function loadVPParticipants(wsId) {
         right.appendChild(trashBtn);
       }
 
-      row.appendChild(info);
       row.appendChild(right);
       list.appendChild(row);
     });
