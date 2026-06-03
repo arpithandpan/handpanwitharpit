@@ -2212,6 +2212,16 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
           <button class="filter-pill" onclick="setFilterPill('participants','mode','BMS',this)">BMS</button>
           <button class="filter-pill" onclick="setFilterPill('participants','mode','Cash',this)">Cash</button>
         </div>
+        <div class="filter-dd-wrap" id="dd-wrap-p-handpan">
+          <button class="filter-dd-btn" id="dd-btn-p-handpan" onclick="toggleFilterDd('p-handpan', event)">
+            Own Handpan <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-p-handpan">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('p-handpan','all','Own Handpan','participants','bringing_own_handpan',this,event)">All</div>
+            <div class="filter-dd-option" data-val="Yes" onclick="selectFilterDd('p-handpan','Yes','Bringing own','participants','bringing_own_handpan',this,event)">Bringing own</div>
+            <div class="filter-dd-option" data-val="No" onclick="selectFilterDd('p-handpan','No','Not bringing','participants','bringing_own_handpan',this,event)">Not bringing</div>
+          </div>
+        </div>
       </div>
       <div class="dash-table-wrap desktop-only">
         <table class="desktop-table"><thead><tr>
@@ -3900,6 +3910,9 @@ async function loadWsPax(wsId) {
           <div class="ws-pax-name">${p.full_name||'—'}</div>
           ${p.razorpay_name && p.razorpay_name !== p.full_name ? '<div style="font-size:0.78rem;color:var(--text-light);opacity:0.7;margin-top:2px;">Booked as: ' + p.razorpay_name + '</div>' : ''}
           <div class="ws-pax-meta">${fmt(p.amount_paid)} · ${fmtMode(p.payment_mode)}${p.phone ? ' · ' + p.phone : ''}</div>
+          ${p.email ? '<div style="font-size:0.8rem;color:var(--text-light);margin-top:2px;">📧 ' + p.email + '</div>' : ''}
+          ${p.bringing_own_handpan ? '<div style="font-size:0.8rem;color:var(--text-light);margin-top:2px;">🥁 Bringing own handpan: ' + p.bringing_own_handpan + '</div>' : ''}
+          ${p.photo_video_consent ? '<div style="font-size:0.8rem;color:var(--text-light);margin-top:2px;">📸 Photo/video OK: ' + p.photo_video_consent + '</div>' : ''}
         </div>
         <div class="ws-pax-right">
           <div style="display:flex;align-items:center;gap:0.4rem;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" id="wsp-cb-${p.id}" onclick="toggleWsPaxCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}','${wsId}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
@@ -3976,7 +3989,7 @@ async function loadParticipants() {
     const adminP = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP;
-    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong>${p.razorpay_name && p.razorpay_name !== p.full_name ? '<div style="font-size:0.78rem;color:var(--text-light);opacity:0.7;margin-top:2px;">Booked as: ' + p.razorpay_name + '</div>' : ''}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky" style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="8">${EMPTY_STATES.participants}</td></tr>`;
+    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong>${p.razorpay_name && p.razorpay_name !== p.full_name ? '<div style="font-size:0.78rem;color:var(--text-light);opacity:0.7;margin-top:2px;">Booked as: ' + p.razorpay_name + '</div>' : ''}${p.email ? '<div style="font-size:0.78rem;color:var(--text-light);margin-top:2px;">📧 ' + p.email + '</div>' : ''}${p.bringing_own_handpan ? '<div style="font-size:0.78rem;color:var(--text-light);margin-top:2px;">🥁 ' + p.bringing_own_handpan + '</div>' : ''}${p.photo_video_consent ? '<div style="font-size:0.78rem;color:var(--text-light);margin-top:2px;">📸 ' + p.photo_video_consent + '</div>' : ''}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky" style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="8">${EMPTY_STATES.participants}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; setSearchFilterVisibility('participants', _hasRows); } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
@@ -3986,6 +3999,9 @@ async function loadParticipants() {
         <div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
         <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div>
         <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div>
+        ${p.email ? '<div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">' + p.email + '</span></div>' : ''}
+        ${p.bringing_own_handpan ? '<div class="m-card-row"><span class="m-card-label">🥁 Own Handpan</span><span class="m-card-val">' + p.bringing_own_handpan + '</span></div>' : ''}
+        ${p.photo_video_consent ? '<div class="m-card-row"><span class="m-card-label">📸 Photo/Video</span><span class="m-card-val">' + p.photo_video_consent + '</span></div>' : ''}
         <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;align-items:center;justify-content:space-between;">
           <div style="display:flex;align-items:center;gap:0.5rem;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
           ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true,this)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
@@ -5115,6 +5131,9 @@ function buildEditForm(entity, r) {
     ${row(isRzp ? readOnly('Payment Mode', r.payment_mode) : sel('Payment Mode','par-mode',[['Razorpay UPI','Razorpay UPI'],['UPI','UPI'],['Cash','Cash'],['BMS','BMS']],r.payment_mode),
           sel('Booking Source','par-source',[['Instagram','Instagram'],['BMS','BMS'],['Razorpay','Razorpay'],['UPI','UPI'],['Referral','Referral'],['Other','Other']],r.booking_source))}
     ${row(sel('Interested in Handpan','par-interested',[['Maybe','Maybe'],['Yes','Yes'],['No','No']],r.interested_in_handpan), fi('Date','par-date','date',r.date))}
+    ${isRzp ? `
+    ${row(readOnly('Email', r.email||'—'), readOnly('Bringing Own Handpan', r.bringing_own_handpan||'—'))}
+    ${row(readOnly('Photo/Video Consent', r.photo_video_consent||'—'), '')}` : row(fi('Email','par-email','email',r.email), '')}
     ${fi('Notes','par-notes','textarea',r.notes)}`;
   }
 
@@ -5361,7 +5380,7 @@ function goToSearchResult(entity, id) {
 // ── FILTER STATE ──
 const filterState = {
   workshops: { year: 'all', search: '' },
-  participants: { workshop: '', checkin: 'all', mode: 'all', search: '' },
+  participants: { workshop: '', checkin: 'all', mode: 'all', bringing_own_handpan: 'all', search: '' },
   classes: { status: 'all', batch: '', search: '' },
   'fee-payments': { student: '', month: '', status: 'all', mode: 'all', search: '' },
   payments: { type: 'all', mode: 'all', category: '', period: '', search: '' },
@@ -5420,6 +5439,7 @@ function applyFilters(section) {
       if (st.checkin === 'yes' && data.checkin !== 'true') return false;
       if (st.checkin === 'no' && data.checkin === 'true') return false;
       if (st.mode !== 'all' && data.mode !== st.mode) return false;
+      if (st.bringing_own_handpan && st.bringing_own_handpan !== 'all' && (data.bringing_own_handpan||'').toLowerCase() !== st.bringing_own_handpan.toLowerCase()) return false;
     }
 
     if (section === 'classes') {
@@ -6421,6 +6441,9 @@ const FILTER_SHEET_CONFIG = {
     { key: 'mode', label: 'Mode', type: 'pill', options: [
       { val: 'all', label: 'All modes' }, { val: 'UPI', label: 'UPI' }, { val: 'Razorpay UPI', label: 'Razorpay' }, { val: 'BMS', label: 'BMS' }, { val: 'Cash', label: 'Cash' }
     ]},
+    { key: 'bringing_own_handpan', label: '🥁 Own Handpan', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'Yes', label: 'Bringing own' }, { val: 'No', label: 'Not bringing' }
+    ]},
   ],
   classes: [
     { key: 'batch', label: 'Batch', type: 'dd', ddKey: 'classes-batch' },
@@ -6972,6 +6995,24 @@ async function loadVPParticipants(wsId) {
         info.appendChild(rzpEl);
       }
       info.appendChild(metaEl);
+      if (p.email) {
+        const emailEl = document.createElement('div');
+        emailEl.style.cssText = 'font-size:0.8rem;color:var(--text-light);margin-top:2px;';
+        emailEl.textContent = '📧 ' + p.email;
+        info.appendChild(emailEl);
+      }
+      if (p.bringing_own_handpan) {
+        const hpEl = document.createElement('div');
+        hpEl.style.cssText = 'font-size:0.8rem;color:var(--text-light);margin-top:2px;';
+        hpEl.textContent = '🥁 Bringing own handpan: ' + p.bringing_own_handpan;
+        info.appendChild(hpEl);
+      }
+      if (p.photo_video_consent) {
+        const pvEl = document.createElement('div');
+        pvEl.style.cssText = 'font-size:0.8rem;color:var(--text-light);margin-top:2px;';
+        pvEl.textContent = '📸 Photo/video OK: ' + p.photo_video_consent;
+        info.appendChild(pvEl);
+      }
 
       const right = document.createElement('div');
       right.className = 'ws-pax-right';
