@@ -5449,7 +5449,7 @@ function applyFilters(section) {
       if (st.checkin === 'yes' && data.checkin !== 'true') return false;
       if (st.checkin === 'no' && data.checkin === 'true') return false;
       if (st.mode !== 'all' && data.mode !== st.mode) return false;
-      if (st.bringing_own_handpan && st.bringing_own_handpan !== 'all' && (data.bringing_own_handpan||'').toLowerCase() !== st.bringing_own_handpan.toLowerCase()) return false;
+      if (st.bringing_own_handpan && st.bringing_own_handpan !== 'all' && normaliseYesNo(data.bringing_own_handpan) !== st.bringing_own_handpan.toLowerCase()) return false;
     }
 
     if (section === 'classes') {
@@ -5520,6 +5520,15 @@ function applyFilters(section) {
 
 // ── COLUMN SORT ──
 const sortStates = {};
+
+// Normalise free-text yes/no answers for reliable filtering
+function normaliseYesNo(val) {
+  if (!val) return '';
+  const v = val.toString().trim().toLowerCase();
+  if (['yes','y','yeah','yep','yup','true','1','ok','okay'].includes(v)) return 'yes';
+  if (['no','n','nope','nah','false','0'].includes(v)) return 'no';
+  return v;
+}
 
 // ── SEARCH/FILTER VISIBILITY ──
 function setSearchFilterVisibility(section, hasData) {
