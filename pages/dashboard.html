@@ -5553,8 +5553,9 @@ async function autoBackfillParticipants() {
   try {
     // Fetch all Razorpay participants missing email
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=id,email,bringing_own_handpan,photo_video_consent,razorpay_payment_id,notes,raw_payload&payment_mode=eq.Razorpay%20UPI&archived=neq.true&email=is.null', { headers: SB_HEADERS });
-    if (!res.ok) return;
+    if (!res.ok) { console.warn('Backfill fetch failed:', res.status, await res.text()); return; }
     const rows = await res.json();
+    console.log('Backfill: found', rows?.length, 'incomplete participants:', rows?.map(r => r.id));
     if (!rows || !rows.length) return;
 
     let fixed = 0;
@@ -5608,7 +5609,9 @@ async function autoBackfillParticipants() {
         });
         if (patchRes.ok) {
           fixed++;
-          console.log('Auto-backfilled participant', p.id, ':', Object.keys(updates).join(', '));
+          console.log('Auto-backfilled participant', p.id, ':', Object.keys(updates).join(', '), updates);
+        } else {
+          console.warn('Backfill patch failed for', p.id, ':', patchRes.status, await patchRes.text());
         }
       }
     }
