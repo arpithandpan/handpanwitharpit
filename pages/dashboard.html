@@ -4484,8 +4484,7 @@ const BIN_TABLES = [
   { key: 'students', label: 'Student', nameField: 'full_name' },
   { key: 'payments', label: 'Payment', nameField: 'payer_name' },
   { key: 'leads', label: 'Lead', nameField: 'full_name' },
-  { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' },
-  { key: 'notifications', label: 'Notification', nameField: 'message' }
+  { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' }
 ];
 
 async function loadBin() {
@@ -4495,9 +4494,7 @@ async function loadBin() {
   try {
     let allItems = [];
     for (const t of BIN_TABLES) {
-      const res = await fetch(SUPABASE_URL + '/rest/v1/' + t.key + '?select=*&archived=eq.true&order=created_at.desc', {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-      });
+      const res = await fetch(SUPABASE_URL + '/rest/v1/' + t.key + '?select=*&archived=eq.true&order=created_at.desc', { headers: SB_HEADERS });
       if (!res.ok) continue;
       const rows = await res.json();
       rows.forEach(r => allItems.push({ ...r, _table: t.key, _label: t.label, _name: r[t.nameField] || r.id || '—' }));
@@ -4654,10 +4651,8 @@ async function loadBinCount() {
   try {
     let total = 0;
     for (const t of BIN_TABLES) {
-      const res = await fetch(SUPABASE_URL + '/rest/v1/' + t.key + '?select=id&archived=is.true', {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-      });
-      if (!res.ok) continue;
+      const res = await fetch(SUPABASE_URL + '/rest/v1/' + t.key + '?select=id&archived=eq.true', { headers: SB_HEADERS });
+      if (!res.ok) { console.warn('BinCount failed for table:', t.key, res.status); continue; }
       const rows = await res.json();
       total += Array.isArray(rows) ? rows.length : 0;
     }
