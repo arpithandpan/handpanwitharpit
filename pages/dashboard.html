@@ -3032,6 +3032,10 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
       <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="par-phone" placeholder="10-digit number"/></div>
     </div>
     <div class="form-row">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="par-email" placeholder="email@example.com"/></div>
+      <div class="form-group"></div>
+    </div>
+    <div class="form-row">
       <div class="form-group"><label class="form-label">Workshop</label>
         <select class="form-input" id="par-workshop"><option value="">Loading workshops...</option></select></div>
       <div class="form-group"><label class="form-label">Amount Paid (₹)</label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
@@ -3055,6 +3059,10 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
           <option value="Maybe">Maybe</option><option value="Yes">Yes</option><option value="No">No</option>
         </select></div>
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="par-date"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Bringing Own Handpan</label><input type="text" class="form-input" id="par-handpan" placeholder="Yes / No"/></div>
+      <div class="form-group"><label class="form-label">Photo/Video Consent</label><input type="text" class="form-input" id="par-photo" placeholder="Yes / No"/></div>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="par-notes" placeholder="Any notes..." rows="3"></textarea></div>
   </div></div>
@@ -3992,7 +4000,7 @@ async function loadParticipants() {
     const adminP = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP;
-    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong>${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.78rem;color:var(--text-light);opacity:0.7;margin-top:2px;">Booked as: ' + p.razorpay_name + '</div>' : ''}</td><td style="font-size:0.85rem;color:var(--text-light);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-tip="${p.email||''}">${p.email||'—'}</td><td style="font-size:0.88rem;">${p.bringing_own_handpan||'—'}</td><td style="font-size:0.88rem;">${p.photo_video_consent||'—'}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky" style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="11">${EMPTY_STATES.participants}</td></tr>`;
+    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong>${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.78rem;color:var(--text-light);opacity:0.7;margin-top:2px;">Booked as: ' + p.razorpay_name + '</div>' : ''}${p.payment_mode === 'Razorpay UPI' && !p.email ? '<div style="font-size:0.72rem;color:rgba(200,147,90,0.6);margin-top:2px;">⚠ Incomplete data</div>' : ''}</td><td style="font-size:0.85rem;color:var(--text-light);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-tip="${p.email||''}">${p.email||'—'}</td><td style="font-size:0.88rem;">${p.bringing_own_handpan||'—'}</td><td style="font-size:0.88rem;">${p.photo_video_consent||'—'}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky" style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="11">${EMPTY_STATES.participants}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; setSearchFilterVisibility('participants', _hasRows); } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
@@ -4261,10 +4269,13 @@ async function saveParticipant() {
       date: dateVal,
       full_name: document.getElementById('par-name').value,
       phone: document.getElementById('par-phone').value || null,
+      email: document.getElementById('par-email')?.value || null,
       amount_paid: parseFloat(document.getElementById('par-amount').value) || 0,
       payment_mode: document.getElementById('par-mode').value,
       booking_source: document.getElementById('par-source').value,
       interested_in_handpan: document.getElementById('par-interested').value,
+      bringing_own_handpan: document.getElementById('par-handpan')?.value || null,
+      photo_video_consent: document.getElementById('par-photo')?.value || null,
       notes: document.getElementById('par-notes').value || null,
       checked_in: false,
       archived: false
@@ -5143,7 +5154,9 @@ function buildEditForm(entity, r) {
     ${row(sel('Interested in Handpan','par-interested',[['Maybe','Maybe'],['Yes','Yes'],['No','No']],r.interested_in_handpan), fi('Date','par-date','date',r.date))}
     ${isRzp ? `
     ${row(readOnly('Email', r.email||'—'), readOnly('Bringing Own Handpan', r.bringing_own_handpan||'—'))}
-    ${row(readOnly('Photo/Video Consent', r.photo_video_consent||'—'), '')}` : row(fi('Email','par-email','email',r.email), '')}
+    ${row(readOnly('Photo/Video Consent', r.photo_video_consent||'—'), readOnly('Razorpay Payment ID', r.razorpay_payment_id||'—'))}` :
+    `${row(fi('Email','par-email','email',r.email), '')}
+    ${row(fi('Bringing Own Handpan','par-handpan','text',r.bringing_own_handpan), fi('Photo/Video Consent','par-photo','text',r.photo_video_consent))}`}
     ${fi('Notes','par-notes','textarea',r.notes)}`;
   }
 
@@ -5198,7 +5211,7 @@ async function saveEdit() {
       if (isRzpPar) {
         body = { full_name:g('par-name'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), date:gd('par-date'), notes:g('par-notes')||null };
       } else {
-        body = { full_name:g('par-name'), phone:g('par-phone')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), date:gd('par-date'), notes:g('par-notes')||null };
+        body = { full_name:g('par-name'), phone:g('par-phone')||null, email:g('par-email')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), bringing_own_handpan:g('par-handpan')||null, photo_video_consent:g('par-photo')||null, date:gd('par-date'), notes:g('par-notes')||null };
       }
     } else if (_editEntity === 'students') {
       body = { full_name:g('stu-name'), phone:g('stu-phone')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), notes:g('stu-notes')||null };
