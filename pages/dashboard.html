@@ -3320,6 +3320,7 @@ function doLogin() {
     loadBinCount();
     loadUnassigned();
     applyRole();
+    setTimeout(autoBackfillParticipants, 4000); // silently heal missing Razorpay data
   } else if (pinValue === VIEWER_PIN) {
     currentRole = 'viewer';
     sessionStorage.setItem('dash_auth', '1');
@@ -5542,6 +5543,86 @@ function normaliseYesNo(val) {
   if (['yes','y','yeah','yep','yup','true','1','ok','okay'].includes(v)) return 'yes';
   if (['no','n','nope','nah','false','0'].includes(v)) return 'no';
   return v;
+}
+
+// ── AUTO-BACKFILL RAZORPAY PARTICIPANT DATA ──
+// Runs once on load. Finds participants where specific columns are NULL
+// but the data exists in notes (saved by old webhook) or raw_payload.
+// Zero manual entry needed — data heals itself automatically.
+async function autoBackfillParticipants() {
+  try {
+    // Fetch all Razorpay participants missing email
+    const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=id,email,bringing_own_handpan,photo_video_consent,razorpay_payment_id,notes,raw_payload&payment_mode=eq.Razorpay UPI&archived=neq.true&email=is.null', { headers: SB_HEADERS });
+    if (!res.ok) return;
+    const rows = await res.json();
+    if (!rows || !rows.length) return;
+
+    let fixed = 0;
+    for (const p of rows) {
+      const updates = {};
+
+      // Try raw_payload first (most reliable)
+      if (p.raw_payload) {
+        const rp = p.raw_payload;
+        if (!p.email && rp.email) updates.email = rp.email;
+        if (!p.razorpay_payment_id && rp.id) updates.razorpay_payment_id = rp.id;
+        const notes = rp.notes || {};
+        // Extract custom fields from raw_payload notes
+        if (!p.bringing_own_handpan) {
+          const val = notes['handpans_will_be_provided_bringing_your_own?_(yes/no)']
+            || notes['handpans_will_be_provided_bringing_your_own?(yes/no)']
+            || notes['handpans_will_be_provided._bringing_your_own?_(yes/no)'];
+          if (val) updates.bringing_own_handpan = val;
+        }
+        if (!p.photo_video_consent) {
+          const val = notes['okay_to_take_your_photo/video_at_the_workshop?_(yes/no)']
+            || notes['okay_to_take_your_photo/video_at_the_workshop?(yes/no)'];
+          if (val) updates.photo_video_consent = val;
+        }
+      }
+
+      // Fallback: parse notes text field (old webhook format)
+      // Format: "email: x@y.com | phone: ... | Bringing own handpan: No | Photo/video OK: Yes"
+      if (p.notes && Object.keys(updates).length === 0 || (p.notes && !updates.email)) {
+        const n = p.notes;
+        if (!updates.email) {
+          const emailMatch = n.match(/email:\s*([^\s|]+)/i);
+          if (emailMatch) updates.email = emailMatch[1].trim();
+        }
+        if (!updates.bringing_own_handpan && !p.bringing_own_handpan) {
+          const hpMatch = n.match(/bringing own handpan:\s*([^|]+)/i);
+          if (hpMatch) updates.bringing_own_handpan = hpMatch[1].trim();
+        }
+        if (!updates.photo_video_consent && !p.photo_video_consent) {
+          const pvMatch = n.match(/photo\/video ok:\s*([^|]+)/i);
+          if (pvMatch) updates.photo_video_consent = pvMatch[1].trim();
+        }
+      }
+
+      // Apply updates if any
+      if (Object.keys(updates).length > 0) {
+        const patchRes = await fetch(SUPABASE_URL + '/rest/v1/participants?id=eq.' + p.id, {
+          method: 'PATCH',
+          headers: { ...SB_HEADERS, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify(updates)
+        });
+        if (patchRes.ok) {
+          fixed++;
+          console.log('Auto-backfilled participant', p.id, ':', Object.keys(updates).join(', '));
+        }
+      }
+    }
+
+    if (fixed > 0) {
+      console.log(`Auto-backfill complete: fixed ${fixed} participant(s)`);
+      // Reload participants table silently to show updated data
+      if (document.getElementById('section-participants')?.classList.contains('active')) {
+        loadParticipants();
+      }
+    }
+  } catch (e) {
+    console.warn('Auto-backfill error:', e.message);
+  }
 }
 
 // ── SEARCH/FILTER VISIBILITY ──
