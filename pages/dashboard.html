@@ -3101,22 +3101,22 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
 
     <div class="form-row">
       <div class="form-group"><label class="form-label">Full Name <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
-      <div class="form-group"><label class="form-label">Phone / Landline</label><div class="phone-wrap" id="lead-phone-wrap"><button type="button" class="phone-flag-btn" id="lead-phone-cc-btn" onclick="openCCPicker('lead-phone-cc-btn','lead-phone-cc','lead-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="lead-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="lead-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="lead-phone" placeholder="Phone number"/></div></div>
+      <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap" id="lead-phone-wrap"><button type="button" class="phone-flag-btn" id="lead-phone-cc-btn" onclick="openCCPicker('lead-phone-cc-btn','lead-phone-cc','lead-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="lead-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="lead-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="lead-phone" placeholder="Phone number"/></div></div>
     </div>
     <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="lead-email" placeholder="email@example.com"/></div>
     <div class="form-row" style="align-items:end;">
-      <div class="form-group"><label class="form-label" style="min-height:2.8em;display:flex;align-items:flex-end;padding-bottom:0.3rem;">Amt by Customer to Maker (₹)</label><input type="number" class="form-input" id="lead-maker-amount" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Paid to Maker (₹)</label><input type="number" class="form-input" id="lead-maker-amount" placeholder="0"/></div>
       <div class="form-group"><label class="form-label" style="min-height:2.8em;display:flex;align-items:flex-end;padding-bottom:0.3rem;">Referral Money for You (₹)</label><input type="number" class="form-input" id="lead-referral-amount" placeholder="0"/></div>
     </div>
 
     <!-- Bought Handpan toggle -->
-    <div class="form-group" style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-      <span style="font-size:1rem;color:var(--bark);font-weight:500;">Bought Handpan?</span>
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.75rem;padding:0.1rem 0;">
       <label class="checkin-toggle" style="margin:0;">
         <input type="checkbox" id="lead-bought-handpan"/>
         <span class="checkin-toggle-track"></span>
         <span class="checkin-toggle-thumb"></span>
       </label>
+      <span style="font-size:1rem;color:var(--bark);font-weight:500;">Bought Handpan?</span>
     </div>
 
     <input type="hidden" id="lead-participant-id" value=""/>
@@ -4492,6 +4492,7 @@ async function savePayment() {
 }
 async function saveLead() {
   if (!(document.getElementById('lead-name').value || '').trim()) { markFieldError('lead-name'); showToast('Full name is required', 'error'); return; }
+  if (!(document.getElementById('lead-phone').value || '').trim()) { markFieldError('lead-phone'); showToast('Phone number is required', 'error'); return; }
   try {
     const body = {
       id: 'L-' + String(Date.now()).slice(-6),
@@ -4572,6 +4573,18 @@ async function loadLeadParticipantPicker() {
     if (wsSel) {
       wsSel.innerHTML = '<option value="">All workshops</option>' +
         workshops.map(w => `<option value="${w.id}">${w.id} — ${(w.venue||'').substring(0,30)}</option>`).join('');
+      // Re-sync custom select UI if it was already initialized
+      const customWrap = wsSel.closest('.form-select-wrap') || wsSel.parentElement?.querySelector('.form-select-wrap');
+      if (customWrap) {
+        const menuEl = customWrap.querySelector('.form-select-menu');
+        if (menuEl) {
+          menuEl.innerHTML = Array.from(wsSel.options).map(o =>
+            `<div class="form-select-opt${o.value===wsSel.value?' selected':''}" data-val="${o.value}" onclick="selectFormOpt(this)">${o.textContent}</div>`
+          ).join('');
+        }
+        const btnLabel = customWrap.querySelector('.form-select-label');
+        if (btnLabel) btnLabel.textContent = wsSel.options[wsSel.selectedIndex]?.textContent || 'All workshops';
+      }
     }
     renderParPickerList('');
   } catch(e) { showToast('Could not load participants', 'error'); }
@@ -5878,7 +5891,7 @@ function buildEditForm(entity, r) {
   if (entity === 'leads') return `
     ${row(fi('Full Name','lead-name','text',r.full_name), `<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('lead-phone', r.phone, 'lead-phone-cc')}</div>`)}
     ${fi('Email','lead-email','email',r.email)}
-    ${row(fi('Amt Paid by Customer to Maker (₹)','lead-maker-amount','number',r.handpan_maker_amount||0), fi('Referral Money (₹)','lead-referral-amount','number',r.referral_amount||0))}
+    ${row(fi('Paid to Maker (₹)','lead-maker-amount','number',r.handpan_maker_amount||0), fi('Referral Money (₹)','lead-referral-amount','number',r.referral_amount||0))}
     <div class="lead-toggle-row">
       <span class="lead-toggle-label">Bought Handpan?</span>
       <label class="checkin-toggle" style="margin:0;">
