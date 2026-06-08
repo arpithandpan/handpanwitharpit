@@ -804,22 +804,57 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   color-scheme: light;
 }
 .form-input:focus { border-color: var(--clay); }
-.phone-wrap { display: flex; gap: 0; align-items: stretch; width: 100%; }
-.phone-cc-select {
-  flex: 0 0 38%; max-width: 38%; min-height: 48px;
+.phone-wrap { display: flex; gap: 0; align-items: stretch; width: 100%; position: relative; }
+.phone-flag-btn {
+  flex: 0 0 58px; min-height: 48px;
   background: rgba(200,147,90,0.08); border: 1.5px solid var(--clay-pale);
   border-right: none; border-radius: 3px 0 0 3px;
-  color: var(--text-dark); font-size: 0.85rem; font-family: var(--font-body);
-  padding: 0 1.5rem 0 0.6rem; cursor: pointer; outline: none;
-  transition: border-color 0.2s; appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23c8935a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 6px center;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  box-sizing: border-box;
+  font-size: 1.25rem; padding: 0; cursor: pointer; outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  text-align: center; box-sizing: border-box; display: flex;
+  align-items: center; justify-content: center; user-select: none;
 }
-.phone-cc-select:focus { border-color: var(--clay); }
-.phone-input-right { flex: 0 0 62%; max-width: 62%; min-width: 0; border-radius: 0 3px 3px 0 !important; box-sizing: border-box; }
-body.dark-mode .phone-cc-select { background-color: #2a2018; border-color: rgba(200,147,90,0.25); color: #e8d5c0; }
+.phone-flag-btn:hover { background: rgba(200,147,90,0.15); }
+.phone-flag-btn.open { border-color: var(--clay); background: rgba(200,147,90,0.15); }
+.phone-prefix-input {
+  flex: 0 0 68px; min-height: 48px;
+  background: rgba(200,147,90,0.05); border: 1.5px solid var(--clay-pale);
+  border-right: none; border-radius: 0; color: var(--text-dark);
+  font-size: 0.95rem; font-family: var(--font-body);
+  padding: 0 0.3rem; outline: none; box-sizing: border-box;
+  transition: border-color 0.2s; text-align: center;
+}
+.phone-prefix-input:focus { border-color: var(--clay); }
+.phone-input-right { flex: 1; min-width: 0; border-radius: 0 3px 3px 0 !important; box-sizing: border-box; }
+/* Country picker dropdown */
+.cc-picker {
+  position: fixed; z-index: 99990;
+  background: #2a1e12; border: 1.5px solid rgba(200,147,90,0.3);
+  border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  width: 280px; overflow: hidden;
+  display: none; flex-direction: column;
+}
+.cc-picker.open { display: flex; }
+.cc-search-wrap { padding: 10px 10px 6px; border-bottom: 1px solid rgba(200,147,90,0.12); }
+.cc-search {
+  width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px;
+  border: 1.5px solid rgba(200,147,90,0.25); background: rgba(255,255,255,0.05);
+  color: #e8d5c0; font-size: 0.95rem; font-family: var(--font-body);
+  outline: none; box-sizing: border-box;
+}
+.cc-search:focus { border-color: var(--clay); }
+.cc-search::placeholder { color: rgba(200,147,90,0.4); }
+.cc-list { overflow-y: auto; max-height: 220px; }
+.cc-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; cursor: pointer; font-size: 0.95rem;
+  color: #e8d5c0; transition: background 0.1s;
+}
+.cc-item:hover, .cc-item.selected { background: rgba(200,147,90,0.12); }
+.cc-item .cc-flag { font-size: 1.2rem; line-height: 1; }
+.cc-item .cc-name { flex: 1; }
+.cc-item .cc-dial { color: rgba(200,147,90,0.7); font-size: 0.88rem; }
+body.dark-mode .phone-prefix-input { background-color: #2a2018; border-color: rgba(200,147,90,0.25); color: #e8d5c0; }
 .form-input.field-error { border-color: #e8856a !important; background: rgba(232,133,106,0.06) !important; }
 .form-input.field-error:focus { border-color: #e8856a !important; }
 textarea.form-input {
@@ -2912,148 +2947,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Full Name <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
-      <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap"><select class="phone-cc-select" id="lead-phone-cc"><option value="+91" selected>🇮🇳 India +91</option><option value="+1">🇺🇸 USA +1</option><option value="+44">🇬🇧 UK +44</option><option value="+61">🇦🇺 Australia +61</option><option value="+1">🇨🇦 Canada +1</option><option value="+49">🇩🇪 Germany +49</option><option value="+33">🇫🇷 France +33</option><option value="+39">🇮🇹 Italy +39</option><option value="+34">🇪🇸 Spain +34</option><option value="+31">🇳🇱 Netherlands +31</option><option value="+46">🇸🇪 Sweden +46</option><option value="+47">🇳🇴 Norway +47</option><option value="+45">🇩🇰 Denmark +45</option><option value="+358">🇫🇮 Finland +358</option><option value="+41">🇨🇭 Switzerland +41</option><option value="+43">🇦🇹 Austria +43</option><option value="+32">🇧🇪 Belgium +32</option><option value="+351">🇵🇹 Portugal +351</option><option value="+353">🇮🇪 Ireland +353</option><option value="+48">🇵🇱 Poland +48</option><option value="+420">🇨🇿 Czech Rep +420</option><option value="+36">🇭🇺 Hungary +36</option><option value="+40">🇷🇴 Romania +40</option><option value="+7">🇷🇺 Russia +7</option><option value="+380">🇺🇦 Ukraine +380</option><option value="+30">🇬🇷 Greece +30</option><option value="+90">🇹🇷 Turkey +90</option><option value="+972">🇮🇱 Israel +972</option><option value="+971">🇦🇪 UAE +971</option><option value="+966">🇸🇦 Saudi Arabia +966</option><option value="+974">🇶🇦 Qatar +974</option><option value="+965">🇰🇼 Kuwait +965</option><option value="+973">🇧🇭 Bahrain +973</option><option value="+968">🇴🇲 Oman +968</option><option value="+92">🇵🇰 Pakistan +92</option><option value="+880">🇧🇩 Bangladesh +880</option><option value="+94">🇱🇰 Sri Lanka +94</option><option value="+977">🇳🇵 Nepal +977</option><option value="+95">🇲🇲 Myanmar +95</option><option value="+66">🇹🇭 Thailand +66</option><option value="+60">🇲🇾 Malaysia +60</option><option value="+65">🇸🇬 Singapore +65</option><option value="+62">🇮🇩 Indonesia +62</option><option value="+63">🇵🇭 Philippines +63</option><option value="+84">🇻🇳 Vietnam +84</option><option value="+82">🇰🇷 South Korea +82</option><option value="+81">🇯🇵 Japan +81</option><option value="+86">🇨🇳 China +86</option><option value="+852">🇭🇰 Hong Kong +852</option><option value="+886">🇹🇼 Taiwan +886</option><option value="+55">🇧🇷 Brazil +55</option><option value="+52">🇲🇽 Mexico +52</option><option value="+54">🇦🇷 Argentina +54</option><option value="+57">🇨🇴 Colombia +57</option><option value="+56">🇨🇱 Chile +56</option><option value="+51">🇵🇪 Peru +51</option><option value="+58">🇻🇪 Venezuela +58</option><option value="+27">🇿🇦 South Africa +27</option><option value="+234">🇳🇬 Nigeria +234</option><option value="+254">🇰🇪 Kenya +254</option><option value="+233">🇬🇭 Ghana +233</option><option value="+20">🇪🇬 Egypt +20</option><option value="+212">🇲🇦 Morocco +212</option><option value="+213">🇩🇿 Algeria +213</option><option value="+216">🇹🇳 Tunisia +216</option><option value="+64">🇳🇿 New Zealand +64</option></select><input type="tel" class="form-input phone-input-right" id="lead-phone" value="" placeholder="Phone number"/></div></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop Attended</label>
-        <select class="form-input" id="lead-workshop"><option value="">Loading workshops...</option></select></div>
-      <div class="form-group"><label class="form-label">Est. Budget (₹)</label><input type="number" class="form-input" id="lead-budget" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Status</label>
-        <select class="form-input" id="lead-status"><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div>
-      <div class="form-group"><label class="form-label">Follow-up Date</label><input type="date" class="form-input" id="lead-followup"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="lead-notes" placeholder="Any notes..." rows="3"></textarea></div>
-  </div></div>
-</div>
-
-<!-- Add Workshop -->
-<div class="form-page" id="form-addWorkshop">
-  <div class="form-page-header">
-    <button class="form-page-back" onclick="tryCloseFormPage('addWorkshop')">← Back</button>
-    <div class="form-page-title">Add Workshop</div>
-    <button class="btn-dash-save" onclick="saveWorkshop()">Save</button>
-  </div>
-  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop ID</label>
-        <select class="form-input" id="ws-id">
-          <option value="">Select ID...</option>
-          <option>WS-001</option><option>WS-002</option><option>WS-003</option>
-          <option>WS-004</option><option>WS-005</option><option>WS-006</option>
-          <option>WS-007</option><option>WS-008</option><option>WS-009</option>
-          <option>WS-010</option><option>WS-011</option><option>WS-012</option>
-          <option>WS-013</option><option>WS-014</option><option>WS-015</option>
-          <option>WS-016</option><option>WS-017</option><option>WS-018</option>
-          <option>WS-019</option><option>WS-020</option><option>WS-021</option>
-          <option>WS-022</option><option>WS-023</option><option>WS-024</option>
-          <option>WS-025</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Date <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="date" class="form-input" id="ws-date"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Venue <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
-    <div class="form-group"><label class="form-label">Razorpay Payment Page ID <span style="font-size:0.82rem;color:var(--text-light);font-weight:400;text-transform:none;letter-spacing:0;">(from Razorpay Dashboard — for auto-assigning workshop payments)</span></label><input type="text" class="form-input" id="ws-rzp-page-id" placeholder="e.g. pl_SvhpECu2FHPr3U"/></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">BMS Participants</label><input type="number" class="form-input" id="ws-bms" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">UPI Participants</label><input type="number" class="form-input" id="ws-upi" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Razorpay Participants</label><input type="number" class="form-input" id="ws-rzp" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Price per Head (₹)</label><input type="number" class="form-input" id="ws-price" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Venue Rent (₹)</label><input type="number" class="form-input" id="ws-venue-rent" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Handpan Rental (₹)</label><input type="number" class="form-input" id="ws-hp-rent" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Porter / Delivery (₹)</label><input type="number" class="form-input" id="ws-porter" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Snacks / Misc (₹)</label><input type="number" class="form-input" id="ws-misc" placeholder="0"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="ws-notes" rows="4" placeholder="Any notes about this workshop..." style="resize:vertical;min-height:100px;"></textarea></div>
-  </div></div>
-</div>
-
-<!-- Add Student -->
-<div class="form-page" id="form-addStudent">
-  <div class="form-page-header">
-    <button class="form-page-back" onclick="tryCloseFormPage('addStudent')">← Back</button>
-    <div class="form-page-title">Add Student</div>
-    <button class="btn-dash-save" onclick="saveStudent()">Save</button>
-  </div>
-  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Student ID <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
-      <div class="form-group"><label class="form-label">Full Name <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap"><select class="phone-cc-select" id="stu-phone-cc"><option value="+91" selected>🇮🇳 India +91</option><option value="+1">🇺🇸 USA +1</option><option value="+44">🇬🇧 UK +44</option><option value="+61">🇦🇺 Australia +61</option><option value="+1">🇨🇦 Canada +1</option><option value="+49">🇩🇪 Germany +49</option><option value="+33">🇫🇷 France +33</option><option value="+39">🇮🇹 Italy +39</option><option value="+34">🇪🇸 Spain +34</option><option value="+31">🇳🇱 Netherlands +31</option><option value="+46">🇸🇪 Sweden +46</option><option value="+47">🇳🇴 Norway +47</option><option value="+45">🇩🇰 Denmark +45</option><option value="+358">🇫🇮 Finland +358</option><option value="+41">🇨🇭 Switzerland +41</option><option value="+43">🇦🇹 Austria +43</option><option value="+32">🇧🇪 Belgium +32</option><option value="+351">🇵🇹 Portugal +351</option><option value="+353">🇮🇪 Ireland +353</option><option value="+48">🇵🇱 Poland +48</option><option value="+420">🇨🇿 Czech Rep +420</option><option value="+36">🇭🇺 Hungary +36</option><option value="+40">🇷🇴 Romania +40</option><option value="+7">🇷🇺 Russia +7</option><option value="+380">🇺🇦 Ukraine +380</option><option value="+30">🇬🇷 Greece +30</option><option value="+90">🇹🇷 Turkey +90</option><option value="+972">🇮🇱 Israel +972</option><option value="+971">🇦🇪 UAE +971</option><option value="+966">🇸🇦 Saudi Arabia +966</option><option value="+974">🇶🇦 Qatar +974</option><option value="+965">🇰🇼 Kuwait +965</option><option value="+973">🇧🇭 Bahrain +973</option><option value="+968">🇴🇲 Oman +968</option><option value="+92">🇵🇰 Pakistan +92</option><option value="+880">🇧🇩 Bangladesh +880</option><option value="+94">🇱🇰 Sri Lanka +94</option><option value="+977">🇳🇵 Nepal +977</option><option value="+95">🇲🇲 Myanmar +95</option><option value="+66">🇹🇭 Thailand +66</option><option value="+60">🇲🇾 Malaysia +60</option><option value="+65">🇸🇬 Singapore +65</option><option value="+62">🇮🇩 Indonesia +62</option><option value="+63">🇵🇭 Philippines +63</option><option value="+84">🇻🇳 Vietnam +84</option><option value="+82">🇰🇷 South Korea +82</option><option value="+81">🇯🇵 Japan +81</option><option value="+86">🇨🇳 China +86</option><option value="+852">🇭🇰 Hong Kong +852</option><option value="+886">🇹🇼 Taiwan +886</option><option value="+55">🇧🇷 Brazil +55</option><option value="+52">🇲🇽 Mexico +52</option><option value="+54">🇦🇷 Argentina +54</option><option value="+57">🇨🇴 Colombia +57</option><option value="+56">🇨🇱 Chile +56</option><option value="+51">🇵🇪 Peru +51</option><option value="+58">🇻🇪 Venezuela +58</option><option value="+27">🇿🇦 South Africa +27</option><option value="+234">🇳🇬 Nigeria +234</option><option value="+254">🇰🇪 Kenya +254</option><option value="+233">🇬🇭 Ghana +233</option><option value="+20">🇪🇬 Egypt +20</option><option value="+212">🇲🇦 Morocco +212</option><option value="+213">🇩🇿 Algeria +213</option><option value="+216">🇹🇳 Tunisia +216</option><option value="+64">🇳🇿 New Zealand +64</option></select><input type="tel" class="form-input phone-input-right" id="stu-phone" value="" placeholder="Phone number"/></div></div>
-      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="stu-email" placeholder="email@example.com"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Level</label>
-        <select class="form-input" id="stu-level"><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Advanced">Advanced</option></select></div>
-      <div class="form-group"><label class="form-label">Status</label>
-        <select class="form-input" id="stu-status"><option value="Active">Active</option><option value="On Break">On Break</option><option value="Completed">Completed</option></select></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Monthly Fee (₹)</label><input type="number" class="form-input" id="stu-fee" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" id="stu-start"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="stu-notes" placeholder="Any notes..." rows="3"></textarea></div>
-  </div></div>
-</div>
-
-<!-- Add Fee Payment -->
-<div class="form-page" id="form-addFeePayment">
-  <div class="form-page-header">
-    <button class="form-page-back" onclick="tryCloseFormPage('addFeePayment')">← Back</button>
-    <div class="form-page-title">Add Fee Payment</div>
-    <button class="btn-dash-save" onclick="saveFeePayment()">Save</button>
-  </div>
-  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Student <span style="color:#e8856a;font-size:0.85em;">*</span></label>
-        <select class="form-input" id="fee-student"><option value="">Loading students...</option></select></div>
-      <div class="form-group"><label class="form-label">Month</label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <select class="form-input" id="fee-month-m">
-            <option value="01">January</option><option value="02">February</option>
-            <option value="03">March</option><option value="04">April</option>
-            <option value="05">May</option><option value="06">June</option>
-            <option value="07">July</option><option value="08">August</option>
-            <option value="09">September</option><option value="10">October</option>
-            <option value="11">November</option><option value="12">December</option>
-          </select>
-          <select class="form-input" id="fee-month-y">
-            <option value="2024">2024</option><option value="2025">2025</option>
-            <option value="2026" selected>2026</option><option value="2027">2027</option>
-          </select>
-        </div></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Amount (₹) <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="number" class="form-input" id="fee-amount" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Payment Mode</label>
-        <select class="form-input" id="fee-mode">
-          <option value="Razorpay UPI">Razorpay UPI</option><option value="UPI">UPI</option>
-          <option value="Cash">Cash</option><option value="Other">Other</option>
-        </select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="fee-notes" placeholder="Any notes..." rows="3"></textarea></div>
-  </div></div>
-</div>
-
-<!-- Add Participant -->
-<div class="form-page" id="form-addParticipant">
-  <div class="form-page-header">
-    <button class="form-page-back" onclick="tryCloseFormPage('addParticipant')">← Back</button>
-    <div class="form-page-title">Add Participant</div>
-    <button class="btn-dash-save" onclick="saveParticipant()">Save</button>
-  </div>
-  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Full Name <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
-      <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap"><select class="phone-cc-select" id="par-phone-cc"><option value="+91" selected>🇮🇳 India +91</option><option value="+1">🇺🇸 USA +1</option><option value="+44">🇬🇧 UK +44</option><option value="+61">🇦🇺 Australia +61</option><option value="+1">🇨🇦 Canada +1</option><option value="+49">🇩🇪 Germany +49</option><option value="+33">🇫🇷 France +33</option><option value="+39">🇮🇹 Italy +39</option><option value="+34">🇪🇸 Spain +34</option><option value="+31">🇳🇱 Netherlands +31</option><option value="+46">🇸🇪 Sweden +46</option><option value="+47">🇳🇴 Norway +47</option><option value="+45">🇩🇰 Denmark +45</option><option value="+358">🇫🇮 Finland +358</option><option value="+41">🇨🇭 Switzerland +41</option><option value="+43">🇦🇹 Austria +43</option><option value="+32">🇧🇪 Belgium +32</option><option value="+351">🇵🇹 Portugal +351</option><option value="+353">🇮🇪 Ireland +353</option><option value="+48">🇵🇱 Poland +48</option><option value="+420">🇨🇿 Czech Rep +420</option><option value="+36">🇭🇺 Hungary +36</option><option value="+40">🇷🇴 Romania +40</option><option value="+7">🇷🇺 Russia +7</option><option value="+380">🇺🇦 Ukraine +380</option><option value="+30">🇬🇷 Greece +30</option><option value="+90">🇹🇷 Turkey +90</option><option value="+972">🇮🇱 Israel +972</option><option value="+971">🇦🇪 UAE +971</option><option value="+966">🇸🇦 Saudi Arabia +966</option><option value="+974">🇶🇦 Qatar +974</option><option value="+965">🇰🇼 Kuwait +965</option><option value="+973">🇧🇭 Bahrain +973</option><option value="+968">🇴🇲 Oman +968</option><option value="+92">🇵🇰 Pakistan +92</option><option value="+880">🇧🇩 Bangladesh +880</option><option value="+94">🇱🇰 Sri Lanka +94</option><option value="+977">🇳🇵 Nepal +977</option><option value="+95">🇲🇲 Myanmar +95</option><option value="+66">🇹🇭 Thailand +66</option><option value="+60">🇲🇾 Malaysia +60</option><option value="+65">🇸🇬 Singapore +65</option><option value="+62">🇮🇩 Indonesia +62</option><option value="+63">🇵🇭 Philippines +63</option><option value="+84">🇻🇳 Vietnam +84</option><option value="+82">🇰🇷 South Korea +82</option><option value="+81">🇯🇵 Japan +81</option><option value="+86">🇨🇳 China +86</option><option value="+852">🇭🇰 Hong Kong +852</option><option value="+886">🇹🇼 Taiwan +886</option><option value="+55">🇧🇷 Brazil +55</option><option value="+52">🇲🇽 Mexico +52</option><option value="+54">🇦🇷 Argentina +54</option><option value="+57">🇨🇴 Colombia +57</option><option value="+56">🇨🇱 Chile +56</option><option value="+51">🇵🇪 Peru +51</option><option value="+58">🇻🇪 Venezuela +58</option><option value="+27">🇿🇦 South Africa +27</option><option value="+234">🇳🇬 Nigeria +234</option><option value="+254">🇰🇪 Kenya +254</option><option value="+233">🇬🇭 Ghana +233</option><option value="+20">🇪🇬 Egypt +20</option><option value="+212">🇲🇦 Morocco +212</option><option value="+213">🇩🇿 Algeria +213</option><option value="+216">🇹🇳 Tunisia +216</option><option value="+64">🇳🇿 New Zealand +64</option></select><input type="tel" class="form-input phone-input-right" id="par-phone" value="" placeholder="Phone number"/></div></div>
+      <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap" id="lead-phone-wrap"><button type="button" class="phone-flag-btn" id="lead-phone-cc-btn" onclick="openCCPicker('lead-phone-cc-btn','lead-phone-cc','lead-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="lead-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="lead-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="lead-phone" placeholder="Phone number"/></div></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="par-email" placeholder="email@example.com"/></div>
@@ -4972,47 +4866,129 @@ function renderNotifications(items) {
 
 function getCountryCodes() {
   return [
-    ['+91','🇮🇳 India +91'],['+1','🇺🇸 USA +1'],['+44','🇬🇧 UK +44'],['+61','🇦🇺 Australia +61'],
-    ['+1','🇨🇦 Canada +1'],['+49','🇩🇪 Germany +49'],['+33','🇫🇷 France +33'],['+39','🇮🇹 Italy +39'],
-    ['+34','🇪🇸 Spain +34'],['+31','🇳🇱 Netherlands +31'],['+46','🇸🇪 Sweden +46'],['+47','🇳🇴 Norway +47'],
-    ['+45','🇩🇰 Denmark +45'],['+358','🇫🇮 Finland +358'],['+41','🇨🇭 Switzerland +41'],['+43','🇦🇹 Austria +43'],
-    ['+32','🇧🇪 Belgium +32'],['+351','🇵🇹 Portugal +351'],['+353','🇮🇪 Ireland +353'],['+48','🇵🇱 Poland +48'],
-    ['+420','🇨🇿 Czech Rep +420'],['+36','🇭🇺 Hungary +36'],['+40','🇷🇴 Romania +40'],['+7','🇷🇺 Russia +7'],
-    ['+380','🇺🇦 Ukraine +380'],['+30','🇬🇷 Greece +30'],['+90','🇹🇷 Turkey +90'],['+972','🇮🇱 Israel +972'],
-    ['+971','🇦🇪 UAE +971'],['+966','🇸🇦 Saudi Arabia +966'],['+974','🇶🇦 Qatar +974'],['+965','🇰🇼 Kuwait +965'],
-    ['+973','🇧🇭 Bahrain +973'],['+968','🇴🇲 Oman +968'],['+92','🇵🇰 Pakistan +92'],['+880','🇧🇩 Bangladesh +880'],
-    ['+94','🇱🇰 Sri Lanka +94'],['+977','🇳🇵 Nepal +977'],['+95','🇲🇲 Myanmar +95'],['+66','🇹🇭 Thailand +66'],
-    ['+60','🇲🇾 Malaysia +60'],['+65','🇸🇬 Singapore +65'],['+62','🇮🇩 Indonesia +62'],['+63','🇵🇭 Philippines +63'],
-    ['+84','🇻🇳 Vietnam +84'],['+82','🇰🇷 South Korea +82'],['+81','🇯🇵 Japan +81'],['+86','🇨🇳 China +86'],
-    ['+852','🇭🇰 Hong Kong +852'],['+886','🇹🇼 Taiwan +886'],['+55','🇧🇷 Brazil +55'],['+52','🇲🇽 Mexico +52'],
-    ['+54','🇦🇷 Argentina +54'],['+57','🇨🇴 Colombia +57'],['+56','🇨🇱 Chile +56'],['+51','🇵🇪 Peru +51'],
-    ['+58','🇻🇪 Venezuela +58'],['+27','🇿🇦 South Africa +27'],['+234','🇳🇬 Nigeria +234'],['+254','🇰🇪 Kenya +254'],
-    ['+233','🇬🇭 Ghana +233'],['+20','🇪🇬 Egypt +20'],['+212','🇲🇦 Morocco +212'],['+213','🇩🇿 Algeria +213'],
-    ['+216','🇹🇳 Tunisia +216'],['+64','🇳🇿 New Zealand +64']
+    ['+91','🇮🇳','India'],['+1','🇺🇸','USA'],['+44','🇬🇧','UK'],['+61','🇦🇺','Australia'],
+    ['+1','🇨🇦','Canada'],['+49','🇩🇪','Germany'],['+33','🇫🇷','France'],['+39','🇮🇹','Italy'],
+    ['+34','🇪🇸','Spain'],['+31','🇳🇱','Netherlands'],['+46','🇸🇪','Sweden'],['+47','🇳🇴','Norway'],
+    ['+45','🇩🇰','Denmark'],['+358','🇫🇮','Finland'],['+41','🇨🇭','Switzerland'],['+43','🇦🇹','Austria'],
+    ['+32','🇧🇪','Belgium'],['+351','🇵🇹','Portugal'],['+353','🇮🇪','Ireland'],['+48','🇵🇱','Poland'],
+    ['+420','🇨🇿','Czech Rep'],['+36','🇭🇺','Hungary'],['+40','🇷🇴','Romania'],['+7','🇷🇺','Russia'],
+    ['+380','🇺🇦','Ukraine'],['+30','🇬🇷','Greece'],['+90','🇹🇷','Turkey'],['+972','🇮🇱','Israel'],
+    ['+971','🇦🇪','UAE'],['+966','🇸🇦','Saudi Arabia'],['+974','🇶🇦','Qatar'],['+965','🇰🇼','Kuwait'],
+    ['+973','🇧🇭','Bahrain'],['+968','🇴🇲','Oman'],['+92','🇵🇰','Pakistan'],['+880','🇧🇩','Bangladesh'],
+    ['+94','🇱🇰','Sri Lanka'],['+977','🇳🇵','Nepal'],['+95','🇲🇲','Myanmar'],['+66','🇹🇭','Thailand'],
+    ['+60','🇲🇾','Malaysia'],['+65','🇸🇬','Singapore'],['+62','🇮🇩','Indonesia'],['+63','🇵🇭','Philippines'],
+    ['+84','🇻🇳','Vietnam'],['+82','🇰🇷','South Korea'],['+81','🇯🇵','Japan'],['+86','🇨🇳','China'],
+    ['+852','🇭🇰','Hong Kong'],['+886','🇹🇼','Taiwan'],['+55','🇧🇷','Brazil'],['+52','🇲🇽','Mexico'],
+    ['+54','🇦🇷','Argentina'],['+57','🇨🇴','Colombia'],['+56','🇨🇱','Chile'],['+51','🇵🇪','Peru'],
+    ['+58','🇻🇪','Venezuela'],['+27','🇿🇦','South Africa'],['+234','🇳🇬','Nigeria'],['+254','🇰🇪','Kenya'],
+    ['+233','🇬🇭','Ghana'],['+20','🇪🇬','Egypt'],['+212','🇲🇦','Morocco'],['+213','🇩🇿','Algeria'],
+    ['+216','🇹🇳','Tunisia'],['+64','🇳🇿','New Zealand']
   ];
+}
+
+let _ccPickerBtn = null, _ccPickerCcId = null, _ccPickerPrefixId = null;
+
+function openCCPicker(btnId, ccId, prefixId) {
+  closeAllCCPickers();
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  const rect = btn.getBoundingClientRect();
+  let picker = document.getElementById('cc-picker-global');
+  if (!picker) {
+    picker = document.createElement('div');
+    picker.id = 'cc-picker-global';
+    picker.className = 'cc-picker';
+    picker.innerHTML =
+      '<div class="cc-search-wrap"><input class="cc-search" id="cc-search-input" placeholder="Search country..." oninput="filterCCList(this.value)" autocomplete="off"/></div>' +
+      '<div class="cc-list" id="cc-list"></div>';
+    document.body.appendChild(picker);
+  }
+  // Position it
+  const pickerW = 280;
+  let left = rect.left;
+  let top = rect.bottom + 4;
+  if (left + pickerW > window.innerWidth - 8) left = window.innerWidth - pickerW - 8;
+  if (top + 280 > window.innerHeight - 8) top = rect.top - 284;
+  picker.style.left = left + 'px';
+  picker.style.top = top + 'px';
+  // Render list
+  const currentCC = document.getElementById(ccId)?.value || '+91';
+  const list = document.getElementById('cc-list');
+  list.innerHTML = getCountryCodes().map(([dial, flag, name]) =>
+    `<div class="cc-item${dial===currentCC?' selected':''}" onclick="selectCC('${dial}','${flag}','${btnId}','${ccId}','${prefixId}')">`+
+    `<span class="cc-flag">${flag}</span><span class="cc-name">${name}</span><span class="cc-dial">${dial}</span></div>`
+  ).join('');
+  picker.classList.add('open');
+  btn.classList.add('open');
+  _ccPickerBtn = btnId; _ccPickerCcId = ccId; _ccPickerPrefixId = prefixId;
+  // Focus search
+  setTimeout(() => { const s = document.getElementById('cc-search-input'); if(s){s.value='';s.focus();} }, 50);
+  // Close on outside click
+  setTimeout(() => document.addEventListener('click', ccPickerOutside, {once:true, capture:true}), 10);
+}
+
+function filterCCList(q) {
+  const items = document.querySelectorAll('#cc-list .cc-item');
+  const lq = q.toLowerCase();
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(lq) ? '' : 'none';
+  });
+}
+
+function selectCC(dial, flag, btnId, ccId, prefixId) {
+  const btn = document.getElementById(btnId);
+  const ccEl = document.getElementById(ccId);
+  const prefEl = document.getElementById(prefixId);
+  if (btn) btn.textContent = flag;
+  if (ccEl) ccEl.value = dial;
+  if (prefEl) prefEl.value = dial;
+  closeAllCCPickers();
+}
+
+function ccPickerOutside(e) {
+  const picker = document.getElementById('cc-picker-global');
+  if (!picker) return;
+  const btn = _ccPickerBtn ? document.getElementById(_ccPickerBtn) : null;
+  if (picker.contains(e.target) || (btn && btn.contains(e.target))) {
+    setTimeout(() => document.addEventListener('click', ccPickerOutside, {once:true, capture:true}), 10);
+    return;
+  }
+  closeAllCCPickers();
+}
+
+function closeAllCCPickers() {
+  const picker = document.getElementById('cc-picker-global');
+  if (picker) picker.classList.remove('open');
+  if (_ccPickerBtn) { const b = document.getElementById(_ccPickerBtn); if(b) b.classList.remove('open'); }
+  _ccPickerBtn = null;
 }
 
 function buildPhoneWrap(inputId, phone, ccId) {
   if (!ccId) ccId = inputId + '-cc';
-  // detect existing country code in stored phone
+  const prefixId = inputId + '-prefix';
+  const btnId = ccId + '-btn';
   let detectedCC = '+91';
+  let detectedFlag = '🇮🇳';
   let localNum = phone || '';
   if (localNum.startsWith('+')) {
-    const codes = getCountryCodes().map(c => c[0]).sort((a,b) => b.length - a.length);
-    for (const cc of codes) {
-      if (localNum.startsWith(cc + ' ') || localNum.startsWith(cc)) {
-        detectedCC = cc;
+    const allCodes = getCountryCodes().map(c => [c[0],c[1]]).sort((a,b) => b[0].length - a[0].length);
+    for (const [cc, flag] of allCodes) {
+      if (localNum.startsWith(cc + ' ') || localNum === cc) {
+        detectedCC = cc; detectedFlag = flag;
         localNum = localNum.slice(cc.length).replace(/^\s+/,'').trim();
         break;
       }
     }
   }
-  const opts = getCountryCodes().map(([v,l]) =>
-    `<option value="${v}"${v===detectedCC?' selected':''}>${l}</option>`
-  ).join('');
-  return `<div class="phone-wrap"><select class="phone-cc-select" id="${ccId}"><option value="+91" selected>🇮🇳 India +91</option><option value="+1">🇺🇸 USA +1</option><option value="+44">🇬🇧 UK +44</option><option value="+61">🇦🇺 Australia +61</option><option value="+1">🇨🇦 Canada +1</option><option value="+49">🇩🇪 Germany +49</option><option value="+33">🇫🇷 France +33</option><option value="+39">🇮🇹 Italy +39</option><option value="+34">🇪🇸 Spain +34</option><option value="+31">🇳🇱 Netherlands +31</option><option value="+46">🇸🇪 Sweden +46</option><option value="+47">🇳🇴 Norway +47</option><option value="+45">🇩🇰 Denmark +45</option><option value="+358">🇫🇮 Finland +358</option><option value="+41">🇨🇭 Switzerland +41</option><option value="+43">🇦🇹 Austria +43</option><option value="+32">🇧🇪 Belgium +32</option><option value="+351">🇵🇹 Portugal +351</option><option value="+353">🇮🇪 Ireland +353</option><option value="+48">🇵🇱 Poland +48</option><option value="+420">🇨🇿 Czech Rep +420</option><option value="+36">🇭🇺 Hungary +36</option><option value="+40">🇷🇴 Romania +40</option><option value="+7">🇷🇺 Russia +7</option><option value="+380">🇺🇦 Ukraine +380</option><option value="+30">🇬🇷 Greece +30</option><option value="+90">🇹🇷 Turkey +90</option><option value="+972">🇮🇱 Israel +972</option><option value="+971">🇦🇪 UAE +971</option><option value="+966">🇸🇦 Saudi Arabia +966</option><option value="+974">🇶🇦 Qatar +974</option><option value="+965">🇰🇼 Kuwait +965</option><option value="+973">🇧🇭 Bahrain +973</option><option value="+968">🇴🇲 Oman +968</option><option value="+92">🇵🇰 Pakistan +92</option><option value="+880">🇧🇩 Bangladesh +880</option><option value="+94">🇱🇰 Sri Lanka +94</option><option value="+977">🇳🇵 Nepal +977</option><option value="+95">🇲🇲 Myanmar +95</option><option value="+66">🇹🇭 Thailand +66</option><option value="+60">🇲🇾 Malaysia +60</option><option value="+65">🇸🇬 Singapore +65</option><option value="+62">🇮🇩 Indonesia +62</option><option value="+63">🇵🇭 Philippines +63</option><option value="+84">🇻🇳 Vietnam +84</option><option value="+82">🇰🇷 South Korea +82</option><option value="+81">🇯🇵 Japan +81</option><option value="+86">🇨🇳 China +86</option><option value="+852">🇭🇰 Hong Kong +852</option><option value="+886">🇹🇼 Taiwan +886</option><option value="+55">🇧🇷 Brazil +55</option><option value="+52">🇲🇽 Mexico +52</option><option value="+54">🇦🇷 Argentina +54</option><option value="+57">🇨🇴 Colombia +57</option><option value="+56">🇨🇱 Chile +56</option><option value="+51">🇵🇪 Peru +51</option><option value="+58">🇻🇪 Venezuela +58</option><option value="+27">🇿🇦 South Africa +27</option><option value="+234">🇳🇬 Nigeria +234</option><option value="+254">🇰🇪 Kenya +254</option><option value="+233">🇬🇭 Ghana +233</option><option value="+20">🇪🇬 Egypt +20</option><option value="+212">🇲🇦 Morocco +212</option><option value="+213">🇩🇿 Algeria +213</option><option value="+216">🇹🇳 Tunisia +216</option><option value="+64">🇳🇿 New Zealand +64</option></select><input type="tel" class="form-input phone-input-right" id="${inputId}" value="${(localNum||'').replace(/"/g,'&quot;')}" placeholder="Phone number"/></div>`;
+  const safeNum = (localNum||'').replace(/"/g,'&quot;');
+  return `<div class="phone-wrap" id="${inputId}-wrap">` +
+    `<button type="button" class="phone-flag-btn" id="${btnId}" onclick="openCCPicker('${btnId}','${ccId}','${prefixId}')" title="Select country">${detectedFlag}</button>` +
+    `<input type="hidden" id="${ccId}" value="${detectedCC}"/>` +
+    `<input type="text" class="phone-prefix-input form-input" id="${prefixId}" value="${detectedCC}" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/>` +
+    `<input type="tel" class="form-input phone-input-right" id="${inputId}" value="${safeNum}" placeholder="Phone number"/>` +
+    `</div>`;
 }
-
 function getPhoneValue(inputId, ccId) {
   if (!ccId) ccId = inputId + '-cc';
   const cc = document.getElementById(ccId)?.value || '+91';
