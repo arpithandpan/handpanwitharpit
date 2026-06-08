@@ -1055,16 +1055,16 @@ body.dark-mode .form-select-opt:hover { background: rgba(193,127,82,0.1); }
   background: rgba(255,255,255,0.10);
   border: 1px solid rgba(200,147,90,0.75);
   border-radius: 12px;
-  padding: 1.75rem 2rem 1.5rem; width: 320px; max-width: 90vw;
+  padding: 2rem 2rem 1.75rem; width: 340px; max-width: 92vw;
   text-align: center; position: relative; z-index: 1;
 }
 .login-logo { margin: 0 auto 0.9rem; }
 .login-title { font-family: var(--font-body); font-size: 1.45rem; font-weight: 400; color: #e8d5c0; margin-bottom: 0.3rem; }
-.login-sub { font-size: 1rem; color: rgba(200,147,90,0.65); margin-bottom: 1.25rem; }
+.login-sub { font-size: 1rem; color: rgba(200,147,90,0.65); margin-bottom: 1.75rem; }
 .login-error { color: #e8856a; font-size: 1.05rem; margin-top: 0.75rem; display: none; }
 
 /* ── PIN PAD ── */
-.pin-dots { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.1rem; }
+.pin-dots { display: flex; justify-content: center; gap: 12px; margin-bottom: 1.5rem; }
 .pin-dot {
   width: 12px; height: 12px; border-radius: 50%;
   border: 1.5px solid rgba(200,147,90,0.65);
@@ -1082,14 +1082,14 @@ body.dark-mode .form-select-opt:hover { background: rgba(193,127,82,0.1); }
 .pin-dots.shake { animation: pin-shake 0.35s ease; }
 .pin-numpad {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 6px; width: 100%; margin-bottom: 0.5rem;
+  gap: 14px; width: 100%; margin-bottom: 0.5rem;
 }
 .pin-key {
   background: rgba(255,255,255,0.07);
   border: 1.5px solid rgba(200,147,90,0.18);
   border-radius: 50%;
-  width: 64px; height: 64px;
-  font-size: 1.35rem; font-weight: 300;
+  width: 72px; height: 72px;
+  font-size: 1.45rem; font-weight: 300;
   color: #e8d5c0; cursor: pointer;
   font-family: var(--font-body);
   display: flex; align-items: center; justify-content: center;
@@ -1103,9 +1103,9 @@ body.dark-mode .form-select-opt:hover { background: rgba(193,127,82,0.1); }
   background: transparent; border: none;
   color: rgba(200,147,90,0.75);
   display: flex; align-items: center; justify-content: center;
-  width: 64px; height: 64px; margin: 0 auto;
+  width: 72px; height: 72px; margin: 0 auto;
 }
-.pin-key.key-del svg { width: 26px; height: 26px; }
+.pin-key.key-del svg { width: 28px; height: 28px; }
 .pin-key.key-del:active { color: rgba(200,147,90,0.95); }
 .pin-hint { font-size: 1.05rem; color: rgba(200,147,90,0.75); letter-spacing: 0.03em; margin-top: 0.5rem; }
 
@@ -2673,21 +2673,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
         </button>
         <div class="mobile-active-chips" id="mobile-chips-leads"></div>
         <div id="dd-leads-workshop" class="custom-select-wrap-placeholder"></div>
-        <div class="filter-dd-wrap" id="dd-wrap-l-referred">
-          <button class="filter-dd-btn" id="dd-btn-l-referred" onclick="toggleFilterDd('l-referred', event)">
-            Referred <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="filter-dd-menu" id="dd-menu-l-referred">
-            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('l-referred','all','Referred','leads','referred',this,event)">All</div>
-            <div class="filter-dd-option" data-val="yes" onclick="selectFilterDd('l-referred','yes','Referred','leads','referred',this,event)">Referred</div>
-            <div class="filter-dd-option" data-val="no" onclick="selectFilterDd('l-referred','no','Not referred','leads','referred',this,event)">Not referred</div>
-          </div>
-        </div>
-        <div class="filter-pills" style="display:none">
-          <button class="filter-pill active" onclick="setFilterPill('leads','referred','all',this)">All</button>
-          <button class="filter-pill" onclick="setFilterPill('leads','referred','yes',this)">Referred</button>
-          <button class="filter-pill" onclick="setFilterPill('leads','referred','no',this)">Not referred</button>
-        </div>
+
         <!-- Referral money filter -->
         <div class="filter-dd-wrap" id="dd-wrap-l-referral">
           <button class="filter-dd-btn" id="dd-btn-l-referral" onclick="toggleFilterDd('l-referral', event)">
@@ -4025,7 +4011,7 @@ async function loadOverview() {
     document.getElementById('stat-workshops').textContent = ws.length;
     document.getElementById('stat-participants').textContent = parts.length;
     document.getElementById('stat-students').textContent = stus.filter(s => s.status === 'Active').length;
-    document.getElementById('stat-leads').textContent = lds.filter(l => l.status === 'Hot' || l.status === 'Warm').length;
+    document.getElementById('stat-leads').textContent = lds.filter(l => !l.archived).length;
     const avgMargin = ws.length ? ws.reduce((s, w) => s + Number(w.margin || 0), 0) / ws.length : 0;
     document.getElementById('stat-margin').textContent = fmtPct(avgMargin);
     document.getElementById('overviewWorkshops').innerHTML = ws.slice(0,5).map(w => `<tr><td><strong>${w.id}</strong></td><td>${fmtDate(w.date)}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td style="color:var(--moss)">${fmt(w.net_profit)}</td></tr>`).join('') || `<tr><td colspan='5'>${EMPTY_STATES.workshops}</td></tr>`;
@@ -7362,8 +7348,11 @@ const FILTER_SHEET_CONFIG = {
   ],
   leads: [
     { key: 'workshop', label: 'Workshop', type: 'dd', ddKey: 'leads-workshop' },
-    { key: 'referred', label: 'Referred', type: 'pill', options: [
-      { val: 'all', label: 'All' }, { val: 'yes', label: 'Referred' }, { val: 'no', label: 'Not referred' }
+    { key: 'referral_received', label: 'Referral Money', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'yes', label: 'Received' }, { val: 'no', label: 'Pending' }
+    ]},
+    { key: 'bought_handpan', label: 'Bought Handpan', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'yes', label: 'Bought' }, { val: 'no', label: 'Not bought' }
     ]},
   ],
 };
