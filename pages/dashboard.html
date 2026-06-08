@@ -804,6 +804,8 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   color-scheme: light;
 }
 .form-input:focus { border-color: var(--clay); }
+/* Global rule: label + (count) always 1 normal space, no letter-spacing inflation */
+.count-label { letter-spacing: 0 !important; }
 .phone-wrap { display: flex; gap: 0; align-items: stretch; width: 100%; position: relative; }
 .phone-flag-btn {
   flex: 0 0 58px; min-height: 48px;
@@ -1630,22 +1632,23 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
 .notif-bucket { border-bottom: 1px solid rgba(200,147,90,0.1); }
 .notif-bucket-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0.75rem 1.5rem; cursor: pointer; user-select: none;
-  transition: background 0.15s;
+  padding: 1rem 1.75rem; cursor: pointer; user-select: none;
+  transition: background 0.15s; min-height: 52px;
+  background: rgba(200,147,90,0.04); border-bottom: 1px solid rgba(200,147,90,0.1);
 }
-.notif-bucket-header:hover { background: rgba(200,147,90,0.05); }
+.notif-bucket-header:hover { background: rgba(200,147,90,0.09); }
 .notif-bucket-label {
-  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em;
-  text-transform: uppercase; color: rgba(200,147,90,0.65);
-  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.95rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(200,147,90,0.85);
+  display: flex; align-items: center; gap: 0.6rem;
 }
 .notif-bucket-count {
-  font-size: 0.72rem; background: rgba(200,147,90,0.15);
-  color: rgba(200,147,90,0.8); border-radius: 10px;
-  padding: 1px 7px; letter-spacing: 0;
+  font-size: 0.8rem; background: rgba(200,147,90,0.18);
+  color: rgba(200,147,90,0.9); border-radius: 10px;
+  padding: 2px 9px; letter-spacing: 0; font-weight: 600; text-transform: none;
 }
 .notif-bucket-chevron {
-  color: rgba(200,147,90,0.4); transition: transform 0.2s;
+  color: rgba(200,147,90,0.6); transition: transform 0.2s;
   display: flex; align-items: center;
 }
 .notif-bucket.collapsed .notif-bucket-chevron { transform: rotate(-90deg); }
@@ -1990,65 +1993,65 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
 <div class="mobile-menu-overlay" id="mobileMenuOverlay">
   <div class="mob-nav" style="display:flex;flex-direction:column;gap:0;padding:68px 0 2rem;align-items:stretch;">
 
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('overview',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('overview',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       Overview
     </a>
     <div style="height:1px;background:rgba(193,127,82,0.2);margin:0.5rem 2.5rem;"></div>
     <div style="padding:0.75rem 2.5rem 0.25rem;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(200,147,90,0.7);font-weight:500;">Workshops</div>
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('workshops',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('workshops',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       Workshops
     </a>
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('participants',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('participants',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Participants
     </a>
     <div style="height:1px;background:rgba(193,127,82,0.2);margin:0.5rem 2.5rem;"></div>
     <div style="padding:0.75rem 2.5rem 0.25rem;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(200,147,90,0.7);font-weight:500;">Classes</div>
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('classes',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('classes',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Classes
     </a>
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('fee-payments',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('fee-payments',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       Fee Payments
     </a>
     <div style="height:1px;background:rgba(193,127,82,0.15);margin:0.25rem 2.5rem;"></div>
     <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(240,219,200,0.6);padding:0.75rem 2.5rem 0.25rem;">Finances</div>
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('payments',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('payments',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       Payments
     </a>
-    <a href="#" class="admin-only" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('unassigned-payments',this);toggleMobileMenu()">
+    <a href="#" class="admin-only" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('unassigned-payments',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
       Unassigned <span id="mobileUnassignedBadge" style="display:none;background:var(--clay);color:#1a1208;font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;"></span>
     </a>
     <div style="height:1px;background:rgba(193,127,82,0.15);margin:0.25rem 2.5rem;"></div>
     <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(240,219,200,0.6);padding:0.75rem 2.5rem 0.25rem;">Pipeline</div>
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('leads',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('leads',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Leads
     </a>
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('insights',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('insights',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Insights
     </a>
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('notifications',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('notifications',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      Notifications<span id="mobileNotifCount" style="letter-spacing:0;font-size:0.85em;"></span>
+      <span style="letter-spacing:0;">Notifications<span id="mobileNotifCount" style="font-size:0.9em;"></span></span>
     </a>
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('bin',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('bin',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
       <span id="mobileBinLabel" style="letter-spacing:0;">Bin</span>
     </a>
-    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="showSection('settings',this);toggleMobileMenu()">
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('settings',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
     </a>
     <div style="margin-top:0.5rem;">
       <div style="height:1px;background:rgba(193,127,82,0.15);margin:0.5rem 2.5rem;"></div>
-      <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="logout();toggleMobileMenu()">
+      <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="logout();toggleMobileMenu()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Logout
       </a>
@@ -2056,7 +2059,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
       <div style="padding:1rem 2.5rem 0.25rem;">
         <div id="mobileRoleBadge" style="display:inline-block;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:20px;background:rgba(193,127,82,0.15);color:var(--clay);border:1px solid rgba(193,127,82,0.3);">Admin</div>
       </div>
-      <a href="https://arpitpandey.com" style="display:flex;align-items:center;gap:1.25rem;padding:0.75rem 2.5rem 1.25rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0.06em;" onclick="toggleMobileMenu()">
+      <a href="https://arpitpandey.com" style="display:flex;align-items:center;gap:1.25rem;padding:0.75rem 2.5rem 1.25rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="toggleMobileMenu()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         arpitpandey.com
       </a>
@@ -2107,8 +2110,8 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
     <ul class="dash-nav">
       <li><a href="#" onclick="showSection('leads',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Leads</a></li>
       <li><a href="#" onclick="showSection('insights',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Insights</a></li>
-      <li><a href="#" onclick="showSection('notifications',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span> Notifications<span id="sidebarNotifCount" style="letter-spacing:0;font-size:0.85em;"></span></a></li>
-      <li><a href="#" onclick="showSection('bin',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span> Bin<span id="sidebarBinCount" style="letter-spacing:0;font-size:0.85em;"></span></a></li>
+      <li><a href="#" onclick="showSection('notifications',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span style="letter-spacing:0;">Notifications<span id="sidebarNotifCount" style="font-size:0.9em;"></span></span></a></li>
+      <li><a href="#" onclick="showSection('bin',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span><span style="letter-spacing:0;">Bin<span id="sidebarBinCount" style="font-size:0.9em;"></span></span></a></li>
       <li class="admin-only"><a href="#" onclick="showSection('settings',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Settings</a></li>
     </ul>
     <div class="dash-nav-divider"></div>
@@ -5032,7 +5035,7 @@ function renderNotifications(items) {
     groups[b].push(n);
   });
 
-  const chevronSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+  const chevronSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
 
   let html = '';
   bucketOrder.forEach(bucket => {
