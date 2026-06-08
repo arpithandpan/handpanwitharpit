@@ -1627,6 +1627,30 @@ body.dark-mode .archived-row { background: rgba(200,147,90,0.04); }
   line-height: 1;
 }
 .notif-badge.show { display: flex; }
+.notif-bucket { border-bottom: 1px solid rgba(200,147,90,0.1); }
+.notif-bucket-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1.5rem; cursor: pointer; user-select: none;
+  transition: background 0.15s;
+}
+.notif-bucket-header:hover { background: rgba(200,147,90,0.05); }
+.notif-bucket-label {
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(200,147,90,0.65);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.notif-bucket-count {
+  font-size: 0.72rem; background: rgba(200,147,90,0.15);
+  color: rgba(200,147,90,0.8); border-radius: 10px;
+  padding: 1px 7px; letter-spacing: 0;
+}
+.notif-bucket-chevron {
+  color: rgba(200,147,90,0.4); transition: transform 0.2s;
+  display: flex; align-items: center;
+}
+.notif-bucket.collapsed .notif-bucket-chevron { transform: rotate(-90deg); }
+.notif-bucket-body { overflow: hidden; }
+.notif-bucket.collapsed .notif-bucket-body { display: none; }
 .notif-item {
   display: flex; gap: 1rem; align-items: flex-start;
   padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--clay-pale);
@@ -2625,6 +2649,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
           <div class="dash-section-subtitle">All activity and alerts from your dashboard</div>
         </div>
         <div id="notifActions" style="display:none;gap:0.75rem;align-items:center;">
+          <button class="btn-dash btn-dash-outline btn-dash-sm" id="notifExpandBtn" onclick="toggleAllBuckets()">Collapse all</button>
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="markAllRead()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Mark all read</button>
           <button class="btn-dash btn-dash-outline btn-dash-sm" title="Move all to bin" onclick="binAllNotifications()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
         </div>
@@ -4988,24 +5013,18 @@ function renderNotifications(items) {
   function getNotifBucket(dateStr) {
     const now = new Date();
     const d = new Date(dateStr);
-    const diffMs = now - d;
-    const diffDays = Math.floor(diffMs / 86400000);
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const yesterdayStart = new Date(todayStart - 86400000);
-    const weekStart = new Date(todayStart - todayStart.getDay() * 86400000);
-    const lastWeekStart = new Date(weekStart - 7 * 86400000);
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastWeekStart = new Date(todayStart - 7 * 86400000);
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     if (d >= todayStart) return 'Today';
     if (d >= yesterdayStart) return 'Yesterday';
-    if (d >= weekStart) return 'This Week';
     if (d >= lastWeekStart) return 'Last Week';
-    if (d >= monthStart) return 'This Month';
     if (d >= lastMonthStart) return 'Last Month';
     return 'Older';
   }
 
-  const bucketOrder = ['Today','Yesterday','This Week','Last Week','This Month','Last Month','Older'];
+  const bucketOrder = ['Today','Yesterday','Last Week','Last Month','Older'];
   const groups = {};
   items.forEach(n => {
     const b = getNotifBucket(n.created_at);
@@ -5013,10 +5032,24 @@ function renderNotifications(items) {
     groups[b].push(n);
   });
 
+  const chevronSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+
   let html = '';
   bucketOrder.forEach(bucket => {
     if (!groups[bucket]) return;
-    html += `<div style="padding:0.6rem 1.5rem 0.3rem;font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(200,147,90,0.55);">${bucket}</div>`;
+    const count = groups[bucket].length;
+    const unread = groups[bucket].filter(n => !n.read).length;
+    const bucketId = 'bucket-' + bucket.replace(/\s+/g, '-').toLowerCase();
+    html += `<div class="notif-bucket" id="${bucketId}">`;
+    html += `<div class="notif-bucket-header" onclick="toggleBucket('${bucketId}')">
+      <div class="notif-bucket-label">
+        ${bucket}
+        <span class="notif-bucket-count">${count}</span>
+        ${unread > 0 ? `<span class="notif-bucket-count" style="background:rgba(200,147,90,0.3);color:#c8935a;">${unread} unread</span>` : ''}
+      </div>
+      <div class="notif-bucket-chevron">${chevronSvg}</div>
+    </div>`;
+    html += `<div class="notif-bucket-body">`;
     html += groups[bucket].map(n => `
       <div class="notif-item ${n.read?'':'unread'}" onclick="markRead(${n.id})">
         <div class="notif-icon ${n.type||'info'}">${n.type==='payment'?'💰':n.type==='warning'?'⚠️':n.type==='error'?'❌':'ℹ️'}</div>
@@ -5027,8 +5060,34 @@ function renderNotifications(items) {
         ${!n.read?'<div class="notif-unread-dot"></div>':''}
       </div>
     `).join('');
+    html += `</div></div>`;
   });
   el.innerHTML = html;
+  // Update expand button label
+  updateExpandBtn();
+}
+
+function toggleBucket(id) {
+  const b = document.getElementById(id);
+  if (b) { b.classList.toggle('collapsed'); updateExpandBtn(); }
+}
+
+function toggleAllBuckets() {
+  const buckets = document.querySelectorAll('.notif-bucket');
+  const allCollapsed = [...buckets].every(b => b.classList.contains('collapsed'));
+  buckets.forEach(b => {
+    if (allCollapsed) b.classList.remove('collapsed');
+    else b.classList.add('collapsed');
+  });
+  updateExpandBtn();
+}
+
+function updateExpandBtn() {
+  const btn = document.getElementById('notifExpandBtn');
+  if (!btn) return;
+  const buckets = document.querySelectorAll('.notif-bucket');
+  const allCollapsed = [...buckets].every(b => b.classList.contains('collapsed'));
+  btn.textContent = allCollapsed ? 'Expand all' : 'Collapse all';
 }
 
 function getCountryCodes() {
