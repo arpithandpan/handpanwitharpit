@@ -969,18 +969,18 @@ body.dark-mode .form-select-opt:hover { background: rgba(193,127,82,0.1); }
   background: rgba(255,255,255,0.10);
   border: 1px solid rgba(200,147,90,0.75);
   border-radius: 12px;
-  padding: 2.5rem; width: 340px; max-width: 90vw;
+  padding: 1.75rem 2rem 1.5rem; width: 320px; max-width: 90vw;
   text-align: center; position: relative; z-index: 1;
 }
-.login-logo { margin: 0 auto 1.5rem; }
-.login-title { font-family: var(--font-body); font-size: 1.7rem; font-weight: 400; color: #e8d5c0; margin-bottom: 0.5rem; }
-.login-sub { font-size: 1.15rem; color: rgba(200,147,90,0.65); margin-bottom: 2rem; }
+.login-logo { margin: 0 auto 0.9rem; }
+.login-title { font-family: var(--font-body); font-size: 1.45rem; font-weight: 400; color: #e8d5c0; margin-bottom: 0.3rem; }
+.login-sub { font-size: 1rem; color: rgba(200,147,90,0.65); margin-bottom: 1.25rem; }
 .login-error { color: #e8856a; font-size: 1.05rem; margin-top: 0.75rem; display: none; }
 
 /* ── PIN PAD ── */
-.pin-dots { display: flex; justify-content: center; gap: 12px; margin-bottom: 1.5rem; }
+.pin-dots { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.1rem; }
 .pin-dot {
-  width: 14px; height: 14px; border-radius: 50%;
+  width: 12px; height: 12px; border-radius: 50%;
   border: 1.5px solid rgba(200,147,90,0.65);
   background: transparent; transition: background 0.15s, border-color 0.15s;
 }
@@ -996,14 +996,14 @@ body.dark-mode .form-select-opt:hover { background: rgba(193,127,82,0.1); }
 .pin-dots.shake { animation: pin-shake 0.35s ease; }
 .pin-numpad {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 8px; width: 100%; margin-bottom: 0.75rem;
+  gap: 6px; width: 100%; margin-bottom: 0.5rem;
 }
 .pin-key {
   background: rgba(255,255,255,0.07);
   border: 1.5px solid rgba(200,147,90,0.18);
   border-radius: 50%;
-  width: 72px; height: 72px;
-  font-size: 1.5rem; font-weight: 300;
+  width: 64px; height: 64px;
+  font-size: 1.35rem; font-weight: 300;
   color: #e8d5c0; cursor: pointer;
   font-family: var(--font-body);
   display: flex; align-items: center; justify-content: center;
@@ -1017,9 +1017,9 @@ body.dark-mode .form-select-opt:hover { background: rgba(193,127,82,0.1); }
   background: transparent; border: none;
   color: rgba(200,147,90,0.75);
   display: flex; align-items: center; justify-content: center;
-  width: 72px; height: 72px; margin: 0 auto;
+  width: 64px; height: 64px; margin: 0 auto;
 }
-.pin-key.key-del svg { width: 30px; height: 30px; }
+.pin-key.key-del svg { width: 26px; height: 26px; }
 .pin-key.key-del:active { color: rgba(200,147,90,0.95); }
 .pin-hint { font-size: 1.05rem; color: rgba(200,147,90,0.75); letter-spacing: 0.03em; margin-top: 0.5rem; }
 
@@ -1879,8 +1879,8 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
   </svg>
   <div class="login-box">
     <div class="login-logo">
-      <div style="color:#8b5e3c;margin:0 auto;width:48px;">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div style="color:#8b5e3c;margin:0 auto;width:40px;">
+        <svg width="40" height="40" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="4" y="4" width="18" height="18" rx="4" stroke="#8b5e3c" stroke-width="1.5" fill="none"/>
           <rect x="26" y="4" width="18" height="18" rx="4" fill="#8b5e3c" opacity="0.9"/>
           <rect x="4" y="26" width="18" height="18" rx="4" fill="#8b5e3c" opacity="0.5"/>
@@ -2602,12 +2602,34 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
           <button class="filter-pill" onclick="setFilterPill('leads','referred','yes',this)">Referred</button>
           <button class="filter-pill" onclick="setFilterPill('leads','referred','no',this)">Not referred</button>
         </div>
+        <!-- Referral money filter -->
+        <div class="filter-dd-wrap" id="dd-wrap-l-referral">
+          <button class="filter-dd-btn" id="dd-btn-l-referral" onclick="toggleFilterDd('l-referral', event)">
+            Referral Money <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-l-referral">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('l-referral','all','Referral Money','leads','referral_received',this,event)">All</div>
+            <div class="filter-dd-option" data-val="yes" onclick="selectFilterDd('l-referral','yes','Received','leads','referral_received',this,event)">Received</div>
+            <div class="filter-dd-option" data-val="no" onclick="selectFilterDd('l-referral','no','Pending','leads','referral_received',this,event)">Pending</div>
+          </div>
+        </div>
+        <!-- Bought handpan filter -->
+        <div class="filter-dd-wrap" id="dd-wrap-l-bought">
+          <button class="filter-dd-btn" id="dd-btn-l-bought" onclick="toggleFilterDd('l-bought', event)">
+            Bought Handpan <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-l-bought">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('l-bought','all','Bought Handpan','leads','bought_handpan',this,event)">All</div>
+            <div class="filter-dd-option" data-val="yes" onclick="selectFilterDd('l-bought','yes','Bought','leads','bought_handpan',this,event)">Bought</div>
+            <div class="filter-dd-option" data-val="no" onclick="selectFilterDd('l-bought','no','Not bought','leads','bought_handpan',this,event)">Not bought</div>
+          </div>
+        </div>
       </div>
       <div class="dash-table-wrap">
         <table class="desktop-table"><thead><tr>
           <th>Lead #</th>
           <th class="sortable-th" onclick="sortTable('leads','full_name',this)">Name <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
-          <th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th><th class="ws-action-sticky">Action</th>
+          <th>Phone</th><th>Maker Amount</th><th>Referral</th><th>Status</th><th>Notes</th><th class="ws-action-sticky">Action</th>
         </tr></thead>
         <tbody id="leadsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       <div class="mobile-cards" id="leadsCards"></div>
@@ -2973,45 +2995,50 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
     <button class="btn-dash-save" onclick="saveLead()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+
+    <!-- Name entry mode toggle -->
+    <div class="form-group" style="margin-bottom:1.25rem;">
+      <label class="form-label">Add by</label>
+      <div style="display:flex;gap:0.5rem;">
+        <button type="button" id="lead-mode-manual" class="btn-dash btn-dash-outline btn-dash-sm" style="flex:1;padding:0.6rem 0;" onclick="setLeadMode('manual')">✏️ Type manually</button>
+        <button type="button" id="lead-mode-pick" class="btn-dash btn-dash-outline btn-dash-sm" style="flex:1;padding:0.6rem 0;" onclick="setLeadMode('pick')">👤 Pick from participant</button>
+      </div>
+    </div>
+
+    <!-- Participant picker (hidden by default) -->
+    <div id="lead-pick-section" style="display:none;">
+      <div class="form-row" style="margin-bottom:0;">
+        <div class="form-group"><label class="form-label">Filter by Workshop</label>
+          <select class="form-input" id="lead-pick-workshop" onchange="filterLeadParticipants()"><option value="">All workshops</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Select Participant</label>
+          <select class="form-input" id="lead-pick-participant" onchange="fillLeadFromParticipant()"><option value="">Choose participant...</option></select>
+        </div>
+      </div>
+    </div>
+
     <div class="form-row">
       <div class="form-group"><label class="form-label">Full Name <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="lead-name" placeholder="Name"/></div>
-      <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap" id="lead-phone-wrap"><button type="button" class="phone-flag-btn" id="lead-phone-cc-btn" onclick="openCCPicker('lead-phone-cc-btn','lead-phone-cc','lead-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="lead-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="lead-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="lead-phone" placeholder="Phone number"/></div></div>
+      <div class="form-group"><label class="form-label">Phone / Landline</label><div class="phone-wrap" id="lead-phone-wrap"><button type="button" class="phone-flag-btn" id="lead-phone-cc-btn" onclick="openCCPicker('lead-phone-cc-btn','lead-phone-cc','lead-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="lead-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="lead-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="lead-phone" placeholder="Phone number"/></div></div>
+    </div>
+    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="lead-email" placeholder="email@example.com"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Amount Paid to Handpan Maker (₹)</label><input type="number" class="form-input" id="lead-maker-amount" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Referral Money for You (₹)</label><input type="number" class="form-input" id="lead-referral-amount" placeholder="0"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="par-email" placeholder="email@example.com"/></div>
+      <div class="form-group" style="display:flex;align-items:center;gap:1rem;padding-top:1.5rem;">
+        <label class="form-label" style="margin:0;">Bought Handpan?</label>
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+          <input type="checkbox" id="lead-bought-handpan" style="width:20px;height:20px;accent-color:#c8935a;cursor:pointer;"/>
+          <span style="font-size:0.95rem;color:var(--text-light);">Yes</span>
+        </label>
+      </div>
       <div class="form-group"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop</label>
-        <select class="form-input" id="par-workshop"><option value="">Loading workshops...</option></select></div>
-      <div class="form-group"><label class="form-label">Amount Paid (₹) <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Payment Mode</label>
-        <select class="form-input" id="par-mode">
-          <option value="Razorpay UPI">Razorpay UPI</option><option value="UPI">UPI</option>
-          <option value="Cash">Cash</option><option value="BMS">BMS</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Booking Source</label>
-        <select class="form-input" id="par-source">
-          <option value="Instagram">Instagram</option><option value="BMS">BMS</option>
-          <option value="Razorpay">Razorpay</option><option value="UPI">UPI</option>
-          <option value="Referral">Referral</option><option value="Other">Other</option>
-        </select></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Interested in Handpan</label>
-        <select class="form-input" id="par-interested">
-          <option value="Maybe">Maybe</option><option value="Yes">Yes</option><option value="No">No</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="par-date"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Bringing Handpan</label><input type="text" class="form-input" id="par-handpan" placeholder="Yes / No"/></div>
-      <div class="form-group"><label class="form-label">Photo/Video Consent</label><input type="text" class="form-input" id="par-photo" placeholder="Yes / No"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="par-notes" placeholder="Any notes..." rows="3"></textarea></div>
-  </div></div>
+    <input type="hidden" id="lead-participant-id" value=""/>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="lead-notes" rows="4" placeholder="Any notes..." style="resize:vertical;min-height:100px;"></textarea></div>
+    </div></div>
 </div>
 
 <!-- ── EDIT FORM PAGE ── -->
@@ -4259,9 +4286,24 @@ async function loadLeads() {
     setSearchFilterVisibility('leads', leads.length > 0);
     const adminL = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td class="td-truncate td-phone" data-tip="${l.phone||''}">${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td class="td-truncate td-notes" data-tip="${l.notes||''}">${l.notes||'—'}</td><td class="ws-action-sticky">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
-      ${EMPTY_STATES.leads}
-    </td></tr>`;
+    const MARK_RCV_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    document.getElementById('leadsTable').innerHTML = leads.map(l => {
+      const refStatus = l.referral_received
+        ? '<span class="badge badge-green">✓ Received</span>'
+        : (l.referral_amount > 0 ? '<span class="badge badge-orange">Pending</span>' : '—');
+      const markBtn = (!l.referral_received && l.referral_amount > 0 && adminL)
+        ? `<button class="btn-dash btn-dash-outline btn-dash-sm" style="white-space:nowrap;" onclick="markReferralReceived('${l.id}','${l.full_name}',${l.referral_amount})">${MARK_RCV_SVG} Mark Received</button>` : '';
+      return `<tr class="${l.archived?'archived-row':''}" data-referral_received="${l.referral_received}" data-bought_handpan="${l.bought_handpan}" data-workshop="${l.workshop_attended||''}">
+        <td>${l.id}</td>
+        <td><strong>${l.full_name}</strong>${l.bought_handpan?'<br><span class="badge badge-green" style="font-size:0.72rem;">Bought 🥁</span>':''}</td>
+        <td class="td-truncate td-phone" data-tip="${l.phone||''}">${l.phone||'—'}</td>
+        <td>${l.handpan_maker_amount>0?fmt(l.handpan_maker_amount):'—'}</td>
+        <td>${l.referral_amount>0?fmt(l.referral_amount):'—'}</td>
+        <td>${refStatus}${markBtn?'<br>'+markBtn:''}</td>
+        <td class="td-truncate td-notes" data-tip="${l.notes||''}">${l.notes||'—'}</td>
+        <td class="ws-action-sticky">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.leads}</td></tr>`;
 
   const _t_leadsTable = document.getElementById('leadsTable');
   const _hd_leadsTable = _t_leadsTable && _t_leadsTable.querySelectorAll('tr').length > 0 && !_t_leadsTable.querySelector('[colspan]');
@@ -4270,7 +4312,25 @@ async function loadLeads() {
   setSearchFilterVisibility('leads', _hd_leadsTable);
   const _e_leadsTable = document.getElementById('leadsEmptyState');
   if (_e_leadsTable) { _e_leadsTable.innerHTML = EMPTY_STATES.leads; _e_leadsTable.style.display = _hd_leadsTable ? 'none' : ''; }
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${l.full_name}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => {
+      const refStatus = l.referral_received
+        ? '<span class="badge badge-green">✓ Referral Received</span>'
+        : (l.referral_amount > 0 ? '<span class="badge badge-orange">Referral Pending</span>' : '');
+      const markBtn = (!l.referral_received && l.referral_amount > 0 && adminL)
+        ? `<button class="btn-dash btn-dash-outline btn-dash-sm" style="margin-top:0.5rem;width:100%;" onclick="markReferralReceived('${l.id}','${l.full_name}',${l.referral_amount})">✓ Mark Referral Received</button>` : '';
+      return `<div class="m-card ${l.archived?'archived-row':''}" data-referral_received="${l.referral_received}" data-bought_handpan="${l.bought_handpan}">
+        <div class="m-card-title">${l.full_name}${l.bought_handpan?' <span class="badge badge-green" style="font-size:0.72rem;">Bought 🥁</span>':''}</div>
+        ${l.phone?`<div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone}</span></div>`:''}
+        ${l.handpan_maker_amount>0?`<div class="m-card-row"><span class="m-card-label">Maker Amount</span><span class="m-card-val">${fmt(l.handpan_maker_amount)}</span></div>`:''}
+        ${l.referral_amount>0?`<div class="m-card-row"><span class="m-card-label">Referral</span><span class="m-card-val">${fmt(l.referral_amount)}</span></div>`:''}
+        ${refStatus?`<div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val">${refStatus}</span></div>`:''}
+        ${l.notes?`<div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes}</span></div>`:''}
+        ${markBtn}
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">
+          ${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${l.full_name}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}
+        </div>
+      </div>`;
+    }).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
 
@@ -4348,11 +4408,116 @@ async function savePayment() {
 }
 async function saveLead() {
   if (!(document.getElementById('lead-name').value || '').trim()) { markFieldError('lead-name'); showToast('Full name is required', 'error'); return; }
-  if (!(document.getElementById('lead-phone').value || '').trim()) { markFieldError('lead-phone'); showToast('Phone number is required', 'error'); return; }
   try {
-    const body = { id:'L-'+String(Date.now()).slice(-3), full_name:document.getElementById('lead-name').value, phone:getPhoneValue('lead-phone','lead-phone-cc'), workshop_attended:document.getElementById('lead-workshop').value, date_added:new Date().toISOString().split('T')[0], estimated_budget:document.getElementById('lead-budget').value, status:document.getElementById('lead-status').value, follow_up_date:document.getElementById('lead-followup').value, referred_friend:false, notes:document.getElementById('lead-notes').value };
-    await sbPost('leads', body); closeFormPage('addLead'); resetForm('addLead'); loadLeads(); showToast('✓ Lead saved successfully!','success');
-  } catch(e) { console.error('saveLead error:', e); showToast('Error saving lead: ' + e.message,'error'); }
+    const body = {
+      id: 'L-' + String(Date.now()).slice(-6),
+      full_name: document.getElementById('lead-name').value.trim(),
+      phone: getPhoneValue('lead-phone','lead-phone-cc') || null,
+      email: document.getElementById('lead-email')?.value || null,
+      handpan_maker_amount: parseFloat(document.getElementById('lead-maker-amount').value) || 0,
+      referral_amount: parseFloat(document.getElementById('lead-referral-amount').value) || 0,
+      bought_handpan: document.getElementById('lead-bought-handpan').checked,
+      referral_received: false,
+      participant_id: document.getElementById('lead-participant-id')?.value || null,
+      date_added: new Date().toISOString().split('T')[0],
+      notes: document.getElementById('lead-notes').value || null
+    };
+    await sbPost('leads', body);
+    closeFormPage('addLead');
+    resetForm('addLead');
+    loadLeads();
+    showToast('✓ Lead saved!', 'success');
+  } catch(e) { console.error('saveLead error:', e); showToast('Error saving lead: ' + e.message, 'error'); }
+}
+
+// ── Lead mode toggle (manual vs pick from participant) ──
+let _leadAllParticipants = [];
+
+async function markReferralReceived(leadId, leadName, amount) {
+  customConfirm(
+    'Mark Referral Received?',
+    `₹${Number(amount).toLocaleString('en-IN')} will be added as Referral income in Payments. This cannot be undone.`,
+    async () => {
+      try {
+        // Mark lead as referral received
+        await sbPatch('leads', leadId, { referral_received: true });
+        // Create payment entry
+        await sbPost('payments', {
+          id: 'PAY-REF-' + String(Date.now()),
+          date: new Date().toISOString().split('T')[0],
+          amount: Number(amount),
+          type: 'income',
+          category: 'referral',
+          payment_mode: 'Other',
+          payer_name: leadName,
+          description: 'Referral — ' + leadName,
+          is_general_expense: false
+        });
+        showToast('✓ Referral marked received & added to Payments!', 'success');
+        loadLeads();
+        loadPayments();
+      } catch(e) { showToast('Error: ' + e.message, 'error'); }
+    },
+    'Mark Received'
+  );
+}
+
+async function setLeadMode(mode) {
+  const manualBtn = document.getElementById('lead-mode-manual');
+  const pickBtn = document.getElementById('lead-mode-pick');
+  const pickSection = document.getElementById('lead-pick-section');
+  if (mode === 'manual') {
+    manualBtn.classList.add('btn-dash-primary'); manualBtn.classList.remove('btn-dash-outline');
+    pickBtn.classList.remove('btn-dash-primary'); pickBtn.classList.add('btn-dash-outline');
+    if (pickSection) pickSection.style.display = 'none';
+  } else {
+    pickBtn.classList.add('btn-dash-primary'); pickBtn.classList.remove('btn-dash-outline');
+    manualBtn.classList.remove('btn-dash-primary'); manualBtn.classList.add('btn-dash-outline');
+    if (pickSection) pickSection.style.display = '';
+    await loadLeadParticipantPicker();
+  }
+}
+
+async function loadLeadParticipantPicker() {
+  try {
+    const [wsRes, parRes] = await Promise.all([
+      fetch(SUPABASE_URL + '/rest/v1/workshops?select=id,venue,date&archived=neq.true&order=date.desc', { headers: SB_HEADERS }),
+      fetch(SUPABASE_URL + '/rest/v1/participants?select=id,full_name,workshop_id&archived=neq.true&order=full_name.asc', { headers: SB_HEADERS })
+    ]);
+    const workshops = await wsRes.json();
+    const participants = await parRes.json();
+    _leadAllParticipants = participants;
+    const wsSel = document.getElementById('lead-pick-workshop');
+    if (wsSel) {
+      wsSel.innerHTML = '<option value="">All workshops</option>' +
+        workshops.map(w => `<option value="${w.id}">${w.id} — ${w.venue||''}</option>`).join('');
+    }
+    renderLeadParticipantOptions('');
+  } catch(e) { showToast('Could not load participants', 'error'); }
+}
+
+function filterLeadParticipants() {
+  const wsId = document.getElementById('lead-pick-workshop')?.value || '';
+  renderLeadParticipantOptions(wsId);
+}
+
+function renderLeadParticipantOptions(wsId) {
+  const sel = document.getElementById('lead-pick-participant');
+  if (!sel) return;
+  const filtered = wsId ? _leadAllParticipants.filter(p => p.workshop_id === wsId) : _leadAllParticipants;
+  sel.innerHTML = '<option value="">Choose participant...</option>' +
+    filtered.map(p => `<option value="${p.id}" data-name="${(p.full_name||'').replace(/"/g,'&quot;')}">${p.full_name}</option>`).join('');
+}
+
+function fillLeadFromParticipant() {
+  const sel = document.getElementById('lead-pick-participant');
+  if (!sel || !sel.value) return;
+  const opt = sel.options[sel.selectedIndex];
+  const name = opt.getAttribute('data-name') || opt.textContent;
+  const nameEl = document.getElementById('lead-name');
+  const pidEl = document.getElementById('lead-participant-id');
+  if (nameEl) { nameEl.value = name; nameEl.classList.remove('field-error'); }
+  if (pidEl) pidEl.value = sel.value;
 }
 async function saveWorkshop() {
   if (!document.getElementById('ws-date').value) { showToast('Date is required', 'error'); return; }
@@ -5555,9 +5720,14 @@ function buildEditForm(entity, r) {
 
   if (entity === 'leads') return `
     ${row(fi('Full Name','lead-name','text',r.full_name), `<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('lead-phone', r.phone, 'lead-phone-cc')}</div>`)}
-    ${row(readOnly('Workshop', r.workshop_attended), fi('Est. Budget (₹)','lead-budget','number',r.estimated_budget))}
-    ${row(sel('Status','lead-status',[['Hot','Hot'],['Warm','Warm'],['Cold','Cold']],r.status),
-          fi('Follow-up Date','lead-followup','date',r.follow_up_date))}
+    ${fi('Email','lead-email','email',r.email)}
+    ${row(fi('Amount Paid to Handpan Maker (₹)','lead-maker-amount','number',r.handpan_maker_amount||0), fi('Referral Money (₹)','lead-referral-amount','number',r.referral_amount||0))}
+    <div class="form-group"><label class="form-label">Bought Handpan?</label>
+      <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;margin-top:0.5rem;">
+        <input type="checkbox" id="ef-lead-bought-handpan" ${r.bought_handpan?'checked':''} style="width:20px;height:20px;accent-color:#c8935a;cursor:pointer;"/>
+        <span style="font-size:0.95rem;color:var(--text-light);">Yes, bought handpan</span>
+      </label>
+    </div>
     ${fi('Notes','lead-notes','textarea',r.notes)}`;
 
   return '<p style="color:var(--text-light);padding:1rem;">No editable fields.</p>';
@@ -5590,7 +5760,7 @@ async function saveEdit() {
     } else if (_editEntity === 'payments') {
       body = { date:gd('pay-date'), amount:gn('pay-amount'), type:g('pay-type'), category:g('pay-category'), payment_mode:g('pay-mode'), payer_name:g('pay-name')||null, description:g('pay-desc')||null, reference_id:g('pay-ref')||null };
     } else if (_editEntity === 'leads') {
-      body = { full_name:g('lead-name'), phone:getPhoneValue('lead-phone','lead-phone-cc')||null, estimated_budget:gn('lead-budget')||null, status:g('lead-status'), follow_up_date:gd('lead-followup'), notes:g('lead-notes')||null };
+      body = { full_name:g('lead-name'), phone:getPhoneValue('lead-phone','lead-phone-cc')||null, email:g('lead-email')||null, handpan_maker_amount:gn('lead-maker-amount')||0, referral_amount:gn('lead-referral-amount')||0, bought_handpan:document.getElementById('ef-lead-bought-handpan')?.checked||false, notes:g('lead-notes')||null };
     }
 
     await sbPatch(_editEntity, _editId, body);
