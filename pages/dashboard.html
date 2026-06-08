@@ -4221,14 +4221,14 @@ async function savePayment() {
     const isGeneral = typeVal === 'general_expense';
     const body = {
       id: 'PAY-'+Date.now(),
-      date: document.getElementById('pay-date').value,
-      amount: document.getElementById('pay-amount').value,
+      date: document.getElementById('pay-date').value || null,
+      amount: parseFloat(document.getElementById('pay-amount').value) || 0,
       type: isGeneral ? 'expense' : typeVal,
       category: isGeneral ? (document.getElementById('pay-gen-cat').value) : document.getElementById('pay-category').value,
       payment_mode: document.getElementById('pay-mode').value,
-      payer_name: document.getElementById('pay-name').value,
-      description: document.getElementById('pay-desc').value,
-      reference_id: document.getElementById('pay-ref').value,
+      payer_name: document.getElementById('pay-name').value || null,
+      description: document.getElementById('pay-desc').value || null,
+      reference_id: document.getElementById('pay-ref').value || null,
       synced_from_razorpay: false,
       is_general_expense: isGeneral
     };
