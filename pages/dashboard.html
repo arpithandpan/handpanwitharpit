@@ -2700,7 +2700,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
         <table class="desktop-table"><thead><tr>
           <th>Lead #</th>
           <th class="sortable-th" onclick="sortTable('leads','full_name',this)">Name <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
-          <th>Phone</th><th>🥁 Bought</th><th>Maker Amt</th><th>Referral</th><th>Referral Status</th><th>Notes</th><th class="ws-action-sticky">Action</th>
+          <th>Phone</th><th>🥁 Bought</th><th>Maker Amt</th><th>Referral</th><th>Notes</th><th class="ws-action-sticky">Action</th>
         </tr></thead>
         <tbody id="leadsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       <div class="mobile-cards" id="leadsCards"></div>
@@ -4371,23 +4371,23 @@ async function loadLeads() {
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     const MARK_RCV_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
     document.getElementById('leadsTable').innerHTML = leads.map(l => {
-      const refStatus = l.referral_received
+      const refStatusBadge = l.referral_received
         ? '<span class="badge badge-green">✓ Received</span>'
         : (l.referral_amount > 0 ? '<span class="badge badge-orange">Pending</span>' : '—');
-      const markBtn = (!l.referral_received && l.referral_amount > 0 && adminL)
-        ? `<button class="btn-dash btn-dash-outline btn-dash-sm" style="white-space:nowrap;" onclick="markReferralReceived('${l.id}','${l.full_name}',${l.referral_amount})">${MARK_RCV_SVG} Mark Received</button>` : '';
+      const markReceivedBtn = (!l.referral_received && l.referral_amount > 0 && adminL)
+        ? `<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${l.full_name}',${l.referral_amount})">✓ Mark received</button>` : '';
+      const editDeleteBtns = `<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`;
       return `<tr class="${l.archived?'archived-row':''}" data-referral_received="${l.referral_received}" data-bought_handpan="${l.bought_handpan}" data-workshop="${l.workshop_attended||''}">
         <td>${l.id}</td>
         <td><strong>${l.full_name}</strong></td>
         <td class="td-truncate td-phone" data-tip="${l.phone||''}">${l.phone||'—'}</td>
         <td>${l.bought_handpan?'<span class="badge badge-green">Yes 🥁</span>':'<span style="color:var(--text-light)">—</span>'}</td>
         <td>${l.handpan_maker_amount>0?fmt(l.handpan_maker_amount):'—'}</td>
-        <td>${l.referral_amount>0?fmt(l.referral_amount):'—'}</td>
-        <td>${refStatus}${markBtn?'<br>'+markBtn:''}</td>
+        <td>${l.referral_amount>0?fmt(l.referral_amount)+' '+refStatusBadge:'—'}</td>
         <td class="td-truncate td-notes" data-tip="${l.notes||''}">${l.notes||'—'}</td>
-        <td class="ws-action-sticky">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td>
+        <td class="ws-action-sticky">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;align-items:center;">${markReceivedBtn}${editDeleteBtns}</span>`):'—'}</td>
       </tr>`;
-    }).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.leads}</td></tr>`;
+    }).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.leads}</td></tr>`;
 
   const _t_leadsTable = document.getElementById('leadsTable');
   const _hd_leadsTable = _t_leadsTable && _t_leadsTable.querySelectorAll('tr').length > 0 && !_t_leadsTable.querySelector('[colspan]');
@@ -4401,7 +4401,7 @@ async function loadLeads() {
         ? '<span class="badge badge-green">✓ Referral Received</span>'
         : (l.referral_amount > 0 ? '<span class="badge badge-orange">Referral Pending</span>' : '');
       const markBtn = (!l.referral_received && l.referral_amount > 0 && adminL)
-        ? `<button class="btn-dash btn-dash-outline btn-dash-sm" style="margin-top:0.5rem;width:100%;" onclick="markReferralReceived('${l.id}','${l.full_name}',${l.referral_amount})">✓ Mark Referral Received</button>` : '';
+        ? `<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${l.full_name}',${l.referral_amount})">✓ Mark received</button>` : '';
       return `<div class="m-card ${l.archived?'archived-row':''}" data-referral_received="${l.referral_received}" data-bought_handpan="${l.bought_handpan}">
         <div class="m-card-title">${l.full_name}${l.bought_handpan?' <span class="badge badge-green" style="font-size:0.72rem;">Bought 🥁</span>':''}</div>
         ${l.phone?`<div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone}</span></div>`:''}
@@ -4409,8 +4409,8 @@ async function loadLeads() {
         ${l.referral_amount>0?`<div class="m-card-row"><span class="m-card-label">Referral</span><span class="m-card-val">${fmt(l.referral_amount)}</span></div>`:''}
         ${refStatus?`<div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val">${refStatus}</span></div>`:''}
         ${l.notes?`<div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes}</span></div>`:''}
-        ${markBtn}
-        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
+          <div>${markBtn}</div>
           ${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${l.full_name}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}
         </div>
       </div>`;
