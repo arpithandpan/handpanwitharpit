@@ -2987,6 +2987,173 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
 </div>
 
 <!-- ── EDIT FORM PAGE ── -->
+<div class="form-page" id="form-addWorkshop">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="tryCloseFormPage('addWorkshop')">← Back</button>
+    <div class="form-page-title">Add Workshop</div>
+    <button class="btn-dash-save" onclick="saveWorkshop()">Save</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Workshop ID</label>
+        <select class="form-input" id="ws-id">
+          <option value="">Select ID...</option>
+          <option>WS-001</option><option>WS-002</option><option>WS-003</option>
+          <option>WS-004</option><option>WS-005</option><option>WS-006</option>
+          <option>WS-007</option><option>WS-008</option><option>WS-009</option>
+          <option>WS-010</option><option>WS-011</option><option>WS-012</option>
+          <option>WS-013</option><option>WS-014</option><option>WS-015</option>
+          <option>WS-016</option><option>WS-017</option><option>WS-018</option>
+          <option>WS-019</option><option>WS-020</option><option>WS-021</option>
+          <option>WS-022</option><option>WS-023</option><option>WS-024</option>
+          <option>WS-025</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ws-date"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Venue</label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
+    <div class="form-group"><label class="form-label">Razorpay Payment Page ID <span style="font-size:0.82rem;color:var(--text-light);font-weight:400;text-transform:none;letter-spacing:0;">(from Razorpay Dashboard — for auto-assigning workshop payments)</span></label><input type="text" class="form-input" id="ws-rzp-page-id" placeholder="e.g. pl_SvhpECu2FHPr3U"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">BMS Participants</label><input type="number" class="form-input" id="ws-bms" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">UPI Participants</label><input type="number" class="form-input" id="ws-upi" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Razorpay Participants</label><input type="number" class="form-input" id="ws-rzp" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Price per Head (₹)</label><input type="number" class="form-input" id="ws-price" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Venue Rent (₹)</label><input type="number" class="form-input" id="ws-venue-rent" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Handpan Rental (₹)</label><input type="number" class="form-input" id="ws-hp-rent" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Porter / Delivery (₹)</label><input type="number" class="form-input" id="ws-porter" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Snacks / Misc (₹)</label><input type="number" class="form-input" id="ws-misc" placeholder="0"/></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- Add Student -->
+
+<div class="form-page" id="form-addStudent">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="tryCloseFormPage('addStudent')">← Back</button>
+    <div class="form-page-title">Add Student</div>
+    <button class="btn-dash-save" onclick="saveStudent()">Save</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap" id="stu-phone-wrap"><button type="button" class="phone-flag-btn" id="stu-phone-cc-btn" onclick="openCCPicker('stu-phone-cc-btn','stu-phone-cc','stu-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="stu-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="stu-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="stu-phone" placeholder="Phone number"/></div></div>
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="stu-email" placeholder="email@example.com"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Level</label>
+        <select class="form-input" id="stu-level"><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Advanced">Advanced</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-input" id="stu-status"><option value="Active">Active</option><option value="On Break">On Break</option><option value="Completed">Completed</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Monthly Fee (₹)</label><input type="number" class="form-input" id="stu-fee" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" id="stu-start"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="stu-notes" placeholder="Any notes..." rows="3"></textarea></div>
+  </div></div>
+</div>
+
+<!-- Add Fee Payment -->
+
+<div class="form-page" id="form-addFeePayment">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="tryCloseFormPage('addFeePayment')">← Back</button>
+    <div class="form-page-title">Add Fee Payment</div>
+    <button class="btn-dash-save" onclick="saveFeePayment()">Save</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Student</label>
+        <select class="form-input" id="fee-student"><option value="">Loading students...</option></select></div>
+      <div class="form-group"><label class="form-label">Month</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <select class="form-input" id="fee-month-m">
+            <option value="01">January</option><option value="02">February</option>
+            <option value="03">March</option><option value="04">April</option>
+            <option value="05">May</option><option value="06">June</option>
+            <option value="07">July</option><option value="08">August</option>
+            <option value="09">September</option><option value="10">October</option>
+            <option value="11">November</option><option value="12">December</option>
+          </select>
+          <select class="form-input" id="fee-month-y">
+            <option value="2024">2024</option><option value="2025">2025</option>
+            <option value="2026" selected>2026</option><option value="2027">2027</option>
+          </select>
+        </div></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="fee-amount" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Payment Mode</label>
+        <select class="form-input" id="fee-mode">
+          <option value="Razorpay UPI">Razorpay UPI</option><option value="UPI">UPI</option>
+          <option value="Cash">Cash</option><option value="Other">Other</option>
+        </select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="fee-notes" placeholder="Any notes..." rows="3"></textarea></div>
+  </div></div>
+</div>
+
+<!-- Add Participant -->
+
+<div class="form-page" id="form-addParticipant">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="tryCloseFormPage('addParticipant')">← Back</button>
+    <div class="form-page-title">Add Participant</div>
+    <button class="btn-dash-save" onclick="saveParticipant()">Save</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap" id="par-phone-wrap"><button type="button" class="phone-flag-btn" id="par-phone-cc-btn" onclick="openCCPicker('par-phone-cc-btn','par-phone-cc','par-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="par-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="par-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="par-phone" placeholder="Phone number"/></div></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="par-email" placeholder="email@example.com"/></div>
+      <div class="form-group"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Workshop</label>
+        <select class="form-input" id="par-workshop"><option value="">Loading workshops...</option></select></div>
+      <div class="form-group"><label class="form-label">Amount Paid (₹)</label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Payment Mode</label>
+        <select class="form-input" id="par-mode">
+          <option value="Razorpay UPI">Razorpay UPI</option><option value="UPI">UPI</option>
+          <option value="Cash">Cash</option><option value="BMS">BMS</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Booking Source</label>
+        <select class="form-input" id="par-source">
+          <option value="Instagram">Instagram</option><option value="BMS">BMS</option>
+          <option value="Razorpay">Razorpay</option><option value="UPI">UPI</option>
+          <option value="Referral">Referral</option><option value="Other">Other</option>
+        </select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Interested in Handpan</label>
+        <select class="form-input" id="par-interested">
+          <option value="Maybe">Maybe</option><option value="Yes">Yes</option><option value="No">No</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="par-date"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Bringing Own Handpan</label><input type="text" class="form-input" id="par-handpan" placeholder="Yes / No"/></div>
+      <div class="form-group"><label class="form-label">Photo/Video Consent</label><input type="text" class="form-input" id="par-photo" placeholder="Yes / No"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="par-notes" placeholder="Any notes..." rows="3"></textarea></div>
+  </div></div>
+</div>
+
+<!-- ── EDIT FORM PAGE ── -->
+
 <div class="form-page" id="form-editRecord">
   <div class="form-page-header">
     <button class="form-page-back" onclick="closeFormPage('editRecord')">← Back</button>
