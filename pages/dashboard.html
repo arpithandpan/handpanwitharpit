@@ -4216,6 +4216,10 @@ function onPayTypeChange() {
 }
 
 async function savePayment() {
+  const dateVal = document.getElementById('pay-date').value;
+  const amountVal = parseFloat(document.getElementById('pay-amount').value);
+  if (!dateVal) { showToast('Please select a date', 'error'); return; }
+  if (!amountVal || amountVal <= 0) { showToast('Please enter a valid amount', 'error'); return; }
   try {
     const typeVal = document.getElementById('pay-type').value;
     const isGeneral = typeVal === 'general_expense';
@@ -4236,12 +4240,15 @@ async function savePayment() {
   } catch(e) { console.error('savePayment error:', e); showToast('Error saving payment: ' + e.message,'error'); }
 }
 async function saveLead() {
+  if (!document.getElementById('lead-name').value.trim()) { showToast('Please enter a name', 'error'); return; }
   try {
     const body = { id:'L-'+String(Date.now()).slice(-3), full_name:document.getElementById('lead-name').value, phone:document.getElementById('lead-phone').value, workshop_attended:document.getElementById('lead-workshop').value, date_added:new Date().toISOString().split('T')[0], estimated_budget:document.getElementById('lead-budget').value, status:document.getElementById('lead-status').value, follow_up_date:document.getElementById('lead-followup').value, referred_friend:false, notes:document.getElementById('lead-notes').value };
     await sbPost('leads', body); closeFormPage('addLead'); resetForm('addLead'); loadLeads(); showToast('✓ Lead saved successfully!','success');
   } catch(e) { console.error('saveLead error:', e); showToast('Error saving lead: ' + e.message,'error'); }
 }
 async function saveWorkshop() {
+  if (!document.getElementById('ws-date').value) { showToast('Please select a date', 'error'); return; }
+  if (!document.getElementById('ws-venue').value.trim()) { showToast('Please enter a venue', 'error'); return; }
   try {
     const bms=parseInt(document.getElementById('ws-bms').value)||0, upi=parseInt(document.getElementById('ws-upi').value)||0, rzp=parseInt(document.getElementById('ws-rzp').value)||0, price=parseFloat(document.getElementById('ws-price').value)||0;
     const venueRent=parseFloat(document.getElementById('ws-venue-rent').value)||0, hpRent=parseFloat(document.getElementById('ws-hp-rent').value)||0, porter=parseFloat(document.getElementById('ws-porter').value)||0, misc=parseFloat(document.getElementById('ws-misc').value)||0;
@@ -4252,12 +4259,17 @@ async function saveWorkshop() {
   } catch(e) { console.error('saveWorkshop error:', e); showToast('Error saving workshop: ' + e.message,'error'); }
 }
 async function saveStudent() {
+  if (!document.getElementById('stu-name').value.trim()) { showToast('Please enter a name', 'error'); return; }
   try {
     const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:document.getElementById('stu-phone').value, email:document.getElementById('stu-email').value, join_date:document.getElementById('stu-start').value, status:document.getElementById('stu-status').value, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value };
     await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
   } catch(e) { console.error('saveStudent error:', e); showToast('Error saving student: ' + e.message,'error'); }
 }
 async function saveFeePayment() {
+  const feeStudentVal = (document.getElementById('fee-student').value || '').trim();
+  const feeAmountVal = parseFloat(document.getElementById('fee-amount').value);
+  if (!feeStudentVal || feeStudentVal === '' || feeStudentVal === 'Loading students...') { showToast('Please select a student', 'error'); return; }
+  if (!feeAmountVal || feeAmountVal <= 0) { showToast('Please enter a valid amount', 'error'); return; }
   try {
     const existing = await sbGetAll('fee_payments');
     const count = (existing.data || []).length;
@@ -4284,6 +4296,8 @@ async function saveFeePayment() {
   }
 }
 async function saveParticipant() {
+  if (!document.getElementById('par-name').value.trim()) { showToast('Please enter participant name', 'error'); return; }
+  if (!document.getElementById('par-workshop').value) { showToast('Please select a workshop', 'error'); return; }
   try {
     const existing = await sbGetAll('participants');
     const count = (existing.data || []).length;
