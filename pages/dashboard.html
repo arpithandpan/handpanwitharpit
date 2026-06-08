@@ -652,14 +652,14 @@ table { width: 100%; border-collapse: collapse; }
 th {
   font-size: 0.88rem; letter-spacing: 0.02em; text-transform: none;
   color: var(--text-light); font-weight: 600;
-  padding: 1rem 1.25rem; text-align: left;
+  padding: 1.1rem 1.25rem; text-align: left;
   background: var(--sand); border-bottom: 1px solid var(--clay-pale);
   white-space: nowrap;
 }
 td {
-  padding: 1.1rem 1.25rem; font-size: 1rem; color: var(--text-mid);
+  padding: 1.25rem 1.25rem; font-size: 1rem; color: var(--text-mid);
   border-bottom: 1px solid rgba(193,127,82,0.08);
-  vertical-align: middle; height: 64px;
+  vertical-align: middle; height: 72px;
 }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: rgba(193,127,82,0.04); }
@@ -3923,6 +3923,7 @@ async function loadWsPax(wsId) {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
     });
     const parts = await res.json();
+    parts.forEach(p => cacheRecord('participants', p));
     if (!parts.length) { list.innerHTML = '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">👥</div><div class="empty-state-title" style="font-size:1rem;">No participants yet</div></div>'; return; }
     const TRASH_BTN = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
     list.innerHTML = parts.map(p => `
@@ -7141,6 +7142,7 @@ async function loadVPParticipants(wsId) {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
     });
     const parts = await res.json();
+    parts.forEach(p => cacheRecord('participants', p));
     if (sub) sub.textContent = parts.length + ' participant' + (parts.length !== 1 ? 's' : '');
     function updateVPCheckinCounter() {
       const counter = document.getElementById('vpCheckinCounter');
