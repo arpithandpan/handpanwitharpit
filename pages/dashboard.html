@@ -710,9 +710,9 @@ tr:hover td { background: rgba(193,127,82,0.04); }
   color: rgba(200,147,90,0.95);
   background: rgba(200,147,90,0.12);
   border: 1.5px solid rgba(200,147,90,0.4);
-  border-radius: 7px; padding: 5px 10px; cursor: pointer;
+  border-radius: 8px; padding: 0 12px; cursor: pointer;
   white-space: nowrap; display: inline-flex; align-items: center;
-  gap: 4px; line-height: 1; min-height: 32px;
+  gap: 4px; line-height: 1; height: 48px; min-height: 48px;
   font-family: var(--font-body);
   transition: background 0.15s, border-color 0.15s;
   -webkit-tap-highlight-color: transparent;
@@ -2715,7 +2715,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
         <table class="desktop-table"><thead><tr>
           <th>Lead #</th>
           <th class="sortable-th" onclick="sortTable('leads','full_name',this)">Name <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
-          <th>Phone</th><th>Bought Handpan?</th><th>Maker Amt</th><th>Referral Received</th><th>Notes</th><th class="ws-action-sticky">Action</th>
+          <th>Phone</th><th>Bought Handpan?</th><th>Maker Amt</th><th>Referral Amt</th><th>Referral Status</th><th>Notes</th><th class="ws-action-sticky">Action</th>
         </tr></thead>
         <tbody id="leadsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       <div class="mobile-cards" id="leadsCards"></div>
@@ -4398,11 +4398,12 @@ async function loadLeads() {
         <td class="td-truncate td-phone" data-tip="${l.phone||''}">${l.phone||'—'}</td>
         <td>${l.bought_handpan?'<span class="badge badge-green">Yes 🥁</span>':'<span style="color:var(--text-light)">—</span>'}</td>
         <td>${l.handpan_maker_amount>0?fmt(l.handpan_maker_amount):'—'}</td>
-        <td>${l.referral_amount>0?fmt(l.referral_amount)+' '+refStatusBadge:'—'}</td>
+        <td>${l.referral_amount>0?fmt(l.referral_amount):'—'}</td>
+        <td>${refStatusBadge}</td>
         <td class="td-truncate td-notes" data-tip="${l.notes||''}">${l.notes||'—'}</td>
         <td class="ws-action-sticky">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;align-items:center;">${markReceivedBtn}${editDeleteBtns}</span>`):'—'}</td>
       </tr>`;
-    }).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.leads}</td></tr>`;
+    }).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.leads}</td></tr>`;
 
   const _t_leadsTable = document.getElementById('leadsTable');
   const _hd_leadsTable = _t_leadsTable && _t_leadsTable.querySelectorAll('tr').length > 0 && !_t_leadsTable.querySelector('[colspan]');
