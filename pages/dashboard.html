@@ -4518,32 +4518,29 @@ async function saveLead() {
 let _leadAllParticipants = [];
 
 async function markReferralReceived(leadId, leadName, amount) {
-  customConfirm(
+  const ok = await customConfirm(
     'Mark Referral Received?',
-    `₹${Number(amount).toLocaleString('en-IN')} will be added as Referral income in Payments. This cannot be undone.`,
-    async () => {
-      try {
-        // Mark lead as referral received
-        await sbPatch('leads', leadId, { referral_received: true });
-        // Create payment entry
-        await sbPost('payments', {
-          id: 'PAY-REF-' + String(Date.now()),
-          date: new Date().toISOString().split('T')[0],
-          amount: Number(amount),
-          type: 'income',
-          category: 'referral',
-          payment_mode: 'Other',
-          payer_name: leadName,
-          description: 'Referral — ' + leadName,
-          is_general_expense: false
-        });
-        showToast('✓ Referral marked received & added to Payments!', 'success');
-        loadLeads();
-        loadPayments();
-      } catch(e) { showToast('Error: ' + e.message, 'error'); }
-    },
+    '₹' + Number(amount).toLocaleString('en-IN') + ' will be added as Referral income in Payments. This cannot be undone.',
     'Mark Received'
   );
+  if (!ok) return;
+  try {
+    await sbPatch('leads', leadId, { referral_received: true });
+    await sbPost('payments', {
+      id: 'PAY-REF-' + String(Date.now()),
+      date: new Date().toISOString().split('T')[0],
+      amount: Number(amount),
+      type: 'income',
+      category: 'referral',
+      payment_mode: 'Other',
+      payer_name: leadName,
+      description: 'Referral — ' + leadName,
+      is_general_expense: false
+    });
+    showToast('✓ Referral received & added to Payments!', 'success');
+    loadLeads();
+    loadPayments();
+  } catch(e) { showToast('Error: ' + e.message, 'error'); }
 }
 
 async function setLeadMode(mode) {
