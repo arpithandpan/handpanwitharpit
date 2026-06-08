@@ -861,26 +861,27 @@ body.dark-mode .phone-prefix-input { background-color: #2a2018; border-color: rg
 
 /* Segmented tab toggle */
 .seg-tabs {
-  display: flex; background: rgba(200,147,90,0.08);
-  border: 1.5px solid rgba(200,147,90,0.2);
-  border-radius: 10px; padding: 3px; gap: 3px;
+  display: flex; background: #2a1e12;
+  border: 1.5px solid rgba(200,147,90,0.15);
+  border-radius: 50px; padding: 4px; gap: 4px;
   width: 100%;
 }
 .seg-tab {
-  flex: 1; padding: 0.65rem 1rem; border-radius: 7px;
+  flex: 1; padding: 0.65rem 1rem; border-radius: 50px;
   border: none; background: transparent;
-  color: var(--text-light); font-size: 0.95rem;
+  color: rgba(200,147,90,0.55); font-size: 0.95rem;
   font-family: var(--font-body); cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.18s, color 0.18s;
   white-space: nowrap; text-align: center;
   -webkit-tap-highlight-color: transparent;
-  min-height: 44px;
+  min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
 }
 .seg-tab.active {
   background: #c8935a; color: #1a1208;
-  font-weight: 600;
+  font-weight: 700;
 }
-.seg-tab:not(.active):hover { background: rgba(200,147,90,0.12); color: var(--bark); }
+.seg-tab.active::before { content: "✓"; font-size: 0.85em; }
+.seg-tab:not(.active):hover { color: rgba(200,147,90,0.85); }
 
 /* Lead bought-handpan toggle row */
 .lead-toggle-row {
@@ -3070,8 +3071,8 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
     <div class="form-group" style="margin-bottom:1.5rem;">
       <label class="form-label">Add by</label>
       <div class="seg-tabs" role="tablist">
-        <button type="button" class="seg-tab active" id="lead-mode-manual" role="tab" onclick="setLeadMode('manual')">✏️ Type manually</button>
-        <button type="button" class="seg-tab" id="lead-mode-pick" role="tab" onclick="setLeadMode('pick')">👤 From participant</button>
+        <button type="button" class="seg-tab active" id="lead-mode-manual" role="tab" onclick="setLeadMode('manual')">New Person</button>
+        <button type="button" class="seg-tab" id="lead-mode-pick" role="tab" onclick="setLeadMode('pick')">Existing Participant</button>
       </div>
     </div>
 
@@ -3103,9 +3104,9 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
       <div class="form-group"><label class="form-label">Phone / Landline</label><div class="phone-wrap" id="lead-phone-wrap"><button type="button" class="phone-flag-btn" id="lead-phone-cc-btn" onclick="openCCPicker('lead-phone-cc-btn','lead-phone-cc','lead-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="lead-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="lead-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="lead-phone" placeholder="Phone number"/></div></div>
     </div>
     <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="lead-email" placeholder="email@example.com"/></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label" style="line-height:1.3;">Amount Paid by Customer<br>to Handpan Maker (₹)</label><input type="number" class="form-input" id="lead-maker-amount" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">Referral Money for You (₹)</label><input type="number" class="form-input" id="lead-referral-amount" placeholder="0"/></div>
+    <div class="form-row" style="align-items:end;">
+      <div class="form-group"><label class="form-label" style="min-height:2.8em;display:flex;align-items:flex-end;padding-bottom:0.3rem;">Amt by Customer to Maker (₹)</label><input type="number" class="form-input" id="lead-maker-amount" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label" style="min-height:2.8em;display:flex;align-items:flex-end;padding-bottom:0.3rem;">Referral Money for You (₹)</label><input type="number" class="form-input" id="lead-referral-amount" placeholder="0"/></div>
     </div>
 
     <!-- Bought Handpan toggle -->
@@ -3113,7 +3114,8 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
       <span class="lead-toggle-label">Bought Handpan?</span>
       <label class="checkin-toggle" style="margin:0;">
         <input type="checkbox" id="lead-bought-handpan" onchange="document.getElementById('lead-bought-label').textContent=this.checked?'Yes':'No'"/>
-        <span class="checkin-slider"></span>
+        <span class="checkin-toggle-track"></span>
+        <span class="checkin-toggle-thumb"></span>
       </label>
       <span id="lead-bought-label" style="font-size:0.95rem;color:var(--text-light);min-width:28px;">No</span>
     </div>
@@ -5884,7 +5886,8 @@ function buildEditForm(entity, r) {
       <span class="lead-toggle-label">Bought Handpan?</span>
       <label class="checkin-toggle" style="margin:0;">
         <input type="checkbox" id="ef-lead-bought-handpan" ${r.bought_handpan?'checked':''} onchange="document.getElementById('ef-lead-bought-label').textContent=this.checked?'Yes':'No'"/>
-        <span class="checkin-slider"></span>
+        <span class="checkin-toggle-track"></span>
+        <span class="checkin-toggle-thumb"></span>
       </label>
       <span id="ef-lead-bought-label" style="font-size:0.95rem;color:var(--text-light);min-width:28px;">${r.bought_handpan?'Yes':'No'}</span>
     </div>
