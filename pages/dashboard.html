@@ -3358,8 +3358,6 @@ tr.row-selected { background: rgba(200,147,90,0.08) !important; }
 <script>
 const SUPABASE_URL = 'https://sabdevsguuobgqjputtv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhYmRldnNndXVvYmdxanB1dHR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyODIyMTcsImV4cCI6MjA5NDg1ODIxN30.fQBjimq7wvOA53oy3b_uKo1Ezh0oQOzHca7UhyxhxGQ';
-const DASHBOARD_PIN = '031990';
-const VIEWER_PIN = '123456';
 let currentRole = 'admin';
 
 function isAdmin() { return currentRole === 'admin'; }
@@ -3423,49 +3421,6 @@ function applyRole() {
     document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
     [badge, mobileBadge].forEach(b => { if (b) { b.textContent = 'Viewer'; b.style.background = 'rgba(122,140,106,0.15)'; b.style.color = 'var(--moss)'; b.style.borderColor = 'rgba(122,140,106,0.3)'; } });
   }
-}
-
-// ── PIN AUTH ──
-let pinValue = '';
-
-function pinPress(digit) {
-  if (pinValue.length >= 6) return;
-  pinValue += digit;
-  updatePinDots();
-  if (pinValue.length === 6) {
-    setTimeout(doLogin, 120);
-  }
-}
-
-function pinDelete() {
-  if (!pinValue.length) return;
-  pinValue = pinValue.slice(0, -1);
-  updatePinDots();
-}
-
-function updatePinDots() {
-  for (let i = 0; i < 6; i++) {
-    const dot = document.getElementById('pd' + i);
-    dot.classList.toggle('filled', i < pinValue.length);
-    dot.classList.remove('error');
-  }
-}
-
-function pinShakeError() {
-  const dots = document.getElementById('pinDots');
-  for (let i = 0; i < 6; i++) {
-    document.getElementById('pd' + i).classList.add('error');
-  }
-  dots.classList.add('shake');
-  setTimeout(() => {
-    dots.classList.remove('shake');
-    pinValue = '';
-    updatePinDots();
-  }, 400);
-}
-
-function setNumpadDisabled(disabled) {
-  document.querySelectorAll('.pin-key').forEach(k => k.disabled = disabled);
 }
 
 function showDashboard() {
@@ -3614,6 +3569,13 @@ function customConfirmClose() {
   unlockScroll();
 }
 
+
+// ── EMAIL/PASSWORD KEYBOARD SUPPORT ──
+document.addEventListener('keydown', function(e) {
+  const loginScreen = document.getElementById('loginScreen');
+  if (!loginScreen || loginScreen.style.display === 'none') return;
+  if (e.key === 'Enter') authLogin();
+});
 if (sessionStorage.getItem('dash_auth') === '1') {
   currentRole = sessionStorage.getItem('dash_role') || 'admin';
   const _savedToken = sessionStorage.getItem('dash_token');
@@ -5254,13 +5216,7 @@ function showToast(msg, type) {
   }, 2000);
 }
 
-// ── PIN KEYBOARD SUPPORT ──
-document.addEventListener('keydown', function(e) {
-  const loginScreen = document.getElementById('loginScreen');
-  if (!loginScreen || loginScreen.style.display === 'none') return;
-  if (e.key >= '0' && e.key <= '9') { pinPress(e.key); }
-  else if (e.key === 'Backspace') { pinDelete(); }
-});
+
 
 if (sessionStorage.getItem('dash_auth') === '1') {
   currentRole = sessionStorage.getItem('dash_role') || 'admin';
