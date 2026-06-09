@@ -1843,8 +1843,22 @@ th.cb-th, td.cb-td {
   vertical-align: middle;
 }
 
-/* hide per-row actions when bulk selection is active */
-.bulk-active .ws-action-sticky { visibility: hidden; pointer-events: none; }
+/* hide per-row action buttons when bulk selection is active, keep column space */
+.bulk-active .ws-action-sticky button { visibility: hidden; pointer-events: none; }
+
+/* highlight selected rows and cards */
+tr.row-selected { background: rgba(200,147,90,0.08) !important; }
+.m-card.row-selected { border-color: rgba(200,147,90,0.5) !important; background: rgba(200,147,90,0.06) !important; }
+
+/* ── HOVER-TO-REVEAL ACTIONS (desktop only) ── */
+@media (min-width: 900px) {
+  .desktop-table tbody tr .ws-action-sticky button,
+  .desktop-table tbody tr .ws-action-sticky a { opacity: 0; transition: opacity 0.15s; }
+  .desktop-table tbody tr:hover .ws-action-sticky button,
+  .desktop-table tbody tr:hover .ws-action-sticky a { opacity: 1; }
+  .bulk-active tbody tr .ws-action-sticky button,
+  .bulk-active tbody tr .ws-action-sticky a { opacity: 0 !important; pointer-events: none; }
+}
 
 </style>
     <ellipse class="orb1" cx="15" cy="20" rx="38" ry="38" fill="url(#orbA1)"/>
@@ -4153,10 +4167,13 @@ async function loadParticipants() {
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; setSearchFilterVisibility('participants', _hasRows); } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
     if (parCards) parCards.innerHTML = parts.map(p => `
-      <div class="m-card" style="margin-bottom:1.25rem;padding:0;" data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}">
+      <div class="m-card" id="pcard-${p.id}" style="margin-bottom:1.25rem;padding:0;" data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}">
         <div style="padding:1rem 1.25rem 0.6rem;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <div class="m-card-title" style="margin:0;">${p.full_name||'—'}</div>
+            <div style="display:flex;align-items:center;gap:0.65rem;">
+              <label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="participants" data-id="${p.id}" data-name="${(p.full_name||p.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('pcard-${p.id}')?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>
+              <div class="m-card-title" style="margin:0;">${p.full_name||'—'}</div>
+            </div>
             <span class="badge badge-clay">${fmtMode(p.payment_mode)}</span>
           </div>
           <div class="m-card-row" style="padding:4px 0 0;"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
@@ -4285,7 +4302,7 @@ async function loadLeads() {
   setSearchFilterVisibility('leads', _hd_leadsTable);
   const _e_leadsTable = document.getElementById('leadsEmptyState');
   if (_e_leadsTable) { _e_leadsTable.innerHTML = EMPTY_STATES.leads; _e_leadsTable.style.display = _hd_leadsTable ? 'none' : ''; }
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title">${l.full_name} ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${l.full_name}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" id="lcard-${l.id}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!l.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="leads" data-id="${l.id}" data-name="${(l.full_name||l.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('lcard-${l.id}')?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span>${l.full_name}</span> ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${l.full_name}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
 
@@ -4606,6 +4623,8 @@ function onRowCbChange(cb) {
   const key = cb.dataset.table + ':' + cb.dataset.id;
   if (cb.checked) _bulkSelected.set(key, { table: cb.dataset.table, id: cb.dataset.id, name: cb.dataset.name });
   else _bulkSelected.delete(key);
+  const row = cb.closest('tr');
+  if (row) row.classList.toggle('row-selected', cb.checked);
   updateBulkBar('table');
 }
 
@@ -4617,6 +4636,8 @@ function toggleSelectAll(section, masterCb) {
     const key = cb.dataset.table + ':' + cb.dataset.id;
     if (masterCb.checked) _bulkSelected.set(key, { table: cb.dataset.table, id: cb.dataset.id, name: cb.dataset.name });
     else _bulkSelected.delete(key);
+    const row = cb.closest('tr');
+    if (row) row.classList.toggle('row-selected', masterCb.checked);
   });
   updateBulkBar('table');
 }
@@ -4642,6 +4663,7 @@ function updateBulkBar(mode) {
 function clearBulkSelection() {
   _bulkSelected.clear();
   document.querySelectorAll('.row-cb, .bin-row-cb').forEach(cb => { cb.checked = false; });
+  document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
   document.querySelectorAll('.m-card.selected').forEach(c => c.classList.remove('selected'));
   document.querySelectorAll('.group-select-all').forEach(c => { c.checked = false; });
   document.querySelectorAll('.desktop-table').forEach(t => t.classList.remove('bulk-active'));
