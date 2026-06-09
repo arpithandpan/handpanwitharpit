@@ -3691,6 +3691,16 @@ function customConfirmClose() {
   unlockScroll();
 }
 
+// ── SUPABASE API ──
+const SB_HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY,
+  'Prefer': 'return=representation',
+  'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6'
+};
+
+// ── SESSION RESTORE ──
 if (sessionStorage.getItem('dash_auth') === '1') {
   currentRole = sessionStorage.getItem('dash_role') || 'admin';
   const savedToken = sessionStorage.getItem('dash_token');
@@ -3707,15 +3717,6 @@ if (sessionStorage.getItem('dash_auth') === '1') {
   }
   applyRole();
 }
-
-// ── SUPABASE API ──
-const SB_HEADERS = {
-  'Content-Type': 'application/json',
-  'apikey': SUPABASE_KEY,
-  'Authorization': 'Bearer ' + SUPABASE_KEY,
-  'Prefer': 'return=representation',
-  'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6'
-};
 
 async function sbGet(table, params = '') {
   // Filter out archived rows: archived is false OR archived is null
