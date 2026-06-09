@@ -3210,6 +3210,14 @@ const VIEWER_EMAIL = 'arpitbam@gmail.com';
 let currentRole = 'admin';
 let _supabaseSession = null;
 
+const SB_HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY,
+  'Prefer': 'return=representation',
+  'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6'
+};
+
 function isAdmin() { return currentRole === 'admin'; }
 
 function toggleAuthPass() {
@@ -3435,13 +3443,6 @@ if (sessionStorage.getItem('dash_auth') === '1') {
 }
 
 // ── SUPABASE API ──
-const SB_HEADERS = {
-  'Content-Type': 'application/json',
-  'apikey': SUPABASE_KEY,
-  'Authorization': 'Bearer ' + SUPABASE_KEY,
-  'Prefer': 'return=representation',
-  'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6'
-};
 
 async function sbGet(table, params = '') {
   // Filter out archived rows: archived is false OR archived is null
