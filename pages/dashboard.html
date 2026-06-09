@@ -3469,17 +3469,23 @@ async function authLogin() {
     sessionStorage.setItem('dash_auth', '1');
     sessionStorage.setItem('dash_role', currentRole);
     sessionStorage.setItem('dash_token', data.access_token);
+    // Auth succeeded — now load dashboard outside the catch so load errors don't show as login errors
     showDashboard();
-    loadAll();
-    loadBinCount();
-    if (currentRole === 'admin') {
-      loadUnassignedPayments();
-      setTimeout(autoBackfillParticipants, 4000);
-      setTimeout(autoBackfillPhones, 6000);
+    try {
+      loadAll();
+      loadBinCount();
+      if (currentRole === 'admin') {
+        loadUnassignedPayments();
+        setTimeout(autoBackfillParticipants, 4000);
+        setTimeout(autoBackfillPhones, 6000);
+      }
+      applyRole();
+    } catch(loadErr) {
+      console.error('Dashboard load error:', loadErr);
     }
-    applyRole();
   } catch(e) {
-    if (errEl) errEl.textContent = 'Connection error. Please try again.';
+    console.error('authLogin error:', e);
+    if (errEl) errEl.textContent = 'Error: ' + (e.message || 'Please try again.');
     if (btn) { btn.textContent = 'Sign In'; btn.disabled = false; }
   }
 }
