@@ -3652,7 +3652,8 @@ const SB_HEADERS = {
   'Content-Type': 'application/json',
   'apikey': SUPABASE_KEY,
   'Authorization': 'Bearer ' + SUPABASE_KEY,
-  'Prefer': 'return=representation'
+  'Prefer': 'return=representation',
+  'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6'
 };
 
 async function sbGet(table, params = '') {
@@ -3770,7 +3771,7 @@ async function populateWorkshopDropdown(selectId) {
   if (!sel) return;
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/workshops?select=id,venue,date&archived=neq.true&order=date.desc', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
     });
     const ws = await res.json();
     sel.innerHTML = '<option value="">Select workshop...</option>' +
@@ -3785,7 +3786,7 @@ async function populateStudentDropdown(selectId) {
   if (!sel) return;
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/students?select=id,full_name&archived=neq.true&order=full_name.asc', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
     });
     const stus = await res.json();
     sel.innerHTML = '<option value="">Select student...</option>' +
@@ -3800,7 +3801,7 @@ async function autoFillNextId(table, inputId, prefix, padLength) {
   if (!el) return;
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?select=id&order=created_at.desc&limit=1', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
     });
     const rows = await res.json();
     let nextNum = 1;
@@ -4032,7 +4033,7 @@ async function loadWorkshops() {
   try {
     const ws = currentRole === 'viewer' ? DUMMY.workshops : await (async () => {
       const res = await fetch(SUPABASE_URL + '/rest/v1/workshops?select=*,participants(count)&participants.archived=eq.false&archived=eq.false&order=date.desc', {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
       });
       if (!res.ok) throw new Error('Failed');
       return await res.json();
@@ -4139,7 +4140,7 @@ async function loadWsPax(wsId) {
   list.innerHTML = '<div class="empty-state" style="padding:2rem 1rem;"><div class="spinner"></div></div>';
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&workshop_id=eq.' + wsId + '&archived=eq.false&order=created_at.asc', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
     });
     const parts = await res.json();
     parts.forEach(p => cacheRecord('participants', p));
@@ -4214,7 +4215,7 @@ async function loadParticipants() {
   try {
     const parts = currentRole === 'viewer' ? DUMMY.participants : await (async () => {
       const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&archived=eq.false&order=created_at.desc', {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
       });
       if (!res.ok) throw new Error('Failed');
       return await res.json();
@@ -4889,7 +4890,7 @@ async function confirmDelete() {
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/' + entity + '?id=eq.' + id, {
       method: 'DELETE',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
     });
     if (!res.ok) throw new Error('Failed');
     showToast('✓ ' + name + ' deleted', 'success');
@@ -5094,7 +5095,7 @@ async function confirmDeleteForever() {
   try {
     await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
       method: 'DELETE',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
     });
     showToast('✓ ' + name + ' deleted permanently', 'success');
     loadBinCount();
@@ -5201,7 +5202,7 @@ async function testConnectorHealth(id) {
       setConnectorState('rzp', 'connected', 'Last payment: ' + (last ? fmtDate(last.date) : 'None yet'));
     } else if (id === 'rw') {
       const res = await fetch(SUPABASE_URL + '/rest/v1/unassigned_payments?select=date,created_at&order=created_at.desc&limit=1', {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
       });
       if (!res.ok) { setConnectorState('rw', 'offline', 'Could not check webhook activity'); return; }
       const rows = await res.json();
@@ -5325,7 +5326,7 @@ async function loadNotifications() {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 6000);
     const res = await fetch(SUPABASE_URL + '/rest/v1/notifications?select=*&order=created_at.desc&limit=50', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' },
       signal: controller.signal
     });
     clearTimeout(timeout);
@@ -5704,7 +5705,7 @@ function closeCheckinMode() {
 async function refreshCheckinGrid() {
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&workshop_id=eq.' + _checkinWorkshopId + '&archived=neq.true&order=full_name.asc', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
     });
     if (!res.ok) throw new Error('Failed');
     _checkinParticipants = await res.json();
@@ -7822,7 +7823,7 @@ async function loadVPParticipants(wsId) {
   const VP_TRASH = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&workshop_id=eq.' + wsId + '&archived=eq.false&order=created_at.asc', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6' }
     });
     const parts = await res.json();
     parts.forEach(p => cacheRecord('participants', p));
