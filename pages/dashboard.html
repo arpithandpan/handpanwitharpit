@@ -4880,18 +4880,19 @@ function showToast(msg, type) {
   }, 2000);
 }
 
-// ── PIN KEYBOARD SUPPORT ──
-document.addEventListener('keydown', function(e) {
-  const loginScreen = document.getElementById('loginScreen');
-  if (!loginScreen || loginScreen.style.display === 'none') return;
-  if (e.key >= '0' && e.key <= '9') { pinPress(e.key); }
-  else if (e.key === 'Backspace') { pinDelete(); }
-});
+// PIN keyboard removed - using Supabase Auth
 
 if (sessionStorage.getItem('dash_auth') === '1') {
   currentRole = sessionStorage.getItem('dash_role') || 'admin';
+  const savedToken = sessionStorage.getItem('dash_token');
+  if (savedToken) SB_HEADERS['Authorization'] = 'Bearer ' + savedToken;
+  showDashboard();
   loadAll();
   loadBinCount();
+  if (currentRole === 'admin') {
+    loadUnassignedPayments();
+    setTimeout(autoBackfillParticipants, 4000);
+  }
   applyRole();
 }
 
