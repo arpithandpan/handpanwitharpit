@@ -3218,6 +3218,63 @@ const SB_HEADERS = {
   'x-dashboard-secret': 'HPW-7x9K#mP2$vQn8@Arz4!wLc6'
 };
 
+// ── EMPTY STATES ──
+const EMPTY_STATES = {
+  unassigned_payments: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">💸</div>
+    <div class="empty-state-title">No unassigned payments</div>
+    <div class="empty-state-sub">Payments received via your general Razorpay link will appear here for you to assign</div>
+  </div>`,
+  search: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">🔍</div>
+    <div class="empty-state-title">Start typing to search</div>
+    <div class="empty-state-sub">Search across workshops, participants, students, payments and leads</div>
+  </div>`,
+  search_noresults: (q) => `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">😕</div>
+    <div class="empty-state-title">No results for "${q}"</div>
+    <div class="empty-state-sub">Try a different name, number or keyword</div>
+  </div>`,
+  workshops: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">🎵</div>
+    <div class="empty-state-title">No workshops yet</div>
+    <div class="empty-state-sub">Add your first workshop to start tracking revenue and participants</div>
+  </div>`,
+  participants: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">👥</div>
+    <div class="empty-state-title">No participants yet</div>
+    <div class="empty-state-sub">Add participants to track attendance and payments for your workshops</div>
+  </div>`,
+  students: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">🎓</div>
+    <div class="empty-state-title">No students yet</div>
+    <div class="empty-state-sub">Enroll your first student to track classes and fee payments</div>
+  </div>`,
+  payments: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">💳</div>
+    <div class="empty-state-title">No payments yet</div>
+    <div class="empty-state-sub">Record income and expenses to track your business finances</div>
+  </div>`,
+  fee_payments: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">📋</div>
+    <div class="empty-state-title">No fee payments yet</div>
+    <div class="empty-state-sub">Track monthly fee payments for your online students here</div>
+  </div>`,
+  leads: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">📍</div>
+    <div class="empty-state-title">No leads yet</div>
+    <div class="empty-state-sub">Track people interested in buying a handpan and follow up with them</div>
+  </div>`,
+  insights: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">📊</div>
+    <div class="empty-state-title">Not enough data yet</div>
+    <div class="empty-state-sub">Add workshops and payments to see your business insights here</div>
+  </div>`,
+};
+
+// stub — phone backfill not active
+async function autoBackfillPhones() {}
+
 function isAdmin() { return currentRole === 'admin'; }
 
 function toggleAuthPass() {
@@ -6017,68 +6074,6 @@ function populatePaymentsCategoryDropdown(payments) {
   const cats = [...new Set(payments.map(p => p.category).filter(Boolean))].sort();
   cats.forEach(c => dd._addOption(c, c));
 }
-
-// ── EMPTY STATES ──
-const EMPTY_STATES = {
-  unassigned_payments: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">💸</div>
-    <div class="empty-state-title">No unassigned payments</div>
-    <div class="empty-state-sub">Payments received via your general Razorpay link will appear here for you to assign</div>
-  </div>`,
-  search: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">🔍</div>
-    <div class="empty-state-title">Start typing to search</div>
-    <div class="empty-state-sub">Search across workshops, participants, students, payments and leads</div>
-  </div>`,
-
-  search_noresults: (q) => `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">😕</div>
-    <div class="empty-state-title">No results for "${q}"</div>
-    <div class="empty-state-sub">Try a different name, number or keyword</div>
-  </div>`,
-
-  workshops: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">🎵</div>
-    <div class="empty-state-title">No workshops yet</div>
-    <div class="empty-state-sub">Add your first workshop to start tracking revenue and participants</div>
-  </div>`,
-
-  participants: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">👥</div>
-    <div class="empty-state-title">No participants yet</div>
-    <div class="empty-state-sub">Add participants to track attendance and payments for your workshops</div>
-  </div>`,
-
-  students: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">🎓</div>
-    <div class="empty-state-title">No students yet</div>
-    <div class="empty-state-sub">Enroll your first student to track classes and fee payments</div>
-  </div>`,
-
-  payments: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">💳</div>
-    <div class="empty-state-title">No payments yet</div>
-    <div class="empty-state-sub">Record income and expenses to track your business finances</div>
-  </div>`,
-
-  fee_payments: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">📋</div>
-    <div class="empty-state-title">No fee payments yet</div>
-    <div class="empty-state-sub">Track monthly fee payments for your online students here</div>
-  </div>`,
-
-  leads: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">📍</div>
-    <div class="empty-state-title">No leads yet</div>
-    <div class="empty-state-sub">Track people interested in buying a handpan and follow up with them</div>
-  </div>`,
-
-  insights: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">📊</div>
-    <div class="empty-state-title">Not enough data yet</div>
-    <div class="empty-state-sub">Add workshops and payments to see your business insights here</div>
-  </div>`,
-};
 
 // ── CUSTOM DATE PICKER ──
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
