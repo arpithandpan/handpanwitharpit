@@ -1787,6 +1787,65 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
 }
 #dash-tooltip.visible { opacity: 1; }
 
+/* ── BULK ACTION BAR ── */
+.bulk-bar {
+  position: fixed;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: #2a1a0e;
+  border: 1px solid rgba(200,147,90,0.5);
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  transition: bottom 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+}
+.bulk-bar.visible { bottom: 1.5rem; }
+.bulk-bar-info { color: #c8935a; font-size: 0.95rem; font-weight: 600; }
+.bulk-bar-actions { display: flex; gap: 0.5rem; align-items: center; }
+
+/* ── ROW CHECKBOXES ── */
+.cb-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px; height: 20px;
+  min-width: 20px;
+  border: 2px solid rgba(200,147,90,0.4);
+  border-radius: 5px;
+  background: rgba(200,147,90,0.06);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  position: relative;
+}
+.cb-box:hover { border-color: rgba(200,147,90,0.8); background: rgba(200,147,90,0.12); }
+.cb-box input[type="checkbox"] {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.cb-box .cb-check {
+  display: none;
+  width: 12px; height: 12px;
+  color: #c8935a;
+}
+.cb-box input:checked ~ .cb-check { display: block; }
+.cb-box:has(input:checked) { border-color: #c8935a; background: rgba(200,147,90,0.18); }
+
+th.cb-th, td.cb-td {
+  width: 44px;
+  min-width: 44px;
+  padding: 0.5rem 0.25rem 0.5rem 1rem !important;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* hide per-row actions when bulk selection is active */
+.bulk-active .ws-action-sticky { visibility: hidden; pointer-events: none; }
+
 </style>
     <ellipse class="orb1" cx="15" cy="20" rx="38" ry="38" fill="url(#orbA1)"/>
     <ellipse class="orb2" cx="82" cy="78" rx="42" ry="42" fill="url(#orbA2)"/>
@@ -1841,6 +1900,10 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
     <button class="btn-dash btn-dash-danger btn-dash-sm" id="bulkDeleteBtn" onclick="bulkDeleteForever()" style="display:none;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
       Delete Forever
+    </button>
+    <button class="btn-dash btn-dash-danger btn-dash-sm" id="bulkArchiveBtn" onclick="bulkArchive()" style="display:none;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      Move to Bin
     </button>
     <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="clearBulkSelection()">Cancel</button>
   </div>
@@ -2240,6 +2303,7 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
       </div>
       <div class="dash-table-wrap desktop-only">
         <table class="desktop-table"><thead><tr>
+          <th class="cb-th"><label class="cb-box" title="Select all"><input type="checkbox" class="row-select-cb" id="selectAllParticipants" onchange="toggleSelectAll('participants',this)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label></th>
           <th>P #</th>
           <th class="sortable-th" onclick="sortTable('participants','full_name',this)">Name <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Email</th>
@@ -2534,11 +2598,12 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
       </div>
       <div class="dash-table-wrap">
         <table class="desktop-table"><thead><tr>
+          <th class="cb-th"><label class="cb-box" title="Select all"><input type="checkbox" class="row-select-cb" id="selectAllLeads" onchange="toggleSelectAll('leads',this)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label></th>
           <th>Lead #</th>
           <th class="sortable-th" onclick="sortTable('leads','full_name',this)">Name <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Phone</th><th>Workshop</th><th>Referred</th><th>Notes</th><th class="ws-action-sticky">Action</th>
         </tr></thead>
-        <tbody id="leadsTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <tbody id="leadsTable"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       <div class="mobile-cards" id="leadsCards"></div>
       </div>
       <div id="leadsEmptyState" style="display:none;"></div>
@@ -3274,6 +3339,11 @@ const EMPTY_STATES = {
 
 // stub — phone backfill not active
 async function autoBackfillPhones() {}
+
+// ── CUSTOM CHECKBOX HELPER ──
+function cbBox(cls, attrs) {
+  return `<label class="cb-box"><input type="checkbox" class="${cls}" ${attrs}><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>`;
+}
 
 function isAdmin() { return currentRole === 'admin'; }
 
@@ -4078,7 +4148,7 @@ async function loadParticipants() {
     const adminP = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP;
-    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}"><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong>${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.78rem;color:var(--text-light);opacity:0.7;margin-top:2px;">Booked as: ' + p.razorpay_name + '</div>' : ''}${p.payment_mode === 'Razorpay UPI' && !p.email ? '<div style="font-size:0.72rem;color:rgba(200,147,90,0.6);margin-top:2px;">⚠ Incomplete data' + (p.raw_payload ? ' — raw data saved' : '') + '</div>' : ''}</td><td style="font-size:0.85rem;color:var(--text-light);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-tip="${p.email||''}">${p.email||'—'}</td><td style="font-size:0.88rem;">${p.bringing_own_handpan||'—'}</td><td style="font-size:0.88rem;">${p.photo_video_consent||'—'}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky" style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="11">${EMPTY_STATES.participants}</td></tr>`;
+    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="participants" data-id="'+p.id+'" data-name="'+(p.full_name||p.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong>${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.78rem;color:var(--text-light);opacity:0.7;margin-top:2px;">Booked as: ' + p.razorpay_name + '</div>' : ''}${p.payment_mode === 'Razorpay UPI' && !p.email ? '<div style="font-size:0.72rem;color:rgba(200,147,90,0.6);margin-top:2px;">⚠ Incomplete data' + (p.raw_payload ? ' — raw data saved' : '') + '</div>' : ''}</td><td style="font-size:0.85rem;color:var(--text-light);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-tip="${p.email||''}">${p.email||'—'}</td><td style="font-size:0.88rem;">${p.bringing_own_handpan||'—'}</td><td style="font-size:0.88rem;">${p.photo_video_consent||'—'}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky" style="display:flex;gap:0.4rem;">${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="12">${EMPTY_STATES.participants}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; setSearchFilterVisibility('participants', _hasRows); } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
@@ -4177,7 +4247,7 @@ async function loadPayments() {
     const adminPay = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     populatePaymentsCategoryDropdown(pays);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => { const isGenExp = p.is_general_expense; const dataType = isGenExp ? 'general_expense' : (p.type||''); const typeBadge = isGenExp ? `<span class="badge badge-clay">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span>`; return `<tr class="${p.archived?'archived-row':''}" data-type="${dataType}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td>${typeBadge}</td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td class="ws-action-sticky">${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`; }).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => { const isGenExp = p.is_general_expense; const dataType = isGenExp ? 'general_expense' : (p.type||''); const typeBadge = isGenExp ? `<span class="badge badge-clay">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span>`; return `<tr class="${p.archived?'archived-row':''}" data-type="${dataType}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td>${p.description||p.payer_name||'—'}</td><td>${typeBadge}</td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td class="ws-action-sticky">${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`; }).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.payments}
     </td></tr>`;
 
@@ -4204,7 +4274,7 @@ async function loadLeads() {
     setSearchFilterVisibility('leads', leads.length > 0);
     const adminL = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td class="td-truncate td-phone" data-tip="${l.phone||''}">${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td class="td-truncate td-notes" data-tip="${l.notes||''}">${l.notes||'—'}</td><td class="ws-action-sticky">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('leadsTable').innerHTML = leads.map(l => `<tr class="${l.archived?'archived-row':''}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="leads" data-id="'+l.id+'" data-name="'+( l.full_name||l.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td class="td-truncate td-phone" data-tip="${l.phone||''}">${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.referred_friend?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td><td class="td-truncate td-notes" data-tip="${l.notes||''}">${l.notes||'—'}</td><td class="ws-action-sticky">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span style="display:flex;gap:0.4rem;"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.leads}
     </td></tr>`;
 
@@ -4527,21 +4597,46 @@ function onBinCbChange(cb) {
 }
 
 function toggleSelectAllGroup(label, labelEl) {
-  const cb = labelEl.querySelector('input[type="checkbox"]');
+  const cb = labelEl.querySelector('input[type="checkbox"]') || labelEl;
   const allCbs = document.querySelectorAll('.bin-row-cb[data-group="' + label + '"]');
   allCbs.forEach(c => { c.checked = cb.checked; onBinCbChange(c); });
+}
+
+function onRowCbChange(cb) {
+  const key = cb.dataset.table + ':' + cb.dataset.id;
+  if (cb.checked) _bulkSelected.set(key, { table: cb.dataset.table, id: cb.dataset.id, name: cb.dataset.name });
+  else _bulkSelected.delete(key);
+  updateBulkBar('table');
+}
+
+function toggleSelectAll(section, masterCb) {
+  const tableId = section === 'participants' ? 'participantsTable' : 'leadsTable';
+  const cbs = document.querySelectorAll('#' + tableId + ' .row-select-cb');
+  cbs.forEach(cb => {
+    cb.checked = masterCb.checked;
+    const key = cb.dataset.table + ':' + cb.dataset.id;
+    if (masterCb.checked) _bulkSelected.set(key, { table: cb.dataset.table, id: cb.dataset.id, name: cb.dataset.name });
+    else _bulkSelected.delete(key);
+  });
+  updateBulkBar('table');
 }
 
 function updateBulkBar(mode) {
   _bulkMode = mode;
   const bar = document.getElementById('bulkBar');
   const n = _bulkSelected.size;
-  if (!n) { bar?.classList.remove('visible'); return; }
+  if (!n) {
+    bar?.classList.remove('visible');
+    document.querySelectorAll('.desktop-table').forEach(t => t.classList.remove('bulk-active'));
+    return;
+  }
   bar?.classList.add('visible');
+  document.querySelectorAll('.desktop-table').forEach(t => t.classList.add('bulk-active'));
   const countEl = document.getElementById('bulkCount');
   if (countEl) countEl.textContent = n;
   document.getElementById('bulkRestoreBtn').style.display = mode === 'bin' ? '' : 'none';
   document.getElementById('bulkDeleteBtn').style.display = mode === 'bin' ? '' : 'none';
+  document.getElementById('bulkArchiveBtn').style.display = mode === 'table' ? '' : 'none';
 }
 
 function clearBulkSelection() {
@@ -4549,6 +4644,11 @@ function clearBulkSelection() {
   document.querySelectorAll('.row-cb, .bin-row-cb').forEach(cb => { cb.checked = false; });
   document.querySelectorAll('.m-card.selected').forEach(c => c.classList.remove('selected'));
   document.querySelectorAll('.group-select-all').forEach(c => { c.checked = false; });
+  document.querySelectorAll('.desktop-table').forEach(t => t.classList.remove('bulk-active'));
+  const sa = document.getElementById('selectAllParticipants');
+  if (sa) sa.checked = false;
+  const sl = document.getElementById('selectAllLeads');
+  if (sl) sl.checked = false;
   document.getElementById('bulkBar')?.classList.remove('visible');
 }
 
@@ -4575,6 +4675,23 @@ async function bulkDeleteForever() {
     }
     showToast('✓ ' + n + ' item' + (n>1?'s':'') + ' permanently deleted!', 'success');
     clearBulkSelection(); loadBin();
+  } catch(e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function bulkArchive() {
+  if (!_bulkSelected.size) return;
+  const n = _bulkSelected.size;
+  const ok = await customConfirm('Move ' + n + ' item' + (n>1?'s':'') + ' to bin?', 'You can restore them from the Bin page.', 'Move to Bin');
+  if (!ok) return;
+  try {
+    const tables = new Set([..._bulkSelected.values()].map(i => i.table));
+    for (const [, item] of _bulkSelected) await sbPatch(item.table, item.id, { archived: true });
+    showToast('✓ ' + n + ' item' + (n>1?'s':'') + ' moved to bin', 'success');
+    clearBulkSelection();
+    tables.forEach(t => {
+      if (t === 'participants') loadParticipants();
+      else if (t === 'leads') loadLeads();
+    });
   } catch(e) { showToast('Error: ' + e.message, 'error'); }
 }
 
@@ -4655,25 +4772,17 @@ async function loadBin() {
     container.innerHTML = Object.entries(groups).map(([label, items]) => `
       <div style="margin-bottom:2.5rem;">
         <div style="font-size:1rem;font-weight:600;color:var(--bark);letter-spacing:0.01em;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--clay-pale);">${label}s <span style="color:var(--text-light);font-weight:400;font-size:0.9rem;">(${items.length})</span></div>
-        <label class="select-all-wrap" onclick="toggleSelectAllGroup('${label}', this)">
-          <input type="checkbox" class="group-select-all" data-group="${label}"/> Select all ${label}s
-        </label>
         <div class="dash-table-wrap desktop-only" style="overflow-x:auto;">
           <table class="desktop-table" style="min-width:320px;">
-            <colgroup>
-              <col style="width:35%;">
-              <col style="width:25%;">
-              <col style="width:40%;">
-            </colgroup>
             <thead><tr>
-              <th style="width:40px;"></th>
+              <th class="cb-th"><label class="cb-box" title="Select all ${label}s" onclick="toggleSelectAllGroup('${label}', this)"><input type="checkbox" class="group-select-all" data-group="${label}"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label></th>
               <th>Name</th>
               <th>ID</th>
               <th>Actions</th>
             </tr></thead>
             <tbody>${items.map(item => `
               <tr id="brow-${item.id}">
-                <td><input type="checkbox" class="bin-row-cb row-cb" data-id="${item.id}" data-table="${item._table}" data-name="${(item._name||'').replace(/"/g,'&quot;')}" data-group="${label}" onchange="onBinCbChange(this)"/></td>
+                <td class="cb-td"><label class="cb-box"><input type="checkbox" class="bin-row-cb row-cb" data-id="${item.id}" data-table="${item._table}" data-name="${(item._name||'').replace(/"/g,'&quot;')}" data-group="${label}" onchange="onBinCbChange(this)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label></td>
                 <td style="font-weight:600;color:var(--bark);">${item._name}</td>
                 <td style="color:var(--text-light);white-space:nowrap;">${item.id||'—'}</td>
                 <td class="ws-action-sticky" style="display:flex;gap:0.5rem;align-items:center;justify-content:flex-end;white-space:nowrap;">
