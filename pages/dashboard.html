@@ -1908,11 +1908,82 @@ tr.row-selected { background: rgba(200,147,90,0.08) !important; }
 .bulk-active tbody .ws-action-sticky button { opacity: 0.3; pointer-events: none; cursor: not-allowed; }
 
 /* Bin table */
-.bin-table { table-layout: fixed; width: 100% !important; min-width: 580px !important; }
+.bin-table { table-layout: fixed; width: 100% !important; }
 .bin-table th:nth-child(1), .bin-table td:nth-child(1) { width: 44px; }
 .bin-table th:nth-child(4), .bin-table td:nth-child(4) { width: 280px; }
 .bin-table th:nth-child(2), .bin-table td:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bin-table th:nth-child(3), .bin-table td:nth-child(3) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── NOTIFICATION TABS ── */
+.notif-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(200,147,90,0.12);
+}
+.notif-tab {
+  padding: 0.55rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-light);
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.notif-tab.active { color: #c8935a; border-bottom-color: #c8935a; }
+.notif-tab:hover:not(.active) { color: var(--bark); }
+
+/* ── NOTIF DOTS MENU ── */
+.notif-dots-btn {
+  background: none;
+  border: 1px solid rgba(200,147,90,0.3);
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  color: var(--text-light);
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.15s;
+}
+.notif-dots-btn:hover { border-color: rgba(200,147,90,0.7); color: #c8935a; }
+.notif-dots-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #2a1a0e;
+  border: 1px solid rgba(200,147,90,0.25);
+  border-radius: 10px;
+  min-width: 180px;
+  z-index: 9999;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  overflow: hidden;
+  display: none;
+}
+.notif-dots-menu.open { display: block; }
+.notif-dots-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.92rem;
+  color: #e8d5c0;
+  cursor: pointer;
+  transition: background 0.12s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.notif-dots-menu-item:hover { background: rgba(200,147,90,0.1); }
+
+/* check-in label gap */
+.checkin-label { margin-right: 0.5rem; }
+
+/* Bin table sticky fix */
+#section-bin .dash-table-wrap { overflow: visible; }
+#section-bin .bin-table { min-width: 500px; }
 </style>
     <ellipse class="orb1" cx="15" cy="20" rx="38" ry="38" fill="url(#orbA1)"/>
     <ellipse class="orb2" cx="82" cy="78" rx="42" ry="42" fill="url(#orbA2)"/>
@@ -2702,12 +2773,31 @@ tr.row-selected { background: rgba(200,147,90,0.08) !important; }
       <div class="dash-section-header">
         <div>
           <div class="dash-section-title">Notifications</div>
-          <div class="dash-section-subtitle">All activity and alerts from your dashboard</div>
+          <div class="dash-section-subtitle" id="notifSubtitle">All activity and alerts from your dashboard</div>
         </div>
         <div id="notifActions" style="display:none;gap:0.75rem;align-items:center;">
           <button class="btn-dash btn-dash-outline btn-dash-sm" id="notifExpandBtn" onclick="toggleAllBuckets()">Collapse all</button>
-          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="markAllRead()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Mark all read</button>
-          <button class="btn-dash btn-dash-outline btn-dash-sm" title="Move all to bin" onclick="binAllNotifications()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+          <div style="position:relative;">
+            <button class="notif-dots-btn" onclick="toggleNotifMenu(this)" title="More options">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </button>
+            <div class="notif-dots-menu" id="notifDotsMenu">
+              <button class="notif-dots-menu-item" onclick="markAllRead();closeNotifMenu()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Mark all as read
+              </button>
+              <button class="notif-dots-menu-item" onclick="binAllNotifications();closeNotifMenu()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                Clear all (move to bin)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="notifTabsWrap" style="display:none;">
+        <div class="notif-tabs">
+          <button class="notif-tab active" id="notifTabAll" onclick="setNotifTab('all')">All</button>
+          <button class="notif-tab" id="notifTabUnread" onclick="setNotifTab('unread')">Unread <span id="notifUnreadCount" style="font-size:0.78rem;background:rgba(200,147,90,0.25);color:#c8935a;border-radius:10px;padding:1px 7px;margin-left:4px;"></span></button>
         </div>
       </div>
       <div id="notificationsContainer">
@@ -2720,7 +2810,7 @@ tr.row-selected { background: rgba(200,147,90,0.08) !important; }
       <div class="dash-section-header">
         <div>
           <div class="dash-section-title">Bin</div>
-          <div class="dash-section-subtitle">Items moved to bin. Restore or delete permanently.</div>
+          <div class="dash-section-subtitle" id="binSubtitle">Items moved to bin. Restore or delete permanently.</div>
         </div>
         <div style="display:flex;gap:2rem;align-items:center;">
           <button class="btn-dash btn-dash-sync" onclick="loadBin()">
@@ -4621,10 +4711,19 @@ async function savePayment() {
   } catch(e) { console.error('savePayment error:', e); showToast('Error saving payment: ' + e.message,'error'); }
 }
 async function saveLead() {
-  if (!(document.getElementById('lead-name').value || '').trim()) { markFieldError('lead-name'); showToast('Full name is required', 'error'); return; }
-  if (!(document.getElementById('lead-phone').value || '').trim()) { markFieldError('lead-phone'); showToast('Phone number is required', 'error'); return; }
+  if (!(document.getElementById('lead-name')?.value || '').trim()) { markFieldError('lead-name'); showToast('Full name is required', 'error'); return; }
   try {
-    const body = { id:'L-'+String(Date.now()).slice(-3), full_name:document.getElementById('lead-name').value, phone:getPhoneValue('lead-phone','lead-phone-cc'), workshop_attended:document.getElementById('lead-workshop').value, date_added:new Date().toISOString().split('T')[0], estimated_budget:document.getElementById('lead-budget').value, status:document.getElementById('lead-status').value, follow_up_date:document.getElementById('lead-followup').value||null, referred_friend:false, notes:document.getElementById('lead-notes').value };
+    const body = {
+      id: 'L-' + String(Date.now()).slice(-6),
+      full_name: document.getElementById('lead-name')?.value || '',
+      phone: getPhoneValue('lead-phone','lead-phone-cc') || null,
+      email: document.getElementById('par-email')?.value || null,
+      workshop_attended: document.getElementById('par-workshop')?.value || null,
+      date_added: new Date().toISOString().split('T')[0],
+      notes: document.getElementById('par-notes')?.value || null,
+      referred_friend: false,
+      archived: false
+    };
     await sbPost('leads', body); closeFormPage('addLead'); resetForm('addLead'); loadLeads(); showToast('✓ Lead saved successfully!','success');
   } catch(e) { console.error('saveLead error:', e); showToast('Error saving lead: ' + e.message,'error'); }
 }
@@ -4944,7 +5043,7 @@ async function loadBin() {
     container.innerHTML = Object.entries(groups).map(([label, items]) => `
       <div style="margin-bottom:2.5rem;">
         <div style="font-size:1rem;font-weight:600;color:var(--bark);letter-spacing:0.01em;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--clay-pale);">${label}s <span style="color:var(--text-light);font-weight:400;font-size:0.9rem;">(${items.length})</span></div>
-        <div class="dash-table-wrap desktop-only" style="overflow-x:auto;overflow-y:visible;">
+        <div class="dash-table-wrap desktop-only">
           <table class="desktop-table bin-table">
             <thead><tr>
               <th class="cb-th"><label class="cb-box" title="Select all ${label}s" onclick="toggleSelectAllGroup('${label}', this)"><input type="checkbox" class="group-select-all" data-group="${label}"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label></th>
@@ -5073,6 +5172,8 @@ function updateBinCount(n) {
   if (mobileLabel) mobileLabel.textContent = count > 0 ? 'Bin (' + count + ')' : 'Bin';
   const sidebarEl = document.getElementById('sidebarBinCount');
   if (sidebarEl) sidebarEl.textContent = count > 0 ? ' (' + count + ')' : '';
+  const subtitle = document.getElementById('binSubtitle');
+  if (subtitle) subtitle.textContent = count > 0 ? count + ' item' + (count !== 1 ? 's' : '') + ' in bin' : 'Items moved to bin. Restore or delete permanently.';
 }
 
 async function loadBinCount() {
@@ -5268,16 +5369,64 @@ async function loadNotifications() {
   }
 }
 
+let _allNotifItems = [];
+let _notifTab = 'all';
+
+function setNotifTab(tab) {
+  _notifTab = tab;
+  document.getElementById('notifTabAll')?.classList.toggle('active', tab === 'all');
+  document.getElementById('notifTabUnread')?.classList.toggle('active', tab === 'unread');
+  renderNotificationsFromCache();
+}
+
+function renderNotificationsFromCache() {
+  const filtered = _notifTab === 'unread' ? _allNotifItems.filter(n => !n.read) : _allNotifItems;
+  renderNotificationsHTML(filtered);
+}
+
+function toggleNotifMenu(btn) {
+  const menu = document.getElementById('notifDotsMenu');
+  if (menu) menu.classList.toggle('open');
+}
+
+function closeNotifMenu() {
+  const menu = document.getElementById('notifDotsMenu');
+  if (menu) menu.classList.remove('open');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.notif-dots-btn') && !e.target.closest('.notif-dots-menu')) closeNotifMenu();
+});
+
 function renderNotifications(items) {
-  const el = document.getElementById('notificationsContainer');
+  _allNotifItems = items;
   const actions = document.getElementById('notifActions');
+  const tabsWrap = document.getElementById('notifTabsWrap');
+  const unreadCount = items.filter(n => !n.read).length;
+  const countEl = document.getElementById('notifUnreadCount');
+  if (countEl) countEl.textContent = unreadCount > 0 ? unreadCount : '';
+  const notifSubtitle = document.getElementById('notifSubtitle');
+  if (notifSubtitle) notifSubtitle.textContent = items.length + ' notification' + (items.length !== 1 ? 's' : '') + (unreadCount > 0 ? ' · ' + unreadCount + ' unread' : '');
+
   if (!items.length) {
+    const el = document.getElementById('notificationsContainer');
     el.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🔔</div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>';
     if (actions) actions.style.display = 'none';
+    if (tabsWrap) tabsWrap.style.display = 'none';
     return;
   }
   if (actions) actions.style.display = 'flex';
+  if (tabsWrap) tabsWrap.style.display = '';
+  renderNotificationsFromCache();
+}
 
+function renderNotificationsHTML(items) {
+  const el = document.getElementById('notificationsContainer');
+  const actions = document.getElementById('notifActions');
+  if (!items.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:2rem 0;"><div style="font-size:2.5rem;margin-bottom:0.5rem;">✓</div><div class="empty-state-title">All caught up!</div><div class="empty-state-sub">No unread notifications</div></div>';
+    return;
+  }
   function getNotifBucket(dateStr) {
     const now = new Date();
     const d = new Date(dateStr);
