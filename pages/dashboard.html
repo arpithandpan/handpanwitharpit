@@ -3325,78 +3325,7 @@ async function doLogin() {
   }
 }
 
-// Legacy stub (no longer used)
-function pinPress(digit) {
-  if (pinValue.length >= 6) return;
-  pinValue += digit;
-  updatePinDots();
-  if (pinValue.length === 6) {
-    setTimeout(doLogin, 120);
-  }
-}
-
-function pinDelete() {
-  if (!pinValue.length) return;
-  pinValue = pinValue.slice(0, -1);
-  updatePinDots();
-}
-
-function updatePinDots() {
-  for (let i = 0; i < 6; i++) {
-    const dot = document.getElementById('pd' + i);
-    dot.classList.toggle('filled', i < pinValue.length);
-    dot.classList.remove('error');
-  }
-}
-
-function pinShakeError() {
-  const dots = document.getElementById('pinDots');
-  for (let i = 0; i < 6; i++) {
-    document.getElementById('pd' + i).classList.add('error');
-  }
-  dots.classList.add('shake');
-  setTimeout(() => {
-    dots.classList.remove('shake');
-    pinValue = '';
-    updatePinDots();
-  }, 400);
-}
-
-function setNumpadDisabled(disabled) {
-  document.querySelectorAll('.pin-key').forEach(k => k.disabled = disabled);
-}
-
-function showDashboard() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('dashRoot').style.display = 'flex';
-  if (window.innerWidth <= 900) {
-    document.getElementById('mobileTopbar').style.display = 'flex';
-  }
-}
-
-function doLogin() {
-  if (pinValue === DASHBOARD_PIN) {
-    currentRole = 'admin';
-    sessionStorage.setItem('dash_auth', '1');
-    sessionStorage.setItem('dash_role', 'admin');
-    showDashboard();
-    loadAll();
-    loadBinCount();
-    loadUnassignedPayments();
-    applyRole();
-    setTimeout(autoBackfillParticipants, 4000); // silently heal missing Razorpay data
-  } else if (pinValue === VIEWER_PIN) {
-    currentRole = 'viewer';
-    sessionStorage.setItem('dash_auth', '1');
-    sessionStorage.setItem('dash_role', 'viewer');
-    showDashboard();
-    loadAll();
-    loadBinCount();
-    applyRole();
-  } else {
-    pinShakeError();
-  }
-}
+// PIN auth removed - using Supabase Auth
 
 async function logout() {
   try {
