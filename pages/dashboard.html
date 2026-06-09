@@ -1773,11 +1773,11 @@ tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important;
   cursor: not-allowed;
 }
 
-/* Bin table — fixed layout so columns don't stretch */
-.bin-table { table-layout: fixed; width: auto !important; min-width: 0 !important; }
+/* Bin table — equal columns across full width */
+.bin-table { table-layout: fixed; width: 100% !important; }
 .bin-table th:nth-child(1), .bin-table td:nth-child(1) { width: 44px; }
-.bin-table th:nth-child(2), .bin-table td:nth-child(2) { width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.bin-table th:nth-child(3), .bin-table td:nth-child(3) { width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bin-table th:nth-child(2), .bin-table td:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bin-table th:nth-child(3), .bin-table td:nth-child(3) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* ── CUSTOM TOOLTIP ── */
 #dash-tooltip {
   position: fixed;
@@ -4793,7 +4793,7 @@ async function loadBin() {
       <div style="margin-bottom:2.5rem;">
         <div style="font-size:1rem;font-weight:600;color:var(--bark);letter-spacing:0.01em;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--clay-pale);">${label}s <span style="color:var(--text-light);font-weight:400;font-size:0.9rem;">(${items.length})</span></div>
         <div class="dash-table-wrap desktop-only" style="overflow-x:auto;">
-          <table class="desktop-table bin-table" style="min-width:320px;">
+          <table class="desktop-table bin-table">
             <thead><tr>
               <th class="cb-th"><label class="cb-box" title="Select all ${label}s" onclick="toggleSelectAllGroup('${label}', this)"><input type="checkbox" class="group-select-all" data-group="${label}"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label></th>
               <th>Name</th>
