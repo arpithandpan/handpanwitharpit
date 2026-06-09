@@ -3597,6 +3597,127 @@ if (sessionStorage.getItem('dash_auth') === '1') {
   showDashboard();
 }
 
+
+// ── CUSTOM CHECKBOX HELPER ──
+function cbBox(cls, attrs) {
+  return `<label class="cb-box"><input type="checkbox" class="${cls}" ${attrs}><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>`;
+}
+
+// ── BULK SELECTION ──
+const _bulkSelected = new Map();
+let _bulkMode = null;
+
+function onRowCbChange(cb) {
+  const key = cb.dataset.table + ':' + cb.dataset.id;
+  if (cb.checked) _bulkSelected.set(key, { table: cb.dataset.table, id: cb.dataset.id, name: cb.dataset.name });
+  else _bulkSelected.delete(key);
+  const row = cb.closest('tr');
+  if (row) row.classList.toggle('row-selected', cb.checked);
+  updateBulkBar('table');
+}
+
+function toggleSelectAll(section, masterCb) {
+  const tableId = section === 'participants' ? 'participantsTable' : 'leadsTable';
+  const cbs = document.querySelectorAll('#' + tableId + ' .row-select-cb');
+  cbs.forEach(cb => {
+    cb.checked = masterCb.checked;
+    const key = cb.dataset.table + ':' + cb.dataset.id;
+    if (masterCb.checked) _bulkSelected.set(key, { table: cb.dataset.table, id: cb.dataset.id, name: cb.dataset.name });
+    else _bulkSelected.delete(key);
+    const row = cb.closest('tr');
+    if (row) row.classList.toggle('row-selected', masterCb.checked);
+  });
+  updateBulkBar('table');
+}
+
+function updateBulkBar(mode) {
+  _bulkMode = mode;
+  const bar = document.getElementById('bulkBar');
+  const n = _bulkSelected.size;
+  if (!n) {
+    bar?.classList.remove('visible');
+    document.querySelectorAll('.desktop-table').forEach(t => t.classList.remove('bulk-active'));
+    return;
+  }
+  bar?.classList.add('visible');
+  document.querySelectorAll('.desktop-table').forEach(t => t.classList.add('bulk-active'));
+  const countEl = document.getElementById('bulkCount');
+  if (countEl) countEl.textContent = n;
+  document.getElementById('bulkRestoreBtn').style.display = mode === 'bin' ? '' : 'none';
+  document.getElementById('bulkDeleteBtn').style.display = mode === 'bin' ? '' : 'none';
+  document.getElementById('bulkArchiveBtn').style.display = mode === 'table' ? '' : 'none';
+}
+
+function clearBulkSelection() {
+  _bulkSelected.clear();
+  document.querySelectorAll('.row-cb, .bin-row-cb').forEach(cb => { cb.checked = false; });
+  document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
+  document.querySelectorAll('.m-card.selected').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.group-select-all').forEach(c => { c.checked = false; });
+  document.querySelectorAll('.desktop-table').forEach(t => t.classList.remove('bulk-active'));
+  const sa = document.getElementById('selectAllParticipants'); if (sa) sa.checked = false;
+  const sl = document.getElementById('selectAllLeads'); if (sl) sl.checked = false;
+  document.getElementById('bulkBar')?.classList.remove('visible');
+}
+
+function onBinCbChange(cb) {
+  const key = cb.dataset.table + ':' + cb.dataset.id;
+  if (cb.checked) _bulkSelected.set(key, { table: cb.dataset.table, id: cb.dataset.id, name: cb.dataset.name });
+  else _bulkSelected.delete(key);
+  const card = document.getElementById('bcard-' + cb.dataset.id);
+  if (card) card.classList.toggle('selected', cb.checked);
+  updateBulkBar('bin');
+}
+
+function toggleSelectAllGroup(label, labelEl) {
+  const cb = labelEl.querySelector('input[type="checkbox"]') || labelEl;
+  const allCbs = document.querySelectorAll('.bin-row-cb[data-group="' + label + '"]');
+  allCbs.forEach(c => { c.checked = cb.checked; onBinCbChange(c); });
+}
+
+async function bulkRestore() {
+  if (!_bulkSelected.size) return;
+  const n = _bulkSelected.size;
+  const ok = await customConfirm('Restore ' + n + ' item' + (n>1?'s':'') + '?', 'These items will be restored from the bin.', 'Restore');
+  if (!ok) return;
+  try {
+    for (const [, item] of _bulkSelected) await sbPatch(item.table, item.id, { archived: false });
+    showToast('✓ ' + n + ' item' + (n>1?'s':'') + ' restored!', 'success');
+    clearBulkSelection(); loadBin();
+  } catch(e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function bulkDeleteForever() {
+  if (!_bulkSelected.size) return;
+  const n = _bulkSelected.size;
+  const ok = await customConfirm('Delete ' + n + ' item' + (n>1?'s':'') + ' forever?', 'This cannot be undone.', 'Delete Forever');
+  if (!ok) return;
+  try {
+    for (const [, item] of _bulkSelected) {
+      await fetch(SUPABASE_URL + '/rest/v1/' + item.table + '?id=eq.' + item.id, { method: 'DELETE', headers: SB_HEADERS });
+    }
+    showToast('✓ ' + n + ' item' + (n>1?'s':'') + ' permanently deleted!', 'success');
+    clearBulkSelection(); loadBin();
+  } catch(e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function bulkArchive() {
+  if (!_bulkSelected.size) return;
+  const n = _bulkSelected.size;
+  const ok = await customConfirm('Move ' + n + ' item' + (n>1?'s':'') + ' to bin?', 'You can restore them from the Bin page.', 'Move to Bin');
+  if (!ok) return;
+  try {
+    const tables = new Set([..._bulkSelected.values()].map(i => i.table));
+    for (const [, item] of _bulkSelected) await sbPatch(item.table, item.id, { archived: true });
+    showToast('✓ ' + n + ' item' + (n>1?'s':'') + ' moved to bin', 'success');
+    clearBulkSelection();
+    tables.forEach(t => {
+      if (t === 'participants') loadParticipants();
+      else if (t === 'leads') loadLeads();
+    });
+  } catch(e) { showToast('Error: ' + e.message, 'error'); }
+}
+
 // ── SUPABASE API ──
 const SB_HEADERS = {
   'Content-Type': 'application/json',
