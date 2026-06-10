@@ -1985,7 +1985,7 @@ tr.row-selected { background: rgba(200,147,90,0.08) !important; }
 /* ── NOTIF DOTS MENU ── */
 .notif-dots-btn {
   background: none;
-  border: 1px solid rgba(200,147,90,0.3);
+  border: 1px solid rgba(200,147,90,0.55);
   border-radius: 8px;
   padding: 0 0.75rem;
   height: 48px;
@@ -2266,7 +2266,10 @@ table#paymentsTable { min-width: 700px; }
         <input type="password" id="auth-pass" class="form-input" placeholder="Password"
           autocomplete="current-password" onkeydown="if(event.key==='Enter')authLogin()" style="padding-right:2.8rem;"/>
         <button type="button" onclick="toggleAuthPass()" id="auth-pass-eye"
-          style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(200,147,90,0.6);cursor:pointer;padding:0;font-size:1.1rem;">👁</button>
+          style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(200,147,90,0.6);cursor:pointer;padding:4px;line-height:0;transition:color 0.15s;" onmouseover="this.style.color='rgba(200,147,90,1)'" onmouseout="this.style.color='rgba(200,147,90,0.6)'">
+          <svg id="auth-eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg id="auth-eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
       </div>
       <button onclick="authLogin()" id="auth-login-btn"
         style="margin-top:0.25rem;background:#c8935a;color:#1a1208;border:none;border-radius:10px;padding:0.85rem;font-size:1rem;font-weight:600;cursor:pointer;transition:background 0.15s;">
@@ -2516,11 +2519,18 @@ table#paymentsTable { min-width: 700px; }
           <div class="dash-section-subtitle">Find anything across your dashboard</div>
         </div>
       </div>
-      <div class="section-search-wrap" style="margin-bottom:2rem;">
+      <div class="section-search-wrap" style="margin-bottom:1.25rem;">
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" class="section-search-input" id="sectionSearchInput" placeholder="Search participants, workshops, payments, leads..." autocomplete="off"
           oninput="handleSectionSearch(this.value)"
           onkeydown="if(event.key==='Escape'){this.value='';handleSectionSearch('');}"/>
+      </div>
+      <div id="recentSearchesWrap" style="margin-bottom:1.5rem;display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+          <span style="font-size:0.82rem;font-weight:600;color:var(--clay);letter-spacing:0.01em;">Recent searches</span>
+          <button onclick="clearRecentSearches()" style="background:none;border:none;font-size:0.8rem;color:var(--text-light);cursor:pointer;padding:2px 4px;border-radius:4px;transition:color 0.15s;" onmouseover="this.style.color='var(--clay)'" onmouseout="this.style.color='var(--text-light)'">Clear</button>
+        </div>
+        <div id="recentSearchChips" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
       </div>
       <div id="sectionSearchResults" style="display:flex;flex-direction:column;flex:1;min-height:60vh;">
         <div id="section-search-empty-default"></div>
@@ -2972,21 +2982,26 @@ table#paymentsTable { min-width: 700px; }
           Filters <span class="mobile-filter-badge" id="mobile-filter-badge-leads" style="display:none"></span>
         </button>
         <div class="mobile-active-chips" id="mobile-chips-leads"></div>
-        <div id="dd-leads-workshop" class="custom-select-wrap-placeholder"></div>
-        <div class="filter-dd-wrap" id="dd-wrap-l-referred">
-          <button class="filter-dd-btn" id="dd-btn-l-referred" onclick="toggleFilterDd('l-referred', event)">
-            Referred <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="filter-dd-wrap" id="dd-wrap-l-bought">
+          <button class="filter-dd-btn" id="dd-btn-l-bought" onclick="toggleFilterDd('l-bought', event)">
+            Bought Handpan <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
-          <div class="filter-dd-menu" id="dd-menu-l-referred">
-            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('l-referred','all','Referred','leads','referred',this,event)">All</div>
-            <div class="filter-dd-option" data-val="yes" onclick="selectFilterDd('l-referred','yes','Referred','leads','referred',this,event)">Referred</div>
-            <div class="filter-dd-option" data-val="no" onclick="selectFilterDd('l-referred','no','Not referred','leads','referred',this,event)">Not referred</div>
+          <div class="filter-dd-menu" id="dd-menu-l-bought">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('l-bought','all','Bought Handpan','leads','bought',this,event)">All</div>
+            <div class="filter-dd-option" data-val="yes" onclick="selectFilterDd('l-bought','yes','Bought: Yes','leads','bought',this,event)">Yes</div>
+            <div class="filter-dd-option" data-val="no" onclick="selectFilterDd('l-bought','no','Bought: No','leads','bought',this,event)">No</div>
           </div>
         </div>
-        <div class="filter-pills" style="display:none">
-          <button class="filter-pill active" onclick="setFilterPill('leads','referred','all',this)">All</button>
-          <button class="filter-pill" onclick="setFilterPill('leads','referred','yes',this)">Referred</button>
-          <button class="filter-pill" onclick="setFilterPill('leads','referred','no',this)">Not referred</button>
+        <div class="filter-dd-wrap" id="dd-wrap-l-referral">
+          <button class="filter-dd-btn" id="dd-btn-l-referral" onclick="toggleFilterDd('l-referral', event)">
+            Referral <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-l-referral">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('l-referral','all','Referral','leads','referral',this,event)">All</div>
+            <div class="filter-dd-option" data-val="pending" onclick="selectFilterDd('l-referral','pending','Referral: Pending','leads','referral',this,event)">Pending</div>
+            <div class="filter-dd-option" data-val="received" onclick="selectFilterDd('l-referral','received','Referral: Received','leads','referral',this,event)">Received</div>
+            <div class="filter-dd-option" data-val="none" onclick="selectFilterDd('l-referral','none','No Referral','leads','referral',this,event)">No referral</div>
+          </div>
         </div>
       </div>
       <div class="dash-table-wrap">
@@ -3076,7 +3091,7 @@ table#paymentsTable { min-width: 700px; }
           <div class="dash-section-subtitle" id="binSubtitle">Items moved to bin. Restore or delete permanently.</div>
         </div>
         <div style="display:flex;gap:2rem;align-items:center;">
-          <button class="btn-dash btn-dash-sync" onclick="loadBin()">
+          <button class="btn-dash btn-dash-sync" onclick="loadBin(true)">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-7.68"/></svg>
             Refresh
           </button>
@@ -3402,7 +3417,11 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <div class="form-group">
         <label class="form-label">Select Participant</label>
-        <select class="form-input" id="lead-pick-participant" onchange="onLeadParticipantPick()">
+        <div style="position:relative;margin-bottom:0.5rem;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(200,147,90,0.6);pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="form-input" id="lead-pick-search" placeholder="Search participants..." autocomplete="off" style="padding-left:36px;" oninput="filterLeadParticipants()"/>
+        </div>
+        <select class="form-input" id="lead-pick-participant" onchange="onLeadParticipantPick()" size="5" style="height:auto;padding:0;">
           <option value="">Choose participant...</option>
         </select>
       </div>
@@ -3866,7 +3885,12 @@ function showDashboard() {
 
 function toggleAuthPass() {
   const p = document.getElementById('auth-pass');
-  p.type = p.type === 'password' ? 'text' : 'password';
+  const isHidden = p.type === 'password';
+  p.type = isHidden ? 'text' : 'password';
+  const open = document.getElementById('auth-eye-open');
+  const closed = document.getElementById('auth-eye-closed');
+  if (open) open.style.display = isHidden ? 'none' : '';
+  if (closed) closed.style.display = isHidden ? '' : 'none';
 }
 
 async function authLogin() {
@@ -4510,17 +4534,69 @@ function loadSection(name) {
 async function loadSearchSection() {
   await ensureSearchCache();
   const input = document.getElementById('sectionSearchInput');
-  if (input) { setTimeout(() => input.focus(), 100); }
+  if (input) { setTimeout(() => { input.focus(); renderRecentSearches(); }, 100); }
+}
+
+// ── RECENT SEARCHES ──
+const RECENT_SEARCHES_KEY = 'hpw_recent_searches';
+const RECENT_SEARCHES_MAX = 8;
+
+function getRecentSearches() {
+  try { return JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || '[]'); } catch { return []; }
+}
+
+function saveRecentSearch(query) {
+  if (!query || query.trim().length < 2) return;
+  const q = query.trim();
+  let searches = getRecentSearches().filter(s => s.toLowerCase() !== q.toLowerCase());
+  searches.unshift(q);
+  if (searches.length > RECENT_SEARCHES_MAX) searches = searches.slice(0, RECENT_SEARCHES_MAX);
+  try { localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches)); } catch {}
+  renderRecentSearches();
+}
+
+function clearRecentSearches() {
+  try { localStorage.removeItem(RECENT_SEARCHES_KEY); } catch {}
+  renderRecentSearches();
+}
+
+function renderRecentSearches() {
+  const wrap = document.getElementById('recentSearchesWrap');
+  const chips = document.getElementById('recentSearchChips');
+  if (!wrap || !chips) return;
+  const searches = getRecentSearches();
+  if (!searches.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  chips.innerHTML = searches.map(s => `
+    <button onclick="runRecentSearch(${JSON.stringify(s)})"
+      style="background:rgba(200,147,90,0.08);border:1px solid rgba(200,147,90,0.25);border-radius:50px;padding:0.35rem 0.85rem;font-size:0.88rem;color:var(--bark);cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:0.4rem;"
+      onmouseover="this.style.background='rgba(200,147,90,0.16)';this.style.borderColor='rgba(200,147,90,0.5)'"
+      onmouseout="this.style.background='rgba(200,147,90,0.08)';this.style.borderColor='rgba(200,147,90,0.25)'">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:0.5;flex-shrink:0;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+      ${s}
+    </button>`).join('');
+}
+
+function runRecentSearch(query) {
+  const input = document.getElementById('sectionSearchInput');
+  if (input) { input.value = query; input.focus(); }
+  handleSectionSearch(query);
 }
 
 async function handleSectionSearch(query) {
   const results = document.getElementById('sectionSearchResults');
   if (!query || query.length < 2) {
     results.innerHTML = EMPTY_STATES.search;
+    renderRecentSearches();
     return;
   }
   await ensureSearchCache();
   const items = searchData(query);
+  // Save to recent searches when results are found
+  if (items.length) saveRecentSearch(query);
+  // Hide recent searches while showing results
+  const wrap = document.getElementById('recentSearchesWrap');
+  if (wrap) wrap.style.display = 'none';
   if (!items.length) {
     results.innerHTML = EMPTY_STATES.search_noresults(query);
     return;
@@ -4968,7 +5044,7 @@ async function loadLeads() {
     setSearchFilterVisibility('leads', leads.length > 0);
     const adminL = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    document.getElementById('leadsTable').innerHTML = leads.map(l => {const hasPendingRef = !l.referral_received && (l.referral_amount||0) > 0; return `<tr class="${l.archived?'archived-row':''}" data-bought="${l.bought_handpan}" data-workshop="${l.workshop_attended||''}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="leads" data-id="'+l.id+'" data-name="'+( l.full_name||l.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td class="td-truncate td-phone" data-tip="${l.phone||''}">${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.bought_handpan?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">—</span>'}</td><td style="font-weight:500;color:var(--bark)">${(l.referral_amount||0)>0?'₹'+Number(l.referral_amount).toLocaleString('en-IN'):'—'}</td><td>${(l.referral_amount||0)>0?(l.referral_received?'<span class="badge badge-green">✓ Received</span>':'<span class="badge badge-clay">Pending</span>'):'—'}</td><td class="ws-action-sticky"><div class="action-wrap">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`${hasPendingRef?`<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${l.full_name.replace(/'/g,"\\'")}',${l.referral_amount||0})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mark received</button>`:''}
+    document.getElementById('leadsTable').innerHTML = leads.map(l => {const hasPendingRef = !l.referral_received && (l.referral_amount||0) > 0; return `<tr class="${l.archived?'archived-row':''}" data-bought="${l.bought_handpan}" data-referral_amount="${l.referral_amount||0}" data-referral_received="${l.referral_received}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="leads" data-id="'+l.id+'" data-name="'+( l.full_name||l.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td class="td-truncate td-phone" data-tip="${l.phone||''}">${l.phone||'—'}</td><td>${l.workshop_attended||'—'}</td><td>${l.bought_handpan?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">—</span>'}</td><td style="font-weight:500;color:var(--bark)">${(l.referral_amount||0)>0?'₹'+Number(l.referral_amount).toLocaleString('en-IN'):'—'}</td><td>${(l.referral_amount||0)>0?(l.referral_received?'<span class="badge badge-green">✓ Received</span>':'<span class="badge badge-clay">Pending</span>'):'—'}</td><td class="ws-action-sticky"><div class="action-wrap">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`${hasPendingRef?`<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${l.full_name.replace(/'/g,"\\'")}',${l.referral_amount||0})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mark received</button>`:''}
                   <button class="icon-action-btn" data-tip="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button>
                   <button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
                 `):'—'}</div></td></tr>`; }).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
@@ -5101,7 +5177,11 @@ function setLeadTab(tab) {
     existingBtn.style.color = isExisting ? '#1a1208' : 'var(--text-light)';
   }
   if (pickerSection) pickerSection.style.display = isExisting ? '' : 'none';
-  if (isExisting) loadLeadParticipantPicker();
+  if (isExisting) {
+    const searchEl = document.getElementById('lead-pick-search');
+    if (searchEl) searchEl.value = '';
+    loadLeadParticipantPicker();
+  }
 }
 
 function onLeadBoughtChange() {
@@ -5148,10 +5228,13 @@ function loadLeadParticipantPicker() {
 function filterLeadParticipants() {
   const wsSel = document.getElementById('lead-pick-workshop');
   const parSel = document.getElementById('lead-pick-participant');
+  const searchEl = document.getElementById('lead-pick-search');
   if (!parSel) return;
   const wsFilter = wsSel?.value || '';
+  const q = (searchEl?.value || '').toLowerCase().trim();
   const parts = Object.values(_recordCache.participants || {})
     .filter(p => !p.archived && (!wsFilter || p.workshop_id === wsFilter))
+    .filter(p => !q || (p.full_name||'').toLowerCase().includes(q))
     .sort((a,b) => (a.full_name||'').localeCompare(b.full_name||''));
   parSel.innerHTML = '<option value="">Choose participant...</option>' +
     parts.map(p => `<option value="${p.id}">${p.full_name} (${p.workshop_id||'—'})</option>`).join('');
@@ -5520,7 +5603,9 @@ const BIN_TABLES = [
   { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' }
 ];
 
-async function loadBin() {
+let _binManualRefresh = false;
+async function loadBin(manual) {
+  if (manual) _binManualRefresh = true;
   const container = document.getElementById('binContainer');
   if (!container) return;
   container.innerHTML = '<div class="empty-state"><div class="spinner" style="margin-bottom:1rem;"></div>Loading bin...</div>';
@@ -5591,7 +5676,7 @@ async function loadBin() {
         </div>
       </div>
     `).join('');
-    showToast('✓ Bin refreshed', 'success');
+    if (_binManualRefresh) { showToast('✓ Bin refreshed', 'success'); _binManualRefresh = false; }
   } catch(e) {
     container.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">⚠️</div><div class="empty-state-title">Could not load bin</div><div class="empty-state-sub">Check your connection and try again</div></div>';
     showToast('Error loading bin', 'error');
@@ -6408,19 +6493,17 @@ function openEdit(entity, id) {
   const title = { workshops:'Edit Workshop', participants:'Edit Participant', students:'Edit Student', fee_payments:'Edit Fee Payment', payments:'Edit Payment', leads:'Edit Lead' }[entity] || 'Edit';
   document.getElementById('editFormTitle').textContent = title;
   document.getElementById('editFormBody').innerHTML = buildEditForm(entity, record);
-  setTimeout(() => {
-    initFormSelects(); initDatePickers();
-    if (entity === 'leads') {
-      const wsSel = document.getElementById('ef-lead-workshop');
-      if (wsSel) {
-        const ws = Object.values(_recordCache.workshops || {})
-          .filter(w => !w.archived)
-          .sort((a,b) => (b.date||'').localeCompare(a.date||''));
-        wsSel.innerHTML = '<option value="">None</option>' +
-          ws.map(w => `<option value="${w.id}" ${record.workshop_attended === w.id ? 'selected' : ''}>${w.id} — ${w.venue||w.id} (${w.date||''})</option>`).join('');
-      }
+  if (entity === 'leads') {
+    const wsSel = document.getElementById('ef-lead-workshop');
+    if (wsSel) {
+      const ws = Object.values(_recordCache.workshops || {})
+        .filter(w => !w.archived)
+        .sort((a,b) => (b.date||'').localeCompare(a.date||''));
+      wsSel.innerHTML = '<option value="">None</option>' +
+        ws.map(w => `<option value="${w.id}" ${record.workshop_attended === w.id ? 'selected' : ''}>${w.id} — ${w.venue||w.id} (${w.date||''})</option>`).join('');
     }
-  }, 50);
+  }
+  setTimeout(() => { initFormSelects(); initDatePickers(); }, 50);
   openFormPage('editRecord');
 }
 
@@ -6487,9 +6570,8 @@ function buildEditForm(entity, r) {
     ${row(fi('Full Name','lead-name','text',r.full_name), `<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('ef-lead-phone', r.phone, 'ef-lead-phone-cc')}</div>`)}
     ${row(fi('Email','lead-email','email',r.email||''), `<div class="form-group"><label class="form-label">Workshop Attended</label><select class="form-input" id="ef-lead-workshop"><option value="">None</option></select></div>`)}
     ${row(fi('Paid to Maker (₹)','lead-maker-amt','number',r.handpan_maker_amount||0), fi('Referral Amount (₹)','lead-referral-amt','number',r.referral_amount||0))}
-    <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1rem;background:rgba(200,147,90,0.06);border:1px solid var(--clay-pale);border-radius:10px;margin-bottom:1.25rem;">
-      <span style="font-size:0.95rem;color:var(--bark);font-weight:500;flex:1;">Bought Handpan?</span>
-      <label class="checkin-toggle" style="margin:0;"><input type="checkbox" id="ef-lead-bought" ${r.bought_handpan?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Bought Handpan?</label><select class="form-input" id="ef-lead-bought"><option value="no" ${!r.bought_handpan?'selected':''}>No</option><option value="yes" ${r.bought_handpan?'selected':''}>Yes</option></select></div>
     </div>
     <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1rem;background:rgba(200,147,90,0.06);border:1px solid var(--clay-pale);border-radius:10px;margin-bottom:1.25rem;">
       <span style="font-size:0.95rem;color:var(--bark);font-weight:500;flex:1;">Referral Received?</span>
@@ -6543,7 +6625,7 @@ async function saveEdit() {
         workshop_attended: g('lead-workshop')||null,
         handpan_maker_amount: gn('lead-maker-amt')||0,
         referral_amount: gn('lead-referral-amt')||0,
-        bought_handpan: boughtEl ? boughtEl.checked : false,
+        bought_handpan: boughtEl ? boughtEl.value === 'yes' : false,
         referral_received: refRecEl ? refRecEl.checked : false,
         notes: g('lead-notes')||null
       };
@@ -6737,7 +6819,7 @@ const filterState = {
   classes: { status: 'all', batch: '', search: '' },
   'fee-payments': { student: '', month: '', status: 'all', mode: 'all', search: '' },
   payments: { type: 'all', mode: 'all', category: '', period: '', search: '' },
-  leads: { referred: 'all', workshop: '', search: '' }
+  leads: { bought: 'all', referral: 'all', search: '' }
 };
 
 function setFilterPill(section, key, value, btn) {
@@ -6827,10 +6909,11 @@ function applyFilters(section) {
     }
 
     if (section === 'leads') {
-      const ws = _dd['leads-workshop']?._getValue() || '';
-      if (ws && data.workshop !== ws) return false;
-      if (st.referred === 'yes' && data.referred !== 'true') return false;
-      if (st.referred === 'no' && data.referred === 'true') return false;
+      if (st.bought === 'yes' && data.bought !== 'true') return false;
+      if (st.bought === 'no' && data.bought === 'true') return false;
+      if (st.referral === 'pending' && !(data.referral_amount > 0 && data.referral_received !== 'true')) return false;
+      if (st.referral === 'received' && !(data.referral_amount > 0 && data.referral_received === 'true')) return false;
+      if (st.referral === 'none' && Number(data.referral_amount) > 0) return false;
     }
 
     return true;
@@ -7218,11 +7301,7 @@ function initStaticDropdowns() {
   });
   document.getElementById('dd-payments-category')?.replaceWith(_dd['payments-category']);
 
-  // Leads workshop dropdown
-  _dd['leads-workshop'] = createCustomSelect('leads-workshop', 'All workshops', [{value:'',label:'All workshops'}], (val) => {
-    applyFilters('leads');
-  });
-  document.getElementById('dd-leads-workshop')?.replaceWith(_dd['leads-workshop']);
+
 }
 
 // Call after DOM ready
@@ -7245,7 +7324,7 @@ if (document.readyState === 'loading') {
 }
 
 function populateWorkshopFilterDropdown(workshops) {
-  ['participants-workshop','leads-workshop'].forEach(id => {
+  ['participants-workshop'].forEach(id => {
     const dd = _dd[id];
     if (!dd) return;
     workshops.forEach(w => {
@@ -7900,9 +7979,11 @@ const FILTER_SHEET_CONFIG = {
     ]},
   ],
   leads: [
-    { key: 'workshop', label: 'Workshop', type: 'dd', ddKey: 'leads-workshop' },
-    { key: 'referred', label: 'Referred', type: 'pill', options: [
-      { val: 'all', label: 'All' }, { val: 'yes', label: 'Referred' }, { val: 'no', label: 'Not referred' }
+    { key: 'bought', label: 'Bought Handpan', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'yes', label: 'Yes' }, { val: 'no', label: 'No' }
+    ]},
+    { key: 'referral', label: 'Referral', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'pending', label: 'Pending' }, { val: 'received', label: 'Received' }, { val: 'none', label: 'No referral' }
     ]},
   ],
 };
