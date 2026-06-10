@@ -4993,7 +4993,7 @@ async function saveStudent() {
   if (!(document.getElementById('stu-name').value || '').trim()) { markFieldError('stu-name'); showToast('Full name is required', 'error'); return; }
   if (!(document.getElementById('stu-phone').value || '').trim()) { markFieldError('stu-phone'); showToast('Phone number is required', 'error'); return; }
   try {
-    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:document.getElementById('stu-email').value, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value };
+    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:document.getElementById('stu-email').value||null, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value||null };
     await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
   } catch(e) { console.error('saveStudent error:', e); showToast('Error saving student: ' + e.message,'error'); }
 }
@@ -6249,7 +6249,7 @@ async function saveEdit() {
         body = { full_name:g('par-name'), phone:getPhoneValue('par-phone','par-phone-cc')||null, email:g('par-email')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), bringing_own_handpan:g('par-handpan')||null, photo_video_consent:g('par-photo')||null, date:gd('par-date'), notes:g('par-notes')||null };
       }
     } else if (_editEntity === 'students') {
-      body = { full_name:g('stu-name'), phone:getPhoneValue('stu-phone','stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), notes:g('stu-notes')||null };
+      body = { full_name:g('stu-name'), phone:getPhoneValue('stu-phone','stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, level:g('stu-level')||null, notes:g('stu-notes')||null };
     } else if (_editEntity === 'fee_payments') {
       body = { amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', notes:g('fee-notes')||null };
     } else if (_editEntity === 'payments') {
