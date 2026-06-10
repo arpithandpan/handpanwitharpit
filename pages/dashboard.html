@@ -1146,7 +1146,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 
 /* Overview quick stats row */
 .overview-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem; margin-top: 2.5rem; }
-.overview-card { background: var(--sand); border: 1px solid var(--clay-pale); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(61,43,31,0.05); }
+.overview-card { background: var(--sand); border: 1px solid var(--clay-pale); border-radius: 12px; overflow: visible; box-shadow: 0 2px 8px rgba(61,43,31,0.05); }
 .overview-card-head { padding: 1rem 1.5rem 0.75rem; font-size: 1.15rem; letter-spacing: 0.01em; text-transform: none; color: var(--bark); font-weight: 600; }
 @media (max-width: 900px) {
   #allStatsWrap { display: flex !important; flex-direction: column; gap: 16px; margin-bottom: 48px !important; }
@@ -2207,6 +2207,19 @@ table#studentsTable { min-width: 700px; }
 table#feePaymentsTable { min-width: 780px; }
 table#paymentsTable { min-width: 700px; }
 
+
+/* Overview card table scroll */
+.overview-card { overflow: visible; }
+.overview-card table { min-width: 380px; }
+.overview-card .overview-card-head { padding: 1rem 1.5rem 0.75rem; }
+.overview-card > table,
+.overview-card > .desktop-table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 0 0 12px 12px;
+}
+
 </style>
     <ellipse class="orb1" cx="15" cy="20" rx="38" ry="38" fill="url(#orbA1)"/>
     <ellipse class="orb2" cx="82" cy="78" rx="42" ry="42" fill="url(#orbA2)"/>
@@ -2519,14 +2532,18 @@ table#paymentsTable { min-width: 700px; }
       <div class="overview-row">
         <div class="overview-card">
           <div class="overview-card-head">Recent Workshops</div>
-          <table class="desktop-table"><thead><tr><th>Workshop</th><th>Date</th><th>Pax</th><th>Revenue</th><th>Profit</th></tr></thead>
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:0 0 12px 12px;">
+          <table class="desktop-table" style="min-width:420px;"><thead><tr><th>Workshop</th><th>Date</th><th>Pax</th><th>Revenue</th><th>Profit</th></tr></thead>
           <tbody id="overviewWorkshops"><tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+          </div>
           <div class="mobile-cards" id="overviewWorkshopsCards"></div>
         </div>
         <div class="overview-card">
           <div class="overview-card-head">Recent Payments</div>
-          <table class="desktop-table"><thead><tr><th>Date</th><th>Name</th><th>Amount</th><th>Mode</th></tr></thead>
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:0 0 12px 12px;">
+          <table class="desktop-table" style="min-width:380px;"><thead><tr><th>Date</th><th>Name</th><th>Amount</th><th>Mode</th></tr></thead>
           <tbody id="overviewPayments"><tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+          </div>
           <div class="mobile-cards" id="overviewPaymentsCards"></div>
         </div>
       </div>
