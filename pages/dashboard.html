@@ -6234,7 +6234,7 @@ function buildEditForm(entity, r) {
 
   if (entity === 'students') return `
     ${row(readOnly('Student ID', r.id), fi('Full Name','stu-name','text',r.full_name))}
-    ${row(`<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('stu-phone', r.phone, 'stu-phone-cc')}</div>`, fi('Email','stu-email','email',r.email))}
+    ${row(`<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('ef-stu-phone', r.phone, 'ef-stu-phone-cc')}</div>`, fi('Email','stu-email','email',r.email))}
     ${row(sel('Status','stu-status',[['Active','Active'],['On Break','On Break'],['Completed','Completed']],r.status),
           fi('Start Date','stu-start','date',r.join_date))}
     ${row(fi('Monthly Fee (₹)','stu-fee','number',r.monthly_fee||0), sel('Level','stu-level',[['Beginner','Beginner'],['Intermediate','Intermediate'],['Advanced','Advanced']],r.level))}
@@ -6290,16 +6290,16 @@ async function saveEdit() {
       if (isRzpPar) {
         body = { full_name:g('par-name'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), date:gd('par-date'), notes:g('par-notes')||null };
       } else {
-        body = { full_name:g('par-name'), phone:getPhoneValue('par-phone','par-phone-cc')||null, email:g('par-email')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), bringing_own_handpan:g('par-handpan')||null, photo_video_consent:g('par-photo')||null, date:gd('par-date'), notes:g('par-notes')||null };
+        body = { full_name:g('par-name'), phone:getPhoneValue('ef-par-phone','ef-par-phone-cc')||null, email:g('par-email')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), bringing_own_handpan:g('par-handpan')||null, photo_video_consent:g('par-photo')||null, date:gd('par-date'), notes:g('par-notes')||null };
       }
     } else if (_editEntity === 'students') {
-      body = { full_name:g('stu-name'), phone:getPhoneValue('stu-phone','stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, level:g('stu-level')||null, notes:g('stu-notes')||null };
+      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, level:g('stu-level')||null, notes:g('stu-notes')||null };
     } else if (_editEntity === 'fee_payments') {
       body = { amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', notes:g('fee-notes')||null };
     } else if (_editEntity === 'payments') {
       body = { date:gd('pay-date'), amount:gn('pay-amount'), type:g('pay-type'), category:g('pay-category'), payment_mode:g('pay-mode'), payer_name:g('pay-name')||null, description:g('pay-desc')||null, reference_id:g('pay-ref')||null };
     } else if (_editEntity === 'leads') {
-      body = { full_name:g('lead-name'), phone:getPhoneValue('lead-phone','lead-phone-cc')||null, estimated_budget:gn('lead-budget')||null, status:g('lead-status'), follow_up_date:gd('lead-followup'), notes:g('lead-notes')||null };
+      body = { full_name:g('lead-name'), phone:getPhoneValue('ef-lead-phone','ef-lead-phone-cc')||null, estimated_budget:gn('lead-budget')||null, status:g('lead-status'), follow_up_date:gd('lead-followup'), notes:g('lead-notes')||null };
     }
 
     await sbPatch(_editEntity, _editId, body);
