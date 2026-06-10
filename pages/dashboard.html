@@ -3381,14 +3381,14 @@ table#paymentsTable { min-width: 700px; }
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
 
     <!-- Segment toggle -->
-    <div style="display:flex;background:rgba(200,147,90,0.08);border-radius:10px;padding:4px;margin-bottom:1.5rem;gap:4px;">
+    <div style="display:flex;background:rgba(200,147,90,0.08);border:1px solid rgba(200,147,90,0.18);border-radius:50px;padding:4px;margin-bottom:1.5rem;gap:4px;">
       <button id="lead-tab-manual" onclick="setLeadTab('manual')"
-        style="flex:1;border:none;border-radius:7px;padding:0.6rem 1rem;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.15s;background:#c8935a;color:#1a1208;">
-        Type manually
+        style="flex:1;border:none;border-radius:50px;padding:0.6rem 1rem;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.18s;background:#c8935a;color:#1a1208;">
+        New Participant
       </button>
       <button id="lead-tab-existing" onclick="setLeadTab('existing')"
-        style="flex:1;border:none;border-radius:7px;padding:0.6rem 1rem;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.15s;background:transparent;color:var(--text-light);">
-        From participant
+        style="flex:1;border:none;border-radius:50px;padding:0.6rem 1rem;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.18s;background:transparent;color:var(--text-light);">
+        Existing Participant
       </button>
     </div>
 
@@ -3430,28 +3430,32 @@ table#paymentsTable { min-width: 700px; }
         <input type="email" class="form-input" id="lead-email" placeholder="email@example.com"/>
       </div>
       <div class="form-group">
-        <label class="form-label">Workshop Attended</label>
-        <select class="form-input" id="lead-workshop-attended"><option value="">Select workshop...</option></select>
+        <label class="form-label">Bought Handpan?</label>
+        <select class="form-input" id="lead-bought-select" onchange="onLeadBoughtChange()">
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Paid to Maker (₹)</label>
-        <input type="number" class="form-input" id="lead-maker-amt" placeholder="0" min="0"/>
+    <!-- Paid to Maker + Referral — shown only when Bought = Yes -->
+    <div id="lead-maker-row" style="display:none;">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Paid to Maker (₹)</label>
+          <input type="number" class="form-input" id="lead-maker-amt" placeholder="0" min="0" oninput="onLeadMakerAmtChange()"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Referral Money for You (₹) <span style="color:var(--clay);font-size:0.8em;font-weight:400;">10% of maker amount</span></label>
+          <input type="number" class="form-input" id="lead-referral-amt" placeholder="0" min="0"/>
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Referral Money for You (₹)</label>
-        <input type="number" class="form-input" id="lead-referral-amt" placeholder="0" min="0"/>
+      <div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.85rem;background:rgba(200,147,90,0.07);border:1px solid rgba(200,147,90,0.2);border-radius:8px;margin-bottom:1.25rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:0.85rem;color:var(--clay);">Mark referral as received from the Leads table once payment arrives.</span>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1rem;background:rgba(200,147,90,0.06);border:1px solid var(--clay-pale);border-radius:10px;margin-bottom:1.25rem;">
-      <span style="font-size:0.95rem;color:var(--bark);font-weight:500;flex:1;">Bought Handpan?</span>
-      <label class="checkin-toggle" style="margin:0;">
-        <input type="checkbox" id="lead-bought-toggle"/>
-        <span class="checkin-toggle-track"></span>
-        <span class="checkin-toggle-thumb"></span>
-      </label>
-    </div>
+    <!-- Hidden workshop attended — still used for existing participant auto-fill -->
+    <input type="hidden" id="lead-workshop-attended" value=""/>
     <div class="form-group">
       <label class="form-label">Notes</label>
       <textarea class="form-input" id="lead-notes" placeholder="Any notes..." rows="3"></textarea>
@@ -4313,8 +4317,8 @@ async function openFormPage(name) {
   if (name === 'addParticipant') {
     await populateWorkshopDropdown('par-workshop');
   } else if (name === 'addLead') {
-    await populateWorkshopDropdown('lead-workshop-attended');
     setLeadTab('manual');
+    onLeadBoughtChange();
   } else if (name === 'addFeePayment') {
     await populateStudentDropdown('fee-student');
   } else if (name === 'addWorkshop') {
@@ -5099,6 +5103,33 @@ function setLeadTab(tab) {
   if (isExisting) loadLeadParticipantPicker();
 }
 
+function onLeadBoughtChange() {
+  const val = document.getElementById('lead-bought-select')?.value;
+  const makerRow = document.getElementById('lead-maker-row');
+  if (!makerRow) return;
+  if (val === 'yes') {
+    makerRow.style.display = '';
+  } else {
+    makerRow.style.display = 'none';
+    const makerEl = document.getElementById('lead-maker-amt');
+    const refEl = document.getElementById('lead-referral-amt');
+    if (makerEl) makerEl.value = '';
+    if (refEl) refEl.value = '';
+  }
+}
+
+function onLeadMakerAmtChange() {
+  const makerEl = document.getElementById('lead-maker-amt');
+  const refEl = document.getElementById('lead-referral-amt');
+  if (!makerEl || !refEl) return;
+  const maker = parseFloat(makerEl.value) || 0;
+  if (maker > 0) {
+    refEl.value = Math.round(maker * 0.1);
+  } else {
+    refEl.value = '';
+  }
+}
+
 function loadLeadParticipantPicker() {
   // Populate workshop filter
   const wsSel = document.getElementById('lead-pick-workshop');
@@ -5139,7 +5170,7 @@ function onLeadParticipantPick() {
   if (nameEl) nameEl.value = p.full_name || '';
   if (emailEl) emailEl.value = p.email || '';
   if (pidEl) pidEl.value = p.id || '';
-  // Auto-select workshop
+  // Store workshop in hidden input
   if (wsEl && p.workshop_id) wsEl.value = p.workshop_id;
   // Fill phone
   if (p.phone) {
@@ -5163,6 +5194,8 @@ async function saveLead() {
   if (!name) { markFieldError('lead-name'); showToast('Full name is required', 'error'); return; }
   if (!phone) { markFieldError('lead-phone'); showToast('Phone number is required', 'error'); return; }
   try {
+    const boughtVal = document.getElementById('lead-bought-select')?.value || 'no';
+    const boughtHandpan = boughtVal === 'yes';
     const body = {
       id: 'L-' + String(Date.now()).slice(-6),
       full_name: name,
@@ -5171,9 +5204,9 @@ async function saveLead() {
       workshop_attended: document.getElementById('lead-workshop-attended')?.value || null,
       participant_id: document.getElementById('lead-participant-id')?.value || null,
       date_added: new Date().toISOString().split('T')[0],
-      handpan_maker_amount: parseFloat(document.getElementById('lead-maker-amt')?.value) || 0,
-      referral_amount: parseFloat(document.getElementById('lead-referral-amt')?.value) || 0,
-      bought_handpan: document.getElementById('lead-bought-toggle')?.checked || false,
+      handpan_maker_amount: boughtHandpan ? (parseFloat(document.getElementById('lead-maker-amt')?.value) || 0) : 0,
+      referral_amount: boughtHandpan ? (parseFloat(document.getElementById('lead-referral-amt')?.value) || 0) : 0,
+      bought_handpan: boughtHandpan,
       referral_received: false,
       referred_friend: false,
       notes: (document.getElementById('lead-notes')?.value || '').trim() || null,
@@ -5185,7 +5218,9 @@ async function saveLead() {
     ['lead-name','lead-email','lead-notes','lead-maker-amt','lead-referral-amt'].forEach(id => {
       const el = document.getElementById(id); if (el) el.value = '';
     });
-    const toggle = document.getElementById('lead-bought-toggle'); if (toggle) toggle.checked = false;
+    const boughtSel = document.getElementById('lead-bought-select'); if (boughtSel) boughtSel.value = 'no';
+    const makerRow = document.getElementById('lead-maker-row'); if (makerRow) makerRow.style.display = 'none';
+    const wsHidden = document.getElementById('lead-workshop-attended'); if (wsHidden) wsHidden.value = '';
     const phoneEl = document.getElementById('lead-phone'); if (phoneEl) phoneEl.value = '';
     const pidEl = document.getElementById('lead-participant-id'); if (pidEl) pidEl.value = '';
     setLeadTab('manual');
