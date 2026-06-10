@@ -2212,7 +2212,7 @@ body:not(.dark-mode) #section-bin .dash-table-wrap { background: #ffffff; }
 table#workshopsTable { min-width: 720px; }
 table#participantsTable { min-width: 900px; }
 table#leadsTable { min-width: 680px; }
-table#studentsTable { min-width: 700px; }
+table#studentsTable { min-width: 860px; }
 table#feePaymentsTable { min-width: 780px; }
 table#paymentsTable { min-width: 700px; }
 
@@ -2753,11 +2753,13 @@ table#paymentsTable { min-width: 700px; }
           <th>Batch</th><th>Phone</th>
           <th class="sortable-th" onclick="sortTable('classes','join_date',this)">Joined <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Status</th>
+          <th>Level</th>
+          <th>Fee/Class</th>
           <th class="sortable-th" onclick="sortTable('classes','total_classes',this)">Classes <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th class="sortable-th" onclick="sortTable('classes','total_paid',this)">Total Paid <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th class="ws-action-sticky">Action</th>
         </tr></thead>
-        <tbody id="studentsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <tbody id="studentsTable"><tr><td colspan="11" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       <div class="mobile-cards" id="studentsCards"></div>
       </div>
       <div id="studentsEmptyState" style="display:none;"></div>
@@ -3578,7 +3580,7 @@ table#paymentsTable { min-width: 700px; }
   <div class="form-page-header">
     <button class="form-page-back" onclick="closeFormPage('editRecord')">← Back</button>
     <div class="form-page-title" id="editFormTitle">Edit</div>
-    <button class="btn-dash-save" onclick="saveEdit()">Save</button>
+    <button class="btn-dash-save" id="editSaveBtn" onclick="saveEdit()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;" id="editFormBody"></div></div>
 </div>
@@ -3705,6 +3707,34 @@ const SB_HEADERS = {
   'Authorization': 'Bearer ' + SUPABASE_KEY,
   'Prefer': 'return=representation'
 };
+
+// ── GLOBAL ERROR BOUNDARY ──
+window.addEventListener('unhandledrejection', e => {
+  const msg = e.reason?.message || String(e.reason) || 'Unknown error';
+  // Only show toast for non-network issues (network errors already handled)
+  if (!msg.includes('Failed to fetch') && !msg.includes('NetworkError')) {
+    console.error('Unhandled rejection:', e.reason);
+  }
+  e.preventDefault();
+});
+
+// ── SAFE FETCH WRAPPER — always returns {ok, status, data, error} ──
+async function safeFetch(url, options = {}) {
+  try {
+    const res = await fetch(url, options);
+    const text = await res.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch(_) { data = text; }
+    if (!res.ok) {
+      const detail = (data && (data.message || data.error || data.hint)) || text || res.statusText;
+      return { ok: false, status: res.status, data: null, error: detail };
+    }
+    return { ok: true, status: res.status, data, error: null };
+  } catch(e) {
+    return { ok: false, status: 0, data: null, error: e.message || 'Network error' };
+  }
+}
+
 let currentRole = 'admin';
 
 function isAdmin() { return currentRole === 'admin'; }
@@ -4150,34 +4180,37 @@ async function sbGetAll(table, params = '') {
 }
 
 async function sbPost(table, body) {
-  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
-    method: 'POST',
-    headers: SB_HEADERS,
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) {
-    let errMsg = 'Supabase error: ' + res.status;
-    try { const errBody = await res.json(); errMsg += ' — ' + (errBody.message || errBody.error || JSON.stringify(errBody)); } catch(_) {}
-    throw new Error(errMsg);
+  const cleanBody = Object.fromEntries(
+    Object.entries(body).filter(([_, v]) => v !== undefined)
+  );
+  const result = await safeFetch(
+    SUPABASE_URL + '/rest/v1/' + table,
+    { method: 'POST', headers: { ...SB_HEADERS, 'Prefer': 'return=representation' }, body: JSON.stringify(cleanBody) }
+  );
+  if (!result.ok) {
+    throw new Error('Create failed' + (result.error ? ': ' + result.error : ' (status ' + result.status + ')'));
   }
-  const text = await res.text();
-  return text ? JSON.parse(text) : {};
+  // Cache new record
+  const rows = Array.isArray(result.data) ? result.data : (result.data ? [result.data] : []);
+  rows.forEach(r => { if (r && r.id) cacheRecord(table, r); });
+  return result.data || {};
 }
 
 async function sbPatch(table, id, body) {
-  const idField = table === 'workshops' ? 'id' : 
-                  table === 'participants' ? 'id' :
-                  table === 'students' ? 'id' :
-                  table === 'payments' ? 'id' :
-                  table === 'fee_payments' ? 'id' :
-                  table === 'leads' ? 'id' : 'id';
-  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?' + idField + '=eq.' + id, {
-    method: 'PATCH',
-    headers: SB_HEADERS,
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error('Supabase error: ' + res.status);
-  return await res.json();
+  const cleanBody = Object.fromEntries(
+    Object.entries(body).filter(([_, v]) => v !== undefined)
+  );
+  const result = await safeFetch(
+    SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + encodeURIComponent(id),
+    { method: 'PATCH', headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' }, body: JSON.stringify(cleanBody) }
+  );
+  if (!result.ok) {
+    throw new Error('Save failed' + (result.error ? ': ' + result.error : ' (status ' + result.status + ')'));
+  }
+  // Immediately update local cache so re-renders show fresh data without waiting for reload
+  if (_recordCache[table] && _recordCache[table][id]) {
+    Object.assign(_recordCache[table][id], cleanBody);
+  }
 }
 
 // Legacy api() wrapper for backward compat
@@ -4758,7 +4791,7 @@ async function loadStudents() {
     window._cachedStudents = stus;
     populateFeeStudentDropdown(stus);
     populateClassesBatchDropdown(stus);
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.level||'—'}</td><td>${s.monthly_fee ? fmt(s.monthly_fee) : '—'}</td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.students}
     </td></tr>`;
 
@@ -4770,7 +4803,7 @@ async function loadStudents() {
   const _e_studentsTable = document.getElementById('studentsEmptyState');
   if (_e_studentsTable) { _e_studentsTable.innerHTML = EMPTY_STATES.students; _e_studentsTable.style.display = _hd_studentsTable ? 'none' : ''; }
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${s.id}','${s.full_name}','student',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Level</span><span class="m-card-val">${s.level||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Monthly Fee</span><span class="m-card-val">${s.monthly_fee ? fmt(s.monthly_fee) : '—'}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${s.id}','${s.full_name}','student',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
   } catch(e) { console.warn('loadStudents error:', e.message); } finally { hideLoader(); }
 }
 async function loadFeePayments() {
@@ -4964,17 +4997,21 @@ async function saveLead() {
   try {
     const body = {
       id: 'L-' + String(Date.now()).slice(-6),
-      full_name: document.getElementById('lead-name')?.value || '',
+      full_name: (document.getElementById('lead-name')?.value || '').trim(),
       phone: getPhoneValue('lead-phone','lead-phone-cc') || null,
-      email: document.getElementById('par-email')?.value || null,
+      email: (document.getElementById('par-email')?.value || '').trim() || null,
       workshop_attended: document.getElementById('par-workshop')?.value || null,
       date_added: new Date().toISOString().split('T')[0],
-      notes: document.getElementById('par-notes')?.value || null,
+      notes: (document.getElementById('par-notes')?.value || '').trim() || null,
       referred_friend: false,
+      bought_handpan: false,
+      handpan_maker_amount: 0,
+      referral_amount: 0,
+      referral_received: false,
       archived: false
     };
     await sbPost('leads', body); closeFormPage('addLead'); resetForm('addLead'); loadLeads(); showToast('✓ Lead saved successfully!','success');
-  } catch(e) { console.error('saveLead error:', e); showToast('Error saving lead: ' + e.message,'error'); }
+  } catch(e) { console.error('saveLead error:', e); showToast('Error: ' + (e.message || 'Save failed'), 'error'); }
 }
 async function saveWorkshop() {
   if (!document.getElementById('ws-date').value) { showToast('Date is required', 'error'); return; }
@@ -4995,7 +5032,7 @@ async function saveStudent() {
   try {
     const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:document.getElementById('stu-email').value||null, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value||null };
     await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
-  } catch(e) { console.error('saveStudent error:', e); showToast('Error saving student: ' + e.message,'error'); }
+  } catch(e) { console.error('saveStudent error:', e); showToast('Error: ' + (e.message || 'Save failed'), 'error'); }
 }
 async function saveFeePayment() {
   const feeStudentVal = (document.getElementById('fee-student').value || '').trim();
@@ -6230,11 +6267,18 @@ function buildEditForm(entity, r) {
 
 async function saveEdit() {
   if (!isAdmin()) return;
+  const saveBtn = document.getElementById('editSaveBtn');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
   try {
     let body = {};
-    const g = id => { const el = document.getElementById('ef-'+id); return el ? el.value : null; };
-    const gn = id => parseFloat(g(id)) || 0;
-    const gd = id => { const v = g(id); return v && v.trim() ? v : null; }; // date fields - null if empty
+    const g = id => {
+      const el = document.getElementById('ef-'+id);
+      if (!el) return null;
+      const v = el.value;
+      return (v === '' || v === null || v === undefined) ? null : v;
+    };
+    const gn = id => { const v = parseFloat(g(id)); return isNaN(v) ? null : v; };
+    const gd = id => { const v = g(id); return v && v.trim() ? v : null; };
 
     if (_editEntity === 'workshops') {
       const bms=parseInt(g('ws-bms'))||0, upi=parseInt(g('ws-upi'))||0, rzp=parseInt(g('ws-rzp'))||0, price=parseFloat(g('ws-price'))||0;
@@ -6259,11 +6303,15 @@ async function saveEdit() {
     }
 
     await sbPatch(_editEntity, _editId, body);
-    closeFormPage('editRecord');
-    await reloadEntity(_editEntity);
     showToast('✓ Changes saved!', 'success');
+    closeFormPage('editRecord');
+    // Reload in background — don't await so UI is snappy
+    reloadEntity(_editEntity).catch(e => console.warn('Reload after save failed:', e));
   } catch(e) {
-    showToast('Error saving changes: ' + e.message, 'error');
+    console.error('saveEdit error:', e);
+    showToast(e.message || 'Save failed — please try again', 'error');
+  } finally {
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save'; }
   }
 }
 
