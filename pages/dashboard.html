@@ -1987,23 +1987,29 @@ tr.row-selected { background: rgba(200,147,90,0.08) !important; }
   background: none;
   border: 1px solid rgba(200,147,90,0.3);
   border-radius: 8px;
-  padding: 0.45rem 0.6rem;
+  padding: 0 0.75rem;
+  height: 40px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-light);
   cursor: pointer;
   position: relative;
   transition: border-color 0.15s;
+  flex-shrink: 0;
 }
 .notif-dots-btn:hover { border-color: rgba(200,147,90,0.7); color: #c8935a; }
 .notif-dots-menu {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 8px);
   right: 0;
   background: #2a1a0e;
   border: 1px solid rgba(200,147,90,0.25);
-  border-radius: 10px;
-  min-width: 180px;
+  border-radius: 12px;
+  min-width: 240px;
   z-index: 9999;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
   overflow: hidden;
   display: none;
 }
@@ -2011,9 +2017,9 @@ tr.row-selected { background: rgba(200,147,90,0.08) !important; }
 .notif-dots-menu-item {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.75rem 1rem;
-  font-size: 0.92rem;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
   color: #e8d5c0;
   cursor: pointer;
   transition: background 0.12s;
@@ -2021,6 +2027,7 @@ tr.row-selected { background: rgba(200,147,90,0.08) !important; }
   background: none;
   width: 100%;
   text-align: left;
+  white-space: nowrap;
 }
 .notif-dots-menu-item:hover { background: rgba(200,147,90,0.1); }
 
@@ -3018,7 +3025,7 @@ table#paymentsTable { min-width: 700px; }
           <div class="dash-section-subtitle" id="notifSubtitle">All activity and alerts from your dashboard</div>
         </div>
         <div id="notifActions" style="display:none;gap:0.75rem;align-items:center;">
-          <button class="btn-dash btn-dash-outline btn-dash-sm" id="notifExpandBtn" onclick="toggleAllBuckets()">Collapse all</button>
+          <button class="btn-dash btn-dash-outline btn-dash-sm" id="notifExpandBtn" onclick="toggleAllBuckets()" style="height:40px;min-height:40px;">Collapse all</button>
           <div style="position:relative;">
             <button class="notif-dots-btn" onclick="toggleNotifMenu(this)" title="More options">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
@@ -5331,8 +5338,10 @@ async function loadBin() {
         </div>
       </div>
     `).join('');
+    showToast('✓ Bin refreshed', 'success');
   } catch(e) {
     container.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">⚠️</div><div class="empty-state-title">Could not load bin</div><div class="empty-state-sub">Check your connection and try again</div></div>';
+    showToast('Error loading bin', 'error');
   }
 }
 
@@ -6240,7 +6249,7 @@ async function saveEdit() {
         body = { full_name:g('par-name'), phone:getPhoneValue('par-phone','par-phone-cc')||null, email:g('par-email')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), bringing_own_handpan:g('par-handpan')||null, photo_video_consent:g('par-photo')||null, date:gd('par-date'), notes:g('par-notes')||null };
       }
     } else if (_editEntity === 'students') {
-      body = { full_name:g('stu-name'), phone:getPhoneValue('stu-phone','stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), notes:g('stu-notes')||null };
+      body = { full_name:g('stu-name'), phone:getPhoneValue('stu-phone','stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, level:g('stu-level')||null, notes:g('stu-notes')||null };
     } else if (_editEntity === 'fee_payments') {
       body = { amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', notes:g('fee-notes')||null };
     } else if (_editEntity === 'payments') {
