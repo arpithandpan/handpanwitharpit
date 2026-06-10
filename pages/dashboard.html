@@ -3423,11 +3423,15 @@ table#paymentsTable { min-width: 700px; }
             <svg id="lead-par-dd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;transition:transform 0.18s;"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div id="lead-par-dd-menu" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:#2a1f14;border:1px solid rgba(200,147,90,0.3);border-radius:10px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,0.4);overflow:hidden;">
-            <div style="padding:0.5rem;display:flex;flex-direction:column;gap:0.4rem;">
-              <select id="lead-pick-workshop-filter" onchange="filterLeadParticipants()"
-                style="width:100%;box-sizing:border-box;background:rgba(255,245,225,0.06) url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23c8935a%22 stroke-width=%222.5%22%3E%3Cpolyline points=%226 9 12 15 18 9%22/%3E%3C/svg%3E') no-repeat right 0.6rem center;border:1px solid rgba(200,147,90,0.2);border-radius:7px;padding:0.5rem 1.8rem 0.5rem 0.6rem;font-size:0.88rem;color:var(--bark);outline:none;-webkit-appearance:none;appearance:none;color-scheme:dark;">
-                <option value="">All workshops</option>
-              </select>
+            <div style="padding:0.5rem;display:flex;flex-direction:column;gap:0.4rem;position:relative;">
+              <div id="lead-ws-filter" style="position:relative;">
+                <button type="button" id="lead-ws-filter-btn" onclick="event.stopPropagation();toggleLeadWsFilter()"
+                  style="width:100%;display:flex;align-items:center;justify-content:space-between;background:rgba(255,245,225,0.06);border:1px solid rgba(200,147,90,0.2);border-radius:7px;padding:0.55rem 0.75rem;font-size:0.88rem;color:var(--bark);cursor:pointer;text-align:left;">
+                  <span id="lead-ws-filter-label">All workshops</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;color:#c8935a;transition:transform 0.18s;" id="lead-ws-filter-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div id="lead-ws-filter-menu" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:#2a1f14;border:1px solid rgba(200,147,90,0.3);border-radius:8px;z-index:1001;box-shadow:0 8px 24px rgba(0,0,0,0.4);max-height:200px;overflow-y:auto;padding:0.25rem;"></div>
+              </div>
               <div style="position:relative;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:rgba(200,147,90,0.5);pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <input type="text" id="lead-pick-search" placeholder="Search participants..." autocomplete="off"
@@ -3435,6 +3439,7 @@ table#paymentsTable { min-width: 700px; }
                   oninput="filterLeadParticipants()"/>
               </div>
             </div>
+            <input type="hidden" id="lead-pick-workshop-filter" value=""/>
             <div id="lead-par-dd-list" style="max-height:220px;overflow-y:auto;padding:0 0.25rem 0.4rem;"></div>
           </div>
         </div>
@@ -5217,6 +5222,8 @@ function setLeadTab(tab) {
     if (label) { label.textContent = 'Choose participant...'; label.style.color = 'rgba(200,147,90,0.5)'; }
     const wsFilterEl = document.getElementById('lead-pick-workshop-filter');
     if (wsFilterEl) wsFilterEl.value = '';
+    const wsFilterLabel = document.getElementById('lead-ws-filter-label');
+    if (wsFilterLabel) wsFilterLabel.textContent = 'All workshops';
     closeLeadParDd();
     loadLeadParticipantPicker();
   }
@@ -5266,14 +5273,55 @@ function toggleLeadParDd() {
   }
 }
 
-function populateLeadWorkshopFilter() {
-  const wsFilterEl = document.getElementById('lead-pick-workshop-filter');
-  if (!wsFilterEl || wsFilterEl.options.length > 1) return;
-  const ws = Object.values(_recordCache.workshops || {})
-    .filter(w => !w.archived)
-    .sort((a,b) => (b.date||'').localeCompare(a.date||''));
-  wsFilterEl.innerHTML = '<option value="">All workshops</option>' +
-    ws.map(w => `<option value="${w.id}">${w.id} — ${(w.venue||w.id).length > 22 ? (w.venue||w.id).slice(0,20)+'…' : (w.venue||w.id)}</option>`).join('');
+let _leadWsFilterOptions = null;
+
+async function populateLeadWorkshopFilter() {
+  const menu = document.getElementById('lead-ws-filter-menu');
+  if (!menu) return;
+  if (!_leadWsFilterOptions) {
+    try {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/workshops?select=id,venue,date&archived=neq.true&order=date.desc', {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      });
+      _leadWsFilterOptions = await res.json();
+    } catch(e) { _leadWsFilterOptions = []; }
+  }
+  const renderOpt = (val, label, selected) => `
+    <div onclick="event.stopPropagation();selectLeadWsFilter('${val}','${label.replace(/'/g,String.fromCharCode(92,39))}')"
+      style="padding:0.6rem 0.75rem;border-radius:6px;cursor:pointer;font-size:0.9rem;color:${selected?'#c8935a':'var(--bark)'};font-weight:${selected?'600':'400'};display:flex;align-items:center;gap:0.4rem;transition:background 0.1s;"
+      onmouseover="this.style.background='rgba(200,147,90,0.1)'" onmouseout="this.style.background=''">
+      ${selected ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : '<span style="width:13px;display:inline-block;"></span>'}
+      ${label}
+    </div>`;
+  const currentVal = document.getElementById('lead-pick-workshop-filter')?.value || '';
+  let html = renderOpt('', 'All workshops', currentVal === '');
+  _leadWsFilterOptions.forEach(w => {
+    const venue = (w.venue||w.id).length > 22 ? (w.venue||w.id).slice(0,20)+'…' : (w.venue||w.id);
+    html += renderOpt(w.id, `${w.id} — ${venue}`, currentVal === w.id);
+  });
+  menu.innerHTML = html;
+}
+
+function toggleLeadWsFilter() {
+  const menu = document.getElementById('lead-ws-filter-menu');
+  const chevron = document.getElementById('lead-ws-filter-chevron');
+  if (!menu) return;
+  const isOpen = menu.style.display !== 'none';
+  menu.style.display = isOpen ? 'none' : '';
+  if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+  if (!isOpen) populateLeadWorkshopFilter();
+}
+
+function selectLeadWsFilter(val, label) {
+  const hidden = document.getElementById('lead-pick-workshop-filter');
+  const labelEl = document.getElementById('lead-ws-filter-label');
+  if (hidden) hidden.value = val;
+  if (labelEl) labelEl.textContent = label;
+  const menu = document.getElementById('lead-ws-filter-menu');
+  const chevron = document.getElementById('lead-ws-filter-chevron');
+  if (menu) menu.style.display = 'none';
+  if (chevron) chevron.style.transform = '';
+  filterLeadParticipants();
 }
 
 function closeLeadParDd() {
@@ -5283,6 +5331,10 @@ function closeLeadParDd() {
   if (menu) menu.style.display = 'none';
   if (chevron) chevron.style.transform = '';
   if (btn) btn.style.borderColor = 'rgba(200,147,90,0.35)';
+  const wsMenu = document.getElementById('lead-ws-filter-menu');
+  const wsChevron = document.getElementById('lead-ws-filter-chevron');
+  if (wsMenu) wsMenu.style.display = 'none';
+  if (wsChevron) wsChevron.style.transform = '';
 }
 
 function loadLeadParticipantPicker() {
