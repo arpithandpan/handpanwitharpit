@@ -3423,7 +3423,11 @@ table#paymentsTable { min-width: 700px; }
             <svg id="lead-par-dd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;transition:transform 0.18s;"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div id="lead-par-dd-menu" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:#2a1f14;border:1px solid rgba(200,147,90,0.3);border-radius:10px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,0.4);overflow:hidden;">
-            <div style="padding:0.5rem;">
+            <div style="padding:0.5rem;display:flex;flex-direction:column;gap:0.4rem;">
+              <select id="lead-pick-workshop-filter" onchange="filterLeadParticipants()"
+                style="width:100%;box-sizing:border-box;background:rgba(255,245,225,0.06) url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23c8935a%22 stroke-width=%222.5%22%3E%3Cpolyline points=%226 9 12 15 18 9%22/%3E%3C/svg%3E') no-repeat right 0.6rem center;border:1px solid rgba(200,147,90,0.2);border-radius:7px;padding:0.5rem 1.8rem 0.5rem 0.6rem;font-size:0.88rem;color:var(--bark);outline:none;-webkit-appearance:none;appearance:none;color-scheme:dark;">
+                <option value="">All workshops</option>
+              </select>
               <div style="position:relative;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:rgba(200,147,90,0.5);pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <input type="text" id="lead-pick-search" placeholder="Search participants..." autocomplete="off"
@@ -4386,32 +4390,43 @@ function toggleSidebar() { document.getElementById('dashSidebar').classList.togg
 async function openFormPage(name) {
   document.getElementById('form-' + name).classList.add('open');
   lockScroll();
+  // For forms with dynamic dropdowns, mark them customized immediately so the
+  // global openModal timer doesn't build a stale wrap while we populate.
+  if (name === 'addParticipant') {
+    const sel = document.getElementById('par-workshop');
+    if (sel) sel.dataset.customized = 'pending';
+  } else if (name === 'addFeePayment') {
+    const sel = document.getElementById('fee-student');
+    if (sel) sel.dataset.customized = 'pending';
+  }
+  setTimeout(() => { initFormSelects(); initDatePickers(); }, 50);
   // Populate dropdowns and auto-fill IDs per form
   if (name === 'addParticipant') {
-    const parWsSel = document.getElementById('par-workshop');
-    if (parWsSel) {
-      delete parWsSel.dataset.customized;
-      const existingWrap = parWsSel.closest('.form-select-wrap');
-      if (existingWrap) existingWrap.replaceWith(parWsSel);
-    }
     await populateWorkshopDropdown('par-workshop');
+    const sel = document.getElementById('par-workshop');
+    if (sel) {
+      delete sel.dataset.customized;
+      const existingWrap = sel.nextElementSibling;
+      if (existingWrap && existingWrap.classList.contains('form-select-wrap')) existingWrap.remove();
+    }
+    initFormSelects();
   } else if (name === 'addLead') {
     setLeadTab('manual');
     onLeadBoughtChange();
   } else if (name === 'addFeePayment') {
-    const feeStuSel = document.getElementById('fee-student');
-    if (feeStuSel) {
-      delete feeStuSel.dataset.customized;
-      const existingWrap = feeStuSel.closest('.form-select-wrap');
-      if (existingWrap) existingWrap.replaceWith(feeStuSel);
-    }
     await populateStudentDropdown('fee-student');
+    const sel = document.getElementById('fee-student');
+    if (sel) {
+      delete sel.dataset.customized;
+      const existingWrap = sel.nextElementSibling;
+      if (existingWrap && existingWrap.classList.contains('form-select-wrap')) existingWrap.remove();
+    }
+    initFormSelects();
   } else if (name === 'addWorkshop') {
     await autoFillNextId('workshops', 'ws-id', 'WS-', 3);
   } else if (name === 'addStudent') {
     await autoFillNextId('students', 'stu-id', 'S-', 3);
   }
-  setTimeout(() => { initFormSelects(); initDatePickers(); }, 80);
 }
 
 async function populateWorkshopDropdown(selectId) {
@@ -5200,6 +5215,8 @@ function setLeadTab(tab) {
     if (searchEl) searchEl.value = '';
     const label = document.getElementById('lead-par-dd-label');
     if (label) { label.textContent = 'Choose participant...'; label.style.color = 'rgba(200,147,90,0.5)'; }
+    const wsFilterEl = document.getElementById('lead-pick-workshop-filter');
+    if (wsFilterEl) wsFilterEl.value = '';
     closeLeadParDd();
     loadLeadParticipantPicker();
   }
@@ -5244,8 +5261,19 @@ function toggleLeadParDd() {
   if (!isOpen) {
     const search = document.getElementById('lead-pick-search');
     if (search) { search.value = ''; search.focus(); }
+    populateLeadWorkshopFilter();
     filterLeadParticipants();
   }
+}
+
+function populateLeadWorkshopFilter() {
+  const wsFilterEl = document.getElementById('lead-pick-workshop-filter');
+  if (!wsFilterEl || wsFilterEl.options.length > 1) return;
+  const ws = Object.values(_recordCache.workshops || {})
+    .filter(w => !w.archived)
+    .sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  wsFilterEl.innerHTML = '<option value="">All workshops</option>' +
+    ws.map(w => `<option value="${w.id}">${w.id} — ${(w.venue||w.id).length > 22 ? (w.venue||w.id).slice(0,20)+'…' : (w.venue||w.id)}</option>`).join('');
 }
 
 function closeLeadParDd() {
@@ -5264,10 +5292,13 @@ function loadLeadParticipantPicker() {
 function filterLeadParticipants() {
   const list = document.getElementById('lead-par-dd-list');
   const searchEl = document.getElementById('lead-pick-search');
+  const wsFilterEl = document.getElementById('lead-pick-workshop-filter');
   if (!list) return;
   const q = (searchEl?.value || '').toLowerCase().trim();
+  const wsFilter = wsFilterEl?.value || '';
   const parts = Object.values(_recordCache.participants || {})
     .filter(p => !p.archived)
+    .filter(p => !wsFilter || p.workshop_id === wsFilter)
     .filter(p => !q || (p.full_name||'').toLowerCase().includes(q) || (p.workshop_id||'').toLowerCase().includes(q))
     .sort((a,b) => (a.full_name||'').localeCompare(b.full_name||''));
   if (!parts.length) {
@@ -7722,6 +7753,39 @@ function makeFormSelect(nativeSelect) {
   nativeSelect.parentNode.insertBefore(wrap, nativeSelect.nextSibling);
   wrap.appendChild(btn);
   wrap.appendChild(menu);
+}
+
+function refreshFormSelect(nativeSelect) {
+  if (!nativeSelect) return;
+  const wrap = nativeSelect.nextElementSibling;
+  if (!wrap || !wrap.classList.contains('form-select-wrap')) {
+    // Not customized yet — let initFormSelects handle it
+    delete nativeSelect.dataset.customized;
+    initFormSelects();
+    return;
+  }
+  const btn = wrap.querySelector('.form-select-btn');
+  const menu = wrap.querySelector('.form-select-menu');
+  const label = btn?.querySelector('.fs-label');
+  if (label) label.textContent = nativeSelect.options[nativeSelect.selectedIndex]?.text || '';
+  if (menu) {
+    menu.innerHTML = '';
+    Array.from(nativeSelect.options).forEach((opt, i) => {
+      const div = document.createElement('div');
+      div.className = 'form-select-opt' + (nativeSelect.selectedIndex === i ? ' selected' : '');
+      div.textContent = opt.text;
+      div.onclick = (e) => {
+        e.stopPropagation();
+        nativeSelect.selectedIndex = i;
+        nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        if (label) label.textContent = opt.text;
+        menu.querySelectorAll('.form-select-opt').forEach((d, j) => d.classList.toggle('selected', j === i));
+        menu.classList.remove('open');
+        btn.classList.remove('open');
+      };
+      menu.appendChild(div);
+    });
+  }
 }
 
 function initFormSelects() {
