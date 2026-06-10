@@ -1895,7 +1895,7 @@ table#participantsTable, .dash-table-wrap table#participantsTable { min-width: 1
 thead .ws-action-sticky { z-index: 4 !important; background: #2a1e12 !important; }
 tbody .ws-action-sticky { background: #1a1208 !important; z-index: 2 !important; }
 /* Action buttons flex wrapper inside td */
-.dash-table-wrap table td { min-width: 0; max-width: 250px; }
+.dash-table-wrap table td:not(.ws-action-sticky) { min-width: 0; max-width: 250px; }
 .dash-table-wrap table td.td-truncate { max-width: 0; }
 
 .ws-action-sticky .action-wrap {
@@ -2525,19 +2525,13 @@ table#paymentsTable { min-width: 700px; }
           <div class="dash-section-subtitle">Find anything across your dashboard</div>
         </div>
       </div>
-      <div class="section-search-wrap" style="margin-bottom:1.25rem;">
+      <div class="section-search-wrap" style="margin-bottom:2rem;">
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" class="section-search-input" id="sectionSearchInput" placeholder="Search participants, workshops, payments, leads..." autocomplete="off"
           oninput="handleSectionSearch(this.value)"
           onkeydown="if(event.key==='Escape'){this.value='';handleSectionSearch('');}"/>
       </div>
-      <div id="recentSearchesWrap" style="margin-bottom:1.5rem;display:none;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
-          <span style="font-size:0.82rem;font-weight:600;color:var(--clay);letter-spacing:0.01em;">Recent searches</span>
-          <button onclick="clearRecentSearches()" style="background:none;border:none;font-size:0.8rem;color:var(--text-light);cursor:pointer;padding:2px 4px;border-radius:4px;transition:color 0.15s;" onmouseover="this.style.color='var(--clay)'" onmouseout="this.style.color='var(--text-light)'">Clear</button>
-        </div>
-        <div id="recentSearchChips" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
-      </div>
+
       <div id="sectionSearchResults" style="display:flex;flex-direction:column;flex:1;min-height:60vh;">
         <div id="section-search-empty-default"></div>
       </div>
@@ -3495,6 +3489,13 @@ table#paymentsTable { min-width: 700px; }
     <input type="hidden" id="lead-workshop-attended" value=""/>
     <div class="form-group">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
+        <label class="form-label" style="margin-bottom:0;">Description</label>
+        <span id="lead-desc-count" style="font-size:0.75rem;color:var(--text-light);">0/120</span>
+      </div>
+      <textarea class="form-input" id="lead-desc" placeholder="Any notes or description..." rows="2" maxlength="120" style="resize:none;" oninput="updateCharCount('lead-desc','lead-desc-count',120)"></textarea>
+    </div>
+    <div class="form-group">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
         <label class="form-label" style="margin-bottom:0;">Notes</label>
         <span id="lead-notes-count" style="font-size:0.75rem;color:var(--text-light);">0/150</span>
       </div>
@@ -3582,6 +3583,13 @@ table#paymentsTable { min-width: 700px; }
         <span id="stu-notes-count" style="font-size:0.75rem;color:var(--text-light);">0/150</span>
       </div>
       <textarea class="form-input" id="stu-notes" placeholder="Any notes..." rows="3" maxlength="150" oninput="updateCharCount('stu-notes','stu-notes-count',150)"></textarea>
+    </div>
+    <div class="form-group">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
+        <label class="form-label" style="margin-bottom:0;">Description</label>
+        <span id="stu-desc-count" style="font-size:0.75rem;color:var(--text-light);">0/120</span>
+      </div>
+      <textarea class="form-input" id="stu-desc" placeholder="Any notes or description..." rows="2" maxlength="120" style="resize:none;" oninput="updateCharCount('stu-desc','stu-desc-count',120)"></textarea>
     </div>
   </div></div>
 </div>
@@ -3678,6 +3686,13 @@ table#paymentsTable { min-width: 700px; }
     <div class="form-row">
       <div class="form-group"><label class="form-label">Bringing Own Handpan</label><input type="text" class="form-input" id="par-handpan" placeholder="Yes / No"/></div>
       <div class="form-group"><label class="form-label">Photo/Video Consent</label><input type="text" class="form-input" id="par-photo" placeholder="Yes / No"/></div>
+    </div>
+    <div class="form-group">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
+        <label class="form-label" style="margin-bottom:0;">Description</label>
+        <span id="par-desc-count" style="font-size:0.75rem;color:var(--text-light);">0/120</span>
+      </div>
+      <textarea class="form-input" id="par-desc" placeholder="Any notes or description..." rows="2" maxlength="120" style="resize:none;" oninput="updateCharCount('par-desc','par-desc-count',120)"></textarea>
     </div>
     <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="par-notes" placeholder="Any notes..." rows="3"></textarea></div>
   </div></div>
@@ -4580,69 +4595,17 @@ function loadSection(name) {
 async function loadSearchSection() {
   await ensureSearchCache();
   const input = document.getElementById('sectionSearchInput');
-  if (input) { setTimeout(() => { input.focus(); renderRecentSearches(); }, 100); }
-}
-
-// ── RECENT SEARCHES ──
-const RECENT_SEARCHES_KEY = 'hpw_recent_searches';
-const RECENT_SEARCHES_MAX = 8;
-
-function getRecentSearches() {
-  try { return JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || '[]'); } catch { return []; }
-}
-
-function saveRecentSearch(query) {
-  if (!query || query.trim().length < 2) return;
-  const q = query.trim();
-  let searches = getRecentSearches().filter(s => s.toLowerCase() !== q.toLowerCase());
-  searches.unshift(q);
-  if (searches.length > RECENT_SEARCHES_MAX) searches = searches.slice(0, RECENT_SEARCHES_MAX);
-  try { localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches)); } catch {}
-  renderRecentSearches();
-}
-
-function clearRecentSearches() {
-  try { localStorage.removeItem(RECENT_SEARCHES_KEY); } catch {}
-  renderRecentSearches();
-}
-
-function renderRecentSearches() {
-  const wrap = document.getElementById('recentSearchesWrap');
-  const chips = document.getElementById('recentSearchChips');
-  if (!wrap || !chips) return;
-  const searches = getRecentSearches();
-  if (!searches.length) { wrap.style.display = 'none'; return; }
-  wrap.style.display = '';
-  chips.innerHTML = searches.map(s => `
-    <button onclick="runRecentSearch(${JSON.stringify(s)})"
-      style="background:rgba(200,147,90,0.08);border:1px solid rgba(200,147,90,0.25);border-radius:50px;padding:0.35rem 0.85rem;font-size:0.88rem;color:var(--bark);cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:0.4rem;"
-      onmouseover="this.style.background='rgba(200,147,90,0.16)';this.style.borderColor='rgba(200,147,90,0.5)'"
-      onmouseout="this.style.background='rgba(200,147,90,0.08)';this.style.borderColor='rgba(200,147,90,0.25)'">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:0.5;flex-shrink:0;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-      ${s}
-    </button>`).join('');
-}
-
-function runRecentSearch(query) {
-  const input = document.getElementById('sectionSearchInput');
-  if (input) { input.value = query; input.focus(); }
-  handleSectionSearch(query);
+  if (input) { setTimeout(() => input.focus(), 100); }
 }
 
 async function handleSectionSearch(query) {
   const results = document.getElementById('sectionSearchResults');
   if (!query || query.length < 2) {
     results.innerHTML = EMPTY_STATES.search;
-    renderRecentSearches();
     return;
   }
   await ensureSearchCache();
   const items = searchData(query);
-  // Save to recent searches when results are found
-  if (items.length) saveRecentSearch(query);
-  // Hide recent searches while showing results
-  const wrap = document.getElementById('recentSearchesWrap');
-  if (wrap) wrap.style.display = 'none';
   if (!items.length) {
     results.innerHTML = EMPTY_STATES.search_noresults(query);
     return;
@@ -5373,13 +5336,14 @@ async function saveLead() {
       bought_handpan: boughtHandpan,
       referral_received: false,
       referred_friend: false,
+      description: (document.getElementById('lead-desc')?.value || '').trim() || null,
       notes: (document.getElementById('lead-notes')?.value || '').trim() || null,
       archived: false
     };
     await sbPost('leads', body);
     closeFormPage('addLead');
     // Reset form
-    ['lead-name','lead-email','lead-notes','lead-maker-amt','lead-referral-amt'].forEach(id => {
+    ['lead-name','lead-email','lead-desc','lead-notes','lead-maker-amt','lead-referral-amt'].forEach(id => {
       const el = document.getElementById(id); if (el) el.value = '';
     });
     const boughtSel = document.getElementById('lead-bought-select'); if (boughtSel) boughtSel.value = 'no';
@@ -5412,7 +5376,7 @@ async function saveStudent() {
   if (!(document.getElementById('stu-name').value || '').trim()) { markFieldError('stu-name'); showToast('Full name is required', 'error'); return; }
   if (!(document.getElementById('stu-phone').value || '').trim()) { markFieldError('stu-phone'); showToast('Phone number is required', 'error'); return; }
   try {
-    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:document.getElementById('stu-email').value||null, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, notes:document.getElementById('stu-notes').value||null };
+    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:document.getElementById('stu-email').value||null, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, description:document.getElementById('stu-desc')?.value||null, notes:document.getElementById('stu-notes').value||null };
     await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
   } catch(e) { console.error('saveStudent error:', e); showToast('Error: ' + (e.message || 'Save failed'), 'error'); }
 }
@@ -5477,6 +5441,7 @@ async function saveParticipant() {
       interested_in_handpan: document.getElementById('par-interested').value,
       bringing_own_handpan: document.getElementById('par-handpan')?.value || null,
       photo_video_consent: document.getElementById('par-photo')?.value || null,
+      description: document.getElementById('par-desc')?.value || null,
       notes: document.getElementById('par-notes').value || null,
       checked_in: false,
       archived: false
