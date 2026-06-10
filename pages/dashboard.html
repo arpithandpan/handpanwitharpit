@@ -363,6 +363,7 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
   cursor: pointer; touch-action: manipulation;
   border-bottom: 1px solid rgba(193,127,90,0.08);
   font-family: var(--font-body); font-size: 1rem; color: #e8d5c0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .mobile-picker-opt:active { background: rgba(193,127,90,0.08); }
 .mobile-picker-opt.selected { color: #c8935a; }
@@ -3693,8 +3694,8 @@ table#paymentsTable { min-width: 700px; }
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="par-date"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Bringing Own Handpan</label><input type="text" class="form-input" id="par-handpan" placeholder="Yes / No"/></div>
-      <div class="form-group"><label class="form-label">Photo/Video Consent</label><input type="text" class="form-input" id="par-photo" placeholder="Yes / No"/></div>
+      <div class="form-group"><label class="form-label">Bringing Own Handpan</label><select class="form-input" id="par-handpan"><option value="">—</option><option value="Yes">Yes</option><option value="No">No</option></select></div>
+      <div class="form-group"><label class="form-label">Photo/Video Consent</label><select class="form-input" id="par-photo"><option value="">—</option><option value="Yes">Yes</option><option value="No">No</option></select></div>
     </div>
     <div class="form-group">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
@@ -4015,11 +4016,11 @@ async function logout() {
 // Text/number/date/tel inputs to check per form (selects are always at a default so we ignore them)
 const FORM_FIELDS = {
   addPayment:     ['pay-date','pay-amount','pay-name','pay-desc','pay-ref'],
-  addLead:        ['lead-name','lead-phone','lead-budget','lead-followup','lead-notes'],
+  addLead:        ['lead-name','lead-phone','lead-email','lead-desc','lead-notes','lead-maker-amt'],
   addWorkshop:    ['ws-date','ws-venue','ws-rzp-page-id','ws-bms','ws-upi','ws-rzp','ws-price','ws-venue-rent','ws-hp-rent','ws-porter','ws-misc'],
-  addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-notes'],
-  addFeePayment:  ['fee-amount','fee-notes'],
-  addParticipant:  ['par-name','par-phone','par-amount','par-date','par-notes'],
+  addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-desc','stu-notes'],
+  addFeePayment:  ['fee-amount','fee-desc','fee-notes'],
+  addParticipant:  ['par-name','par-phone','par-amount','par-date','par-desc','par-notes'],
   assignPayment:   ['assign-page-notes']
 };
 
@@ -4443,7 +4444,11 @@ async function populateWorkshopDropdown(selectId) {
     });
     const ws = await res.json();
     sel.innerHTML = '<option value="">Select workshop...</option>' +
-      ws.map(w => `<option value="${w.id}">${w.id} — ${w.venue || ''} (${fmtDate(w.date)})</option>`).join('');
+      ws.map(w => {
+        const venue = (w.venue||w.id).length > 28 ? (w.venue||w.id).slice(0,26)+'…' : (w.venue||w.id);
+        const date = w.date ? new Date(w.date).toLocaleDateString('en-IN',{month:'short',year:'numeric'}) : '';
+        return `<option value="${w.id}">${w.id} — ${venue}${date ? ' ('+date+')' : ''}</option>`;
+      }).join('');
   } catch(e) {
     sel.innerHTML = '<option value="">Could not load workshops</option>';
   }
@@ -4902,7 +4907,7 @@ async function loadParticipants() {
     const adminP = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP;
-    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="participants" data-id="'+p.id+'" data-name="'+( p.full_name||p.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${p.id}</td><td><strong>${p.full_name||'—'}</strong>${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.85rem;color:var(--text-light);opacity:0.7;margin-top:2px;">Booked as: ' + p.razorpay_name + '</div>' : ''}${p.payment_mode === 'Razorpay UPI' && !p.email ? '<div style="font-size:0.72rem;color:rgba(200,147,90,0.6);margin-top:2px;">⚠ Incomplete data' + (p.raw_payload ? ' — raw data saved' : '') + '</div>' : ''}</td><td style="font-size:0.85rem;color:var(--text-light);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-tip="${p.email||''}">${p.email||'—'}</td><td style="font-size:0.88rem;">${p.bringing_own_handpan||'—'}</td><td style="font-size:0.88rem;">${p.photo_video_consent||'—'}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky"><div class="action-wrap">${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="12">${EMPTY_STATES.participants}</td></tr>`;
+    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="participants" data-id="'+p.id+'" data-name="'+( p.full_name||p.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${p.id}</td><td class="td-truncate td-name" data-tip="${(p.full_name||'').replace(/"/g,'&quot;')}"><strong>${p.full_name||'—'}</strong>${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.85rem;color:var(--text-light);opacity:0.7;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Booked as: ' + p.razorpay_name + '</div>' : ''}${p.payment_mode === 'Razorpay UPI' && !p.email ? '<div style="font-size:0.72rem;color:rgba(200,147,90,0.6);margin-top:2px;">⚠ Incomplete data' + (p.raw_payload ? ' — raw data saved' : '') + '</div>' : ''}</td><td style="font-size:0.85rem;color:var(--text-light);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-tip="${p.email||''}">${p.email||'—'}</td><td style="font-size:0.88rem;">${p.bringing_own_handpan||'—'}</td><td style="font-size:0.88rem;">${p.photo_video_consent||'—'}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky"><div class="action-wrap">${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="12">${EMPTY_STATES.participants}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; setSearchFilterVisibility('participants', _hasRows); } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
@@ -4953,7 +4958,7 @@ async function loadStudents() {
     window._cachedStudents = stus;
     populateFeeStudentDropdown(stus);
     populateClassesBatchDropdown(stus);
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}"><td>${s.id}</td><td><strong>${s.full_name}</strong></td><td>${s.batch_id||'—'}</td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.level||'—'}</td><td>${s.monthly_fee ? fmt(s.monthly_fee) : '—'}</td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}"><td>${s.id}</td><td class="td-truncate td-name" data-tip="${(s.full_name||'').replace(/"/g,'&quot;')}"><strong>${s.full_name}</strong></td><td class="td-truncate" style="max-width:90px;" data-tip="${s.batch_id||''}">${s.batch_id||'—'}</td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.level||'—'}</td><td>${s.monthly_fee ? fmt(s.monthly_fee) : '—'}</td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.students}
     </td></tr>`;
 
@@ -4979,7 +4984,7 @@ async function loadFeePayments() {
     const adminFP = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     populateFeeMonthDropdown(fps);
-    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${f.month||''}" data-mode="${f.payment_mode||''}" data-payment_date="${f.payment_date||''}" data-amount="${f.amount||0}"><td>${f.id}</td><td><strong>${f.student_name}</strong></td><td>${f.batch_id}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td><span class="badge badge-clay">${f.payment_mode||'UPI'}</span></td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td class="ws-action-sticky">${adminFP?(f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('fee_payments','${f.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${f.month||''}" data-mode="${f.payment_mode||''}" data-payment_date="${f.payment_date||''}" data-amount="${f.amount||0}"><td>${f.id}</td><td class="td-truncate td-name" data-tip="${(f.student_name||'').replace(/"/g,'&quot;')}"><strong>${f.student_name}</strong></td><td class="td-truncate" style="max-width:90px;" data-tip="${f.batch_id||''}">${f.batch_id||'—'}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td><span class="badge badge-clay">${f.payment_mode||'UPI'}</span></td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td class="ws-action-sticky">${adminFP?(f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('fee_payments','${f.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.fee_payments}
     </td></tr>`;
     setSearchFilterVisibility('fee-payments', fps.length > 0);
@@ -5073,7 +5078,7 @@ async function loadLeads() {
     setSearchFilterVisibility('leads', leads.length > 0);
     const adminL = isAdmin();
     const PENCIL = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-    document.getElementById('leadsTable').innerHTML = leads.map(l => {const hasPendingRef = !l.referral_received && (l.referral_amount||0) > 0; return `<tr class="${l.archived?'archived-row':''}" data-bought="${l.bought_handpan}" data-referral_amount="${l.referral_amount||0}" data-referral_received="${l.referral_received}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="leads" data-id="'+l.id+'" data-name="'+( l.full_name||l.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${l.id}</td><td><strong>${l.full_name}</strong></td><td class="td-truncate td-phone" data-tip="${l.phone||''}">${l.phone||'—'}</td><td class="td-truncate td-venue" data-tip="${l.workshop_attended||''}">${l.workshop_attended||'—'}</td><td>${l.bought_handpan?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">—</span>'}</td><td style="font-weight:500;color:var(--bark)">${(l.referral_amount||0)>0?'₹'+Number(l.referral_amount).toLocaleString('en-IN'):'—'}</td><td>${(l.referral_amount||0)>0?(l.referral_received?'<span class="badge badge-green">✓ Received</span>':'<span class="badge badge-clay">Pending</span>'):'—'}</td><td class="ws-action-sticky"><div class="action-wrap">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`${hasPendingRef?`<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${l.full_name.replace(/'/g,"\\'")}',${l.referral_amount||0})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mark received</button>`:''}
+    document.getElementById('leadsTable').innerHTML = leads.map(l => {const hasPendingRef = !l.referral_received && (l.referral_amount||0) > 0; return `<tr class="${l.archived?'archived-row':''}" data-bought="${l.bought_handpan}" data-referral_amount="${l.referral_amount||0}" data-referral_received="${l.referral_received}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="leads" data-id="'+l.id+'" data-name="'+( l.full_name||l.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${l.id}</td><td class="td-truncate td-name" data-tip="${(l.full_name||'').replace(/"/g,'&quot;')}"><strong>${l.full_name}</strong></td><td class="td-truncate td-phone" data-tip="${l.phone||''}">${l.phone||'—'}</td><td class="td-truncate td-venue" data-tip="${l.workshop_attended||''}">${l.workshop_attended||'—'}</td><td>${l.bought_handpan?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">—</span>'}</td><td style="font-weight:500;color:var(--bark)">${(l.referral_amount||0)>0?'₹'+Number(l.referral_amount).toLocaleString('en-IN'):'—'}</td><td>${(l.referral_amount||0)>0?(l.referral_received?'<span class="badge badge-green">✓ Received</span>':'<span class="badge badge-clay">Pending</span>'):'—'}</td><td class="ws-action-sticky"><div class="action-wrap">${adminL?(l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`${hasPendingRef?`<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${l.full_name.replace(/'/g,"\\'")}',${l.referral_amount||0})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mark received</button>`:''}
                   <button class="icon-action-btn" data-tip="Edit" onclick="openEdit('leads','${l.id}')">${PENCIL}</button>
                   <button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('leads','${l.id}','${l.full_name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
                 `):'—'}</div></td></tr>`; }).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
@@ -5341,15 +5346,32 @@ function loadLeadParticipantPicker() {
   filterLeadParticipants();
 }
 
+let _leadAllParticipants = null;
+
+async function fetchAllParticipantsForLeadPicker() {
+  if (_leadAllParticipants) return _leadAllParticipants;
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=id,full_name,email,phone,workshop_id&archived=neq.true&order=full_name.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    _leadAllParticipants = await res.json();
+  } catch(e) { _leadAllParticipants = []; }
+  return _leadAllParticipants;
+}
+
 function filterLeadParticipants() {
   const list = document.getElementById('lead-par-dd-list');
   const searchEl = document.getElementById('lead-pick-search');
   const wsFilterEl = document.getElementById('lead-pick-workshop-filter');
   if (!list) return;
+  if (!_leadAllParticipants) {
+    list.innerHTML = '<div style="padding:0.75rem 1rem;font-size:0.9rem;color:var(--text-light);text-align:center;">Loading participants…</div>';
+    fetchAllParticipantsForLeadPicker().then(() => filterLeadParticipants());
+    return;
+  }
   const q = (searchEl?.value || '').toLowerCase().trim();
   const wsFilter = wsFilterEl?.value || '';
-  const parts = Object.values(_recordCache.participants || {})
-    .filter(p => !p.archived)
+  const parts = (_leadAllParticipants || [])
     .filter(p => !wsFilter || p.workshop_id === wsFilter)
     .filter(p => !q || (p.full_name||'').toLowerCase().includes(q) || (p.workshop_id||'').toLowerCase().includes(q))
     .sort((a,b) => (a.full_name||'').localeCompare(b.full_name||''));
@@ -5368,7 +5390,7 @@ function filterLeadParticipants() {
 
 function onLeadParticipantPick(id) {
   if (!id) return;
-  const p = _recordCache.participants?.[id];
+  const p = (_leadAllParticipants || []).find(x => x.id === id);
   if (!p) return;
   // Update dropdown button label
   const label = document.getElementById('lead-par-dd-label');
@@ -8370,9 +8392,9 @@ async function loadUnassignedPayments() {
           <td style="font-weight:600;color:var(--clay)">${p.id}</td>
           <td>${fmtDate(p.date)}</td>
           <td class="td-truncate td-name" data-tip="${p.payer_name||''}">${p.payer_name||'—'}</td>
-          <td>${p.payer_phone||'—'}</td>
+          <td class="td-truncate td-phone" data-tip="${p.payer_phone||''}">${p.payer_phone||'—'}</td>
           <td style="font-weight:600;color:var(--moss)">+${fmt(p.amount)}</td>
-          <td style="font-size:0.8rem;color:var(--text-light)">${p.razorpay_payment_id||'—'}</td>
+          <td class="td-truncate" style="max-width:120px;font-size:0.8rem;color:var(--text-light)" data-tip="${p.razorpay_payment_id||''}">${p.razorpay_payment_id||'—'}</td>
           <td>${adminU ? `<span style="display:flex;gap:0.5rem;"><button class="btn-dash btn-dash-primary btn-dash-sm" data-assign-id="${p.id}">Assign</button><button class="icon-action-btn danger" data-tip="Remove" data-remove-id="${p.id}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>` : '—'}</td>
         </tr>`).join('')}
       </tbody></table>
@@ -8448,12 +8470,6 @@ function updateUnassignedBadge(count) {
   });
 }
 
-function closeAssignModal() {
-  const modal = document.getElementById('modal-assignPayment');
-  if (modal) modal.classList.remove('open');
-  if (window.innerWidth <= 900) closeMobilePicker();
-}
-
 async function openAssignPayment(id, amount, name, phone) {
   _currentAssignId = id;
   _currentAssignAmount = amount;
@@ -8475,14 +8491,22 @@ async function openAssignPayment(id, amount, name, phone) {
   const stuWrap = document.getElementById('assign-page-student-wrap');
   if (stuWrap) stuWrap.style.display = 'none';
 
-  // Always fetch fresh workshops
+  // Always fetch fresh workshops/students, removing any stale custom-select wrap first
+  for (const selId of ['assign-page-workshop-select', 'assign-page-student-select']) {
+    const sel = document.getElementById(selId);
+    if (sel) {
+      const existingWrap = sel.nextElementSibling;
+      if (existingWrap && existingWrap.classList.contains('form-select-wrap')) existingWrap.remove();
+      delete sel.dataset.customized;
+    }
+  }
   await populateWorkshopDropdown('assign-page-workshop-select');
   await populateStudentDropdown('assign-page-student-select');
 
   // Open as full-page view (same as all other forms)
   document.getElementById('form-assignPayment').classList.add('open');
   lockScroll();
-  setTimeout(() => { initFormSelects(); }, 80);
+  initFormSelects();
 }
 
 function onAssignPageTypeChange() {
@@ -8503,9 +8527,7 @@ async function saveAssignPaymentPage() {
   await _doAssign(type, notes, workshopId, studentId);
 }
 
-// Keep legacy stubs in case anything still references them
-function onAssignTypeChange() { onAssignPageTypeChange(); }
-async function saveAssignPayment() { await saveAssignPaymentPage(); }
+// (legacy onAssignTypeChange/saveAssignPayment stubs removed — use onAssignPageTypeChange/saveAssignPaymentPage)
 
 async function _doAssign(type, notes, workshopId, studentId) {
   try {
@@ -8589,7 +8611,9 @@ function openReassignPayment(id, record) {
   if (!modal) return;
   document.getElementById('reassignInfo').innerHTML =
     `<strong>${record.payer_name||'—'}</strong><br>Amount: <strong style="color:var(--moss)">+${fmt(record.amount)}</strong> · ${fmtDate(record.date)}`;
-  document.getElementById('reassign-category').value = record.category || '';
+  const catEl = document.getElementById('reassign-category');
+  catEl.value = record.category || '';
+  catEl.dispatchEvent(new Event('change', { bubbles: true }));
   document.getElementById('reassign-reference').value = record.reference_id || '';
   modal.classList.add('open');
 }
@@ -8824,53 +8848,6 @@ async function doVPToggle(p, wsId, newState, cbInput, labelEl, toggleEl) {
   }
 }
 </script>
-
-<!-- ── ASSIGN PAYMENT MODAL ── -->
-<div class="modal-overlay" id="modal-assignPayment" onclick="if(event.target===this)closeAssignModal()">
-  <div class="modal" style="max-width:440px;">
-    <div class="modal-header">
-      <div class="modal-title">Assign Payment</div>
-      <button class="modal-close" onclick="closeAssignModal()" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(200,147,90,0.1);border:none;cursor:pointer;color:var(--clay-light);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div style="margin-bottom:1.25rem;">
-        <div id="assignPaymentInfo" style="background:rgba(200,147,90,0.1);border:1px solid rgba(200,147,90,0.25);border-radius:10px;padding:1rem;font-size:0.95rem;color:var(--clay-light);"></div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Assign to</label>
-        <select class="form-input" id="assign-type" onchange="onAssignTypeChange()">
-          <option value="">Select category...</option>
-          <option value="workshop">Workshop participant</option>
-          <option value="classes">Class fee payment</option>
-          <option value="general">General income</option>
-          <option value="ignore">Skip for now</option>
-        </select>
-      </div>
-      <div class="form-group" id="assign-workshop-wrap" style="display:none;">
-        <label class="form-label">Workshop</label>
-        <select class="form-input" id="assign-workshop-select">
-          <option value="">Loading workshops...</option>
-        </select>
-      </div>
-      <div class="form-group" id="assign-student-wrap" style="display:none;">
-        <label class="form-label">Student</label>
-        <select class="form-input" id="assign-student-select">
-          <option value="">Loading students...</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Notes (optional)</label>
-        <input type="text" class="form-input" id="assign-notes" placeholder="e.g. Gig payment, workshop fee..."/>
-      </div>
-    </div>
-    <div class="modal-footer" style="justify-content:flex-end;gap:0.75rem;">
-      <button class="btn-dash" onclick="closeAssignModal()">Cancel</button>
-      <button class="btn-dash btn-dash-primary" onclick="saveAssignPayment()">Assign</button>
-    </div>
-  </div>
-</div>
 
 <!-- ── REASSIGN PAYMENT MODAL ── -->
 <div class="modal-overlay" id="modal-reassignPayment" onclick="if(event.target===this)document.getElementById('modal-reassignPayment').classList.remove('open')">
