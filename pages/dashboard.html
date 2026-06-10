@@ -3445,7 +3445,7 @@ table#paymentsTable { min-width: 700px; }
           <input type="number" class="form-input" id="lead-maker-amt" placeholder="0" min="0" oninput="onLeadMakerAmtChange()"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Referral Money for You (₹) <span style="color:var(--clay);font-size:0.8em;font-weight:400;">10% of maker amount</span></label>
+          <label class="form-label">Referral Money for You (₹)</label>
           <input type="number" class="form-input" id="lead-referral-amt" placeholder="0" min="0"/>
         </div>
       </div>
@@ -4982,7 +4982,8 @@ async function loadLeads() {
   setSearchFilterVisibility('leads', _hd_leadsTable);
   const _e_leadsTable = document.getElementById('leadsEmptyState');
   if (_e_leadsTable) { _e_leadsTable.innerHTML = EMPTY_STATES.leads; _e_leadsTable.style.display = _hd_leadsTable ? 'none' : ''; }
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" id="lcard-${l.id}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!l.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="leads" data-id="${l.id}" data-name="${(l.full_name||l.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('lcard-'+l.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span>${l.full_name}</span> ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${l.full_name}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" id="lcard-${l.id}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!l.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="leads" data-id="${l.id}" data-name="${(l.full_name||l.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('lcard-'+l.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span>${l.full_name}</span> ${l.referred_friend?'<span class="badge badge-green" style="float:right">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">${(()=>{const hasPendingRefC=!l.referral_received&&(l.referral_amount||0)>0;const markBtn=hasPendingRefC?`<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))
+}',${l.referral_amount||0})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mark received</button>`:'<span></span>';return l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button><span></span>`:markBtn+`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`;})()}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
 
@@ -6407,7 +6408,19 @@ function openEdit(entity, id) {
   const title = { workshops:'Edit Workshop', participants:'Edit Participant', students:'Edit Student', fee_payments:'Edit Fee Payment', payments:'Edit Payment', leads:'Edit Lead' }[entity] || 'Edit';
   document.getElementById('editFormTitle').textContent = title;
   document.getElementById('editFormBody').innerHTML = buildEditForm(entity, record);
-  setTimeout(() => { initFormSelects(); initDatePickers(); }, 50);
+  setTimeout(() => {
+    initFormSelects(); initDatePickers();
+    if (entity === 'leads') {
+      const wsSel = document.getElementById('ef-lead-workshop');
+      if (wsSel) {
+        const ws = Object.values(_recordCache.workshops || {})
+          .filter(w => !w.archived)
+          .sort((a,b) => (b.date||'').localeCompare(a.date||''));
+        wsSel.innerHTML = '<option value="">None</option>' +
+          ws.map(w => `<option value="${w.id}" ${record.workshop_attended === w.id ? 'selected' : ''}>${w.id} — ${w.venue||w.id} (${w.date||''})</option>`).join('');
+      }
+    }
+  }, 50);
   openFormPage('editRecord');
 }
 
@@ -6472,7 +6485,7 @@ function buildEditForm(entity, r) {
 
   if (entity === 'leads') return `
     ${row(fi('Full Name','lead-name','text',r.full_name), `<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('ef-lead-phone', r.phone, 'ef-lead-phone-cc')}</div>`)}
-    ${row(fi('Email','lead-email','email',r.email||''), readOnly('Workshop', r.workshop_attended||'—'))}
+    ${row(fi('Email','lead-email','email',r.email||''), `<div class="form-group"><label class="form-label">Workshop Attended</label><select class="form-input" id="ef-lead-workshop"><option value="">None</option></select></div>`)}
     ${row(fi('Paid to Maker (₹)','lead-maker-amt','number',r.handpan_maker_amount||0), fi('Referral Amount (₹)','lead-referral-amt','number',r.referral_amount||0))}
     <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1rem;background:rgba(200,147,90,0.06);border:1px solid var(--clay-pale);border-radius:10px;margin-bottom:1.25rem;">
       <span style="font-size:0.95rem;color:var(--bark);font-weight:500;flex:1;">Bought Handpan?</span>
@@ -6527,6 +6540,7 @@ async function saveEdit() {
         full_name: g('lead-name'),
         phone: getPhoneValue('ef-lead-phone','ef-lead-phone-cc')||null,
         email: g('lead-email')||null,
+        workshop_attended: g('lead-workshop')||null,
         handpan_maker_amount: gn('lead-maker-amt')||0,
         referral_amount: gn('lead-referral-amt')||0,
         bought_handpan: boughtEl ? boughtEl.checked : false,
