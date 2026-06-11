@@ -151,6 +151,7 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
   padding: 0.65rem 1rem; font-size: 1rem; color: #e8d5c0;
   cursor: pointer; white-space: nowrap; transition: background 0.1s;
   min-height: 48px; font-family: var(--font-body); touch-action: manipulation;
+  overflow: hidden; text-overflow: ellipsis;
 }
 .filter-dd-option:hover { background: rgba(193,127,90,0.12); }
 .filter-dd-option.selected { color: #c8935a; }
@@ -323,7 +324,7 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
   border-radius: 20px 20px 0 0;
   border-top: 1px solid rgba(193,127,90,0.2);
   display: flex; flex-direction: column;
-  max-height: 80vh;
+  max-height: 80vh; width: 100%; box-sizing: border-box; overflow-x: hidden;
   transform: translateY(100%);
   transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
 }
@@ -345,7 +346,7 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
   justify-content: center; flex-shrink: 0;
 }
 .mobile-picker-sheet-body {
-  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
   padding: 0.5rem 0; overscroll-behavior: contain;
 }
 /* Date picker inside sheet */
@@ -363,7 +364,10 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
   cursor: pointer; touch-action: manipulation;
   border-bottom: 1px solid rgba(193,127,90,0.08);
   font-family: var(--font-body); font-size: 1rem; color: #e8d5c0;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  width: 100%; max-width: 100%; box-sizing: border-box; overflow: hidden;
+}
+.mobile-picker-opt-text {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1;
 }
 .mobile-picker-opt:active { background: rgba(193,127,90,0.08); }
 .mobile-picker-opt.selected { color: #c8935a; }
@@ -863,7 +867,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .cc-picker {
   position: fixed; z-index: 99990;
   background: #2a1e12; border: 1.5px solid rgba(200,147,90,0.3);
-  border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
   width: 280px; overflow: hidden;
   display: none; flex-direction: column;
 }
@@ -881,12 +885,12 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .cc-item {
   display: flex; align-items: center; gap: 10px;
   padding: 9px 14px; cursor: pointer; font-size: 0.95rem;
-  color: #e8d5c0; transition: background 0.1s;
+  color: #e8d5c0; transition: background 0.1s; min-height: 48px;
 }
 .cc-item:hover, .cc-item.selected { background: rgba(200,147,90,0.12); }
-.cc-item .cc-flag { font-size: 1.2rem; line-height: 1; }
-.cc-item .cc-name { flex: 1; }
-.cc-item .cc-dial { color: rgba(200,147,90,0.7); font-size: 0.88rem; }
+.cc-item .cc-flag { font-size: 1.2rem; line-height: 1; flex-shrink: 0; }
+.cc-item .cc-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cc-item .cc-dial { color: rgba(200,147,90,0.7); font-size: 0.88rem; flex-shrink: 0; }
 body.dark-mode .phone-prefix-input { background-color: #2a2018; border-color: rgba(200,147,90,0.25); color: #e8d5c0; }
 .form-input.field-error { border-color: #e8856a !important; background: rgba(232,133,106,0.06) !important; }
 .form-input.field-error:focus { border-color: #e8856a !important; }
@@ -963,6 +967,7 @@ body.dark-mode .date-picker-btn { background: #2a2018; border-color: rgba(200,14
 }
 .form-select-btn:hover { border-color: var(--clay); }
 .form-select-btn.open { border-color: var(--clay); }
+.form-select-btn:focus, .form-select-btn:focus-visible { outline: none; border-color: var(--clay); box-shadow: 0 0 0 3px rgba(200,147,90,0.15); }
 .form-select-btn svg { flex-shrink: 0; color: var(--clay); opacity: 0.6; transition: transform 0.2s; }
 .form-select-btn.open svg { transform: rotate(180deg); opacity: 1; }
 .form-select-menu {
@@ -977,6 +982,7 @@ body.dark-mode .date-picker-btn { background: #2a2018; border-color: rgba(200,14
   cursor: pointer; display: flex; align-items: center; gap: 8px;
   min-height: 52px; font-family: var(--font-body);
   transition: background 0.1s; border-bottom: 1px solid rgba(193,127,82,0.08);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .form-select-opt:last-child { border-bottom: none; }
 .form-select-opt:hover { background: rgba(193,127,82,0.06); }
@@ -3356,8 +3362,8 @@ table#paymentsTable { min-width: 700px; }
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Date <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="date" class="form-input" id="pay-date"/></div>
-      <div class="form-group"><label class="form-label">Amount (₹) <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="number" class="form-input" id="pay-amount" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Date&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="date" class="form-input" id="pay-date"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹)&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="number" class="form-input" id="pay-amount" placeholder="0"/></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Type</label>
@@ -3458,11 +3464,11 @@ table#paymentsTable { min-width: 700px; }
     <!-- Shared fields -->
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Full Name <span style="color:#e8856a;font-size:0.85em;">*</span></label>
+        <label class="form-label">Full Name&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
         <input type="text" class="form-input" id="lead-name" placeholder="Name"/>
       </div>
       <div class="form-group">
-        <label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label>
+        <label class="form-label">Phone / Landline&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
         <div class="phone-wrap" id="lead-phone-wrap">
           <button type="button" class="phone-flag-btn" id="lead-phone-cc-btn" onclick="openCCPicker('lead-phone-cc-btn','lead-phone-cc','lead-phone-prefix')" title="Select country">🇮🇳</button>
           <input type="hidden" id="lead-phone-cc" value="+91"/>
@@ -3530,7 +3536,7 @@ table#paymentsTable { min-width: 700px; }
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop ID <span style="color:#e8856a;font-size:0.85em;">*</span></label>
+      <div class="form-group"><label class="form-label">Workshop ID&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
         <select class="form-input" id="ws-id">
           <option value="">Select ID...</option>
           <option>WS-001</option><option>WS-002</option><option>WS-003</option>
@@ -3543,9 +3549,9 @@ table#paymentsTable { min-width: 700px; }
           <option>WS-022</option><option>WS-023</option><option>WS-024</option>
           <option>WS-025</option>
         </select></div>
-      <div class="form-group"><label class="form-label">Date <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="date" class="form-input" id="ws-date"/></div>
+      <div class="form-group"><label class="form-label">Date&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="date" class="form-input" id="ws-date"/></div>
     </div>
-    <div class="form-group"><label class="form-label">Venue <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
+    <div class="form-group"><label class="form-label">Venue&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
     <div class="form-group"><label class="form-label">Razorpay Payment Page ID <span style="font-size:0.82rem;color:var(--text-light);font-weight:400;text-transform:none;letter-spacing:0;">(from Razorpay Dashboard — for auto-assigning workshop payments)</span></label><input type="text" class="form-input" id="ws-rzp-page-id" placeholder="e.g. pl_SvhpECu2FHPr3U"/></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">BMS Participants</label><input type="number" class="form-input" id="ws-bms" placeholder="0"/></div>
@@ -3576,11 +3582,11 @@ table#paymentsTable { min-width: 700px; }
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Student ID <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
+      <div class="form-group"><label class="form-label">Student ID&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap" id="stu-phone-wrap"><button type="button" class="phone-flag-btn" id="stu-phone-cc-btn" onclick="openCCPicker('stu-phone-cc-btn','stu-phone-cc','stu-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="stu-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="stu-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="stu-phone" placeholder="Phone number"/></div></div>
+      <div class="form-group"><label class="form-label">Phone / Landline&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><div class="phone-wrap" id="stu-phone-wrap"><button type="button" class="phone-flag-btn" id="stu-phone-cc-btn" onclick="openCCPicker('stu-phone-cc-btn','stu-phone-cc','stu-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="stu-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="stu-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="stu-phone" placeholder="Phone number"/></div></div>
       <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="stu-email" placeholder="email@example.com"/></div>
     </div>
     <div class="form-row">
@@ -3620,7 +3626,7 @@ table#paymentsTable { min-width: 700px; }
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Student <span style="color:#e8856a;font-size:0.85em;">*</span></label>
+      <div class="form-group"><label class="form-label">Student&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
         <select class="form-input" id="fee-student"><option value="">Loading students...</option></select></div>
       <div class="form-group"><label class="form-label">Month</label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
@@ -3639,7 +3645,7 @@ table#paymentsTable { min-width: 700px; }
         </div></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Amount (₹) <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="number" class="form-input" id="fee-amount" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹)&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="number" class="form-input" id="fee-amount" placeholder="0"/></div>
       <div class="form-group"><label class="form-label">Payment Mode</label>
         <select class="form-input" id="fee-mode">
           <option value="Razorpay UPI">Razorpay UPI</option><option value="UPI">UPI</option>
@@ -3667,17 +3673,17 @@ table#paymentsTable { min-width: 700px; }
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Full Name <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
-      <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap" id="par-phone-wrap"><button type="button" class="phone-flag-btn" id="par-phone-cc-btn" onclick="openCCPicker('par-phone-cc-btn','par-phone-cc','par-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="par-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="par-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="par-phone" placeholder="Phone number"/></div></div>
+      <div class="form-group"><label class="form-label">Full Name&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Phone / Landline&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><div class="phone-wrap" id="par-phone-wrap"><button type="button" class="phone-flag-btn" id="par-phone-cc-btn" onclick="openCCPicker('par-phone-cc-btn','par-phone-cc','par-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="par-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="par-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="par-phone" placeholder="Phone number"/></div></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="par-email" placeholder="email@example.com"/></div>
       <div class="form-group"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop <span style="color:#e8856a;font-size:0.85em;">*</span></label>
+      <div class="form-group"><label class="form-label">Workshop&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
         <select class="form-input" id="par-workshop"><option value="">Loading workshops...</option></select></div>
-      <div class="form-group"><label class="form-label">Amount Paid (₹) <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹)&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Payment Mode</label>
@@ -7790,6 +7796,7 @@ function makeFormSelect(nativeSelect) {
       const div = document.createElement('div');
       div.className = 'form-select-opt' + (nativeSelect.selectedIndex === i ? ' selected' : '');
       div.textContent = opt.text;
+      div.title = opt.text;
       div.onclick = (e) => {
         e.stopPropagation();
         nativeSelect.selectedIndex = i;
@@ -7814,7 +7821,7 @@ function makeFormSelect(nativeSelect) {
         Array.from(nativeSelect.options).forEach((opt, i) => {
           const div = document.createElement('div');
           div.className = 'mobile-picker-opt' + (nativeSelect.selectedIndex === i ? ' selected' : '');
-          div.innerHTML = `<div class="mobile-picker-opt-radio"><div class="mobile-picker-opt-radio-dot"></div></div>${opt.text}`;
+          div.innerHTML = `<div class="mobile-picker-opt-radio"><div class="mobile-picker-opt-radio-dot"></div></div><span class="mobile-picker-opt-text" title="${opt.text.replace(/"/g,'&quot;')}">${opt.text}</span>`;
           div.onclick = () => {
             nativeSelect.selectedIndex = i;
             nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
@@ -7874,6 +7881,7 @@ function refreshFormSelect(nativeSelect) {
       const div = document.createElement('div');
       div.className = 'form-select-opt' + (nativeSelect.selectedIndex === i ? ' selected' : '');
       div.textContent = opt.text;
+      div.title = opt.text;
       div.onclick = (e) => {
         e.stopPropagation();
         nativeSelect.selectedIndex = i;
