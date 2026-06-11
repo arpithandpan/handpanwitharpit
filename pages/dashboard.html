@@ -1198,7 +1198,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 .toast {
   position: fixed; top: 1.25rem; left: 50%;
   transform: translateX(-50%) translateY(-80px);
-  width: auto; max-width: calc(100vw - 2rem);
+  width: max-content; min-width: 220px; max-width: min(480px, calc(100vw - 2rem));
   background: rgba(46,36,24,0.92); color: #c8935a;
   border: none;
   padding: 0.65rem 1.25rem; border-radius: 10px;
@@ -1206,7 +1206,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   opacity: 0;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
   pointer-events: none; will-change: transform, opacity;
-  text-align: center; white-space: nowrap;
+  text-align: center; white-space: normal; word-wrap: break-word; line-height: 1.4;
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 .toast.success { background: rgba(212,237,187,0.88); color: #27500a; }
@@ -3576,7 +3576,7 @@ table#paymentsTable { min-width: 700px; }
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Student ID</label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
+      <div class="form-group"><label class="form-label">Student ID <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" placeholder="Name"/></div>
     </div>
     <div class="form-row">
@@ -3620,7 +3620,7 @@ table#paymentsTable { min-width: 700px; }
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Student</label>
+      <div class="form-group"><label class="form-label">Student <span style="color:#e8856a;font-size:0.85em;">*</span></label>
         <select class="form-input" id="fee-student"><option value="">Loading students...</option></select></div>
       <div class="form-group"><label class="form-label">Month</label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
@@ -3639,7 +3639,7 @@ table#paymentsTable { min-width: 700px; }
         </div></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="fee-amount" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Amount (₹) <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="number" class="form-input" id="fee-amount" placeholder="0"/></div>
       <div class="form-group"><label class="form-label">Payment Mode</label>
         <select class="form-input" id="fee-mode">
           <option value="Razorpay UPI">Razorpay UPI</option><option value="UPI">UPI</option>
@@ -3667,7 +3667,7 @@ table#paymentsTable { min-width: 700px; }
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Full Name <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="par-name" placeholder="Name"/></div>
       <div class="form-group"><label class="form-label">Phone / Landline <span style="color:#e8856a;font-size:0.85em;">*</span></label><div class="phone-wrap" id="par-phone-wrap"><button type="button" class="phone-flag-btn" id="par-phone-cc-btn" onclick="openCCPicker('par-phone-cc-btn','par-phone-cc','par-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="par-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="par-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="par-phone" placeholder="Phone number"/></div></div>
     </div>
     <div class="form-row">
@@ -3675,9 +3675,9 @@ table#paymentsTable { min-width: 700px; }
       <div class="form-group"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Workshop</label>
+      <div class="form-group"><label class="form-label">Workshop <span style="color:#e8856a;font-size:0.85em;">*</span></label>
         <select class="form-input" id="par-workshop"><option value="">Loading workshops...</option></select></div>
-      <div class="form-group"><label class="form-label">Amount Paid (₹)</label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Amount Paid (₹) <span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="number" class="form-input" id="par-amount" placeholder="0"/></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Payment Mode</label>
@@ -4451,7 +4451,7 @@ async function populateWorkshopDropdown(selectId) {
     const ws = await res.json();
     sel.innerHTML = '<option value="">Select workshop...</option>' +
       ws.map(w => {
-        const venue = (w.venue||w.id).length > 28 ? (w.venue||w.id).slice(0,26)+'…' : (w.venue||w.id);
+        const venue = w.venue || w.id;
         const date = w.date ? new Date(w.date).toLocaleDateString('en-IN',{month:'short',year:'numeric'}) : '';
         return `<option value="${w.id}">${w.id} — ${venue}${date ? ' ('+date+')' : ''}</option>`;
       }).join('');
@@ -5183,7 +5183,7 @@ async function savePayment() {
   const dateVal = document.getElementById('pay-date').value;
   const amountVal = parseFloat(document.getElementById('pay-amount').value);
   if (!dateVal) { markFieldError('pay-date'); showToast('Date is required', 'error'); return; }
-  if (!amountVal || amountVal <= 0) { markFieldError('pay-amount'); showToast('Amount is required and must be greater than 0', 'error'); return; }
+  if (!amountVal || amountVal <= 0) { markFieldError('pay-amount'); showToast('Amount must be greater than 0', 'error'); return; }
   try {
     const typeVal = document.getElementById('pay-type').value;
     const isGeneral = typeVal === 'general_expense';
@@ -5300,15 +5300,15 @@ async function populateLeadWorkshopFilter() {
   }
   const renderOpt = (val, label, selected) => `
     <div onclick="event.stopPropagation();selectLeadWsFilter('${val}','${label.replace(/'/g,String.fromCharCode(92,39))}')"
-      style="padding:0.6rem 0.75rem;border-radius:6px;cursor:pointer;font-size:0.9rem;color:${selected?'#c8935a':'var(--bark)'};font-weight:${selected?'600':'400'};display:flex;align-items:center;gap:0.4rem;transition:background 0.1s;"
-      onmouseover="this.style.background='rgba(200,147,90,0.1)'" onmouseout="this.style.background=''">
-      ${selected ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : '<span style="width:13px;display:inline-block;"></span>'}
-      ${label}
+      style="padding:0.6rem 0.75rem;min-height:48px;border-radius:6px;cursor:pointer;font-size:0.9rem;color:${selected?'#c8935a':'var(--bark)'};font-weight:${selected?'600':'400'};display:flex;align-items:center;gap:0.4rem;transition:background 0.1s;overflow:hidden;"
+      onmouseover="this.style.background='rgba(200,147,90,0.1)'" onmouseout="this.style.background=''" title="${label.replace(/"/g,'&quot;')}">
+      ${selected ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>' : '<span style="width:13px;display:inline-block;flex-shrink:0;"></span>'}
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">${label}</span>
     </div>`;
   const currentVal = document.getElementById('lead-pick-workshop-filter')?.value || '';
   let html = renderOpt('', 'All workshops', currentVal === '');
   _leadWsFilterOptions.forEach(w => {
-    const venue = (w.venue||w.id).length > 22 ? (w.venue||w.id).slice(0,20)+'…' : (w.venue||w.id);
+    const venue = w.venue || w.id;
     html += renderOpt(w.id, `${w.id} — ${venue}`, currentVal === w.id);
   });
   menu.innerHTML = html;
@@ -5507,7 +5507,7 @@ async function saveFeePayment() {
   const feeStudentVal = (document.getElementById('fee-student').value || '').trim();
   const feeAmountVal = parseFloat(document.getElementById('fee-amount').value);
   if (!feeStudentVal || feeStudentVal === 'Loading students...') { markFieldError('fee-student'); showToast('Please select a student', 'error'); return; }
-  if (!feeAmountVal || feeAmountVal <= 0) { markFieldError('fee-amount'); showToast('Amount is required and must be greater than 0', 'error'); return; }
+  if (!feeAmountVal || feeAmountVal <= 0) { markFieldError('fee-amount'); showToast('Amount must be greater than 0', 'error'); return; }
   try {
     const existing = await sbGetAll('fee_payments');
     const count = (existing.data || []).length;
@@ -5544,7 +5544,7 @@ async function saveParticipant() {
   if (!parWorkshop || parWorkshop === 'Loading workshops...') { markFieldError('par-workshop'); parErrors.push('Workshop'); }
   if (!parPhone) { markFieldError('par-phone'); parErrors.push('Phone'); }
   if (!parAmount || parAmount <= 0) { markFieldError('par-amount'); parErrors.push('Amount paid'); }
-  if (parErrors.length) { showToast(parErrors.join(', ') + ' required', 'error'); return; }
+  if (parErrors.length) { showToast('Please fill in all required fields', 'error'); return; }
   try {
     const existing = await sbGetAll('participants');
     const count = (existing.data || []).length;
@@ -6673,7 +6673,7 @@ function openEdit(entity, id) {
         .sort((a,b) => (b.date||'').localeCompare(a.date||''));
       wsSel.innerHTML = '<option value="">None</option>' +
         ws.map(w => {
-          const venue = (w.venue||w.id).length > 28 ? (w.venue||w.id).slice(0,26)+'…' : (w.venue||w.id);
+          const venue = w.venue || w.id;
           const date = w.date ? new Date(w.date).toLocaleDateString('en-IN',{month:'short',year:'numeric'}) : '';
           const label = `${w.id} — ${venue}${date ? ' ('+date+')' : ''}`;
           return `<option value="${w.id}" ${record.workshop_attended === w.id ? 'selected' : ''}>${label}</option>`;
