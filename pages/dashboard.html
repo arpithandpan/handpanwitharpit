@@ -367,7 +367,9 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
   width: 100%; max-width: 100%; box-sizing: border-box; overflow: hidden;
 }
 .mobile-picker-opt-text {
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1;
+  min-width: 0; flex: 1;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; word-break: break-word; line-height: 1.35;
 }
 .mobile-picker-opt:active { background: rgba(193,127,90,0.08); }
 .mobile-picker-opt.selected { color: #c8935a; }
@@ -405,9 +407,9 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
 .custom-select-btn.open svg { transform: rotate(180deg); opacity: 1; }
 .custom-select-menu {
   display: none; position: absolute; top: calc(100% + 6px); left: 0;
-  min-width: 100%; background: #2a1e12; border: 1px solid rgba(193,127,90,0.3);
-  border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-  z-index: 9000; padding: 4px 0; max-height: 260px; overflow-y: auto;
+  min-width: 100%; max-width: 320px; background: #2a1e12; border: 1px solid rgba(193,127,90,0.3);
+  border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  z-index: 9000; padding: 4px 0; max-height: 260px; overflow-y: auto; overflow-x: hidden;
 }
 .custom-select-menu.open { display: block; }
 .custom-select-option {
@@ -415,6 +417,7 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
   padding: 0.75rem 1rem; font-size: 1.05rem; color: #e8d5c0;
   cursor: pointer; white-space: nowrap; transition: background 0.1s;
   min-height: 48px; font-family: var(--font-body);
+  overflow: hidden; text-overflow: ellipsis;
 }
 .custom-select-option:hover { background: rgba(193,127,90,0.12); }
 .custom-select-option.selected { color: #c8935a; }
@@ -971,7 +974,7 @@ body.dark-mode .date-picker-btn { background: #2a2018; border-color: rgba(200,14
 .form-select-btn svg { flex-shrink: 0; color: var(--clay); opacity: 0.6; transition: transform 0.2s; }
 .form-select-btn.open svg { transform: rotate(180deg); opacity: 1; }
 .form-select-menu {
-  display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  display: none; position: absolute; top: calc(100% + 4px); left: 0;
   background: white; border: 1.5px solid var(--clay-pale); border-radius: 8px;
   box-shadow: 0 8px 24px rgba(61,43,31,0.15); z-index: 9999;
   max-height: 240px; overflow-y: auto; overflow-x: hidden;
@@ -5310,7 +5313,7 @@ async function populateLeadWorkshopFilter() {
   const renderOpt = (val, label, selected) => `
     <div onclick="event.stopPropagation();selectLeadWsFilter('${val}','${label.replace(/'/g,String.fromCharCode(92,39))}')"
       style="width:100%;box-sizing:border-box;padding:0.6rem 0.75rem;min-height:48px;border-radius:6px;cursor:pointer;font-size:0.9rem;color:${selected?'#c8935a':'var(--bark)'};font-weight:${selected?'600':'400'};display:flex;align-items:center;gap:0.4rem;transition:background 0.1s;overflow:hidden;"
-      onmouseover="this.style.background='rgba(200,147,90,0.1)'" onmouseout="this.style.background=''" title="${label.replace(/"/g,'&quot;')}">
+      onmouseover="this.style.background='rgba(200,147,90,0.1)'" onmouseout="this.style.background=''" data-tip="${label.replace(/"/g,'&quot;')}">
       ${selected ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>' : '<span style="width:13px;display:inline-block;flex-shrink:0;"></span>'}
       <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">${label}</span>
     </div>`;
@@ -5399,7 +5402,7 @@ function filterLeadParticipants() {
     <div onclick="onLeadParticipantPick('${p.id}')"
       style="width:100%;box-sizing:border-box;padding:0.65rem 0.85rem;min-height:48px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;transition:background 0.1s;overflow:hidden;"
       onmouseover="this.style.background='rgba(200,147,90,0.1)'" onmouseout="this.style.background=''">
-      <span style="font-size:0.95rem;color:var(--bark);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;" title="${(p.full_name||'').replace(/"/g,'&quot;')}">${p.full_name}</span>
+      <span style="font-size:0.95rem;color:var(--bark);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;" data-tip="${(p.full_name||'').replace(/"/g,'&quot;')}">${p.full_name}</span>
       <span style="font-size:0.78rem;color:var(--text-light);flex-shrink:0;">${p.workshop_id||'—'}</span>
     </div>`).join('');
 }
@@ -7802,12 +7805,12 @@ function makeFormSelect(nativeSelect) {
       span.className = 'form-select-opt-text';
       span.textContent = opt.text;
       div.appendChild(span);
-      div.title = opt.text;
+      div.setAttribute('data-tip', opt.text);
       div.onclick = (e) => {
         e.stopPropagation();
         nativeSelect.selectedIndex = i;
         nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
-        btn.querySelector('.fs-label').textContent = opt.text; btn.title = opt.text;
+        btn.querySelector('.fs-label').textContent = opt.text; btn.setAttribute('data-tip', opt.text);
         menu.querySelectorAll('.form-select-opt').forEach((d, j) => d.classList.toggle('selected', j === i));
         closeMenu();
       };
@@ -7816,7 +7819,7 @@ function makeFormSelect(nativeSelect) {
   }
 
   btn.innerHTML = `<span class="fs-label">${getLabel()}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
-  btn.title = getLabel();
+  btn.setAttribute('data-tip', getLabel());
   buildMenu();
 
   function openMenu() {
@@ -7831,7 +7834,7 @@ function makeFormSelect(nativeSelect) {
           div.onclick = () => {
             nativeSelect.selectedIndex = i;
             nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
-            btn.querySelector('.fs-label').textContent = opt.text; btn.title = opt.text;
+            btn.querySelector('.fs-label').textContent = opt.text; btn.setAttribute('data-tip', opt.text);
             closeMobilePicker();
           };
           body.appendChild(div);
@@ -7846,6 +7849,7 @@ function makeFormSelect(nativeSelect) {
     menu.classList.add('open');
     btn.classList.add('open');
     const rect = btn.getBoundingClientRect();
+    menu.style.width = rect.width + 'px';
     if (window.innerHeight - rect.bottom < 220) {
       menu.style.top = 'auto';
       menu.style.bottom = 'calc(100% + 4px)';
@@ -7860,7 +7864,7 @@ function makeFormSelect(nativeSelect) {
 
   // Keep custom select in sync if native value is changed programmatically
   nativeSelect.addEventListener('change', () => {
-    btn.querySelector('.fs-label').textContent = getLabel(); btn.title = getLabel();
+    btn.querySelector('.fs-label').textContent = getLabel(); btn.setAttribute('data-tip', getLabel());
   });
 
   nativeSelect.parentNode.insertBefore(wrap, nativeSelect.nextSibling);
@@ -7890,7 +7894,7 @@ function refreshFormSelect(nativeSelect) {
       span2.className = 'form-select-opt-text';
       span2.textContent = opt.text;
       div.appendChild(span2);
-      div.title = opt.text;
+      div.setAttribute('data-tip', opt.text);
       div.onclick = (e) => {
         e.stopPropagation();
         nativeSelect.selectedIndex = i;
