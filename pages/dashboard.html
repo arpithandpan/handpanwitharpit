@@ -546,12 +546,14 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
 .icon-action-btn svg { width: 18px; height: 18px; }
 .icon-action-btn:hover { border-color: var(--clay); color: var(--clay); background: rgba(200,147,90,0.06); }
 .icon-action-btn.danger:hover { border-color: rgba(180,60,40,0.6); color: #c8735a; background: rgba(180,60,40,0.06); }
-.icon-action-btn[title]:hover::after {
-  content: attr(title);
-  position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-  background: #2e1f0f; color: #e8d5c0; font-size: 11px; white-space: nowrap;
-  padding: 3px 8px; border-radius: 4px; pointer-events: none;
-  border: 1px solid rgba(200,147,90,0.25); z-index: 100;
+@media (hover: hover) and (pointer: fine) {
+  .icon-action-btn[title]:hover::after {
+    content: attr(title);
+    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: #2e1f0f; color: #e8d5c0; font-size: 11px; white-space: nowrap;
+    padding: 3px 8px; border-radius: 4px; pointer-events: none;
+    border: 1px solid rgba(200,147,90,0.25); z-index: 100;
+  }
 }
 
 /* ── GLOBAL OVERFLOW FIX ── */
@@ -3522,13 +3524,6 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <textarea class="form-input" id="lead-desc" placeholder="Any notes or description..." rows="2" maxlength="120" style="resize:none;" oninput="updateCharCount('lead-desc','lead-desc-count',120)"></textarea>
     </div>
-    <div class="form-group">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
-        <label class="form-label" style="margin-bottom:0;">Notes</label>
-        <span id="lead-notes-count" style="font-size:0.75rem;color:var(--text-light);">0/150</span>
-      </div>
-      <textarea class="form-input" id="lead-notes" placeholder="Any notes..." rows="3" maxlength="150" oninput="updateCharCount('lead-notes','lead-notes-count',150)"></textarea>
-    </div>
     <input type="hidden" id="lead-participant-id" value=""/>
   </div></div>
 </div>
@@ -3607,13 +3602,6 @@ table#paymentsTable { min-width: 700px; }
     </div>
     <div class="form-group">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
-        <label class="form-label" style="margin-bottom:0;">Notes</label>
-        <span id="stu-notes-count" style="font-size:0.75rem;color:var(--text-light);">0/150</span>
-      </div>
-      <textarea class="form-input" id="stu-notes" placeholder="Any notes..." rows="3" maxlength="150" oninput="updateCharCount('stu-notes','stu-notes-count',150)"></textarea>
-    </div>
-    <div class="form-group">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
         <label class="form-label" style="margin-bottom:0;">Description</label>
         <span id="stu-desc-count" style="font-size:0.75rem;color:var(--text-light);">0/120</span>
       </div>
@@ -3665,7 +3653,6 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <textarea class="form-input" id="fee-desc" placeholder="e.g. Partial payment, advance..." rows="2" maxlength="120" style="resize:none;" oninput="updateCharCount('fee-desc','fee-desc-count',120)"></textarea>
     </div>
-    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="fee-notes" placeholder="Any notes..." rows="2"></textarea></div>
   </div></div>
 </div>
 
@@ -3722,7 +3709,6 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <textarea class="form-input" id="par-desc" placeholder="Any notes or description..." rows="2" maxlength="120" style="resize:none;" oninput="updateCharCount('par-desc','par-desc-count',120)"></textarea>
     </div>
-    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="par-notes" placeholder="Any notes..." rows="3"></textarea></div>
   </div></div>
 </div>
 
@@ -4034,11 +4020,11 @@ async function logout() {
 // Text/number/date/tel inputs to check per form (selects are always at a default so we ignore them)
 const FORM_FIELDS = {
   addPayment:     ['pay-date','pay-amount','pay-name','pay-desc','pay-ref'],
-  addLead:        ['lead-name','lead-phone','lead-email','lead-desc','lead-notes','lead-maker-amt'],
+  addLead:        ['lead-name','lead-phone','lead-email','lead-desc','lead-maker-amt'],
   addWorkshop:    ['ws-date','ws-venue','ws-rzp-page-id','ws-bms','ws-upi','ws-rzp','ws-price','ws-venue-rent','ws-hp-rent','ws-porter','ws-misc'],
-  addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-desc','stu-notes'],
-  addFeePayment:  ['fee-amount','fee-desc','fee-notes'],
-  addParticipant:  ['par-name','par-phone','par-amount','par-date','par-desc','par-notes'],
+  addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-desc'],
+  addFeePayment:  ['fee-amount','fee-desc'],
+  addParticipant:  ['par-name','par-phone','par-amount','par-date','par-desc'],
   assignPayment:   ['assign-page-notes']
 };
 
@@ -5111,7 +5097,7 @@ async function loadLeads() {
   setSearchFilterVisibility('leads', _hd_leadsTable);
   const _e_leadsTable = document.getElementById('leadsEmptyState');
   if (_e_leadsTable) { _e_leadsTable.innerHTML = EMPTY_STATES.leads; _e_leadsTable.style.display = _hd_leadsTable ? 'none' : ''; }
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" id="lcard-${l.id}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!l.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="leads" data-id="${l.id}" data-name="${(l.full_name||l.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('lcard-'+l.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${l.full_name}</span> ${l.referred_friend?'<span class="badge badge-green" style="flex-shrink:0;">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val">${l.notes||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">${(()=>{const hasPendingRefC=!l.referral_received&&(l.referral_amount||0)>0;const markBtn=hasPendingRefC?`<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" id="lcard-${l.id}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!l.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="leads" data-id="${l.id}" data-name="${(l.full_name||l.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('lcard-'+l.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${l.full_name}</span> ${l.referred_friend?'<span class="badge badge-green" style="flex-shrink:0;">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${l.description||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">${(()=>{const hasPendingRefC=!l.referral_received&&(l.referral_amount||0)>0;const markBtn=hasPendingRefC?`<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))
 }',${l.referral_amount||0})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mark received</button>`:'<span></span>';return l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button><span></span>`:markBtn+`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`;})()}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
@@ -5461,13 +5447,13 @@ async function saveLead() {
       referral_received: false,
       referred_friend: false,
       description: (document.getElementById('lead-desc')?.value || '').trim() || null,
-      notes: (document.getElementById('lead-notes')?.value || '').trim() || null,
+      
       archived: false
     };
     await sbPost('leads', body);
     closeFormPage('addLead');
     // Reset form
-    ['lead-name','lead-email','lead-desc','lead-notes','lead-maker-amt','lead-referral-amt'].forEach(id => {
+    ['lead-name','lead-email','lead-desc','lead-maker-amt','lead-referral-amt'].forEach(id => {
       const el = document.getElementById(id); if (el) el.value = '';
     });
     const boughtSel = document.getElementById('lead-bought-select'); if (boughtSel) boughtSel.value = 'no';
@@ -5511,7 +5497,7 @@ async function saveStudent() {
   if (!(document.getElementById('stu-name').value || '').trim()) { markFieldError('stu-name'); showToast('Full name is required', 'error'); return; }
   if (!(document.getElementById('stu-phone').value || '').trim()) { markFieldError('stu-phone'); showToast('Phone number is required', 'error'); return; }
   try {
-    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:document.getElementById('stu-email').value||null, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, description:document.getElementById('stu-desc')?.value||null, notes:document.getElementById('stu-notes').value||null };
+    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:document.getElementById('stu-email').value||null, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, description:document.getElementById('stu-desc')?.value||null };
     await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
   } catch(e) { console.error('saveStudent error:', e); showToast('Error: ' + (e.message || 'Save failed'), 'error'); }
 }
@@ -5532,7 +5518,7 @@ async function saveFeePayment() {
       amount: parseFloat(document.getElementById('fee-amount').value) || 0,
       payment_mode: document.getElementById('fee-mode').value,
       description: document.getElementById('fee-desc')?.value || null,
-      notes: document.getElementById('fee-notes').value || null,
+      
       paid: true,
       payment_date: new Date().toISOString().split('T')[0]
     };
@@ -5577,7 +5563,7 @@ async function saveParticipant() {
       bringing_own_handpan: document.getElementById('par-handpan')?.value || null,
       photo_video_consent: document.getElementById('par-photo')?.value || null,
       description: document.getElementById('par-desc')?.value || null,
-      notes: document.getElementById('par-notes').value || null,
+      
       checked_in: false,
       archived: false
     };
@@ -6733,7 +6719,7 @@ function buildEditForm(entity, r) {
     ${r.raw_payload ? '<div style="margin-bottom:1rem;padding:0.6rem 0.85rem;background:rgba(200,147,90,0.05);border:1px solid rgba(200,147,90,0.15);border-radius:8px;"><div style="font-size:0.75rem;color:var(--text-light);margin-bottom:4px;">RAW RAZORPAY DATA</div><div style="font-size:0.72rem;color:var(--text-light);font-family:monospace;word-break:break-all;max-height:80px;overflow-y:auto;">Name: ' + (r.raw_payload.notes?.name||r.raw_payload.customer_name||'—') + ' | Email: ' + (r.raw_payload.email||'—') + ' | Phone: ' + (r.raw_payload.contact||'—') + '</div></div>' : ''}` :
     `${row(fi('Email','par-email','email',r.email), '')}
     ${row(sel('Bringing Handpan','par-handpan',[['','—'],['Yes','Yes'],['No','No']],r.bringing_own_handpan||''), sel('Photo/Video Consent','par-photo',[['','—'],['Yes','Yes'],['No','No']],r.photo_video_consent||''))}`}
-    ${fi('Notes','par-notes','textarea',r.notes)}`;
+    ${fi('Description','par-desc','textarea',r.description)}`;
   }
 
   if (entity === 'students') return `
@@ -6742,13 +6728,13 @@ function buildEditForm(entity, r) {
     ${row(sel('Status','stu-status',[['Active','Active'],['On Break','On Break'],['Completed','Completed']],r.status),
           fi('Start Date','stu-start','date',r.join_date))}
     ${row(fi('Monthly Fee (₹)','stu-fee','number',r.monthly_fee||0), sel('Level','stu-level',[['Beginner','Beginner'],['Intermediate','Intermediate'],['Advanced','Advanced']],r.level))}
-    ${fi('Notes','stu-notes','textarea',r.notes)}`;
+    ${fi('Description','stu-desc','textarea',r.description)}`;
 
   if (entity === 'fee_payments') return `
     ${row(readOnly('FP ID', r.id), readOnly('Student', r.student_name||r.student_id))}
     ${row(fi('Amount (₹)','fee-amount','number',r.amount), sel('Payment Mode','fee-mode',[['Razorpay UPI','Razorpay UPI'],['UPI','UPI'],['Cash','Cash'],['Other','Other']],r.payment_mode))}
     ${row(fi('Payment Date','fee-date','date',r.payment_date), sel('Paid','fee-paid',[['true','Paid'],['false','Pending']],String(r.paid)))}
-    ${fi('Notes','fee-notes','textarea',r.notes)}`;
+    ${fi('Description','fee-desc','textarea',r.description)}`;
 
   if (entity === 'payments') return `
     ${row(fi('Date','pay-date','date',r.date), fi('Amount (₹)','pay-amount','number',r.amount))}
@@ -6770,7 +6756,7 @@ function buildEditForm(entity, r) {
       <span style="font-size:0.95rem;color:var(--bark);font-weight:500;flex:1;">Referral Received?</span>
       <label class="checkin-toggle" style="margin:0;"><input type="checkbox" id="ef-lead-ref-received" ${r.referral_received?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>
     </div>
-    ${fi('Notes','lead-notes','textarea',r.notes)}`;
+    ${fi('Description','lead-desc','textarea',r.description)}`;
 
   return '<p style="color:var(--text-light);padding:1rem;">No editable fields.</p>';
 }
@@ -6798,14 +6784,14 @@ async function saveEdit() {
     } else if (_editEntity === 'participants') {
       const isRzpPar = document.getElementById('par-phone')?.disabled || !document.getElementById('par-phone');
       if (isRzpPar) {
-        body = { full_name:g('par-name'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), date:gd('par-date'), notes:g('par-notes')||null };
+        body = { full_name:g('par-name'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), date:gd('par-date'), description:g('par-desc')||null };
       } else {
-        body = { full_name:g('par-name'), phone:getPhoneValue('ef-par-phone','ef-par-phone-cc')||null, email:g('par-email')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), bringing_own_handpan:g('par-handpan')||null, photo_video_consent:g('par-photo')||null, date:gd('par-date'), notes:g('par-notes')||null };
+        body = { full_name:g('par-name'), phone:getPhoneValue('ef-par-phone','ef-par-phone-cc')||null, email:g('par-email')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), bringing_own_handpan:g('par-handpan')||null, photo_video_consent:g('par-photo')||null, date:gd('par-date'), description:g('par-desc')||null };
       }
     } else if (_editEntity === 'students') {
-      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, level:g('stu-level')||null, notes:g('stu-notes')||null };
+      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
     } else if (_editEntity === 'fee_payments') {
-      body = { amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', description:g('fee-desc')||null, notes:g('fee-notes')||null };
+      body = { amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', description:g('fee-desc')||null };
     } else if (_editEntity === 'payments') {
       body = { date:gd('pay-date'), amount:gn('pay-amount'), type:g('pay-type'), category:g('pay-category'), payment_mode:g('pay-mode'), payer_name:g('pay-name')||null, description:g('pay-desc')||null, reference_id:g('pay-ref')||null };
     } else if (_editEntity === 'leads') {
@@ -6820,7 +6806,7 @@ async function saveEdit() {
         referral_amount: gn('lead-referral-amt')||0,
         bought_handpan: boughtEl ? boughtEl.value === 'yes' : false,
         referral_received: refRecEl ? refRecEl.checked : false,
-        notes: g('lead-notes')||null
+        description: g('lead-desc')||null
       };
     }
 
@@ -8959,17 +8945,21 @@ async function doVPToggle(p, wsId, newState, cbInput, labelEl, toggleEl) {
     tip.style.top = top + 'px';
   }
   function hide() { tip.classList.remove('visible'); }
-  document.addEventListener('mouseover', function(e) {
-    var el = e.target.closest('[data-tip]');
-    if (el) show(el, e);
-    else hide();
-  });
-  document.addEventListener('mousemove', function(e) {
-    if (tip.classList.contains('visible')) position(e);
-  });
-  document.addEventListener('mouseout', function(e) {
-    if (!e.relatedTarget || !e.relatedTarget.closest('[data-tip]')) hide();
-  });
+  // Only enable hover tooltips on devices that actually support hover (not touch)
+  var supportsHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (supportsHover) {
+    document.addEventListener('mouseover', function(e) {
+      var el = e.target.closest('[data-tip]');
+      if (el) show(el, e);
+      else hide();
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (tip.classList.contains('visible')) position(e);
+    });
+    document.addEventListener('mouseout', function(e) {
+      if (!e.relatedTarget || !e.relatedTarget.closest('[data-tip]')) hide();
+    });
+  }
   document.addEventListener('click', hide);
   document.addEventListener('scroll', hide, true);
 })();
