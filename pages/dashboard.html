@@ -563,7 +563,7 @@ body { overflow-x: clip; max-width: 100vw; }
 
 /* ── HIDE MOBILE CARDS ON DESKTOP ── */
 @media (min-width: 901px) {
-  #workshopsCards, #participantsCards, #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #overviewWorkshopsCards, #overviewPaymentsCards { display: none !important; }
+  #workshopsCards, #participantsCards, #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #waitlistCards, #overviewWorkshopsCards, #overviewPaymentsCards { display: none !important; }
   .mobile-search-fullscreen { display: none !important; }
   .mobile-only { display: none !important; }
 }
@@ -1183,7 +1183,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   .mobile-only { display: flex !important; }
   .dash-table-wrap table, .dash-table-wrap .desktop-table { display: none !important; }
   .dash-table-wrap { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; width: 100% !important; box-sizing: border-box !important; overflow: hidden !important; }
-  #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #workshopsCards, #participantsCards { display: flex !important; }
+  #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #waitlistCards, #workshopsCards, #participantsCards { display: flex !important; }
   .mobile-cards { display: flex !important; flex-direction: column !important; gap: 16px !important; width: 100% !important; padding: 0 0 max(2rem, env(safe-area-inset-bottom)) !important; box-sizing: border-box !important; }
   .m-card { box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; margin-bottom: 0 !important; overflow: hidden !important; }
   .m-card-row { box-sizing: border-box !important; width: 100% !important; }
@@ -2442,6 +2442,10 @@ table#paymentsTable { min-width: 700px; }
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Leads
     </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('waitlist',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Waitlist
+    </a>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('insights',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Insights
@@ -2518,6 +2522,7 @@ table#paymentsTable { min-width: 700px; }
     <div class="dash-sidebar-title">Pipeline</div>
     <ul class="dash-nav">
       <li><a href="#" onclick="showSection('leads',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Leads</a></li>
+      <li><a href="#" onclick="showSection('waitlist',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Waitlist</a></li>
       <li><a href="#" onclick="showSection('insights',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Insights</a></li>
       <li><a href="#" onclick="showSection('notifications',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span style="letter-spacing:0;">Notifications<span id="sidebarNotifCount" style="font-size:0.9em;"></span></span></a></li>
       <li><a href="#" onclick="showSection('bin',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span><span style="letter-spacing:0;">Bin<span id="sidebarBinCount" style="font-size:0.9em;"></span></span></a></li>
@@ -3038,6 +3043,52 @@ table#paymentsTable { min-width: 700px; }
       <div id="leadsEmptyState" style="display:none;"></div>
     </section>
 
+    <!-- ── WAITLIST ── -->
+    <section class="dash-section" id="section-waitlist">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Waitlist</div>
+          <div class="dash-section-subtitle" id="waitlistCount">People interested in joining a future workshop</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addWaitlist')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add to Waitlist</button>
+        </div>
+      </div>
+      <div class="section-search-wrap" id="search-wrap-waitlist">
+        <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="section-search-input" id="search-waitlist" placeholder="Search by name, phone..." autocomplete="off" oninput="applyFilters('waitlist')"/>
+      </div>
+      <div class="filter-bar" id="filter-bar-waitlist">
+        <button class="mobile-filter-btn" id="mobile-filter-btn-waitlist" onclick="openFilterSheet('waitlist')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filters <span class="mobile-filter-badge" id="mobile-filter-badge-waitlist" style="display:none"></span>
+        </button>
+        <div class="mobile-active-chips" id="mobile-chips-waitlist"></div>
+        <div id="dd-waitlist-month" class="custom-select-wrap-placeholder"></div>
+        <div class="filter-dd-wrap" id="dd-wrap-wl-contacted">
+          <button class="filter-dd-btn" id="dd-btn-wl-contacted" onclick="toggleFilterDd('wl-contacted', event)">
+            Contacted <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-dd-menu" id="dd-menu-wl-contacted">
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('wl-contacted','all','Contacted','waitlist','contacted',this,event)">All</div>
+            <div class="filter-dd-option" data-val="yes" onclick="selectFilterDd('wl-contacted','yes','Contacted: Yes','waitlist','contacted',this,event)">Yes</div>
+            <div class="filter-dd-option" data-val="no" onclick="selectFilterDd('wl-contacted','no','Contacted: No','waitlist','contacted',this,event)">No</div>
+          </div>
+        </div>
+      </div>
+      <div class="dash-table-wrap">
+        <table class="desktop-table"><thead><tr>
+          <th class="cb-th"><label class="cb-box" title="Select all"><input type="checkbox" class="row-select-cb" id="selectAllWaitlist" onchange="toggleSelectAll('waitlist',this)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label></th>
+          <th class="sortable-th" onclick="sortTable('waitlist','full_name',this)">Name <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
+          <th>Phone</th><th>Preferred Month</th><th>Source</th><th>Contacted</th><th>Date Added</th><th class="ws-action-sticky">Action</th>
+        </tr></thead>
+        <tbody id="waitlistTable"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+      <div class="mobile-cards" id="waitlistCards"></div>
+      </div>
+      <div id="waitlistEmptyState" style="display:none;"></div>
+    </section>
+
     <!-- ── INSIGHTS ── -->
     <section class="dash-section" id="section-insights">
       <div class="dash-section-header">
@@ -3294,6 +3345,7 @@ table#paymentsTable { min-width: 700px; }
           <button class="btn-dash btn-dash-ghost" onclick="exportData('payments')">⬇ Payments</button>
           <button class="btn-dash btn-dash-ghost" onclick="exportData('leads')">⬇ Leads</button>
           <button class="btn-dash btn-dash-ghost" onclick="exportData('fee_payments')">⬇ Fee Payments</button>
+          <button class="btn-dash btn-dash-ghost" onclick="exportData('workshop_waitlist')">⬇ Waitlist</button>
         </div>
         <button class="btn-dash btn-dash-primary" onclick="exportAll()" style="margin-top:1rem;">⬇ Export Everything</button>
       </div>
@@ -3525,6 +3577,65 @@ table#paymentsTable { min-width: 700px; }
       <textarea class="form-input" id="lead-desc" placeholder="Any notes or description..." rows="2" maxlength="120" style="resize:none;" oninput="updateCharCount('lead-desc','lead-desc-count',120)"></textarea>
     </div>
     <input type="hidden" id="lead-participant-id" value=""/>
+  </div></div>
+</div>
+
+<!-- Add to Waitlist -->
+<div class="form-page" id="form-addWaitlist">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="tryCloseFormPage('addWaitlist')">← Back</button>
+    <div class="form-page-title">Add to Waitlist</div>
+    <button class="btn-dash-save" onclick="saveWaitlist()">Save</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Full Name&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
+        <input type="text" class="form-input" id="wl-name" placeholder="Name"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone / Landline&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
+        <div class="phone-wrap" id="wl-phone-wrap">
+          <button type="button" class="phone-flag-btn" id="wl-phone-cc-btn" onclick="openCCPicker('wl-phone-cc-btn','wl-phone-cc','wl-phone-prefix')" title="Select country">🇮🇳</button>
+          <input type="hidden" id="wl-phone-cc" value="+91"/>
+          <input type="text" class="phone-prefix-input form-input" id="wl-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/>
+          <input type="tel" class="form-input phone-input-right" id="wl-phone" placeholder="Phone number"/>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="wl-email" placeholder="email@example.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Source</label>
+        <select class="form-input" id="wl-source">
+          <option value="WhatsApp">WhatsApp</option>
+          <option value="Instagram">Instagram</option>
+          <option value="In Person">In Person</option>
+          <option value="Website">Website</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Preferred Month&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
+      <select class="form-input" id="wl-month">
+        <option value="">None</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1rem;background:rgba(200,147,90,0.06);border:1px solid var(--clay-pale);border-radius:10px;margin-bottom:1.25rem;">
+      <span style="font-size:0.95rem;color:var(--bark);font-weight:500;flex:1;">Already contacted?</span>
+      <label class="checkin-toggle" style="margin:0;"><input type="checkbox" id="wl-contacted"><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>
+    </div>
+    <div class="form-group">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
+        <label class="form-label" style="margin-bottom:0;">Notes</label>
+        <span id="wl-notes-count" style="font-size:0.75rem;color:var(--text-light);">0/120</span>
+      </div>
+      <textarea class="form-input" id="wl-notes" placeholder="Any notes..." rows="2" maxlength="120" style="resize:none;" oninput="updateCharCount('wl-notes','wl-notes-count',120)"></textarea>
+    </div>
   </div></div>
 </div>
 
@@ -3933,6 +4044,10 @@ const DUMMY = {
     { id:'L-002', full_name:'Nikhil Joshi', phone:'9900334455', workshop_attended:'WS-003', date_added:'2026-04-05', estimated_budget:50000, status:'Warm', follow_up_date:'2026-06-01', referred_friend:false, notes:'Comparing with other instruments', archived:false },
     { id:'L-003', full_name:'Shreya Das', phone:'', workshop_attended:'WS-001', date_added:'2026-01-18', estimated_budget:40000, status:'Cold', follow_up_date:'', referred_friend:false, notes:'Not sure yet', archived:false },
   ],
+  workshop_waitlist: [
+    { id:'WL-001', full_name:'Tanvi Rao', phone:'9845009988', email:'', source:'WhatsApp', preferred_month:'2026-07-01', date_added:'2026-06-10', contacted:false, notes:'Travelling this month, free from July', archived:false },
+    { id:'WL-002', full_name:'Imran Sheikh', phone:'9900221144', email:'imran@example.com', source:'Instagram', preferred_month:'2026-08-01', date_added:'2026-06-12', contacted:true, notes:'', archived:false },
+  ],
 };
 
 function applyRole() {
@@ -4034,7 +4149,8 @@ const FORM_FIELDS = {
   addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-desc'],
   addFeePayment:  ['fee-amount','fee-desc'],
   addParticipant:  ['par-name','par-phone','par-amount','par-date','par-desc'],
-  assignPayment:   ['assign-page-notes']
+  assignPayment:   ['assign-page-notes'],
+  addWaitlist:     ['wl-name','wl-phone','wl-email','wl-notes']
 };
 
 function isFormDirty(formName) {
@@ -4146,7 +4262,7 @@ function onRowCbChange(cb) {
 }
 
 function toggleSelectAll(section, masterCb) {
-  const tableId = section === 'participants' ? 'participantsTable' : 'leadsTable';
+  const tableId = { participants: 'participantsTable', leads: 'leadsTable', waitlist: 'waitlistTable' }[section] || 'leadsTable';
   const cbs = document.querySelectorAll('#' + tableId + ' .row-select-cb');
   cbs.forEach(cb => {
     cb.checked = masterCb.checked;
@@ -4186,6 +4302,7 @@ function clearBulkSelection() {
   document.querySelectorAll('.desktop-table').forEach(t => t.classList.remove('bulk-active'));
   const sa = document.getElementById('selectAllParticipants'); if (sa) sa.checked = false;
   const sl = document.getElementById('selectAllLeads'); if (sl) sl.checked = false;
+  const swl = document.getElementById('selectAllWaitlist'); if (swl) swl.checked = false;
   document.getElementById('bulkBar')?.classList.remove('visible');
 }
 
@@ -4243,6 +4360,7 @@ async function bulkArchive() {
     tables.forEach(t => {
       if (t === 'participants') loadParticipants();
       else if (t === 'leads') loadLeads();
+      else if (t === 'workshop_waitlist') loadWaitlist();
     });
   } catch(e) { showToast('Error: ' + e.message, 'error'); }
 }
@@ -4259,7 +4377,7 @@ const EMPTY_STATES = {
   search: `<div class="empty-state">
     <div style="font-size:3rem;margin-bottom:0.5rem;">🔍</div>
     <div class="empty-state-title">Start typing to search</div>
-    <div class="empty-state-sub">Search across workshops, participants, students, payments and leads</div>
+    <div class="empty-state-sub">Search across workshops, participants, students, payments, leads and waitlist</div>
   </div>`,
 
   search_noresults: (q) => `<div class="empty-state">
@@ -4302,6 +4420,12 @@ const EMPTY_STATES = {
     <div style="font-size:3rem;margin-bottom:0.5rem;">📍</div>
     <div class="empty-state-title">No leads yet</div>
     <div class="empty-state-sub">Track people interested in buying a handpan and follow up with them</div>
+  </div>`,
+
+  workshop_waitlist: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">🙋</div>
+    <div class="empty-state-title">No one on the waitlist yet</div>
+    <div class="empty-state-sub">People interested in a future workshop will show up here, along with anyone you add manually</div>
   </div>`,
 
   insights: `<div class="empty-state">
@@ -4445,6 +4569,16 @@ async function openFormPage(name) {
     await autoFillNextId('workshops', 'ws-id', 'WS-', 3);
   } else if (name === 'addStudent') {
     await autoFillNextId('students', 'stu-id', 'S-', 3);
+  } else if (name === 'addWaitlist') {
+    const monthSel = document.getElementById('wl-month');
+    if (monthSel) {
+      monthSel.innerHTML = '<option value="">None</option>' +
+        getUpcomingMonths(12).map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+      delete monthSel.dataset.customized;
+      const existingWrap = monthSel.nextElementSibling;
+      if (existingWrap && existingWrap.classList.contains('form-select-wrap')) existingWrap.remove();
+    }
+    initFormSelects();
   }
 }
 
@@ -4624,6 +4758,7 @@ function loadSection(name) {
   else if (name === 'payments') loadPayments();
   else if (name === 'unassigned') loadUnassignedPayments();
   else if (name === 'leads') loadLeads();
+  else if (name === 'waitlist') loadWaitlist();
   else if (name === 'unassigned-payments') loadUnassignedPayments();
   else if (name === 'insights') loadInsights();
   else if (name === 'bin') { loadBin(); }
@@ -4677,6 +4812,23 @@ const fmt = n => '₹' + Number(n || 0).toLocaleString('en-IN');
 const fmtMode = m => (!m ? '—' : m === 'Razorpay UPI' ? 'RZP UPI' : m);
 const fmtPct = n => (Number(n || 0) * 100).toFixed(1) + '%';
 const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '—';
+const fmtMonth = d => d ? new Date(d+'T00:00:00').toLocaleDateString('en-IN', {month:'long',year:'numeric'}) : '—';
+
+// ── UPCOMING MONTHS (for Preferred Month pickers) ──
+// Generates the next `count` months starting this month, as {value, label}
+// pairs — value is the first of that month (e.g. "2026-08-01"), matching
+// the date column on workshop_waitlist so it sorts and filters cleanly.
+function getUpcomingMonths(count = 12) {
+  const out = [];
+  const now = new Date();
+  for (let i = 0; i < count; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const value = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-01';
+    const label = d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+    out.push({ value, label });
+  }
+  return out;
+}
 
 // ── OVERVIEW ──
 async function loadOverview() {
@@ -5111,6 +5263,47 @@ async function loadLeads() {
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
 
+async function loadWaitlist() {
+  try {
+    const waitlist = currentRole === 'viewer' ? DUMMY.workshop_waitlist : await (async () => {
+      const res = await api('/workshop_waitlist?order=created_at:desc');
+      return Array.isArray(res) ? res : (res.data || []);
+    })();
+    waitlist.forEach(w => cacheRecord('workshop_waitlist', w));
+    window._totalCounts = window._totalCounts || {};
+    window._totalCounts.waitlist = waitlist.length;
+    const waitlistCountEl = document.getElementById('waitlistCount');
+    if (waitlistCountEl) waitlistCountEl.textContent = waitlist.length + ' signup' + (waitlist.length !== 1 ? 's' : '') + ' total';
+    setSearchFilterVisibility('waitlist', waitlist.length > 0);
+    populateWaitlistMonthDropdown(waitlist);
+    const adminWl = isAdmin();
+    const PENCIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    const TRASH = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+    document.getElementById('waitlistTable').innerHTML = waitlist.map(w => `<tr class="${w.archived?'archived-row':''}" data-full_name="${(w.full_name||'').replace(/"/g,'&quot;')}" data-month="${w.preferred_month||''}" data-contacted="${w.contacted}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="workshop_waitlist" data-id="'+w.id+'" data-name="'+(w.full_name||w.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td class="td-truncate td-name" data-tip="${(w.full_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${w.full_name}</span></td><td class="td-truncate td-phone" data-tip="${w.phone||''}">${w.phone||'—'}</td><td>${fmtMonth(w.preferred_month)}</td><td><span class="badge badge-clay">${w.source||'Other'}</span></td><td><label class="checkin-toggle" data-tip="${w.contacted?'Contacted':'Not contacted'}" onclick="toggleContacted('${w.id}',${!!w.contacted},'${(w.full_name||w.id).replace(/'/g,"\\'")}');event.preventDefault();"><input type="checkbox" ${w.contacted?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></td><td>${fmtDate(w.date_added)}</td><td class="ws-action-sticky"><div class="action-wrap">${adminWl?(w.archived?`<button class="btn-restore" onclick="restoreRecord('workshop_waitlist','${w.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('workshop_waitlist','${w.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('workshop_waitlist','${w.id}','${(w.full_name||w.id).replace(/'/g,"\\'")}')">${TRASH}</button>`):'—'}</div></td></tr>`).join('') || `<tr><td colspan="8" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.workshop_waitlist}</td></tr>`;
+
+    const _t_waitlistTable = document.getElementById('waitlistTable');
+    const _hd_waitlistTable = _t_waitlistTable && _t_waitlistTable.querySelectorAll('tr').length > 0 && !_t_waitlistTable.querySelector('[colspan]');
+    const _w_waitlistTable = _t_waitlistTable && _t_waitlistTable.closest('.dash-table-wrap');
+    if (_w_waitlistTable) _w_waitlistTable.style.display = _hd_waitlistTable ? '' : 'none';
+    setSearchFilterVisibility('waitlist', _hd_waitlistTable);
+    const _e_waitlistTable = document.getElementById('waitlistEmptyState');
+    if (_e_waitlistTable) { _e_waitlistTable.innerHTML = EMPTY_STATES.workshop_waitlist; _e_waitlistTable.style.display = _hd_waitlistTable ? 'none' : ''; }
+
+    const waitlistCards = document.getElementById('waitlistCards');
+    if (waitlistCards) waitlistCards.innerHTML = waitlist.map(w => `<div class="m-card ${w.archived?'archived-row':''}" id="wcard-${w.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!w.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="workshop_waitlist" data-id="${w.id}" data-name="${(w.full_name||w.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('wcard-'+w.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${w.full_name}</span> <span class="badge badge-clay" style="flex-shrink:0;">${w.source||'Other'}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${w.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Preferred Month</span><span class="m-card-val">${fmtMonth(w.preferred_month)}</span></div><div class="m-card-row"><span class="m-card-label">Date Added</span><span class="m-card-val">${fmtDate(w.date_added)}</span></div><div class="m-card-row"><span class="m-card-label">Contacted</span><span class="m-card-val"><label class="checkin-toggle" data-tip="${w.contacted?'Contacted':'Not contacted'}" onclick="toggleContacted('${w.id}',${!!w.contacted},'${(w.full_name||'').replace(/'/g,String.fromCharCode(92,39))}');event.preventDefault();"><input type="checkbox" ${w.contacted?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshop_waitlist','${w.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${w.id}','${(w.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','waitlist',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.workshop_waitlist + '</div>';
+  } catch(e) { console.error('loadWaitlist error:', e); showToast('Error loading waitlist', 'error'); } finally { hideLoader(); }
+}
+
+async function toggleContacted(id, currentState, name) {
+  try {
+    await sbPatch('workshop_waitlist', id, { contacted: !currentState });
+    loadWaitlist();
+  } catch(e) {
+    console.error('toggleContacted error:', e);
+    showToast('Failed to update — try again', 'error');
+  }
+}
+
 // ── INSIGHTS ──
 async function loadInsights() {
   try {
@@ -5478,6 +5671,41 @@ async function saveLead() {
     showToast('✓ Lead saved!', 'success');
   } catch(e) { console.error('saveLead error:', e); showToast('Error: ' + (e.message || 'Save failed'), 'error'); }
 }
+
+async function saveWaitlist() {
+  const name = (document.getElementById('wl-name')?.value || '').trim();
+  const phone = getPhoneValue('wl-phone', 'wl-phone-cc');
+  const month = document.getElementById('wl-month')?.value || '';
+  if (!name) { markFieldError('wl-name'); showToast('Full name is required', 'error'); return; }
+  if (!phone) { markFieldError('wl-phone'); showToast('Phone number is required', 'error'); return; }
+  if (!month) { markFieldError('wl-month'); showToast('Preferred month is required', 'error'); return; }
+  try {
+    const body = {
+      id: 'WL-' + String(Date.now()).slice(-6),
+      full_name: name,
+      phone: phone,
+      email: (document.getElementById('wl-email')?.value || '').trim() || null,
+      source: document.getElementById('wl-source')?.value || 'Other',
+      preferred_month: month,
+      contacted: !!document.getElementById('wl-contacted')?.checked,
+      notes: (document.getElementById('wl-notes')?.value || '').trim() || null,
+      date_added: new Date().toISOString().split('T')[0],
+      archived: false
+    };
+    await sbPost('workshop_waitlist', body);
+    closeFormPage('addWaitlist');
+    // Reset form
+    ['wl-name','wl-email','wl-notes'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    const phoneEl = document.getElementById('wl-phone'); if (phoneEl) phoneEl.value = '';
+    const sourceSel = document.getElementById('wl-source'); if (sourceSel) sourceSel.value = 'WhatsApp';
+    const monthSel = document.getElementById('wl-month'); if (monthSel) monthSel.value = '';
+    const contactedCb = document.getElementById('wl-contacted'); if (contactedCb) contactedCb.checked = false;
+    loadWaitlist();
+    showToast('✓ Added to waitlist!', 'success');
+  } catch(e) { console.error('saveWaitlist error:', e); showToast('Error: ' + (e.message || 'Save failed'), 'error'); }
+}
 async function saveWorkshop() {
   const wsId = (document.getElementById('ws-id').value || '').trim();
   const wsDate = document.getElementById('ws-date').value;
@@ -5672,7 +5900,7 @@ async function exportData(entity) {
 
 async function exportAll() {
   showToast('Exporting all data...', '');
-  const entities = ['workshops','participants','students','payments','leads','fee_payments'];
+  const entities = ['workshops','participants','students','payments','leads','fee_payments','workshop_waitlist'];
   for (const e of entities) { await exportData(e); await new Promise(r=>setTimeout(r,300)); }
   showToast('✓ All data exported!', 'success');
 }
@@ -5762,6 +5990,7 @@ async function reloadEntity(entity) {
   else if (entity === 'fee_payments') { await loadFeePayments(); }
   else if (entity === 'payments') { await loadPayments(); }
   else if (entity === 'leads') { await loadLeads(); }
+  else if (entity === 'workshop_waitlist') { await loadWaitlist(); }
 }
 
 
@@ -5789,7 +6018,8 @@ const BIN_TABLES = [
   { key: 'students', label: 'Student', nameField: 'full_name' },
   { key: 'payments', label: 'Payment', nameField: 'payer_name' },
   { key: 'leads', label: 'Lead', nameField: 'full_name' },
-  { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' }
+  { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' },
+  { key: 'workshop_waitlist', label: 'Waitlist Signup', nameField: 'full_name' }
 ];
 
 let _binManualRefresh = false;
@@ -6679,7 +6909,7 @@ function openEdit(entity, id) {
   // Razorpay participants are now editable (name only; amount/mode/phone locked in the form)
   _editEntity = entity;
   _editId = id;
-  const title = { workshops:'Edit Workshop', participants:'Edit Participant', students:'Edit Student', fee_payments:'Edit Fee Payment', payments:'Edit Payment', leads:'Edit Lead' }[entity] || 'Edit';
+  const title = { workshops:'Edit Workshop', participants:'Edit Participant', students:'Edit Student', fee_payments:'Edit Fee Payment', payments:'Edit Payment', leads:'Edit Lead', workshop_waitlist:'Edit Waitlist Entry' }[entity] || 'Edit';
   document.getElementById('editFormTitle').textContent = title;
   document.getElementById('editFormBody').innerHTML = buildEditForm(entity, record);
   if (entity === 'leads') {
@@ -6699,6 +6929,19 @@ function openEdit(entity, id) {
       delete wsSel.dataset.customized;
       const existingWrap = wsSel.closest('.form-select-wrap');
       if (existingWrap) existingWrap.replaceWith(wsSel);
+    }
+  } else if (entity === 'workshop_waitlist') {
+    const monthSel = document.getElementById('ef-wl-month');
+    if (monthSel) {
+      const months = getUpcomingMonths(12);
+      if (record.preferred_month && !months.some(m => m.value === record.preferred_month)) {
+        months.unshift({ value: record.preferred_month, label: fmtMonth(record.preferred_month) });
+      }
+      monthSel.innerHTML = '<option value="">None</option>' +
+        months.map(m => `<option value="${m.value}" ${record.preferred_month === m.value ? 'selected' : ''}>${m.label}</option>`).join('');
+      delete monthSel.dataset.customized;
+      const existingWrap = monthSel.nextElementSibling;
+      if (existingWrap && existingWrap.classList.contains('form-select-wrap')) existingWrap.remove();
     }
   }
   setTimeout(() => { initFormSelects(); initDatePickers(); }, 50);
@@ -6780,6 +7023,16 @@ function buildEditForm(entity, r) {
     </div>
     ${fi('Description','lead-desc','textarea',r.description)}`;
 
+  if (entity === 'workshop_waitlist') return `
+    ${row(fi('Full Name','wl-name','text',r.full_name), `<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('ef-wl-phone', r.phone, 'ef-wl-phone-cc')}</div>`)}
+    ${row(fi('Email','wl-email','email',r.email||''), sel('Source','wl-source',[['WhatsApp','WhatsApp'],['Instagram','Instagram'],['In Person','In Person'],['Website','Website'],['Other','Other']],r.source||'Other'))}
+    <div class="form-group"><label class="form-label">Preferred Month</label><select class="form-input" id="ef-wl-month"><option value="">None</option></select></div>
+    <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1rem;background:rgba(200,147,90,0.06);border:1px solid var(--clay-pale);border-radius:10px;margin-bottom:1.25rem;">
+      <span style="font-size:0.95rem;color:var(--bark);font-weight:500;flex:1;">Contacted?</span>
+      <label class="checkin-toggle" style="margin:0;"><input type="checkbox" id="ef-wl-contacted" ${r.contacted?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>
+    </div>
+    ${fi('Notes','wl-notes','textarea',r.notes)}`;
+
   return '<p style="color:var(--text-light);padding:1rem;">No editable fields.</p>';
 }
 
@@ -6830,6 +7083,17 @@ async function saveEdit() {
         referral_received: refRecEl ? refRecEl.checked : false,
         description: g('lead-desc')||null
       };
+    } else if (_editEntity === 'workshop_waitlist') {
+      const contactedEl = document.getElementById('ef-wl-contacted');
+      body = {
+        full_name: g('wl-name'),
+        phone: getPhoneValue('ef-wl-phone','ef-wl-phone-cc')||null,
+        email: g('wl-email')||null,
+        source: g('wl-source')||'Other',
+        preferred_month: gd('wl-month'),
+        contacted: contactedEl ? contactedEl.checked : false,
+        notes: g('wl-notes')||null
+      };
     }
 
     await sbPatch(_editEntity, _editId, body);
@@ -6864,6 +7128,7 @@ async function ensureSearchCache() {
     DUMMY.payments.forEach(r => cacheRecord('payments', r));
     DUMMY.fee_payments.forEach(r => cacheRecord('fee_payments', r));
     DUMMY.leads.forEach(r => cacheRecord('leads', r));
+    DUMMY.workshop_waitlist.forEach(r => cacheRecord('workshop_waitlist', r));
     return;
   }
   const toFetch = [];
@@ -6873,6 +7138,7 @@ async function ensureSearchCache() {
   if (!_searchFetchedEntities.leads) toFetch.push('leads');
   if (!_searchFetchedEntities.payments) toFetch.push('payments');
   if (!_searchFetchedEntities.fee_payments) toFetch.push('fee_payments');
+  if (!_searchFetchedEntities.workshop_waitlist) toFetch.push('workshop_waitlist');
   if (!toFetch.length) return;
   try {
     const results = await Promise.all(toFetch.map(e => api('/' + e)));
@@ -6904,6 +7170,9 @@ function getSearchData() {
   });
   if (cache.leads) Object.values(cache.leads).forEach(r => {
     data.push({ entity:'leads', id:r.id, name:r.full_name||r.id, meta:(r.phone||'—')+' · '+(r.status||''), icon:'🔍' });
+  });
+  if (cache.workshop_waitlist) Object.values(cache.workshop_waitlist).forEach(r => {
+    data.push({ entity:'waitlist', id:r.id, name:r.full_name||r.id, meta:(r.phone||'—')+' · '+fmtMonth(r.preferred_month), icon:'🙋' });
   });
   return data;
 }
@@ -7020,7 +7289,8 @@ const filterState = {
   classes: { status: 'all', batch: '', search: '' },
   'fee-payments': { student: '', month: '', status: 'all', mode: 'all', search: '' },
   payments: { type: 'all', mode: 'all', category: '', period: '', search: '' },
-  leads: { bought: 'all', referral: 'all', search: '' }
+  leads: { bought: 'all', referral: 'all', search: '' },
+  waitlist: { month: '', contacted: 'all', search: '' }
 };
 
 function setFilterPill(section, key, value, btn) {
@@ -7035,12 +7305,12 @@ function setFilterPill(section, key, value, btn) {
 }
 
 function applyFilters(section) {
-  const searchId = { workshops: 'search-workshops', participants: 'search-participants', classes: 'search-classes', 'fee-payments': 'search-fee-payments', payments: 'search-payments', leads: 'search-leads' };
+  const searchId = { workshops: 'search-workshops', participants: 'search-participants', classes: 'search-classes', 'fee-payments': 'search-fee-payments', payments: 'search-payments', leads: 'search-leads', waitlist: 'search-waitlist' };
   const q = (document.getElementById(searchId[section])?.value || '').toLowerCase().trim();
   filterState[section].search = q;
 
-  const tableMap = { workshops:'workshopsTable', participants:'participantsTable', classes:'studentsTable', 'fee-payments':'feePaymentsTable', payments:'paymentsTable', leads:'leadsTable' };
-  const cardMap = { workshops:'workshopsCards', participants:'participantsCards', classes:'studentsCards', 'fee-payments':'feePaymentsCards', payments:'paymentsCards', leads:'leadsCards' };
+  const tableMap = { workshops:'workshopsTable', participants:'participantsTable', classes:'studentsTable', 'fee-payments':'feePaymentsTable', payments:'paymentsTable', leads:'leadsTable', waitlist:'waitlistTable' };
+  const cardMap = { workshops:'workshopsCards', participants:'participantsCards', classes:'studentsCards', 'fee-payments':'feePaymentsCards', payments:'paymentsCards', leads:'leadsCards', waitlist:'waitlistCards' };
 
   const st = filterState[section];
 
@@ -7117,14 +7387,21 @@ function applyFilters(section) {
       if (st.referral === 'none' && Number(data.referral_amount) > 0) return false;
     }
 
+    if (section === 'waitlist') {
+      const month = _dd['waitlist-month']?._getValue() || '';
+      if (month && data.month !== month) return false;
+      if (st.contacted === 'yes' && data.contacted !== 'true') return false;
+      if (st.contacted === 'no' && data.contacted === 'true') return false;
+    }
+
     return true;
   }
 
   const tbl = document.getElementById(tableMap[section]);
   const cards = document.getElementById(cardMap[section]);
 
-  const countIdMap = { workshops: 'workshopCount', participants: 'participantCount', classes: 'studentsCount', payments: 'paymentsCount', leads: 'leadsCount', 'fee-payments': 'feePaymentsCount' };
-  const labelMap = { workshops: 'workshop', participants: 'participant', classes: 'student', payments: 'payment', leads: 'lead', 'fee-payments': 'payment' };
+  const countIdMap = { workshops: 'workshopCount', participants: 'participantCount', classes: 'studentsCount', payments: 'paymentsCount', leads: 'leadsCount', 'fee-payments': 'feePaymentsCount', waitlist: 'waitlistCount' };
+  const labelMap = { workshops: 'workshop', participants: 'participant', classes: 'student', payments: 'payment', leads: 'lead', 'fee-payments': 'payment', waitlist: 'signup' };
   const total = (window._totalCounts || {})[section] || 0;
 
   if (tbl) {
@@ -7318,7 +7595,7 @@ const SORT_SVG_ASC = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none
 const SORT_SVG_DESC = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20l8-8H4z" fill="currentColor" stroke="none"/></svg>';
 
 function sortTable(section, col, thEl) {
-  const tableMap = { workshops:'workshopsTable', participants:'participantsTable', classes:'studentsTable', 'fee-payments':'feePaymentsTable', payments:'paymentsTable', leads:'leadsTable' };
+  const tableMap = { workshops:'workshopsTable', participants:'participantsTable', classes:'studentsTable', 'fee-payments':'feePaymentsTable', payments:'paymentsTable', leads:'leadsTable', waitlist:'waitlistTable' };
   const tbl = document.getElementById(tableMap[section]);
   if (!tbl) return;
   const prev = sortStates[section] || {};
@@ -7389,6 +7666,9 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
   } else if (type === 'lead') {
     html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('leads','${id}')">${EDIT_SVG} Edit</button>`;
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('leads','${id}','${name}')">${TRASH_SVG} Delete</button>`;
+  } else if (type === 'waitlist') {
+    html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('workshop_waitlist','${id}')">${EDIT_SVG} Edit</button>`;
+    html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('workshop_waitlist','${id}','${name}')">${TRASH_SVG} Delete</button>`;
   }
 
   if (window.innerWidth <= 900) {
@@ -7416,6 +7696,9 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
       } else if (type === 'lead') {
         actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('leads', id) });
         actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('leads', id, name) });
+      } else if (type === 'waitlist') {
+        actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('workshop_waitlist', id) });
+        actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('workshop_waitlist', id, name) });
       }
       actions.forEach(({ label, danger, fn }) => {
         const btn = document.createElement('button');
@@ -7502,6 +7785,11 @@ function initStaticDropdowns() {
   });
   document.getElementById('dd-payments-category')?.replaceWith(_dd['payments-category']);
 
+  // Waitlist preferred-month dropdown
+  _dd['waitlist-month'] = createCustomSelect('waitlist-month', 'All months', [{value:'',label:'All months'}], (val) => {
+    applyFilters('waitlist');
+  });
+  document.getElementById('dd-waitlist-month')?.replaceWith(_dd['waitlist-month']);
 
 }
 
@@ -7581,6 +7869,13 @@ function populatePaymentsCategoryDropdown(payments) {
   if (!dd) return;
   const cats = [...new Set(payments.map(p => p.category).filter(Boolean))].sort();
   cats.forEach(c => dd._addOption(c, c));
+}
+
+function populateWaitlistMonthDropdown(waitlistRows) {
+  const dd = _dd['waitlist-month'];
+  if (!dd) return;
+  const months = [...new Set(waitlistRows.map(w => w.preferred_month).filter(Boolean))].sort();
+  months.forEach(m => dd._addOption(m, fmtMonth(m)));
 }
 
 // ── CUSTOM DATE PICKER ──
@@ -8240,6 +8535,12 @@ const FILTER_SHEET_CONFIG = {
     ]},
     { key: 'referral', label: 'Referral', type: 'pill', options: [
       { val: 'all', label: 'All' }, { val: 'pending', label: 'Pending' }, { val: 'received', label: 'Received' }, { val: 'none', label: 'No referral' }
+    ]},
+  ],
+  waitlist: [
+    { key: 'month', label: 'Preferred Month', type: 'dd', ddKey: 'waitlist-month' },
+    { key: 'contacted', label: 'Contacted', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'yes', label: 'Contacted' }, { val: 'no', label: 'Not contacted' }
     ]},
   ],
 };
