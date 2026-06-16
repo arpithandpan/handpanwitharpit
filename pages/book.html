@@ -737,13 +737,9 @@
     if (participantMax === 0){
       participantDesc.textContent = 'Sold out';
       participantDesc.classList.add('disabled');
-      payBtn.disabled = true;
-      payBtn.textContent = 'Fully booked';
     } else {
       participantDesc.textContent = '₹' + participantPrice.toLocaleString('en-IN') + ' per person';
       participantDesc.classList.remove('disabled');
-      payBtn.disabled = false;
-      payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
     }
     if (observerPrice != null){
       if (observerMax === 0){
@@ -754,6 +750,17 @@
         observerDesc.classList.remove('disabled');
       }
     }
+
+    // Only fully disable Reserve once nothing offered is left to buy.
+    // If audience passes aren't offered at all, they don't count toward this.
+    const fullySoldOut = participantMax === 0 && (observerPrice == null || observerMax === 0);
+    if (fullySoldOut){
+      payBtn.disabled = true;
+      payBtn.textContent = 'Fully booked';
+    } else {
+      payBtn.disabled = false;
+      payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+    }
   }
   pMinus.addEventListener('click', () => { if (pCount > 1) { pCount--; render(); } });
   pPlus.addEventListener('click', () => { if (pCount < participantMax) { pCount++; render(); } });
@@ -761,6 +768,10 @@
   oPlus.addEventListener('click', () => { if (oCount < observerMax) { oCount++; render(); } });
 
   payBtn.addEventListener('click', async () => {
+    if (pCount + oCount <= 0){
+      alert('Please select at least one ticket before reserving.');
+      return;
+    }
     const nameValid = validateName();
     const phoneValid = validatePhone();
     const emailValid = validateEmail();
