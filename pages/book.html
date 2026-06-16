@@ -317,18 +317,18 @@
     <h1>Handpan Workshop<br/><em>&amp; Mini Concert</em></h1>
     <p class="hero-eyebrow" style="margin-top:10px; margin-bottom:0;">Beginner Friendly · Bengaluru</p>
     <p class="hero-sub">A guided, hands-on session followed by a short live performance, no experience needed, just come curious.</p>
-    <div class="hero-meta-vertical">
+    <div class="hero-meta-vertical" id="hero-meta">
       <div class="hero-meta-line">
         <span class="hero-meta-label">Date</span>
-        <span class="hero-meta-value">05 July, 2026 · Sunday</span>
+        <span class="hero-meta-value" id="hero-date">…</span>
       </div>
-      <div class="hero-meta-line">
+      <div class="hero-meta-line" id="hero-time-row">
         <span class="hero-meta-label">Time</span>
-        <span class="hero-meta-value">3:30 - 5:30 PM · 2 hrs</span>
+        <span class="hero-meta-value" id="hero-time">…</span>
       </div>
       <div class="hero-meta-line">
         <span class="hero-meta-label">Venue</span>
-        <a href="https://maps.app.goo.gl/TsCtWnqye82Daf369?g_st=iw" target="_blank" rel="noopener" class="hero-venue-link">Bloom Creative Zone, Haralur, Bengaluru <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:14px; height:14px; flex-shrink:0;"><path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"/><path d="M10 14l10 -10"/><path d="M15 4l5 0l0 5"/></svg></a>
+        <span class="hero-meta-value" id="hero-venue">…</span>
       </div>
     </div>
   </div>
@@ -379,11 +379,14 @@
   <div class="booking section">
     <h2 class="section-title">Book your <em>spot</em></h2>
 
+    <div class="booking-unavailable" id="booking-unavailable" style="display:none; padding:1.5rem 0; text-align:center; color:var(--text-mid); font-size:0.95rem; line-height:1.7;"></div>
+
+    <div id="booking-content">
     <div class="ticket-card">
       <div class="ticket-row">
         <div>
           <p class="ticket-name">Participant</p>
-          <p class="ticket-desc" id="participant-desc">₹2,000 per person</p>
+          <p class="ticket-desc" id="participant-desc">…</p>
         </div>
         <div class="stepper">
           <button id="p-minus" aria-label="Decrease participants">−</button>
@@ -391,10 +394,10 @@
           <button id="p-plus" aria-label="Increase participants">+</button>
         </div>
       </div>
-      <div class="ticket-row">
+      <div class="ticket-row" id="observer-row">
         <div>
           <p class="ticket-name">Audience pass</p>
-          <p class="ticket-desc" id="observer-desc">₹500 per person</p>
+          <p class="ticket-desc" id="observer-desc">…</p>
           <p class="ticket-note">Watch the session and enjoy the live concert. Does not include hands-on participation or a handpan.</p>
         </div>
         <div class="stepper">
@@ -455,7 +458,7 @@
     <div class="total-card">
       <div>
         <p class="total-label">Total amount</p>
-        <p class="total-amount" id="total-amount">₹2,000</p>
+        <p class="total-amount" id="total-amount">₹0</p>
       </div>
       <span class="total-badge" id="ticket-badge">1 ticket</span>
     </div>
@@ -463,6 +466,7 @@
     <button class="cta" id="pay-btn">
       Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>
     </button>
+    </div>
   </div>
 
   <div class="section">
@@ -493,17 +497,22 @@
 
 </div>
 
-<script>
-  const PRICE_PARTICIPANT = 2000;
-  const PRICE_OBSERVER = 500;
+<script>  // ── CONFIG ──
+  const API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
+  const workshopId = new URLSearchParams(window.location.search).get('ws');
 
-  // These values would ideally come from a live availability endpoint
-  let participantMax = 15;
-  let observerMax = 2;
+  // Pricing and capacity come from the workshop's own record in Supabase —
+  // nothing is hardcoded here anymore. observerPrice stays null until we
+  // know the workshop actually offers audience passes; null is treated as
+  // "not offered" (row hidden), separate from an explicit free price of 0.
+  let participantPrice = 0;
+  let observerPrice = null;
+  let participantMax = 50;
+  let observerMax = 0;
+  let workshopDateTime = null;
 
   let pCount = 1;
   let oCount = 0;
-
   const pCountEl = document.getElementById('p-count');
   const oCountEl = document.getElementById('o-count');
   const pMinus = document.getElementById('p-minus');
@@ -514,18 +523,25 @@
   const badgeEl = document.getElementById('ticket-badge');
   const observerDesc = document.getElementById('observer-desc');
   const participantDesc = document.getElementById('participant-desc');
+  const observerRow = document.getElementById('observer-row');
   const payBtn = document.getElementById('pay-btn');
-
+  const bookingContent = document.getElementById('booking-content');
+  const bookingUnavailable = document.getElementById('booking-unavailable');
+  const heroMeta = document.getElementById('hero-meta');
+  const heroDateEl = document.getElementById('hero-date');
+  const heroTimeRow = document.getElementById('hero-time-row');
+  const heroTimeEl = document.getElementById('hero-time');
+  const heroVenueEl = document.getElementById('hero-venue');
+  const countdownEl = document.getElementById('countdown');
   let bringingOwnHandpan = 'No';
   let photoConsent = 'Yes';
-
   // Country codes
   const countries = [
     { name: 'India', flag: '🇮🇳', code: '+91', minLen: 10, maxLen: 10 },
     { name: 'United States', flag: '🇺🇸', code: '+1', minLen: 10, maxLen: 10 },
     { name: 'United Kingdom', flag: '🇬🇧', code: '+44', minLen: 10, maxLen: 10 },
     { name: 'Canada', flag: '🇨🇦', code: '+1', minLen: 10, maxLen: 10 },
-    { name: 'Germany', flag: '🇩🇪', code: '+49', minLen: 10, maxLen: 11 },
+    { name: 'Germany', flag: '🇩🇪', code: '+49', minLen: 9, maxLen: 11 },
     { name: 'Australia', flag: '🇦🇺', code: '+61', minLen: 9, maxLen: 9 },
     { name: 'United Arab Emirates', flag: '🇦🇪', code: '+971', minLen: 9, maxLen: 9 },
     { name: 'Singapore', flag: '🇸🇬', code: '+65', minLen: 8, maxLen: 8 },
@@ -536,14 +552,12 @@
     { name: 'Nepal', flag: '🇳🇵', code: '+977', minLen: 10, maxLen: 10 },
   ];
   let selectedCountry = countries[0];
-
   const countrySelect = document.getElementById('country-select');
   const countryFlag = document.getElementById('country-flag');
   const countryCode = document.getElementById('country-code');
   const countryDropdown = document.getElementById('country-dropdown');
   const countrySearch = document.getElementById('country-search');
   const countryList = document.getElementById('country-list');
-
   function renderCountryList(filter){
     const f = (filter || '').trim().toLowerCase();
     countryList.innerHTML = '';
@@ -566,7 +580,6 @@
       });
   }
   renderCountryList('');
-
   countrySelect.addEventListener('click', () => {
     countryDropdown.classList.toggle('open');
     if (countryDropdown.classList.contains('open')) countrySearch.focus();
@@ -577,7 +590,6 @@
       countryDropdown.classList.remove('open');
     }
   });
-
   // Validation
   const nameInput = document.getElementById('name');
   const phoneInput = document.getElementById('phone');
@@ -585,7 +597,6 @@
   const nameError = document.getElementById('name-error');
   const phoneError = document.getElementById('phone-error');
   const emailError = document.getElementById('email-error');
-
   function setError(input, errorEl, message){
     if (message){
       input.classList.add('invalid');
@@ -597,7 +608,6 @@
       errorEl.classList.remove('show');
     }
   }
-
   function validateName(){
     const val = nameInput.value.trim();
     if (!val){
@@ -611,7 +621,6 @@
     setError(nameInput, nameError, '');
     return true;
   }
-
   function validatePhone(){
     const val = phoneInput.value.trim();
     if (!val){
@@ -636,7 +645,6 @@
     setError(phoneInput, phoneError, '');
     return true;
   }
-
   function validateEmail(){
     const val = emailInput.value.trim();
     if (!val){
@@ -650,14 +658,12 @@
     setError(emailInput, emailError, '');
     return true;
   }
-
   nameInput.addEventListener('blur', validateName);
   nameInput.addEventListener('input', () => { if (nameInput.classList.contains('invalid')) validateName(); });
   phoneInput.addEventListener('blur', validatePhone);
   phoneInput.addEventListener('input', () => { if (phoneInput.classList.contains('invalid')) validatePhone(); });
   emailInput.addEventListener('blur', validateEmail);
   emailInput.addEventListener('input', () => { if (emailInput.classList.contains('invalid')) validateEmail(); });
-
   document.querySelectorAll('.toggle-pair').forEach(group => {
     const buttons = group.querySelectorAll('.toggle-btn');
     buttons.forEach(btn => {
@@ -676,33 +682,79 @@
     });
   });
 
+  // ── DISPLAY HELPERS ──
+  function formatDisplayDate(dateStr){
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00+05:30');
+    const day = d.toLocaleDateString('en-GB', { day: '2-digit', timeZone: 'Asia/Kolkata' });
+    const month = d.toLocaleDateString('en-GB', { month: 'long', timeZone: 'Asia/Kolkata' });
+    const year = d.toLocaleDateString('en-GB', { year: 'numeric', timeZone: 'Asia/Kolkata' });
+    const weekday = d.toLocaleDateString('en-GB', { weekday: 'long', timeZone: 'Asia/Kolkata' });
+    return `${day} ${month}, ${year} · ${weekday}`;
+  }
+  // Workshop time is free text (e.g. "3:30 - 5:30 PM"), set by hand on the
+  // dashboard, not a strict time field. We try to pull a start time out of
+  // it for the countdown; if that fails for any reason, we fall back to
+  // midnight IST on the workshop date so the countdown still works, just
+  // with less precision.
+  function parseStartDateTime(dateStr, timeStr){
+    if (!dateStr) return null;
+    let hours = 0, minutes = 0;
+    if (timeStr){
+      const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?/);
+      if (match){
+        hours = parseInt(match[1], 10);
+        minutes = parseInt(match[2], 10);
+        let meridiem = match[3];
+        if (!meridiem){
+          const later = timeStr.slice(match.index + match[0].length).match(/(AM|PM|am|pm)/);
+          meridiem = later ? later[1] : null;
+        }
+        if (meridiem){
+          meridiem = meridiem.toUpperCase();
+          if (meridiem === 'PM' && hours < 12) hours += 12;
+          if (meridiem === 'AM' && hours === 12) hours = 0;
+        }
+      }
+    }
+    const hh = String(hours).padStart(2, '0');
+    const mm = String(minutes).padStart(2, '0');
+    return new Date(`${dateStr}T${hh}:${mm}:00+05:30`);
+  }
+
   function render(){
     pCountEl.textContent = pCount;
     oCountEl.textContent = oCount;
-
     pMinus.disabled = pCount <= 1;
     pPlus.disabled = pCount >= participantMax;
     oMinus.disabled = oCount <= 0;
     oPlus.disabled = oCount >= observerMax;
-
-    const total = pCount * PRICE_PARTICIPANT + oCount * PRICE_OBSERVER;
+    const total = pCount * participantPrice + oCount * (observerPrice || 0);
     totalEl.textContent = '₹' + total.toLocaleString('en-IN');
-
     const totalTickets = pCount + oCount;
     badgeEl.textContent = totalTickets + (totalTickets === 1 ? ' ticket' : ' tickets');
 
-    if (observerMax === 0){
-      observerDesc.textContent = 'Sold out';
-      observerDesc.classList.add('disabled');
-    }
     if (participantMax === 0){
       participantDesc.textContent = 'Sold out';
       participantDesc.classList.add('disabled');
       payBtn.disabled = true;
       payBtn.textContent = 'Fully booked';
+    } else {
+      participantDesc.textContent = '₹' + participantPrice.toLocaleString('en-IN') + ' per person';
+      participantDesc.classList.remove('disabled');
+      payBtn.disabled = false;
+      payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+    }
+    if (observerPrice != null){
+      if (observerMax === 0){
+        observerDesc.textContent = 'Sold out';
+        observerDesc.classList.add('disabled');
+      } else {
+        observerDesc.textContent = '₹' + observerPrice.toLocaleString('en-IN') + ' per person';
+        observerDesc.classList.remove('disabled');
+      }
     }
   }
-
   pMinus.addEventListener('click', () => { if (pCount > 1) { pCount--; render(); } });
   pPlus.addEventListener('click', () => { if (pCount < participantMax) { pCount++; render(); } });
   oMinus.addEventListener('click', () => { if (oCount > 0) { oCount--; render(); } });
@@ -712,26 +764,22 @@
     const nameValid = validateName();
     const phoneValid = validatePhone();
     const emailValid = validateEmail();
-
     if (!nameValid || !phoneValid || !emailValid){
       const firstInvalid = document.querySelector('.form-card input.invalid');
       if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
-
     const name = nameInput.value.trim();
     const phone = selectedCountry.code + phoneInput.value.trim();
     const email = emailInput.value.trim();
-
     payBtn.disabled = true;
     payBtn.textContent = 'Redirecting...';
-
     try {
-      const res = await fetch('https://handpan-webhook-server-production.up.railway.app/api/create-payment-link', {
+      const res = await fetch(API_BASE + '/api/create-payment-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          workshopId: 'WS-005',
+          workshopId,
           participants: pCount,
           observers: oCount,
           name, phone, email,
@@ -740,15 +788,13 @@
         })
       });
       const data = await res.json();
-
       if (res.status === 409){
         alert("Sorry, those spots just got booked by someone else. Please refresh and try again with a smaller number of spots.");
         payBtn.disabled = false;
-        payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right"></i>';
-        fetchAvailability();
+        payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+        loadWorkshop();
         return;
       }
-
       if (data.short_url){
         window.location.href = data.short_url;
       } else {
@@ -757,21 +803,19 @@
     } catch (err){
       alert('Something went wrong creating your payment link. Please try again or contact us directly.');
       payBtn.disabled = false;
-      payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right"></i>';
+      payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
     }
   });
 
-  // Countdown timer to workshop start
-  const workshopDate = new Date('2026-07-05T15:30:00+05:30');
-  const countdownEl = document.getElementById('countdown');
+  // ── COUNTDOWN ──
   const cdDays = document.getElementById('cd-days');
   const cdHours = document.getElementById('cd-hours');
   const cdMins = document.getElementById('cd-mins');
   const cdSecs = document.getElementById('cd-secs');
-
   function updateCountdown(){
+    if (!workshopDateTime) { countdownEl.style.display = 'none'; return; }
     const now = new Date();
-    const diff = workshopDate - now;
+    const diff = workshopDateTime - now;
     if (diff <= 0){
       countdownEl.style.display = 'none';
       return;
@@ -786,33 +830,88 @@
     cdSecs.textContent = String(secs).padStart(2, '0');
   }
 
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
+  // ── UNAVAILABLE STATE ──
+  // Used both when the link itself is bad (missing/unknown workshop ID) and
+  // when the workshop exists but isn't bookable yet (no price configured).
+  function showUnavailable(message){
+    heroMeta.style.display = 'none';
+    countdownEl.style.display = 'none';
+    bookingContent.style.display = 'none';
+    bookingUnavailable.textContent = message;
+    bookingUnavailable.style.display = '';
+  }
 
-  render();
-
-  // Pull live availability so the +/- limits reflect real remaining spots.
-  // If this fails for any reason, we just keep the defaults above —
-  // not worth blocking the whole page over it.
-  async function fetchAvailability(){
+  // ── LOAD WORKSHOP ──
+  // Single source of truth for everything on this page that varies by
+  // workshop: date, time, venue, prices, and remaining slots. book.html
+  // itself never hardcodes any of this — it just renders whatever this
+  // call returns for whatever ?ws= is in its own URL.
+  async function loadWorkshop(){
+    if (!workshopId){
+      showUnavailable("This booking link isn't valid. Please check the link and try again, or contact us directly.");
+      return;
+    }
     try {
-      const res = await fetch('https://handpan-webhook-server-production.up.railway.app/api/workshop/WS-005/availability');
-      if (!res.ok) return;
-      const data = await res.json();
-      if (typeof data.participantsRemaining === 'number'){
-        participantMax = data.participantsRemaining;
-        if (pCount > participantMax) pCount = Math.max(0, participantMax);
+      const res = await fetch(API_BASE + '/api/workshop/' + encodeURIComponent(workshopId) + '/availability');
+      if (!res.ok){
+        showUnavailable("This workshop isn't available right now. It may have already happened, been cancelled, or the link may be incorrect.");
+        return;
       }
-      if (typeof data.observersRemaining === 'number'){
-        observerMax = data.observersRemaining;
+      const data = await res.json();
+
+      heroDateEl.textContent = formatDisplayDate(data.date);
+      if (data.time){
+        heroTimeEl.textContent = data.time;
+        heroTimeRow.style.display = '';
+      } else {
+        heroTimeRow.style.display = 'none';
+      }
+      if (data.venueMapUrl){
+        const a = document.createElement('a');
+        a.href = data.venueMapUrl;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.className = 'hero-venue-link';
+        a.innerHTML = (data.venue || '') + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:14px; height:14px; flex-shrink:0;"><path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"/><path d="M10 14l10 -10"/><path d="M15 4l5 0l0 5"/></svg>';
+        heroVenueEl.innerHTML = '';
+        heroVenueEl.appendChild(a);
+      } else {
+        heroVenueEl.textContent = data.venue || '';
+      }
+
+      workshopDateTime = parseStartDateTime(data.date, data.time);
+
+      if (data.participantPrice == null || data.participantPrice <= 0){
+        showUnavailable("Bookings for this workshop aren't open yet. Please check back soon or contact us directly.");
+        return;
+      }
+
+      participantPrice = data.participantPrice;
+      observerPrice = (data.observerPrice != null && data.observerPrice > 0) ? data.observerPrice : null;
+
+      if (observerPrice == null){
+        observerRow.style.display = 'none';
+        observerMax = 0;
+        oCount = 0;
+      } else {
+        observerRow.style.display = '';
+        observerMax = (typeof data.observersRemaining === 'number') ? data.observersRemaining : 50;
         if (oCount > observerMax) oCount = Math.max(0, observerMax);
       }
+
+      participantMax = (typeof data.participantsRemaining === 'number') ? data.participantsRemaining : 50;
+      if (pCount > participantMax) pCount = Math.max(0, participantMax);
+
       render();
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
     } catch (err){
-      console.error('Could not fetch availability', err);
+      console.error('Could not load workshop info', err);
+      showUnavailable("We couldn't load this workshop's details. Please check your connection and refresh the page, or contact us directly.");
     }
   }
-  fetchAvailability();
+
+  loadWorkshop();
 </script>
 </body>
 </html>
