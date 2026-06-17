@@ -207,6 +207,14 @@
 
   .waitlist-prompt{ display:flex; flex-direction:column; gap:10px; }
   .waitlist-prompt-text{ font-size:15px; color:var(--text-mid); line-height:1.6; }
+  .booking-soldout{ background:var(--cream); border:1px solid var(--clay-pale); border-radius:var(--radius); padding:1.5rem; }
+  .soldout-badge{
+    display:inline-flex; align-items:center; font-size:15px; font-weight:600;
+    padding:7px 16px; border-radius:20px; margin-bottom:1.1rem;
+  }
+  .soldout-badge.soldout-grey{ background:#E5DCCF; color:var(--text-mid); }
+  .soldout-badge.soldout-red{ background:#B43C28; color:var(--cream); }
+  .soldout-message{ font-size:16px; color:var(--text-mid); line-height:1.65; margin-bottom:1.25rem; }
   .waitlist-prompt-row{ display:flex; gap:10px; flex-wrap:wrap; }
   .waitlist-prompt-row select{
     flex:1; min-width:140px; height:48px; border-radius:var(--radius);
@@ -472,17 +480,6 @@
           <span class="count" id="p-count">1</span>
           <button id="p-plus" aria-label="Increase participants">+</button>
         </div>
-        <div class="waitlist-prompt" id="participant-waitlist" style="display:none;">
-          <p class="waitlist-prompt-text">Let us know which month works for you and we'll reach out when we open a new workshop.</p>
-          <div class="waitlist-prompt-row">
-            <select id="wl-month-select" aria-label="Preferred month"></select>
-            <button type="button" id="wl-notify-btn">Notify me</button>
-          </div>
-          <p class="field-error" id="wl-notify-error"></p>
-        </div>
-        <div class="waitlist-success" id="participant-waitlist-success" style="display:none;">
-          <span>✓</span><span id="waitlist-success-text"></span>
-        </div>
       </div>
       <div class="ticket-row" id="observer-row">
         <div>
@@ -571,6 +568,22 @@
     <button class="cta" id="pay-btn">
       Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>
     </button>
+    </div>
+
+    <div class="booking-soldout" id="booking-soldout" style="display:none;">
+      <span class="soldout-badge" id="soldout-badge">Booking closed</span>
+      <p class="soldout-message" id="soldout-message"></p>
+
+      <div class="waitlist-prompt" id="participant-waitlist" style="display:none;">
+        <div class="waitlist-prompt-row">
+          <select id="wl-month-select" aria-label="Preferred month"></select>
+          <button type="button" id="wl-notify-btn">Notify me</button>
+        </div>
+        <p class="field-error" id="wl-notify-error"></p>
+      </div>
+      <div class="waitlist-success" id="participant-waitlist-success" style="display:none;">
+        <span>✓</span><span id="waitlist-success-text"></span>
+      </div>
     </div>
   </div>
 
@@ -673,6 +686,9 @@
   const payBtn = document.getElementById('pay-btn');
   const loadingOverlay = document.getElementById('loading-overlay');
   const bookingContent = document.getElementById('booking-content');
+  const bookingSoldout = document.getElementById('booking-soldout');
+  const soldoutBadge = document.getElementById('soldout-badge');
+  const soldoutMessage = document.getElementById('soldout-message');
   const bookingUnavailable = document.getElementById('booking-unavailable');
   const bookingSuccess = document.getElementById('booking-success');
   const bookingSectionTitle = document.getElementById('booking-section-title');
@@ -933,6 +949,31 @@
     // Audience passes only make sense alongside at least one participant ticket.
     const audienceLocked = pCount === 0 || participantClosed;
     if (audienceLocked) oCount = 0;
+
+    // Once nothing can be booked, the full ticket/details/payment form is just
+    // clutter — swap it for a focused message plus the waitlist signup. The
+    // "0 slots left" framing is only accurate for a genuine sell-out; if the
+    // booking window simply closed with capacity still unsold, skip the stat
+    // and explain the actual reason instead.
+    if (participantClosed){
+      bookingContent.style.display = 'none';
+      bookingSoldout.style.display = '';
+      if (pastCutoff){
+        soldoutBadge.textContent = 'Booking closed';
+        soldoutBadge.className = 'soldout-badge soldout-red';
+      } else {
+        soldoutBadge.textContent = 'All slots booked';
+        soldoutBadge.className = 'soldout-badge soldout-grey';
+      }
+      if (pastCutoff && participantMax > 0){
+        soldoutMessage.textContent = "Bookings for this session have closed. Let us know which month works for you, and we'll reach out for the next one.";
+      } else {
+        soldoutMessage.textContent = "All spots for this session are taken. Let us know which month works for you, and we'll reach out the moment a new workshop opens.";
+      }
+    } else {
+      bookingContent.style.display = '';
+      bookingSoldout.style.display = 'none';
+    }
 
     pCountEl.textContent = pCount;
     oCountEl.textContent = oCount;
