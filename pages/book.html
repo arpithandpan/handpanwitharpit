@@ -323,6 +323,9 @@
   .cta:disabled{ background:var(--text-light); cursor:not-allowed; }
   .cta i{ font-size:20px; }
 
+  .handpan-spinner{ width:56px; height:56px; margin:0 auto; animation:spin 1.9s linear infinite; }
+  @keyframes spin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+
   .fineprint{ font-size:15px; color:var(--text-light); text-align:center; margin-top:0.85rem; }
 
   /* GOOD TO KNOW */
@@ -599,6 +602,37 @@
 
 </div>
 
+<div id="loading-overlay" style="display:none; position:fixed; inset:0; background:rgba(61,43,31,0.55); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:var(--cream); border-radius:14px; padding:2.25rem 2rem; width:280px; text-align:center;">
+    <div class="handpan-spinner">
+      <svg width="56" height="56" viewBox="0 0 300 300" style="display:block;" aria-hidden="true">
+        <circle cx="150" cy="150" r="148" fill="#C17F52"/>
+        <circle cx="150" cy="150" r="138" fill="#3D2B1F"/>
+        <ellipse cx="150" cy="150" rx="62" ry="52" fill="#C17F52"/>
+        <ellipse cx="150" cy="150" rx="34" ry="28" fill="#3D2B1F"/>
+        <ellipse cx="150" cy="46" rx="18" ry="14" fill="#C17F52"/>
+        <ellipse cx="150" cy="46" rx="9" ry="7" fill="#3D2B1F"/>
+        <ellipse cx="220" cy="80" rx="20" ry="16" transform="rotate(45 220 80)" fill="#C17F52"/>
+        <ellipse cx="220" cy="80" rx="10" ry="8" transform="rotate(45 220 80)" fill="#3D2B1F"/>
+        <ellipse cx="254" cy="150" rx="16" ry="22" fill="#C17F52"/>
+        <ellipse cx="254" cy="150" rx="8" ry="11" fill="#3D2B1F"/>
+        <ellipse cx="220" cy="220" rx="26" ry="21" transform="rotate(-45 220 220)" fill="#C17F52"/>
+        <ellipse cx="220" cy="220" rx="14" ry="11" transform="rotate(-45 220 220)" fill="#3D2B1F"/>
+        <ellipse cx="150" cy="256" rx="28" ry="22" fill="#C17F52"/>
+        <ellipse cx="150" cy="256" rx="15" ry="12" fill="#3D2B1F"/>
+        <ellipse cx="80" cy="220" rx="26" ry="21" transform="rotate(45 80 220)" fill="#C17F52"/>
+        <ellipse cx="80" cy="220" rx="14" ry="11" transform="rotate(45 80 220)" fill="#3D2B1F"/>
+        <ellipse cx="46" cy="150" rx="16" ry="22" fill="#C17F52"/>
+        <ellipse cx="46" cy="150" rx="8" ry="11" fill="#3D2B1F"/>
+        <ellipse cx="80" cy="80" rx="20" ry="16" transform="rotate(-45 80 80)" fill="#C17F52"/>
+        <ellipse cx="80" cy="80" rx="10" ry="8" transform="rotate(-45 80 80)" fill="#3D2B1F"/>
+      </svg>
+    </div>
+    <div style="font-size:18px;font-weight:500;color:var(--text-dark);margin-top:1.1rem;">Securing your spot…</div>
+    <div style="font-size:14px;color:var(--text-light);margin-top:0.5rem;line-height:1.5;">Please don't close this page, you'll be taken to payment in a moment.</div>
+  </div>
+</div>
+
 <script>  // ── CONFIG ──
   const API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
   const workshopId = new URLSearchParams(window.location.search).get('ws');
@@ -637,6 +671,7 @@
   const hpGroupSizeEl = document.getElementById('hp-group-size');
   const observerRow = document.getElementById('observer-row');
   const payBtn = document.getElementById('pay-btn');
+  const loadingOverlay = document.getElementById('loading-overlay');
   const bookingContent = document.getElementById('booking-content');
   const bookingUnavailable = document.getElementById('booking-unavailable');
   const bookingSuccess = document.getElementById('booking-success');
@@ -1016,7 +1051,7 @@
     const phone = selectedCountry.code + phoneInput.value.trim();
     const email = emailInput.value.trim();
     payBtn.disabled = true;
-    payBtn.textContent = 'Redirecting...';
+    loadingOverlay.style.display = 'flex';
     try {
       const res = await fetch(API_BASE + '/api/create-payment-link', {
         method: 'POST',
@@ -1035,6 +1070,7 @@
       const data = await res.json();
       if (res.status === 409){
         alert("Sorry, those spots just got booked by someone else. Please refresh and try again with a smaller number of spots.");
+        loadingOverlay.style.display = 'none';
         payBtn.disabled = false;
         payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
         loadWorkshop();
@@ -1047,6 +1083,7 @@
       }
     } catch (err){
       alert('Something went wrong creating your payment link. Please try again or contact us directly.');
+      loadingOverlay.style.display = 'none';
       payBtn.disabled = false;
       payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
     }
