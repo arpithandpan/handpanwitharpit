@@ -1388,7 +1388,6 @@
 
       render();
       updateCountdown();
-      setInterval(updateCountdown, 1000);
     } catch (err){
       console.error('Could not load workshop info', err);
       showUnavailable("We couldn't load this workshop's details. Please check your connection and refresh the page, or contact us directly.");
@@ -1400,7 +1399,20 @@
     showSuccess();
   } else {
     loadWorkshop();
+    setInterval(updateCountdown, 1000);
   }
+
+  // If the browser restores this page from its back-forward cache (e.g. the
+  // user taps back after being sent to Razorpay), the DOM comes back frozen
+  // exactly as it looked at the moment they left — loading overlay and all.
+  // Clear that overlay and re-pull availability so the page is both usable
+  // and accurate, rather than stuck on a stale snapshot.
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted){
+      loadingOverlay.style.display = 'none';
+      loadWorkshop();
+    }
+  });
 </script>
 </body>
 </html>
