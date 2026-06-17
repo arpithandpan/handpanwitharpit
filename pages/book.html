@@ -207,26 +207,39 @@
 
   .waitlist-prompt{ display:flex; flex-direction:column; gap:10px; }
   .waitlist-prompt-text{ font-size:15px; color:var(--text-mid); line-height:1.6; }
-  .booking-soldout{ background:var(--cream); border:1px solid var(--clay-pale); border-radius:var(--radius); padding:1.5rem; }
   .soldout-badge{
     display:inline-flex; align-items:center; font-size:15px; font-weight:600;
     padding:7px 16px; border-radius:20px; margin-bottom:1.1rem;
   }
   .soldout-badge.soldout-grey{ background:#E5DCCF; color:var(--text-mid); }
   .soldout-badge.soldout-red{ background:#B43C28; color:var(--cream); }
-  .soldout-message{ font-size:16px; color:var(--text-mid); line-height:1.65; margin-bottom:1.25rem; }
+  .soldout-message{ font-size:16px; color:var(--text-mid); line-height:1.65; margin-bottom:0; }
   .waitlist-prompt-row{ display:flex; gap:10px; flex-wrap:wrap; }
-  .waitlist-prompt-row select{
-    flex:1; min-width:140px; height:48px; border-radius:var(--radius);
-    border:1px solid var(--stone); background-color:var(--cream); color:var(--text-dark);
-    font-family:inherit; font-size:16px; padding:0 36px 0 12px; outline:none;
-    transition:border-color 0.15s;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235C4A3A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6l6 -6'/%3E%3C/svg%3E");
-    background-repeat:no-repeat;
-    background-position:right 12px center;
-    background-size:16px;
+  .month-select-wrap{ position:relative; flex:1; min-width:140px; }
+  .month-select{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    width:100%; height:48px; border-radius:var(--radius); border:1px solid var(--stone);
+    background:var(--cream); color:var(--text-dark); font-family:inherit; font-size:16px;
+    padding:0 14px; cursor:pointer; text-align:left;
   }
-  .waitlist-prompt-row select:focus{ border-color:var(--clay); }
+  .month-select-label{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .month-select svg{ color:var(--text-light); transition:transform 0.15s; flex-shrink:0; }
+  .month-select.open svg{ transform:rotate(180deg); }
+  .month-dropdown{
+    display:none; flex-direction:column; position:absolute; top:calc(100% + 6px); left:0; right:0;
+    border:1px solid var(--stone); border-radius:var(--radius); background:var(--cream);
+    padding:0.4rem; max-height:240px; overflow-y:auto; z-index:5;
+    box-shadow:0 6px 20px rgba(61,43,31,0.14);
+  }
+  .month-dropdown.open{ display:flex; }
+  .month-option{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:0.7rem 0.65rem; min-height:44px; cursor:pointer; border-radius:4px; font-size:16px;
+    color:var(--text-dark);
+  }
+  .month-option:hover{ background:var(--sand); }
+  .month-option .mo-check{ color:var(--clay); width:16px; height:16px; flex-shrink:0; visibility:hidden; }
+  .month-option.selected .mo-check{ visibility:visible; }
   .waitlist-prompt-row button{
     height:48px; padding:0 1.25rem; border:none; border-radius:var(--radius);
     background:var(--clay); color:var(--cream); font-family:inherit;
@@ -333,6 +346,8 @@
 
   .handpan-spinner{ width:56px; height:56px; margin:0 auto; animation:spin 1.9s linear infinite; }
   @keyframes spin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+  .inline-spinner{ display:inline-flex; width:15px; height:15px; vertical-align:-2px; animation:spin 1.9s linear infinite; }
+  .inline-spinner i{ font-size:15px; line-height:1; }
 
   .fineprint{ font-size:15px; color:var(--text-light); text-align:center; margin-top:0.85rem; }
 
@@ -389,15 +404,15 @@
     <div class="hero-meta-vertical" id="hero-meta">
       <div class="hero-meta-line">
         <span class="hero-meta-label">Date</span>
-        <span class="hero-meta-value" id="hero-date">…</span>
+        <span class="hero-meta-value" id="hero-date"><span class="inline-spinner"><i class="ti ti-loader" aria-hidden="true"></i></span></span>
       </div>
       <div class="hero-meta-line" id="hero-time-row">
         <span class="hero-meta-label">Time</span>
-        <span class="hero-meta-value" id="hero-time">…</span>
+        <span class="hero-meta-value" id="hero-time"><span class="inline-spinner"><i class="ti ti-loader" aria-hidden="true"></i></span></span>
       </div>
       <div class="hero-meta-line">
         <span class="hero-meta-label">Venue</span>
-        <span class="hero-meta-value" id="hero-venue">…</span>
+        <span class="hero-meta-value" id="hero-venue"><span class="inline-spinner"><i class="ti ti-loader" aria-hidden="true"></i></span></span>
       </div>
     </div>
   </div>
@@ -467,7 +482,7 @@
     </div>
 
     <div id="booking-content">
-    <div class="ticket-card">
+    <div class="ticket-card" id="ticket-card">
       <div class="ticket-row">
         <div>
           <p class="ticket-name">Participant</p>
@@ -497,7 +512,12 @@
     </div>
 
     <div class="form-card">
-      <p class="label">Your details</p>
+      <div class="booking-soldout-header" id="booking-soldout-header" style="display:none;">
+        <span class="soldout-badge" id="soldout-badge">Booking closed</span>
+        <p class="soldout-message" id="soldout-message"></p>
+      </div>
+
+      <p class="label" id="details-label">Your details</p>
 
       <div class="contact-fields">
         <div class="field-group">
@@ -519,7 +539,7 @@
             <input type="text" class="country-search" id="country-search" placeholder="Search country..."/>
             <div class="country-list" id="country-list"></div>
           </div>
-          <p class="field-hint">We'll send your booking confirmation and updates to this number on WhatsApp.</p>
+          <p class="field-hint" id="phone-hint">We'll send your booking confirmation and updates to this number on WhatsApp.</p>
           <p class="field-error" id="phone-error"></p>
         </div>
 
@@ -529,7 +549,7 @@
         </div>
       </div>
 
-      <div class="preferences">
+      <div class="preferences" id="preferences-block">
         <div class="toggle-group">
           <p class="toggle-q">Bringing your own handpan?</p>
           <div class="toggle-pair" data-toggle="own-handpan">
@@ -555,9 +575,28 @@
           </div>
         </div>
       </div>
+
+      <div class="booking-soldout-footer" id="booking-soldout-footer" style="display:none;">
+        <div class="waitlist-prompt" id="participant-waitlist" style="display:none;">
+          <div class="waitlist-prompt-row">
+            <div class="month-select-wrap" id="month-select-wrap">
+              <button type="button" class="month-select" id="month-select" aria-haspopup="listbox" aria-expanded="false">
+                <span class="month-select-label" id="month-select-label"></span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px; flex-shrink:0;"><path d="M6 9l6 6l6 -6"/></svg>
+              </button>
+              <div class="month-dropdown" id="month-dropdown" role="listbox"></div>
+            </div>
+            <button type="button" id="wl-notify-btn">Notify me</button>
+          </div>
+          <p class="field-error" id="wl-notify-error"></p>
+        </div>
+        <div class="waitlist-success" id="participant-waitlist-success" style="display:none;">
+          <span>✓</span><span id="waitlist-success-text"></span>
+        </div>
+      </div>
     </div>
 
-    <div class="total-card">
+    <div class="total-card" id="total-card">
       <div>
         <p class="total-label">Total amount</p>
         <p class="total-amount" id="total-amount">₹0</p>
@@ -568,22 +607,6 @@
     <button class="cta" id="pay-btn">
       Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>
     </button>
-    </div>
-
-    <div class="booking-soldout" id="booking-soldout" style="display:none;">
-      <span class="soldout-badge" id="soldout-badge">Booking closed</span>
-      <p class="soldout-message" id="soldout-message"></p>
-
-      <div class="waitlist-prompt" id="participant-waitlist" style="display:none;">
-        <div class="waitlist-prompt-row">
-          <select id="wl-month-select" aria-label="Preferred month"></select>
-          <button type="button" id="wl-notify-btn">Notify me</button>
-        </div>
-        <p class="field-error" id="wl-notify-error"></p>
-      </div>
-      <div class="waitlist-success" id="participant-waitlist-success" style="display:none;">
-        <span>✓</span><span id="waitlist-success-text"></span>
-      </div>
     </div>
   </div>
 
@@ -686,7 +709,13 @@
   const payBtn = document.getElementById('pay-btn');
   const loadingOverlay = document.getElementById('loading-overlay');
   const bookingContent = document.getElementById('booking-content');
-  const bookingSoldout = document.getElementById('booking-soldout');
+  const ticketCard = document.getElementById('ticket-card');
+  const totalCard = document.getElementById('total-card');
+  const detailsLabel = document.getElementById('details-label');
+  const phoneHint = document.getElementById('phone-hint');
+  const preferencesBlock = document.getElementById('preferences-block');
+  const bookingSoldoutHeader = document.getElementById('booking-soldout-header');
+  const bookingSoldoutFooter = document.getElementById('booking-soldout-footer');
   const soldoutBadge = document.getElementById('soldout-badge');
   const soldoutMessage = document.getElementById('soldout-message');
   const bookingUnavailable = document.getElementById('booking-unavailable');
@@ -707,7 +736,10 @@
   const participantWaitlist = document.getElementById('participant-waitlist');
   const participantWaitlistSuccess = document.getElementById('participant-waitlist-success');
   const waitlistSuccessText = document.getElementById('waitlist-success-text');
-  const wlMonthSelect = document.getElementById('wl-month-select');
+  const monthSelectWrap = document.getElementById('month-select-wrap');
+  const monthSelectBtn = document.getElementById('month-select');
+  const monthSelectLabel = document.getElementById('month-select-label');
+  const monthDropdown = document.getElementById('month-dropdown');
   const wlNotifyBtn = document.getElementById('wl-notify-btn');
   const wlNotifyError = document.getElementById('wl-notify-error');
   let waitlistSubmitted = false;
@@ -715,18 +747,53 @@
   // Next 12 months starting this month, as {value, label} — value is the
   // first of that month (e.g. "2026-08-01"), matching the date column the
   // dashboard's Waitlist section reads from, so it sorts and filters cleanly.
-  function getUpcomingMonths(count){
+  function getUpcomingMonths(endYear, endMonth){
     const out = [];
     const now = new Date();
-    for (let i = 0; i < count; i++){
-      const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    let d = new Date(now.getFullYear(), now.getMonth(), 1);
+    const end = new Date(endYear, endMonth - 1, 1);
+    while (d <= end){
       const value = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-01';
       const label = d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
       out.push({ value, label });
+      d = new Date(d.getFullYear(), d.getMonth()+1, 1);
     }
     return out;
   }
-  wlMonthSelect.innerHTML = getUpcomingMonths(12).map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+  const upcomingMonths = getUpcomingMonths(2026, 12);
+  let selectedMonth = upcomingMonths[0] || null;
+
+  function renderMonthDropdown(){
+    monthDropdown.innerHTML = '';
+    upcomingMonths.forEach(m => {
+      const item = document.createElement('div');
+      item.className = 'month-option' + (selectedMonth && m.value === selectedMonth.value ? ' selected' : '');
+      item.setAttribute('role', 'option');
+      item.innerHTML = `<span>${m.label}</span><svg class="mo-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>`;
+      item.addEventListener('click', () => {
+        selectedMonth = m;
+        monthSelectLabel.textContent = m.label;
+        closeMonthDropdown();
+        renderMonthDropdown();
+      });
+      monthDropdown.appendChild(item);
+    });
+  }
+  function closeMonthDropdown(){
+    monthDropdown.classList.remove('open');
+    monthSelectBtn.classList.remove('open');
+    monthSelectBtn.setAttribute('aria-expanded', 'false');
+  }
+  renderMonthDropdown();
+  if (selectedMonth) monthSelectLabel.textContent = selectedMonth.label;
+  monthSelectBtn.addEventListener('click', () => {
+    const isOpen = monthDropdown.classList.toggle('open');
+    monthSelectBtn.classList.toggle('open', isOpen);
+    monthSelectBtn.setAttribute('aria-expanded', String(isOpen));
+  });
+  document.addEventListener('click', (e) => {
+    if (!monthSelectWrap.contains(e.target)) closeMonthDropdown();
+  });
 
   let ownHandpanCount = 0;
   let bringingOwnHandpan = 'No';
@@ -956,8 +1023,14 @@
     // booking window simply closed with capacity still unsold, skip the stat
     // and explain the actual reason instead.
     if (participantClosed){
-      bookingContent.style.display = 'none';
-      bookingSoldout.style.display = '';
+      ticketCard.style.display = 'none';
+      preferencesBlock.style.display = 'none';
+      totalCard.style.display = 'none';
+      payBtn.style.display = 'none';
+      detailsLabel.style.display = 'none';
+      bookingSoldoutHeader.style.display = '';
+      bookingSoldoutFooter.style.display = '';
+      phoneHint.textContent = "We'll reach out to this number on WhatsApp when a new workshop opens.";
       if (pastCutoff){
         soldoutBadge.textContent = 'Booking closed';
         soldoutBadge.className = 'soldout-badge soldout-red';
@@ -971,8 +1044,14 @@
         soldoutMessage.textContent = "All spots for this session are taken. Let us know which month works for you, and we'll reach out the moment a new workshop opens.";
       }
     } else {
-      bookingContent.style.display = '';
-      bookingSoldout.style.display = 'none';
+      ticketCard.style.display = '';
+      preferencesBlock.style.display = '';
+      totalCard.style.display = '';
+      payBtn.style.display = '';
+      detailsLabel.style.display = '';
+      bookingSoldoutHeader.style.display = 'none';
+      bookingSoldoutFooter.style.display = 'none';
+      phoneHint.textContent = "We'll send your booking confirmation and updates to this number on WhatsApp.";
     }
 
     pCountEl.textContent = pCount;
@@ -1146,8 +1225,8 @@
     const name = nameInput.value.trim();
     const phone = selectedCountry.code + phoneInput.value.trim();
     const email = emailInput.value.trim();
-    const preferredMonth = wlMonthSelect.value;
-    const monthLabel = wlMonthSelect.options[wlMonthSelect.selectedIndex]?.text || '';
+    const preferredMonth = selectedMonth ? selectedMonth.value : '';
+    const monthLabel = selectedMonth ? selectedMonth.label : '';
     wlNotifyBtn.disabled = true;
     wlNotifyBtn.textContent = 'Submitting...';
     wlNotifyError.textContent = '';
