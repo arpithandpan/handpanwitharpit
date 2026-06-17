@@ -633,6 +633,10 @@ body { overflow-x: clip; max-width: 100vw; }
   font-size: 1.15rem; color: var(--text-light); margin-top: 0.35rem;
   display: block; width: 100%; clear: both;
 }
+.dash-section-count {
+  font-size: 0.95rem; color: var(--text-light); opacity: 0.75; margin-top: 0.3rem;
+  display: block; width: 100%; clear: both;
+}
 
 /* Stat cards */
 .stats-grid {
@@ -3002,7 +3006,8 @@ table#paymentsTable { min-width: 700px; }
       <div class="dash-section-header">
         <div>
           <div class="dash-section-title">Leads</div>
-          <div class="dash-section-subtitle" id="leadsCount">People interested in buying a handpan</div>
+          <div class="dash-section-subtitle">People interested in buying a handpan</div>
+          <div class="dash-section-count" id="leadsCount"></div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;">
           <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addLead')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -3059,7 +3064,8 @@ table#paymentsTable { min-width: 700px; }
       <div class="dash-section-header">
         <div>
           <div class="dash-section-title">Waitlist</div>
-          <div class="dash-section-subtitle" id="waitlistCount">People interested in joining a future workshop</div>
+          <div class="dash-section-subtitle">People interested in joining a future workshop</div>
+          <div class="dash-section-count" id="waitlistCount"></div>
         </div>
         <div style="display:flex;align-items:center;gap:1rem;">
           <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addWaitlist')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -5354,7 +5360,7 @@ async function loadInsights() {
     const cats = {}; pays.filter(p=>p.type==='income').forEach(p=>{cats[p.category]=(cats[p.category]||0)+Number(p.amount);});
     const entries = Object.entries(cats).sort((a,b)=>b[1]-a[1]); const maxC = Math.max(...entries.map(e=>e[1]));
     document.getElementById('chartCategories').innerHTML = entries.map(([cat,val])=>`<div class="chart-bar-wrap"><div class="chart-bar-val">${fmt(val)}</div><div class="chart-bar" style="height:${maxC?Math.round(val/maxC*100):0}%;background:var(--moss)"></div><div class="chart-bar-label">${cat}</div></div>`).join('');
-  } catch(e) { showToast('Error loading insights', 'error'); } finally { hideLoader(); }
+  } catch(e) { showToast("Couldn't load insights. Check your connection and try again.", 'error'); } finally { hideLoader(); }
 }
 
 // ── SYNC ──
