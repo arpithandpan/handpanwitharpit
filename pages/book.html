@@ -143,6 +143,14 @@
     padding:1.1rem 0;
   }
   .ticket-row + .ticket-row{ border-top:1px solid var(--clay-pale); }
+  .spots-badge{
+    display:inline-flex; align-items:center; font-size:13.5px; font-weight:500;
+    padding:5px 12px; border-radius:20px; margin:7px 0 2px;
+  }
+  .spots-badge:empty{ display:none; }
+  .spots-badge.spots-normal{ background:var(--clay-pale); color:#8A5A36; }
+  .spots-badge.spots-low{ background:var(--clay); color:var(--cream); font-weight:600; }
+  .spots-badge.spots-soldout{ background:#E5DCCF; color:var(--text-mid); font-weight:600; }
   .ticket-name{ font-size:19px; font-weight:500; color:var(--text-dark); }
   .ticket-desc{ font-size:16px; color:var(--text-light); margin-top:2px; }
   .ticket-desc.disabled{ color:#B43C28; }
@@ -394,6 +402,7 @@
         <div>
           <p class="ticket-name">Participant</p>
           <p class="ticket-desc" id="participant-desc">…</p>
+          <span class="spots-badge" id="participant-spots-badge"></span>
           <p class="ticket-note">Handpans will be provided. If you'd like to bring your own, you're welcome to.</p>
         </div>
         <div class="stepper" id="participant-stepper">
@@ -417,6 +426,7 @@
         <div>
           <p class="ticket-name">Audience pass</p>
           <p class="ticket-desc" id="observer-desc">…</p>
+          <span class="spots-badge" id="observer-spots-badge"></span>
           <p class="ticket-note">Watch the session and enjoy the live concert. Does not include hands-on participation or a handpan.</p>
         </div>
         <div class="stepper">
@@ -546,6 +556,8 @@
   const badgeEl = document.getElementById('ticket-badge');
   const observerDesc = document.getElementById('observer-desc');
   const participantDesc = document.getElementById('participant-desc');
+  const observerSpotsBadge = document.getElementById('observer-spots-badge');
+  const participantSpotsBadge = document.getElementById('participant-spots-badge');
   const observerRow = document.getElementById('observer-row');
   const payBtn = document.getElementById('pay-btn');
   const bookingContent = document.getElementById('booking-content');
@@ -783,9 +795,11 @@
     badgeEl.textContent = totalTickets + (totalTickets === 1 ? ' ticket' : ' tickets');
 
     if (participantMax === 0){
-      participantDesc.textContent = 'Sold out';
+      participantDesc.textContent = '';
       participantDesc.classList.add('disabled');
       participantStepper.style.display = 'none';
+      participantSpotsBadge.textContent = 'Sold out';
+      participantSpotsBadge.className = 'spots-badge spots-soldout';
       if (waitlistSubmitted){
         participantWaitlist.style.display = 'none';
         participantWaitlistSuccess.style.display = '';
@@ -799,14 +813,30 @@
       participantStepper.style.display = '';
       participantWaitlist.style.display = 'none';
       participantWaitlistSuccess.style.display = 'none';
+      if (participantMax <= 2){
+        participantSpotsBadge.textContent = participantMax === 1 ? 'Only 1 spot left!' : ('Only ' + participantMax + ' spots left!');
+        participantSpotsBadge.className = 'spots-badge spots-low';
+      } else {
+        participantSpotsBadge.textContent = participantMax + ' spots left';
+        participantSpotsBadge.className = 'spots-badge spots-normal';
+      }
     }
     if (observerPrice != null){
       if (observerMax === 0){
-        observerDesc.textContent = 'Sold out';
+        observerDesc.textContent = '';
         observerDesc.classList.add('disabled');
+        observerSpotsBadge.textContent = 'Sold out';
+        observerSpotsBadge.className = 'spots-badge spots-soldout';
       } else {
         observerDesc.textContent = '₹' + observerPrice.toLocaleString('en-IN') + ' per person';
         observerDesc.classList.remove('disabled');
+        if (observerMax <= 2){
+          observerSpotsBadge.textContent = observerMax === 1 ? 'Only 1 spot left!' : ('Only ' + observerMax + ' spots left!');
+          observerSpotsBadge.className = 'spots-badge spots-low';
+        } else {
+          observerSpotsBadge.textContent = observerMax + ' spots left';
+          observerSpotsBadge.className = 'spots-badge spots-normal';
+        }
       }
     }
 
