@@ -167,6 +167,7 @@
   .stepper button:disabled{ opacity:0.3; cursor:not-allowed; }
   .stepper .count{ font-size:19px; font-weight:500; min-width:18px; text-align:center; }
   .stepper-note{ font-size:13px; color:var(--text-light); margin-left:2px; }
+  .handpan-count-row{ border-top:1px solid var(--clay-pale); margin-top:14px; padding-top:14px; }
   .guest-names{ display:flex; flex-direction:column; gap:10px; }
   .guest-names:empty{ display:none; }
 
@@ -475,12 +476,19 @@
 
       <div class="preferences">
         <div class="toggle-group">
-          <p class="toggle-q">How many of your group are bringing their own handpan?</p>
-          <div class="stepper" id="handpan-stepper">
-            <button type="button" id="hp-minus" aria-label="Decrease">−</button>
-            <span class="count" id="hp-count">0</span>
-            <button type="button" id="hp-plus" aria-label="Increase">+</button>
-            <span class="stepper-note">out of <span id="hp-group-size">1</span> in your group</span>
+          <p class="toggle-q">Bringing your own handpan?</p>
+          <div class="toggle-pair" data-toggle="own-handpan">
+            <button type="button" class="toggle-btn" data-value="No"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>No</button>
+            <button type="button" class="toggle-btn" data-value="Yes"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>Yes</button>
+          </div>
+          <div class="handpan-count-row" id="handpan-count-row" style="display:none;">
+            <p class="toggle-q">How many of your group?</p>
+            <div class="stepper" id="handpan-stepper">
+              <button type="button" id="hp-minus" aria-label="Decrease">−</button>
+              <span class="count" id="hp-count">1</span>
+              <button type="button" id="hp-plus" aria-label="Increase">+</button>
+              <span class="stepper-note">out of <span id="hp-group-size">1</span> in your group</span>
+            </div>
           </div>
         </div>
 
@@ -565,6 +573,7 @@
   const observerSpotsBadge = document.getElementById('observer-spots-badge');
   const participantSpotsBadge = document.getElementById('participant-spots-badge');
   const guestNamesContainer = document.getElementById('guest-names-container');
+  const handpanCountRow = document.getElementById('handpan-count-row');
   const hpMinus = document.getElementById('hp-minus');
   const hpPlus = document.getElementById('hp-plus');
   const hpCountEl = document.getElementById('hp-count');
@@ -605,6 +614,7 @@
   wlMonthSelect.innerHTML = getUpcomingMonths(12).map(m => `<option value="${m.value}">${m.label}</option>`).join('');
 
   let ownHandpanCount = 0;
+  let bringingOwnHandpan = 'No';
   let photoConsent = 'Yes';
   let guestNames = [];
   // Country codes
@@ -738,19 +748,25 @@
   emailInput.addEventListener('input', () => { if (emailInput.classList.contains('invalid')) validateEmail(); });
   document.querySelectorAll('.toggle-pair').forEach(group => {
     const buttons = group.querySelectorAll('.toggle-btn');
+    const isHandpan = group.dataset.toggle === 'own-handpan';
     buttons.forEach(btn => {
-      if (btn.dataset.value === photoConsent){
+      if (btn.dataset.value === (isHandpan ? bringingOwnHandpan : photoConsent)){
         btn.classList.add('active');
       }
       btn.addEventListener('click', () => {
         buttons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        photoConsent = btn.dataset.value;
+        if (isHandpan){
+          bringingOwnHandpan = btn.dataset.value;
+          render();
+        } else {
+          photoConsent = btn.dataset.value;
+        }
       });
     });
   });
 
-  hpMinus.addEventListener('click', () => { if (ownHandpanCount > 0) { ownHandpanCount--; render(); } });
+  hpMinus.addEventListener('click', () => { if (ownHandpanCount > 1) { ownHandpanCount--; render(); } });
   hpPlus.addEventListener('click', () => { if (ownHandpanCount < pCount) { ownHandpanCount++; render(); } });
 
   function renderGuestFields(){
@@ -879,12 +895,23 @@
       }
     }
 
-    // Handpan count can never exceed how many people are actually in the booking.
-    if (ownHandpanCount > pCount) ownHandpanCount = pCount;
-    hpCountEl.textContent = ownHandpanCount;
-    hpGroupSizeEl.textContent = pCount;
-    hpMinus.disabled = ownHandpanCount <= 0;
-    hpPlus.disabled = ownHandpanCount >= pCount;
+    // Handpan: simple yes/no for a single ticket; for 2+ tickets, "Yes" reveals
+    // a count stepper so we can capture how many in the group are bringing one.
+    if (bringingOwnHandpan === 'No'){
+      ownHandpanCount = 0;
+      handpanCountRow.style.display = 'none';
+    } else if (pCount <= 1){
+      ownHandpanCount = pCount; // 1 if there's a ticket, 0 in the locked/sold-out edge case
+      handpanCountRow.style.display = 'none';
+    } else {
+      if (ownHandpanCount < 1) ownHandpanCount = 1;
+      if (ownHandpanCount > pCount) ownHandpanCount = pCount;
+      handpanCountRow.style.display = '';
+      hpCountEl.textContent = ownHandpanCount;
+      hpGroupSizeEl.textContent = pCount;
+      hpMinus.disabled = ownHandpanCount <= 1;
+      hpPlus.disabled = ownHandpanCount >= pCount;
+    }
 
     renderGuestFields();
 
@@ -936,7 +963,7 @@
           name, phone, email,
           guestNames: guestNames.map(n => n.trim()).filter(n => n.length > 0),
           ownHandpanCount,
-          bringingOwnHandpan: ownHandpanCount > 0 ? 'Yes' : 'No',
+          bringingOwnHandpan,
           photoConsent
         })
       });
