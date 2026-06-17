@@ -911,7 +911,12 @@
   }
   function validateEmail(){
     const val = emailInput.value.trim();
+    const emailOptional = bookingSoldoutHeader.style.display !== 'none';
     if (!val){
+      if (emailOptional){
+        setError(emailInput, emailError, '');
+        return true;
+      }
       setError(emailInput, emailError, 'Please enter your email.');
       return false;
     }
@@ -1031,6 +1036,7 @@
       bookingSoldoutHeader.style.display = '';
       bookingSoldoutFooter.style.display = '';
       phoneHint.textContent = "We'll reach out to this number on WhatsApp when a new workshop opens.";
+      emailInput.placeholder = 'Email (optional)';
       if (pastCutoff){
         soldoutBadge.textContent = 'Booking closed';
         soldoutBadge.className = 'soldout-badge soldout-red';
@@ -1052,6 +1058,7 @@
       bookingSoldoutHeader.style.display = 'none';
       bookingSoldoutFooter.style.display = 'none';
       phoneHint.textContent = "We'll send your booking confirmation and updates to this number on WhatsApp.";
+      emailInput.placeholder = 'Email';
     }
 
     pCountEl.textContent = pCount;
