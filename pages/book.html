@@ -176,9 +176,13 @@
   .waitlist-prompt-row{ display:flex; gap:10px; flex-wrap:wrap; }
   .waitlist-prompt-row select{
     flex:1; min-width:140px; height:48px; border-radius:var(--radius);
-    border:1px solid var(--stone); background:var(--cream); color:var(--text-dark);
-    font-family:inherit; font-size:16px; padding:0 12px; outline:none;
+    border:1px solid var(--stone); background-color:var(--cream); color:var(--text-dark);
+    font-family:inherit; font-size:16px; padding:0 36px 0 12px; outline:none;
     transition:border-color 0.15s;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235C4A3A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6l6 -6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 12px center;
+    background-size:16px;
   }
   .waitlist-prompt-row select:focus{ border-color:var(--clay); }
   .waitlist-prompt-row button{
@@ -558,6 +562,8 @@
   let participantMax = 50;
   let observerMax = 0;
   let workshopDateTime = null;
+  let bookingCutoff = null;
+  let lastPastCutoffState = false;
 
   let pCount = 1;
   let oCount = 0;
@@ -830,8 +836,10 @@
   }
 
   function render(){
+    const pastCutoff = !!(bookingCutoff && new Date() >= bookingCutoff);
+    const participantClosed = participantMax === 0 || pastCutoff;
     // Audience passes only make sense alongside at least one participant ticket.
-    const audienceLocked = pCount === 0;
+    const audienceLocked = pCount === 0 || participantClosed;
     if (audienceLocked) oCount = 0;
 
     pCountEl.textContent = pCount;
@@ -845,11 +853,11 @@
     const totalTickets = pCount + oCount;
     badgeEl.textContent = totalTickets + (totalTickets === 1 ? ' ticket' : ' tickets');
 
-    if (participantMax === 0){
+    if (participantClosed){
       participantDesc.textContent = '';
       participantDesc.classList.add('disabled');
       participantStepper.style.display = 'none';
-      participantSpotsBadge.textContent = 'Sold out';
+      participantSpotsBadge.textContent = pastCutoff ? 'Booking closed' : 'Sold out';
       participantSpotsBadge.className = 'spots-badge spots-soldout';
       if (waitlistSubmitted){
         participantWaitlist.style.display = 'none';
@@ -916,12 +924,11 @@
 
     renderGuestFields();
 
-    // Only fully disable Reserve once nothing offered is left to buy.
-    // If audience passes aren't offered at all, they don't count toward this.
-    const fullySoldOut = participantMax === 0;
-    if (fullySoldOut){
+    // Only fully disable Reserve once nothing offered is left to buy,
+    // or once the booking window itself has closed.
+    if (participantClosed){
       payBtn.disabled = true;
-      payBtn.textContent = 'Fully booked';
+      payBtn.textContent = pastCutoff ? 'Booking closed' : 'Fully booked';
     } else if (pCount === 0){
       payBtn.disabled = true;
       payBtn.textContent = 'Select at least 1 spot';
@@ -1035,21 +1042,30 @@
   const cdMins = document.getElementById('cd-mins');
   const cdSecs = document.getElementById('cd-secs');
   function updateCountdown(){
-    if (!workshopDateTime) { countdownEl.style.display = 'none'; return; }
-    const now = new Date();
-    const diff = workshopDateTime - now;
-    if (diff <= 0){
+    if (!workshopDateTime){
       countdownEl.style.display = 'none';
-      return;
+    } else {
+      const diff = workshopDateTime - new Date();
+      if (diff <= 0){
+        countdownEl.style.display = 'none';
+      } else {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const mins = Math.floor((diff / (1000 * 60)) % 60);
+        const secs = Math.floor((diff / 1000) % 60);
+        cdDays.textContent = String(days).padStart(2, '0');
+        cdHours.textContent = String(hours).padStart(2, '0');
+        cdMins.textContent = String(mins).padStart(2, '0');
+        cdSecs.textContent = String(secs).padStart(2, '0');
+      }
     }
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const mins = Math.floor((diff / (1000 * 60)) % 60);
-    const secs = Math.floor((diff / 1000) % 60);
-    cdDays.textContent = String(days).padStart(2, '0');
-    cdHours.textContent = String(hours).padStart(2, '0');
-    cdMins.textContent = String(mins).padStart(2, '0');
-    cdSecs.textContent = String(secs).padStart(2, '0');
+    // Catch the exact moment the booking window closes for anyone who has
+    // the page open across that boundary, without re-rendering every tick.
+    const pastCutoffNow = !!(bookingCutoff && new Date() >= bookingCutoff);
+    if (pastCutoffNow !== lastPastCutoffState){
+      lastPastCutoffState = pastCutoffNow;
+      render();
+    }
   }
 
   // ── UNAVAILABLE STATE ──
@@ -1102,6 +1118,10 @@
       }
 
       workshopDateTime = parseStartDateTime(data.date, data.time);
+      // Bookings close at the start of the workshop's own calendar day —
+      // i.e. the last bookable moment is 23:59:59 the day before.
+      bookingCutoff = data.date ? new Date(`${data.date}T00:00:00+05:30`) : null;
+      lastPastCutoffState = bookingCutoff ? (new Date() >= bookingCutoff) : false;
 
       if (data.participantPrice == null || data.participantPrice <= 0){
         showUnavailable("Bookings for this workshop aren't open yet. Please check back soon or contact us directly.");
