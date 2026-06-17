@@ -149,7 +149,7 @@
   }
   .spots-badge:empty{ display:none; }
   .spots-badge.spots-normal{ background:var(--clay-pale); color:#8A5A36; }
-  .spots-badge.spots-low{ background:var(--clay); color:var(--cream); font-weight:600; }
+  .spots-badge.spots-low{ background:var(--bark); color:var(--cream); font-weight:600; }
   .spots-badge.spots-soldout{ background:#E5DCCF; color:var(--text-mid); font-weight:600; }
   .ticket-name{ font-size:19px; font-weight:500; color:var(--text-dark); }
   .ticket-desc{ font-size:16px; color:var(--text-light); margin-top:2px; }
@@ -166,6 +166,9 @@
   .stepper button:hover{ background:var(--sand); }
   .stepper button:disabled{ opacity:0.3; cursor:not-allowed; }
   .stepper .count{ font-size:19px; font-weight:500; min-width:18px; text-align:center; }
+  .stepper-note{ font-size:13px; color:var(--text-light); margin-left:2px; }
+  .guest-names{ display:flex; flex-direction:column; gap:10px; }
+  .guest-names:empty{ display:none; }
 
   .waitlist-prompt{ display:flex; flex-direction:column; gap:10px; }
   .waitlist-prompt-text{ font-size:15px; color:var(--text-mid); line-height:1.6; }
@@ -427,7 +430,7 @@
           <p class="ticket-name">Audience pass</p>
           <p class="ticket-desc" id="observer-desc">…</p>
           <span class="spots-badge" id="observer-spots-badge"></span>
-          <p class="ticket-note">Watch the session and enjoy the live concert. Does not include hands-on participation or a handpan.</p>
+          <p class="ticket-note">Bring a friend, family member, or partner to watch and cheer you on. They won't participate in the workshop or get a handpan.</p>
         </div>
         <div class="stepper">
           <button id="o-minus" aria-label="Decrease audience pass">−</button>
@@ -445,6 +448,7 @@
           <input type="text" id="name" placeholder="Full name" autocomplete="name"/>
           <p class="field-error" id="name-error"></p>
         </div>
+        <div class="guest-names" id="guest-names-container"></div>
 
         <div class="field-group">
           <div class="phone-row">
@@ -471,10 +475,12 @@
 
       <div class="preferences">
         <div class="toggle-group">
-          <p class="toggle-q">Bringing your own handpan?</p>
-          <div class="toggle-pair" data-toggle="own-handpan">
-            <button type="button" class="toggle-btn" data-value="No"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>No</button>
-            <button type="button" class="toggle-btn" data-value="Yes"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>Yes</button>
+          <p class="toggle-q">How many of your group are bringing their own handpan?</p>
+          <div class="stepper" id="handpan-stepper">
+            <button type="button" id="hp-minus" aria-label="Decrease">−</button>
+            <span class="count" id="hp-count">0</span>
+            <button type="button" id="hp-plus" aria-label="Increase">+</button>
+            <span class="stepper-note">out of <span id="hp-group-size">1</span> in your group</span>
           </div>
         </div>
 
@@ -558,6 +564,11 @@
   const participantDesc = document.getElementById('participant-desc');
   const observerSpotsBadge = document.getElementById('observer-spots-badge');
   const participantSpotsBadge = document.getElementById('participant-spots-badge');
+  const guestNamesContainer = document.getElementById('guest-names-container');
+  const hpMinus = document.getElementById('hp-minus');
+  const hpPlus = document.getElementById('hp-plus');
+  const hpCountEl = document.getElementById('hp-count');
+  const hpGroupSizeEl = document.getElementById('hp-group-size');
   const observerRow = document.getElementById('observer-row');
   const payBtn = document.getElementById('pay-btn');
   const bookingContent = document.getElementById('booking-content');
@@ -593,8 +604,9 @@
   }
   wlMonthSelect.innerHTML = getUpcomingMonths(12).map(m => `<option value="${m.value}">${m.label}</option>`).join('');
 
-  let bringingOwnHandpan = 'No';
+  let ownHandpanCount = 0;
   let photoConsent = 'Yes';
+  let guestNames = [];
   // Country codes
   const countries = [
     { name: 'India', flag: '🇮🇳', code: '+91', minLen: 10, maxLen: 10 },
@@ -727,20 +739,38 @@
   document.querySelectorAll('.toggle-pair').forEach(group => {
     const buttons = group.querySelectorAll('.toggle-btn');
     buttons.forEach(btn => {
-      if (btn.dataset.value === (group.dataset.toggle === 'own-handpan' ? bringingOwnHandpan : photoConsent)){
+      if (btn.dataset.value === photoConsent){
         btn.classList.add('active');
       }
       btn.addEventListener('click', () => {
         buttons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if (group.dataset.toggle === 'own-handpan'){
-          bringingOwnHandpan = btn.dataset.value;
-        } else {
-          photoConsent = btn.dataset.value;
-        }
+        photoConsent = btn.dataset.value;
       });
     });
   });
+
+  hpMinus.addEventListener('click', () => { if (ownHandpanCount > 0) { ownHandpanCount--; render(); } });
+  hpPlus.addEventListener('click', () => { if (ownHandpanCount < pCount) { ownHandpanCount++; render(); } });
+
+  function renderGuestFields(){
+    const needed = Math.max(0, pCount - 1);
+    while (guestNames.length < needed) guestNames.push('');
+    guestNames.length = needed;
+    if (needed === 0){
+      guestNamesContainer.innerHTML = '';
+      return;
+    }
+    let html = '<p class="field-hint">You\'ve booked ' + pCount + ' participant tickets. Know your guests\' names? Totally fine to skip, we can get this at the workshop.</p>';
+    for (let i = 0; i < needed; i++){
+      const val = (guestNames[i] || '').replace(/"/g, '&quot;');
+      html += '<input type="text" class="guest-name-input" data-idx="' + i + '" placeholder="Guest ' + (i+1) + ' name (optional)" value="' + val + '"/>';
+    }
+    guestNamesContainer.innerHTML = html;
+    guestNamesContainer.querySelectorAll('.guest-name-input').forEach(inp => {
+      inp.addEventListener('input', () => { guestNames[parseInt(inp.dataset.idx, 10)] = inp.value; });
+    });
+  }
 
   // ── DISPLAY HELPERS ──
   function formatDisplayDate(dateStr){
@@ -783,12 +813,16 @@
   }
 
   function render(){
+    // Audience passes only make sense alongside at least one participant ticket.
+    const audienceLocked = pCount === 0;
+    if (audienceLocked) oCount = 0;
+
     pCountEl.textContent = pCount;
     oCountEl.textContent = oCount;
-    pMinus.disabled = pCount <= 1;
+    pMinus.disabled = pCount <= 0;
     pPlus.disabled = pCount >= participantMax;
-    oMinus.disabled = oCount <= 0;
-    oPlus.disabled = oCount >= observerMax;
+    oMinus.disabled = oCount <= 0 || audienceLocked;
+    oPlus.disabled = audienceLocked || oCount >= observerMax;
     const total = pCount * participantPrice + oCount * (observerPrice || 0);
     totalEl.textContent = '₹' + total.toLocaleString('en-IN');
     const totalTickets = pCount + oCount;
@@ -822,7 +856,12 @@
       }
     }
     if (observerPrice != null){
-      if (observerMax === 0){
+      if (audienceLocked){
+        observerDesc.textContent = 'Available once you add a participant ticket.';
+        observerDesc.classList.remove('disabled');
+        observerSpotsBadge.textContent = '';
+        observerSpotsBadge.className = 'spots-badge';
+      } else if (observerMax === 0){
         observerDesc.textContent = '';
         observerDesc.classList.add('disabled');
         observerSpotsBadge.textContent = 'Sold out';
@@ -840,21 +879,33 @@
       }
     }
 
+    // Handpan count can never exceed how many people are actually in the booking.
+    if (ownHandpanCount > pCount) ownHandpanCount = pCount;
+    hpCountEl.textContent = ownHandpanCount;
+    hpGroupSizeEl.textContent = pCount;
+    hpMinus.disabled = ownHandpanCount <= 0;
+    hpPlus.disabled = ownHandpanCount >= pCount;
+
+    renderGuestFields();
+
     // Only fully disable Reserve once nothing offered is left to buy.
     // If audience passes aren't offered at all, they don't count toward this.
-    const fullySoldOut = participantMax === 0 && (observerPrice == null || observerMax === 0);
+    const fullySoldOut = participantMax === 0;
     if (fullySoldOut){
       payBtn.disabled = true;
       payBtn.textContent = 'Fully booked';
+    } else if (pCount === 0){
+      payBtn.disabled = true;
+      payBtn.textContent = 'Select at least 1 spot';
     } else {
       payBtn.disabled = false;
       payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
     }
   }
-  pMinus.addEventListener('click', () => { if (pCount > 1) { pCount--; render(); } });
+  pMinus.addEventListener('click', () => { if (pCount > 0) { pCount--; render(); } });
   pPlus.addEventListener('click', () => { if (pCount < participantMax) { pCount++; render(); } });
   oMinus.addEventListener('click', () => { if (oCount > 0) { oCount--; render(); } });
-  oPlus.addEventListener('click', () => { if (oCount < observerMax) { oCount++; render(); } });
+  oPlus.addEventListener('click', () => { if (pCount > 0 && oCount < observerMax) { oCount++; render(); } });
 
   payBtn.addEventListener('click', async () => {
     if (pCount + oCount <= 0){
@@ -883,7 +934,9 @@
           participants: pCount,
           observers: oCount,
           name, phone, email,
-          bringingOwnHandpan,
+          guestNames: guestNames.map(n => n.trim()).filter(n => n.length > 0),
+          ownHandpanCount,
+          bringingOwnHandpan: ownHandpanCount > 0 ? 'Yes' : 'No',
           photoConsent
         })
       });
