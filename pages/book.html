@@ -91,6 +91,40 @@
   .section-title em{ font-style:italic; color:var(--clay); }
   .lede{ font-size:16.5px; color:var(--text-mid); line-height:1.8; }
 
+  /* BOOKING SUCCESS */
+  .booking-success{
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    gap:1.25rem; padding:1.5rem 0 0.5rem;
+  }
+  .success-check{
+    width:56px; height:56px; border-radius:50%; background:var(--moss);
+    display:flex; align-items:center; justify-content:center; color:var(--cream);
+  }
+  .success-check svg{ width:28px; height:28px; }
+  .success-heading{
+    font-family:'Fraunces', serif; font-weight:700; font-size:24px; color:var(--text-dark);
+  }
+  .success-text{ font-size:15px; color:var(--text-mid); line-height:1.7; max-width:320px; }
+  .success-instagram{
+    width:100%; margin-top:0.25rem; padding-top:1.25rem;
+    border-top:1px solid var(--clay-pale);
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .success-instagram-caption{ font-size:13.5px; color:var(--text-light); }
+  .success-instagram-btn{
+    width:100%; height:48px; padding:0 1.5rem; border:none; border-radius:var(--radius);
+    background:var(--clay); color:var(--cream); font-family:inherit; font-size:15px; font-weight:500;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+    text-decoration:none; transition:background 0.15s;
+  }
+  .success-instagram-btn:hover{ background:var(--bark); }
+  .success-instagram-btn svg{ width:18px; height:18px; flex-shrink:0; }
+  .success-rebook-btn{
+    width:100%; height:46px; padding:0 1.75rem; border:1px solid var(--stone); border-radius:var(--radius);
+    background:transparent; color:var(--text-dark); font-family:inherit; font-size:14.5px; font-weight:500;
+    cursor:pointer;
+  }
+
   /* GALLERY */
   .gallery{
     display:flex; gap:12px; overflow-x:auto; margin-top:1.75rem;
@@ -401,9 +435,25 @@
   </div>
 
   <div class="booking section">
-    <h2 class="section-title">Book your <em>spot</em></h2>
+    <h2 class="section-title" id="booking-section-title">Book your <em>spot</em></h2>
 
     <div class="booking-unavailable" id="booking-unavailable" style="display:none; padding:1.5rem 0; text-align:center; color:var(--text-mid); font-size:0.95rem; line-height:1.7;"></div>
+
+    <div class="booking-success" id="booking-success" style="display:none;">
+      <div class="success-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg>
+      </div>
+      <h3 class="success-heading">You're all set!</h3>
+      <p class="success-text">Thanks for booking. We've received your payment and will send your confirmation on WhatsApp shortly.</p>
+      <div class="success-instagram">
+        <p class="success-instagram-caption">Follow Arpit for more handpan content</p>
+        <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener" class="success-instagram-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none"/></svg>
+          @pandeyarpit
+        </a>
+      </div>
+      <button type="button" id="success-rebook-btn" class="success-rebook-btn">Book another spot</button>
+    </div>
 
     <div id="booking-content">
     <div class="ticket-card">
@@ -589,6 +639,9 @@
   const payBtn = document.getElementById('pay-btn');
   const bookingContent = document.getElementById('booking-content');
   const bookingUnavailable = document.getElementById('booking-unavailable');
+  const bookingSuccess = document.getElementById('booking-success');
+  const bookingSectionTitle = document.getElementById('booking-section-title');
+  const successRebookBtn = document.getElementById('success-rebook-btn');
   const heroMeta = document.getElementById('hero-meta');
   const heroDateEl = document.getElementById('hero-date');
   const heroTimeRow = document.getElementById('hero-time-row');
@@ -1079,6 +1132,23 @@
     bookingUnavailable.style.display = '';
   }
 
+  function showSuccess(){
+    heroMeta.style.display = 'none';
+    countdownEl.style.display = 'none';
+    bookingSectionTitle.style.display = 'none';
+    bookingContent.style.display = 'none';
+    bookingUnavailable.style.display = 'none';
+    bookingSuccess.style.display = '';
+  }
+
+  successRebookBtn.addEventListener('click', () => {
+    const url = new URL(window.location.href);
+    const cleanParams = new URLSearchParams();
+    if (workshopId) cleanParams.set('ws', workshopId);
+    url.search = cleanParams.toString();
+    window.location.href = url.toString();
+  });
+
   // ── LOAD WORKSHOP ──
   // Single source of truth for everything on this page that varies by
   // workshop: date, time, venue, prices, and remaining slots. book.html
@@ -1153,7 +1223,12 @@
     }
   }
 
-  loadWorkshop();
+  const paymentStatus = new URLSearchParams(window.location.search).get('razorpay_payment_link_status');
+  if (paymentStatus === 'paid'){
+    showSuccess();
+  } else {
+    loadWorkshop();
+  }
 </script>
 </body>
 </html>
