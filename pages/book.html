@@ -68,7 +68,9 @@
   .hero-venue-link{
     font-size:17px; color:var(--cream); text-decoration:underline;
     text-underline-offset:3px; display:inline-flex; align-items:center; gap:6px;
+    max-width:100%; white-space:nowrap; overflow:hidden;
   }
+  .hero-venue-link span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .hero-venue-link svg{ color:var(--clay-light); }
 
   /* HIGHLIGHTS */
@@ -1012,6 +1014,14 @@
   }
 
   // ── DISPLAY HELPERS ──
+  // Long venue strings (e.g. "Bloom Creative Zone, Haralur, Bengaluru") wrap
+  // awkwardly in the narrow hero column. Keep only the venue name and the
+  // city (first and last comma-separated parts) so it always fits on one line.
+  function shortenVenue(venue){
+    const parts = venue.split(',').map(p => p.trim()).filter(Boolean);
+    if (parts.length <= 2) return venue;
+    return parts[0] + ', ' + parts[parts.length - 1];
+  }
   function formatDisplayDate(dateStr){
     if (!dateStr) return '';
     const d = new Date(dateStr + 'T00:00:00+05:30');
@@ -1390,11 +1400,11 @@
         a.target = '_blank';
         a.rel = 'noopener';
         a.className = 'hero-venue-link';
-        a.innerHTML = (data.venue || '') + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:14px; height:14px; flex-shrink:0;"><path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"/><path d="M10 14l10 -10"/><path d="M15 4l5 0l0 5"/></svg>';
+        a.innerHTML = '<span>' + shortenVenue(data.venue || '') + '</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:14px; height:14px; flex-shrink:0;"><path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"/><path d="M10 14l10 -10"/><path d="M15 4l5 0l0 5"/></svg>';
         heroVenueEl.innerHTML = '';
         heroVenueEl.appendChild(a);
       } else {
-        heroVenueEl.textContent = data.venue || '';
+        heroVenueEl.textContent = shortenVenue(data.venue || '');
       }
 
       workshopDateTime = parseStartDateTime(data.date, data.time);
