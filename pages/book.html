@@ -313,6 +313,8 @@
     font-family:inherit; font-size:16px; color:var(--text-dark); cursor:pointer;
     flex-shrink:0; white-space:nowrap;
   }
+  .country-select svg{ transition:transform 0.15s; }
+  .country-select.open svg{ transform:rotate(180deg); }
   .phone-row input{ flex:1; min-width:0; }
   .country-dropdown{
     display:none; flex-direction:column; gap:8px; margin-top:8px;
@@ -589,7 +591,7 @@
 
       <div class="preferences" id="preferences-block">
         <div class="toggle-group">
-          <p class="toggle-q">Bringing your own handpan?</p>
+          <p class="toggle-q">Are you bringing your own handpan?</p>
           <div class="toggle-pair" data-toggle="own-handpan">
             <button type="button" class="toggle-btn" data-value="No"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>No</button>
             <button type="button" class="toggle-btn" data-value="Yes"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>Yes</button>
@@ -607,7 +609,7 @@
         </div>
 
         <div class="toggle-group">
-          <p class="toggle-q">Okay with photos/videos at the workshop for social media?</p>
+          <p class="toggle-q">Are you okay with us taking photos/videos at the workshop for social media?</p>
           <div class="toggle-pair" data-toggle="photo-consent">
             <button type="button" class="toggle-btn" data-value="Yes"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>Yes</button>
             <button type="button" class="toggle-btn" data-value="No"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>No</button>
@@ -660,7 +662,7 @@
     </ol>
 
     <div class="contact-block">
-      <h3 class="contact-heading">Contact Arpit</h3>
+      <h3 class="contact-heading">Got questions? Talk to Arpit</h3>
       <a href="https://www.instagram.com/pandeyarpit" target="_blank" rel="noopener" class="contact-row">
         <span class="contact-label">Instagram</span>
         <span class="contact-value">@pandeyarpit</span>
@@ -876,6 +878,7 @@
           countryFlag.textContent = c.flag;
           countryCode.textContent = c.code;
           countryDropdown.classList.remove('open');
+          countrySelect.classList.remove('open');
           countrySearch.value = '';
           renderCountryList('');
           validatePhone();
@@ -886,12 +889,14 @@
   renderCountryList('');
   countrySelect.addEventListener('click', () => {
     countryDropdown.classList.toggle('open');
+    countrySelect.classList.toggle('open', countryDropdown.classList.contains('open'));
     if (countryDropdown.classList.contains('open')) countrySearch.focus();
   });
   countrySearch.addEventListener('input', () => renderCountryList(countrySearch.value));
   document.addEventListener('click', (e) => {
     if (!countryDropdown.contains(e.target) && !countrySelect.contains(e.target)){
       countryDropdown.classList.remove('open');
+      countrySelect.classList.remove('open');
     }
   });
   // Validation
