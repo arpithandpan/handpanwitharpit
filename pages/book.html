@@ -214,13 +214,16 @@
   .spots-badge.spots-normal{ background:var(--clay-pale); color:#8A5A36; }
   .spots-badge.spots-low{ background:var(--bark); color:var(--cream); font-weight:600; }
   .spots-badge.spots-soldout{ background:#E5DCCF; color:var(--text-mid); font-weight:600; }
+  .spots-badge.spots-locked{ background:var(--clay-pale); color:#8A5A36; font-weight:600; gap:5px; }
+  .spots-badge.spots-locked i{ font-size:15px; }
   .ticket-name{ font-size:19px; font-weight:500; color:var(--text-dark); }
   .ticket-desc{ font-size:16px; color:var(--text-light); margin-top:2px; }
   .ticket-desc.disabled{ color:#B43C28; }
+  .ticket-desc.locked-hint{ color:var(--clay); font-weight:500; }
   .ticket-note{ font-size:15px; color:var(--text-light); margin-top:4px; line-height:1.6; }
   .stepper{ display:flex; align-items:center; gap:16px; }
   .stepper button{
-    width:48px; height:48px; border-radius:50%;
+    width:48px; height:48px; flex-shrink:0; border-radius:50%;
     border:1px solid var(--stone); background:var(--cream);
     font-size:22px; line-height:1; color:var(--text-dark);
     display:flex; align-items:center; justify-content:center;
@@ -1179,18 +1182,21 @@
     }
     if (observerPrice != null){
       if (audienceLocked){
-        observerDesc.textContent = 'Available once you add a participant ticket.';
+        observerDesc.textContent = 'Add a participant ticket first to unlock this.';
         observerDesc.classList.remove('disabled');
-        observerSpotsBadge.textContent = '';
-        observerSpotsBadge.className = 'spots-badge';
+        observerDesc.classList.add('locked-hint');
+        observerSpotsBadge.innerHTML = '<i class="ti ti-lock"></i>Locked';
+        observerSpotsBadge.className = 'spots-badge spots-locked';
       } else if (observerMax === 0){
         observerDesc.textContent = '';
         observerDesc.classList.add('disabled');
+        observerDesc.classList.remove('locked-hint');
         observerSpotsBadge.textContent = 'Sold out';
         observerSpotsBadge.className = 'spots-badge spots-soldout';
       } else {
         observerDesc.textContent = '₹' + observerPrice.toLocaleString('en-IN') + ' per person';
         observerDesc.classList.remove('disabled');
+        observerDesc.classList.remove('locked-hint');
         if (observerMax <= 2){
           observerSpotsBadge.textContent = observerMax === 1 ? 'Only 1 spot left!' : ('Only ' + observerMax + ' spots left!');
           observerSpotsBadge.className = 'spots-badge spots-low';
