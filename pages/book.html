@@ -233,6 +233,9 @@
   .stepper button:hover{ background:var(--sand); }
   .stepper button:disabled{ opacity:0.3; cursor:not-allowed; }
   .stepper .count{ font-size:19px; font-weight:500; min-width:18px; text-align:center; }
+  .stepper .count.unset{ color:var(--text-light); font-weight:400; }
+  .handpan-hint{ font-size:14px; color:var(--clay); font-weight:500; margin:12px 0 0; display:flex; align-items:center; gap:7px; }
+  .handpan-hint i{ font-size:16px; }
   .stepper-note{ font-size:13px; color:var(--text-light); margin-left:2px; }
   .handpan-count-row{ margin-top:14px; }
   .handpan-count-row .toggle-q{ margin-bottom:14px; }
@@ -606,10 +609,11 @@
             <p class="toggle-q">How many handpans are you bringing?</p>
             <div class="stepper" id="handpan-stepper">
               <button type="button" id="hp-minus" aria-label="Decrease">−</button>
-              <span class="count" id="hp-count">1</span>
+              <span class="count unset" id="hp-count">–</span>
               <button type="button" id="hp-plus" aria-label="Increase">+</button>
               <span class="stepper-note">up to <span id="hp-group-size">1</span> (one per person)</span>
             </div>
+            <p class="handpan-hint" id="handpan-hint"><i class="ti ti-hand-finger" aria-hidden="true"></i> Tap + to tell us how many</p>
           </div>
         </div>
 
@@ -752,6 +756,7 @@
   const hpPlus = document.getElementById('hp-plus');
   const hpCountEl = document.getElementById('hp-count');
   const hpGroupSizeEl = document.getElementById('hp-group-size');
+  const handpanHint = document.getElementById('handpan-hint');
   const observerRow = document.getElementById('observer-row');
   const payBtn = document.getElementById('pay-btn');
   const loadingOverlay = document.getElementById('loading-overlay');
@@ -842,7 +847,7 @@
     if (!monthSelectWrap.contains(e.target)) closeMonthDropdown();
   });
 
-  let ownHandpanCount = 0;
+  let ownHandpanCount = null;
   let bringingOwnHandpan = null;
   let photoConsent = null;
   let guestNames = [];
@@ -1003,6 +1008,14 @@
       return false;
     }
     setToggleError(group, ownHandpanError, '');
+    if (handpanCountRow.style.display !== 'none' && ownHandpanCount === null){
+      handpanHint.style.color = 'var(--error, #B43C28)';
+      handpanHint.innerHTML = '<i class="ti ti-alert-circle" aria-hidden="true"></i> Please tap + to tell us how many handpans you\u2019re bringing.';
+      handpanCountRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+    handpanHint.style.color = '';
+    handpanHint.innerHTML = '<i class="ti ti-hand-finger" aria-hidden="true"></i> Tap + to tell us how many';
     return true;
   }
   function validatePhotoConsent(){
@@ -1036,8 +1049,17 @@
     });
   });
 
-  hpMinus.addEventListener('click', () => { if (ownHandpanCount > 1) { ownHandpanCount--; render(); } });
-  hpPlus.addEventListener('click', () => { if (ownHandpanCount < pCount) { ownHandpanCount++; render(); } });
+  hpMinus.addEventListener('click', () => {
+    if (ownHandpanCount === null) return;
+    if (ownHandpanCount > 1) { ownHandpanCount--; }
+    else { ownHandpanCount = null; }
+    render();
+  });
+  hpPlus.addEventListener('click', () => {
+    if (ownHandpanCount === null) { ownHandpanCount = 1; }
+    else if (ownHandpanCount < pCount) { ownHandpanCount++; }
+    render();
+  });
 
   function renderGuestFields(){
     const needed = Math.max(0, pCount - 1);
@@ -1220,19 +1242,33 @@
     // Handpan: simple yes/no for a single ticket; for 2+ tickets, "Yes" reveals
     // a count stepper so we can capture how many in the group are bringing one.
     if (bringingOwnHandpan !== 'Yes'){
-      ownHandpanCount = 0;
+      ownHandpanCount = null;
       handpanCountRow.style.display = 'none';
     } else if (pCount <= 1){
-      ownHandpanCount = pCount; // 1 if there's a ticket, 0 in the locked/sold-out edge case
+      ownHandpanCount = null; // single ticket: implicitly one, no question needed
       handpanCountRow.style.display = 'none';
     } else {
-      if (ownHandpanCount < 1) ownHandpanCount = 1;
-      if (ownHandpanCount > pCount) ownHandpanCount = pCount;
+      if (ownHandpanCount !== null){
+        if (ownHandpanCount < 1) ownHandpanCount = 1;
+        if (ownHandpanCount > pCount) ownHandpanCount = pCount;
+      }
       handpanCountRow.style.display = '';
-      hpCountEl.textContent = ownHandpanCount;
       hpGroupSizeEl.textContent = pCount;
-      hpMinus.disabled = ownHandpanCount <= 1;
-      hpPlus.disabled = ownHandpanCount >= pCount;
+      if (ownHandpanCount === null){
+        hpCountEl.textContent = '\u2013';
+        hpCountEl.classList.add('unset');
+        hpMinus.disabled = true;
+        hpPlus.disabled = false;
+        handpanHint.style.display = 'flex';
+        handpanHint.style.color = '';
+        handpanHint.innerHTML = '<i class="ti ti-hand-finger" aria-hidden="true"></i> Tap + to tell us how many';
+      } else {
+        hpCountEl.textContent = ownHandpanCount;
+        hpCountEl.classList.remove('unset');
+        hpMinus.disabled = false;
+        hpPlus.disabled = ownHandpanCount >= pCount;
+        handpanHint.style.display = 'none';
+      }
     }
 
     renderGuestFields();
@@ -1273,6 +1309,8 @@
     const name = nameInput.value.trim();
     const phone = selectedCountry.code + phoneInput.value.trim();
     const email = emailInput.value.trim();
+    const ownHandpanCountValue = bringingOwnHandpan !== 'Yes' ? 0
+      : (pCount <= 1 ? 1 : ownHandpanCount);
     payBtn.disabled = true;
     loadingOverlay.style.display = 'flex';
     try {
@@ -1285,7 +1323,7 @@
           observers: oCount,
           name, phone, email,
           guestNames: guestNames.map(n => n.trim()).filter(n => n.length > 0),
-          ownHandpanCount,
+          ownHandpanCount: ownHandpanCountValue,
           bringingOwnHandpan,
           photoConsent
         })
