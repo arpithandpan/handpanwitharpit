@@ -9002,6 +9002,12 @@ function openReassignPayment(id, record) {
   catEl.dispatchEvent(new Event('change', { bubbles: true }));
   document.getElementById('reassign-reference').value = record.reference_id || '';
   modal.classList.add('open');
+  lockScroll();
+}
+
+function closeReassignPayment() {
+  document.getElementById('modal-reassignPayment').classList.remove('open');
+  unlockScroll();
 }
 
 async function saveReassign() {
@@ -9010,7 +9016,7 @@ async function saveReassign() {
   if (!category) { showToast('Please select a category', 'error'); return; }
   try {
     await sbPatch('payments', _reassignId, { category, reference_id: reference || null });
-    document.getElementById('modal-reassignPayment').classList.remove('open');
+    closeReassignPayment();
     showToast('✓ Payment updated', 'success');
     loadPayments();
   } catch(e) {
@@ -9236,11 +9242,11 @@ async function doVPToggle(p, wsId, newState, cbInput, labelEl, toggleEl) {
 </script>
 
 <!-- ── REASSIGN PAYMENT MODAL ── -->
-<div class="modal-overlay" id="modal-reassignPayment" onclick="if(event.target===this)document.getElementById('modal-reassignPayment').classList.remove('open')">
-  <div class="modal" style="max-width:400px;">
+<div class="modal-overlay" id="modal-reassignPayment" style="background:rgba(10,6,3,0.75);backdrop-filter:blur(2px);z-index:30000;" onclick="if(event.target===this)closeReassignPayment()">
+  <div class="modal" style="max-width:400px;background:#3d2c1e;border:1px solid rgba(200,147,90,0.65);box-shadow:0 20px 60px rgba(0,0,0,0.5);">
     <div class="modal-header">
       <div class="modal-title">Edit Payment Category</div>
-      <button class="modal-close" onclick="document.getElementById('modal-reassignPayment').classList.remove('open')" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(200,147,90,0.1);border:none;cursor:pointer;color:var(--clay-light);">
+      <button class="modal-close" onclick="closeReassignPayment()" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(200,147,90,0.1);border:none;cursor:pointer;color:var(--clay-light);">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -9264,8 +9270,8 @@ async function doVPToggle(p, wsId, newState, cbInput, labelEl, toggleEl) {
         <input type="text" class="form-input" id="reassign-reference" placeholder="e.g. WS-004 or student name"/>
       </div>
     </div>
-    <div class="modal-footer" style="justify-content:flex-end;gap:0.75rem;">
-      <button class="btn-dash" onclick="document.getElementById('modal-reassignPayment').classList.remove('open')">Cancel</button>
+    <div class="modal-footer" style="display:flex;align-items:center;justify-content:flex-end;gap:0.75rem;margin-top:1.5rem;">
+      <button class="btn-dash" style="background:transparent;color:var(--text-light);" onclick="closeReassignPayment()">Cancel</button>
       <button class="btn-dash btn-dash-primary" onclick="saveReassign()">Save</button>
     </div>
   </div>
