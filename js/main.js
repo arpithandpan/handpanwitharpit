@@ -102,6 +102,19 @@ document.addEventListener('DOMContentLoaded', () => {
     mobileMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', closeMenu);
     });
+
+    // Close the mobile menu if the window is widened back to desktop layout
+    const desktopMQ = window.matchMedia('(min-width: 1081px)');
+    const handleDesktopSwitch = (e) => {
+      if (e.matches && hamburger.getAttribute('data-open') === 'true') {
+        closeMenu();
+      }
+    };
+    if (desktopMQ.addEventListener) {
+      desktopMQ.addEventListener('change', handleDesktopSwitch);
+    } else if (desktopMQ.addListener) {
+      desktopMQ.addListener(handleDesktopSwitch); // older Safari fallback
+    }
   }
 
   // ---- Scroll-triggered fade-in ----
