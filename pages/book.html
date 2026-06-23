@@ -382,6 +382,23 @@
   }
   .cta:hover{ background:var(--clay); }
   .cta:disabled{ background:var(--text-light); cursor:not-allowed; }
+  .booking-terms{ margin:0.1rem 0 1.15rem; display:flex; flex-direction:column; gap:0.85rem; }
+  .refund-note{ display:flex; gap:9px; align-items:flex-start; background:var(--sand); border-radius:10px; padding:0.7rem 0.85rem; font-size:14.5px; color:var(--text-mid); line-height:1.5; }
+  .refund-note svg{ flex-shrink:0; width:18px; height:18px; color:var(--clay); margin-top:1px; }
+  .agree-row{ display:flex; gap:11px; align-items:flex-start; cursor:pointer; padding:0 2px; }
+  .agree-box{ margin-top:1px; width:18px; height:18px; accent-color:var(--clay); flex-shrink:0; cursor:pointer; }
+  .agree-text{ font-size:15px; color:var(--text-mid); line-height:1.5; }
+  .terms-link{ color:var(--clay); text-decoration:underline; text-underline-offset:2px; font-weight:500; }
+  .agree-row.invalid .agree-box{ outline:2px solid #B43C28; outline-offset:2px; border-radius:3px; }
+  .terms-modal-overlay{ position:fixed; inset:0; background:rgba(61,43,31,0.55); z-index:9998; display:none; align-items:center; justify-content:center; padding:18px; }
+  .terms-modal{ background:var(--cream); border-radius:14px; width:100%; max-width:460px; max-height:82vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 18px 50px rgba(61,43,31,0.32); }
+  .terms-modal-head{ display:flex; justify-content:space-between; align-items:center; padding:1.1rem 1.25rem; border-bottom:1px solid var(--sand-deep); }
+  .terms-modal-title{ font-family:'Fraunces', serif; font-size:21px; color:var(--text-dark); }
+  .terms-modal-close{ background:var(--sand); border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; color:var(--bark-mid); display:flex; align-items:center; justify-content:center; }
+  .terms-modal-close svg{ width:18px; height:18px; }
+  .terms-modal-body{ overflow-y:auto; padding:0.3rem 1.25rem 1.4rem; }
+  .terms-modal-body h4{ font-family:'Fraunces', serif; font-weight:600; font-size:16.5px; color:var(--text-dark); margin:1.15rem 0 0.4rem; }
+  .terms-modal-body p{ font-size:14.5px; color:var(--text-mid); line-height:1.6; margin:0; }
   .cta i{ font-size:20px; }
 
   .handpan-spinner{ width:56px; height:56px; margin:0 auto; animation:spin 1.9s linear infinite; }
@@ -616,15 +633,6 @@
             <p class="handpan-hint" id="handpan-hint"><i class="ti ti-hand-finger" aria-hidden="true"></i> Tap + to tell us how many</p>
           </div>
         </div>
-
-        <div class="toggle-group">
-          <p class="toggle-q">Are you okay with us taking photos/videos at the workshop for social media?</p>
-          <div class="toggle-pair" data-toggle="photo-consent">
-            <button type="button" class="toggle-btn" data-value="Yes"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>Yes</button>
-            <button type="button" class="toggle-btn" data-value="No"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>No</button>
-          </div>
-          <p class="field-error" id="photo-consent-error"></p>
-        </div>
       </div>
 
       <div class="booking-soldout-footer" id="booking-soldout-footer" style="display:none;">
@@ -655,6 +663,15 @@
       <span class="total-badge" id="ticket-badge">1 ticket</span>
     </div>
 
+    <div class="booking-terms">
+      <p class="refund-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>Tickets are non-refundable once booked. Full refund only if we cancel the workshop.</span></p>
+      <label class="agree-row">
+        <input type="checkbox" id="agree-terms" class="agree-box">
+        <span class="agree-text">I have read and agree to the <a href="#" id="terms-link" class="terms-link">Terms &amp; Conditions</a></span>
+      </label>
+      <p class="field-error" id="terms-error"></p>
+    </div>
+
     <button class="cta" id="pay-btn">
       Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>
     </button>
@@ -664,10 +681,9 @@
   <div class="section" id="good-to-know-section">
     <h2 class="section-title">Good to <em>know</em></h2>
     <ol class="info-list">
-      <li><span>Sessions are conducted on floor mats, please wear comfortable clothing.</span></li>
+      <li><span>Sessions are conducted on floor mats, so please wear comfortable clothing.</span></li>
       <li><span>Handpans will be provided. If you'd like to bring your own, you're welcome to.</span></li>
-      <li><span>Photos and videos may be taken during the session for promotional use.</span></li>
-      <li><span>Full refund only if the workshop is cancelled by us.</span></li>
+      <li><span>Parking around the venue is limited, so we'd suggest booking a ride rather than driving.</span></li>
     </ol>
 
     <div class="contact-block">
@@ -687,6 +703,39 @@
     Arpit Pandey<br/>Handpan artist · Bengaluru, India
   </footer>
 
+</div>
+
+<div class="terms-modal-overlay" id="terms-modal">
+  <div class="terms-modal" role="dialog" aria-modal="true" aria-label="Terms and Conditions">
+    <div class="terms-modal-head">
+      <span class="terms-modal-title">Terms &amp; Conditions</span>
+      <button type="button" class="terms-modal-close" id="terms-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="terms-modal-body">
+      <h4>Booking and payment</h4>
+      <p>When you book, you are agreeing to everything on this page. We collect your name, contact details, and booking information so we can run the session and keep you updated. Payments are handled securely by Razorpay, so we never see or store your card details.</p>
+      <h4>Cancellations and refunds</h4>
+      <p>Once you book, your spot is confirmed and the ticket cannot be cancelled or refunded. Please be sure of your date before you pay. The only exception is if we cancel the entire workshop, in which case you get a full refund.</p>
+      <h4>If we need to change something</h4>
+      <p>Now and then a schedule may shift for reasons outside our control, like venue or weather issues. If that happens we will let you know as early as we can. If we ever have to call off the whole workshop, you get a full refund.</p>
+      <h4>Sending someone in your place</h4>
+      <p>If you can't make it, you're welcome to pass your spot to a friend. Just send us their name beforehand so we know who to expect.</p>
+      <h4>What to expect</h4>
+      <p>This is a beginner friendly session, so no experience is needed. You'll be sitting on mats while you play, so wear something comfortable. Please arrive on time so we can start together.</p>
+      <h4>The handpans</h4>
+      <p>Handpans are provided during the session, so you don't need to bring your own. They're delicate instruments, so please handle them with care. If you damage an instrument, you'll be responsible for the cost of repair or replacement.</p>
+      <h4>Observer pass</h4>
+      <p>If you'd like to come along without joining in, an observer pass is available for ₹500 per person. Observers can watch the workshop, soak in the atmosphere, and enjoy the live handpan concert at the end. Handpans are not provided and the observer pass does not include taking part in the workshop activities.</p>
+      <h4>Photos and video</h4>
+      <p>We photograph and film our sessions, including wide shots of the whole room, and use them on social media and to promote future workshops. By booking, you agree that we may film and photograph the session, including you, and use that footage. If you have any concerns, have a word with us before the session.</p>
+      <h4>Admission and conduct</h4>
+      <p>We reserve the right of admission. If anyone behaves in a way that's unsafe or disruptive to others, we may ask them to leave, and that decision rests with us.</p>
+      <h4>Your belongings</h4>
+      <p>Please look after your personal things. We can't take responsibility for any loss or damage to items you bring along.</p>
+      <h4>A note on health</h4>
+      <p>The session is gentle and hands-on, but you take part at your own comfort. If you have any health condition we should be aware of, please tell us in advance so we can look after you.</p>
+    </div>
+  </div>
 </div>
 
 <div id="loading-overlay" style="display:none; position:fixed; inset:0; background:rgba(61,43,31,0.55); z-index:9999; align-items:center; justify-content:center;">
@@ -849,7 +898,6 @@
 
   let ownHandpanCount = null;
   let bringingOwnHandpan = null;
-  let photoConsent = null;
   let guestNames = [];
   // Country codes
   const countries = [
@@ -989,7 +1037,26 @@
   emailInput.addEventListener('blur', validateEmail);
   emailInput.addEventListener('input', () => { if (emailInput.classList.contains('invalid')) validateEmail(); });
   const ownHandpanError = document.getElementById('own-handpan-error');
-  const photoConsentError = document.getElementById('photo-consent-error');
+  const agreeBox = document.getElementById('agree-terms');
+  const agreeRow = document.querySelector('.agree-row');
+  const termsError = document.getElementById('terms-error');
+  const termsLink = document.getElementById('terms-link');
+  const termsModal = document.getElementById('terms-modal');
+  const termsClose = document.getElementById('terms-close');
+  if (termsLink) termsLink.addEventListener('click', e => { e.preventDefault(); termsModal.style.display = 'flex'; });
+  if (termsClose) termsClose.addEventListener('click', () => { termsModal.style.display = 'none'; });
+  if (termsModal) termsModal.addEventListener('click', e => { if (e.target === termsModal) termsModal.style.display = 'none'; });
+  if (agreeBox) agreeBox.addEventListener('change', () => { if (agreeBox.checked){ agreeRow.classList.remove('invalid'); termsError.style.display = 'none'; } });
+  function validateTerms(){
+    if (!agreeBox || !agreeBox.checked){
+      if (agreeRow) agreeRow.classList.add('invalid');
+      if (termsError){ termsError.textContent = 'Please agree to the terms to continue.'; termsError.style.display = 'block'; }
+      return false;
+    }
+    agreeRow.classList.remove('invalid');
+    termsError.style.display = 'none';
+    return true;
+  }
   function setToggleError(group, errorEl, message){
     if (message){
       group.classList.add('invalid');
@@ -1018,33 +1085,18 @@
     handpanHint.innerHTML = '<i class="ti ti-hand-finger" aria-hidden="true"></i> Tap + to tell us how many';
     return true;
   }
-  function validatePhotoConsent(){
-    const group = document.querySelector('.toggle-pair[data-toggle="photo-consent"]');
-    if (!photoConsent){
-      setToggleError(group, photoConsentError, 'Please let us know if photos/videos are okay.');
-      return false;
-    }
-    setToggleError(group, photoConsentError, '');
-    return true;
-  }
   document.querySelectorAll('.toggle-pair').forEach(group => {
     const buttons = group.querySelectorAll('.toggle-btn');
-    const isHandpan = group.dataset.toggle === 'own-handpan';
     buttons.forEach(btn => {
-      if (btn.dataset.value === (isHandpan ? bringingOwnHandpan : photoConsent)){
+      if (btn.dataset.value === bringingOwnHandpan){
         btn.classList.add('active');
       }
       btn.addEventListener('click', () => {
         buttons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if (isHandpan){
-          bringingOwnHandpan = btn.dataset.value;
-          validateOwnHandpan();
-          render();
-        } else {
-          photoConsent = btn.dataset.value;
-          validatePhotoConsent();
-        }
+        bringingOwnHandpan = btn.dataset.value;
+        validateOwnHandpan();
+        render();
       });
     });
   });
@@ -1300,9 +1352,9 @@
     const phoneValid = validatePhone();
     const emailValid = validateEmail();
     const ownHandpanValid = validateOwnHandpan();
-    const photoConsentValid = validatePhotoConsent();
-    if (!nameValid || !phoneValid || !emailValid || !ownHandpanValid || !photoConsentValid){
-      const firstInvalid = document.querySelector('.form-card input.invalid, .toggle-pair.invalid');
+    const termsValid = validateTerms();
+    if (!nameValid || !phoneValid || !emailValid || !ownHandpanValid || !termsValid){
+      const firstInvalid = document.querySelector('.form-card input.invalid, .toggle-pair.invalid, .agree-row.invalid');
       if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
@@ -1324,8 +1376,7 @@
           name, phone, email,
           guestNames: guestNames.map(n => n.trim()).filter(n => n.length > 0),
           ownHandpanCount: ownHandpanCountValue,
-          bringingOwnHandpan,
-          photoConsent
+          bringingOwnHandpan
         })
       });
       const data = await res.json();
