@@ -818,6 +818,7 @@
   let workshopDateTime = null;
   let bookingCutoff = null;
   let lastPastCutoffState = false;
+  let countdownEnabled = false;
 
   let pCount = 1;
   let oCount = 0;
@@ -1516,13 +1517,14 @@
   const cdMins = document.getElementById('cd-mins');
   const cdSecs = document.getElementById('cd-secs');
   function updateCountdown(){
-    if (!workshopDateTime){
+    if (!countdownEnabled || !workshopDateTime){
       countdownEl.style.display = 'none';
     } else {
       const diff = workshopDateTime - new Date();
       if (diff <= 0){
         countdownEl.style.display = 'none';
       } else {
+        countdownEl.style.display = '';
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
         const mins = Math.floor((diff / (1000 * 60)) % 60);
@@ -1547,6 +1549,7 @@
   // when the workshop exists but isn't bookable yet (no price configured).
   function showUnavailable(message){
     heroMeta.style.display = 'none';
+    countdownEnabled = false;
     countdownEl.style.display = 'none';
     bookingContent.style.display = 'none';
     bookingUnavailable.textContent = message;
@@ -1555,6 +1558,7 @@
 
   function showSuccess(){
     heroMeta.style.display = 'none';
+    countdownEnabled = false;
     countdownEl.style.display = 'none';
     bookingSectionTitle.style.display = 'none';
     bookingContent.style.display = 'none';
@@ -1640,6 +1644,7 @@
       if (pCount > participantMax) pCount = Math.max(0, participantMax);
 
       render();
+      countdownEnabled = true;
       updateCountdown();
     } catch (err){
       console.error('Could not load workshop info', err);
