@@ -406,10 +406,6 @@
   .agree-text{ font-size:15px; color:var(--text-mid); line-height:1.5; }
   .terms-link{ color:var(--clay); text-decoration:underline; text-underline-offset:2px; font-weight:500; }
   .agree-row.invalid .agree-box{ outline:2px solid #8A2614; outline-offset:2px; border-radius:3px; }
-  .agree-box:disabled{ opacity:0.4; cursor:not-allowed; }
-  .agree-hint{ font-size:13.5px; color:var(--text-light); margin:7px 0 0 calc(0.95rem + 40px); line-height:1.4; }
-  .agree-row.just-unlocked .agree-box{ animation:agreePulse 1.5s ease-out; border-radius:3px; }
-  @keyframes agreePulse{ 0%{ box-shadow:0 0 0 0 rgba(193,127,82,0.55); } 70%{ box-shadow:0 0 0 9px rgba(193,127,82,0); } 100%{ box-shadow:0 0 0 0 rgba(193,127,82,0); } }
   .terms-agree-btn{ width:100%; margin-top:1.5rem; border:none; border-radius:10px; background:var(--bark); color:var(--cream); font-family:inherit; font-size:16px; font-weight:500; padding:14px; cursor:pointer; }
   .terms-agree-btn:active{ transform:scale(0.99); }
   .terms-modal-overlay{ position:fixed; inset:0; background:rgba(61,43,31,0.55); z-index:9998; display:none; align-items:center; justify-content:center; padding:18px; }
@@ -688,11 +684,10 @@
     </div>
 
     <div class="booking-terms">
-      <label class="agree-row locked">
-        <input type="checkbox" id="agree-terms" class="agree-box" disabled>
+      <label class="agree-row">
+        <input type="checkbox" id="agree-terms" class="agree-box">
         <span class="agree-text">I have read and agree to the <a href="#" id="terms-link" class="terms-link">Terms &amp; Conditions</a></span>
       </label>
-      <p class="agree-hint" id="agree-hint">Please open and read the terms to continue.</p>
       <p class="field-error" id="terms-error"></p>
     </div>
 
@@ -1078,38 +1073,24 @@
   const termsLink = document.getElementById('terms-link');
   const termsModal = document.getElementById('terms-modal');
   const termsClose = document.getElementById('terms-close');
-  const agreeHint = document.getElementById('agree-hint');
   const termsAgreeBtn = document.getElementById('terms-agree-btn');
   let termsScrollY = 0;
-  function unlockAgree(){
-    if (agreeBox && agreeBox.disabled){
-      agreeBox.disabled = false;
-      agreeRow.classList.remove('locked');
-      if (agreeHint) agreeHint.style.display = 'none';
-    }
-  }
   function openTerms(){
     termsScrollY = window.scrollY || window.pageYOffset || 0;
     document.body.style.top = (-termsScrollY) + 'px';
     document.body.classList.add('modal-open');
     termsModal.style.display = 'flex';
-    unlockAgree();
   }
   function closeTerms(){
     termsModal.style.display = 'none';
     document.body.classList.remove('modal-open');
     document.body.style.top = '';
     window.scrollTo(0, termsScrollY);
-    if (agreeBox && !agreeBox.disabled && !agreeBox.checked){
-      agreeRow.classList.add('just-unlocked');
-      setTimeout(() => agreeRow.classList.remove('just-unlocked'), 1600);
-    }
   }
   if (termsLink) termsLink.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); openTerms(); });
   if (termsClose) termsClose.addEventListener('click', closeTerms);
   if (termsModal) termsModal.addEventListener('click', e => { if (e.target === termsModal) closeTerms(); });
   if (termsAgreeBtn) termsAgreeBtn.addEventListener('click', () => {
-    unlockAgree();
     agreeBox.checked = true;
     agreeRow.classList.remove('invalid');
     if (termsError) termsError.classList.remove('show');
