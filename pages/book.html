@@ -633,7 +633,7 @@
         </div>
 
         <div class="field-group">
-          <input type="email" id="email" placeholder="Email" autocomplete="email"/>
+          <input type="email" id="email" placeholder="Email (optional)" autocomplete="email"/>
           <p class="field-error" id="email-error"></p>
         </div>
       </div>
@@ -1053,17 +1053,13 @@
   }
   function validateEmail(){
     const val = emailInput.value.trim();
-    const emailOptional = bookingSoldoutHeader.style.display !== 'none';
+    // Email is always optional — blank passes, but a typed value must be valid.
     if (!val){
-      if (emailOptional){
-        setError(emailInput, emailError, '');
-        return true;
-      }
-      setError(emailInput, emailError, 'Please enter your email.');
-      return false;
+      setError(emailInput, emailError, '');
+      return true;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){
-      setError(emailInput, emailError, 'Enter a valid email address.');
+      setError(emailInput, emailError, 'Please enter a valid email, or leave it blank.');
       return false;
     }
     setError(emailInput, emailError, '');
@@ -1446,7 +1442,7 @@
           workshopId,
           participants: pCount,
           observers: oCount,
-          name, phone, email,
+          name, phone, email: email || null,
           guestNames: guestNames.map(n => n.trim()).filter(n => n.length > 0),
           ownHandpanCount: ownHandpanCountValue,
           bringingOwnHandpan
