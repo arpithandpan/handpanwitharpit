@@ -3514,6 +3514,61 @@ table#paymentsTable { min-width: 700px; }
   </div></div>
 </div>
 
+<!-- Invoice Editor -->
+<div class="form-page" id="form-invoiceEditor">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="closeInvoiceEditor()">← Back</button>
+    <div class="form-page-title" id="invEditorTitle">New Invoice</div>
+    <button class="btn-dash-save" onclick="generateInvoice()">Generate</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Invoice No</label><div style="display:flex;align-items:center;height:var(--input-h,44px);"><span id="inv-no" style="font-weight:600;color:var(--clay);font-size:1.05rem;">INV-004</span></div></div>
+      <div class="form-group"><label class="form-label">Invoice Date</label><input type="date" class="form-input" id="inv-date"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Billed To&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="inv-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Email</label><input type="text" class="form-input" id="inv-email" placeholder="Email (optional)"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">City</label><input type="text" class="form-input" id="inv-city" placeholder="City (optional)"/></div>
+      <div class="form-group"><label class="form-label">PAN</label><input type="text" class="form-input" id="inv-pan" placeholder="PAN (optional)"/></div>
+    </div>
+    <div class="form-label" style="margin-top:0.5rem;margin-bottom:0.4rem;">Payment received</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="inv-pay-date"/></div>
+      <div class="form-group"><label class="form-label">Mode</label>
+        <select class="form-input" id="inv-pay-mode">
+          <option value="UPI">UPI</option><option value="Cash">Cash</option>
+          <option value="Bank Transfer">Bank Transfer</option><option value="Razorpay">Razorpay</option>
+          <option value="Other">Other</option>
+        </select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Reference number</label><input type="text" class="form-input" id="inv-pay-ref" placeholder="UPI / UTR reference (optional)"/></div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:1rem 0 0.5rem;">
+      <div class="form-label" style="margin:0;">Line items</div>
+      <button type="button" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;" onclick="invAddLine()">+ Add line</button>
+    </div>
+    <div style="display:flex;gap:0.5rem;font-size:0.72rem;color:var(--text-light);letter-spacing:0.04em;margin-bottom:0.35rem;padding-right:46px;">
+      <span style="flex:1;">DESCRIPTION</span><span style="width:54px;text-align:center;">QTY</span><span style="width:84px;text-align:right;">RATE</span><span style="width:90px;text-align:right;">AMOUNT</span>
+    </div>
+    <div id="inv-lines"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--clay-pale);padding-top:0.85rem;margin-top:0.5rem;">
+      <span class="form-label" style="margin:0;">Total</span>
+      <span id="inv-total" style="font-size:1.25rem;font-weight:600;">₹0</span>
+    </div>
+    <div id="inv-words" style="text-align:right;font-size:0.8rem;color:var(--text-light);font-style:italic;margin-top:0.25rem;min-height:1rem;"></div>
+
+    <div style="display:flex;gap:0.6rem;margin-top:1.5rem;">
+      <button type="button" class="btn-dash btn-dash-outline" style="flex:1;" onclick="previewInvoice()">Preview</button>
+      <button type="button" class="btn-dash btn-dash-primary" style="flex:1.4;" onclick="generateInvoice()">Generate PDF</button>
+    </div>
+  </div></div>
+</div>
+
+
 <!-- Add Lead -->
 <div class="form-page" id="form-addLead">
   <div class="form-page-header">
@@ -5408,9 +5463,329 @@ async function loadInvoices() {
     showToast('Error loading invoices', 'error');
   } finally { hideLoader(); }
 }
-// Placeholder hooks — wired up in the next build stage (editor + PDF)
-function openInvoiceEditor(prefill) { showToast('The invoice editor comes in the next build step', 'info'); }
-function openInvoicePreview(id) { showToast('Invoice preview and PDF come in the next build step', 'info'); }
+// ── INVOICES: EDITOR + GENERATION ──
+const INV_BIZ = {
+  name: 'Arpit Pandey',
+  role: 'Handpan Artist & Educator',
+  loc: 'Bengaluru, Karnataka, India',
+  email: 'arpithandpan@gmail.com',
+  upi: 'arpitbam-1@okhdfcbank',
+  bank: 'HDFC Bank', acName: 'Arpit Pandey', acNo: '50100873491552', ifsc: 'HDFC0000278'
+};
+let invState = null;
+
+function invToISO(d) {
+  if (!d) return '';
+  try { const dt = new Date(d); if (isNaN(dt)) return ''; return dt.toISOString().slice(0,10); } catch(e){ return ''; }
+}
+function invLongDate(iso) {
+  if (!iso) return '';
+  const dt = new Date(iso + 'T00:00:00');
+  if (isNaN(dt)) return iso;
+  return dt.toLocaleDateString('en-GB', { day:'2-digit', month:'long', year:'numeric' });
+}
+function invMonthLabel(m) {
+  if (!m) return '';
+  const mm = /^(\d{4})-(\d{2})$/.exec(m);
+  if (mm) { const dt = new Date(Number(mm[1]), Number(mm[2])-1, 1); return dt.toLocaleDateString('en-GB',{month:'long',year:'numeric'}); }
+  return m;
+}
+function invINR(n) { return Number(n||0).toLocaleString('en-IN'); }
+function invNumToWords(num) {
+  num = Math.round(Number(num)||0);
+  if (num === 0) return 'Zero';
+  const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  const two=n=> n<20?a[n]:(b[Math.floor(n/10)]+(n%10?' '+a[n%10]:''));
+  const three=n=> (Math.floor(n/100)?a[Math.floor(n/100)]+' Hundred'+(n%100?' ':''):'')+(n%100?two(n%100):'');
+  let out='';
+  const crore=Math.floor(num/10000000); num%=10000000;
+  const lakh=Math.floor(num/100000); num%=100000;
+  const thou=Math.floor(num/1000); num%=1000;
+  if(crore) out+=three(crore)+' Crore ';
+  if(lakh) out+=two(lakh)+' Lakh ';
+  if(thou) out+=two(thou)+' Thousand ';
+  if(num) out+=three(num);
+  return out.trim();
+}
+function invAmountInWords(n) { return 'Rupees ' + invNumToWords(n) + ' Only'; }
+
+async function invNextNumber() {
+  try {
+    const rows = await sbGet('invoices', 'order=invoice_number.desc');
+    const list = Array.isArray(rows) ? rows : (rows && rows.data ? rows.data : []);
+    const max = list.reduce((m,r)=> Math.max(m, Number(r.invoice_number)||0), 0);
+    return (max || 3) + 1;
+  } catch(e) { console.error('invNextNumber', e); return 4; }
+}
+
+function invMapSource(table, r) {
+  if (table === 'fee_payments') {
+    const cls = r.classes ? ' (' + r.classes + ' classes)' : '';
+    return {
+      billed: { name: r.student_name || '', email: r.email || '', city: '' },
+      payment: { date: invToISO(r.payment_date), mode: r.payment_mode || 'UPI', ref: '' },
+      lines: [{ desc: 'Handpan Online Classes \u2013 ' + invMonthLabel(r.month) + cls, qty: 1, rate: Number(r.amount)||0 }]
+    };
+  }
+  if (table === 'participants') {
+    return {
+      billed: { name: r.full_name || r.razorpay_name || '', email: r.email || '', city: '' },
+      payment: { date: invToISO(r.created_at), mode: r.payment_mode || 'UPI', ref: '' },
+      lines: [{ desc: 'Handpan Workshop' + (r.workshop_id ? ' \u2013 ' + r.workshop_id : ''), qty: 1, rate: Number(r.amount_paid)||0 }]
+    };
+  }
+  if (table === 'payments') {
+    return {
+      billed: { name: r.payer_name || '', email: '', city: '' },
+      payment: { date: invToISO(r.date), mode: r.payment_mode || 'UPI', ref: '' },
+      lines: [{ desc: r.description || r.category || 'Handpan services', qty: 1, rate: Number(r.amount)||0 }]
+    };
+  }
+  return null;
+}
+
+async function openInvoiceEditor(prefill) {
+  if (!isAdmin || (typeof isAdmin === 'function' ? !isAdmin() : false)) { /* admin gate handled by UI; continue */ }
+  const number = await invNextNumber();
+  invState = {
+    number,
+    invoiceDate: invToISO(new Date()),
+    source: { table: null, id: null },
+    billed: { name: '', email: '', city: '' },
+    payment: { date: '', mode: 'UPI', ref: '' },
+    pan: '',
+    lines: [{ desc: '', qty: 1, rate: 0 }]
+  };
+  if (prefill && prefill.source && prefill.id) {
+    try {
+      const rows = await sbGet(prefill.source, 'id=eq.' + encodeURIComponent(prefill.id));
+      const list = Array.isArray(rows) ? rows : (rows && rows.data ? rows.data : []);
+      const rec = list[0];
+      if (rec) {
+        const mapped = invMapSource(prefill.source, rec);
+        if (mapped) {
+          invState.source = { table: prefill.source, id: prefill.id };
+          invState.billed = mapped.billed;
+          invState.payment = mapped.payment;
+          invState.lines = mapped.lines.length ? mapped.lines : invState.lines;
+        }
+      }
+    } catch(e) { console.error('prefill error', e); }
+  }
+  invRenderEditor();
+  document.getElementById('form-invoiceEditor').classList.add('open');
+  if (typeof lockScroll === 'function') lockScroll();
+}
+
+function invRenderEditor() {
+  const s = invState;
+  document.getElementById('invEditorTitle').textContent = s.source.table ? 'New Invoice' : 'New Invoice';
+  document.getElementById('inv-no').textContent = 'INV-' + String(s.number).padStart(3,'0');
+  document.getElementById('inv-date').value = s.invoiceDate;
+  document.getElementById('inv-name').value = s.billed.name || '';
+  document.getElementById('inv-email').value = s.billed.email || '';
+  document.getElementById('inv-city').value = s.billed.city || '';
+  document.getElementById('inv-pan').value = s.pan || '';
+  document.getElementById('inv-pay-date').value = s.payment.date || '';
+  document.getElementById('inv-pay-mode').value = s.payment.mode || 'UPI';
+  document.getElementById('inv-pay-ref').value = s.payment.ref || '';
+  invRenderLines();
+}
+
+function invRenderLines() {
+  const wrap = document.getElementById('inv-lines');
+  wrap.innerHTML = invState.lines.map((ln, i) => {
+    const amt = (Number(ln.qty)||0) * (Number(ln.rate)||0);
+    return '<div class="inv-line" style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;">'
+      + '<input class="form-input" style="flex:1;min-width:0;" placeholder="Description" value="' + String(ln.desc||'').replace(/"/g,'&quot;') + '" oninput="invSetLine(' + i + ',\'desc\',this.value)"/>'
+      + '<input type="number" class="form-input" style="width:54px;text-align:center;" value="' + (ln.qty!=null?ln.qty:1) + '" oninput="invSetLine(' + i + ',\'qty\',this.value)"/>'
+      + '<input type="number" class="form-input" style="width:84px;text-align:right;" placeholder="0" value="' + (ln.rate!=null?ln.rate:'') + '" oninput="invSetLine(' + i + ',\'rate\',this.value)"/>'
+      + '<span style="width:90px;text-align:right;font-weight:500;color:var(--clay);">\u20B9' + invINR(amt) + '</span>'
+      + '<button type="button" class="icon-action-btn danger" data-tip="Remove line" onclick="invRemoveLine(' + i + ')" ' + (invState.lines.length<=1?'style="visibility:hidden;"':'') + '><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
+      + '</div>';
+  }).join('');
+  invRecalc();
+}
+function invSetLine(i, key, val) {
+  if (!invState.lines[i]) return;
+  invState.lines[i][key] = (key==='desc') ? val : (val==='' ? '' : Number(val));
+  if (key !== 'desc') {
+    const amt = (Number(invState.lines[i].qty)||0) * (Number(invState.lines[i].rate)||0);
+    const row = document.querySelectorAll('#inv-lines .inv-line')[i];
+    if (row) row.querySelector('span').textContent = '\u20B9' + invINR(amt);
+    invRecalc();
+  }
+}
+function invAddLine() { invState.lines.push({ desc:'', qty:1, rate:0 }); invRenderLines(); }
+function invRemoveLine(i) { if (invState.lines.length<=1) return; invState.lines.splice(i,1); invRenderLines(); }
+function invRecalc() {
+  const total = invState.lines.reduce((s,ln)=> s + (Number(ln.qty)||0)*(Number(ln.rate)||0), 0);
+  document.getElementById('inv-total').textContent = '\u20B9' + invINR(total);
+  document.getElementById('inv-words').textContent = total>0 ? invAmountInWords(total) : '';
+  return total;
+}
+
+function invCollect() {
+  const s = invState;
+  s.invoiceDate = document.getElementById('inv-date').value || s.invoiceDate;
+  s.billed.name = document.getElementById('inv-name').value.trim();
+  s.billed.email = document.getElementById('inv-email').value.trim();
+  s.billed.city = document.getElementById('inv-city').value.trim();
+  s.pan = document.getElementById('inv-pan').value.trim();
+  s.payment.date = document.getElementById('inv-pay-date').value;
+  s.payment.mode = document.getElementById('inv-pay-mode').value;
+  s.payment.ref = document.getElementById('inv-pay-ref').value.trim();
+  return s;
+}
+function invValidate(s) {
+  if (!s.billed.name) { showToast('Add who the invoice is billed to', 'error'); return false; }
+  const valid = s.lines.filter(l => (Number(l.rate)||0) > 0 && String(l.desc||'').trim());
+  if (!valid.length) { showToast('Add at least one line with a description and amount', 'error'); return false; }
+  return true;
+}
+
+function invBuildHTML(d, autoPrint) {
+  const banner = d.payment && d.payment.date ? (
+    '<div class="banner"><div class="bm">&#10003;&nbsp;&nbsp;PAYMENT RECEIVED</div><div class="bs">on <b>' + invLongDate(d.payment.date) + '</b>'
+    + (d.payment.mode ? ' &middot; ' + d.payment.mode : '')
+    + (d.payment.ref ? ' &middot; Ref <b>' + d.payment.ref + '</b>' : '') + '</div></div>'
+  ) : '';
+  const cityRow = d.billed.city ? '<div><span class="g">City:</span> <span class="hl">' + d.billed.city + '</span></div>' : '';
+  const emailRow = d.billed.email ? '<div><span class="g">Email:</span> <span class="hl">' + d.billed.email + '</span></div>' : '';
+  const panRow = d.pan ? '<div style="color:#333;">PAN: ' + d.pan + '</div>' : '';
+  const rows = d.lines.map(ln => '<tr><td class="desc">' + (ln.desc||'') + '</td><td>' + (ln.qty||0) + '</td><td>' + invINR(ln.rate) + '</td><td>' + invINR((Number(ln.qty)||0)*(Number(ln.rate)||0)) + '</td></tr>').join('');
+  const ap = autoPrint ? '<script>window.onload=function(){setTimeout(function(){window.print();},350);};<\/script>' : '';
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + d.title + '</title><style>'
+    + '@page{size:A4;margin:0;}*{box-sizing:border-box;}html,body{margin:0;padding:0;}'
+    + 'body{font-family:\'Helvetica Neue\',Arial,sans-serif;color:#1a1a1a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    + '.sheet{width:210mm;min-height:297mm;padding:18mm 16mm;}'
+    + '.row{display:flex;justify-content:space-between;align-items:flex-start;}'
+    + '.bn{font-size:26px;font-weight:700;letter-spacing:-0.3px;}.bsub{font-size:13px;color:#555;margin-top:10px;line-height:1.6;}'
+    + '.it{font-size:26px;font-weight:700;letter-spacing:0.5px;text-align:right;}'
+    + '.meta{margin-top:10px;margin-left:auto;font-size:13px;border-collapse:collapse;}.meta td{padding:2px 0;}'
+    + '.meta .l{color:#555;text-align:right;padding-right:8px;}.meta .v{font-weight:700;background:#fbf1d4;padding:2px 8px;}'
+    + '.divider{border-top:1.5px solid #1a1a1a;margin:18px 0 20px;}'
+    + '.bl{font-weight:700;font-size:11px;letter-spacing:0.5px;margin-bottom:4px;}'
+    + '.from{font-size:13px;line-height:1.65;}.billed{font-size:13px;line-height:1.95;text-align:right;}'
+    + '.g{color:#555;}.hl{background:#fbf1d4;padding:1px 6px;}'
+    + '.banner{background:#e9f3ec;border:1px solid #bcd9c4;text-align:center;padding:11px;margin:20px 0;border-radius:2px;}'
+    + '.bm{color:#2f7d4f;font-weight:700;font-size:14px;}.bs{color:#3f8a5e;font-size:11.5px;margin-top:3px;}'
+    + 'table.items{width:100%;border-collapse:collapse;font-size:13px;}table.items thead tr{background:#111;color:#fff;}'
+    + 'table.items th{padding:8px 12px;font-weight:700;text-align:right;}table.items th.desc{text-align:left;}'
+    + 'table.items td{padding:9px 12px;text-align:right;}table.items td.desc{text-align:left;}table.items tbody tr:nth-child(even){background:#f6f6f6;}'
+    + '.tot{background:#111;color:#fff;display:flex;justify-content:flex-end;gap:48px;padding:10px 12px;font-size:15px;font-weight:700;margin-top:30px;}'
+    + '.tot .a{min-width:110px;text-align:right;}.words{text-align:right;font-size:12px;color:#555;font-style:italic;margin-top:6px;}'
+    + '.pay{background:#f4f4f4;padding:14px 16px;margin-top:22px;font-size:12.5px;line-height:1.7;border-radius:2px;}.pay .h{font-weight:700;margin-bottom:3px;}.pay .i{font-style:italic;}'
+    + '.foot{text-align:center;font-style:italic;color:#888;font-size:12px;margin-top:24px;}'
+    + '</style></head><body><div class="sheet">'
+    + '<div class="row"><div><div class="bn">' + INV_BIZ.name + '</div><div class="bsub">' + INV_BIZ.role + '<br>' + INV_BIZ.loc + '<br>' + INV_BIZ.email + '</div></div>'
+    + '<div><div class="it">INVOICE</div><table class="meta"><tr><td class="l">No:</td><td class="v">' + d.no + '</td></tr><tr><td class="l">Date:</td><td class="v">' + invLongDate(d.invoiceDate) + '</td></tr></table></div></div>'
+    + '<div class="divider"></div>'
+    + '<div class="row"><div class="from"><div class="bl">FROM</div><div style="font-weight:700;">' + INV_BIZ.name + '</div><div style="color:#333;">' + INV_BIZ.email + '</div><div style="color:#333;">UPI: ' + INV_BIZ.upi + '</div>' + panRow + '</div>'
+    + '<div class="billed"><div class="bl">BILLED TO</div><div><span class="g">Name:</span> <span class="hl" style="font-weight:500;">' + d.billed.name + '</span></div>' + emailRow + cityRow + '</div></div>'
+    + banner
+    + '<table class="items"><thead><tr><th class="desc">Description</th><th style="width:60px;">Qty</th><th style="width:100px;">Rate (\u20B9)</th><th style="width:110px;">Amount (\u20B9)</th></tr></thead><tbody>' + rows + '</tbody></table>'
+    + '<div class="tot"><span>TOTAL</span><span class="a">\u20B9' + invINR(d.total) + '</span></div>'
+    + '<div class="words">' + (d.words||'') + '</div>'
+    + '<div class="pay"><div class="h">PAYMENT DETAILS</div><div>UPI ID:&nbsp;&nbsp;' + INV_BIZ.upi + '</div><div>Bank:&nbsp;&nbsp;' + INV_BIZ.bank + '&nbsp;&nbsp;|&nbsp;&nbsp;Account Name: ' + INV_BIZ.acName + '</div><div class="i">Account No:&nbsp;&nbsp;' + INV_BIZ.acNo + '&nbsp;&nbsp;|&nbsp;&nbsp;IFSC: ' + INV_BIZ.ifsc + '</div></div>'
+    + '<div class="foot">This is a self-generated invoice for handpan services rendered by ' + INV_BIZ.name + ' (individual).</div>'
+    + '</div>' + ap + '</body></html>';
+}
+
+function invDataFromState(s) {
+  const lines = s.lines.filter(l => String(l.desc||'').trim() && (Number(l.rate)||0)>0).map(l => ({ desc:l.desc, qty:Number(l.qty)||1, rate:Number(l.rate)||0 }));
+  const total = lines.reduce((a,l)=> a + l.qty*l.rate, 0);
+  const no = 'INV-' + String(s.number).padStart(3,'0');
+  const nameSlug = (s.billed.name||'invoice').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return {
+    no, invoiceDate: s.invoiceDate, billed: s.billed, pan: s.pan, payment: s.payment,
+    lines, total, words: invAmountInWords(total),
+    title: no + '_' + nameSlug
+  };
+}
+
+function invOpenPrint(html, title) {
+  const w = window.open('', '_blank');
+  if (!w) { showToast('Allow pop-ups to view or save the invoice', 'error'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+  try { w.document.title = title; } catch(e){}
+}
+
+function previewInvoice() {
+  const s = invCollect();
+  if (!invValidate(s)) return;
+  const d = invDataFromState(s);
+  invOpenPrint(invBuildHTML(d, false), d.title);
+}
+
+async function generateInvoice() {
+  const s = invCollect();
+  if (!invValidate(s)) return;
+  const d = invDataFromState(s);
+  const payload = {
+    invoice_number: s.number,
+    invoice_date: s.invoiceDate,
+    source_table: s.source.table || null,
+    source_id: s.source.id || null,
+    billed_name: s.billed.name,
+    billed_email: s.billed.email || null,
+    billed_city: s.billed.city || null,
+    payment_received_date: s.payment.date || null,
+    payment_mode: s.payment.mode || null,
+    payment_reference: s.payment.ref || null,
+    line_items: d.lines,
+    total_amount: d.total,
+    amount_in_words: d.words,
+    pan: s.pan || null
+  };
+  try {
+    await sbPost('invoices', payload);
+  } catch(e) {
+    // likely a number collision; bump and retry once
+    try {
+      s.number = await invNextNumber();
+      payload.invoice_number = s.number;
+      const d2 = invDataFromState(s);
+      payload.line_items = d2.lines; payload.total_amount = d2.total; payload.amount_in_words = d2.words;
+      await sbPost('invoices', payload);
+      d.no = d2.no; d.title = d2.title;
+    } catch(e2) {
+      console.error('generateInvoice', e2); showToast('Could not save the invoice — try again', 'error'); return;
+    }
+  }
+  showToast('Invoice ' + d.no + ' generated', 'success');
+  closeInvoiceEditor();
+  invOpenPrint(invBuildHTML(d, true), d.title);
+  if (sessionStorage.getItem('dash_section') === 'invoices') loadInvoices();
+}
+
+function closeInvoiceEditor() {
+  document.getElementById('form-invoiceEditor').classList.remove('open');
+  if (typeof unlockScroll === 'function') unlockScroll();
+}
+
+async function openInvoicePreview(id) {
+  try {
+    const rows = await sbGet('invoices', 'id=eq.' + encodeURIComponent(id));
+    const list = Array.isArray(rows) ? rows : (rows && rows.data ? rows.data : []);
+    const r = list[0];
+    if (!r) { showToast('Invoice not found', 'error'); return; }
+    const lines = (r.line_items||[]).map(l => ({ desc:l.desc||l.description||'', qty:Number(l.qty)||1, rate:Number(l.rate)||0 }));
+    const no = 'INV-' + String(r.invoice_number).padStart(3,'0');
+    const nameSlug = (r.billed_name||'invoice').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const d = {
+      no, invoiceDate: r.invoice_date,
+      billed: { name: r.billed_name||'', email: r.billed_email||'', city: r.billed_city||'' },
+      pan: r.pan||'',
+      payment: { date: r.payment_received_date||'', mode: r.payment_mode||'', ref: r.payment_reference||'' },
+      lines, total: Number(r.total_amount)||0, words: r.amount_in_words || invAmountInWords(r.total_amount),
+      title: no + '_' + nameSlug
+    };
+    invOpenPrint(invBuildHTML(d, true), d.title);
+  } catch(e) { console.error('openInvoicePreview', e); showToast('Could not open the invoice', 'error'); }
+}
+
 function filterInvoices(q) {
   q = (q || '').toLowerCase().trim();
   const rows = document.querySelectorAll('#invoicesTable tr');
