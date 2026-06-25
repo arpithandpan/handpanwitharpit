@@ -746,6 +746,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 }
 .badge-green { background: rgba(122,140,106,0.15); color: var(--moss); }
 .badge-clay  { background: rgba(193,127,82,0.15); color: var(--clay); }
+.badge-stone { background: rgba(140,123,110,0.18); color: var(--stone); }
 .badge-red   { background: rgba(180,60,40,0.1); color: #B43C28; }
 .badge-gray  { background: rgba(100,100,100,0.1); color: var(--text-light); }
 .badge-blue  { background: rgba(70,100,160,0.1); color: #4664A0; }
@@ -2441,6 +2442,10 @@ table#paymentsTable { min-width: 700px; }
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
       Unassigned <span id="mobileUnassignedBadge" style="display:none;background:var(--clay);color:#1a1208;font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;"></span>
     </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('invoices',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+      Invoices
+    </a>
     <div style="height:1px;background:rgba(193,127,82,0.15);margin:0.25rem 2.5rem;"></div>
     <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(240,219,200,0.6);padding:0.75rem 2.5rem 0.25rem;">Pipeline</div>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('leads',this);toggleMobileMenu()">
@@ -2522,6 +2527,7 @@ table#paymentsTable { min-width: 700px; }
     <ul class="dash-nav">
       <li><a href="#" onclick="showSection('payments',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span> Payments</a></li>
       <li class="admin-only"><a href="#" onclick="showSection('unassigned-payments',this)" style="white-space:nowrap;"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span> Unassigned <span id="sidebarUnassignedBadge" style="display:none;background:var(--clay);color:#1a1208;font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;"></span></a></li>
+      <li><a href="#" onclick="showSection('invoices',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span> Invoices</a></li>
     </ul>
     <div class="dash-nav-divider"></div>
     <div class="dash-sidebar-title">Pipeline</div>
@@ -3056,6 +3062,33 @@ table#paymentsTable { min-width: 700px; }
       <div class="mobile-cards" id="leadsCards"></div>
       </div>
       <div id="leadsEmptyState" style="display:none;"></div>
+    </section>
+
+    <!-- ── INVOICES ── -->
+    <section class="dash-section" id="section-invoices">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Invoices</div>
+          <div class="dash-section-subtitle">Generated invoices for students and customers</div>
+          <div class="dash-section-count" id="invoicesCount"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button class="btn-dash btn-dash-primary admin-only" onclick="openInvoiceEditor(null)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Invoice</button>
+        </div>
+      </div>
+      <div class="section-search-wrap" id="search-wrap-invoices">
+        <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="section-search-input" id="search-invoices" placeholder="Search by invoice no, name, email..." autocomplete="off" oninput="filterInvoices(this.value)"/>
+      </div>
+      <div class="dash-table-wrap">
+        <table class="desktop-table"><thead><tr>
+          <th>No</th><th>Billed To</th><th>Date</th><th style="text-align:right;">Amount</th><th>Source</th><th class="ws-action-sticky">Action</th>
+        </tr></thead>
+        <tbody id="invoicesTable"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+      <div class="mobile-cards" id="invoicesCards"></div>
+      </div>
+      <div id="invoicesEmptyState" style="display:none;"></div>
     </section>
 
     <!-- ── WAITLIST ── -->
@@ -4377,6 +4410,11 @@ async function bulkArchive() {
 
 // ── EMPTY STATES ──
 const EMPTY_STATES = {
+  invoices: `<div class="empty-state">
+    <div style="font-size:3rem;margin-bottom:0.5rem;">\u{1F9FE}</div>
+    <div class="empty-state-title">No invoices yet</div>
+    <div class="empty-state-sub">Generate one from a payment row, or use New Invoice to create a blank one</div>
+  </div>`,
   unassigned_payments: `<div class="empty-state">
     <div style="font-size:3rem;margin-bottom:0.5rem;">💸</div>
     <div class="empty-state-title">No unassigned payments</div>
@@ -4768,6 +4806,7 @@ function loadSection(name) {
   else if (name === 'leads') loadLeads();
   else if (name === 'waitlist') loadWaitlist();
   else if (name === 'unassigned-payments') loadUnassignedPayments();
+  else if (name === 'invoices') loadInvoices();
   else if (name === 'insights') loadInsights();
   else if (name === 'bin') { loadBin(); }
   else if (name === 'notifications') { loadNotifications(); }
@@ -5093,7 +5132,7 @@ async function loadParticipants() {
     const adminP = isAdmin();
     const PENCIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP;
-    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}" data-has-guests="${(Number(p.guest_count)>0)?'1':'0'}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="participants" data-id="'+p.id+'" data-name="'+( p.full_name||p.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${p.id}</td><td class="td-truncate td-name" data-tip="${(p.full_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${p.full_name||'—'}</span>${personCaption(p)}${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.9rem;color:var(--text-light);opacity:0.7;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Booked as: ' + p.razorpay_name + '</div>' : ''}${p.payment_mode === 'Razorpay UPI' && !p.email ? '<div style="font-size:0.72rem;color:rgba(200,147,90,0.6);margin-top:2px;">⚠ Incomplete data' + (p.raw_payload ? ' — raw data saved' : '') + '</div>' : ''}</td><td class="td-truncate td-email" style="color:var(--text-light);" data-tip="${p.email||''}">${p.email||'—'}</td><td>${p.bringing_own_handpan||'—'}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky"><div class="action-wrap">${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="11">${EMPTY_STATES.participants}</td></tr>`;
+    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}" data-has-guests="${(Number(p.guest_count)>0)?'1':'0'}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="participants" data-id="'+p.id+'" data-name="'+( p.full_name||p.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${p.id}</td><td class="td-truncate td-name" data-tip="${(p.full_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${p.full_name||'—'}</span>${personCaption(p)}${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.9rem;color:var(--text-light);opacity:0.7;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Booked as: ' + p.razorpay_name + '</div>' : ''}${p.payment_mode === 'Razorpay UPI' && !p.email ? '<div style="font-size:0.72rem;color:rgba(200,147,90,0.6);margin-top:2px;">⚠ Incomplete data' + (p.raw_payload ? ' — raw data saved' : '') + '</div>' : ''}</td><td class="td-truncate td-email" style="color:var(--text-light);" data-tip="${p.email||''}">${p.email||'—'}</td><td>${p.bringing_own_handpan||'—'}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky"><div class="action-wrap">${Number(p.amount_paid)>0?`<button class="icon-action-btn" data-tip="Create invoice" onclick="openInvoiceEditor({source:'participants',id:'${p.id}'})"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"8\" y1=\"13\" x2=\"16\" y2=\"13\"/><line x1=\"8\" y1=\"17\" x2=\"13\" y2=\"17\"/></svg></button>`:''}${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="11">${EMPTY_STATES.participants}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; setSearchFilterVisibility('participants', _hasRows); } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
@@ -5173,7 +5212,7 @@ async function loadFeePayments() {
     const adminFP = isAdmin();
     const PENCIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     populateFeeMonthDropdown(fps);
-    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${f.month||''}" data-mode="${f.payment_mode||''}" data-payment_date="${f.payment_date||''}" data-amount="${f.amount||0}"><td>${f.id}</td><td class="td-truncate td-name" data-tip="${(f.student_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${f.student_name}</span></td><td class="td-truncate" style="max-width:90px;" data-tip="${f.batch_id||''}">${f.batch_id||'—'}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td><span class="badge badge-clay">${f.payment_mode||'UPI'}</span></td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td class="ws-action-sticky">${adminFP?(f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('fee_payments','${f.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${f.month||''}" data-mode="${f.payment_mode||''}" data-payment_date="${f.payment_date||''}" data-amount="${f.amount||0}"><td>${f.id}</td><td class="td-truncate td-name" data-tip="${(f.student_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${f.student_name}</span></td><td class="td-truncate" style="max-width:90px;" data-tip="${f.batch_id||''}">${f.batch_id||'—'}</td><td>${f.month}</td><td>${f.classes}</td><td>${fmt(f.amount)}</td><td><span class="badge badge-clay">${f.payment_mode||'UPI'}</span></td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td class="ws-action-sticky">${adminFP?(f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap">${(f.paid && Number(f.amount)>0)?`<button class="icon-action-btn" data-tip="Create invoice" onclick="openInvoiceEditor({source:'fee_payments',id:'${f.id}'})"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"8\" y1=\"13\" x2=\"16\" y2=\"13\"/><line x1=\"8\" y1=\"17\" x2=\"13\" y2=\"17\"/></svg></button>`:''}<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('fee_payments','${f.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.fee_payments}
     </td></tr>`;
     setSearchFilterVisibility('fee-payments', fps.length > 0);
@@ -5203,7 +5242,7 @@ async function loadPayments() {
     const adminPay = isAdmin();
     const PENCIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     populatePaymentsCategoryDropdown(pays);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => { const isGenExp = p.is_general_expense; const dataType = isGenExp ? 'general_expense' : (p.type||''); const typeBadge = isGenExp ? `<span class="badge badge-clay">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span>`; return `<tr class="${p.archived?'archived-row':''}" data-type="${dataType}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td class="td-truncate td-desc" data-tip="${p.description||p.payer_name||''}">${p.description||p.payer_name||'—'}</td><td>${typeBadge}</td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td class="ws-action-sticky">${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`; }).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => { const isGenExp = p.is_general_expense; const dataType = isGenExp ? 'general_expense' : (p.type||''); const typeBadge = isGenExp ? `<span class="badge badge-clay">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span>`; return `<tr class="${p.archived?'archived-row':''}" data-type="${dataType}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td class="td-truncate td-desc" data-tip="${p.description||p.payer_name||''}">${p.description||p.payer_name||'—'}</td><td>${typeBadge}</td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--moss)':'#B43C28'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td class="ws-action-sticky">${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap">${(p.type==='income' && !p.is_general_expense)?`<button class="icon-action-btn" data-tip="Create invoice" onclick="openInvoiceEditor({source:'payments',id:'${p.id}'})"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"8\" y1=\"13\" x2=\"16\" y2=\"13\"/><line x1=\"8\" y1=\"17\" x2=\"13\" y2=\"17\"/></svg></button>`:''}<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`; }).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.payments}
     </td></tr>`;
 
@@ -5325,6 +5364,68 @@ async function toggleContacted(id, currentState, name) {
     console.error('toggleContacted error:', e);
     showToast('Failed to update — try again', 'error');
   }
+}
+
+// ── INVOICES ──
+function invFmtNo(n) { return 'INV-' + String(n == null ? 0 : n).padStart(3, '0'); }
+function invSourceLabel(t) {
+  if (t === 'fee_payments') return 'Fee payment';
+  if (t === 'participants') return 'Workshop';
+  if (t === 'payments') return 'Payment';
+  return 'Manual';
+}
+function invSourceBadge(t) {
+  const manual = !t;
+  return `<span class="badge ${manual ? 'badge-stone' : 'badge-clay'}">${invSourceLabel(t)}</span>`;
+}
+async function loadInvoices() {
+  try {
+    const invoices = currentRole === 'viewer' ? [] : await sbGet('invoices', 'order=invoice_number.desc');
+    const list = Array.isArray(invoices) ? invoices : (invoices && invoices.data ? invoices.data : []);
+    window._totalCounts = window._totalCounts || {};
+    window._totalCounts.invoices = list.length;
+    const countEl = document.getElementById('invoicesCount');
+    if (countEl) countEl.textContent = list.length + ' invoice' + (list.length !== 1 ? 's' : '') + ' total';
+    setSearchFilterVisibility('invoices', list.length > 0);
+    const DL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+    document.getElementById('invoicesTable').innerHTML = list.map(inv => {
+      const nm = (inv.billed_name || '').replace(/"/g, '&quot;');
+      return `<tr data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span></td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmt(inv.total_amount)}</td><td>${invSourceBadge(inv.source_table)}</td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button></div></td></tr>`;
+    }).join('') || `<tr><td colspan="6" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.invoices}</td></tr>`;
+
+    const _t = document.getElementById('invoicesTable');
+    const _hd = _t && _t.querySelectorAll('tr').length > 0 && !_t.querySelector('[colspan]');
+    const _w = _t && _t.closest('.dash-table-wrap');
+    if (_w) _w.style.display = _hd ? '' : 'none';
+    setSearchFilterVisibility('invoices', _hd);
+    const _e = document.getElementById('invoicesEmptyState');
+    if (_e) { _e.innerHTML = EMPTY_STATES.invoices; _e.style.display = _hd ? 'none' : ''; }
+
+    const cards = document.getElementById('invoicesCards');
+    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card"><div class="m-card-title" style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;"><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span> ${invSourceBadge(inv.source_table)}</div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmt(inv.total_amount)}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button></div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.invoices + '</div>';
+  } catch (e) {
+    console.error('loadInvoices error:', e);
+    showToast('Error loading invoices', 'error');
+  } finally { hideLoader(); }
+}
+// Placeholder hooks — wired up in the next build stage (editor + PDF)
+function openInvoiceEditor(prefill) { showToast('The invoice editor comes in the next build step', 'info'); }
+function openInvoicePreview(id) { showToast('Invoice preview and PDF come in the next build step', 'info'); }
+function filterInvoices(q) {
+  q = (q || '').toLowerCase().trim();
+  const rows = document.querySelectorAll('#invoicesTable tr');
+  let shown = 0;
+  rows.forEach(r => {
+    if (r.querySelector('[colspan]')) return;
+    const hay = ((r.dataset.invoice_no||'') + ' ' + (r.dataset.billed_name||'') + ' ' + (r.dataset.billed_email||'')).toLowerCase();
+    const match = !q || hay.includes(q);
+    r.style.display = match ? '' : 'none';
+    if (match) shown++;
+  });
+  document.querySelectorAll('#invoicesCards .m-card').forEach(card => {
+    const hay = (card.textContent || '').toLowerCase();
+    card.style.display = (!q || hay.includes(q)) ? '' : 'none';
+  });
 }
 
 // ── INSIGHTS ──
