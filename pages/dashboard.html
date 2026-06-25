@@ -3086,7 +3086,7 @@ table#paymentsTable { min-width: 700px; }
           <th>No</th><th>Billed To</th><th>Date</th><th style="text-align:right;">Amount</th><th>Source</th><th class="ws-action-sticky">Action</th>
         </tr></thead>
         <tbody id="invoicesTable"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody></table>
-      <div class="mobile-cards" id="invoicesCards"></div>
+      <div class="mobile-cards mobile-only" id="invoicesCards"></div>
       </div>
       <div id="invoicesEmptyState" style="display:none;"></div>
     </section>
@@ -3519,22 +3519,28 @@ table#paymentsTable { min-width: 700px; }
   <div class="form-page-header">
     <button class="form-page-back" onclick="closeInvoiceEditor()">← Back</button>
     <div class="form-page-title" id="invEditorTitle">New Invoice</div>
-    <button class="btn-dash-save" onclick="generateInvoice()">Generate</button>
+    <button class="btn-dash-save" onclick="saveInvoice()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <div style="background:rgba(193,127,82,0.08);border:1px solid var(--clay-pale);border-radius:8px;padding:0.7rem 0.9rem;font-size:0.82rem;color:var(--text-light);line-height:1.5;margin-bottom:0.25rem;">Your name, email, UPI and bank details are added to every invoice automatically. Below you only enter the customer and payment details.</div>
+
+    <div style="font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--clay);margin:1rem 0 0.85rem;padding-bottom:0.45rem;border-bottom:1px solid var(--clay-pale);">Invoice details</div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Invoice No</label><div style="display:flex;align-items:center;height:var(--input-h,44px);"><span id="inv-no" style="font-weight:600;color:var(--clay);font-size:1.05rem;">INV-004</span></div></div>
       <div class="form-group"><label class="form-label">Invoice Date</label><input type="date" class="form-input" id="inv-date"/></div>
     </div>
+
+    <div style="font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--clay);margin:1.5rem 0 0.85rem;padding-bottom:0.45rem;border-bottom:1px solid var(--clay-pale);">Your details &middot; optional</div>
+    <div class="form-group"><label class="form-label">Your PAN</label><input type="text" class="form-input" id="inv-pan" placeholder="PAN (optional, appears on the invoice)"/></div>
+
+    <div style="font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--clay);margin:1.5rem 0 0.85rem;padding-bottom:0.45rem;border-bottom:1px solid var(--clay-pale);">Billed to &middot; customer</div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Billed To&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="inv-name" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Name&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="inv-name" placeholder="Customer name"/></div>
       <div class="form-group"><label class="form-label">Email</label><input type="text" class="form-input" id="inv-email" placeholder="Email (optional)"/></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">City</label><input type="text" class="form-input" id="inv-city" placeholder="City (optional)"/></div>
-      <div class="form-group"><label class="form-label">PAN</label><input type="text" class="form-input" id="inv-pan" placeholder="PAN (optional)"/></div>
-    </div>
-    <div class="form-label" style="margin-top:0.5rem;margin-bottom:0.4rem;">Payment received</div>
+    <div class="form-group"><label class="form-label">City</label><input type="text" class="form-input" id="inv-city" placeholder="Customer city (optional)"/></div>
+
+    <div style="font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--clay);margin:1.5rem 0 0.85rem;padding-bottom:0.45rem;border-bottom:1px solid var(--clay-pale);">Payment received</div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="inv-pay-date"/></div>
       <div class="form-group"><label class="form-label">Mode</label>
@@ -5555,6 +5561,8 @@ async function openInvoiceEditor(prefill) {
     billed: { name: '', email: '', city: '' },
     payment: { date: '', mode: 'UPI', ref: '' },
     pan: '',
+    saved: false,
+    _committing: false,
     lines: [{ desc: '', qty: 1, rate: 0 }]
   };
   if (prefill && prefill.source && prefill.id) {
@@ -5719,9 +5727,12 @@ function previewInvoice() {
   invOpenPrint(invBuildHTML(d, false), d.title);
 }
 
-async function generateInvoice() {
+async function invCommit() {
   const s = invCollect();
-  if (!invValidate(s)) return;
+  if (!invValidate(s)) return { ok: false };
+  if (invState._committing) return { ok: false };
+  if (invState.saved) return { ok: true, d: invDataFromState(s), already: true };
+  invState._committing = true;
   const d = invDataFromState(s);
   const payload = {
     invoice_number: s.number,
@@ -5742,7 +5753,6 @@ async function generateInvoice() {
   try {
     await sbPost('invoices', payload);
   } catch(e) {
-    // likely a number collision; bump and retry once
     try {
       s.number = await invNextNumber();
       payload.invoice_number = s.number;
@@ -5751,13 +5761,30 @@ async function generateInvoice() {
       await sbPost('invoices', payload);
       d.no = d2.no; d.title = d2.title;
     } catch(e2) {
-      console.error('generateInvoice', e2); showToast('Could not save: ' + (e2 && e2.message ? e2.message : 'try again'), 'error'); return;
+      invState._committing = false;
+      console.error('invCommit', e2); showToast('Could not save: ' + (e2 && e2.message ? e2.message : 'try again'), 'error');
+      return { ok: false };
     }
   }
-  showToast('Invoice ' + d.no + ' generated', 'success');
-  closeInvoiceEditor();
-  invOpenPrint(invBuildHTML(d, true), d.title);
+  invState.saved = true;
+  invState._committing = false;
   if (sessionStorage.getItem('dash_section') === 'invoices') loadInvoices();
+  return { ok: true, d };
+}
+
+async function saveInvoice() {
+  const r = await invCommit();
+  if (!r.ok) return;
+  showToast(r.already ? ('Invoice ' + r.d.no + ' already saved') : ('Invoice ' + r.d.no + ' saved'), 'success');
+  closeInvoiceEditor();
+}
+
+async function generateInvoice() {
+  const r = await invCommit();
+  if (!r.ok) return;
+  showToast(r.already ? ('Opening ' + r.d.no) : ('Invoice ' + r.d.no + ' generated'), 'success');
+  closeInvoiceEditor();
+  invOpenPrint(invBuildHTML(r.d, true), r.d.title);
 }
 
 function closeInvoiceEditor() {
@@ -6616,6 +6643,7 @@ async function restoreBinItem(table, id, name) {
 
 let _deleteForeverPending = null;
 function promptDeleteForever(table, id, name) {
+  if (table === 'invoices') { showToast('Invoices stay in the Bin to protect numbering — restore it instead', 'info'); return; }
   _deleteForeverPending = { table, id, name };
   document.getElementById('deleteForeverTitle').textContent = 'Delete "' + name + '" forever?';
   document.getElementById('deleteForeverDesc').textContent = 'This will permanently remove this record from your system. This cannot be undone.';
