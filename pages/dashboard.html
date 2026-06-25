@@ -5751,7 +5751,7 @@ async function generateInvoice() {
       await sbPost('invoices', payload);
       d.no = d2.no; d.title = d2.title;
     } catch(e2) {
-      console.error('generateInvoice', e2); showToast('Could not save the invoice — try again', 'error'); return;
+      console.error('generateInvoice', e2); showToast('Could not save: ' + (e2 && e2.message ? e2.message : 'try again'), 'error'); return;
     }
   }
   showToast('Invoice ' + d.no + ' generated', 'success');
