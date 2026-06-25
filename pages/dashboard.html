@@ -5445,7 +5445,7 @@ async function loadInvoices() {
     const DL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
     document.getElementById('invoicesTable').innerHTML = list.map(inv => {
       const nm = (inv.billed_name || '').replace(/"/g, '&quot;');
-      return `<tr data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span></td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmt(inv.total_amount)}</td><td>${invSourceBadge(inv.source_table)}</td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button></div></td></tr>`;
+      return `<tr data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span></td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmt(inv.total_amount)}</td><td>${invSourceBadge(inv.source_table)}</td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button>${isAdmin()?`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"/><path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2\"/></svg></button>`:''}</div></td></tr>`;
     }).join('') || `<tr><td colspan="6" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.invoices}</td></tr>`;
 
     const _t = document.getElementById('invoicesTable');
@@ -5457,7 +5457,7 @@ async function loadInvoices() {
     if (_e) { _e.innerHTML = EMPTY_STATES.invoices; _e.style.display = _hd ? 'none' : ''; }
 
     const cards = document.getElementById('invoicesCards');
-    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card"><div class="m-card-title" style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;"><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span> ${invSourceBadge(inv.source_table)}</div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmt(inv.total_amount)}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button></div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.invoices + '</div>';
+    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card"><div class="m-card-title" style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;"><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span> ${invSourceBadge(inv.source_table)}</div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmt(inv.total_amount)}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button>${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.invoices + '</div>';
   } catch (e) {
     console.error('loadInvoices error:', e);
     showToast('Error loading invoices', 'error');
@@ -5512,7 +5512,7 @@ function invAmountInWords(n) { return 'Rupees ' + invNumToWords(n) + ' Only'; }
 
 async function invNextNumber() {
   try {
-    const rows = await sbGet('invoices', 'order=invoice_number.desc');
+    const rows = await sbGetAll('invoices', 'order=invoice_number.desc');
     const list = Array.isArray(rows) ? rows : (rows && rows.data ? rows.data : []);
     const max = list.reduce((m,r)=> Math.max(m, Number(r.invoice_number)||0), 0);
     return (max || 3) + 1;
@@ -6489,6 +6489,7 @@ async function reloadEntity(entity) {
   else if (entity === 'payments') { await loadPayments(); }
   else if (entity === 'leads') { await loadLeads(); }
   else if (entity === 'workshop_waitlist') { await loadWaitlist(); }
+  else if (entity === 'invoices') { await loadInvoices(); }
 }
 
 
@@ -6517,7 +6518,8 @@ const BIN_TABLES = [
   { key: 'payments', label: 'Payment', nameField: 'payer_name' },
   { key: 'leads', label: 'Lead', nameField: 'full_name' },
   { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' },
-  { key: 'workshop_waitlist', label: 'Waitlist Signup', nameField: 'full_name' }
+  { key: 'workshop_waitlist', label: 'Waitlist Signup', nameField: 'full_name' },
+  { key: 'invoices', label: 'Invoice', nameField: 'billed_name' }
 ];
 
 let _binManualRefresh = false;
