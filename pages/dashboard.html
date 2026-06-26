@@ -2324,6 +2324,9 @@ table#paymentsTable { min-width: 700px; }
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
       Delete Forever
     </button>
+    <button class="btn-dash btn-dash-primary btn-dash-sm" id="invBulkDownloadBtn" onclick="invBulkDownload()" style="display:none;">Download ZIP</button>
+    <button class="btn-dash btn-dash-outline btn-dash-sm" id="invMarkSentBtn" onclick="invBulkMarkSent(true)" style="display:none;">Mark sent</button>
+    <button class="btn-dash btn-dash-outline btn-dash-sm" id="invMarkNotSentBtn" onclick="invBulkMarkSent(false)" style="display:none;">Mark not sent</button>
     <button class="btn-dash btn-dash-danger btn-dash-sm" id="bulkArchiveBtn" onclick="bulkArchive()" style="display:none;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
       Move to Bin
@@ -3082,28 +3085,20 @@ table#paymentsTable { min-width: 700px; }
         <input type="text" class="section-search-input" id="search-invoices" placeholder="Search by invoice no, name, email..." autocomplete="off" oninput="invSetFilter('search',this.value)"/>
       </div>
       <div id="filter-bar-invoices">
-        <div style="display:inline-flex;border:1px solid var(--clay-pale);border-radius:8px;overflow:hidden;">
+        <div class="inv-seg">
           <button class="inv-fstatus active" data-v="all" onclick="invSetStatusFilter('all')">All</button>
           <button class="inv-fstatus" data-v="sent" onclick="invSetStatusFilter('sent')">Sent</button>
           <button class="inv-fstatus" data-v="notsent" onclick="invSetStatusFilter('notsent')">Not sent</button>
         </div>
-        <span style="color:var(--text-light);font-size:0.8rem;">From</span>
-        <input type="date" class="form-input" style="width:auto;max-width:155px;" id="inv-filter-from" onchange="invSetFilter('from',this.value)"/>
-        <span style="color:var(--text-light);font-size:0.8rem;">To</span>
-        <input type="date" class="form-input" style="width:auto;max-width:155px;" id="inv-filter-to" onchange="invSetFilter('to',this.value)"/>
-        <button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.8rem;" onclick="invClearFilters()">Clear</button>
-      </div>
-      <div id="inv-bulk-bar" style="display:none;">
-        <span id="inv-bulk-count" style="font-weight:600;color:var(--clay);font-size:0.85rem;">0 selected</span>
-        <button class="btn-dash btn-dash-primary btn-dash-sm" style="padding:0 0.9rem;" onclick="invBulkDownload()">Download ZIP</button>
-        <button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;" onclick="invBulkMarkSent(true)">Mark sent</button>
-        <button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;" onclick="invBulkMarkSent(false)">Mark not sent</button>
-        <button class="btn-dash btn-dash-danger btn-dash-sm admin-only" style="padding:0 0.9rem;" onclick="invBulkDelete()">Delete</button>
-        <button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.8rem;margin-left:auto;" onclick="invClearSel()">Clear</button>
+        <div class="inv-daterange">
+          <div class="inv-datecol"><span class="inv-dlabel">From</span><input type="date" class="form-input" id="inv-filter-from" onchange="invSetFilter('from',this.value)"/></div>
+          <div class="inv-datecol"><span class="inv-dlabel">To</span><input type="date" class="form-input" id="inv-filter-to" onchange="invSetFilter('to',this.value)"/></div>
+        </div>
+        <button class="btn-dash btn-dash-outline btn-dash-sm inv-clearbtn" onclick="invClearFilters()">Clear</button>
       </div>
       <div class="dash-table-wrap">
         <table class="desktop-table"><thead><tr>
-          <th class="cb-th"><label class="cb-box" title="Select all"><input type="checkbox" class="row-select-cb" id="inv-cb-all" onchange="invToggleAll(this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label></th><th>No</th><th>Billed To</th><th>Date</th><th style="text-align:right;">Amount</th><th>Status</th><th class="ws-action-sticky">Action</th>
+          <th class="cb-th"><label class="cb-box" title="Select all"><input type="checkbox" class="row-select-cb" id="selectAllInvoices" onchange="toggleSelectAll('invoices',this)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label></th><th>No</th><th>Billed To</th><th>Date</th><th style="text-align:right;">Amount</th><th>Status</th><th class="ws-action-sticky">Action</th>
         </tr></thead>
         <tbody id="invoicesTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       <div class="mobile-cards mobile-only" id="invoicesCards"></div>
@@ -3551,13 +3546,23 @@ table#paymentsTable { min-width: 700px; }
 .inv-switch .sl:before{content:"";position:absolute;height:13px;width:13px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
 .inv-switch input:checked + .sl{background:#7da55e;}
 .inv-switch input:checked + .sl:before{transform:translateX(15px);}
-#filter-bar-invoices{display:flex;flex-wrap:wrap;align-items:center;gap:0.6rem;margin-bottom:0.9rem;}
-.inv-fstatus{background:transparent;border:none;color:var(--text-light);font-size:0.8rem;padding:7px 14px;cursor:pointer;font-weight:500;}
-.inv-fstatus:not(:last-child){border-right:1px solid var(--clay-pale);}
-.inv-fstatus.active{background:var(--clay);color:#1a1208;}
-#inv-bulk-bar{align-items:center;gap:0.7rem;background:var(--sand);border:1px solid var(--clay);border-radius:10px;padding:0.6rem 0.9rem;margin-bottom:0.85rem;flex-wrap:wrap;}
-#filter-bar-invoices .date-picker-wrap{width:150px;}
+#filter-bar-invoices{display:flex;flex-wrap:wrap;align-items:flex-end;gap:0.85rem;margin-bottom:0.9rem;}
+.inv-seg{display:inline-flex;border:1px solid var(--clay-pale);border-radius:999px;padding:3px;gap:2px;}
+.inv-fstatus{background:transparent;border:none;color:var(--text-light);font-size:0.8rem;padding:7px 18px;cursor:pointer;font-weight:500;border-radius:999px;transition:background 0.15s,color 0.15s;}
+.inv-fstatus.active{background:var(--clay);color:#1a1208;font-weight:600;}
+.inv-daterange{display:flex;gap:0.7rem;}
+.inv-datecol{display:flex;flex-direction:column;gap:5px;width:150px;}
+.inv-dlabel{color:var(--text-light);font-size:0.66rem;letter-spacing:0.07em;text-transform:uppercase;font-weight:600;padding-left:2px;}
+.inv-clearbtn{padding:0 0.9rem;}
+#filter-bar-invoices .date-picker-wrap{width:100%;}
 #filter-bar-invoices .date-picker-btn{min-height:44px;}
+@media (max-width:640px){
+  #filter-bar-invoices{flex-direction:column;align-items:stretch;}
+  .inv-seg{align-self:flex-start;}
+  .inv-daterange{width:100%;}
+  .inv-datecol{flex:1;width:auto;}
+  .inv-clearbtn{align-self:flex-start;}
+}
 </style>
 <div class="form-page" id="form-invoiceEditor">
   <div class="form-page-header">
@@ -4411,11 +4416,11 @@ function onRowCbChange(cb) {
   else _bulkSelected.delete(key);
   const row = cb.closest('tr');
   if (row) row.classList.toggle('row-selected', cb.checked);
-  updateBulkBar('table');
+  updateBulkBar(cb.dataset.table === 'invoices' ? 'invoices' : 'table');
 }
 
 function toggleSelectAll(section, masterCb) {
-  const tableId = { participants: 'participantsTable', leads: 'leadsTable', waitlist: 'waitlistTable' }[section] || 'leadsTable';
+  const tableId = { participants: 'participantsTable', leads: 'leadsTable', waitlist: 'waitlistTable', invoices: 'invoicesTable' }[section] || 'leadsTable';
   const cbs = document.querySelectorAll('#' + tableId + ' .row-select-cb');
   cbs.forEach(cb => {
     cb.checked = masterCb.checked;
@@ -4425,7 +4430,7 @@ function toggleSelectAll(section, masterCb) {
     const row = cb.closest('tr');
     if (row) row.classList.toggle('row-selected', masterCb.checked);
   });
-  updateBulkBar('table');
+  updateBulkBar(section === 'invoices' ? 'invoices' : 'table');
 }
 
 function updateBulkBar(mode) {
@@ -4443,7 +4448,10 @@ function updateBulkBar(mode) {
   if (countEl) countEl.textContent = n;
   document.getElementById('bulkRestoreBtn').style.display = mode === 'bin' ? '' : 'none';
   document.getElementById('bulkDeleteBtn').style.display = mode === 'bin' ? '' : 'none';
-  document.getElementById('bulkArchiveBtn').style.display = mode === 'table' ? '' : 'none';
+  document.getElementById('bulkArchiveBtn').style.display = (mode === 'table' || mode === 'invoices') ? '' : 'none';
+  const invDl = document.getElementById('invBulkDownloadBtn'); if (invDl) invDl.style.display = mode === 'invoices' ? '' : 'none';
+  const invMs = document.getElementById('invMarkSentBtn'); if (invMs) invMs.style.display = mode === 'invoices' ? '' : 'none';
+  const invMns = document.getElementById('invMarkNotSentBtn'); if (invMns) invMns.style.display = mode === 'invoices' ? '' : 'none';
 }
 
 function clearBulkSelection() {
@@ -4456,6 +4464,7 @@ function clearBulkSelection() {
   const sa = document.getElementById('selectAllParticipants'); if (sa) sa.checked = false;
   const sl = document.getElementById('selectAllLeads'); if (sl) sl.checked = false;
   const swl = document.getElementById('selectAllWaitlist'); if (swl) swl.checked = false;
+  const sinv = document.getElementById('selectAllInvoices'); if (sinv) sinv.checked = false;
   document.getElementById('bulkBar')?.classList.remove('visible');
 }
 
@@ -4514,6 +4523,7 @@ async function bulkArchive() {
       if (t === 'participants') loadParticipants();
       else if (t === 'leads') loadLeads();
       else if (t === 'workshop_waitlist') loadWaitlist();
+      else if (t === 'invoices') loadInvoices();
     });
   } catch(e) { showToast('Error: ' + e.message, 'error'); }
 }
@@ -5490,9 +5500,8 @@ function invSourceBadge(t) {
   const manual = !t;
   return `<span class="badge ${manual ? 'badge-stone' : 'badge-clay'}">${invSourceLabel(t)}</span>`;
 }
-// ── INVOICES: selection, filters, bulk actions ──
+// ── INVOICES: filters + bulk actions (uses shared selection system) ──
 let invAllCache = [];
-let invSel = new Set();
 let invFilter = { status: 'all', from: '', to: '', search: '' };
 
 function invFilterList(list) {
@@ -5512,40 +5521,14 @@ function invSetStatusFilter(val) {
   invRenderInvoices();
 }
 
-function invToggleSel(id, on, el) { if (on) invSel.add(id); else invSel.delete(id); if (el) { const row = el.closest('tr') || el.closest('.m-card'); if (row) row.classList.toggle('row-selected', on); } invUpdateBulkBar(); }
-function invToggleAll(on) {
-  invFilterList(invAllCache).forEach(r => { if (on) invSel.add(r.id); else invSel.delete(r.id); });
-  invRenderInvoices();
-}
-function invSelectedIds() { return [...invSel].filter(id => invAllCache.some(r => r.id === id)); }
-function invClearSel() { invSel.clear(); invRenderInvoices(); }
-function invSyncSelAllCb() {
-  const ids = invFilterList(invAllCache).map(r => r.id);
-  const cb = document.getElementById('inv-cb-all');
-  if (cb) cb.checked = ids.length > 0 && ids.every(i => invSel.has(i));
-}
-function invUpdateBulkBar() {
-  const bar = document.getElementById('inv-bulk-bar');
-  const n = invSelectedIds().length;
-  if (bar) bar.style.display = n > 0 ? 'flex' : 'none';
-  const c = document.getElementById('inv-bulk-count');
-  if (c) c.textContent = n + ' selected';
-  invSyncSelAllCb();
-}
+function invSelectedIds() { return [..._bulkSelected.values()].filter(i => i.table === 'invoices').map(i => i.id); }
 
 async function invBulkMarkSent(on) {
   const ids = invSelectedIds(); if (!ids.length) return;
   showToast('Updating ' + ids.length + '...', 'info');
   for (const id of ids) { try { await sbPatch('invoices', id, on ? { sent: true, sent_at: new Date().toISOString() } : { sent: false, sent_at: null }); } catch(e) { console.error(e); } }
-  invSel.clear(); await loadInvoices();
+  clearBulkSelection(); await loadInvoices();
   showToast('Marked ' + ids.length + (on ? ' as sent' : ' as not sent'), 'success');
-}
-async function invBulkDelete() {
-  const ids = invSelectedIds(); if (!ids.length) return;
-  if (!confirm('Move ' + ids.length + ' invoice' + (ids.length > 1 ? 's' : '') + ' to the Bin?')) return;
-  for (const id of ids) { try { await sbPatch('invoices', id, { archived: true }); } catch(e) { console.error(e); } }
-  invSel.clear(); await loadInvoices();
-  showToast('Moved ' + ids.length + ' to the Bin', 'success');
 }
 
 function invDataFromRow(r) {
@@ -5564,7 +5547,7 @@ function invDataFromRow(r) {
 
 function invLoadScript(src) {
   return new Promise((res, rej) => {
-    if ([...document.scripts].some(s => s.src === src)) return res();
+    if ([...document.scripts].some(sc => sc.src === src)) return res();
     const sc = document.createElement('script');
     sc.src = src; sc.onload = () => res(); sc.onerror = () => rej(new Error('Failed to load ' + src));
     document.head.appendChild(sc);
@@ -5632,6 +5615,7 @@ async function loadInvoices() {
   } finally { hideLoader(); }
 }
 function invRenderInvoices() {
+    clearBulkSelection();
     const list = invFilterList(invAllCache);
     window._totalCounts = window._totalCounts || {};
     window._totalCounts.invoices = invAllCache.length;
@@ -5642,7 +5626,7 @@ function invRenderInvoices() {
     const MAIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>`;
     document.getElementById('invoicesTable').innerHTML = list.map(inv => {
       const nm = (inv.billed_name || '').replace(/"/g, '&quot;');
-      return `<tr class="${invSel.has(inv.id)?'row-selected':''}" data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td class="cb-td"><label class="cb-box"><input type="checkbox" class="row-select-cb" ${invSel.has(inv.id)?'checked':''} onchange="invToggleSel('${inv.id}',this.checked,this)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label></td><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span></td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmt(inv.total_amount)}</td><td><div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;"><div style="display:flex;align-items:center;gap:8px;"><label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="font-size:0.78rem;color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}</span></div>${inv.sent&&inv.sent_at?`<span style="font-size:0.7rem;color:var(--text-light);">${fmtDate(inv.sent_at)}</span>`:''}</div></td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button><button class="icon-action-btn" data-tip="Email to customer" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">${MAIL}</button>${isAdmin()?`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"/><path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2\"/></svg></button>`:''}</div></td></tr>`;
+      return `<tr data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="invoices" data-id="'+inv.id+'" data-name="'+(inv.billed_name||inv.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span></td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmt(inv.total_amount)}</td><td><div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;"><div style="display:flex;align-items:center;gap:8px;"><label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="font-size:0.78rem;color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}</span></div>${inv.sent&&inv.sent_at?`<span style="font-size:0.7rem;color:var(--text-light);">${fmtDate(inv.sent_at)}</span>`:''}</div></td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button><button class="icon-action-btn" data-tip="Email to customer" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">${MAIL}</button>${isAdmin()?`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"/><path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2\"/></svg></button>`:''}</div></td></tr>`;
     }).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.invoices}</td></tr>`;
 
     const _t = document.getElementById('invoicesTable');
@@ -5654,8 +5638,7 @@ function invRenderInvoices() {
     if (_e) { _e.innerHTML = EMPTY_STATES.invoices; _e.style.display = _hd ? 'none' : ''; }
 
     const cards = document.getElementById('invoicesCards');
-    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card${invSel.has(inv.id)?' row-selected':''}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;"><label class="cb-box"><input type="checkbox" class="row-select-cb" ${invSel.has(inv.id)?'checked':''} onchange="invToggleSel('${inv.id}',this.checked,this)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span></div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmt(inv.total_amount)}</span></div><div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val" style="display:flex;align-items:center;gap:8px;justify-content:flex-end;"><label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${fmtDate(inv.sent_at)}`:''}</span></span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.invoices + '</div>';
-  invUpdateBulkBar();
+    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card" id="icard-${inv.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;"><label class="cb-box"><input type="checkbox" class="row-select-cb row-cb" data-table="invoices" data-id="${inv.id}" data-name="${(inv.billed_name||inv.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('icard-'+inv.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span></div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmt(inv.total_amount)}</span></div><div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val" style="display:flex;align-items:center;gap:8px;justify-content:flex-end;"><label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${fmtDate(inv.sent_at)}`:''}</span></span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.invoices + '</div>';
 }
 // ── INVOICES: EDITOR + GENERATION ──
 const INV_BIZ = {
