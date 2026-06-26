@@ -2797,7 +2797,6 @@ table#paymentsTable { min-width: 700px; }
           Filters <span class="mobile-filter-badge" id="mobile-filter-badge-classes" style="display:none"></span>
         </button>
         <div class="mobile-active-chips" id="mobile-chips-classes"></div>
-        <div id="dd-classes-batch" class="custom-select-wrap-placeholder"></div>
         <div class="filter-dd-wrap" id="dd-wrap-c-status">
           <button class="filter-dd-btn" id="dd-btn-c-status" onclick="toggleFilterDd('c-status', event)">
             Status <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
@@ -2821,7 +2820,7 @@ table#paymentsTable { min-width: 700px; }
         <table class="desktop-table"><thead><tr>
           <th>S #</th>
           <th class="sortable-th" onclick="sortTable('classes','full_name',this)">Name <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
-          <th>Batch</th><th>Phone</th>
+          <th>Phone</th>
           <th class="sortable-th" onclick="sortTable('classes','join_date',this)">Joined <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Status</th>
           <th>Level</th>
@@ -2830,7 +2829,7 @@ table#paymentsTable { min-width: 700px; }
           <th class="sortable-th" onclick="sortTable('classes','total_paid',this)">Total Paid <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th class="ws-action-sticky">Action</th>
         </tr></thead>
-        <tbody id="studentsTable"><tr><td colspan="11" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <tbody id="studentsTable"><tr><td colspan="10" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       <div class="mobile-cards" id="studentsCards"></div>
       </div>
       <div id="studentsEmptyState" style="display:none;"></div>
@@ -5302,7 +5301,7 @@ async function loadStudents() {
     window._cachedStudents = stus;
     populateFeeStudentDropdown(stus);
     populateClassesBatchDropdown(stus);
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}"><td>${s.id}</td><td class="td-truncate td-name" data-tip="${(s.full_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${s.full_name}</span></td><td class="td-truncate" style="max-width:90px;" data-tip="${s.batch_id||''}">${s.batch_id||'—'}</td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.level||'—'}</td><td>${s.monthly_fee ? fmt(s.monthly_fee) : '—'}</td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}"><td>${s.id}</td><td class="td-truncate td-name" data-tip="${(s.full_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${s.full_name}</span></td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.level||'—'}</td><td>${s.monthly_fee ? fmt(s.monthly_fee) : '—'}</td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${fmt(s.total_paid)}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="10" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.students}
     </td></tr>`;
 
@@ -8508,11 +8507,6 @@ function initStaticDropdowns() {
   });
   document.getElementById('dd-participants-workshop')?.replaceWith(_dd['participants-workshop']);
 
-  // Classes batch dropdown
-  _dd['classes-batch'] = createCustomSelect('classes-batch', 'All batches', [{value:'',label:'All batches'}], (val) => {
-    applyFilters('classes');
-  });
-  document.getElementById('dd-classes-batch')?.replaceWith(_dd['classes-batch']);
 
   // Fee student dropdown
   _dd['fee-student'] = createCustomSelect('fee-student', 'All students', [{value:'',label:'All students'}], (val) => {
@@ -9265,7 +9259,6 @@ const FILTER_SHEET_CONFIG = {
     ]},
   ],
   classes: [
-    { key: 'batch', label: 'Batch', type: 'dd', ddKey: 'classes-batch' },
     { key: 'status', label: 'Status', type: 'pill', options: [
       { val: 'all', label: 'All' }, { val: 'Active', label: 'Active' }, { val: 'On Break', label: 'On Break' }, { val: 'Archived', label: 'Archived' }
     ]},
