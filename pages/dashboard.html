@@ -3079,13 +3079,33 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <div class="section-search-wrap" id="search-wrap-invoices">
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="section-search-input" id="search-invoices" placeholder="Search by invoice no, name, email..." autocomplete="off" oninput="filterInvoices(this.value)"/>
+        <input type="text" class="section-search-input" id="search-invoices" placeholder="Search by invoice no, name, email..." autocomplete="off" oninput="invSetFilter('search',this.value)"/>
+      </div>
+      <div id="filter-bar-invoices">
+        <div style="display:inline-flex;border:1px solid var(--clay-pale);border-radius:8px;overflow:hidden;">
+          <button class="inv-fstatus active" data-v="all" onclick="invSetStatusFilter('all')">All</button>
+          <button class="inv-fstatus" data-v="sent" onclick="invSetStatusFilter('sent')">Sent</button>
+          <button class="inv-fstatus" data-v="notsent" onclick="invSetStatusFilter('notsent')">Not sent</button>
+        </div>
+        <span style="color:var(--text-light);font-size:0.8rem;">From</span>
+        <input type="date" class="form-input" style="width:auto;max-width:155px;" id="inv-filter-from" onchange="invSetFilter('from',this.value)"/>
+        <span style="color:var(--text-light);font-size:0.8rem;">To</span>
+        <input type="date" class="form-input" style="width:auto;max-width:155px;" id="inv-filter-to" onchange="invSetFilter('to',this.value)"/>
+        <button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.8rem;" onclick="invClearFilters()">Clear</button>
+      </div>
+      <div id="inv-bulk-bar" style="display:none;">
+        <span id="inv-bulk-count" style="font-weight:600;color:var(--clay);font-size:0.85rem;">0 selected</span>
+        <button class="btn-dash btn-dash-primary btn-dash-sm" style="padding:0 0.9rem;" onclick="invBulkDownload()">Download ZIP</button>
+        <button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;" onclick="invBulkMarkSent(true)">Mark sent</button>
+        <button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;" onclick="invBulkMarkSent(false)">Mark not sent</button>
+        <button class="btn-dash btn-dash-danger btn-dash-sm admin-only" style="padding:0 0.9rem;" onclick="invBulkDelete()">Delete</button>
+        <button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.8rem;margin-left:auto;" onclick="invClearSel()">Clear</button>
       </div>
       <div class="dash-table-wrap">
         <table class="desktop-table"><thead><tr>
-          <th>No</th><th>Billed To</th><th>Date</th><th style="text-align:right;">Amount</th><th>Status</th><th class="ws-action-sticky">Action</th>
+          <th style="width:34px;text-align:center;"><input type="checkbox" id="inv-cb-all" onchange="invToggleAll(this.checked)"></th><th>No</th><th>Billed To</th><th>Date</th><th style="text-align:right;">Amount</th><th>Status</th><th class="ws-action-sticky">Action</th>
         </tr></thead>
-        <tbody id="invoicesTable"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <tbody id="invoicesTable"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       <div class="mobile-cards mobile-only" id="invoicesCards"></div>
       </div>
       <div id="invoicesEmptyState" style="display:none;"></div>
@@ -3525,6 +3545,17 @@ table#paymentsTable { min-width: 700px; }
 .inv-date-hint{font-size:0.7rem;color:var(--text-light);margin-top:0.4rem;display:inline-block;}
 .inv-pan-add{display:flex;align-items:center;gap:0.45rem;color:var(--text-light);font-size:0.85rem;padding:0.7rem 0.85rem;border:1px dashed var(--clay-pale);border-radius:9px;cursor:pointer;margin-bottom:0.5rem;}
 .inv-pan-add:hover{border-color:var(--clay);color:var(--clay);}
+.inv-switch{position:relative;display:inline-block;width:34px;height:19px;flex-shrink:0;}
+.inv-switch input{opacity:0;width:0;height:0;position:absolute;margin:0;}
+.inv-switch .sl{position:absolute;cursor:pointer;inset:0;background:rgba(150,130,110,0.4);border-radius:20px;transition:.2s;}
+.inv-switch .sl:before{content:"";position:absolute;height:13px;width:13px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
+.inv-switch input:checked + .sl{background:#7da55e;}
+.inv-switch input:checked + .sl:before{transform:translateX(15px);}
+#filter-bar-invoices{display:flex;flex-wrap:wrap;align-items:center;gap:0.6rem;margin-bottom:0.9rem;}
+.inv-fstatus{background:transparent;border:none;color:var(--text-light);font-size:0.8rem;padding:7px 14px;cursor:pointer;font-weight:500;}
+.inv-fstatus:not(:last-child){border-right:1px solid var(--clay-pale);}
+.inv-fstatus.active{background:var(--clay);color:#1a1208;}
+#inv-bulk-bar{align-items:center;gap:0.7rem;background:var(--sand);border:1px solid var(--clay);border-radius:10px;padding:0.6rem 0.9rem;margin-bottom:0.85rem;flex-wrap:wrap;}
 </style>
 <div class="form-page" id="form-invoiceEditor">
   <div class="form-page-header">
@@ -5457,21 +5488,160 @@ function invSourceBadge(t) {
   const manual = !t;
   return `<span class="badge ${manual ? 'badge-stone' : 'badge-clay'}">${invSourceLabel(t)}</span>`;
 }
+// ── INVOICES: selection, filters, bulk actions ──
+let invAllCache = [];
+let invSel = new Set();
+let invFilter = { status: 'all', from: '', to: '', search: '' };
+
+function invFilterList(list) {
+  let out = (list || []).slice();
+  if (invFilter.status === 'sent') out = out.filter(r => r.sent);
+  else if (invFilter.status === 'notsent') out = out.filter(r => !r.sent);
+  if (invFilter.from) out = out.filter(r => (r.invoice_date || '') >= invFilter.from);
+  if (invFilter.to) out = out.filter(r => (r.invoice_date || '') <= invFilter.to);
+  const q = (invFilter.search || '').toLowerCase().trim();
+  if (q) out = out.filter(r => ((invFmtNo(r.invoice_number) + ' ' + (r.billed_name||'') + ' ' + (r.billed_email||'')).toLowerCase().includes(q)));
+  return out;
+}
+function invSetFilter(key, val) { invFilter[key] = val; invRenderInvoices(); }
+function invSetStatusFilter(val) {
+  invFilter.status = val;
+  document.querySelectorAll('.inv-fstatus').forEach(b => b.classList.toggle('active', b.dataset.v === val));
+  invRenderInvoices();
+}
+
+function invToggleSel(id, on) { if (on) invSel.add(id); else invSel.delete(id); invUpdateBulkBar(); }
+function invToggleAll(on) {
+  invFilterList(invAllCache).forEach(r => { if (on) invSel.add(r.id); else invSel.delete(r.id); });
+  invRenderInvoices();
+}
+function invSelectedIds() { return [...invSel].filter(id => invAllCache.some(r => r.id === id)); }
+function invClearSel() { invSel.clear(); invRenderInvoices(); }
+function invSyncSelAllCb() {
+  const ids = invFilterList(invAllCache).map(r => r.id);
+  const cb = document.getElementById('inv-cb-all');
+  if (cb) cb.checked = ids.length > 0 && ids.every(i => invSel.has(i));
+}
+function invUpdateBulkBar() {
+  const bar = document.getElementById('inv-bulk-bar');
+  const n = invSelectedIds().length;
+  if (bar) bar.style.display = n > 0 ? 'flex' : 'none';
+  const c = document.getElementById('inv-bulk-count');
+  if (c) c.textContent = n + ' selected';
+  invSyncSelAllCb();
+}
+
+async function invBulkMarkSent(on) {
+  const ids = invSelectedIds(); if (!ids.length) return;
+  showToast('Updating ' + ids.length + '...', 'info');
+  for (const id of ids) { try { await sbPatch('invoices', id, on ? { sent: true, sent_at: new Date().toISOString() } : { sent: false, sent_at: null }); } catch(e) { console.error(e); } }
+  invSel.clear(); await loadInvoices();
+  showToast('Marked ' + ids.length + (on ? ' as sent' : ' as not sent'), 'success');
+}
+async function invBulkDelete() {
+  const ids = invSelectedIds(); if (!ids.length) return;
+  if (!confirm('Move ' + ids.length + ' invoice' + (ids.length > 1 ? 's' : '') + ' to the Bin?')) return;
+  for (const id of ids) { try { await sbPatch('invoices', id, { archived: true }); } catch(e) { console.error(e); } }
+  invSel.clear(); await loadInvoices();
+  showToast('Moved ' + ids.length + ' to the Bin', 'success');
+}
+
+function invDataFromRow(r) {
+  const lines = (r.line_items || []).map(l => ({ desc: l.desc || l.description || '', qty: Number(l.qty) || 1, rate: Number(l.rate) || 0 }));
+  const no = 'INV-' + String(r.invoice_number).padStart(3, '0');
+  const nameSlug = (r.billed_name || 'invoice').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return {
+    no, invoiceDate: r.invoice_date,
+    billed: { name: r.billed_name || '', email: r.billed_email || '', city: r.billed_city || '', phone: r.billed_phone || '' },
+    pan: r.pan || '',
+    payment: { date: r.payment_received_date || '', mode: r.payment_mode || '', ref: r.payment_reference || '' },
+    lines, total: Number(r.total_amount) || 0, words: r.amount_in_words || invAmountInWords(r.total_amount),
+    title: no + '_' + nameSlug
+  };
+}
+
+function invLoadScript(src) {
+  return new Promise((res, rej) => {
+    if ([...document.scripts].some(s => s.src === src)) return res();
+    const sc = document.createElement('script');
+    sc.src = src; sc.onload = () => res(); sc.onerror = () => rej(new Error('Failed to load ' + src));
+    document.head.appendChild(sc);
+  });
+}
+async function invEnsureLibs() {
+  if (!window.JSZip) await invLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+  if (!window.html2canvas) await invLoadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  if (!(window.jspdf && window.jspdf.jsPDF)) await invLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+}
+async function invMakePdfBlob(d) {
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;height:1123px;border:0;';
+  document.body.appendChild(iframe);
+  iframe.contentDocument.open(); iframe.contentDocument.write(invBuildHTML(d, false)); iframe.contentDocument.close();
+  await new Promise(r => setTimeout(r, 160));
+  const target = iframe.contentDocument.querySelector('.sheet') || iframe.contentDocument.body;
+  const canvas = await html2canvas(target, { scale: 2, backgroundColor: '#ffffff' });
+  document.body.removeChild(iframe);
+  const img = canvas.toDataURL('image/jpeg', 0.92);
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'pt', 'a4');
+  const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
+  const ratio = Math.min(pw / canvas.width, ph / canvas.height);
+  pdf.addImage(img, 'JPEG', (pw - canvas.width * ratio) / 2, 0, canvas.width * ratio, canvas.height * ratio);
+  return pdf.output('blob');
+}
+function invDownloadBlob(blob, name) {
+  const u = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = u; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 3000);
+}
+async function invBulkDownload() {
+  const ids = invSelectedIds(); if (!ids.length) return;
+  showToast('Preparing ' + ids.length + ' invoice' + (ids.length > 1 ? 's' : '') + '...', 'info');
+  try {
+    await invEnsureLibs();
+    const list = invAllCache.filter(r => ids.includes(r.id));
+    const zip = new JSZip();
+    for (const r of list) { const blob = await invMakePdfBlob(invDataFromRow(r)); zip.file(invDataFromRow(r).title + '.pdf', blob); }
+    const content = await zip.generateAsync({ type: 'blob' });
+    invDownloadBlob(content, 'invoices_' + new Date().toISOString().slice(0,10) + '.zip');
+    showToast('Downloaded ' + list.length + ' invoice' + (list.length > 1 ? 's' : ''), 'success');
+  } catch(e) { console.error('invBulkDownload', e); showToast('Could not prepare the ZIP. Check your connection and try again.', 'error'); }
+}
+function invClearFilters() {
+  invFilter = { status: 'all', from: '', to: '', search: '' };
+  const f = document.getElementById('inv-filter-from'); const t = document.getElementById('inv-filter-to'); const sr = document.getElementById('search-invoices');
+  if (f) { f.value = ''; if (f._dpRefresh) f._dpRefresh(); }
+  if (t) { t.value = ''; if (t._dpRefresh) t._dpRefresh(); }
+  if (sr) sr.value = '';
+  document.querySelectorAll('.inv-fstatus').forEach(b => b.classList.toggle('active', b.dataset.v === 'all'));
+  invRenderInvoices();
+}
+
 async function loadInvoices() {
   try {
     const invoices = currentRole === 'viewer' ? [] : await sbGet('invoices', 'order=invoice_number.desc');
-    const list = Array.isArray(invoices) ? invoices : (invoices && invoices.data ? invoices.data : []);
+    invAllCache = Array.isArray(invoices) ? invoices : (invoices && invoices.data ? invoices.data : []);
+    invRenderInvoices();
+  } catch (e) {
+    console.error('loadInvoices error:', e);
+    showToast('Error loading invoices', 'error');
+  } finally { hideLoader(); }
+}
+function invRenderInvoices() {
+    const list = invFilterList(invAllCache);
     window._totalCounts = window._totalCounts || {};
-    window._totalCounts.invoices = list.length;
+    window._totalCounts.invoices = invAllCache.length;
     const countEl = document.getElementById('invoicesCount');
-    if (countEl) countEl.textContent = list.length + ' invoice' + (list.length !== 1 ? 's' : '') + ' total';
-    setSearchFilterVisibility('invoices', list.length > 0);
+    if (countEl) countEl.textContent = (list.length === invAllCache.length) ? (invAllCache.length + ' invoice' + (invAllCache.length !== 1 ? 's' : '') + ' total') : (list.length + ' of ' + invAllCache.length);
+    setSearchFilterVisibility('invoices', invAllCache.length > 0);
     const DL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
     const MAIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>`;
     document.getElementById('invoicesTable').innerHTML = list.map(inv => {
       const nm = (inv.billed_name || '').replace(/"/g, '&quot;');
-      return `<tr data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span></td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmt(inv.total_amount)}</td><td>${inv.sent?`<div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;"><span style="background:rgba(138,170,110,0.18);color:#7da55e;font-size:0.6rem;font-weight:700;padding:1px 7px;border-radius:10px;cursor:pointer;" data-tip="Click to undo" onclick="invUnsend('${inv.id}')">SENT</span>${inv.sent_at?`<span style="font-size:0.7rem;color:var(--text-light);">${fmtDate(inv.sent_at)}</span>`:''}</div>`:`<span style="font-size:0.78rem;color:var(--text-light);">Not sent</span>`}</td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button><button class="icon-action-btn" data-tip="Email to customer" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">${MAIL}</button>${isAdmin()?`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"/><path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2\"/></svg></button>`:''}</div></td></tr>`;
-    }).join('') || `<tr><td colspan="6" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.invoices}</td></tr>`;
+      return `<tr data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td style="width:34px;text-align:center;"><input type="checkbox" class="inv-row-cb" ${invSel.has(inv.id)?'checked':''} onchange="invToggleSel('${inv.id}',this.checked)"></td><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span></td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmt(inv.total_amount)}</td><td><div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;"><div style="display:flex;align-items:center;gap:8px;"><label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="font-size:0.78rem;color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}</span></div>${inv.sent&&inv.sent_at?`<span style="font-size:0.7rem;color:var(--text-light);">${fmtDate(inv.sent_at)}</span>`:''}</div></td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button><button class="icon-action-btn" data-tip="Email to customer" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">${MAIL}</button>${isAdmin()?`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"/><path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2\"/></svg></button>`:''}</div></td></tr>`;
+    }).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.invoices}</td></tr>`;
 
     const _t = document.getElementById('invoicesTable');
     const _hd = _t && _t.querySelectorAll('tr').length > 0 && !_t.querySelector('[colspan]');
@@ -5482,11 +5652,8 @@ async function loadInvoices() {
     if (_e) { _e.innerHTML = EMPTY_STATES.invoices; _e.style.display = _hd ? 'none' : ''; }
 
     const cards = document.getElementById('invoicesCards');
-    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card"><div class="m-card-title" style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;"><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span></div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmt(inv.total_amount)}</span></div><div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val">${inv.sent?`<span style="color:#7da55e;font-weight:600;">Sent</span>${inv.sent_at?` \u00b7 ${fmtDate(inv.sent_at)}`:''}`:`<span style="color:var(--text-light);">Not sent</span>`}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.invoices + '</div>';
-  } catch (e) {
-    console.error('loadInvoices error:', e);
-    showToast('Error loading invoices', 'error');
-  } finally { hideLoader(); }
+    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card"><div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;"><input type="checkbox" class="inv-row-cb" ${invSel.has(inv.id)?'checked':''} onchange="invToggleSel('${inv.id}',this.checked)"><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span></div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmt(inv.total_amount)}</span></div><div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val" style="display:flex;align-items:center;gap:8px;justify-content:flex-end;"><label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${fmtDate(inv.sent_at)}`:''}</span></span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.invoices + '</div>';
+  invUpdateBulkBar();
 }
 // ── INVOICES: EDITOR + GENERATION ──
 const INV_BIZ = {
@@ -5770,14 +5937,19 @@ function invEmail(id, email, no, amount, dateISO) {
   const gmail = 'https://mail.google.com/mail/?view=cm&fs=1&authuser=' + encodeURIComponent('arpithandpan@gmail.com') + '&to=' + encodeURIComponent(email||'') + '&su=' + encodeURIComponent(su) + '&body=' + encodeURIComponent(body);
   const w = window.open(gmail, '_blank');
   if (!w) { showToast('Allow pop-ups to open Gmail', 'error'); return; }
-  showToast(email ? 'Gmail opened. Download the PDF and attach it, then send' : 'Gmail opened. Add the recipient, attach the PDF, then send', 'success');
-  invMarkSent(id);
+  showToast(email ? 'Gmail opened. Attach the PDF and send, then switch this invoice to Sent' : 'Gmail opened. Add the recipient, attach the PDF and send, then switch this invoice to Sent', 'success');
 }
 async function invMarkSent(id) {
   try {
     await sbPatch('invoices', id, { sent: true, sent_at: new Date().toISOString() });
     if (sessionStorage.getItem('dash_section') === 'invoices') loadInvoices();
   } catch(e) { console.error('invMarkSent', e); }
+}
+async function invSetSent(id, on) {
+  try {
+    await sbPatch('invoices', id, on ? { sent: true, sent_at: new Date().toISOString() } : { sent: false, sent_at: null });
+    if (sessionStorage.getItem('dash_section') === 'invoices') loadInvoices();
+  } catch(e) { console.error('invSetSent', e); showToast('Could not update status', 'error'); if (sessionStorage.getItem('dash_section') === 'invoices') loadInvoices(); }
 }
 async function invUnsend(id) {
   try {
