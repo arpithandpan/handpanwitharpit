@@ -3519,7 +3519,7 @@ table#paymentsTable { min-width: 700px; }
   <div class="form-page-header">
     <button class="form-page-back" onclick="closeInvoiceEditor()">← Back</button>
     <div class="form-page-title" id="invEditorTitle">New Invoice</div>
-    <button class="btn-dash-save" onclick="saveInvoice()">Save</button>
+    <span style="width:60px;"></span>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div style="background:rgba(193,127,82,0.08);border:1px solid var(--clay-pale);border-radius:8px;padding:0.7rem 0.9rem;font-size:0.82rem;color:var(--text-light);line-height:1.5;margin-bottom:0.25rem;">Your name, email, UPI and bank details are added to every invoice automatically. Below you only enter the customer and payment details.</div>
@@ -3531,7 +3531,7 @@ table#paymentsTable { min-width: 700px; }
     </div>
 
     <div style="font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--clay);margin:1.5rem 0 0.85rem;padding-bottom:0.45rem;border-bottom:1px solid var(--clay-pale);">Your details &middot; optional</div>
-    <div class="form-group"><label class="form-label">Your PAN</label><input type="text" class="form-input" id="inv-pan" placeholder="PAN (optional, appears on the invoice)"/></div>
+    <div class="form-group"><label class="form-label">Your PAN</label><input type="text" class="form-input" id="inv-pan" maxlength="10" oninput="this.value=this.value.toUpperCase()" placeholder="PAN (optional, e.g. ABCDE1234F)"/></div>
 
     <div style="font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--clay);margin:1.5rem 0 0.85rem;padding-bottom:0.45rem;border-bottom:1px solid var(--clay-pale);">Billed to &middot; customer</div>
     <div class="form-row">
@@ -3569,7 +3569,7 @@ table#paymentsTable { min-width: 700px; }
 
     <div style="display:flex;gap:0.6rem;margin-top:1.5rem;">
       <button type="button" class="btn-dash btn-dash-outline" style="flex:1;" onclick="previewInvoice()">Preview</button>
-      <button type="button" class="btn-dash btn-dash-primary" style="flex:1.4;" onclick="generateInvoice()">Generate PDF</button>
+      <button type="button" class="btn-dash btn-dash-primary" style="flex:1.6;" onclick="generateInvoice()">Save &amp; Generate PDF</button>
     </div>
   </div></div>
 </div>
@@ -5640,7 +5640,7 @@ function invCollect() {
   s.billed.name = document.getElementById('inv-name').value.trim();
   s.billed.email = document.getElementById('inv-email').value.trim();
   s.billed.city = document.getElementById('inv-city').value.trim();
-  s.pan = document.getElementById('inv-pan').value.trim();
+  s.pan = document.getElementById('inv-pan').value.trim().toUpperCase();
   s.payment.date = document.getElementById('inv-pay-date').value;
   s.payment.mode = document.getElementById('inv-pay-mode').value;
   s.payment.ref = document.getElementById('inv-pay-ref').value.trim();
@@ -5650,6 +5650,7 @@ function invValidate(s) {
   if (!s.billed.name) { showToast('Add who the invoice is billed to', 'error'); return false; }
   const valid = s.lines.filter(l => (Number(l.rate)||0) > 0 && String(l.desc||'').trim());
   if (!valid.length) { showToast('Add at least one line with a description and amount', 'error'); return false; }
+  if (s.pan && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(s.pan)) { showToast('PAN should look like ABCDE1234F, or leave it blank', 'error'); return false; }
   return true;
 }
 
@@ -5659,8 +5660,8 @@ function invBuildHTML(d, autoPrint) {
     + (d.payment.mode ? ' &middot; ' + d.payment.mode : '')
     + (d.payment.ref ? ' &middot; Ref <b>' + d.payment.ref + '</b>' : '') + '</div></div>'
   ) : '';
-  const cityRow = d.billed.city ? '<div><span class="g">City:</span> <span class="hl">' + d.billed.city + '</span></div>' : '';
-  const emailRow = d.billed.email ? '<div><span class="g">Email:</span> <span class="hl">' + d.billed.email + '</span></div>' : '';
+  const cityRow = d.billed.city ? '<div><span class="g">City:</span> <span>' + d.billed.city + '</span></div>' : '';
+  const emailRow = d.billed.email ? '<div><span class="g">Email:</span> <span>' + d.billed.email + '</span></div>' : '';
   const panRow = d.pan ? '<div style="color:#333;">PAN: ' + d.pan + '</div>' : '';
   const rows = d.lines.map(ln => '<tr><td class="desc">' + (ln.desc||'') + '</td><td>' + (ln.qty||0) + '</td><td>' + invINR(ln.rate) + '</td><td>' + invINR((Number(ln.qty)||0)*(Number(ln.rate)||0)) + '</td></tr>').join('');
   const ap = autoPrint ? '<script>window.onload=function(){setTimeout(function(){window.print();},350);};<\/script>' : '';
@@ -5672,11 +5673,11 @@ function invBuildHTML(d, autoPrint) {
     + '.bn{font-size:26px;font-weight:700;letter-spacing:-0.3px;}.bsub{font-size:13px;color:#555;margin-top:10px;line-height:1.6;}'
     + '.it{font-size:26px;font-weight:700;letter-spacing:0.5px;text-align:right;}'
     + '.meta{margin-top:10px;margin-left:auto;font-size:13px;border-collapse:collapse;}.meta td{padding:2px 0;}'
-    + '.meta .l{color:#555;text-align:right;padding-right:8px;}.meta .v{font-weight:700;background:#fbf1d4;padding:2px 8px;}'
+    + '.meta .l{color:#555;text-align:right;padding-right:8px;}.meta .v{font-weight:700;padding:2px 0;}'
     + '.divider{border-top:1.5px solid #1a1a1a;margin:18px 0 20px;}'
     + '.bl{font-weight:700;font-size:11px;letter-spacing:0.5px;margin-bottom:4px;}'
     + '.from{font-size:13px;line-height:1.65;}.billed{font-size:13px;line-height:1.95;text-align:right;}'
-    + '.g{color:#555;}.hl{background:#fbf1d4;padding:1px 6px;}'
+    + '.g{color:#555;}.hl{padding:0;}'
     + '.banner{background:#e9f3ec;border:1px solid #bcd9c4;text-align:center;padding:11px;margin:20px 0;border-radius:2px;}'
     + '.bm{color:#2f7d4f;font-weight:700;font-size:14px;}.bs{color:#3f8a5e;font-size:11.5px;margin-top:3px;}'
     + 'table.items{width:100%;border-collapse:collapse;font-size:13px;}table.items thead tr{background:#111;color:#fff;}'
@@ -5691,7 +5692,7 @@ function invBuildHTML(d, autoPrint) {
     + '<div><div class="it">INVOICE</div><table class="meta"><tr><td class="l">No:</td><td class="v">' + d.no + '</td></tr><tr><td class="l">Date:</td><td class="v">' + invLongDate(d.invoiceDate) + '</td></tr></table></div></div>'
     + '<div class="divider"></div>'
     + '<div class="row"><div class="from"><div class="bl">FROM</div><div style="font-weight:700;">' + INV_BIZ.name + '</div><div style="color:#333;">' + INV_BIZ.email + '</div><div style="color:#333;">UPI: ' + INV_BIZ.upi + '</div>' + panRow + '</div>'
-    + '<div class="billed"><div class="bl">BILLED TO</div><div><span class="g">Name:</span> <span class="hl" style="font-weight:500;">' + d.billed.name + '</span></div>' + emailRow + cityRow + '</div></div>'
+    + '<div class="billed"><div class="bl">BILLED TO</div><div><span class="g">Name:</span> <span style="font-weight:500;">' + d.billed.name + '</span></div>' + emailRow + cityRow + '</div></div>'
     + banner
     + '<table class="items"><thead><tr><th class="desc">Description</th><th style="width:60px;">Qty</th><th style="width:100px;">Rate (\u20B9)</th><th style="width:110px;">Amount (\u20B9)</th></tr></thead><tbody>' + rows + '</tbody></table>'
     + '<div class="tot"><span>TOTAL</span><span class="a">\u20B9' + invINR(d.total) + '</span></div>'
@@ -5718,6 +5719,15 @@ function invOpenPrint(html, title) {
   if (!w) { showToast('Allow pop-ups to view or save the invoice', 'error'); return; }
   w.document.open(); w.document.write(html); w.document.close();
   try { w.document.title = title; } catch(e){}
+}
+let invLastDoc = null;
+function invViewLastDoc() { if (invLastDoc) invOpenPrint(invLastDoc.html, invLastDoc.title); }
+function invDismissBanner() { const b = document.getElementById('invDocBanner'); if (b) b.style.display = 'none'; }
+function invShowDocBanner(no, html, title) {
+  invLastDoc = { html: html, title: title };
+  const b = document.getElementById('invDocBanner'); if (!b) return;
+  const m = document.getElementById('invDocBannerMsg'); if (m) m.textContent = 'Invoice ' + no + ' saved';
+  b.style.display = 'flex';
 }
 
 function previewInvoice() {
@@ -5782,9 +5792,8 @@ async function saveInvoice() {
 async function generateInvoice() {
   const r = await invCommit();
   if (!r.ok) return;
-  showToast(r.already ? ('Opening ' + r.d.no) : ('Invoice ' + r.d.no + ' generated'), 'success');
   closeInvoiceEditor();
-  invOpenPrint(invBuildHTML(r.d, true), r.d.title);
+  invShowDocBanner(r.d.no, invBuildHTML(r.d, true), r.d.title);
 }
 
 function closeInvoiceEditor() {
@@ -9811,5 +9820,11 @@ async function doVPToggle(p, wsId, newState, cbInput, labelEl, toggleEl) {
   document.addEventListener('scroll', hide, true);
 })();
 </script>
+<div id="invDocBanner" style="display:none;position:fixed;top:1rem;left:50%;transform:translateX(-50%);z-index:99999;align-items:center;gap:0.85rem;background:var(--bark,#2a1a0e);border:1px solid var(--clay);border-radius:12px;padding:0.8rem 1rem;box-shadow:0 12px 32px rgba(0,0,0,0.4);max-width:92vw;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5bbd7e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M20 6 9 17l-5-5"/></svg>
+  <span id="invDocBannerMsg" style="color:#e8d5c0;font-size:0.9rem;white-space:nowrap;">Invoice saved</span>
+  <button class="btn-dash btn-dash-primary btn-dash-sm" style="padding:0 1rem;white-space:nowrap;" onclick="invViewLastDoc()">View Invoice</button>
+  <button onclick="invDismissBanner()" aria-label="Dismiss" style="background:none;border:none;color:#b8956f;font-size:1.3rem;cursor:pointer;line-height:1;padding:0 0.25rem;">&times;</button>
+</div>
 </body>
 </html>
