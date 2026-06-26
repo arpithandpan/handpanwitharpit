@@ -2552,6 +2552,12 @@ table#paymentsTable { min-width: 700px; }
       <div id="sidebarRoleBadge" style="display:inline-block;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:20px;margin-bottom:0.75rem;background:rgba(193,127,82,0.15);color:var(--clay);border:1px solid rgba(193,127,82,0.3);">Admin</div>
       <br/>
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
+      <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span style="color:var(--clay);font-weight:500;">v25</span>
+        <span style="color:rgba(240,219,200,0.45);">·</span>
+        <span>27 Jun 2026, 3:20 AM</span>
+      </div>
     </div>
   </aside>
 
@@ -5706,12 +5712,13 @@ function invNumToWords(num) {
 function invAmountInWords(n) { return 'Rupees ' + invNumToWords(n) + ' Only'; }
 
 async function invNextNumber() {
+  let max = 0;
   try {
     const rows = await sbGetAll('invoices', 'order=invoice_number.desc');
     const list = Array.isArray(rows) ? rows : (rows && rows.data ? rows.data : []);
-    const max = list.reduce((m,r)=> Math.max(m, Number(r.invoice_number)||0), 0);
-    return (max || 3) + 1;
-  } catch(e) { console.error('invNextNumber', e); return 4; }
+    max = list.reduce((m,r)=> Math.max(m, Number(r.invoice_number)||0), 0);
+  } catch(e) { console.error('invNextNumber', e); }
+  return max + 1;
 }
 
 function invMapSource(table, r) {
