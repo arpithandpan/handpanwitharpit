@@ -2562,7 +2562,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v28</span>
+        <span style="color:var(--clay);font-weight:500;">v29</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -5567,6 +5567,7 @@ function invDataFromRow(r) {
     pan: r.pan || '',
     payment: { date: r.payment_received_date || '', mode: r.payment_mode || '', ref: r.payment_reference || '' },
     lines, total: Number(r.total_amount) || 0, words: r.amount_in_words || invAmountInWords(r.total_amount),
+    cancelled: !!r.cancelled, cancelledAt: (r.cancelled_at || '').slice(0,10),
     title: no + '_' + nameSlug
   };
 }
@@ -5896,11 +5897,15 @@ function invValidate(s) {
 }
 
 function invBuildHTML(d, autoPrint) {
-  const banner = d.payment && d.payment.date ? (
+  const watermark = d.cancelled ? '<div class="wm">CANCELLED</div>' : '';
+  const banner = d.cancelled ? (
+    '<div class="banner-x"><div class="bm-x">&#10005;&nbsp;&nbsp;INVOICE CANCELLED</div>'
+    + (d.cancelledAt ? '<div class="bs-x">on <b>' + invLongDate(d.cancelledAt) + '</b></div>' : '') + '</div>'
+  ) : (d.payment && d.payment.date ? (
     '<div class="banner"><div class="bm">&#10003;&nbsp;&nbsp;PAYMENT RECEIVED</div><div class="bs">on <b>' + invLongDate(d.payment.date) + '</b>'
     + (d.payment.mode ? ' &middot; ' + d.payment.mode : '')
     + (d.payment.ref ? ' &middot; Ref <b>' + d.payment.ref + '</b>' : '') + '</div></div>'
-  ) : '';
+  ) : '');
   const cityRow = d.billed.city ? '<div><span class="g">City:</span> <span>' + d.billed.city + '</span></div>' : '';
   const emailRow = d.billed.email ? '<div><span class="g">Email:</span> <span>' + d.billed.email + '</span></div>' : '';
   const phoneRow = d.billed.phone ? '<div><span class="g">Phone:</span> <span>' + d.billed.phone + '</span></div>' : '';
@@ -5910,7 +5915,7 @@ function invBuildHTML(d, autoPrint) {
   return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + d.title + '</title><style>'
     + '@page{size:A4;margin:0;}*{box-sizing:border-box;}html,body{margin:0;padding:0;}'
     + 'body{font-family:\'Helvetica Neue\',Arial,sans-serif;color:#1a1a1a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    + '.sheet{width:210mm;min-height:297mm;padding:18mm 16mm;}'
+    + '.sheet{width:210mm;min-height:297mm;padding:18mm 16mm;position:relative;overflow:hidden;background:#fff;}'
     + '.row{display:flex;justify-content:space-between;align-items:flex-start;}'
     + '.bn{font-size:26px;font-weight:700;letter-spacing:-0.3px;}.bsub{font-size:13px;color:#555;margin-top:10px;line-height:1.6;}'
     + '.it{font-size:26px;font-weight:700;letter-spacing:0.5px;text-align:right;}'
@@ -5922,6 +5927,9 @@ function invBuildHTML(d, autoPrint) {
     + '.g{color:#555;}.hl{padding:0;}'
     + '.banner{background:#e9f3ec;border:1px solid #bcd9c4;text-align:center;padding:11px;margin:20px 0;border-radius:2px;}'
     + '.bm{color:#2f7d4f;font-weight:700;font-size:14px;}.bs{color:#3f8a5e;font-size:11.5px;margin-top:3px;}'
+    + '.banner-x{background:#faece8;border:1px solid #e2b3a4;text-align:center;padding:11px;margin:20px 0;border-radius:2px;}'
+    + '.bm-x{color:#b4452c;font-weight:700;font-size:14px;}.bs-x{color:#b4452c;font-size:11.5px;margin-top:3px;opacity:0.85;}'
+    + '.wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-26deg);font-size:100px;font-weight:800;letter-spacing:0.04em;color:#b4452c;opacity:0.12;white-space:nowrap;z-index:-1;pointer-events:none;}'  
     + 'table.items{width:100%;border-collapse:collapse;font-size:13px;}table.items thead tr{background:#111;color:#fff;}'
     + 'table.items th{padding:8px 12px;font-weight:700;text-align:right;}table.items th.desc{text-align:left;}'
     + 'table.items td{padding:9px 12px;text-align:right;}table.items td.desc{text-align:left;}table.items tbody tr:nth-child(even){background:#f6f6f6;}'
@@ -5929,7 +5937,7 @@ function invBuildHTML(d, autoPrint) {
     + '.tot .a{min-width:110px;text-align:right;}.words{text-align:right;font-size:12px;color:#555;font-style:italic;margin-top:6px;}'
     + '.pay{background:#f4f4f4;padding:14px 16px;margin-top:22px;font-size:12.5px;line-height:1.7;border-radius:2px;}.pay .h{font-weight:700;margin-bottom:3px;}.pay .i{font-style:italic;}'
     + '.foot{text-align:center;font-style:italic;color:#888;font-size:12px;margin-top:24px;}'
-    + '</style></head><body><div class="sheet">'
+    + '</style></head><body><div class="sheet">' + watermark
     + '<div class="row"><div><div class="bn">' + INV_BIZ.name + '</div><div class="bsub">' + INV_BIZ.role + '<br>' + INV_BIZ.loc + '<br>' + INV_BIZ.email + '</div></div>'
     + '<div><div class="it">INVOICE</div><table class="meta"><tr><td class="l">No:</td><td class="v">' + d.no + '</td></tr><tr><td class="l">Date:</td><td class="v">' + invLongDate(d.invoiceDate) + '</td></tr></table></div></div>'
     + '<div class="divider"></div>'
