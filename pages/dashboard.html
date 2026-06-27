@@ -2498,6 +2498,12 @@ table#paymentsTable { min-width: 700px; }
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         arpitpandey.com
       </a>
+      <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span style="color:var(--clay);font-weight:500;">v32</span>
+        <span style="color:rgba(240,219,200,0.45);">·</span>
+        <span>27 Jun 2026</span>
+      </div>
     </div>
   </div>
 </div>
@@ -2562,7 +2568,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v31</span>
+        <span style="color:var(--clay);font-weight:500;">v32</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -4154,6 +4160,26 @@ function handleSessionExpiry() {
     if (errEl) errEl.textContent = 'Your session timed out. Please sign in again to continue.';
   }, 1500);
 }
+// Read the JWT expiry (exp, in seconds) and return it as ms, or 0 if unreadable.
+function jwtExpMs(token) {
+  try {
+    const payload = JSON.parse(atob((token || '').split('.')[1]));
+    return payload && payload.exp ? payload.exp * 1000 : 0;
+  } catch(e) { return 0; }
+}
+// Set a timer that fires the session-expiry screen the moment the token lapses,
+// even if the page is sitting idle with no fetch running.
+let _sessionTimer = null;
+function scheduleSessionTimeout() {
+  if (_sessionTimer) { clearTimeout(_sessionTimer); _sessionTimer = null; }
+  const token = sessionStorage.getItem('dash_token');
+  const expMs = jwtExpMs(token);
+  if (!expMs) return;
+  // Fire 5s before the real expiry so the user is moved before requests start failing.
+  const fireIn = expMs - Date.now() - 5000;
+  if (fireIn <= 0) { handleSessionExpiry(); return; }
+  _sessionTimer = setTimeout(handleSessionExpiry, fireIn);
+}
 (function () {
   const _origFetch = window.fetch.bind(window);
   window.fetch = async function (input, init) {
@@ -4313,6 +4339,7 @@ async function authLogin() {
     sessionStorage.setItem('dash_auth', '1');
     sessionStorage.setItem('dash_role', currentRole);
     sessionStorage.setItem('dash_token', data.access_token);
+    scheduleSessionTimeout();
     // Auth succeeded — now load dashboard outside the catch so load errors don't show as login errors
     showDashboard();
     try {
@@ -4438,6 +4465,7 @@ if (sessionStorage.getItem('dash_auth') === '1') {
   currentRole = sessionStorage.getItem('dash_role') || 'admin';
   const _savedToken = sessionStorage.getItem('dash_token');
   if (_savedToken) SB_HEADERS['Authorization'] = 'Bearer ' + _savedToken;
+  scheduleSessionTimeout();
   showDashboard();
   loadAll();
   loadBinCount();
