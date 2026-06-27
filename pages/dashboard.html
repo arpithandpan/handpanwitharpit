@@ -6124,6 +6124,7 @@ async function openInvoicePreview(id) {
       pan: r.pan||'',
       payment: { date: r.payment_received_date||'', mode: r.payment_mode||'', ref: r.payment_reference||'' },
       lines, total: Number(r.total_amount)||0, words: r.amount_in_words || invAmountInWords(r.total_amount),
+      cancelled: !!r.cancelled, cancelledAt: (r.cancelled_at||'').slice(0,10),
       title: no + '_' + nameSlug
     };
     invOpenPrint(invBuildHTML(d, true), d.title);
