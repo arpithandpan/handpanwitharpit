@@ -2554,7 +2554,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v26</span>
+        <span style="color:var(--clay);font-weight:500;">v27</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -5720,6 +5720,26 @@ async function invNextNumber() {
   } catch(e) { console.error('invNextNumber', e); }
   return max + 1;
 }
+async function invPeekNumber() {
+  try {
+    const result = await safeFetch(SUPABASE_URL + '/rest/v1/rpc/peek_invoice_number',
+      { method: 'POST', headers: { ...SB_HEADERS, 'Content-Type': 'application/json' }, body: '{}' });
+    if (result.ok && result.data != null) {
+      const n = Number(Array.isArray(result.data) ? result.data[0] : result.data);
+      if (n > 0) return n;
+    }
+  } catch(e) { console.error('invPeekNumber', e); }
+  return await invNextNumber();
+}
+async function invConsumeNumber() {
+  const result = await safeFetch(SUPABASE_URL + '/rest/v1/rpc/next_invoice_number',
+    { method: 'POST', headers: { ...SB_HEADERS, 'Content-Type': 'application/json' }, body: '{}' });
+  if (result.ok && result.data != null) {
+    const n = Number(Array.isArray(result.data) ? result.data[0] : result.data);
+    if (n > 0) return n;
+  }
+  throw new Error('Could not reserve an invoice number. Please check your connection and try again.');
+}
 
 function invMapSource(table, r) {
   if (table === 'fee_payments') {
@@ -5749,7 +5769,7 @@ function invMapSource(table, r) {
 
 async function openInvoiceEditor(prefill) {
   if (!isAdmin || (typeof isAdmin === 'function' ? !isAdmin() : false)) { /* admin gate handled by UI; continue */ }
-  const number = await invNextNumber();
+  const number = await invPeekNumber();
   invState = {
     number,
     invoiceDate: invToISO(new Date()),
@@ -6004,7 +6024,7 @@ async function invCommit() {
     await sbPost('invoices', payload);
   } catch(e) {
     try {
-      s.number = await invNextNumber();
+      s.number = await invConsumeNumber();
       payload.invoice_number = s.number;
       const d2 = invDataFromState(s);
       payload.line_items = d2.lines; payload.total_amount = d2.total; payload.amount_in_words = d2.words;
