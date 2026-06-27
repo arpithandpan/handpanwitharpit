@@ -2562,7 +2562,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v30</span>
+        <span style="color:var(--clay);font-weight:500;">v31</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -4134,6 +4134,44 @@ const SB_HEADERS = {
   'Authorization': 'Bearer ' + SUPABASE_KEY,
   'Prefer': 'return=representation'
 };
+
+// ── SESSION EXPIRY HANDLER ──
+// The user JWT in SB_HEADERS expires after a while. Once it does, every REST
+// call returns 401/403. Instead of many generic "Error loading X" toasts,
+// detect it once globally and tell the user plainly to log in again.
+let _sessionExpiryHandled = false;
+function handleSessionExpiry() {
+  if (_sessionExpiryHandled) return;
+  _sessionExpiryHandled = true;
+  try { showToast('Your session has timed out. Please log in again.', 'error'); } catch(e) {}
+  sessionStorage.removeItem('dash_auth');
+  sessionStorage.removeItem('dash_role');
+  sessionStorage.removeItem('dash_token');
+  setTimeout(function () {
+    const ls = document.getElementById('loginScreen');
+    if (ls) { ls.style.display = 'flex'; }
+    const errEl = document.getElementById('auth-error');
+    if (errEl) errEl.textContent = 'Your session timed out. Please sign in again to continue.';
+  }, 1500);
+}
+(function () {
+  const _origFetch = window.fetch.bind(window);
+  window.fetch = async function (input, init) {
+    const res = await _origFetch(input, init);
+    try {
+      const url = (typeof input === 'string') ? input : (input && input.url) || '';
+      const isSupabaseRest = url.indexOf(SUPABASE_URL + '/rest/v1/') === 0;
+      const isAuthCall = url.indexOf(SUPABASE_URL + '/auth/v1/') === 0;
+      if (isSupabaseRest && !isAuthCall && (res.status === 401 || res.status === 403)) {
+        const usingUserToken = (SB_HEADERS['Authorization'] || '') !== ('Bearer ' + SUPABASE_KEY);
+        if (usingUserToken && sessionStorage.getItem('dash_auth') === '1') {
+          handleSessionExpiry();
+        }
+      }
+    } catch(e) {}
+    return res;
+  };
+})();
 
 // ── GLOBAL ERROR BOUNDARY ──
 window.addEventListener('unhandledrejection', e => {
