@@ -718,12 +718,15 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 
 /* ── CHECKIN TOGGLE SWITCH ── */
 .obs-chip {
-  display:inline-flex; align-items:center; gap:5px;
+  display:inline-flex; align-items:center; justify-content:center; gap:5px;
   background:rgba(122,140,106,0.18); color:var(--moss);
-  border:0.5px solid rgba(122,140,106,0.5); border-radius:50px;
-  font-size:0.8rem; font-weight:600; padding:5px 12px; min-height:32px;
+  border:1px solid rgba(122,140,106,0.5); border-radius:16px;
+  font-size:0.8rem; font-weight:600; line-height:1;
+  height:30px; padding:0 12px; box-sizing:border-box;
   cursor:pointer; white-space:nowrap; font-family:var(--font-body);
+  vertical-align:middle; width:auto; max-width:max-content;
 }
+.obs-chip svg { flex-shrink:0; display:block; }
 .obs-chip:hover { background:rgba(122,140,106,0.3); border-color:var(--moss); }
 .checkin-toggle {
   position: relative; display: inline-flex; align-items: center;
@@ -2508,7 +2511,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v34</span>
+        <span style="color:var(--clay);font-weight:500;">v35</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -2576,7 +2579,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v34</span>
+        <span style="color:var(--clay);font-weight:500;">v35</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -10236,11 +10239,12 @@ function openObsPopup(pid, ev) {
   for (let i = 0; i < oc; i++) {
     (function(idx){
       const orow = document.createElement('div');
-      orow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+      orow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:0.85rem 0;' + (idx > 0 ? 'border-top:1px solid rgba(200,147,90,0.12);' : '');
       const lab = document.createElement('span');
       lab.className = 'checkin-label';
       const isIn = idx < (Number(rec.observers_checked_in)||0);
       lab.dataset.checked = isIn ? '1' : '0';
+      lab.style.fontSize = '0.95rem';
       lab.textContent = oc === 1 ? 'Observer' : ('Observer ' + (idx+1));
       const tog = document.createElement('label');
       tog.className = 'checkin-toggle';
@@ -10295,14 +10299,17 @@ async function doObsPopupToggle(rec, newCount) {
 
 <!-- ── OBSERVER CHECK-IN POPUP ── -->
 <div class="modal-overlay" id="modal-obsCheckin" style="background:rgba(10,6,3,0.7);backdrop-filter:blur(2px);z-index:30000;" onclick="if(event.target===this)closeObsPopup()">
-  <div class="modal" style="max-width:340px;background:#3d2c1e;border:1px solid rgba(122,140,106,0.6);box-shadow:0 20px 60px rgba(0,0,0,0.5);">
-    <div class="modal-header">
-      <div class="modal-title" id="obsPopupName" style="font-size:1rem;">Observer check-in</div>
-      <button class="modal-close" onclick="closeObsPopup()" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(200,147,90,0.1);border:none;cursor:pointer;color:var(--clay-light);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  <div class="modal" style="width:340px;max-width:calc(100vw - 2rem);background:#3d2c1e;border:1px solid rgba(122,140,106,0.55);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);overflow:hidden;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;padding:1.25rem 1.25rem 0.5rem;">
+      <div>
+        <div id="obsPopupName" style="font-size:1rem;font-weight:600;color:#f0dfc8;line-height:1.35;">Observer check-in</div>
+        <div style="font-size:0.8rem;color:var(--text-light);margin-top:2px;">Tap to check in on the day</div>
+      </div>
+      <button onclick="closeObsPopup()" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;min-width:32px;border-radius:50%;background:rgba(200,147,90,0.12);border:none;cursor:pointer;color:var(--clay-light);flex-shrink:0;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <div style="padding:0.5rem 1.4rem 1.4rem;display:flex;flex-direction:column;gap:0.85rem;" id="obsPopupBody"></div>
+    <div style="padding:0.5rem 1.25rem 1.25rem;display:flex;flex-direction:column;" id="obsPopupBody"></div>
   </div>
 </div>
 
