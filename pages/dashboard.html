@@ -2511,7 +2511,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v36</span>
+        <span style="color:var(--clay);font-weight:500;">v37</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -2579,7 +2579,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v36</span>
+        <span style="color:var(--clay);font-weight:500;">v37</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -5123,14 +5123,14 @@ async function loadOverview() {
     // Workshops: completed = date already passed (whole day); upcoming = next future-dated workshop
     (function(){
       const today = new Date(); today.setHours(0,0,0,0);
-      const dated = ws.filter(w => w.date).map(w => ({ id: w.id, d: new Date(w.date + 'T00:00:00') }));
+      const dated = ws.filter(w => w.date).map(w => ({ id: w.id, raw: w.date, d: new Date(w.date + 'T00:00:00') }));
       const completed = dated.filter(w => w.d < today).length;
       const upcoming = dated.filter(w => w.d >= today).sort((a,b) => a.d - b.d)[0];
       document.getElementById('stat-workshops').textContent = completed;
       const upEl = document.getElementById('stat-upcoming');
       if (upEl) {
         if (upcoming) {
-          upEl.textContent = upcoming.id + ' \u00b7 ' + fmtDate(upcoming.d.toISOString().slice(0,10));
+          upEl.textContent = upcoming.id + ' \u00b7 ' + fmtDate(upcoming.raw);
           upEl.style.color = 'var(--moss)';
         } else {
           upEl.textContent = 'None scheduled';
