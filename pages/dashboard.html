@@ -2511,7 +2511,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v35</span>
+        <span style="color:var(--clay);font-weight:500;">v36</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -2579,7 +2579,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v35</span>
+        <span style="color:var(--clay);font-weight:500;">v36</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -2623,7 +2623,7 @@ table#paymentsTable { min-width: 700px; }
         <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value clay" id="stat-revenue">—</div><div class="stat-sub">All time</div></div>
         <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" id="stat-expenses">—</div><div class="stat-sub">All time</div></div>
         <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="stat-profit">—</div><div class="stat-sub">All time</div></div>
-        <div class="stat-card"><div class="stat-label">Workshops Done</div><div class="stat-value" id="stat-workshops">—</div><div class="stat-sub">Total</div></div>
+        <div class="stat-card"><div class="stat-label">Workshops</div><div class="stat-value" id="stat-workshops">—</div><div class="stat-sub" style="margin-bottom:0.6rem;">Completed</div><div style="border-top:0.5px solid rgba(200,147,90,0.16);padding-top:0.55rem;"><div class="stat-label" style="margin-bottom:0.15rem;">Upcoming</div><div id="stat-upcoming" style="font-size:0.95rem;font-weight:600;color:var(--moss);line-height:1.35;">—</div></div></div>
       </div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-label">Total Participants</div><div class="stat-value" id="stat-participants">—</div><div class="stat-sub">Across all workshops</div></div>
@@ -5120,7 +5120,24 @@ async function loadOverview() {
     document.getElementById('stat-revenue').textContent = fmt(income);
     document.getElementById('stat-expenses').textContent = fmt(expense);
     document.getElementById('stat-profit').textContent = fmt(income - expense);
-    document.getElementById('stat-workshops').textContent = ws.length;
+    // Workshops: completed = date already passed (whole day); upcoming = next future-dated workshop
+    (function(){
+      const today = new Date(); today.setHours(0,0,0,0);
+      const dated = ws.filter(w => w.date).map(w => ({ id: w.id, d: new Date(w.date + 'T00:00:00') }));
+      const completed = dated.filter(w => w.d < today).length;
+      const upcoming = dated.filter(w => w.d >= today).sort((a,b) => a.d - b.d)[0];
+      document.getElementById('stat-workshops').textContent = completed;
+      const upEl = document.getElementById('stat-upcoming');
+      if (upEl) {
+        if (upcoming) {
+          upEl.textContent = upcoming.id + ' \u00b7 ' + fmtDate(upcoming.d.toISOString().slice(0,10));
+          upEl.style.color = 'var(--moss)';
+        } else {
+          upEl.textContent = 'None scheduled';
+          upEl.style.color = 'var(--text-light)';
+        }
+      }
+    })();
     document.getElementById('stat-participants').textContent = parts.length;
     document.getElementById('stat-students').textContent = stus.filter(s => s.status === 'Active').length;
     document.getElementById('stat-leads').textContent = lds.filter(l => l.status === 'Hot' || l.status === 'Warm').length;
