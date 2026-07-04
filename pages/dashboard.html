@@ -2511,7 +2511,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v38</span>
+        <span style="color:var(--clay);font-weight:500;">v40</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -2579,7 +2579,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v38</span>
+        <span style="color:var(--clay);font-weight:500;">v40</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>27 Jun 2026</span>
       </div>
@@ -2775,11 +2775,11 @@ table#paymentsTable { min-width: 700px; }
         </div>
         <div class="filter-dd-wrap" id="dd-wrap-p-guests">
           <button class="filter-dd-btn" id="dd-btn-p-guests" onclick="toggleFilterDd('p-guests', event)">
-            Guests <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            Audience <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="filter-dd-menu" id="dd-menu-p-guests">
-            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('p-guests','all','Guests','participants','guests',this,event)">All</div>
-            <div class="filter-dd-option" data-val="yes" onclick="selectFilterDd('p-guests','yes','With guests','participants','guests',this,event)">With guests</div>
+            <div class="filter-dd-option selected" data-val="all" onclick="selectFilterDd('p-guests','all','Audience','participants','guests',this,event)">All</div>
+            <div class="filter-dd-option" data-val="yes" onclick="selectFilterDd('p-guests','yes','With audience','participants','guests',this,event)">With audience</div>
             <div class="filter-dd-option" data-val="no" onclick="selectFilterDd('p-guests','no','Solo','participants','guests',this,event)">Solo</div>
           </div>
         </div>
@@ -2794,7 +2794,7 @@ table#paymentsTable { min-width: 700px; }
           <th>Phone</th>
           <th class="sortable-th" onclick="sortTable('participants','workshop_id',this)">Workshop <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th class="sortable-th" onclick="sortTable('participants','amount_paid',this)">Amount <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
-          <th>Mode</th><th>Observers</th><th>Check In</th><th class="ws-action-sticky">Action</th>
+          <th>Mode</th><th>Audience</th><th>Check In</th><th class="ws-action-sticky">Action</th>
         </tr></thead>
         <tbody id="participantsTable"><tr><td colspan="12" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       </div>
@@ -5362,12 +5362,12 @@ async function loadParticipants() {
     const adminP = isAdmin();
     const PENCIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     if (tbl) tbl.innerHTML = parts.map(p => { const canEditPar = adminP;
-    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}" data-has-guests="${(Number(p.guest_count)>0)?'1':'0'}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="participants" data-id="'+p.id+'" data-name="'+( p.full_name||p.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${p.id}</td><td class="td-truncate td-name" data-tip="${(p.full_name||'').replace(/"/g,'&quot;')}"><span style="display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;max-width:100%;"><span style="font-weight:500;overflow:hidden;text-overflow:ellipsis;">${p.full_name||'—'}</span>${(Number(p.observer_count)||0) > 0 ? '<span style="background:rgba(122,140,106,0.2);color:var(--moss);font-size:0.68rem;font-weight:600;padding:2px 8px;border-radius:14px;white-space:nowrap;border:0.5px solid rgba(122,140,106,0.4);flex-shrink:0;">+'+(Number(p.observer_count)||0)+' observer'+((Number(p.observer_count)||0)>1?'s':'')+'</span>' : ''}</span>${personCaption(p)}${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.9rem;color:var(--text-light);opacity:0.7;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Booked as: ' + p.razorpay_name + '</div>' : ''}${p.payment_mode === 'Razorpay UPI' && !p.email ? '<div style="font-size:0.72rem;color:rgba(200,147,90,0.6);margin-top:2px;">⚠ Incomplete data' + (p.raw_payload ? ' — raw data saved' : '') + '</div>' : ''}</td><td class="td-truncate td-email" style="color:var(--text-light);" data-tip="${p.email||''}">${p.email||'—'}</td><td>${p.bringing_own_handpan||'—'}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td>${(Number(p.observer_count)||0) > 0 ? '<button class="obs-chip" onclick="openObsPopup(&quot;'+p.id+'&quot;,event)" data-tip="Observer check-in">'+(Number(p.observers_checked_in)||0)+'/'+(Number(p.observer_count)||0)+' in <svg width=&quot;10&quot; height=&quot;10&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;3&quot;><polyline points=&quot;6 9 12 15 18 9&quot;/></svg></button>' : '<span style="color:var(--text-light);opacity:0.5;">—</span>'}</td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky"><div class="action-wrap">${Number(p.amount_paid)>0?`<button class="icon-action-btn" data-tip="Create invoice" onclick="openInvoiceEditor({source:'participants',id:'${p.id}'})"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"8\" y1=\"13\" x2=\"16\" y2=\"13\"/><line x1=\"8\" y1=\"17\" x2=\"13\" y2=\"17\"/></svg></button>`:''}${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="12">${EMPTY_STATES.participants}</td></tr>`;
+    return `<tr data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-date="${p.created_at||''}" data-amount_paid="${p.amount_paid||0}" data-bringing_own_handpan="${p.bringing_own_handpan||''}" data-has-guests="${(Number(p.observer_count)>0)?'1':'0'}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="participants" data-id="'+p.id+'" data-name="'+( p.full_name||p.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td>${p.id}</td><td class="td-truncate td-name" data-tip="${(p.full_name||'').replace(/"/g,'&quot;')}"><span style="display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;max-width:100%;"><span style="font-weight:500;overflow:hidden;text-overflow:ellipsis;">${p.full_name||'—'}</span>${(Number(p.observer_count)||0) > 0 ? '<span style="background:rgba(122,140,106,0.2);color:var(--moss);font-size:0.68rem;font-weight:600;padding:2px 8px;border-radius:14px;white-space:nowrap;border:0.5px solid rgba(122,140,106,0.4);flex-shrink:0;">+'+(Number(p.observer_count)||0)+' audience</span>' : ''}</span>${personCaption(p)}${p.razorpay_name && p.razorpay_name !== 'NULL' && p.razorpay_name !== p.full_name ? '<div style="font-size:0.9rem;color:var(--text-light);opacity:0.7;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Booked as: ' + p.razorpay_name + '</div>' : ''}${p.payment_mode === 'Razorpay UPI' && !p.email ? '<div style="font-size:0.72rem;color:rgba(200,147,90,0.6);margin-top:2px;">⚠ Incomplete data' + (p.raw_payload ? ' — raw data saved' : '') + '</div>' : ''}</td><td class="td-truncate td-email" style="color:var(--text-light);" data-tip="${p.email||''}">${p.email||'—'}</td><td>${p.bringing_own_handpan||'—'}</td><td class="td-truncate td-phone" data-tip="${p.phone||''}">${p.phone||'—'}</td><td>${p.workshop_id||'—'}</td><td>${fmt(p.amount_paid)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td>${(Number(p.observer_count)||0) > 0 ? '<button class="obs-chip" onclick="openObsPopup(&quot;'+p.id+'&quot;,event)" data-tip="Audience check-in">'+(Number(p.observers_checked_in)||0)+'/'+(Number(p.observer_count)||0)+' in <svg width=&quot;10&quot; height=&quot;10&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;3&quot;><polyline points=&quot;6 9 12 15 18 9&quot;/></svg></button>' : '<span style="color:var(--text-light);opacity:0.5;">—</span>'}</td><td><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" data-tip="${p.checked_in?'Checked in':'Check in'}" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/['\"]/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div></td><td class="ws-action-sticky"><div class="action-wrap">${Number(p.amount_paid)>0?`<button class="icon-action-btn" data-tip="Create invoice" onclick="openInvoiceEditor({source:'participants',id:'${p.id}'})"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"8\" y1=\"13\" x2=\"16\" y2=\"13\"/><line x1=\"8\" y1=\"17\" x2=\"13\" y2=\"17\"/></svg></button>`:''}${canEditPar?`<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('participants','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('participants','${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`}</td></tr>`; }).join('') || `<tr><td colspan="12">${EMPTY_STATES.participants}</td></tr>`;
 
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; setSearchFilterVisibility('participants', _hasRows); } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
     if (parCards) parCards.innerHTML = parts.map(p => `
-      <div class="m-card" style="margin-bottom:1.25rem;padding:0;" data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-has-guests="${(Number(p.guest_count)>0)?'1':'0'}">
+      <div class="m-card" style="margin-bottom:1.25rem;padding:0;" data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-has-guests="${(Number(p.observer_count)>0)?'1':'0'}">
         <div style="padding:1.1rem 1.4rem 0.75rem;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
             <div>
@@ -9441,8 +9441,8 @@ const FILTER_SHEET_CONFIG = {
     { key: 'bringing_own_handpan', label: '🥁 Bringing Handpan', type: 'pill', options: [
       { val: 'all', label: 'All' }, { val: 'Yes', label: 'Bringing own' }, { val: 'No', label: 'Not bringing' }
     ]},
-    { key: 'guests', label: 'Guests', type: 'pill', options: [
-      { val: 'all', label: 'All' }, { val: 'yes', label: 'With guests' }, { val: 'no', label: 'Solo' }
+    { key: 'guests', label: 'Audience', type: 'pill', options: [
+      { val: 'all', label: 'All' }, { val: 'yes', label: 'With audience' }, { val: 'no', label: 'Solo' }
     ]},
   ],
   classes: [
@@ -9963,7 +9963,7 @@ async function loadVPParticipants(wsId) {
     const parts = await res.json();
     parts.forEach(p => cacheRecord('participants', p));
     const _obsTotal = parts.reduce(function(s,p){ return s + (Number(p.observer_count)||0); }, 0);
-    if (sub) sub.textContent = parts.length + ' participant' + (parts.length !== 1 ? 's' : '') + (_obsTotal > 0 ? ' · ' + _obsTotal + ' observer' + (_obsTotal !== 1 ? 's' : '') : '');
+    if (sub) sub.textContent = parts.length + ' participant' + (parts.length !== 1 ? 's' : '') + (_obsTotal > 0 ? ' · ' + _obsTotal + ' audience' : '');
     function updateVPCheckinCounter() {
       const counter = document.getElementById('vpCheckinCounter');
       if (counter) {
@@ -9984,7 +9984,7 @@ async function loadVPParticipants(wsId) {
         const obsTotal = parts.reduce(function(s,p){ return s + (Number(p.observer_count)||0); }, 0);
         const obsIn = parts.reduce(function(s,p){ return s + Math.min(Number(p.observers_checked_in)||0, Number(p.observer_count)||0); }, 0);
         if (obsTotal > 0) {
-          obsCounter.textContent = obsIn + ' / ' + obsTotal + ' observer' + (obsTotal !== 1 ? 's' : '');
+          obsCounter.textContent = obsIn + ' / ' + obsTotal + ' audience';
           obsCounter.style.display = '';
         } else {
           obsCounter.style.display = 'none';
@@ -10021,7 +10021,7 @@ async function loadVPParticipants(wsId) {
         nameWrap.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap;';
         const obsBadge = document.createElement('span');
         obsBadge.style.cssText = 'background:rgba(122,140,106,0.18);color:var(--moss);font-size:0.72rem;font-weight:600;padding:3px 9px;border-radius:50px;white-space:nowrap;';
-        obsBadge.textContent = '+' + (Number(p.observer_count)||0) + ' observer';
+        obsBadge.textContent = '+' + (Number(p.observer_count)||0) + ' audience';
         nameWrap.appendChild(nameEl);
         nameWrap.appendChild(obsBadge);
         topDiv.appendChild(nameWrap);
@@ -10063,7 +10063,7 @@ async function loadVPParticipants(wsId) {
           const obsRow = document.createElement('div');
           obsRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;';
           // Observer price fixed at ₹500. If observer pricing changes, update this figure.
-          obsRow.innerHTML = '<span style="font-size:0.95rem;color:var(--text-light);">Observer pass</span><span style="font-size:0.95rem;font-weight:600;color:var(--moss);">' + (Number(p.observer_count)||0) + ' (₹' + ((Number(p.observer_count)||0)*500) + ')</span>';
+          obsRow.innerHTML = '<span style="font-size:0.95rem;color:var(--text-light);">Audience pass</span><span style="font-size:0.95rem;font-weight:600;color:var(--moss);">' + (Number(p.observer_count)||0) + ' (₹' + ((Number(p.observer_count)||0)*500) + ')</span>';
           infoDiv.appendChild(obsRow);
         }
         row.appendChild(infoDiv);
@@ -10151,7 +10151,7 @@ async function loadVPParticipants(wsId) {
             olabel.className = 'checkin-label';
             var isIn = idx < (Number(p.observers_checked_in)||0);
             olabel.dataset.checked = isIn ? '1' : '0';
-            olabel.textContent = _oc === 1 ? 'Observer' : ('Observer ' + (idx+1));
+            olabel.textContent = _oc === 1 ? 'Audience' : ('Audience ' + (idx+1));
             var otoggle = document.createElement('label');
             otoggle.className = 'checkin-toggle';
             var oinput = document.createElement('input');
@@ -10232,12 +10232,12 @@ async function doVPObserverToggle(p, wsId, newCount) {
       body: JSON.stringify({ observers_checked_in: newCount })
     });
     cacheRecord('participants', p);
-    showToast(newCount > prev ? '✓ Observer checked in!' : '✓ Observer check-in removed', 'success');
+    showToast(newCount > prev ? '✓ Audience checked in!' : '✓ Audience check-in removed', 'success');
     loadVPParticipants(wsId);
   } catch(e) {
     p.observers_checked_in = prev;
     if (window._vpUpdateCounters) window._vpUpdateCounters();
-    showToast('Failed to update observer check-in', 'error');
+    showToast('Failed to update audience check-in', 'error');
     loadVPParticipants(wsId);
   }
 }
@@ -10262,7 +10262,7 @@ function openObsPopup(pid, ev) {
       const isIn = idx < (Number(rec.observers_checked_in)||0);
       lab.dataset.checked = isIn ? '1' : '0';
       lab.style.fontSize = '0.95rem';
-      lab.textContent = oc === 1 ? 'Observer' : ('Observer ' + (idx+1));
+      lab.textContent = oc === 1 ? 'Audience' : ('Audience ' + (idx+1));
       const tog = document.createElement('label');
       tog.className = 'checkin-toggle';
       const inp = document.createElement('input'); inp.type='checkbox'; inp.checked=isIn;
@@ -10291,29 +10291,21 @@ function closeObsPopup() {
   unlockScroll();
 }
 function showObsRemoveConfirm(rec, idx) {
+  // Reuse the shared confirm dialog so it looks identical to the participant one
   const oc = Number(rec.observer_count)||0;
-  const body = document.getElementById('obsPopupBody');
-  if (!body) return;
-  const label = oc === 1 ? 'this observer' : ('Observer ' + (idx+1));
-  body.innerHTML = '';
-  const box = document.createElement('div');
-  box.style.cssText = 'background:rgba(200,147,90,0.08);border:1px solid rgba(200,147,90,0.25);border-radius:12px;padding:0.9rem 1rem;';
-  const msg = document.createElement('div');
-  msg.style.cssText = 'color:#e8d6c0;font-size:0.9rem;line-height:1.5;margin-bottom:0.85rem;';
-  msg.textContent = 'Mark ' + label + ' as not checked in?';
-  const btnRow = document.createElement('div');
-  btnRow.style.cssText = 'display:flex;gap:0.6rem;';
-  const cancelBtn = document.createElement('button');
-  cancelBtn.style.cssText = 'flex:1;padding:0.6rem 0;background:transparent;border:1px solid rgba(200,147,90,0.4);border-radius:10px;color:var(--clay);font-size:0.9rem;font-weight:500;cursor:pointer;font-family:var(--font-body);';
-  cancelBtn.textContent = 'Cancel';
-  cancelBtn.addEventListener('click', function(){ openObsPopup(rec.id); });
-  const removeBtn = document.createElement('button');
-  removeBtn.style.cssText = 'flex:1;padding:0.6rem 0;background:rgba(200,147,90,0.2);border:1px solid rgba(200,147,90,0.5);border-radius:10px;color:#e8b98a;font-size:0.9rem;font-weight:600;cursor:pointer;font-family:var(--font-body);';
-  removeBtn.textContent = 'Remove';
-  removeBtn.addEventListener('click', function(){ doObsPopupToggle(rec, idx); });
-  btnRow.appendChild(cancelBtn); btnRow.appendChild(removeBtn);
-  box.appendChild(msg); box.appendChild(btnRow);
-  body.appendChild(box);
+  const who = oc === 1 ? ('The audience pass for ' + (rec.full_name || 'this participant')) : ('Audience ' + (idx+1) + ' for ' + (rec.full_name || 'this participant'));
+  document.getElementById('archiveConfirmTitle').textContent = 'Remove check-in?';
+  document.getElementById('archiveConfirmDesc').textContent = who + ' will be marked as not checked in.';
+  const btn = document.getElementById('archiveConfirmBtn');
+  btn.textContent = 'Remove';
+  btn.onclick = function(){
+    document.getElementById('archiveConfirmModal').style.display = 'none';
+    unlockScroll();
+    doObsPopupToggle(rec, idx);
+  };
+  // Cancel just closes the confirm and leaves the observer popup as-is
+  document.getElementById('archiveConfirmModal').style.display = 'flex';
+  lockScroll();
 }
 async function doObsPopupToggle(rec, newCount) {
   const oc = Number(rec.observer_count)||0;
@@ -10332,12 +10324,12 @@ async function doObsPopupToggle(rec, newCount) {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ observers_checked_in: newCount })
     });
-    showToast(newCount > prev ? '✓ Observer checked in!' : '✓ Observer check-in removed', 'success');
+    showToast(newCount > prev ? '✓ Audience checked in!' : '✓ Audience check-in removed', 'success');
   } catch(e) {
     rec.observers_checked_in = prev;
     cacheRecord('participants', rec);
     openObsPopup(rec.id);
-    showToast('Failed to update observer check-in', 'error');
+    showToast('Failed to update audience check-in', 'error');
   }
 }
 </script>
@@ -10345,16 +10337,16 @@ async function doObsPopupToggle(rec, newCount) {
 <!-- ── OBSERVER CHECK-IN POPUP ── -->
 <div class="modal-overlay" id="modal-obsCheckin" style="background:rgba(10,6,3,0.7);backdrop-filter:blur(2px);z-index:30000;" onclick="if(event.target===this)closeObsPopup()">
   <div class="modal" style="width:340px;max-width:calc(100vw - 2rem);background:#3d2c1e;border:1px solid rgba(200,147,90,0.35);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);overflow:hidden;">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;padding:1.25rem 1.25rem 0.5rem;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;padding:1.1rem 1.25rem 0.4rem;">
       <div>
-        <div id="obsPopupName" style="font-size:1rem;font-weight:600;color:#f0dfc8;line-height:1.35;">Observer check-in</div>
-        <div style="font-size:0.8rem;color:var(--text-light);margin-top:2px;">Tap to check in on the day</div>
+        <div id="obsPopupName" style="font-size:1.05rem;font-weight:600;color:#f0dfc8;line-height:1.3;">Audience check-in</div>
+        <div style="font-size:0.82rem;color:var(--text-light);margin-top:4px;">Audience check-in</div>
       </div>
-      <button onclick="closeObsPopup()" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;min-width:32px;border-radius:50%;background:rgba(200,147,90,0.12);border:none;cursor:pointer;color:var(--clay-light);flex-shrink:0;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button onclick="closeObsPopup()" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;border-radius:50%;background:rgba(200,147,90,0.14);border:none;cursor:pointer;color:var(--clay-light);flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <div style="padding:0.5rem 1.25rem 1.25rem;display:flex;flex-direction:column;" id="obsPopupBody"></div>
+    <div style="padding:0.5rem 1.25rem 1.15rem;display:flex;flex-direction:column;" id="obsPopupBody"></div>
   </div>
 </div>
 
