@@ -905,23 +905,26 @@
   const wlNotifyError = document.getElementById('wl-notify-error');
   let waitlistSubmitted = false;
 
-  // Next 12 months starting this month, as {value, label} — value is the
-  // first of that month (e.g. "2026-08-01"), matching the date column the
-  // dashboard's Waitlist section reads from, so it sorts and filters cleanly.
-  function getUpcomingMonths(endYear, endMonth){
+  // The next `count` months starting from next month, as {value, label, fullLabel}.
+  // value is the first of that month (e.g. "2026-08-01"), matching the date column
+  // the dashboard's Waitlist section reads from, so it sorts and filters cleanly.
+  // label is short (e.g. "Aug 2026") for the dropdown so long names don't wrap.
+  // fullLabel is the long form (e.g. "August 2026") for the confirmation message.
+  const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function getUpcomingMonths(count){
     const out = [];
     const now = new Date();
-    let d = new Date(now.getFullYear(), now.getMonth(), 1);
-    const end = new Date(endYear, endMonth - 1, 1);
-    while (d <= end){
+    let d = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    for (let i = 0; i < count; i++){
       const value = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-01';
-      const label = d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
-      out.push({ value, label });
+      const label = MONTHS_SHORT[d.getMonth()] + ' ' + d.getFullYear();
+      const fullLabel = d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+      out.push({ value, label, fullLabel });
       d = new Date(d.getFullYear(), d.getMonth()+1, 1);
     }
     return out;
   }
-  const upcomingMonths = getUpcomingMonths(2026, 12);
+  const upcomingMonths = getUpcomingMonths(5);
   let selectedMonth = upcomingMonths[0] || null;
 
   function renderMonthDropdown(){
@@ -1494,7 +1497,7 @@
     const phone = selectedCountry.code + phoneInput.value.trim();
     const email = emailInput.value.trim();
     const preferredMonth = selectedMonth ? selectedMonth.value : '';
-    const monthLabel = selectedMonth ? selectedMonth.label : '';
+    const monthLabel = selectedMonth ? selectedMonth.fullLabel : '';
     wlNotifyBtn.disabled = true;
     wlNotifyBtn.textContent = 'Submitting...';
     wlNotifyError.textContent = '';
@@ -1524,7 +1527,8 @@
   const cdMins = document.getElementById('cd-mins');
   const cdSecs = document.getElementById('cd-secs');
   function updateCountdown(){
-    if (!countdownEnabled || !workshopDateTime){
+    const bookingClosed = participantMax === 0 || !!(bookingCutoff && new Date() >= bookingCutoff);
+    if (!countdownEnabled || !workshopDateTime || bookingClosed){
       countdownEl.style.display = 'none';
     } else {
       const diff = workshopDateTime - new Date();
