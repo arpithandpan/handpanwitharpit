@@ -142,7 +142,7 @@
 <section class="section" id="upcoming">
   <div class="section-header"><h2 class="section-title">Upcoming <em>Workshops</em></h2></div>
 
-  <div class="workshop-card" data-ws="WS-005" data-date="2026-07-05" data-end="17:30">
+  <div class="workshop-card" data-ws="WS-005" data-date="2026-07-05">
     <div class="workshop-card-header">
       <div class="wc-date"><span class="wc-day">05</span><span class="wc-month">Jul 2026</span></div>
       <div>
@@ -359,7 +359,7 @@
   </div>
   <div class="footer-bottom">
     <p>© 2026 Arpit Pandey</p>
-    <p style="margin-top:0.4rem;font-size:0.8rem;letter-spacing:0.04em;color:var(--text-light);">v1 · 06 Jul 2026</p>
+    <p style="margin-top:0.4rem;font-size:0.8rem;letter-spacing:0.04em;color:var(--text-light);">v2 · 07 Jul 2026</p>
   </div>
 </footer>
 
@@ -391,13 +391,13 @@
   function processCard(card) {
     var ws = card.getAttribute('data-ws');
     var date = card.getAttribute('data-date');
-    var end = card.getAttribute('data-end') || '23:59';
     if (!ws || !date) return;
     var now = new Date();
+    var dayStart = istDate(date, '00:00');
 
-    if (now > istDate(date, end)) { card.style.display = 'none'; return; }
+    if (now >= new Date(dayStart.getTime() + 86400000)) { card.style.display = 'none'; return; }
 
-    if (now >= istDate(date, '00:00')) {
+    if (now >= dayStart) {
       setBadge(card, 'full', 'Booking closed');
       setPill(card, 'Booking closed');
       return;
