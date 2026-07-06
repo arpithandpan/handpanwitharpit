@@ -273,13 +273,25 @@
 
   .waitlist-prompt{ display:flex; flex-direction:column; gap:10px; }
   .waitlist-prompt-text{ font-size:15px; color:var(--text-mid); line-height:1.6; }
-  .soldout-badge{
-    display:inline-flex; align-items:center; font-size:15px; font-weight:600;
-    padding:7px 16px; border-radius:20px; margin-bottom:1.1rem;
+  .soldout-panel{
+    display:flex; gap:16px; align-items:flex-start;
+    border-radius:12px; padding:20px 22px; margin-bottom:1.5rem;
+    border:1px solid transparent;
   }
-  .soldout-badge.soldout-grey{ background:#E5DCCF; color:var(--text-mid); }
-  .soldout-badge.soldout-red{ background:#B43C28; color:var(--cream); }
-  .soldout-message{ font-size:16px; color:var(--text-mid); line-height:1.65; margin-bottom:0; }
+  .soldout-panel.soldout-red{ background:#F5DAD2; border-color:#ECC7BC; }
+  .soldout-panel.soldout-grey{ background:#ECE6DC; border-color:#DED6C7; }
+  .soldout-icon{
+    width:46px; height:46px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; color:var(--cream);
+  }
+  .soldout-panel.soldout-red .soldout-icon{ background:#BC6A4C; }
+  .soldout-panel.soldout-grey .soldout-icon{ background:#A99C8A; }
+  .soldout-title{
+    font-family:'Fraunces', serif; font-size:1.35rem; font-weight:400;
+    color:var(--bark); margin:2px 0 5px;
+  }
+  .soldout-message{ font-size:15px; color:var(--text-mid); line-height:1.6; margin:0; }
   .waitlist-prompt-row{ display:flex; gap:10px; flex-wrap:wrap; }
   .month-select-wrap{ position:relative; flex:1; min-width:140px; }
   .month-select{
@@ -623,8 +635,13 @@
 
     <div class="form-card">
       <div class="booking-soldout-header" id="booking-soldout-header" style="display:none;">
-        <span class="soldout-badge" id="soldout-badge">Booking closed</span>
-        <p class="soldout-message" id="soldout-message"></p>
+        <div class="soldout-panel soldout-red" id="soldout-panel">
+          <div class="soldout-icon" id="soldout-icon"><i class="ti ti-calendar-off" aria-hidden="true"></i></div>
+          <div class="soldout-body">
+            <p class="soldout-title" id="soldout-badge">Booking closed</p>
+            <p class="soldout-message" id="soldout-message"></p>
+          </div>
+        </div>
       </div>
 
       <p class="label" id="details-label">Your details</p>
@@ -878,6 +895,8 @@
   const bookingSoldoutHeader = document.getElementById('booking-soldout-header');
   const bookingSoldoutFooter = document.getElementById('booking-soldout-footer');
   const soldoutBadge = document.getElementById('soldout-badge');
+  const soldoutPanel = document.getElementById('soldout-panel');
+  const soldoutIcon = document.getElementById('soldout-icon');
   const soldoutMessage = document.getElementById('soldout-message');
   const bookingUnavailable = document.getElementById('booking-unavailable');
   const bookingSuccess = document.getElementById('booking-success');
@@ -1286,10 +1305,12 @@
       emailInput.placeholder = 'Email (optional)';
       if (pastCutoff){
         soldoutBadge.textContent = 'Booking closed';
-        soldoutBadge.className = 'soldout-badge soldout-red';
+        soldoutPanel.className = 'soldout-panel soldout-red';
+        soldoutIcon.innerHTML = '<i class="ti ti-calendar-off" aria-hidden="true"></i>';
       } else {
         soldoutBadge.textContent = 'All slots booked';
-        soldoutBadge.className = 'soldout-badge soldout-grey';
+        soldoutPanel.className = 'soldout-panel soldout-grey';
+        soldoutIcon.innerHTML = '<i class="ti ti-users" aria-hidden="true"></i>';
       }
       if (pastCutoff && participantMax > 0){
         soldoutMessage.textContent = "Bookings for this session have closed. Let us know which month works for you, and we'll reach out for the next one.";
