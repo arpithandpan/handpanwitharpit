@@ -160,6 +160,9 @@
 .w-title { font-family: var(--font-body); font-size: 1.35rem; font-weight: 400; color: var(--bark); margin-bottom: 0.4rem; }
 .w-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: baseline; }
 .w-meta span { font-size: 1rem; color: var(--text-light); }
+.w-counts { font-size: 0.98rem; color: var(--text-mid); margin-top: 0.55rem; }
+.w-counts .w-dim { color: var(--text-light); }
+.w-pill-off { font-size:1rem; font-weight:500; cursor:not-allowed; white-space:nowrap; color:var(--text-light); border:1.5px solid var(--clay-pale); padding:calc(0.79rem - 1.5px) 2rem; border-radius:40px; display:inline-block; letter-spacing:0.08em; text-transform:none; }
 .w-meta span + span::before { content: none; }
 .w-action { text-align: right; flex-shrink: 0; }
 .spots-badge {
@@ -449,9 +452,9 @@
     <a href="pages/workshops.html" class="section-link">All workshops →</a>
   </div>
   <div class="workshop-rows">
-    <div class="workshop-row">
+    <div class="workshop-row" data-ws="WS-005" data-date="2026-07-05" data-end="17:30">
       <div class="w-date"><span class="w-day">05</span><span class="w-month">Jul 2026</span></div>
-      <div><span class="spots-badge">Bookings open</span><p class="w-title">Finding Your Still Sound</p><div class="w-meta"><span>Creative Bloom, Haralur, Bengaluru · 2 hours · Beginner</span></div></div>
+      <div><span class="spots-badge">Bookings open</span><p class="w-title">Finding Your Still Sound</p><div class="w-meta"><span>Creative Bloom, Haralur, Bengaluru · 2 hours · Beginner</span></div><p class="w-counts" hidden></p></div>
       <div class="w-action"><a href="/pages/book?ws=WS-005" class="btn-primary" style="font-size:1rem;padding:0.79rem 2rem;">Book now</a></div>
     </div>
     <div class="workshop-row">
@@ -570,6 +573,7 @@
   </div>
   <div class="footer-bottom">
     <p>© 2026 Arpit Pandey</p>
+    <p style="margin-top:0.4rem;font-size:0.8rem;letter-spacing:0.04em;color:var(--text-light);">v1 · 06 Jul 2026</p>
   </div>
 </footer>
 
@@ -582,6 +586,76 @@ function toggleClass(el) {
   body.classList.toggle('open');
   toggle.textContent = isOpen ? '+ See details' : '− Hide details';
 }
+</script>
+<script>
+(function () {
+  var API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
+  var LOW_SEATS = 2;
+
+  function istDate(d, t) { return new Date(d + 'T' + t + '+05:30'); }
+  function setPill(row, text) {
+    var a = row.querySelector('.w-action');
+    if (a) a.innerHTML = '<span class="w-pill-off">' + text + '</span>';
+  }
+  function setBadge(row, cls, text) {
+    var b = row.querySelector('.spots-badge');
+    if (!b) return;
+    b.className = cls;
+    b.textContent = text;
+  }
+  function showCounts(row, html) {
+    var el = row.querySelector('.w-counts');
+    if (!el) return;
+    el.innerHTML = html;
+    el.hidden = false;
+  }
+  function processRow(row) {
+    var ws = row.getAttribute('data-ws');
+    var date = row.getAttribute('data-date');
+    var end = row.getAttribute('data-end') || '23:59';
+    if (!ws || !date) return;
+    var now = new Date();
+
+    if (now > istDate(date, end)) { row.style.display = 'none'; return; }
+
+    if (now >= istDate(date, '00:00')) {
+      setBadge(row, 'spots-badge full', 'Booking closed');
+      setPill(row, 'Booking closed');
+      return;
+    }
+
+    fetch(API_BASE + '/api/workshop/' + encodeURIComponent(ws) + '/availability')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data) return;
+        var pn = Number(data.participantsRemaining);
+        var on = Number(data.observersRemaining);
+        if (isNaN(pn)) return;
+
+        if (pn <= 0) {
+          setBadge(row, 'spots-badge full', 'Slots full');
+          setPill(row, 'Slots full');
+          return;
+        }
+
+        if (pn <= LOW_SEATS) {
+          setBadge(row, 'spots-badge few', 'Only ' + pn + (pn === 1 ? ' spot left' : ' spots left'));
+        } else {
+          setBadge(row, 'spots-badge', 'Bookings open');
+        }
+
+        var line = pn + ' participant ' + (pn === 1 ? 'spot' : 'spots') + ' left';
+        if (!isNaN(on)) {
+          line += (on > 0)
+            ? ' <span class="w-dim">\u00b7</span> ' + on + ' audience ' + (on === 1 ? 'pass' : 'passes') + ' left'
+            : ' <span class="w-dim">\u00b7 audience full</span>';
+        }
+        showCounts(row, line);
+      })
+      .catch(function () {});
+  }
+  document.querySelectorAll('.workshop-row[data-ws]').forEach(processRow);
+})();
 </script>
 </body>
 </html>
