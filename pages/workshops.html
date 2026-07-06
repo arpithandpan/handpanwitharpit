@@ -38,6 +38,9 @@
 .wc-title { font-family: var(--font-body); font-size: 1.5rem; font-weight: 400; color: var(--bark); margin-bottom: 0.5rem; }
 .wc-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; }
 .wc-meta span { font-size: 1rem; color: var(--text-light); }
+.wc-counts { font-size: 0.98rem; color: var(--text-mid); margin-top: 0.6rem; }
+.wc-counts .wc-dim { color: var(--text-light); }
+.wc-pill-off { font-size:1rem; font-weight:500; padding:calc(0.79rem - 1.5px) 2.6rem; display:inline-block; cursor:not-allowed; color:var(--text-light); border:1.5px solid var(--clay-pale); border-radius:40px; letter-spacing:0.08em; text-transform:none; }
 .wc-action { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.8rem; }
 .wc-price { font-family: var(--font-body); font-size: 1.5rem; font-weight: 400; color: var(--bark); display: block; margin-bottom: 0.5rem; }
 
@@ -139,7 +142,7 @@
 <section class="section" id="upcoming">
   <div class="section-header"><h2 class="section-title">Upcoming <em>Workshops</em></h2></div>
 
-  <div class="workshop-card">
+  <div class="workshop-card" data-ws="WS-005" data-date="2026-07-05" data-end="17:30">
     <div class="workshop-card-header">
       <div class="wc-date"><span class="wc-day">05</span><span class="wc-month">Jul 2026</span></div>
       <div>
@@ -148,6 +151,7 @@
         <div class="wc-meta">
           <span>Creative Bloom, Haralur, Bengaluru · 2 hours · Beginner</span>
         </div>
+        <p class="wc-counts" hidden></p>
       </div>
       <div class="wc-action">
         <a href="/pages/book?ws=WS-005" class="btn-primary">Book now</a>
@@ -350,5 +354,77 @@
 </footer>
 
 <script src="../js/main.js"></script>
+<script>
+(function () {
+  var API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
+  var LOW_SEATS = 2;
+
+  function istDate(dateStr, timeStr) {
+    return new Date(dateStr + 'T' + timeStr + '+05:30');
+  }
+  function setPill(card, text) {
+    var a = card.querySelector('.wc-action');
+    if (a) a.innerHTML = '<span class="wc-pill-off">' + text + '</span>';
+  }
+  function setBadge(card, cls, text) {
+    var b = card.querySelector('.wc-badge');
+    if (!b) return;
+    b.className = 'wc-badge ' + cls;
+    b.textContent = text;
+  }
+  function showCounts(card, html) {
+    var el = card.querySelector('.wc-counts');
+    if (!el) return;
+    el.innerHTML = html;
+    el.hidden = false;
+  }
+  function processCard(card) {
+    var ws = card.getAttribute('data-ws');
+    var date = card.getAttribute('data-date');
+    var end = card.getAttribute('data-end') || '23:59';
+    if (!ws || !date) return;
+    var now = new Date();
+
+    if (now > istDate(date, end)) { card.style.display = 'none'; return; }
+
+    if (now >= istDate(date, '00:00')) {
+      setBadge(card, 'full', 'Booking closed');
+      setPill(card, 'Booking closed');
+      return;
+    }
+
+    fetch(API_BASE + '/api/workshop/' + encodeURIComponent(ws) + '/availability')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data) return;
+        var p = Number(data.participantsRemaining);
+        var o = Number(data.observersRemaining);
+        if (isNaN(p)) return;
+
+        if (p <= 0) {
+          setBadge(card, 'full', 'Slots full');
+          setPill(card, 'Slots full');
+          return;
+        }
+
+        if (p <= LOW_SEATS) {
+          setBadge(card, 'few', 'Only ' + p + (p === 1 ? ' spot left' : ' spots left'));
+        } else {
+          setBadge(card, 'open', 'Bookings open');
+        }
+
+        var line = p + ' participant ' + (p === 1 ? 'spot' : 'spots') + ' left';
+        if (!isNaN(o)) {
+          line += (o > 0)
+            ? ' <span class="wc-dim">\u00b7</span> ' + o + ' audience ' + (o === 1 ? 'pass' : 'passes') + ' left'
+            : ' <span class="wc-dim">\u00b7 audience full</span>';
+        }
+        showCounts(card, line);
+      })
+      .catch(function () {});
+  }
+  document.querySelectorAll('.workshop-card[data-ws]').forEach(processCard);
+})();
+</script>
 </body>
 </html>
