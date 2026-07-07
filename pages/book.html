@@ -670,7 +670,7 @@
         </div>
 
         <div class="field-group">
-          <input type="email" id="email" placeholder="Email (optional)" autocomplete="email"/>
+          <input type="email" id="email" placeholder="Email" autocomplete="email" aria-required="true"/>
           <p class="field-error" id="email-error"></p>
         </div>
       </div>
@@ -762,7 +762,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:#B4A290;letter-spacing:0.03em;">(v2)</span>
   </footer>
 
 </div>
@@ -1095,13 +1095,13 @@
   }
   function validateEmail(){
     const val = emailInput.value.trim();
-    // Email is always optional — blank passes, but a typed value must be valid.
+    // Email is required for a booking. The waitlist opt-in skips this validator.
     if (!val){
-      setError(emailInput, emailError, '');
-      return true;
+      setError(emailInput, emailError, 'Please enter your email.');
+      return false;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){
-      setError(emailInput, emailError, 'Please enter a valid email, or leave it blank.');
+      setError(emailInput, emailError, 'Please enter a valid email.');
       return false;
     }
     setError(emailInput, emailError, '');
@@ -1327,7 +1327,7 @@
       bookingSoldoutHeader.style.display = 'none';
       bookingSoldoutFooter.style.display = 'none';
       phoneHint.textContent = "We'll send your booking confirmation and updates to this number on WhatsApp.";
-      emailInput.placeholder = 'Email (optional)';
+      emailInput.placeholder = 'Email';
     }
 
     pCountEl.textContent = pCount;
