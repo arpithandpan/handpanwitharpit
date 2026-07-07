@@ -662,6 +662,33 @@ body { overflow-x: clip; max-width: 100vw; }
 .stat-value.clay { color: var(--clay); }
 .stat-sub { font-size: 1.15rem; color: var(--text-light); margin-top: 0.4rem; }
 
+/* ── Expandable stat detail (money splits) ── */
+#overviewStats { align-items: start; }
+.stat-card.expandable .stat-head { cursor: pointer; }
+.stat-chev { float: right; color: var(--text-light); transition: transform 0.25s ease; margin-top: 4px; }
+.stat-card.open .stat-chev { transform: rotate(180deg); }
+.stat-card.expandable:hover .stat-chev { color: var(--clay); }
+.stat-detail { max-height: 0; overflow: hidden; transition: max-height 0.32s ease; }
+.stat-card.open .stat-detail { max-height: 640px; }
+.stat-detail-inner { margin-top: 1.25rem; padding-top: 1.1rem; border-top: 1px solid var(--clay-pale); }
+.sd-row { margin-bottom: 0.9rem; }
+.sd-row:last-child { margin-bottom: 0; }
+.sd-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem; gap: 0.75rem; }
+.sd-name { font-size: 0.92rem; color: var(--bark); }
+.sd-name .sd-sub { color: var(--text-light); font-size: 0.78rem; margin-left: 0.35rem; }
+.sd-amt { font-size: 0.95rem; color: var(--bark); font-weight: 500; white-space: nowrap; }
+.sd-bar { height: 5px; border-radius: 3px; background: rgba(184,114,42,0.12); overflow: hidden; }
+.sd-fill { height: 100%; border-radius: 3px; }
+.sd-row.deduct .sd-name, .sd-row.deduct .sd-amt { color: var(--text-light); }
+.sd-row.deduct .sd-amt { color: #b43c28; }
+.sd-foot { margin-top: 1.1rem; padding-top: 0.9rem; border-top: 1px solid var(--clay-pale); display: flex; justify-content: space-between; align-items: baseline; }
+.sd-foot .l { font-size: 0.9rem; color: var(--text-light); }
+.sd-foot .r { font-size: 1.15rem; font-weight: 600; }
+.sd-foot .r.clay { color: var(--clay); }
+.sd-foot .r.green { color: var(--moss); }
+.sd-foot .r.plain { color: var(--bark); }
+.sd-empty { font-size: 0.85rem; color: var(--text-light); padding: 0.25rem 0; }
+
 /* Tables */
 .dash-table-wrap { background: white; border: 1px solid var(--clay-pale); border-radius: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; max-width: 100%; box-sizing: border-box; }
 td { white-space: nowrap; vertical-align: middle; }
@@ -1609,6 +1636,15 @@ body.dark-mode .stat-value { color: #e8d5c0; }
 body.dark-mode .stat-value.green { color: #8aaa6e; }
 body.dark-mode .stat-value.clay { color: #c8935a; }
 body.dark-mode .stat-sub { color: #9a7d63; }
+body.dark-mode .stat-detail-inner, body.dark-mode .sd-foot { border-top-color: rgba(200,147,90,0.16); }
+body.dark-mode .sd-name, body.dark-mode .sd-amt { color: #e8d5c0; }
+body.dark-mode .sd-bar { background: rgba(200,147,90,0.1); }
+body.dark-mode .sd-name .sd-sub, body.dark-mode .sd-foot .l, body.dark-mode .sd-empty, body.dark-mode .stat-chev { color: #9a7d63; }
+body.dark-mode .sd-row.deduct .sd-name, body.dark-mode .sd-row.deduct .sd-amt { color: #9a7d63; }
+body.dark-mode .sd-row.deduct .sd-amt { color: #c77b5e; }
+body.dark-mode .sd-foot .r.plain { color: #e8d5c0; }
+body.dark-mode .sd-foot .r.green { color: #8aaa6e; }
+body.dark-mode .sd-foot .r.clay { color: #c8935a; }
 body.dark-mode .m-card { background: #231c16; border-color: rgba(200,147,90,0.22); box-shadow: none; }
 body.dark-mode .m-card-title { color: #e8d5c0; border-bottom-color: rgba(200,147,90,0.15); }
 body.dark-mode .m-card-label { color: #7a6354; }
@@ -2620,9 +2656,9 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <div id="allStatsWrap" style="display:contents;">
       <div class="stats-grid" id="overviewStats">
-        <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value clay" id="stat-revenue">—</div><div class="stat-sub">All time</div></div>
-        <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" id="stat-expenses">—</div><div class="stat-sub">All time</div></div>
-        <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="stat-profit">—</div><div class="stat-sub">All time</div></div>
+        <div class="stat-card expandable" id="card-revenue"><div class="stat-head" onclick="toggleStatCard('card-revenue')"><svg class="stat-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><div class="stat-label">Total Revenue</div><div class="stat-value clay" id="stat-revenue">—</div><div class="stat-sub">All time</div></div><div class="stat-detail"><div class="stat-detail-inner" id="rev-split"></div></div></div>
+        <div class="stat-card expandable" id="card-expenses"><div class="stat-head" onclick="toggleStatCard('card-expenses')"><svg class="stat-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><div class="stat-label">Total Expenses</div><div class="stat-value" id="stat-expenses">—</div><div class="stat-sub">All time</div></div><div class="stat-detail"><div class="stat-detail-inner" id="exp-split"></div></div></div>
+        <div class="stat-card expandable" id="card-profit"><div class="stat-head" onclick="toggleStatCard('card-profit')"><svg class="stat-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><div class="stat-label">Net Profit</div><div class="stat-value green" id="stat-profit">—</div><div class="stat-sub">All time</div></div><div class="stat-detail"><div class="stat-detail-inner" id="profit-split"></div></div></div>
         <div class="stat-card"><div class="stat-label">Workshops</div><div class="stat-value" id="stat-workshops">—</div><div class="stat-sub" style="margin-bottom:0.6rem;">Completed</div><div style="border-top:0.5px solid rgba(200,147,90,0.16);padding-top:0.55rem;"><div class="stat-label" style="margin-bottom:0.15rem;">Upcoming</div><div id="stat-upcoming" style="font-size:0.95rem;font-weight:600;color:var(--moss);line-height:1.35;">—</div></div></div>
       </div>
       <div class="stats-grid">
@@ -5102,6 +5138,11 @@ function getUpcomingMonths(count = 12) {
 }
 
 // ── OVERVIEW ──
+function toggleStatCard(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
 async function loadOverview() {
   try {
     let ws, pays, stus, lds, parts;
@@ -5120,6 +5161,61 @@ async function loadOverview() {
     document.getElementById('stat-revenue').textContent = fmt(income);
     document.getElementById('stat-expenses').textContent = fmt(expense);
     document.getElementById('stat-profit').textContent = fmt(income - expense);
+
+    // ── Money detail: revenue by source, expenses by category, profit by source ──
+    (function renderMoneySplits(){
+      const inc = pays.filter(p => p.type === 'income');
+      const exp = pays.filter(p => p.type === 'expense');
+      const sum = arr => arr.reduce((s,p) => s + Number(p.amount || 0), 0);
+      const clampPct = p => Math.max(0, Math.min(100, p || 0));
+      const CAT_LABELS = { venue:'Venue rent', handpan_rental:'Handpan rental', porter:'Porter / delivery', misc:'Misc', marketing:'Marketing / ads', equipment:'Gear / equipment', maintenance:'Maintenance', accessories:'Accessories', travel:'Travel', workshop:'Workshops', class:'Classes', classes:'Classes', gig:'Gigs', sale:'Miscellaneous' };
+      const prettify = c => CAT_LABELS[c] || (c ? c.replace(/_/g,' ').replace(/\b\w/g, m => m.toUpperCase()) : 'Uncategorised');
+      const sdRow = (name, sub, val, pct, color) => `<div class="sd-row"><div class="sd-top"><span class="sd-name">${name}${sub?`<span class="sd-sub">${sub}</span>`:''}</span><span class="sd-amt">${fmt(val)}</span></div><div class="sd-bar"><div class="sd-fill" style="width:${clampPct(pct)}%;background:${color}"></div></div></div>`;
+      const sdDeduct = (name, sub, val, pct) => `<div class="sd-row deduct"><div class="sd-top"><span class="sd-name">${name}${sub?`<span class="sd-sub">${sub}</span>`:''}</span><span class="sd-amt">\u2212 ${fmt(val)}</span></div><div class="sd-bar"><div class="sd-fill" style="width:${clampPct(pct)}%;background:rgba(199,123,94,0.55)"></div></div></div>`;
+      const sdFoot = (label, val, cls) => `<div class="sd-foot"><span class="l">${label}</span><span class="r ${cls}">${fmt(val)}</span></div>`;
+
+      // Revenue by source
+      const wsInc = sum(inc.filter(p => p.category === 'workshop'));
+      const classInc = sum(inc.filter(p => p.category === 'class' || p.category === 'classes'));
+      const othersInc = income - wsInc - classInc;
+      const revEl = document.getElementById('rev-split');
+      if (revEl) revEl.innerHTML = income > 0
+        ? sdRow('Workshops', income ? Math.round(wsInc/income*100)+'%' : '', wsInc, wsInc/income*100, '#c8935a')
+          + sdRow('Classes', income ? Math.round(classInc/income*100)+'%' : '', classInc, classInc/income*100, '#8aaa6e')
+          + sdRow('Others', 'gigs, misc', othersInc, othersInc/income*100, '#9a7d63')
+          + sdFoot('Total in', income, 'clay')
+        : '<div class="sd-empty">No income recorded yet.</div>';
+
+      // Expenses by category
+      const expEl = document.getElementById('exp-split');
+      if (expEl) {
+        const byCat = {};
+        exp.forEach(p => { const c = p.category || 'uncategorised'; byCat[c] = (byCat[c] || 0) + Number(p.amount || 0); });
+        const entries = Object.entries(byCat).sort((a,b) => b[1] - a[1]);
+        const maxC = entries.length ? entries[0][1] : 0;
+        expEl.innerHTML = entries.length
+          ? entries.map(([c,v]) => sdRow(prettify(c), '', v, maxC ? v/maxC*100 : 0, '#c8935a')).join('') + sdFoot('Total out', expense, 'plain')
+          : '<div class="sd-empty">No expenses recorded yet.</div>';
+      }
+
+      // Net profit by source (shared costs = honest remainder, so it always reconciles)
+      const profitEl = document.getElementById('profit-split');
+      if (profitEl) {
+        const wsCost = sum(exp.filter(p => ['venue','handpan_rental','porter'].includes(p.category)));
+        const classCost = sum(exp.filter(p => p.category === 'class' || p.category === 'classes'));
+        const othersCost = sum(exp.filter(p => ['gig','sale'].includes(p.category)));
+        const sharedCost = expense - wsCost - classCost - othersCost;
+        const wsProfit = wsInc - wsCost, classProfit = classInc - classCost, othersProfit = othersInc - othersCost;
+        const net = income - expense;
+        const scale = Math.max(wsProfit, classProfit, othersProfit, sharedCost, 1);
+        profitEl.innerHTML =
+            sdRow('Workshops', 'after direct costs', wsProfit, wsProfit/scale*100, '#c8935a')
+          + sdRow('Classes', '', classProfit, classProfit/scale*100, '#8aaa6e')
+          + sdRow('Others', 'gigs, misc', othersProfit, othersProfit/scale*100, '#9a7d63')
+          + sdDeduct('Shared costs', 'not tied to one stream', sharedCost, sharedCost/scale*100)
+          + sdFoot('Net profit', net, 'green');
+      }
+    })();
     // Workshops: completed = date already passed (whole day); upcoming = next future-dated workshop
     (function(){
       const today = new Date(); today.setHours(0,0,0,0);
