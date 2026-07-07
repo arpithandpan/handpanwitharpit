@@ -5198,10 +5198,13 @@ async function loadOverview() {
           : '<div class="sd-empty">No expenses recorded yet.</div>';
       }
 
-      // Net profit by source (shared costs = honest remainder, so it always reconciles)
+      // Net profit by source. Workshop costs include misc (workshop snacks/misc),
+      // so this line matches the per-workshop profit in the Workshops table. Shared
+      // costs are the honest remainder (marketing, gear, travel) and only show when
+      // there actually are some, so the whole thing still reconciles to net profit.
       const profitEl = document.getElementById('profit-split');
       if (profitEl) {
-        const wsCost = sum(exp.filter(p => ['venue','handpan_rental','porter'].includes(p.category)));
+        const wsCost = sum(exp.filter(p => ['venue','handpan_rental','porter','misc'].includes(p.category)));
         const classCost = sum(exp.filter(p => p.category === 'class' || p.category === 'classes'));
         const othersCost = sum(exp.filter(p => ['gig','sale'].includes(p.category)));
         const sharedCost = expense - wsCost - classCost - othersCost;
@@ -5212,7 +5215,7 @@ async function loadOverview() {
             sdRow('Workshops', 'after its own costs', wsProfit, wsProfit/scale*100, '#c8935a')
           + sdRow('Classes', 'no direct costs', classProfit, classProfit/scale*100, '#8aaa6e')
           + sdRow('Others', 'gigs and misc', othersProfit, othersProfit/scale*100, '#9a7d63')
-          + sdDeduct('Shared costs', 'shared, not per stream', sharedCost, sharedCost/scale*100)
+          + (Math.round(sharedCost) !== 0 ? sdDeduct('Shared costs', 'shared, not per stream', sharedCost, sharedCost/scale*100) : '')
           + sdFoot('Net profit', net, 'green');
       }
     })();
