@@ -762,7 +762,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:#B4A290;letter-spacing:0.03em;">(v2)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:#B4A290;letter-spacing:0.03em;">(v4)</span>
   </footer>
 
 </div>
@@ -1301,7 +1301,7 @@
       bookingSoldoutHeader.style.display = '';
       bookingSoldoutFooter.style.display = '';
       phoneHint.textContent = "We'll reach out to this number on WhatsApp when a new workshop opens.";
-      emailInput.placeholder = 'Email (optional)';
+      emailInput.placeholder = 'Email';
       if (pastCutoff){
         soldoutBadge.textContent = 'Booking closed';
         soldoutPanel.className = 'soldout-panel soldout-red';
@@ -1509,11 +1509,12 @@
   // Shown in place of the participant stepper once participant slots are
   // sold out. Reuses the same name/phone/email fields and validators as the
   // main booking form below — no duplicate inputs — and only needs name +
-  // phone to be filled in (email stays optional, matching the server).
+  // phone and email to be filled in.
   wlNotifyBtn.addEventListener('click', async () => {
     const nameValid = validateName();
     const phoneValid = validatePhone();
-    if (!nameValid || !phoneValid){
+    const emailValid = validateEmail();
+    if (!nameValid || !phoneValid || !emailValid){
       const firstInvalid = document.querySelector('.form-card input.invalid');
       if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
