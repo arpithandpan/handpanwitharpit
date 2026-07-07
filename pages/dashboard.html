@@ -5577,8 +5577,10 @@ async function loadPayments() {
     window._totalCounts.payments = pays.length;
     const paysCountEl = document.getElementById('paymentsCount');
     if (paysCountEl) paysCountEl.textContent = pays.length + ' payment' + (pays.length !== 1 ? 's' : '') + ' total';
-    const income = pays.filter(p=>p.type==='income').reduce((s,p)=>s+Number(p.amount),0);
-    const expense = pays.filter(p=>p.type==='expense').reduce((s,p)=>s+Number(p.amount),0);
+    // Summary reflects live money only. Deleted (archived) rows can be shown in
+    // the list via the toggle, but they must never count toward these totals.
+    const income = pays.filter(p=>p.type==='income' && !p.archived).reduce((s,p)=>s+Number(p.amount),0);
+    const expense = pays.filter(p=>p.type==='expense' && !p.archived).reduce((s,p)=>s+Number(p.amount),0);
     document.getElementById('payTotalIncome').textContent = fmt(income);
     document.getElementById('payTotalExpenses').textContent = fmt(expense);
     document.getElementById('payNetProfit').textContent = fmt(income-expense);
