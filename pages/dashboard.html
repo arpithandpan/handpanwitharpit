@@ -2590,9 +2590,9 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v43</span>
+        <span style="color:var(--clay);font-weight:500;">v44</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
-        <span>15 Jul 2026</span>
+        <span>5 Aug 2026</span>
       </div>
     </div>
   </div>
@@ -2658,9 +2658,9 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v43</span>
+        <span style="color:var(--clay);font-weight:500;">v44</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
-        <span>15 Jul 2026</span>
+        <span>5 Aug 2026</span>
       </div>
     </div>
   </aside>
@@ -3585,6 +3585,25 @@ table#paymentsTable { min-width: 700px; }
       <select class="form-input" id="assign-page-student-select">
         <option value="">Loading students...</option>
       </select>
+      <div id="assign-page-student-hint" style="display:none;font-size:0.8rem;color:var(--clay);margin-top:0.4rem;"></div>
+    </div>
+    <div class="form-row" id="assign-page-fee-wrap" style="display:none;">
+      <div class="form-group"><label class="form-label">Month</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <select class="form-input" id="assign-page-month-m">
+            <option value="01">January</option><option value="02">February</option>
+            <option value="03">March</option><option value="04">April</option>
+            <option value="05">May</option><option value="06">June</option>
+            <option value="07">July</option><option value="08">August</option>
+            <option value="09">September</option><option value="10">October</option>
+            <option value="11">November</option><option value="12">December</option>
+          </select>
+          <select class="form-input" id="assign-page-month-y">
+            <option value="2024">2024</option><option value="2025">2025</option>
+            <option value="2026">2026</option><option value="2027">2027</option>
+          </select>
+        </div></div>
+      <div class="form-group"><label class="form-label">Classes Paid</label><input type="number" class="form-input" id="assign-page-classes" placeholder="0" min="0"/></div>
     </div>
     <div class="form-group">
       <label class="form-label">Notes (Optional)</label>
@@ -3989,6 +4008,7 @@ table#paymentsTable { min-width: 700px; }
       <div class="form-group"><label class="form-label">Monthly Fee (₹)</label><input type="number" class="form-input" id="stu-fee" placeholder="0"/></div>
       <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" id="stu-start"/></div>
     </div>
+    <div class="form-group"><label class="form-label">Payer Name (if someone else pays)</label><input type="text" class="form-input" id="stu-payer" placeholder="e.g. Anurag" maxlength="80"/></div>
     <div class="form-group">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
         <label class="form-label" style="margin-bottom:0;">Description</label>
@@ -4034,6 +4054,10 @@ table#paymentsTable { min-width: 700px; }
           <option value="Razorpay UPI">Razorpay UPI</option><option value="UPI">UPI</option>
           <option value="Cash">Cash</option><option value="Other">Other</option>
         </select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Classes Paid</label><input type="number" class="form-input" id="fee-classes" placeholder="0" min="0"/></div>
+      <div class="form-group"><label class="form-label">Payment Date</label><input type="date" class="form-input" id="fee-date"/></div>
     </div>
     <div class="form-group">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
@@ -5579,6 +5603,30 @@ async function loadStudents() {
     if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Level</span><span class="m-card-val">${s.level||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Monthly Fee</span><span class="m-card-val">${s.monthly_fee ? fmt(s.monthly_fee) : '—'}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">${s.email||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${s.description||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${s.id}','${s.full_name}','student',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
   } catch(e) { console.warn('loadStudents error:', e.message); } finally { hideLoader(); }
 }
+function normMonth(m) {
+  if (!m) return '';
+  m = String(m).trim();
+  const mons = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  let mm = m.match(/^(\d{4})-(\d{1,2})$/);
+  if (mm) return mm[1] + '-' + String(parseInt(mm[2],10)).padStart(2,'0');
+  mm = m.match(/^([A-Za-z]{3,})[-\s](\d{4})$/);
+  if (mm) {
+    const i = mons.indexOf(mm[1].slice(0,3).toLowerCase());
+    if (i >= 0) return mm[2] + '-' + String(i+1).padStart(2,'0');
+  }
+  mm = m.match(/^(\d{1,2})-(\d{4})$/);
+  if (mm) return mm[2] + '-' + String(parseInt(mm[1],10)).padStart(2,'0');
+  return m;
+}
+async function nextFeePaymentId() {
+  const existing = await sbGetAll('fee_payments');
+  let max = 0;
+  (existing.data || []).forEach(r => {
+    const m = String(r.id || '').match(/^FP-(\d+)$/i);
+    if (m) { const n = parseInt(m[1], 10); if (n > max) max = n; }
+  });
+  return 'FP-' + String(max + 1).padStart(3, '0');
+}
 function fmtFeeMonth(m) {
   if (!m) return '—';
   m = String(m).trim();
@@ -5606,12 +5654,12 @@ async function loadFeePayments() {
     const adminFP = isAdmin();
     const PENCIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     populateFeeMonthDropdown(fps);
-    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${f.month||''}" data-mode="${f.payment_mode||''}" data-payment_date="${f.payment_date||''}" data-amount="${f.amount||0}"><td>${f.id}</td><td class="td-truncate td-name" data-tip="${feeStudentDisplay(f).replace(/"/g,'&quot;')}"><span style="font-weight:500;">${feeStudentDisplay(f)}</span></td><td>${fmtFeeMonth(f.month)}</td><td>${(Number(f.classes)>0)?f.classes:(Number(f.amount)>0?Math.round(Number(f.amount)/1000):0)}</td><td>${fmt(f.amount)}</td><td><span class="badge badge-clay">${f.payment_mode||'UPI'}</span></td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td class="td-truncate td-desc" data-tip="${(f.description||'').replace(/"/g,'&quot;')}">${f.description||'—'}</td><td class="ws-action-sticky">${adminFP?(f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap">${(f.paid && Number(f.amount)>0)?`<button class="icon-action-btn" data-tip="Create invoice" onclick="openInvoiceEditor({source:'fee_payments',id:'${f.id}'})"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"8\" y1=\"13\" x2=\"16\" y2=\"13\"/><line x1=\"8\" y1=\"17\" x2=\"13\" y2=\"17\"/></svg></button>`:''}<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('fee_payments','${f.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="10" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('feePaymentsTable').innerHTML = fps.map(f => `<tr class="${f.archived?'archived-row':''}" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${normMonth(f.month)}" data-mode="${f.payment_mode||''}" data-payment_date="${f.payment_date||''}" data-amount="${f.amount||0}"><td>${f.id}</td><td class="td-truncate td-name" data-tip="${feeStudentDisplay(f).replace(/"/g,'&quot;')}"><span style="font-weight:500;">${feeStudentDisplay(f)}</span></td><td>${fmtFeeMonth(f.month)}</td><td>${Number(f.classes)||0}</td><td>${fmt(f.amount)}</td><td><span class="badge badge-clay">${f.payment_mode||'UPI'}</span></td><td>${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</td><td>${fmtDate(f.payment_date)}</td><td class="td-truncate td-desc" data-tip="${(f.description||'').replace(/"/g,'&quot;')}">${f.description||'—'}</td><td class="ws-action-sticky">${adminFP?(f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap">${(f.paid && Number(f.amount)>0)?`<button class="icon-action-btn" data-tip="Create invoice" onclick="openInvoiceEditor({source:'fee_payments',id:'${f.id}'})"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"8\" y1=\"13\" x2=\"16\" y2=\"13\"/><line x1=\"8\" y1=\"17\" x2=\"13\" y2=\"17\"/></svg></button>`:''}<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('fee_payments','${f.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('fee_payments','${f.id}','${f.student_name} ${f.month}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="10" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.fee_payments}
     </td></tr>`;
     setSearchFilterVisibility('fee-payments', fps.length > 0);
     const fpCards = document.getElementById('feePaymentsCards');
-    if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${f.month||''}" data-mode="${f.payment_mode||''}"><div class="m-card-title">${feeStudentDisplay(f)} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${fmtFeeMonth(f.month)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmt(f.amount)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${f.description||'—'}</span></div><div style="padding-top:1rem;margin-top:0.75rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;justify-content:flex-end;align-items:center;">${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${f.id}','${(f.student_name||f.id).replace(/'/g,"\\'")}','fee_payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.fee_payments + '</div>';
+    if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${normMonth(f.month)}" data-mode="${f.payment_mode||''}"><div class="m-card-title">${feeStudentDisplay(f)} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${fmtFeeMonth(f.month)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmt(f.amount)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${f.description||'—'}</span></div><div style="padding-top:1rem;margin-top:0.75rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;justify-content:flex-end;align-items:center;">${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${f.id}','${(f.student_name||f.id).replace(/'/g,"\\'")}','fee_payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.fee_payments + '</div>';
   } catch(e) { showToast('Error loading fee payments', 'error'); } finally { hideLoader(); }
 }
 
@@ -6836,7 +6884,7 @@ async function saveStudent() {
   if (!(document.getElementById('stu-name').value || '').trim()) { markFieldError('stu-name'); showToast('Full name is required', 'error'); return; }
   if (!(document.getElementById('stu-phone').value || '').trim()) { markFieldError('stu-phone'); showToast('Phone number is required', 'error'); return; }
   try {
-    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:document.getElementById('stu-email').value||null, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, description:document.getElementById('stu-desc')?.value||null };
+    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:document.getElementById('stu-email').value||null, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, payer_name:(document.getElementById('stu-payer')?.value||'').trim()||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, description:document.getElementById('stu-desc')?.value||null };
     await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
   } catch(e) { console.error('saveStudent error:', e); showToast('Error: ' + (e.message || 'Save failed'), 'error'); }
 }
@@ -6846,10 +6894,7 @@ async function saveFeePayment() {
   if (!feeStudentVal || feeStudentVal === 'Loading students...') { markFieldError('fee-student'); showToast('Please select a student', 'error'); return; }
   if (!feeAmountVal || feeAmountVal <= 0) { markFieldError('fee-amount'); showToast('Amount must be greater than 0', 'error'); return; }
   try {
-    const existing = await sbGetAll('fee_payments');
-    const count = (existing.data || []).length;
-    const nextNum = String(count + 1).padStart(4, '0');
-    const id = 'FP-' + nextNum;
+    const id = await nextFeePaymentId();
     const _sid = document.getElementById('fee-student').value;
     let _sname = (_recordCache.students && _recordCache.students[_sid] && _recordCache.students[_sid].full_name) || '';
     if (!_sname) { const _se = document.getElementById('fee-student'); _sname = (_se && _se.selectedOptions && _se.selectedOptions[0]) ? _se.selectedOptions[0].text : ''; }
@@ -6860,11 +6905,11 @@ async function saveFeePayment() {
       student_name: _sname || null,
       month: (document.getElementById('fee-month-y').value || '2026') + '-' + (document.getElementById('fee-month-m').value || '01'),
       amount: parseFloat(document.getElementById('fee-amount').value) || 0,
+      classes: parseInt(document.getElementById('fee-classes')?.value, 10) || 0,
       payment_mode: document.getElementById('fee-mode').value,
       description: document.getElementById('fee-desc')?.value || null,
-      
       paid: true,
-      payment_date: new Date().toISOString().split('T')[0]
+      payment_date: (document.getElementById('fee-date')?.value || '') || new Date().toISOString().split('T')[0]
     };
     await sbPost('fee_payments', body);
     closeFormPage('addFeePayment');
@@ -8091,11 +8136,13 @@ function buildEditForm(entity, r) {
     ${row(sel('Status','stu-status',[['Active','Active'],['On Break','On Break'],['Completed','Completed']],r.status),
           fi('Start Date','stu-start','date',r.join_date))}
     ${row(fi('Monthly Fee (₹)','stu-fee','number',r.monthly_fee||0), sel('Level','stu-level',[['Beginner','Beginner'],['Intermediate','Intermediate'],['Advanced','Advanced']],r.level))}
+    ${fi('Payer Name','stu-payer','text',r.payer_name||'','maxlength="80"')}
     ${fi('Description','stu-desc','textarea',r.description)}
     ${row(readOnly('Classes', r.total_classes||0), readOnly('Total Paid', fmt(r.total_paid||0)))}`;
 
   if (entity === 'fee_payments') return `
     ${row(readOnly('FP ID', r.id), readOnly('Student', feeStudentDisplay(r)))}
+    ${row(fi('Month (YYYY-MM)','fee-month','text',normMonth(r.month),'placeholder="2026-08"'), fi('Classes Paid','fee-classes','number',Number(r.classes)||0))}
     ${row(fi('Amount (₹)','fee-amount','number',r.amount), sel('Payment Mode','fee-mode',[['Razorpay UPI','Razorpay UPI'],['UPI','UPI'],['Cash','Cash'],['Other','Other']],r.payment_mode))}
     ${row(fi('Payment Date','fee-date','date',r.payment_date), sel('Paid','fee-paid',[['true','Paid'],['false','Pending']],String(r.paid)))}
     ${fi('Description','fee-desc','textarea',r.description)}`;
@@ -8163,9 +8210,9 @@ async function saveEdit() {
         body = { full_name:g('par-name'), phone:getPhoneValue('ef-par-phone','ef-par-phone-cc')||null, email:g('par-email')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), bringing_own_handpan:g('par-handpan')||null, date:gd('par-date'), description:g('par-desc')||null };
       }
     } else if (_editEntity === 'students') {
-      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
+      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, payer_name:g('stu-payer')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
     } else if (_editEntity === 'fee_payments') {
-      body = { amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', description:g('fee-desc')||null };
+      body = { month:normMonth(g('fee-month'))||null, classes:gn('fee-classes')||0, amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', description:g('fee-desc')||null };
     } else if (_editEntity === 'payments') {
       body = { date:gd('pay-date'), amount:gn('pay-amount'), type:g('pay-type'), category:g('pay-category'), payment_mode:g('pay-mode'), payer_name:g('pay-name')||null, description:g('pay-desc')||null, reference_id:g('pay-ref')||null };
     } else if (_editEntity === 'leads') {
@@ -8940,8 +8987,8 @@ function populateFeeStudentDropdown(students) {
 function populateFeeMonthDropdown(feePayments) {
   const dd = _dd['fee-month'];
   if (!dd) return;
-  const months = [...new Set(feePayments.map(f => f.month).filter(Boolean))].sort().reverse();
-  months.forEach(m => dd._addOption(m, m));
+  const months = [...new Set(feePayments.map(f => normMonth(f.month)).filter(Boolean))].sort().reverse();
+  months.forEach(m => dd._addOption(m, fmtFeeMonth(m)));
 }
 
 function populateClassesBatchDropdown(students) {
@@ -9917,10 +9964,12 @@ function updateUnassignedBadge(count) {
   });
 }
 
+let _currentAssignPayment = {};
 async function openAssignPayment(id, amount, name, phone) {
   _currentAssignId = id;
   _currentAssignAmount = amount;
   _currentAssignName = name;
+  _currentAssignPayment = (window._unassignedItems && window._unassignedItems[id]) || {};
 
   // Set payer info card
   const infoEl = document.getElementById('assign-page-info');
@@ -9937,6 +9986,18 @@ async function openAssignPayment(id, amount, name, phone) {
   if (wsWrap) wsWrap.style.display = 'none';
   const stuWrap = document.getElementById('assign-page-student-wrap');
   if (stuWrap) stuWrap.style.display = 'none';
+  const feeWrap = document.getElementById('assign-page-fee-wrap');
+  if (feeWrap) feeWrap.style.display = 'none';
+  const hintEl = document.getElementById('assign-page-student-hint');
+  if (hintEl) { hintEl.style.display = 'none'; hintEl.textContent = ''; }
+  // Default the month to the month the payment actually landed in
+  const _pd = _currentAssignPayment.date ? new Date(_currentAssignPayment.date) : new Date();
+  const _mEl = document.getElementById('assign-page-month-m');
+  const _yEl = document.getElementById('assign-page-month-y');
+  if (_mEl) _mEl.value = String(_pd.getMonth() + 1).padStart(2, '0');
+  if (_yEl) _yEl.value = String(_pd.getFullYear());
+  const _cEl = document.getElementById('assign-page-classes');
+  if (_cEl) _cEl.value = '';
 
   // Always fetch fresh workshops/students, removing any stale custom-select wrap first
   for (const selId of ['assign-page-workshop-select', 'assign-page-student-select']) {
@@ -9950,6 +10011,29 @@ async function openAssignPayment(id, amount, name, phone) {
   await populateWorkshopDropdown('assign-page-workshop-select');
   await populateStudentDropdown('assign-page-student-select');
 
+  // Suggest a student when the payer name matches a student's payer_name or own name
+  try {
+    const payer = (name || '').trim().toLowerCase();
+    if (payer) {
+      const studs = (await sbGetAll('students')).data || [];
+      const hit = studs.find(st => {
+        const pn = (st.payer_name || '').trim().toLowerCase();
+        const fn = (st.full_name || '').trim().toLowerCase();
+        return (pn && (pn === payer || pn.includes(payer) || payer.includes(pn)))
+            || (fn && (fn === payer || payer.includes(fn)));
+      });
+      if (hit) {
+        const sel = document.getElementById('assign-page-student-select');
+        if (sel) sel.value = hit.id;
+        const hEl = document.getElementById('assign-page-student-hint');
+        if (hEl) {
+          hEl.textContent = 'Suggested from payer name: ' + (hit.full_name || hit.id);
+          hEl.style.display = '';
+        }
+      }
+    }
+  } catch (e) { console.warn('payer match skipped:', e); }
+
   // Open as full-page view (same as all other forms)
   document.getElementById('form-assignPayment').classList.add('open');
   lockScroll();
@@ -9960,8 +10044,10 @@ function onAssignPageTypeChange() {
   const type = document.getElementById('assign-page-type')?.value;
   const wsWrap = document.getElementById('assign-page-workshop-wrap');
   const stuWrap = document.getElementById('assign-page-student-wrap');
+  const feeWrap = document.getElementById('assign-page-fee-wrap');
   if (wsWrap) wsWrap.style.display = type === 'workshop' ? '' : 'none';
   if (stuWrap) stuWrap.style.display = type === 'classes' ? '' : 'none';
+  if (feeWrap) feeWrap.style.display = type === 'classes' ? '' : 'none';
 }
 
 async function saveAssignPaymentPage() {
@@ -9970,17 +10056,49 @@ async function saveAssignPaymentPage() {
   const workshopId = document.getElementById('assign-page-workshop-select')?.value || null;
   const studentId = document.getElementById('assign-page-student-select')?.value || null;
   if (!type) { showToast('Please select a category', 'error'); return; }
+  if (type === 'classes' && !studentId) { showToast('Please select a student', 'error'); return; }
+  const feeMonth = type === 'classes'
+    ? (document.getElementById('assign-page-month-y')?.value || '2026') + '-' + (document.getElementById('assign-page-month-m')?.value || '01')
+    : null;
+  const feeClasses = type === 'classes'
+    ? (parseInt(document.getElementById('assign-page-classes')?.value, 10) || 0)
+    : 0;
   closeFormPage('assignPayment');
-  await _doAssign(type, notes, workshopId, studentId);
+  await _doAssign(type, notes, workshopId, studentId, feeMonth, feeClasses);
 }
 
 // (legacy onAssignTypeChange/saveAssignPayment stubs removed — use onAssignPageTypeChange/saveAssignPaymentPage)
 
-async function _doAssign(type, notes, workshopId, studentId) {
+async function _doAssign(type, notes, workshopId, studentId, feeMonth, feeClasses) {
   try {
+    const payDate = _currentAssignPayment.date || new Date().toISOString().split('T')[0];
     if (type === 'ignore') {
       await sbPatch('unassigned_payments', _currentAssignId, { status: 'ignored' });
       showToast('Payment skipped', 'success');
+    } else if (type === 'classes') {
+      // Class fees belong in fee_payments, not payments. One destination only.
+      const fpId = await nextFeePaymentId();
+      let sName = (_recordCache.students && _recordCache.students[studentId] && _recordCache.students[studentId].full_name) || '';
+      if (!sName) {
+        const s = ((await sbGetAll('students')).data || []).find(x => x.id === studentId);
+        sName = s ? s.full_name : '';
+      }
+      sName = (sName || '').replace(/\s*\(S-\d+\)\s*$/i, '').trim();
+      await sbPost('fee_payments', {
+        id: fpId,
+        student_id: studentId,
+        student_name: sName || null,
+        month: normMonth(feeMonth),
+        classes: feeClasses || 0,
+        amount: _currentAssignAmount,
+        payment_mode: 'Razorpay UPI',
+        paid: true,
+        payment_date: payDate,
+        description: notes || `Paid by ${_currentAssignName || 'payer'} (from unassigned ${_currentAssignId})`
+      });
+      await sbPatch('unassigned_payments', _currentAssignId, { status: 'assigned', notes: notes || null });
+      showToast(`✓ Logged as class fee ${fpId}`, 'success');
+      loadFeePayments();
     } else {
       const categoryMap = { workshop: 'workshop', classes: 'class', general: 'general' };
       const labelMap = { workshop: 'Workshop', classes: 'Classes', general: 'General Income' };
@@ -9992,8 +10110,8 @@ async function _doAssign(type, notes, workshopId, studentId) {
         type: 'income',
         category: categoryMap[type] || type,
         payment_mode: 'Razorpay UPI',
-        reference_id: type === 'workshop' ? (workshopId || null) : type === 'classes' ? (studentId || null) : null,
-        date: new Date().toISOString().split('T')[0],
+        reference_id: type === 'workshop' ? (workshopId || null) : null,
+        date: payDate,
         description: notes || `Assigned from unassigned payment ${_currentAssignId}`,
         synced_from_razorpay: true
       });
