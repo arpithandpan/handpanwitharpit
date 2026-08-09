@@ -2590,7 +2590,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v47</span>
+        <span style="color:var(--clay);font-weight:500;">v48</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>5 Aug 2026</span>
       </div>
@@ -2658,7 +2658,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v47</span>
+        <span style="color:var(--clay);font-weight:500;">v48</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span>5 Aug 2026</span>
       </div>
@@ -2937,7 +2937,7 @@ table#paymentsTable { min-width: 700px; }
           <th>Status</th>
           <th>Level</th>
           <th>Monthly Fee</th>
-          <th class="sortable-th" onclick="sortTable('classes','total_classes',this)">Classes <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
+          <th class="sortable-th" onclick="sortTable('classes','total_classes',this)">Classes Paid <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th class="sortable-th" onclick="sortTable('classes','total_paid',this)">Total Paid <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Description</th>
           <th class="ws-action-sticky">Action</th>
@@ -3582,10 +3582,28 @@ table#paymentsTable { min-width: 700px; }
     </div>
     <div class="form-group" id="assign-page-student-wrap" style="display:none;">
       <label class="form-label">Student</label>
-      <select class="form-input" id="assign-page-student-select">
+      <select class="form-input" id="assign-page-student-select" onchange="onAssignStudentChange()">
         <option value="">Loading students...</option>
       </select>
       <div id="assign-page-student-hint" style="display:none;font-size:0.8rem;color:var(--clay);margin-top:0.4rem;"></div>
+    </div>
+    <div id="assign-page-new-student" style="display:none;background:rgba(200,147,90,0.06);border:1px solid rgba(200,147,90,0.22);border-radius:10px;padding:1rem 1rem 0.25rem;margin-bottom:1.5rem;">
+      <div style="font-size:0.78rem;letter-spacing:0.06em;color:var(--clay);margin-bottom:0.9rem;">NEW STUDENT</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Full Name&nbsp;<span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="assign-new-name" maxlength="80" placeholder="Student name"/></div>
+        <div class="form-group"><label class="form-label">Phone&nbsp;<span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="assign-new-phone" maxlength="20" placeholder="9876543210"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Monthly Fee (₹)</label><input type="number" class="form-input" id="assign-new-fee" placeholder="4000"/></div>
+        <div class="form-group"><label class="form-label">Level</label>
+          <select class="form-input" id="assign-new-level">
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+          </select>
+        </div>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text-light);padding-bottom:0.75rem;">Name and phone carry over from the payment. The student is created when you hit Assign.</div>
     </div>
     <div class="form-row" id="assign-page-fee-wrap" style="display:none;">
       <div class="form-group"><label class="form-label">Month</label>
@@ -5572,6 +5590,31 @@ async function loadParticipants() {
 }
 
 // ── CLASSES ──
+// Student totals are never stored. They are rolled up from fee_payments on every
+// read, so they can't drift away from the ledger.
+async function applyStudentTotals(stus) {
+  if (!Array.isArray(stus) || !stus.length) return;
+  if (currentRole === 'viewer') return;
+  try {
+    const rows = (await sbGetAll('fee_payments')).data || [];
+    const roll = {};
+    rows.forEach(f => {
+      if (!f || !f.student_id) return;
+      if (f.paid === false) return;
+      const r = roll[f.student_id] || (roll[f.student_id] = { amount: 0, classes: 0 });
+      r.amount += Number(f.amount) || 0;
+      r.classes += Number(f.classes) || 0;
+    });
+    stus.forEach(s => {
+      const r = roll[s.id] || { amount: 0, classes: 0 };
+      s.total_paid = r.amount;
+      s.total_classes = r.classes;
+    });
+  } catch (e) {
+    console.warn('student totals rollup skipped:', e);
+  }
+}
+
 async function loadStudents() {
   try {
     const stus = currentRole === 'viewer' ? DUMMY.students : await (async () => {
@@ -5579,6 +5622,7 @@ async function loadStudents() {
       const res = await api('/students' + (showArchivedStudents ? '?include_archived=true' : ''));
       return Array.isArray(res) ? res : (res.data || []);
     })();
+    await applyStudentTotals(stus);
     stus.forEach(s => cacheRecord('students', s));
     window._totalCounts = window._totalCounts || {};
     window._totalCounts.classes = stus.length;
@@ -8104,6 +8148,8 @@ function buildEditForm(entity, r) {
   const sel = (label, id, opts, val='') => `<div class="form-group"><label class="form-label">${label}</label><select class="form-input" id="ef-${id}">${opts.map(([v,t])=>`<option value="${v}"${v==val?' selected':''}>${t}</option>`).join('')}</select></div>`;
   const row = (...items) => `<div class="form-row">${items.join('')}</div>`;
   const readOnly = (label, val) => `<div class="form-group"><label class="form-label">${label}</label><input type="text" class="form-input" value="${val||'—'}" disabled style="opacity:0.5;cursor:not-allowed;"/></div>`;
+  // Computed values render as text, never as a greyed-out input that looks typeable.
+  const derived = (label, val, hint) => `<div class="form-group"><label class="form-label">${label}</label><div style="padding:0.85rem 1rem;border:1px dashed rgba(200,147,90,0.32);border-radius:10px;font-size:0.95rem;color:var(--bark);background:rgba(200,147,90,0.04);">${val}</div>${hint ? `<div style="font-size:0.78rem;color:var(--text-light);margin-top:0.4rem;">${hint}</div>` : ''}</div>`;
 
   if (entity === 'workshops') return `
     ${row(readOnly('Workshop ID', r.id), fi('Date','ws-date','date',r.date))}
@@ -8143,7 +8189,7 @@ function buildEditForm(entity, r) {
     ${row(fi('Monthly Fee (₹)','stu-fee','number',r.monthly_fee||0), sel('Level','stu-level',[['Beginner','Beginner'],['Intermediate','Intermediate'],['Advanced','Advanced']],r.level))}
     ${fi('Payer Name','stu-payer','text',r.payer_name||'','maxlength="80"')}
     ${fi('Description','stu-desc','textarea',r.description)}
-    ${row(readOnly('Classes', r.total_classes||0), readOnly('Total Paid', fmt(r.total_paid||0)))}`;
+    ${row(derived('Classes Paid For', r.total_classes||0, 'Counted from fee payments'), derived('Total Paid', fmt(r.total_paid||0), 'Sum of all fee payments'))}`;
 
   if (entity === 'fee_payments') return `
     ${row(readOnly('FP ID', r.id), readOnly('Student', feeStudentDisplay(r)))}
@@ -10016,6 +10062,25 @@ async function openAssignPayment(id, amount, name, phone) {
   await populateWorkshopDropdown('assign-page-workshop-select');
   await populateStudentDropdown('assign-page-student-select');
 
+  // Let the picker create the thing it needs, so you never have to leave the form.
+  const _stuSel = document.getElementById('assign-page-student-select');
+  if (_stuSel && !_stuSel.querySelector('option[value="__new__"]')) {
+    const optNew = document.createElement('option');
+    optNew.value = '__new__';
+    optNew.text = '+ New student from this payment';
+    _stuSel.insertBefore(optNew, _stuSel.firstChild ? _stuSel.firstChild.nextSibling : null);
+  }
+  const _npWrap = document.getElementById('assign-page-new-student');
+  if (_npWrap) _npWrap.style.display = 'none';
+  const _nName = document.getElementById('assign-new-name');
+  if (_nName) _nName.value = (name || '').trim();
+  const _nPhone = document.getElementById('assign-new-phone');
+  if (_nPhone) _nPhone.value = (phone || '').trim();
+  const _nFee = document.getElementById('assign-new-fee');
+  if (_nFee) _nFee.value = '';
+  const _nLevel = document.getElementById('assign-new-level');
+  if (_nLevel) _nLevel.value = 'Beginner';
+
   // Suggest a student when the payer name matches a student's payer_name or own name
   try {
     const payer = (name || '').trim().toLowerCase();
@@ -10045,6 +10110,28 @@ async function openAssignPayment(id, amount, name, phone) {
   initFormSelects();
 }
 
+function onAssignStudentChange() {
+  const val = document.getElementById('assign-page-student-select')?.value;
+  const wrap = document.getElementById('assign-page-new-student');
+  if (wrap) wrap.style.display = val === '__new__' ? '' : 'none';
+  const hint = document.getElementById('assign-page-student-hint');
+  if (hint && val === '__new__') hint.style.display = 'none';
+}
+
+async function nextStudentId() {
+  try {
+    const rows = (await sbGetAll('students', 'select=id')).data || [];
+    let max = 0;
+    rows.forEach(r => {
+      const m = String(r.id || '').match(/(\d+)$/);
+      if (m) max = Math.max(max, parseInt(m[1], 10));
+    });
+    return 'S-' + String(max + 1).padStart(3, '0');
+  } catch (e) {
+    return 'S-' + String(Date.now()).slice(-3);
+  }
+}
+
 function onAssignPageTypeChange() {
   const type = document.getElementById('assign-page-type')?.value;
   const wsWrap = document.getElementById('assign-page-workshop-wrap');
@@ -10059,9 +10146,38 @@ async function saveAssignPaymentPage() {
   const type = document.getElementById('assign-page-type')?.value;
   const notes = document.getElementById('assign-page-notes')?.value || '';
   const workshopId = document.getElementById('assign-page-workshop-select')?.value || null;
-  const studentId = document.getElementById('assign-page-student-select')?.value || null;
+  let studentId = document.getElementById('assign-page-student-select')?.value || null;
   if (!type) { showToast('Please select a category', 'error'); return; }
   if (type === 'classes' && !studentId) { showToast('Please select a student', 'error'); return; }
+  if (type === 'classes' && studentId === '__new__') {
+    const nName = (document.getElementById('assign-new-name')?.value || '').trim();
+    const nPhone = (document.getElementById('assign-new-phone')?.value || '').trim();
+    if (!nName) { markFieldError('assign-new-name'); showToast('Full name is required', 'error'); return; }
+    if (!nPhone) { markFieldError('assign-new-phone'); showToast('Phone number is required', 'error'); return; }
+    try {
+      const newId = await nextStudentId();
+      await sbPost('students', {
+        id: newId,
+        full_name: nName,
+        phone: nPhone,
+        email: null,
+        join_date: (_currentAssignPayment.date || new Date().toISOString().split('T')[0]),
+        status: 'Active',
+        monthly_fee: parseFloat(document.getElementById('assign-new-fee')?.value) || null,
+        payer_name: (_currentAssignName || '').trim() || null,
+        level: document.getElementById('assign-new-level')?.value || 'Beginner',
+        total_classes: 0,
+        total_paid: 0,
+        description: null
+      });
+      studentId = newId;
+      showToast('✓ Student ' + newId + ' created', 'success');
+    } catch (e) {
+      console.error('inline student create failed:', e);
+      showToast('Could not create student: ' + (e.message || 'save failed'), 'error');
+      return;
+    }
+  }
   const feeMonth = type === 'classes'
     ? (document.getElementById('assign-page-month-y')?.value || '2026') + '-' + (document.getElementById('assign-page-month-m')?.value || '01')
     : null;
@@ -10119,6 +10235,7 @@ async function _doAssign(type, notes, workshopId, studentId, feeMonth, feeClasse
       showToast(`✓ Logged as class fee ${fpId}`, 'success');
       loadFeePayments();
       loadPayments();
+      loadStudents();
     } else {
       const categoryMap = { workshop: 'workshop', classes: 'class', general: 'general' };
       const labelMap = { workshop: 'Workshop', classes: 'Classes', general: 'General Income' };
