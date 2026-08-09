@@ -2590,9 +2590,9 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v50</span>
+        <span style="color:var(--clay);font-weight:500;">v52</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
-        <span class="build-date">5 Aug 2026</span>
+        <span class="build-date">__COMMIT__</span>
       </div>
     </div>
   </div>
@@ -2658,9 +2658,9 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v50</span>
+        <span style="color:var(--clay);font-weight:500;">v52</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
-        <span class="build-date">5 Aug 2026</span>
+        <span class="build-date">__COMMIT__</span>
       </div>
     </div>
   </aside>
@@ -8981,50 +8981,46 @@ function initStaticDropdowns() {
 // ── BUILD STAMP ──
 // The date shown is the file's real Last-Modified time from the server, not a
 // typed string. If it says minutes ago, you are looking at a fresh upload.
-const _BS_MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-function _relTime(then, now) {
-  const mins = Math.round((now - then) / 60000);
-  if (mins < 1) return 'deployed just now';
-  if (mins < 60) return 'deployed ' + mins + ' min ago';
-  const hrs = Math.round(mins / 60);
-  if (hrs < 24) return 'deployed ' + hrs + ' hour' + (hrs === 1 ? '' : 's') + ' ago';
-  const days = Math.round(hrs / 24);
-  if (days < 8) return 'deployed ' + days + ' day' + (days === 1 ? '' : 's') + ' ago';
-  return 'deployed ' + then.getDate() + ' ' + _BS_MONS[then.getMonth()] + ' ' + then.getFullYear();
-}
-
 async function initBuildStamp() {
   const spans = document.querySelectorAll('.build-date');
   if (!spans.length) return;
-  try {
-    // Clean URLs like /pages/dashboard are rewrites and don't carry the file's
-    // Last-Modified. Ask for the real .html file instead.
-    let path = window.location.pathname;
-    if (!/\.[a-z0-9]+$/i.test(path)) path = path.replace(/\/$/, '') + '.html';
-    let lm = null;
-    try {
-      const res = await fetch(path + '?_bs=' + Date.now(), { method: 'HEAD', cache: 'no-store' });
-      if (res.ok) lm = res.headers.get('Last-Modified');
-    } catch (e) { /* fall through to the original path below */ }
-    if (!lm && path !== window.location.pathname) {
-      const res2 = await fetch(window.location.pathname + '?_bs=' + Date.now(), { method: 'HEAD', cache: 'no-store' });
-      if (res2.ok) lm = res2.headers.get('Last-Modified');
-    }
-    if (!lm) { console.warn('build stamp: no Last-Modified header on ' + path); return; }
-    const then = new Date(lm);
-    if (isNaN(then.getTime())) return;
-    const now = new Date();
-    const label = _relTime(then, now);
-    const exact = then.getDate() + ' ' + _BS_MONS[then.getMonth()] + ' ' + then.getFullYear()
-      + ', ' + then.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
-    const fresh = (now - then) < 3600000;
+  // Built as pieces so the build-time sed doesn't rewrite this literal too.
+  const PLACEHOLDER = '__' + 'COMMIT' + '__';
+  const built = (spans[0].textContent || '').trim();
+
+  if (built === PLACEHOLDER || !built) {
     spans.forEach(el => {
-      el.textContent = label;
-      el.title = 'File last changed on the server: ' + exact;
-      el.style.color = fresh ? 'var(--moss, #a8c47f)' : '';
+      el.textContent = 'build info unavailable';
+      el.title = 'The build step did not stamp a commit into this file.';
     });
+    return;
+  }
+
+  const paint = (text, color, tip) => spans.forEach(el => {
+    el.textContent = text;
+    el.style.color = color || '';
+    if (tip) el.title = tip;
+  });
+
+  paint(built, '', 'Commit this page was built from');
+  if (!/^https?:$/.test(window.location.protocol)) return;
+
+  try {
+    const res = await fetch('https://api.github.com/repos/arpithandpan/handpanwitharpit/commits/main', {
+      headers: { 'Accept': 'application/vnd.github+json' }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const latest = (data.sha || '').slice(0, built.length);
+    if (!latest) return;
+    if (latest === built) {
+      paint(built + ' \u00b7 Up to date', '#a8c47f', 'This page matches the newest commit on main.');
+    } else {
+      paint(built + ' \u00b7 Outdated', '#e0906e',
+        'Newer commit on main: ' + latest + '. Redeploy or hard refresh.');
+    }
   } catch (e) {
-    console.warn('build stamp skipped:', e);
+    console.warn('build stamp: could not reach GitHub', e);
   }
 }
 
