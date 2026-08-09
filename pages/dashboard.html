@@ -2590,9 +2590,9 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v48</span>
+        <span style="color:var(--clay);font-weight:500;">v49</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
-        <span>5 Aug 2026</span>
+        <span class="build-date">5 Aug 2026</span>
       </div>
     </div>
   </div>
@@ -2658,9 +2658,9 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v48</span>
+        <span style="color:var(--clay);font-weight:500;">v49</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
-        <span>5 Aug 2026</span>
+        <span class="build-date">5 Aug 2026</span>
       </div>
     </div>
   </aside>
@@ -8978,11 +8978,51 @@ function initStaticDropdowns() {
 
 }
 
+// ── BUILD STAMP ──
+// The date shown is the file's real Last-Modified time from the server, not a
+// typed string. If it says minutes ago, you are looking at a fresh upload.
+const _BS_MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function _relTime(then, now) {
+  const mins = Math.round((now - then) / 60000);
+  if (mins < 1) return 'deployed just now';
+  if (mins < 60) return 'deployed ' + mins + ' min ago';
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return 'deployed ' + hrs + ' hour' + (hrs === 1 ? '' : 's') + ' ago';
+  const days = Math.round(hrs / 24);
+  if (days < 8) return 'deployed ' + days + ' day' + (days === 1 ? '' : 's') + ' ago';
+  return 'deployed ' + then.getDate() + ' ' + _BS_MONS[then.getMonth()] + ' ' + then.getFullYear();
+}
+
+async function initBuildStamp() {
+  const spans = document.querySelectorAll('.build-date');
+  if (!spans.length) return;
+  try {
+    const res = await fetch(window.location.pathname + '?_bs=' + Date.now(), { method: 'HEAD', cache: 'no-store' });
+    const lm = res.headers.get('Last-Modified');
+    if (!lm) return;
+    const then = new Date(lm);
+    if (isNaN(then.getTime())) return;
+    const now = new Date();
+    const label = _relTime(then, now);
+    const exact = then.getDate() + ' ' + _BS_MONS[then.getMonth()] + ' ' + then.getFullYear()
+      + ', ' + then.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
+    const fresh = (now - then) < 3600000;
+    spans.forEach(el => {
+      el.textContent = label;
+      el.title = 'File last changed on the server: ' + exact;
+      el.style.color = fresh ? 'var(--moss, #a8c47f)' : '';
+    });
+  } catch (e) {
+    console.warn('build stamp skipped:', e);
+  }
+}
+
 // Call after DOM ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initStaticDropdowns();
     initFormSelects(); initDatePickers();
+    initBuildStamp();
     const el = document.getElementById('section-search-empty-default');
     if (el) el.innerHTML = EMPTY_STATES.search;
     const mob = document.getElementById('mobileSearchEmptyDefault');
@@ -8991,6 +9031,7 @@ if (document.readyState === 'loading') {
 } else {
   initStaticDropdowns();
   initFormSelects(); initDatePickers();
+  initBuildStamp();
   const el = document.getElementById('section-search-empty-default');
   if (el) el.innerHTML = EMPTY_STATES.search;
   const mob = document.getElementById('mobileSearchEmptyDefault');
