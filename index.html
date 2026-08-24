@@ -243,16 +243,20 @@
   font-size: 1.02rem; color: var(--text-mid);
   margin: -2.5rem 0 2.5rem;
 }
+.rev-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 1.4rem;
+  align-items: stretch;
+}
 .rev-card {
   background: var(--cream);
-  border: 1px solid rgba(193,127,82,0.22);
   border-radius: 3px;
-  padding: 1.7rem 1.8rem;
-  margin-bottom: 1.1rem;
-  display: grid;
-  grid-template-columns: 44px minmax(0,1fr);
-  gap: 1.2rem;
-  align-items: start;
+  padding: 1.7rem 1.6rem;
+}
+.rev-who {
+  display: flex; align-items: center; gap: 0.8rem;
+  margin-bottom: 1rem;
 }
 .rev-avatar {
   width: 44px; height: 44px; border-radius: 50%;
@@ -263,18 +267,22 @@
 }
 .rev-name {
   font-size: 1.02rem; font-weight: 500; color: var(--bark);
-  line-height: 1.35;
+  line-height: 1.3;
 }
 .rev-context {
-  font-size: 0.78rem; letter-spacing: 0.09em;
+  font-size: 0.75rem; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--text-light);
-  margin: 0.2rem 0 0.9rem;
+  margin-top: 0.2rem;
+}
+.rev-stars {
+  color: var(--clay); font-size: 0.95rem;
+  letter-spacing: 0.18em; margin-bottom: 0.85rem;
 }
 .rev-quote {
   font-size: 1.02rem; font-weight: 400; line-height: 1.8;
   color: var(--text-mid); margin: 0;
 }
-.rev-foot { padding-top: 1.6rem; text-align: center; }
+.rev-foot { padding-top: 2.4rem; text-align: center; }
 .rev-btn {
   display: inline-block; text-decoration: none;
   padding: calc(0.79rem - 2px) 1.9rem;
@@ -286,12 +294,15 @@
 }
 .rev-btn:hover { background: var(--bark); color: var(--cream); }
 
+@media (max-width: 900px) {
+  .rev-grid { grid-template-columns: 1fr; gap: 1.1rem; }
+}
 @media (max-width: 600px) {
-  .rev-hide-mobile { display: none; }
-  .rev-card { padding: 1.4rem 1.3rem; gap: 1rem; grid-template-columns: 40px minmax(0,1fr); }
+  .rev-card { padding: 1.4rem 1.3rem; }
   .rev-avatar { width: 40px; height: 40px; font-size: 1.05rem; }
   .rev-quote { font-size: 0.98rem; line-height: 1.75; }
   .rev-sub { margin: -2rem 0 2rem; }
+  .rev-foot { padding-top: 2rem; }
 }
 
 /* ---- NEWSLETTER ---- */
@@ -574,49 +585,44 @@
   </div>
   <p class="rev-sub">From people who came to a workshop or took classes.</p>
 
-  <div class="rev-card">
-    <div class="rev-avatar">J</div>
-    <div>
-      <div class="rev-name">Jayanth N</div>
-      <div class="rev-context">Workshop</div>
-      <p class="rev-quote">I came across an ad for Arpit's handpan workshop on Instagram, and I signed up for it without knowing what to expect. It was the best two hours of my time spent on something in a long time. I come from no music background, but never felt out of place during the workshop. He gave us frameworks that we could apply and start stringing into a tune within the same workshop.</p>
-    </div>
-  </div>
+  <div class="rev-grid">
 
-  <div class="rev-card">
-    <div class="rev-avatar">B</div>
-    <div>
-      <div class="rev-name">Bala Senthil Kumar</div>
-      <div class="rev-context">One to one classes</div>
-      <p class="rev-quote">I had been searching for someone to teach me Handpan on a one to one basis. Each class he just amazed me with his way of teaching. He understands exactly where I made mistakes and corrects it with unique way to do it correctly. Excellent method, very wonderful patterns, step by step teaching and guidance.</p>
+    <div class="rev-card">
+      <div class="rev-who">
+        <div class="rev-avatar">J</div>
+        <div>
+          <div class="rev-name">Jayanth N</div>
+          <div class="rev-context">Workshop &middot; Aug 2026</div>
+        </div>
+      </div>
+      <div class="rev-stars" aria-label="Five out of five stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="rev-quote">I came across an ad for Arpit's handpan workshop on Instagram, and I signed up for it without knowing what to expect. It was the best two hours of my time spent on something in a long time.</p>
     </div>
-  </div>
 
-  <div class="rev-card">
-    <div class="rev-avatar">M</div>
-    <div>
-      <div class="rev-name">Megha Koul</div>
-      <div class="rev-context">Workshop</div>
-      <p class="rev-quote">I had an amazing time at the workshop. Well curated and easy to follow instructions. Arpit is very thorough with his approach. Highly recommend.</p>
+    <div class="rev-card">
+      <div class="rev-who">
+        <div class="rev-avatar">B</div>
+        <div>
+          <div class="rev-name">Bala Senthil Kumar</div>
+          <div class="rev-context">One to one classes &middot; Aug 2026</div>
+        </div>
+      </div>
+      <div class="rev-stars" aria-label="Five out of five stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="rev-quote">I had been searching for someone to teach me Handpan on a one to one basis. Each class he just amazed me with his way of teaching.</p>
     </div>
-  </div>
 
-  <div class="rev-card rev-hide-mobile">
-    <div class="rev-avatar">P</div>
-    <div>
-      <div class="rev-name">Priyanka Chourasia</div>
-      <div class="rev-context">Workshop</div>
-      <p class="rev-quote">Arpit has a deep understanding of the instrument and, more importantly, a very patient and encouraging way of teaching. What I especially appreciated was how he made the instrument feel approachable even for a beginner. His guidance helped me understand the rhythm, notes, hand techniques, and most importantly the feeling behind the music.</p>
+    <div class="rev-card">
+      <div class="rev-who">
+        <div class="rev-avatar">M</div>
+        <div>
+          <div class="rev-name">Megha Koul</div>
+          <div class="rev-context">Workshop &middot; Aug 2026</div>
+        </div>
+      </div>
+      <div class="rev-stars" aria-label="Five out of five stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="rev-quote">I had an amazing time at the workshop. Well curated and easy to follow instructions. Arpit is very thorough with his approach.</p>
     </div>
-  </div>
 
-  <div class="rev-card rev-hide-mobile">
-    <div class="rev-avatar">N</div>
-    <div>
-      <div class="rev-name">Neil Chordia</div>
-      <div class="rev-context">Workshop</div>
-      <p class="rev-quote">The handpan workshop was just amazing and totally worth the hours. Arpit's expertise and command on the instrument definitely has got me hooked on to it and as far as the workshop is concerned, a must go to if you ever have second thoughts. Well thought and organized.</p>
-    </div>
   </div>
 
   <div class="rev-foot">
