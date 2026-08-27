@@ -243,6 +243,15 @@
   font-size: 1.02rem; color: var(--text-mid);
   margin: -2.5rem 0 2.5rem;
 }
+.rev-badge {
+  display: none; align-items: center; gap: 0.7rem;
+  background: var(--cream); border-radius: 40px;
+  padding: 0.55rem 1.2rem; margin: -1.6rem 0 2.2rem;
+}
+.rev-badge.is-live { display: inline-flex; }
+.rev-badge-stars { color: var(--clay); font-size: 0.9rem; letter-spacing: 0.16em; }
+.rev-badge-rating { font-size: 1rem; font-weight: 500; color: var(--bark); }
+.rev-badge-count { font-size: 0.95rem; color: var(--text-light); }
 .rev-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0,1fr));
@@ -283,9 +292,7 @@
   color: var(--text-mid); margin: 0;
 }
 .rev-foot { padding-top: 2.4rem; text-align: center; }
-/* Google profile suspended, appeal submitted 25 Aug 2026.
-   Delete this line to bring the button back once reinstated. */
-.rev-foot { display: none; }
+
 .rev-btn {
   display: inline-block; text-decoration: none;
   padding: calc(0.79rem - 2px) 1.9rem;
@@ -584,9 +591,15 @@
 <!-- REVIEWS -->
 <section class="section bg-sand-deep" id="reviews">
   <div class="section-header">
-    <h2 class="section-title">Kind <em>Words</em></h2>
+    <h2 class="section-title">What People <em>Say</em></h2>
   </div>
   <p class="rev-sub">From people who came to a workshop or took classes.</p>
+
+  <div class="rev-badge" id="revBadge" hidden>
+    <span class="rev-badge-stars" id="revBadgeStars" aria-hidden="true"></span>
+    <span class="rev-badge-rating" id="revBadgeRating"></span>
+    <span class="rev-badge-count" id="revBadgeCount"></span>
+  </div>
 
   <div class="rev-grid">
 
@@ -684,6 +697,39 @@ function toggleClass(el) {
   toggle.textContent = isOpen ? '+ See details' : '− Hide details';
 }
 </script>
+<script>
+(function () {
+  var API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
+  var badge = document.getElementById('revBadge');
+  if (!badge) return;
+
+  fetch(API_BASE + '/api/reviews')
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (!d) return;
+      var rating = Number(d.rating);
+      var count = Number(d.count);
+      if (!isFinite(rating) || !isFinite(count) || count < 1) return;
+
+      var filled = Math.round(rating);
+      if (filled < 0) filled = 0;
+      if (filled > 5) filled = 5;
+      var stars = '';
+      for (var i = 0; i < 5; i++) stars += (i < filled ? '\u2605' : '\u2606');
+
+      document.getElementById('revBadgeStars').textContent = stars;
+      document.getElementById('revBadgeRating').textContent = rating.toFixed(1);
+      document.getElementById('revBadgeCount').textContent =
+        '\u00B7 ' + count + (count === 1 ? ' Google review' : ' Google reviews');
+
+      badge.setAttribute('aria-label', rating.toFixed(1) + ' out of 5 from ' + count + ' Google reviews');
+      badge.hidden = false;
+      badge.classList.add('is-live');
+    })
+    .catch(function () { /* badge stays hidden */ });
+})();
+</script>
+
 <script>
 (function () {
   var API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
