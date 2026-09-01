@@ -879,3 +879,86 @@ textarea:focus-visible {
   .hero-sub,
   .hero-actions { animation: none; opacity: 1; transform: none; }
 }
+
+
+/* ============================================
+   TYPE SCALE
+   Eight steps, nothing else. Every step is a
+   clamp, so type scales smoothly from a 320px
+   phone to a large television without a single
+   breakpoint. No page sets its own size.
+
+   --t-display  hero name, once per site
+   --t-1        page titles
+   --t-2        section titles
+   --t-3        card and item titles
+   --t-lead     the sentence under a title
+   --t-body     all prose
+   --t-small    meta, dates, secondary
+   --t-micro    eyebrows, labels, pills
+   ============================================ */
+:root {
+  --t-display: clamp(2.75rem, 1.6rem + 5.2vw, 5rem);
+  --t-1:       clamp(2.1rem,  1.3rem + 4.0vw, 3.6rem);
+  --t-2:       clamp(1.7rem,  1.2rem + 2.4vw, 2.5rem);
+  --t-3:       clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);
+  --t-lead:    clamp(1.1rem,  1.0rem + 0.5vw, 1.25rem);
+  --t-body:    clamp(1rem,    0.96rem + 0.2vw, 1.1rem);
+  --t-small:   clamp(0.9rem,  0.87rem + 0.15vw, 0.95rem);
+  --t-micro:   clamp(0.75rem, 0.73rem + 0.1vw, 0.8rem);
+}
+
+/* display */
+.hero-title                                   { font-size: var(--t-display); }
+
+/* page titles */
+.page-hero-title                              { font-size: var(--t-1); }
+
+/* section titles and the one featured release headline */
+.section-title, .release-title,
+.photo-banner-title, .contact-info h2         { font-size: var(--t-2); }
+
+/* card and item titles, plus the big numerals that act as titles */
+.w-title, .class-name, .music-name, .release-name,
+.video-title, .past-photo-title, .rev-name,
+.faq-q, .stage-name, .footer-brand-name,
+.private-card-label, .story h3, .epk-info h3,
+.contact-form-card h3, .instrument-card h4,
+.channel h4                                   { font-size: var(--t-3); }
+
+/* numerals that act as display elements, not titles */
+.w-day, .stage-num                            { font-size: var(--t-2); }
+
+/* lead */
+.hero-sub, .page-hero-sub, .section-sub       { font-size: var(--t-lead); }
+
+/* body */
+.intro-body p, .story p, .release-desc, .rev-quote,
+.past-photo-desc, .class-desc, .course-desc,
+.private-card-desc, .private-text p, .faq-a,
+.stage-fit, .stage-outcome, .step-text p,
+.contact-info p, .detail-block p, .blockquote p,
+.quick-val, .rev-sub                          { font-size: var(--t-body); }
+
+/* meta, dates, secondary */
+.w-month, .w-meta span, .w-counts, .past-photo-meta,
+.class-meta, .course-meta, .music-meta, .music-year,
+.release-info, .release-year, .stage-facts,
+.footer-brand-tag, .rev-stars, .rev-badge-stars,
+.hero-rating-stars, .hero-rating-value,
+.w-status-note, .quick-label, .step-num,
+.rev-badge-rating, .rev-badge-count           { font-size: var(--t-small); }
+
+/* eyebrows, labels, pills */
+.hero-eyebrow, .page-hero-eyebrow, .section-eyebrow,
+.past-photo-eyebrow, .release-eyebrow, .release-type,
+.music-type, .video-label, .rev-context, .class-level,
+.course-level, .hiw-label, .w-status-label,
+.footer-col h4, .class-pill, .spots-badge,
+.intro-label, .stat small                     { font-size: var(--t-micro); }
+
+/* controls sit at body size, they are not part of the reading scale */
+.btn-primary, .btn-enroll, .btn-enroll-lg, .btn-ghost,
+.rev-btn, .platform-btn, .social-btn, .music-link,
+.rp-link, .section-link, .nav-links a,
+.w-pill-off, .wc-pill-off                     { font-size: var(--t-body); }
