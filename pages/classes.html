@@ -5,56 +5,130 @@
 <title>Online Classes | Arpit Pandey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../css/style.css"/>
 <style>
-.classes-intro { display: grid; grid-template-columns: 1.4fr 1fr; gap: 5rem; align-items: center; margin-bottom: 5rem; }
-.classes-intro-text p { font-family: var(--font-body); font-size: 1.1rem; font-weight: 450; color: var(--text-mid); line-height: 1.85; margin-bottom: 1.2rem; }
-.how-it-works { background: var(--sand); border-radius: 3px; padding: 2rem; }
-.how-it-works h3 { font-family: var(--font-body); font-size: 1.3rem; font-weight: 400; color: var(--bark); margin-bottom: 1.5rem; font-style: normal; }
-.step { display: flex; gap: 1rem; margin-bottom: 1.2rem; }
-.step-num { font-family: var(--font-body); font-size: 1.5rem; font-weight: 400; color: var(--clay); min-width: 28px; line-height: 1.2; }
-.step-text strong { display: block; font-size: 1rem; font-weight: 500; color: var(--bark); margin-bottom: 0.2rem; }
-.step-text p { font-size: 1rem; color: var(--text-light); line-height: 1.6; }
 
-.course-cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; margin-bottom: 4rem; align-items: stretch; }
-.course-card { border: 1px solid var(--clay-pale); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.25s, box-shadow 0.25s; }
-.course-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(61,43,31,0.1); }
-.course-card.featured { border-color: var(--bark); }
-.course-card-head { padding: 1.5rem 1.8rem 1.4rem; background: var(--cream); }
-.course-card.featured .course-card-head { background: var(--bark); }
-.course-card-body { padding: 1.5rem 1.8rem 1.8rem; background: var(--cream); display: flex; flex-direction: column; flex: 1; }
-.course-card.featured .course-card-body { background: #2a1f16; }
-.course-level { font-size: 0.95rem; letter-spacing: 0.04em; text-transform: none; color: var(--clay); margin-bottom: 0.6rem; }
-.course-card.featured .course-level { color: var(--clay-light); }
-.course-name { font-family: var(--font-body); font-size: 1.9rem; font-weight: 400; color: var(--bark); line-height: 1.1; margin-bottom: 0.4rem; }
-.course-card.featured .course-name { color: var(--clay-pale); }
-.course-tagline { font-size: 0.95rem; color: var(--text-light); }
-.course-card.featured .course-tagline { color: rgba(240,219,200,0.45); }
-.course-stats { display: flex; gap: 0; margin-bottom: 1.4rem; border: 1px solid var(--clay-pale); border-radius: 5px; overflow: hidden; }
-.course-card.featured .course-stats { border-color: rgba(193,127,82,0.2); }
-.course-stat { flex: 1; text-align: center; padding: 0.8rem 0.5rem; border-right: 1px solid var(--clay-pale); }
-.course-card.featured .course-stat { border-right-color: rgba(193,127,82,0.2); }
-.course-stat:last-child { border-right: none; }
-.course-stat span { font-family: var(--font-body); font-size: 1.4rem; font-weight: 400; color: var(--clay); display: block; line-height: 1.1; }
-.course-card.featured .course-stat span { color: var(--clay-light); }
-.course-stat small { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: none; color: var(--text-light); }
-.course-card.featured .course-stat small { color: rgba(240,219,200,0.3); }
-.course-curriculum { margin-bottom: 1.4rem; }
-.curriculum-item { padding: 0.65rem 0; border-bottom: 1px solid rgba(193,127,82,0.1); font-size: 0.95rem; color: var(--text-mid); line-height: 1.5; }
-.course-card.featured .curriculum-item { color: rgba(240,219,200,0.7); border-bottom-color: rgba(193,127,82,0.15); }
-.curriculum-item:last-child { border-bottom: none; }
-.course-outcome { padding: 0.9rem 1rem; border-radius: 5px; background: rgba(193,127,82,0.08); margin-bottom: 1.4rem; font-size: 0.95rem; color: var(--text-mid); line-height: 1.6; }
-.course-card.featured .course-outcome { background: rgba(193,127,82,0.15); color: rgba(240,219,200,0.85); }
+
+/* ---- INTRO + HOW IT WORKS ----
+   One centred lede, then three steps across.
+   The old version was a 2-column grid with
+   align-items:center, so the shorter column
+   floated in the middle of the taller one. */
+.classes-lede {
+  max-width: 60ch; margin: 0 auto 3.5rem;
+  text-align: center;
+  font-size: 1.15rem; line-height: 1.8;
+  color: var(--text-dark); font-weight: 400;
+}
+.how-it-works { margin-bottom: 5rem; }
+.hiw-label {
+  font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--maroon); text-align: center;
+  margin-bottom: 2rem;
+}
+.steps {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.step { display: flex; gap: 0.9rem; align-items: flex-start; }
+.step-num {
+  flex-shrink: 0;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--maroon); color: var(--ivory);
+  font-size: 0.85rem; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+}
+.step-text strong {
+  display: block; font-size: 1.02rem; font-weight: 600;
+  color: var(--maroon); margin-bottom: 0.3rem;
+}
+.step-text p {
+  font-size: 0.98rem; line-height: 1.7;
+  color: var(--text-dark); margin: 0;
+}
+
+/* ---- COURSE PATH ----
+   Two stages, not two products. Side by side above 900px,
+   stacked below, because an iPad in portrait gets cramped
+   long before a phone does. */
+.course-path {
+  display: flex; align-items: stretch;
+  margin-bottom: 4rem; border-radius: var(--card-radius);
+  overflow: hidden;
+}
+.course-stage {
+  flex: 1; background: var(--card);
+  padding: 2rem 2.2rem;
+  display: flex; flex-direction: column;
+}
+.course-stage.is-next { background: var(--maroon); }
+
+.course-arrow {
+  width: 52px; background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--maroon); font-size: 1.4rem;
+}
+
+.stage-head { display: flex; align-items: baseline; gap: 0.7rem; margin-bottom: 0.7rem; }
+.stage-num  { font-size: 2rem; font-weight: 600; line-height: 1; color: var(--maroon); }
+.stage-name { font-size: 1.7rem; font-weight: 600; color: var(--maroon); margin: 0; line-height: 1; }
+.is-next .stage-num, .is-next .stage-name { color: var(--ivory); }
+
+.stage-facts   { font-size: 1rem; color: var(--text-dark); margin-bottom: 1.1rem; }
+.stage-fit     { font-size: 1rem; line-height: 1.7; color: var(--text-dark); margin-bottom: 1.1rem; }
+.stage-fit strong { color: var(--maroon); font-weight: 600; }
+.stage-detail  { margin-bottom: 1.2rem; }
+.stage-detail p { font-size: 0.98rem; line-height: 1.7; color: var(--text-dark); margin-bottom: 0.4rem; }
+.stage-outcome { font-size: 1rem; line-height: 1.7; color: var(--maroon); margin-bottom: 1.6rem; }
+.stage-outcome strong { font-weight: 600; }
+
+.is-next .stage-facts,
+.is-next .stage-fit,
+.is-next .stage-detail p { color: var(--ivory); font-weight: 300; }
+.is-next .stage-fit strong { color: var(--ivory); font-weight: 600; }
+.is-next .stage-outcome { color: var(--ivory); font-weight: 400; }
+
+.course-stage .btn-enroll-lg { margin-top: auto; align-self: flex-start; }
+.is-next .btn-enroll-lg {
+  background: var(--ivory); border-color: var(--ivory); color: var(--maroon);
+}
+.is-next .btn-enroll-lg:hover {
+  background: var(--ivory-warm); border-color: var(--ivory-warm); color: var(--maroon);
+}
+
+/* ---- BREAKPOINTS ----
+   900  iPad portrait and below: the path stacks, steps go
+        two across. Two columns at 768px are already tight.
+   600  phones: single column, left aligned, buttons full width. */
+
+@media (max-width: 900px) {
+  .classes-lede { font-size: 1.08rem; margin-bottom: 2.5rem; }
+  /* three items never go two across: 1 and 2 pair up and 3 is
+     orphaned, so the sequence stops reading as a sequence.
+     Three or one, nothing between. */
+  .steps { grid-template-columns: 1fr; gap: 1.5rem; }
+  .how-it-works { margin-bottom: 3.5rem; }
+
+  .course-path { flex-direction: column; }
+  .course-arrow { width: auto; height: 46px; }
+  .course-arrow span { display: inline-block; transform: rotate(90deg); }
+  .course-stage { padding: 1.6rem 1.5rem; }
+  /* the month detail turns a scannable card into a wall on a small
+     screen. the fit line and the outcome are what decide anything. */
+  .stage-detail { display: none; }
+}
+
 .btn-enroll-lg {
   display: block; align-self: flex-start; text-align: center; text-decoration: none; width: auto; padding: calc(0.79rem - 2px) 2rem;
   font-family: var(--font-body); font-size: 1rem; font-weight: 600; letter-spacing: 0.02em; text-transform: none;
   border: 2px solid var(--bark); color: var(--bark); background: transparent;
   border-radius: 40px; cursor: pointer; transition: all 0.2s; box-sizing: border-box; margin-top: auto;
 }
-.btn-enroll-lg:hover { background: var(--bark); color: var(--cream); }
-.course-card.featured .btn-enroll-lg { background: var(--clay); border-color: var(--clay); color: var(--cream); }
-.course-card.featured .btn-enroll-lg:hover { background: var(--clay-light); }
+.btn-enroll-lg:hover { background: var(--maroon-deep); color: var(--ivory); }
 
 /* FAQ */
 .faq-list { max-width: 720px; }
@@ -70,16 +144,12 @@
 .faq-item.open .faq-a { display: block; }
 
 
-@media (max-width: 1080px) {
-  .classes-intro { grid-template-columns: 1fr; gap: 2.5rem; }
-  .course-cards { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-  .course-meta-row { gap: 1rem; }
-}
 @media (max-width: 600px) {
-  .course-cards { grid-template-columns: 1fr; }
-  .course-card-header { padding: 1.5rem 1.5rem 1.2rem; }
-  .course-card-body { padding: 1.2rem 1.5rem 1.5rem; }
-  .btn-enroll-lg { align-self: stretch; width: 100%; }
+  .classes-lede { font-size: 1.02rem; text-align: left; margin-bottom: 2rem; }
+  .hiw-label { text-align: left; margin-bottom: 1.4rem; }
+  .stage-num { font-size: 1.7rem; }
+  .stage-name { font-size: 1.45rem; }
+  .btn-enroll-lg { align-self: stretch; width: 100%; text-align: center; }
 }
 </style>
 </head>
@@ -103,71 +173,78 @@
 
 <section class="page-hero">
   <p class="page-hero-eyebrow">Learn online</p>
-  <h1 class="page-hero-title">Online <em>Classes</em></h1>
+  <h1 class="page-hero-title">Online classes</h1>
   <p class="page-hero-sub">Learn handpan from anywhere — live on Zoom, guided by Arpit's patient and thoughtful teaching.</p>
 </section>
+<div class="page-hero-rule" aria-hidden="true"></div>
 
 <section class="section">
-  <div class="classes-intro">
-    <div class="classes-intro-text">
-      <p>These courses are built around a simple belief: the handpan is an instrument of listening first, and technique second. You don't need a musical background. You just need to be curious and willing to show up.</p>
-      <p>Classes are live on Zoom, once a week, one hour each. After every session, Arpit shares a recording so you can revisit and practise at your own pace.</p>
-    </div>
-    <div class="how-it-works">
-      <h3>How it works</h3>
-      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Get in touch</strong><p>Send Arpit a message on email, WhatsApp, or Instagram to enquire about the next batch.</p></div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Join live on Zoom</strong><p>Weekly 1-hour sessions, live with Arpit. Ask questions, get real-time feedback.</p></div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Practise with recordings</strong><p>Session recordings are shared after each class so you can go back and practise.</p></div></div>
-    </div>
+  <p class="classes-lede">The handpan is an instrument of listening first and technique second. Classes are live on Zoom, once a week, one hour each, and every session is recorded so you can practise at your own pace.</p>
+
+  <div class="how-it-works">
+    <p class="hiw-label">How it works</p>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-num">1</span>
+        <div class="step-text">
+          <strong>Get in touch</strong>
+          <p>Message Arpit on email, WhatsApp or Instagram to ask about the next batch.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <div class="step-text">
+          <strong>Join live on Zoom</strong>
+          <p>Weekly one hour sessions, live. Ask questions and get feedback as you play.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <div class="step-text">
+          <strong>Practise with recordings</strong>
+          <p>Every session is recorded and shared, so you can go back to anything.</p>
+        </div>
+      </li>
+    </ol>
   </div>
 
   <!-- COURSE CARDS -->
-  <div class="course-cards">
+  <div class="course-path">
 
-    <!-- Beginner FEATURED -->
-    <div class="course-card featured">
-      <div class="course-card-head">
-        <p class="course-level">Beginner</p>
-        <h2 class="course-name">Beginner Course</h2>
-        <p class="course-tagline">For complete beginners — no musical background needed</p>
+    <!-- Stage 1 -->
+    <div class="course-stage">
+      <div class="stage-head">
+        <span class="stage-num">01</span>
+        <h2 class="stage-name">Beginner</h2>
       </div>
-      <div class="course-card-body">
-        <div class="course-stats">
-          <div class="course-stat"><span>12</span><small>Sessions</small></div>
-          <div class="course-stat"><span>3</span><small>Months</small></div>
-          <div class="course-stat"><span>1hr</span><small>Each</small></div>
-        </div>
-        <div class="course-curriculum">
-          <div class="curriculum-item">Month 1 — First sounds, note layout, basic timing</div>
-          <div class="curriculum-item">Month 2 — Hand coordination, dynamics, first piece</div>
-          <div class="curriculum-item">Month 3 — Flow, improvisation, final performance</div>
-        </div>
-        <div class="course-outcome">By the end you'll be able to play a short piece confidently and start exploring your own sound.</div>
-        <a href="contact.html" class="btn-enroll-lg">Enquire now</a>
+      <p class="stage-facts">3 months · 12 sessions · 1hr weekly</p>
+      <p class="stage-fit"><strong>Start here if</strong> you have never touched a handpan.</p>
+      <div class="stage-detail">
+        <p>First sounds, note layout and basic timing.</p>
+        <p>Then hand coordination, dynamics and your first piece.</p>
+        <p>Then flow, improvisation and a final performance.</p>
       </div>
+      <p class="stage-outcome"><strong>You finish able to</strong> play a short piece confidently and start exploring your own sound.</p>
+      <a href="contact.html" class="btn-enroll-lg">Enquire</a>
     </div>
 
-    <!-- Intermediate -->
-    <div class="course-card">
-      <div class="course-card-head">
-        <p class="course-level">Intermediate</p>
-        <h2 class="course-name">Intermediate Course</h2>
-        <p class="course-tagline">For those with a good command of the basics</p>
+    <div class="course-arrow" aria-hidden="true"><span>&#8594;</span></div>
+
+    <!-- Stage 2 -->
+    <div class="course-stage is-next">
+      <div class="stage-head">
+        <span class="stage-num">02</span>
+        <h2 class="stage-name">Intermediate</h2>
       </div>
-      <div class="course-card-body">
-        <div class="course-stats">
-          <div class="course-stat"><span>24</span><small>Sessions</small></div>
-          <div class="course-stat"><span>6</span><small>Months</small></div>
-          <div class="course-stat"><span>1hr</span><small>Each</small></div>
-        </div>
-        <div class="course-curriculum">
-          <div class="curriculum-item">Months 1–2 — Deeper rhythm, polyrhythms, expressive playing</div>
-          <div class="curriculum-item">Months 3–4 — Music theory, scales, note relationships</div>
-          <div class="curriculum-item">Months 5–6 — Improvisation, composition, personal repertoire</div>
-        </div>
-        <div class="course-outcome">By the end you'll have your own piece, a stronger improvisational voice, and the confidence to play in front of others.</div>
-        <a href="contact.html" class="btn-enroll-lg">Enquire now</a>
+      <p class="stage-facts">6 months · 24 sessions · 1hr weekly</p>
+      <p class="stage-fit"><strong>Start here if</strong> you already have a good command of the basics.</p>
+      <div class="stage-detail">
+        <p>Deeper rhythm, polyrhythms and expressive playing.</p>
+        <p>Then theory, scales and how the notes relate.</p>
+        <p>Then improvisation, composition and your own repertoire.</p>
       </div>
+      <p class="stage-outcome"><strong>You finish with</strong> your own piece, a stronger improvisational voice, and the confidence to play in front of others.</p>
+      <a href="contact.html" class="btn-enroll-lg">Enquire</a>
     </div>
 
   </div>

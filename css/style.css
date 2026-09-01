@@ -12,22 +12,39 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 
 :root {
-  --clay:       #C17F52;
-  --clay-light: #D4956A;
-  --clay-pale:  #F0DBC8;
-  --bark:       #3D2B1F;
-  --bark-mid:   #5C3D2B;
-  --sand:       #F5EDE0;
-  --sand-deep:  #EAD9C4;
-  --moss:       #7A8C6A;
-  --moss-light: #A3B090;
-  --stone:      #8C7B6E;
-  --cream:      #FAF5EE;
-  --text-dark:  #2C1F14;
-  --text-mid:   #5C4A3A;
-  --text-light: #9C8472;
-  --font-display: 'Jost', sans-serif;
-  --font-body:    'Jost', sans-serif;
+  /* ---- TWO COLOUR PALETTE ---- */
+  --maroon:       #500018;   /* wine */
+  --maroon-deep:  #3A0011;   /* hover / pressed only */
+  --ivory:        #F5EEE5;
+  /* secondary ink on wine, mirroring what #5A4645 does on cream.
+     Labels only. Never on body text, never on cream. 5.42:1 */
+  --label-on-wine: #B98D9A;
+  --ivory-warm:   #EFE7DB;
+  --rule:         rgba(80,0,24,0.30);
+  --rule-strong:  rgba(80,0,24,0.55);
+  --rule-light:   rgba(245,238,229,0.32);
+
+  /* ---- ALIASES: legacy names map onto the two colours ---- */
+  --clay:       #500018;
+  --clay-light: #F5EEE5;
+  --clay-pale:  #F5EEE5;
+  --bark:       #500018;
+  --bark-mid:   #3A0011;
+  --sand:       #F5EEE5;
+  --sand-deep:  #F5EEE5;
+  --card:       #FFFDFA;   /* warm white, same lightness as #fff */
+  --card-rule:  transparent;    /* cards separate by surface alone */
+  --card-shadow: none;          /* separation is surface + hairline, not weight */
+  --card-radius: 18px;
+  --moss:       #500018;
+  --moss-light: #F5EEE5;
+  --stone:      rgba(80,0,24,0.28);
+  --cream:      #F5EEE5;
+  --text-dark:  #5A4645;   /* warm grey body ink */
+  --text-mid:   #6B5150;
+  --text-light: #500018;   /* meta is full maroon; size and weight do the work */
+  --font-display: 'Figtree', sans-serif;
+  --font-body:    'Figtree', sans-serif;
   --nav-h: 72px;
 }
 
@@ -55,11 +72,11 @@ nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 4rem;
   height: var(--nav-h);
-  background: rgba(250,245,238,0.98);
-  border-bottom: 1px solid rgba(193,127,82,0.15);
+  background: rgba(245,238,229,0.98);
+  border-bottom: 1px solid var(--rule);
   transition: box-shadow 0.3s;
 }
-nav.scrolled { box-shadow: 0 2px 20px rgba(61,43,31,0.08); }
+nav.scrolled { box-shadow: 0 2px 20px rgba(80,0,24,0.08); }
 .nav-logo {
   display: flex; align-items: center;
   text-decoration: none; flex-shrink: 0;
@@ -96,7 +113,7 @@ nav.scrolled { box-shadow: 0 2px 20px rgba(61,43,31,0.08); }
   text-decoration: none; transition: background 0.2s;
   white-space: nowrap; flex-shrink: 0;
 }
-.nav-cta:hover { background: var(--clay); }
+.nav-cta:hover { background: var(--maroon-deep); }
 .nav-hamburger {
   display: none;
   flex-direction: column;
@@ -196,9 +213,9 @@ nav.menu-open { background: var(--cream); border-bottom-color: transparent; box-
 }
 
 @media (hover: hover) {
-  .btn-primary:hover { background: var(--bark); transform: translateY(-1px); }
-  .btn-outline:hover { background: var(--bark); color: var(--cream); }
-  .btn-ghost:hover { color: var(--bark); border-color: var(--bark); }
+  .btn-primary:hover { background: var(--maroon-deep); transform: translateY(-1px); }
+  .btn-outline:hover { background: var(--maroon); color: var(--ivory); }
+  .btn-ghost:hover { color: var(--maroon-deep); border-color: var(--maroon); }
 }
 
 /* ---- SECTION COMMONS ---- */
@@ -220,7 +237,7 @@ nav.menu-open { background: var(--cream); border-bottom-color: transparent; box-
 .section-title em { font-style: normal; color: var(--clay); }
 .section-title-light { color: var(--clay-pale); }
 .section-title-light em { color: var(--clay-light); }
-.section-header-dark { border-bottom-color: rgba(193,127,82,0.2); }
+.section-header-dark { border-bottom-color: var(--rule-light); }
 
 .section-link {
   font-size: 1.02rem; letter-spacing: 0.02em;
@@ -232,41 +249,46 @@ nav.menu-open { background: var(--cream); border-bottom-color: transparent; box-
 .section-link-light { color: var(--clay-light); }
 
 /* ---- PAGE HERO (inner pages) ---- */
+/* ---- PAGE HEADER ----
+   The wine block is gone. It carried no information and
+   sat two-thirds empty on every page. What is left is
+   type on cream, held to a reading measure so the space
+   to the right reads as margin rather than a gap. */
 .page-hero {
-  background: var(--bark);
-  padding: calc(var(--nav-h) + 4rem) 4rem 4rem;
-  position: relative; overflow: hidden;
-}
-.page-hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(193,127,82,0.15) 0%, transparent 60%);
+  padding: calc(var(--nav-h) + 4.5rem) 4rem 2.5rem;
+  max-width: 58ch;
 }
 .page-hero-eyebrow {
-  font-size: 1.05rem; letter-spacing: 0.04em;
-  color: var(--clay);
-  margin-bottom: 1rem;
-  opacity: 0; animation: fadeUp 0.7s 0.1s forwards;
+  font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--maroon);
+  margin-bottom: 1.1rem;
+  animation: fadeUp 0.7s 0.1s both;
 }
 .page-hero-title {
   font-family: var(--font-body);
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  font-weight: 400; color: var(--clay-pale);
-  line-height: 1.1; margin-bottom: 1rem;
-  opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+  font-size: clamp(2.4rem, 5.5vw, 4rem);
+  font-weight: 600; color: var(--maroon);
+  letter-spacing: -0.025em;
+  line-height: 1.02; margin-bottom: 1.2rem;
+  /* two-word titles break onto two lines and build a block
+     instead of running as one thin strip across the row */
+  max-width: 11ch;
+  animation: fadeUp 0.7s 0.2s both;
 }
-.page-hero-title em { font-style: normal; color: var(--clay-light); display: block; font-size: clamp(2.5rem, 5vw, 4rem); }
+.page-hero-title em { font-style: normal; color: var(--maroon); display: inline; }
 .page-hero-sub {
   font-family: var(--font-body);
-  font-size: 1.25rem; font-weight: 400; font-style: normal;
-  color: rgba(240,219,200,0.6); max-width: 520px;
-  opacity: 0; animation: fadeUp 0.7s 0.3s forwards;
+  font-size: 1.15rem; font-weight: 400; font-style: normal;
+  line-height: 1.75;
+  color: var(--text-dark); max-width: 42ch;
+  animation: fadeUp 0.7s 0.3s both;
 }
 
 /* ---- FOOTER ---- */
 .site-footer {
-  background: var(--bark);
-  border-top: 1px solid rgba(193,127,82,0.15);
+  background: var(--maroon);
+  border-top: 1px solid rgba(245,238,229,0.14);
 }
 .footer-main {
   display: grid;
@@ -279,32 +301,35 @@ nav.menu-open { background: var(--cream); border-bottom-color: transparent; box-
 .footer-brand-name {
   font-family: var(--font-body);
   font-size: 1.4rem; font-weight: 400;
-  color: rgba(240,219,200,0.8);
+  color: var(--ivory);
   display: block; margin-bottom: 0.3rem;
 }
-.footer-brand-name em { font-style: normal; color: var(--clay); }
+.footer-brand-name em { font-style: normal; color: var(--ivory); }
 .footer-brand-tag {
-  font-size: 0.95rem; color: rgba(240,219,200,0.4);
+  font-size: 0.95rem; color: var(--ivory);
   line-height: 1.7; display: block;
 }
 .footer-col h4 {
-  font-size: 1.02rem; letter-spacing: 0.02em;
-  color: var(--clay);
-  margin-bottom: 1.2rem;
+  font-size: 0.72rem; letter-spacing: 0.18em;
+  text-transform: uppercase; font-weight: 600;
+  color: var(--ivory);
+  margin-bottom: 1.4rem;
 }
 .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
 .footer-col ul a {
-  font-size: 0.95rem; color: rgba(240,219,200,0.72);
-  text-decoration: none; transition: color 0.2s;
+  font-size: 1.02rem; font-weight: 400; color: var(--ivory);
+  text-decoration: none;
+  text-underline-offset: 4px; text-decoration-thickness: 1px;
 }
-.footer-col ul a:hover { color: var(--clay-light); }
+/* colour cannot signal hover here, so the underline does */
+.footer-col ul a:hover { text-decoration: underline; }
 .footer-bottom {
   padding: 1.5rem 4rem;
-  border-top: 1px solid rgba(193,127,82,0.1);
+  border-top: 1px solid rgba(245,238,229,0.14);
   display: flex; justify-content: flex-start; align-items: center;
   max-width: 1400px; margin: 0 auto;
 }
-.footer-bottom p { font-size: 0.9rem; color: rgba(240,219,200,0.25); }
+.footer-bottom p { font-size: 0.9rem; color: var(--ivory); }
 
 /* ---- ANIMATIONS ---- */
 @keyframes fadeUp {
@@ -326,8 +351,8 @@ nav.menu-open { background: var(--cream); border-bottom-color: transparent; box-
 .form-group select,
 .form-group textarea {
   font-family: var(--font-body); font-size: 1.05rem;
-  color: var(--text-dark); background: var(--cream);
-  border: 1px solid var(--clay-pale); border-radius: 2px;
+  color: var(--text-dark); background: var(--card);
+  border: 1px solid rgba(80,0,24,0.35); border-radius: 8px;
   padding: 0.8rem 1rem; outline: none;
   transition: border-color 0.2s;
   width: 100%;
@@ -388,4 +413,468 @@ nav.menu-open { background: var(--cream); border-bottom-color: transparent; box-
   .footer-social { display: none; }
 
   .btn-primary, .btn-outline { padding: 0.85rem 1.5rem; font-size: 0.95rem; }
+}
+
+
+/* ============================================
+   TWO COLOUR SYSTEM — CONTEXT OVERRIDES
+   Hierarchy is carried by fill, not by hue:
+   solid = primary, outlined = secondary.
+   ============================================ */
+
+/* hairlines on ivory (clay-pale used to do this job) */
+.section-header,
+.divider,
+.workshop-row,
+.class-card,
+.w-pill-off,
+.form-group input,
+.form-group select,
+.form-group textarea { border-color: var(--rule); }
+
+.btn-ghost { border-bottom-color: var(--rule); }
+
+/* two-tone section titles */
+.section-title em { color: var(--maroon); }
+.hero-title em    { color: var(--maroon); }
+
+/* utility */
+.bg-maroon { background: var(--maroon); }
+
+/* ---- REVIEWS ON MAROON ---- */
+.rev-dark .section-header      { border-bottom-color: var(--rule-light); }
+.rev-dark .section-title       { color: var(--ivory); }
+.rev-dark .section-title em    { color: var(--ivory); }
+.rev-dark .rev-sub             { color: var(--ivory); }
+.rev-dark .rev-badge {
+  background: transparent;
+  border: 1px solid rgba(245,238,229,0.35);
+  padding: 0.5rem 1.15rem;
+}
+.rev-dark .rev-badge-rating    { color: var(--ivory); }
+.rev-dark .rev-badge-count     { color: var(--ivory); }
+.rev-dark .rev-card            { background: var(--ivory); }
+.rev-dark .rev-btn             { border-color: rgba(245,238,229,0.5); color: var(--ivory); }
+.rev-dark .rev-btn:hover       { background: var(--ivory); color: var(--maroon); }
+
+
+/* ============================================
+   FIGTREE WEIGHT TUNING
+   Figtree carries more weight than Jost did at
+   the same number, and light-on-dark always
+   reads heavier than dark-on-light. So headings
+   sit at 500 on ivory and drop to 400 on maroon.
+   ============================================ */
+.hero-title,
+.section-title,
+.page-hero-title,
+.intro-label,
+.class-name,
+.music-name,
+.w-title,
+.rev-name        { font-weight: 500; }
+
+/* on maroon: one step lighter */
+.page-hero-title,
+.intro-label,
+.section-title-light,
+.class-card.featured .class-name,
+.rev-dark .section-title  { font-weight: 400; }
+
+.hero-title em,
+.section-title em         { font-weight: 500; }
+.rev-dark .section-title em { font-weight: 400; }
+
+
+/* ============================================
+   CONTRAST PASS
+   Cards are pure ivory on a tinted band so they
+   separate by surface as well as by stroke, and
+   every border is strong enough to actually see.
+   ============================================ */
+.workshop-row,
+.class-card,
+.music-card,
+.release-card    {
+  background: var(--card);
+  border-color: var(--card-rule);
+}
+
+/* on the maroon band the card flips to ivory */
+.rev-dark .rev-card { background: var(--ivory); border: none; }
+
+.section-header  { border-bottom-color: var(--rule-strong); }
+.divider         { border-top-color: var(--rule-strong); }
+
+.btn-outline,
+.btn-enroll,
+.rev-btn         { border-color: var(--maroon); }
+
+/* light-on-dark secondary text: lift off the floor */
+.rev-dark .rev-sub,
+.rev-dark .rev-badge-count { color: var(--ivory); }
+
+/* Page descriptions sit on ivory, not on wine. They were
+   ivory-on-ivory since the maroon header block was removed,
+   which made every page description invisible. */
+.page-hero-sub { color: var(--text-dark); }
+
+
+/* ============================================
+   GOOGLE REVIEW BADGE
+   The G mark and the star gold are Google's, not
+   ours. They stay full colour because they are
+   proof, not decoration, and Google's brand terms
+   require the mark to be used as supplied.
+   ============================================ */
+.rev-badge-g { width: 19px; height: 19px; display: block; flex-shrink: 0; }
+
+/* Google gold is 2.1:1 on cream, so on light surfaces
+   it drops to a darker gold that still reads as gold. */
+.rev-stars,
+.rev-badge-stars          { color: #A96D06; }
+.rev-dark .rev-badge-stars { color: #FBBC05; }
+
+.rev-dark .rev-badge {
+  border: 1px solid rgba(245,238,229,0.30);
+  background: transparent;
+  padding: 0.5rem 1.15rem;
+}
+.rev-badge-count:empty { display: none; }
+
+
+/* ============================================
+   WORKSHOP HIERARCHY
+   Only one workshop can actually be booked, so
+   only one gets weight. The rest are dates.
+   ============================================ */
+.workshop-row.is-open .w-day,
+.workshop-row.is-open .w-title,
+.w-card.is-open .w-day,
+.w-card.is-open .w-title      { color: var(--ivory); }
+
+.workshop-row.is-open .w-month,
+.workshop-row.is-open .w-meta,
+.w-card.is-open .w-month,
+.w-card.is-open .w-meta       { color: var(--ivory); }
+
+.workshop-row.is-open .w-spots,
+.w-card.is-open .w-spots      { color: var(--ivory); }
+
+.workshop-row.is-open .btn-primary,
+.w-card.is-open .btn-primary {
+  background: var(--ivory); color: var(--maroon);
+}
+.workshop-row.is-open .btn-primary:hover,
+.w-card.is-open .btn-primary:hover {
+  background: #FFFFFF; color: var(--maroon);
+}
+.workshop-row.is-open .w-pill-off,
+.w-card.is-open .w-pill-off {
+  color: var(--ivory); border-color: rgba(245,238,229,0.35);
+}
+.workshop-row.is-open:hover,
+.w-card.is-open:hover         { background: var(--maroon); }
+
+
+/* ============================================
+   INTERACTIVE STATES
+   Cards are identified by surface and shadow, so
+   hover lifts the shadow and leaves the hairline
+   alone. Keyboard focus is full-strength wine,
+   which is the state that actually has to be
+   unmissable.
+   ============================================ */
+
+a:focus-visible,
+button:focus-visible,
+.workshop-row:focus-visible,
+.class-card:focus-visible,
+.music-card:focus-visible,
+.release-card:focus-visible,
+.btn-primary:focus-visible,
+.btn-outline:focus-visible,
+.btn-enroll:focus-visible,
+.rev-btn:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--maroon);
+  outline-offset: 2px;
+}
+
+/* on wine sections the ring flips so it stays visible */
+.bg-maroon a:focus-visible,
+.bg-maroon button:focus-visible,
+.site-footer a:focus-visible,
+.page-hero a:focus-visible,
+.workshop-row.is-open a:focus-visible,
+.workshop-row.is-open button:focus-visible {
+  outline-color: var(--ivory);
+}
+
+
+/* ============================================
+   HERO RATING BADGE
+   Sits on its own line under the buttons, so the
+   proof lands at the moment someone is deciding
+   whether to press one. The G mark already says
+   Google, so the word is carried by aria-label
+   instead of repeated on screen.
+   ============================================ */
+.hero-rating {
+  display: none; align-items: center; gap: 0.55rem;
+  margin-top: 2rem; text-decoration: none;
+  animation: fadeUp 0.8s 0.8s both;
+}
+.hero-rating.is-live { display: inline-flex; }
+.hero-rating .g-mark { width: 18px; height: 18px; display: block; flex-shrink: 0; }
+.hero-rating-stars { color: #A96D06; font-size: 0.95rem; letter-spacing: 0.1em; }
+.hero-rating-value { color: var(--maroon); font-size: 0.95rem; font-weight: 500; }
+.hero-rating:hover .hero-rating-value { text-decoration: underline; }
+
+.rev-badge .g-mark { width: 18px; height: 18px; display: block; flex-shrink: 0; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (max-width: 600px) {
+  .hero-rating { margin-top: 1.5rem; }
+}
+
+
+/* ============================================
+   OPEN ROW BADGE
+   The bookings-open badge sits on the wine card,
+   so the green needs to lift off wine, not cream.
+   ============================================ */
+.workshop-row.is-open .spots-badge,
+.w-card.is-open .spots-badge {
+  background: #7A8C63; color: #14200C;
+}
+.workshop-row.is-open .w-counts,
+.w-card.is-open .w-counts        { color: var(--ivory); }
+.workshop-row.is-open .w-counts .w-dim,
+.w-card.is-open .w-counts .w-dim { color: var(--ivory); }
+.workshop-row.is-open .w-meta span,
+.w-card.is-open .w-meta span     { color: var(--ivory); }
+
+
+/* ============================================
+   BRASS ACCENT
+   Two colours read flat because nothing draws
+   the eye. Brass gives it somewhere to land and
+   echoes the instrument, which is hammered steel
+   with a warm sheen.
+   ============================================ */
+
+/* on wine grounds */
+.section-title-light em,
+.page-hero-eyebrow,
+.rev-dark .section-title em,
+.workshop-row.is-open .w-month,
+.footer-col h4                  { color: var(--ivory); }
+
+/* on cream grounds */
+.hero-eyebrow,
+.section-eyebrow,
+.lbl-accent                     { color: var(--maroon); }
+
+.section-title em               { color: var(--maroon); }
+.hero-title em                  { color: var(--maroon); }  /* name stays wine */
+
+.nav-links a.active::after,
+.nav-links a:hover::after       { background: var(--maroon); }
+.nav-links a.active             { color: var(--maroon); }
+
+.class-card.featured .class-level { color: var(--ivory); }
+
+
+/* ============================================
+   HOVER: SHADOW, NOT STROKE
+   White cards separate by surface, so a hover
+   border reads as a hard edge appearing from
+   nowhere. Lifting the shadow reads as the card
+   coming forward instead.
+   Interactive cards only. Focus rings are
+   untouched and still full strength.
+   ============================================ */
+/* scale only on cards you can actually click.
+   .workshop-row is cursor:default, so it stays still. */
+.class-card,
+.music-card,
+.release-card,
+.channel {
+  transition: transform 0.28s cubic-bezier(.25,.1,.25,1);
+}
+.class-card:hover,
+.music-card:hover,
+.release-card:hover,
+.channel:hover {
+  transform: scale(1.012);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .class-card:hover,
+  .music-card:hover,
+  .release-card:hover,
+  .channel:hover { transform: none; }
+}
+
+
+/* ============================================
+   TYPE SCALE
+   Hierarchy comes from size and weight only.
+   No opacity, no accent colour. Three inks:
+   maroon, warm grey for body, ivory on wine.
+
+   600  headings and labels
+   500  sub headings
+   400  body, meta, dates
+   300  body on wine only, because light on dark
+        renders heavier than dark on light
+   ============================================ */
+
+/* headings */
+.hero-title,
+.page-hero-title,
+.section-title,
+.section-title-light      { font-weight: 600; }
+.hero-title em,
+.section-title em         { font-weight: 600; color: var(--maroon); }
+.section-title-light em,
+.rev-dark .section-title em { font-weight: 600; color: var(--ivory); }
+
+/* card titles */
+.w-title, .class-name, .music-name, .rev-name,
+.past-photo-title, .course-name, .channel h4,
+.instrument-card h4       { font-weight: 600; }
+
+/* sub headings */
+.class-level, .course-level, .private-card-label { font-weight: 500; }
+
+/* eyebrows and small labels: tracked caps carry the emphasis */
+.hero-eyebrow,
+.page-hero-eyebrow,
+.section-eyebrow,
+.past-photo-eyebrow,
+.footer-col h4,
+.spots-badge              { font-weight: 600; letter-spacing: 0.1em; }
+
+/* body */
+.hero-sub, .section-sub, .rev-quote, .past-photo-desc,
+.class-desc, .course-desc { font-weight: 400; }
+
+/* meta, dates, secondary: smaller and lighter, never faded */
+.w-month, .w-meta span, .w-counts, .past-photo-meta,
+.class-meta, .course-meta, .rev-context, .music-year,
+.stat small, .footer-bottom p, .testi-loc { font-weight: 400; }
+
+/* on wine, body drops one step so it reads the same weight */
+.intro-body p,
+.rev-dark .rev-sub,
+.testi-quote,
+.class-card.featured .class-desc,
+.course-card.featured .course-desc,
+.w-card.is-open .w-meta span,
+.workshop-row.is-open .w-meta span { font-weight: 300; }
+
+
+/* ============================================
+   LABELS ON WINE
+   Each ground gets a primary and a secondary ink.
+   Cream: maroon + #5A4645.  Wine: ivory + rose.
+   Eyebrow labels only.
+   ============================================ */
+.page-hero-eyebrow,
+.footer-col h4,
+.intro-label,
+.stat small,
+.testi-loc,
+.rev-dark .rev-badge-count,
+.class-card.featured .class-level,
+.course-card.featured .course-level,
+.w-card.is-open .w-month,
+.workshop-row.is-open .w-month { color: var(--label-on-wine); }
+
+
+/* ============================================
+   WORKSHOP STATUS
+   Scheduled rows are information, not controls.
+   No pill, so the only button in the section is
+   the one you can actually press.
+   ============================================ */
+.w-status { text-align: right; }
+.w-status-label {
+  display: block; font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--maroon); margin-bottom: 0.25rem;
+}
+.w-status-note {
+  display: block; font-size: 0.9rem; font-weight: 400;
+  color: var(--text-dark); white-space: nowrap;
+}
+
+/* status dot lives with the count, where people actually look */
+.w-dot {
+  display: inline-block; width: 7px; height: 7px;
+  border-radius: 50%; margin-right: 0.5rem;
+  vertical-align: middle; background: #8FA574;
+}
+.w-dot.few  { background: #D98A4A; }
+.w-dot.full { background: #B9AEA8; }
+
+@media (max-width: 600px) {
+  .w-status { text-align: left; }
+}
+
+
+/* ============================================
+   HEADER RULE
+   A short wine bar closes the header so it does not
+   run straight into the body copy. The full-width
+   hairline was too corporate for an artist site.
+   ============================================ */
+.page-hero-rule {
+  width: 64px; height: 2px;
+  background: var(--maroon);
+  margin: 0 4rem 3rem;
+}
+
+@media (max-width: 900px) {
+  .page-hero { padding: calc(var(--nav-h) + 3rem) 2rem 2rem; }
+  .page-hero-rule { margin: 0 2rem 2.5rem; }
+}
+@media (max-width: 600px) {
+  .page-hero { padding: calc(var(--nav-h) + 2.2rem) 1.2rem 1.6rem; }
+  .page-hero-rule { margin: 0 1.2rem 2rem; }
+}
+
+
+/* ============================================
+   REVEAL SAFETY
+   These elements used to be opacity:0 by default and
+   relied on an animation to become visible. If the
+   animation never ran the content was simply gone,
+   which is what happened to the page descriptions.
+   Now they are visible by default and only animate
+   when motion is welcome.
+   ============================================ */
+.page-hero-eyebrow,
+.page-hero-title,
+.page-hero-sub,
+.hero-rating { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .page-hero-eyebrow,
+  .page-hero-title,
+  .page-hero-sub,
+  .hero-rating,
+  .hero-eyebrow,
+  .hero-title,
+  .hero-sub,
+  .hero-actions { animation: none; opacity: 1; transform: none; }
 }
