@@ -594,15 +594,18 @@ textarea:focus-visible {
    Google, so the word is carried by aria-label
    instead of repeated on screen.
    ============================================ */
+/* The rating rides on the eyebrow line, one step smaller than the
+   descriptor beside it, so it reads as a footnote and not a boast.
+   It renders from the markup, so a failed API call cannot hide it. */
 .hero-rating {
-  display: none; align-items: center; gap: 0.55rem;
-  margin-top: 2rem; text-decoration: none;
-  animation: fadeUp 0.8s 0.8s both;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  text-decoration: none; vertical-align: middle;
+  margin-left: 0.9rem; padding-left: 0.9rem;
+  border-left: 1px solid var(--rule);
 }
-.hero-rating.is-live { display: inline-flex; }
-.hero-rating .g-mark { width: 18px; height: 18px; display: block; flex-shrink: 0; }
-.hero-rating-stars { color: #A96D06; font-size: 0.95rem; letter-spacing: 0.1em; }
-.hero-rating-value { color: var(--maroon); font-size: 0.95rem; font-weight: 500; }
+.hero-rating .g-mark { width: 15px; height: 15px; display: block; flex-shrink: 0; }
+.hero-rating-stars { color: #A96D06; font-size: 0.85rem; letter-spacing: 0.06em; }
+.hero-rating-value { color: var(--maroon); font-size: 0.85rem; font-weight: 600; }
 .hero-rating:hover .hero-rating-value { text-decoration: underline; }
 
 .rev-badge .g-mark { width: 18px; height: 18px; display: block; flex-shrink: 0; }
@@ -614,7 +617,12 @@ textarea:focus-visible {
 }
 
 @media (max-width: 600px) {
-  .hero-rating { margin-top: 1.5rem; }
+  /* on a narrow column the divider would collide with a wrapped
+     eyebrow, so the badge drops to its own line */
+  .hero-rating {
+    display: flex; margin-left: 0; padding-left: 0;
+    border-left: none; margin-top: 0.6rem;
+  }
 }
 
 
