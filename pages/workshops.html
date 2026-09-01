@@ -35,7 +35,7 @@
 .wc-badge.open { background: #5E6E4D; color: var(--cream); font-weight: 600; }
 .wc-badge.few  { background: rgba(180,60,40,0.1); color: #B43C28; }
 .wc-badge.full { background: rgba(100,100,100,0.1); color: var(--text-light); }
-.wc-title { font-family: var(--font-body); font-size: 1.5rem; font-weight: 400; color: var(--bark); margin-bottom: 0.5rem; }
+.wc-title { font-family: var(--font-body); font-size: 1.5rem; color: var(--bark); margin-bottom: 0.5rem; }
 .wc-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; }
 .wc-meta span { font-size: 1rem; color: var(--text-light); }
 .wc-counts { font-size: 0.98rem; color: var(--text-mid); margin-top: 0.6rem; }
@@ -53,7 +53,45 @@
 .detail-block ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
 .detail-block ul li { font-size: 1.05rem; color: var(--text-mid); padding-left: 1rem; position: relative; }
 .detail-block ul li::before { content: '—'; position: absolute; left: 0; color: var(--maroon); font-size: 1rem; }
-.detail-block p { font-size: 1.05rem; color: var(--text-mid); line-height: 1.7; font-weight: 450; }
+.detail-block p { font-size: 1.05rem; color: var(--text-mid); line-height: 1.7; }
+
+/* ---- WORKSHOPS PREVIEW ---- */
+.workshop-rows { display: flex; flex-direction: column; gap: 0.75rem; }
+.workshop-row {
+  display: grid; grid-template-columns: 100px 1fr auto;
+  gap: 2rem; align-items: center;
+  padding: 1.8rem 2rem; background: var(--card);
+  border: 1px solid var(--card-rule); border-radius: var(--card-radius);
+  transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  cursor: default;
+}
+/* .workshop-row is cursor:default, so it has no hover state.
+   Reacting to hover on something you cannot click is a lie. */
+.w-date { text-align: left; flex-shrink: 0; }
+.w-day { font-family: var(--font-body); font-size: 2.4rem; font-weight: 400; color: var(--clay); line-height: 1; display: block; }
+.w-month { font-size: 0.98rem; letter-spacing: 0.12em; text-transform: none; color: var(--text-light); display: block; white-space: nowrap; }
+.w-card.is-open, .workshop-row.is-open {
+  border: 1px solid var(--maroon) !important;
+  background: var(--maroon);
+}
+.w-title { font-family: var(--font-body); font-size: 1.35rem; color: var(--bark); margin-bottom: 0.4rem; }
+.w-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: baseline; }
+.w-meta span { font-size: 1rem; color: var(--text-light); }
+.w-counts { font-size: 0.98rem; color: var(--text-mid); margin-top: 0.55rem; }
+.w-counts .w-dim { color: var(--text-light); }
+.w-pill-off { font-size:1rem; font-weight:500; cursor:not-allowed; white-space:nowrap; color:var(--text-light); border:1.5px solid rgba(80,0,24,0.28); padding:calc(0.79rem - 1.5px) 2rem; border-radius:40px; display:inline-block; letter-spacing:0.08em; text-transform:none; }
+.w-meta span + span::before { content: none; }
+.w-action { text-align: right; flex-shrink: 0; }
+.spots-badge {
+  font-size: 11px; letter-spacing: 0.3px;
+  text-transform: none; padding: 5px 12px 5px 16px; border-radius: 0;
+  background: #5E6E4D; color: var(--cream); font-weight: 600;
+}
+.workshop-row:has(.spots-badge) { position: relative; padding-top: 3.4rem; }
+.workshop-row .spots-badge { position: absolute; top: 16px; left: 0; margin: 0; }
+.spots-badge.few { background: rgba(180,60,40,0.1); color: #B43C28; }
+.spots-badge.full { background: rgba(100,100,100,0.1); color: var(--text-light); }
 
 /* PAST WORKSHOPS */
 .past-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
@@ -63,14 +101,14 @@
 
 /* Past workshop photo-rows */
 .past-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2.25rem;
 }
 .past-card { background: var(--card); border-radius: var(--card-radius); overflow: hidden; }
 .past-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
-.past-card-info { padding: 1.4rem 1.5rem 1.6rem; }
+.past-card-info { padding: 1.8rem 2rem 2rem; }
 .past-photo-eyebrow { font-size: 1rem; letter-spacing: 0.04em; text-transform: none; color: var(--text-light); margin-bottom: 0.6rem; }
-.past-photo-title { font-family: var(--font-body); font-size: 1.4rem; font-weight: 500; color: var(--maroon); margin-bottom: 0.6rem; }
-.past-photo-desc { font-family: var(--font-body); font-size: 1rem; font-weight: 400; color: var(--text-dark); line-height: 1.7; margin-bottom: 0.6rem; }
+.past-photo-title { font-family: var(--font-body); font-size: 1.4rem; color: var(--maroon); margin-bottom: 0.6rem; }
+.past-photo-desc { font-family: var(--font-body); font-size: 1rem; color: var(--text-dark); line-height: 1.7; margin-bottom: 0.6rem; }
 .past-photo-meta { font-size: 0.9rem; color: var(--text-light); }
 
 /* Private / Custom section */
@@ -78,7 +116,7 @@
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 3rem; align-items: center;
 }
-.private-text p { font-family: var(--font-body); font-size: 1.1rem; font-weight: 450; color: var(--text-mid); line-height: 1.85; margin-bottom: 1.5rem; }
+.private-text p { font-family: var(--font-body); font-size: 1.1rem; color: var(--text-mid); line-height: 1.85; margin-bottom: 1.5rem; }
 .private-text p:last-of-type { margin-bottom: 2rem; }
 .private-cards { display: flex; flex-direction: column; gap: 1rem; }
 .private-card { background: var(--card); border: 1px solid var(--card-rule); border-radius: var(--card-radius); padding: 1.5rem 1.8rem; }
@@ -89,7 +127,7 @@
   .workshop-card-header { grid-template-columns: 80px 1fr auto; gap: 1rem; padding: 1.5rem; }
   .wc-action { align-items: flex-end; }
   .workshop-details-grid { grid-template-columns: 1fr; }
-  .past-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .past-grid { grid-template-columns: 1fr; gap: 1.5rem; }
   .form-row { grid-template-columns: 1fr; }
   .workshop-details { padding: 0 1.5rem 1.5rem; }
   .past-grid { grid-template-columns: 1fr; }
@@ -107,6 +145,23 @@
 
   .past-photo-title { font-size: 1.6rem; }
   .booking-overlay { align-items: flex-end; padding: 0; }
+}
+
+/* --- workshop rows, responsive (same breakpoints as the home page) --- */
+@media (max-width: 1080px) {
+  .workshop-row { grid-template-columns: 70px 1fr auto; gap: 1rem; padding: 1.5rem; }
+  .w-action { text-align: right; min-width: unset; margin-top: 0; }
+}
+@media (max-width: 768px) {
+  .workshop-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1.4rem; }
+  .w-date { display: flex; align-items: baseline; gap: 0.5rem; text-align: left; }
+  .w-action { text-align: left; min-width: unset; margin-top: 1.2rem; }
+}
+@media (max-width: 600px) {
+  .workshop-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1.2rem; }
+  .w-date { display: flex; align-items: baseline; gap: 0.5rem; text-align: left; }
+  .w-day { font-size: 1.6rem; }
+  .w-action { text-align: left; min-width: unset; margin-top: 1.2rem; }
 }
 </style>
 </head>
@@ -139,65 +194,26 @@
 <section class="section" id="upcoming">
   <div class="section-header"><h2 class="section-title">Upcoming <em>Workshops</em></h2></div>
 
-  <div class="workshop-card" data-ws="WS-007" data-date="2026-09-06">
-    <div class="workshop-card-header">
-      <div class="wc-date"><span class="wc-day">06</span><span class="wc-month">Sep 2026</span></div>
-      <div>
-        <span class="wc-badge open">Bookings open</span>
-        <p class="wc-title">Between Stillness and Storm</p>
-        <div class="wc-meta">
-          <span>Creative Bloom, Haralur, Bengaluru · 2 hours · Beginner</span>
-        </div>
-        <p class="wc-counts" hidden></p>
-      </div>
-      <div class="wc-action">
-        <a href="/pages/book?ws=WS-007" class="btn-primary">Book now</a>
-      </div>
+  <div class="workshop-rows">
+    <div class="workshop-row is-open" data-ws="WS-007" data-date="2026-09-06">
+      <div class="w-date"><span class="w-day">06</span><span class="w-month">Sep 2026</span></div>
+      <div><p class="w-title">Between Stillness and Storm</p><div class="w-meta"><span>Creative Bloom, Haralur, Bengaluru · 2 hours · Beginner</span></div><p class="w-counts" hidden></p></div>
+      <div class="w-action"><a href="/pages/book?ws=WS-007" class="btn-primary" style="font-size:1rem;padding:0.79rem 2rem;">Book now</a></div>
     </div>
-  </div>
-
-  <div class="workshop-card">
-    <div class="workshop-card-header">
-      <div class="wc-date"><span class="wc-day">04</span><span class="wc-month">Oct 2026</span></div>
-      <div>
-        <p class="wc-title">Breath, Pause, Resonance</p>
-        <div class="wc-meta">
-          <span>Creative Bloom, Indiranagar, Bengaluru · 2 hours · Beginner</span>
-        </div>
-      </div>
-      <div class="wc-action">
-        <span style="font-size:1rem;font-weight:500;padding:calc(0.79rem - 1.5px) 2.6rem;display:inline-block;cursor:not-allowed;color:var(--text-mid);border:1.5px solid var(--rule);border-radius:40px;letter-spacing:0.08em;text-transform: none;">Scheduled</span>
-      </div>
+    <div class="workshop-row">
+      <div class="w-date"><span class="w-day">04</span><span class="w-month">Oct 2026</span></div>
+      <div><p class="w-title">Breath, Pause, Resonance</p><div class="w-meta"><span>Creative Bloom, Indiranagar, Bengaluru · 2 hours · Beginner</span></div></div>
+      <div class="w-action w-status"><span class="w-status-label">Scheduled</span><span class="w-status-note">Booking opens Sep</span></div>
     </div>
-  </div>
-
-  <div class="workshop-card">
-    <div class="workshop-card-header">
-      <div class="wc-date"><span class="wc-day">01</span><span class="wc-month">Nov 2026</span></div>
-      <div>
-        <p class="wc-title">Echoes of the Inner Self</p>
-        <div class="wc-meta">
-          <span>Venue to be announced, Bengaluru · 2 hours · Beginner</span>
-        </div>
-      </div>
-      <div class="wc-action">
-        <span style="font-size:1rem;font-weight:500;padding:calc(0.79rem - 1.5px) 2.6rem;display:inline-block;cursor:not-allowed;color:var(--text-mid);border:1.5px solid var(--rule);border-radius:40px;letter-spacing:0.08em;text-transform: none;">Scheduled</span>
-      </div>
+    <div class="workshop-row">
+      <div class="w-date"><span class="w-day">01</span><span class="w-month">Nov 2026</span></div>
+      <div><p class="w-title">Echoes of the Inner Self</p><div class="w-meta"><span>Venue to be announced, Bengaluru · 2 hours · Beginner</span></div></div>
+      <div class="w-action w-status"><span class="w-status-label">Scheduled</span><span class="w-status-note">Booking opens Oct</span></div>
     </div>
-  </div>
-
-  <div class="workshop-card">
-    <div class="workshop-card-header">
-      <div class="wc-date"><span class="wc-day">06</span><span class="wc-month">Dec 2026</span></div>
-      <div>
-        <p class="wc-title">Winter Stillness Circle</p>
-        <div class="wc-meta">
-          <span>Venue to be announced, Bengaluru · 2 hours · Beginner</span>
-        </div>
-      </div>
-      <div class="wc-action">
-        <span style="font-size:1rem;font-weight:500;padding:calc(0.79rem - 1.5px) 2.6rem;display:inline-block;cursor:not-allowed;color:var(--text-mid);border:1.5px solid var(--rule);border-radius:40px;letter-spacing:0.08em;text-transform: none;">Scheduled</span>
-      </div>
+    <div class="workshop-row">
+      <div class="w-date"><span class="w-day">06</span><span class="w-month">Dec 2026</span></div>
+      <div><p class="w-title">Winter Stillness Circle</p><div class="w-meta"><span>Venue to be announced, Bengaluru · 2 hours · Beginner</span></div></div>
+      <div class="w-action w-status"><span class="w-status-label">Scheduled</span><span class="w-status-note">Booking opens Nov</span></div>
     </div>
   </div>
 </section>
@@ -328,7 +344,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 Arpit Pandey <span style="font-size:0.78rem;letter-spacing:0.03em;">(v6)</span></p>
+    <p>© 2026 Arpit Pandey <span style="font-size:0.78rem;letter-spacing:0.03em;">(v9)</span></p>
   </div>
 </footer>
 
@@ -341,34 +357,37 @@
   function istDate(dateStr, timeStr) {
     return new Date(dateStr + 'T' + timeStr + '+05:30');
   }
-  function setPill(card, text) {
-    var a = card.querySelector('.wc-action');
-    if (a) a.innerHTML = '<span class="wc-pill-off">' + text + '</span>';
+  function setPill(row, text) {
+    var a = row.querySelector('.w-action');
+    if (a) a.innerHTML = '<span class="w-pill-off">' + text + '</span>';
   }
-  function setBadge(card, cls, text) {
-    var b = card.querySelector('.wc-badge');
-    if (!b) return;
-    b.className = 'wc-badge ' + cls;
-    b.textContent = text;
+  // the sticker is gone; state now rides on the counts line as a dot
+  function setBadge(row, cls, text) {
+    row.dataset.state = cls.indexOf('full') > -1 ? 'full'
+                      : cls.indexOf('few') > -1 ? 'few' : '';
+    row.dataset.stateLabel = text;
   }
-  function showCounts(card, html) {
-    var el = card.querySelector('.wc-counts');
+  function showCounts(row, html) {
+    var el = row.querySelector('.w-counts');
     if (!el) return;
-    el.innerHTML = html;
+    var st = row.dataset.state || '';
+    var lbl = row.dataset.stateLabel || 'Bookings open';
+    // the dot is decorative on its own, so it carries the wording for screen readers
+    el.innerHTML = '<span class="w-dot ' + st + '" role="img" aria-label="' + lbl + '"></span>' + html;
     el.hidden = false;
   }
-  function processCard(card) {
-    var ws = card.getAttribute('data-ws');
-    var date = card.getAttribute('data-date');
+  function processRow(row) {
+    var ws = row.getAttribute('data-ws');
+    var date = row.getAttribute('data-date');
     if (!ws || !date) return;
     var now = new Date();
     var dayStart = istDate(date, '00:00');
 
-    if (now >= new Date(dayStart.getTime() + 86400000)) { card.style.display = 'none'; return; }
+    if (now >= new Date(dayStart.getTime() + 86400000)) { row.style.display = 'none'; return; }
 
     if (now >= dayStart) {
-      setBadge(card, 'full', 'Booking closed');
-      setPill(card, 'Booking closed');
+      setBadge(row, 'spots-badge full', 'Booking closed');
+      setPill(row, 'Booking closed');
       return;
     }
 
@@ -376,33 +395,33 @@
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         if (!data) return;
-        var p = Number(data.participantsRemaining);
-        var o = Number(data.observersRemaining);
-        if (isNaN(p)) return;
+        var pn = Number(data.participantsRemaining);
+        var on = Number(data.observersRemaining);
+        if (isNaN(pn)) return;
 
-        if (p <= 0) {
-          setBadge(card, 'full', 'Slots full');
-          setPill(card, 'Slots full');
+        if (pn <= 0) {
+          setBadge(row, 'spots-badge full', 'Slots full');
+          setPill(row, 'Slots full');
           return;
         }
 
-        if (p <= LOW_SEATS) {
-          setBadge(card, 'few', 'Only ' + p + (p === 1 ? ' spot left' : ' spots left'));
+        if (pn <= LOW_SEATS) {
+          setBadge(row, 'spots-badge few', 'Only ' + pn + (pn === 1 ? ' spot left' : ' spots left'));
         } else {
-          setBadge(card, 'open', 'Bookings open');
+          setBadge(row, 'spots-badge', 'Bookings open');
         }
 
-        var line = p + ' participant ' + (p === 1 ? 'spot' : 'spots') + ' left';
-        if (!isNaN(o)) {
-          line += (o > 0)
-            ? ' <span class="wc-dim">\u00b7</span> ' + o + ' audience ' + (o === 1 ? 'pass' : 'passes') + ' left'
-            : ' <span class="wc-dim">\u00b7 audience full</span>';
+        var line = pn + ' participant ' + (pn === 1 ? 'spot' : 'spots') + ' left';
+        if (!isNaN(on)) {
+          line += (on > 0)
+            ? ' <span class="w-dim">\u00b7</span> ' + on + ' audience ' + (on === 1 ? 'pass' : 'passes') + ' left'
+            : ' <span class="w-dim">\u00b7 audience full</span>';
         }
-        showCounts(card, line);
+        showCounts(row, line);
       })
       .catch(function () {});
   }
-  document.querySelectorAll('.workshop-card[data-ws]').forEach(processCard);
+  document.querySelectorAll('.workshop-row[data-ws]').forEach(processRow);
 })();
 </script>
 </body>
