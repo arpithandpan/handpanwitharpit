@@ -54,6 +54,10 @@
 .releases-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
 .release-card { background: var(--card); border-radius: var(--card-radius); overflow: hidden; border: 1px solid var(--card-rule); -webkit-tap-highlight-color: transparent; cursor: pointer; }
 .release-art { aspect-ratio: 1; background: var(--sand-deep); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+/* The card was doing the rounding by clipping a square image. On a long
+   press iOS lifts the raw image out of that clip, so its real corners
+   showed. Rounding the image itself keeps them in the lifted preview. */
+.release-art img { border-radius: var(--card-radius) var(--card-radius) 0 0; }
 .release-art-overlay {
   position: absolute; inset: 0;
   background: rgba(80,0,24,0.78);

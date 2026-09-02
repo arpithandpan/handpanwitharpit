@@ -708,11 +708,16 @@ textarea:focus-visible {
 .channel {
   transition: transform 0.28s cubic-bezier(.25,.1,.25,1);
 }
-.class-card:hover,
-.music-card:hover,
-.release-card:hover,
-.channel:hover {
-  transform: scale(1.012);
+/* This block had no hover guard, so on a touch screen the card stayed
+   scaled after a tap. It sits in style.css, which my earlier audits
+   could not read from a file:// page, so it went unnoticed. */
+@media (hover: hover) and (pointer: fine) {
+  .class-card:hover,
+  .music-card:hover,
+  .release-card:hover,
+  .channel:hover {
+    transform: scale(1.012);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
