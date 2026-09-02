@@ -13,7 +13,7 @@
   background: var(--card); border-radius: var(--card-radius); padding: 3rem; margin-bottom: 4rem;
 }
 .release-art-lg {
-  aspect-ratio: 1; background: var(--sand-deep); border-radius: 3px;
+  aspect-ratio: 1; background: var(--sand-deep); border-radius: var(--card-radius);
   display: flex; align-items: center; justify-content: center;
   position: relative; overflow: hidden;
 }
@@ -111,14 +111,13 @@
 
 @media (max-width: 1080px) {
   .release-featured { grid-template-columns: 1fr; padding: 2rem; gap: 2rem; }
-  .release-art-lg { max-height: 400px; }
+  .release-art-lg { max-width: none; }
   .releases-grid { grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
   .video-grid { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
   .release-art-wrap { max-width: 240px; margin: 0 auto; }
 }
 @media (max-width: 600px) {
   .release-featured { padding: 1.5rem; }
-  .release-art-lg { max-height: 280px; }
   .releases-grid { grid-template-columns: 1fr; }
   .video-grid { grid-template-columns: 1fr; }
   /* three streaming buttons will not fit on one line at readable
@@ -128,6 +127,16 @@
 }
 
 /* --- mobile type step --- */
+
+/* Two columns hold down to 760px. Before this the layout dropped to a
+   single column at 1080, which is desktop territory: any phone in
+   landscape or tablet in portrait got a capped square with space
+   either side. Below 760 it stacks and the art fills the card. */
+@media (min-width: 760px) and (max-width: 1080px) {
+  .release-featured {
+    grid-template-columns: 0.9fr 1.1fr; gap: 2.5rem; align-items: center;
+  }
+}
 </style>
 </head>
 <body>
