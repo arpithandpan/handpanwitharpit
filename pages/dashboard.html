@@ -823,6 +823,11 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .btn-dash-sync:hover { background: rgba(122,140,106,0.25); }
 /* Danger — destructive actions like Clear all */
 .btn-dash-danger { background: transparent; color: #B43C28; border: 1px solid rgba(180,60,40,0.3); justify-content: center; }
+.ws-cancelled-badge{display:inline-block;font-size:0.68rem;font-weight:600;color:#e87a60;border:1px solid rgba(232,122,96,0.5);border-radius:999px;padding:1px 8px;letter-spacing:0.04em;white-space:nowrap;vertical-align:middle;margin-left:0.4rem;text-transform:uppercase;}
+tr.ws-row-cancelled td{opacity:0.5;}
+tr.ws-row-cancelled td:first-child,tr.ws-row-cancelled td.ws-action-sticky{opacity:1;}
+tr.ws-row-cancelled td:nth-child(4),tr.ws-row-cancelled td:nth-child(5),tr.ws-row-cancelled td:nth-child(6),tr.ws-row-cancelled td:nth-child(7){text-decoration:line-through;}
+.m-card.ws-card-cancelled{opacity:0.65;}
 .inv-cancelled-badge{display:inline-block;font-size:0.72rem;font-weight:600;color:#e87a60;border:1px solid rgba(220,100,80,0.5);border-radius:999px;padding:1px 9px;letter-spacing:0.02em;white-space:nowrap;}
 .inv-reinstate-link{background:none;border:none;color:var(--clay);font-size:0.7rem;cursor:pointer;padding:0;text-decoration:underline;font-family:inherit;}
 .inv-reinstate-link:hover{opacity:0.8;}
@@ -4195,6 +4200,36 @@ table#paymentsTable { min-width: 700px; }
   </div>
 </div>
 
+<!-- ── CANCEL WORKSHOP MODAL ── -->
+<div id="cancelWsModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:40000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:#3d2c1e;border:1px solid rgba(200,147,90,0.65);border-radius:12px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="padding:1.5rem 1.5rem 1rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(232,122,96,0.16);border:1.5px solid rgba(232,122,96,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e87a60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <div id="cancelWsTitle" style="font-size:1.15rem;font-weight:600;color:#e8d5c0;">Cancel workshop?</div>
+      </div>
+      <p style="font-size:0.95rem;color:rgba(200,147,90,0.75);line-height:1.6;margin:0 0 1rem;">
+        <span id="cancelWsDesc">Checking what this workshop holds\u2026</span>
+      </p>
+      <div class="form-group" style="margin-bottom:0.5rem;">
+        <label class="form-label">Reason</label>
+        <input type="text" class="form-input" id="cancelWsReason" maxlength="120" placeholder="e.g. Low ticket sales"/>
+      </div>
+      <p style="font-size:0.82rem;color:rgba(200,147,90,0.55);line-height:1.5;margin:0.75rem 0 0;">
+        Nothing is deleted. Bookings and payments are moved to Bin, so this
+        workshop stops counting toward revenue, expenses and your completed
+        total. Refunds still have to be issued in Razorpay yourself.
+      </p>
+    </div>
+    <div style="display:flex;border-top:1px solid rgba(193,127,90,0.2);">
+      <button onclick="closeCancelWs()" style="flex:1;padding:1rem;background:transparent;border:none;border-right:1px solid rgba(193,127,90,0.2);font-size:1rem;color:#c8935a;cursor:pointer;font-family:var(--font-body);">Keep it</button>
+      <button id="cancelWsBtn" onclick="confirmCancelWs()" style="flex:1;padding:1rem;background:transparent;border:none;font-size:1rem;color:#e87a60;font-weight:600;cursor:pointer;font-family:var(--font-body);">Cancel workshop</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── CUSTOM CONFIRM MODAL ── -->
 <div id="customConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:40000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
   <div style="background:#3d2c1e;border:1px solid rgba(200,147,90,0.65);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
@@ -5386,7 +5421,8 @@ async function loadOverview() {
     // Workshops: completed = date already passed (whole day); upcoming = next future-dated workshop
     (function(){
       const today = new Date(); today.setHours(0,0,0,0);
-      const dated = ws.filter(w => w.date).map(w => ({ id: w.id, raw: w.date, d: new Date(w.date + 'T00:00:00') }));
+      // a cancelled workshop never happened, so it is neither completed nor upcoming
+      const dated = ws.filter(w => w.date && !w.cancelled).map(w => ({ id: w.id, raw: w.date, d: new Date(w.date + 'T00:00:00') }));
       const completed = dated.filter(w => w.d < today).length;
       const upcoming = dated.filter(w => w.d >= today).sort((a,b) => a.d - b.d)[0];
       document.getElementById('stat-workshops').textContent = completed;
@@ -5443,14 +5479,20 @@ async function loadWorkshops() {
     const PENCIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     const CHECK_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
     const TRASH_ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+    const CANCEL_ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+    const UNDO_ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M3.51 13a9 9 0 1 0 2.13-9.36L3 7"/></svg>`;
     const admin = isAdmin();
 
     const tbl = document.getElementById('workshopsTable');
     if (tbl) tbl.innerHTML = ws.map(w => {
       const editBtn = admin ? '<button class="icon-action-btn" data-tip="Edit" onclick="openEdit(\'workshops\',\''+w.id+'\')">'+PENCIL+'</button>' : '';
       const delBtn = admin ? '<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord(\'workshops\',\''+w.id+'\',\'Workshop '+w.id+'\')">'+TRASH_ICON+'</button>' : '';
-      return '<tr data-year="'+(w.date||'').substring(0,4)+'" data-date="'+(w.date||'')+'" data-total_pax="'+(w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0))+'" data-total_revenue="'+(w.total_revenue||0)+'" data-total_expense="'+(w.total_expense||0)+'" data-net_profit="'+(w.net_profit||0)+'" data-margin="'+(w.margin||0)+'" id="ws-tr-'+w.id+'">'
-        + '<td><strong>'+w.id+'</strong></td>'
+      const isCancelled = !!w.cancelled;
+      const cancelBtn = admin ? (isCancelled
+        ? '<button class="icon-action-btn" data-tip="Restore workshop" onclick="uncancelWorkshop(\''+w.id+'\')">'+UNDO_ICON+'</button>'
+        : '<button class="icon-action-btn danger" data-tip="Cancel workshop" onclick="cancelWorkshop(\''+w.id+'\')">'+CANCEL_ICON+'</button>') : '';
+      return '<tr class="'+(isCancelled?'ws-row-cancelled':'')+'" data-year="'+(w.date||'').substring(0,4)+'" data-date="'+(w.date||'')+'" data-total_pax="'+(w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0))+'" data-total_revenue="'+(w.total_revenue||0)+'" data-total_expense="'+(w.total_expense||0)+'" data-net_profit="'+(w.net_profit||0)+'" data-margin="'+(w.margin||0)+'" id="ws-tr-'+w.id+'">'
+        + '<td><strong>'+w.id+'</strong>'+(isCancelled?' <span class="ws-cancelled-badge">Cancelled</span>':'')+'</td>'
         + '<td>'+fmtDate(w.date)+'</td>'
         + '<td class="td-truncate td-venue" data-tip="'+(w.venue||'')+'">'+(w.venue||'—')+'</td>'
         + '<td>'+(w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0))+'</td>'
@@ -5461,6 +5503,7 @@ async function loadWorkshops() {
         + '<td class="ws-action-sticky"><div class="action-wrap">'
         + editBtn
         + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openWsPaxPage(\''+w.id+'\',\''+encodeForAttr(w.venue||w.id)+'\',\''+fmtDate(w.date)+'\');" style="font-size:0.85rem;padding:0.45rem 0.85rem;min-height:48px;gap:0.4rem;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> View '+(w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0))+' Participants</button>'
+        + cancelBtn
         + delBtn
         + '</div></td></tr>';
     }).join('') || '<tr><td colspan="9">'+EMPTY_STATES.workshops+'</td></tr>';
@@ -5469,11 +5512,11 @@ async function loadWorkshops() {
     window._cachedWorkshops = ws;
     const wsCardsEl = document.getElementById('workshopsCards');
     if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `
-      <div class="m-card" id="wscard-${w.id}" style="border-radius:12px;overflow:hidden;padding:0;">
+      <div class="m-card${w.cancelled ? ' ws-card-cancelled' : ''}" id="wscard-${w.id}" style="border-radius:12px;overflow:hidden;padding:0;">
         <div style="padding:1.25rem 1.5rem 1rem;">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.6rem;">
             <div>
-              <div style="font-size:11px;font-weight:600;color:var(--clay);letter-spacing:0.02em;text-transform:none;margin-bottom:3px;">${w.id}</div>
+              <div style="font-size:11px;font-weight:600;color:var(--clay);letter-spacing:0.02em;text-transform:none;margin-bottom:3px;">${w.id}${w.cancelled ? ' <span class="ws-cancelled-badge">Cancelled</span>' : ''}</div>
               <div style="font-size:17px;font-weight:600;color:var(--bark);">${w.venue||'—'}</div>
               <div style="font-size:12px;color:var(--text-light);margin-top:2px;">${fmtDate(w.date)}</div>
             </div>
@@ -7196,6 +7239,89 @@ async function confirmDelete() {
   }
 }
 let _archivePending = null;
+// ── CANCEL A WORKSHOP ─────────────────────────────────────────────
+// Money on a workshop lives in three places, and recompute_workshop()
+// reads each from somewhere different:
+//   revenue  = payments where reference_id = ws, type income, not archived
+//   expense  = the five cost columns ON the workshop row
+//   pax      = participants for the workshop, not archived
+// So cancelling means archiving the income rows, archiving the people,
+// and zeroing the cost columns (which makes sync_workshop_cost_payments
+// delete its own WSC- rows). Nothing is deleted outright.
+let _cancelWsPending = null;
+
+async function cancelWorkshop(id) {
+  if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
+  _cancelWsPending = { id, pays: [], parts: [] };
+  document.getElementById('cancelWsTitle').textContent = 'Cancel ' + id + '?';
+  document.getElementById('cancelWsReason').value = '';
+  document.getElementById('cancelWsDesc').textContent = 'Checking what this workshop holds\u2026';
+  document.getElementById('cancelWsModal').style.display = 'flex';
+  lockScroll();
+  try {
+    const [pays, parts] = await Promise.all([api('/payments'), api('/participants')]);
+    const income = (pays.data || []).filter(p =>
+      p.reference_id === id && p.type === 'income' && p.category === 'workshop');
+    const people = (parts.data || []).filter(p => p.workshop_id === id);
+    _cancelWsPending.pays = income;
+    _cancelWsPending.parts = people;
+    const total = income.reduce((t, p) => t + Number(p.amount || 0), 0);
+    document.getElementById('cancelWsDesc').textContent =
+      people.length + ' booking' + (people.length === 1 ? '' : 's') +
+      ' and ' + fmt(total) + ' taken. Both will be moved to Bin and this ' +
+      'workshop\u2019s costs set to zero.';
+  } catch (e) {
+    document.getElementById('cancelWsDesc').textContent =
+      'Could not read the bookings. Cancelling will still mark the workshop, but check the numbers afterwards.';
+  }
+}
+
+function closeCancelWs() {
+  document.getElementById('cancelWsModal').style.display = 'none';
+  unlockScroll();
+  _cancelWsPending = null;
+}
+
+async function confirmCancelWs() {
+  if (!_cancelWsPending) return;
+  const { id, pays, parts } = _cancelWsPending;
+  const reason = (document.getElementById('cancelWsReason').value || '').trim() || null;
+  const btn = document.getElementById('cancelWsBtn');
+  btn.disabled = true; btn.textContent = 'Cancelling\u2026';
+  try {
+    // 1. the money that came in
+    for (const p of pays) await sbPatch('payments', p.id, { archived: true });
+    // 2. the people who booked
+    for (const p of parts) await sbPatch('participants', p.id, { archived: true });
+    // 3. the costs. Zeroing these makes the sync trigger delete its WSC- rows,
+    //    which is what takes the spend out of both the workshop and Overview.
+    await sbPatch('workshops', id, {
+      venue_rent: 0, handpan_rental: 0, porter_delivery: 0,
+      snacks_misc: 0, ads_spend: 0,
+      cancelled: true, cancelled_reason: reason,
+      cancelled_at: new Date().toISOString()
+    });
+    closeCancelWs();
+    loadWorkshops();
+    showToast('\u2713 ' + id + ' cancelled', 'success');
+  } catch (e) {
+    console.error('cancelWorkshop error:', e);
+    btn.disabled = false; btn.textContent = 'Cancel workshop';
+    showToast('Could not cancel: ' + e.message, 'error');
+  }
+}
+
+async function uncancelWorkshop(id) {
+  if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
+  try {
+    await sbPatch('workshops', id, { cancelled: false, cancelled_reason: null, cancelled_at: null });
+    loadWorkshops();
+    showToast('\u2713 ' + id + ' is active again. Restore its bookings from Bin if you need them.', 'success');
+  } catch (e) {
+    showToast('Could not restore: ' + e.message, 'error');
+  }
+}
+
 function archiveRecord(entity, id, name) {
   if (!isAdmin()) { showToast('Viewer access only — contact admin to delete records', 'error'); return; }
   _archivePending = { entity, id, name };
