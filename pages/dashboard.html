@@ -5922,7 +5922,7 @@ async function openRequestFee(studentId) {
   document.getElementById('fr-form-fields').style.display = '';
   document.getElementById('fr-result').style.display = 'none';
   const saveBtn = document.getElementById('fr-save-btn');
-  saveBtn.style.display = ''; saveBtn.disabled = false; saveBtn.textContent = 'Create link';
+  saveBtn.style.visibility = ''; saveBtn.disabled = false; saveBtn.textContent = 'Create link';
   frUpdatePreview();
   openFormPage('requestFee');
 }
@@ -5954,7 +5954,7 @@ async function saveFeeRequest() {
     const wa = document.getElementById('fr-result-wa');
     const phone = String(stu.phone || '').replace(/[^\d]/g, '');
     wa.href = 'https://wa.me/' + (phone ? (phone.length === 10 ? '91' + phone : phone) : '') + '?text=' + encodeURIComponent(waText);
-    saveBtn.style.display = 'none';
+    saveBtn.style.visibility = 'hidden';
     // Clear inputs so the dirty check doesn't nag on close
     ['fr-classes','fr-amount','fr-note'].forEach(i => { document.getElementById(i).value = ''; });
     showToast('Payment link created: ' + id, 'success');
