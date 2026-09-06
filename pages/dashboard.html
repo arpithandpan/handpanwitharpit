@@ -5974,13 +5974,22 @@ function copyFeeRequestLink(link) {
   else prompt('Copy this link:', val);
 }
 
-async function cancelFeeRequest(id) {
-  if (!confirm('Cancel ' + id + '? The link will stop working.')) return;
-  try {
-    await sbPatch('fee_requests', id, { status: 'cancelled' });
-    showToast(id + ' cancelled', 'success');
-    loadFeeRequests();
-  } catch (e) { showToast('Could not cancel: ' + (e.message || ''), 'error'); }
+function cancelFeeRequest(id) {
+  if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
+  document.getElementById('archiveConfirmTitle').textContent = 'Cancel ' + id + '?';
+  document.getElementById('archiveConfirmDesc').textContent = 'The payment link will stop working. The student will see a message asking them to contact you for a new one.';
+  const btn = document.getElementById('archiveConfirmBtn');
+  btn.textContent = 'Cancel request';
+  btn.onclick = async () => {
+    closeArchiveConfirm();
+    try {
+      await sbPatch('fee_requests', id, { status: 'cancelled' });
+      showToast(id + ' cancelled', 'success');
+      loadFeeRequests();
+    } catch (e) { showToast('Could not cancel: ' + (e.message || ''), 'error'); }
+  };
+  document.getElementById('archiveConfirmModal').style.display = 'flex';
+  lockScroll();
 }
 
 async function loadFeeRequests() {
