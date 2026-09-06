@@ -156,7 +156,11 @@
   /* UNAVAILABLE */
   .unavailable{ text-align:center; padding:1rem 0; display:flex; flex-direction:column; align-items:center; gap:1rem; }
   .unavailable i{ font-size:40px; color:var(--clay-light); }
-  .unavailable p{ font-size:15.5px; color:var(--text-mid); line-height:1.7; max-width:340px; }
+  .unavailable p{ font-size:15.5px; color:var(--text-mid); line-height:1.7; max-width:360px; }
+  .unavailable-heading{ font-weight:600; font-size:22px; color:var(--maroon); line-height:1.3; }
+  .unavailable-alt{ margin-top:0.75rem; padding-top:1.25rem; border-top:1px solid var(--clay-pale); width:100%;
+    display:flex; flex-direction:column; align-items:center; gap:4px; font-size:14.5px; color:var(--text-light); }
+  .unavailable-alt a{ color:var(--maroon); font-weight:500; text-decoration:none; border-bottom:1px solid var(--clay-light); }
 
   /* LOADING */
   .handpan-spinner{ width:56px; height:56px; margin:0 auto; animation:spin 1.9s linear infinite; }
@@ -180,7 +184,7 @@
         <div class="detail-card"><span class="detail-icon"><i class="ti ti-music" aria-hidden="true"></i></span><span class="detail-value" id="hero-level"><span class="skel-bar" style="width:100px;"></span></span></div>
       </div>
     </div>
-    <div class="hero-photo"><img src="/images/arpit-hero.jpg" alt="Arpit playing the handpan"/></div>
+    <div class="hero-photo"><img src="/images/handpan-hero.jpg" alt="Hands playing a handpan"/></div>
   </section>
 
   <!-- INCLUDED -->
@@ -222,9 +226,14 @@
     </div>
 
     <div class="unavailable" id="booking-unavailable" style="display:none;">
-      <i class="ti ti-link-off" aria-hidden="true"></i>
-      <p id="unavailable-text">This page needs a personal payment link. If you're a student of Arpit's, message him on Instagram and he'll send you yours.</p>
-      <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener" class="success-instagram-btn" style="max-width:280px;"><i class="ti ti-brand-instagram" aria-hidden="true"></i> Message on Instagram</a>
+      <i class="ti ti-link" aria-hidden="true"></i>
+      <h3 class="unavailable-heading">Every student gets their own link</h3>
+      <p id="unavailable-text">Your name, your fee and your currency are already on it, so there's nothing to fill in. If yours isn't working, or you haven't received one yet, message Arpit and he'll send it across.</p>
+      <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener" class="success-instagram-btn" style="max-width:300px;"><i class="ti ti-brand-instagram" aria-hidden="true"></i> Message Arpit on Instagram</a>
+      <div class="unavailable-alt">
+        <span>Not a student yet?</span>
+        <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener">Start with a free 45 minute session</a>
+      </div>
     </div>
   </section>
 
@@ -313,9 +322,10 @@
   // ── STATES ──
   function showUnavailable(msg){
     if (msg) unavailableText.textContent = msg;
-    heroProgram.textContent = 'Handpan classes';
-    heroFor.textContent = 'with Arpit';
+    heroProgram.textContent = 'Almost there';
+    heroFor.textContent = 'you just need your personal link';
     heroStudent.parentElement.style.display = 'none';
+    heroFormat.parentElement.style.display = 'none';
     heroLevel.parentElement.style.display = 'none';
     includedSection.style.display = 'none';
     bookingContent.style.display = 'none';
@@ -365,7 +375,7 @@
       render();
     } catch (err){
       console.error('Could not load fee details', err);
-      showUnavailable("We couldn't load your payment details. Please check your connection and refresh, or message Arpit directly.");
+      showUnavailable("We couldn't load your payment details just now. Check your connection and refresh, or message Arpit and he'll sort it out.");
     }
   }
 
