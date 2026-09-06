@@ -356,7 +356,11 @@
     if (fee.sessions){
       incSessions.textContent = fee.sessions + ' live one-to-one sessions on Zoom';
     }
-    totalLabel.textContent = fee.feeLabel || 'Amount due';
+    let label = fee.feeLabel || 'Amount due';
+    if (label === 'Monthly fee'){
+      label += ' · ' + new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+    }
+    totalLabel.textContent = label;
     totalAmount.innerHTML = fmtAmount(fee.amount, fee.currency) + '<small>' + fee.currency + '</small>';
     payBtn.innerHTML = 'Pay ' + fmtAmount(fee.amount, fee.currency) + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></svg>';
     payBtn.disabled = false;
