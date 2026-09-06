@@ -23,7 +23,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.47.0/iconfont/tabler-icons.min.css"/>
 <style>
   :root{
     color-scheme: light;
@@ -74,7 +73,8 @@
     width:40px; height:1px; background:var(--clay-light);
   }
   .detail-card{ display:flex; align-items:center; gap:10px; }
-  .detail-icon{ flex-shrink:0; width:18px; height:18px; color:var(--clay-light); display:inline-flex; font-size:18px; }
+  .detail-icon{ flex-shrink:0; width:18px; height:18px; color:var(--clay-light); display:inline-flex; }
+  .detail-icon svg{ width:100%; height:100%; }
   .detail-value{ font-size:16.5px; color:var(--ivory); font-weight:400; line-height:1.45; }
   .hero-photo{ width:100%; aspect-ratio:3 / 2; background:#0B110F; }
   .hero-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
@@ -94,7 +94,7 @@
 
   .included-list{ list-style:none; display:flex; flex-direction:column; gap:12px; }
   .included-list li{ display:flex; gap:12px; align-items:flex-start; font-size:16px; color:var(--text-mid); line-height:1.55; }
-  .included-list li i{ font-size:20px; color:var(--moss); flex-shrink:0; margin-top:3px; }
+  .included-list li svg{ width:20px; height:20px; color:var(--moss); flex-shrink:0; margin-top:3px; }
 
   .total-card{
     background:var(--cream); border-radius:18px; padding:1.5rem;
@@ -107,7 +107,7 @@
     display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:500;
     padding:6px 12px; border-radius:20px; background:var(--clay-pale); color:var(--maroon); white-space:nowrap;
   }
-  .total-badge i{ font-size:16px; }
+  .total-badge svg{ width:16px; height:16px; }
 
   .cta{
     width:100%; height:58px; border:none; border-radius:40px;
@@ -119,11 +119,11 @@
   .cta:active:not(:disabled){ transform:scale(0.99); }
   @media (hover:hover) and (pointer:fine){ .cta:hover{ background:var(--maroon-deep); } }
   .cta:disabled{ background:var(--text-light); cursor:not-allowed; }
-  .cta i{ font-size:20px; }
+  .cta svg{ width:20px; height:20px; }
   .fineprint{ font-size:15px; color:var(--text-light); text-align:center; margin-top:0.85rem; line-height:1.55; }
   .methods{ display:flex; justify-content:center; gap:14px; margin-top:1rem; color:var(--text-light); font-size:13.5px; }
   .methods span{ display:inline-flex; align-items:center; gap:5px; }
-  .methods i{ font-size:17px; }
+  .methods svg{ width:17px; height:17px; }
 
   /* SUCCESS */
   .booking-success{
@@ -134,7 +134,7 @@
     width:56px; height:56px; border-radius:50%; background:var(--moss);
     display:flex; align-items:center; justify-content:center; color:var(--cream);
   }
-  .success-check i{ font-size:30px; }
+  .success-check svg{ width:30px; height:30px; stroke-width:2.4; }
   .success-heading{ font-weight:600; font-size:24px; color:var(--maroon); }
   .success-text{ font-size:15px; color:var(--text-mid); line-height:1.7; max-width:340px; }
   .success-ref{ font-size:13.5px; color:var(--text-light); background:var(--sand); padding:8px 14px; border-radius:20px; }
@@ -151,11 +151,11 @@
     text-decoration:none; transition:background 0.15s;
   }
   @media (hover:hover) and (pointer:fine){ .success-instagram-btn:hover{ background:var(--maroon-deep); } }
-  .success-instagram-btn i{ font-size:18px; }
+  .success-instagram-btn svg{ width:18px; height:18px; }
 
   /* UNAVAILABLE */
   .unavailable{ text-align:center; padding:1rem 0; display:flex; flex-direction:column; align-items:center; gap:1rem; }
-  .unavailable i{ font-size:40px; color:var(--clay-light); }
+  .unavailable > svg{ width:40px; height:40px; color:var(--clay-light); }
   .unavailable p{ font-size:15.5px; color:var(--text-mid); line-height:1.7; max-width:360px; }
   .unavailable-heading{ font-weight:600; font-size:22px; color:var(--maroon); line-height:1.3; }
   .unavailable-alt{ margin-top:0.75rem; padding-top:1.25rem; border-top:1px solid var(--clay-pale); width:100%;
@@ -179,9 +179,9 @@
       <div class="hero-eyebrow">Handpan with Arpit</div>
       <h1><span id="hero-program"><span class="skel-bar" style="width:220px;"></span></span><em id="hero-for"><span class="skel-bar" style="width:160px;"></span></em></h1>
       <div class="details-section">
-        <div class="detail-card"><span class="detail-icon"><i class="ti ti-user" aria-hidden="true"></i></span><span class="detail-value" id="hero-student"><span class="skel-bar" style="width:140px;"></span></span></div>
-        <div class="detail-card"><span class="detail-icon"><i class="ti ti-video" aria-hidden="true"></i></span><span class="detail-value" id="hero-format">Live 1:1 classes on Zoom</span></div>
-        <div class="detail-card"><span class="detail-icon"><i class="ti ti-music" aria-hidden="true"></i></span><span class="detail-value" id="hero-level"><span class="skel-bar" style="width:100px;"></span></span></div>
+        <div class="detail-card"><span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/></svg></span><span class="detail-value" id="hero-student"><span class="skel-bar" style="width:140px;"></span></span></div>
+        <div class="detail-card"><span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z"/><path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"/></svg></span><span class="detail-value" id="hero-format">Live 1:1 classes on Zoom</span></div>
+        <div class="detail-card"><span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M13 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M9 17v-13h10v13"/><path d="M9 8h10"/></svg></span><span class="detail-value" id="hero-level"><span class="skel-bar" style="width:100px;"></span></span></div>
       </div>
     </div>
     <div class="hero-photo"><img src="/images/handpan-hero.jpg" alt="Hands playing a handpan"/></div>
@@ -191,10 +191,10 @@
   <section class="section" id="included-section">
     <h2 class="section-title">What's included</h2>
     <ul class="included-list" id="included-list">
-      <li><i class="ti ti-circle-check" aria-hidden="true"></i><span id="inc-sessions">Live one-to-one sessions on Zoom</span></li>
-      <li><i class="ti ti-circle-check" aria-hidden="true"></i><span>Recording of every session, yours to keep</span></li>
-      <li><i class="ti ti-circle-check" aria-hidden="true"></i><span>A personal practice plan after each class</span></li>
-      <li><i class="ti ti-circle-check" aria-hidden="true"></i><span>Message support between sessions for questions</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M9 12l2 2l4 -4"/></svg><span id="inc-sessions">Live one-to-one sessions on Zoom</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M9 12l2 2l4 -4"/></svg><span>Recording of every session, yours to keep</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M9 12l2 2l4 -4"/></svg><span>A personal practice plan after each class</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M9 12l2 2l4 -4"/></svg><span>Message support between sessions for questions</span></li>
     </ul>
   </section>
 
@@ -207,29 +207,29 @@
           <div class="total-label" id="total-label">Amount due</div>
           <div class="total-amount" id="total-amount"><span class="skel-bar" style="width:120px; background:#ddd;"></span></div>
         </div>
-        <span class="total-badge"><i class="ti ti-lock" aria-hidden="true"></i> Secure</span>
+        <span class="total-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"/><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/></svg> Secure</span>
       </div>
-      <button class="cta" id="pay-btn" disabled>Loading <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+      <button class="cta" id="pay-btn" disabled>Loading <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></svg></button>
       <p class="fineprint">You'll be taken to Razorpay to complete the payment, then brought straight back here.</p>
       <div class="methods" id="methods"></div>
     </div>
 
     <div class="booking-success" id="booking-success" style="display:none;">
-      <div class="success-check"><i class="ti ti-check" aria-hidden="true"></i></div>
+      <div class="success-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg></div>
       <h3 class="success-heading">Payment received</h3>
       <p class="success-text">Thank you! Your invoice will reach your email within 24 hours. Arpit will message you shortly to set up your class schedule.</p>
       <div class="success-ref" id="success-ref" style="display:none;"></div>
       <div class="success-instagram">
         <p class="success-instagram-caption">Follow Arpit for more handpan content</p>
-        <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener" class="success-instagram-btn"><i class="ti ti-brand-instagram" aria-hidden="true"></i> @pandeyarpit</a>
+        <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener" class="success-instagram-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4m0 4a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z"/><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M16.5 7.5l0 .01"/></svg> @pandeyarpit</a>
       </div>
     </div>
 
     <div class="unavailable" id="booking-unavailable" style="display:none;">
-      <i class="ti ti-link" aria-hidden="true"></i>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 15l6 -6"/><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"/><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"/></svg>
       <h3 class="unavailable-heading">Every student gets their own link</h3>
       <p id="unavailable-text">Your name, your fee and your currency are already on it, so there's nothing to fill in. If yours isn't working, or you haven't received one yet, message Arpit and he'll send it across.</p>
-      <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener" class="success-instagram-btn" style="max-width:300px;"><i class="ti ti-brand-instagram" aria-hidden="true"></i> Message Arpit on Instagram</a>
+      <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener" class="success-instagram-btn" style="max-width:300px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4m0 4a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z"/><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M16.5 7.5l0 .01"/></svg> Message Arpit on Instagram</a>
       <div class="unavailable-alt">
         <span>Not a student yet?</span>
         <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener">Start with a free 45 minute session</a>
@@ -298,6 +298,8 @@
   const loadingOverlay = document.getElementById('loading-overlay');
 
   let fee = null;
+  const ICON_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></svg>';
+  const ICON_CARD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z"/><path d="M3 10l18 0"/><path d="M7 15l.01 0"/><path d="M11 15l2 0"/></svg>';
 
   // ── FORMATTING ──
   // One currency per page, always. The page only ever shows the currency
@@ -357,10 +359,10 @@
     }
     totalLabel.textContent = fee.feeLabel || 'Amount due';
     totalAmount.innerHTML = fmtAmount(fee.amount, fee.currency) + '<small>' + fee.currency + '</small>';
-    payBtn.innerHTML = 'Pay ' + fmtAmount(fee.amount, fee.currency) + ' <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+    payBtn.innerHTML = 'Pay ' + fmtAmount(fee.amount, fee.currency) + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></svg>';
     payBtn.disabled = false;
     const c = CURRENCY[fee.currency];
-    if (c) methodsEl.innerHTML = c.methods.map(m => '<span><i class="ti ti-credit-card" aria-hidden="true"></i>' + m + '</span>').join('');
+    if (c) methodsEl.innerHTML = c.methods.map(m => '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z"/><path d="M3 10l18 0"/><path d="M7 15l.01 0"/><path d="M11 15l2 0"/></svg>' + m + '</span>').join('');
     document.title = 'Pay your fee | Handpan with Arpit';
   }
 
