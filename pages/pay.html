@@ -104,6 +104,7 @@
   .total-label{ font-size:14.5px; color:var(--text-light); text-transform:uppercase; letter-spacing:0.08em; font-weight:500; }
   .total-amount{ font-size:34px; font-weight:400; color:var(--text-dark); margin-top:2px; line-height:1.2; }
   .total-amount small{ font-size:15px; color:var(--text-light); margin-left:4px; }
+  .total-note{ font-size:14px; color:var(--text-light); margin-top:4px; }
   .total-badge{
     display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:500;
     padding:6px 12px; border-radius:20px; background:var(--clay-pale); color:var(--maroon); white-space:nowrap;
@@ -205,6 +206,7 @@
         <div>
           <div class="total-label" id="total-label">Amount due</div>
           <div class="total-amount" id="total-amount"><span class="skel-bar" style="width:120px; background:#ddd;"></span></div>
+          <div class="total-note" id="fee-note" style="display:none;"></div>
         </div>
         <span class="total-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"/><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/></svg> Secure</span>
       </div>
@@ -215,8 +217,8 @@
 
     <div class="booking-success" id="booking-success" style="display:none;">
       <div class="success-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg></div>
-      <h3 class="success-heading">Payment received</h3>
-      <p class="success-text">Thank you! Your invoice will reach your email within 24 hours. Arpit will message you shortly to set up your class schedule.</p>
+      <h3 class="success-heading" id="success-heading">Payment received</h3>
+      <p class="success-text" id="success-text">Thank you! Your invoice will reach your email within 24 hours. Arpit will message you shortly to set up your class schedule.</p>
       <div class="success-ref" id="success-ref" style="display:none;"></div>
       <div class="success-instagram">
         <p class="success-instagram-caption">Follow Arpit for more handpan content</p>
@@ -226,8 +228,8 @@
 
     <div class="unavailable" id="booking-unavailable" style="display:none;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 15l6 -6"/><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"/><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"/></svg>
-      <h3 class="unavailable-heading">Every student gets their own link</h3>
-      <p id="unavailable-text">Your name, your fee and your currency are already on it, so there's nothing to fill in. If yours isn't working, or you haven't received one yet, message Arpit and he'll send it across.</p>
+      <h3 class="unavailable-heading">Every payment gets its own link</h3>
+      <p id="unavailable-text">Each payment has its own link with your name, the number of classes and the fee already on it, so there's nothing to fill in. If yours isn't working, or you haven't received one yet, message Arpit and he'll send it across.</p>
       <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener" class="success-instagram-btn" style="max-width:300px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4m0 4a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z"/><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M16.5 7.5l0 .01"/></svg> Message Arpit on Instagram</a>
       <div class="unavailable-alt">
         <span>Not a student yet?</span>
@@ -276,7 +278,7 @@
   // ── CONFIG ──
   const API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
   const params = new URLSearchParams(window.location.search);
-  const studentId = params.get('s');
+  const requestId = params.get('r');
 
   const heroProgram = document.getElementById('hero-program');
   const heroFor = document.getElementById('hero-for');
@@ -294,6 +296,9 @@
   const bookingUnavailable = document.getElementById('booking-unavailable');
   const unavailableText = document.getElementById('unavailable-text');
   const successRef = document.getElementById('success-ref');
+  const successHeading = document.getElementById('success-heading');
+  const successText = document.getElementById('success-text');
+  const feeNote = document.getElementById('fee-note');
   const loadingOverlay = document.getElementById('loading-overlay');
 
   let fee = null;
@@ -334,12 +339,22 @@
     bookingUnavailable.style.display = '';
   }
 
-  function showSuccess(){
+  function showSuccess(paymentId, alreadyPaid){
+    if (fee){
+      heroProgram.textContent = 'Handpan classes';
+      heroFor.textContent = 'for ' + firstName(fee.name);
+      heroStudent.textContent = fee.name;
+      heroLevel.textContent = fee.level ? fee.level + ' level' : 'Personalised to your level';
+    }
     includedSection.style.display = 'none';
     bookingContent.style.display = 'none';
     bookingUnavailable.style.display = 'none';
     bookingSuccess.style.display = '';
-    const pid = params.get('razorpay_payment_id');
+    if (alreadyPaid){
+      successHeading.textContent = 'This fee is already paid';
+      successText.textContent = 'Nothing more to do here. If you were expecting a new payment link, message Arpit and he\'ll send a fresh one.';
+    }
+    const pid = paymentId || params.get('razorpay_payment_id');
     if (pid){
       successRef.textContent = 'Payment reference: ' + pid;
       successRef.style.display = '';
@@ -349,34 +364,32 @@
   // ── RENDER ──
   function render(){
     const name = fee.name || 'Student';
-    heroProgram.textContent = fee.programName;
+    heroProgram.textContent = 'Handpan classes';
     heroFor.textContent = 'for ' + firstName(name);
     heroStudent.textContent = name;
     heroLevel.textContent = fee.level ? fee.level + ' level' : 'Personalised to your level';
-    if (fee.sessions){
-      incSessions.textContent = fee.sessions + ' live one-to-one sessions on Zoom';
-    }
-    let label = fee.feeLabel || 'Amount due';
-    if (label === 'Monthly fee'){
-      label += ' · ' + new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
-    }
-    totalLabel.textContent = label;
+    incSessions.textContent = fee.classes === 1
+      ? '1 live one-to-one session on Zoom'
+      : fee.classes + ' live one-to-one sessions on Zoom';
+    totalLabel.textContent = fee.label || 'Amount due';
     totalAmount.innerHTML = fmtAmount(fee.amount, fee.currency) + '<small>' + fee.currency + '</small>';
-    payBtn.innerHTML = 'Pay ' + fmtAmount(fee.amount, fee.currency) + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></svg>';
+    if (fee.note){ feeNote.textContent = fee.note; feeNote.style.display = ''; }
+    payBtn.innerHTML = 'Pay ' + fmtAmount(fee.amount, fee.currency) + ' ' + ICON_ARROW;
     payBtn.disabled = false;
     const c = CURRENCY[fee.currency];
-    if (c) methodsEl.innerHTML = c.methods.map(m => '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z"/><path d="M3 10l18 0"/><path d="M7 15l.01 0"/><path d="M11 15l2 0"/></svg>' + m + '</span>').join('');
+    if (c) methodsEl.innerHTML = c.methods.map(m => '<span>' + ICON_CARD + m + '</span>').join('');
     document.title = 'Pay your fee | Handpan with Arpit';
   }
 
   // ── LOAD ──
   async function loadFee(){
-    if (!studentId){ showUnavailable(); return; }
+    if (!requestId){ showUnavailable(); return; }
     try {
-      const res = await fetch(API_BASE + '/api/student/' + encodeURIComponent(studentId) + '/fee');
+      const res = await fetch(API_BASE + '/api/fee-request/' + encodeURIComponent(requestId));
       if (res.status === 404){ showUnavailable(); return; }
       if (!res.ok) throw new Error('HTTP ' + res.status);
       fee = await res.json();
+      if (fee.status === 'paid'){ showSuccess(fee.paymentId, true); return; }
       render();
     } catch (err){
       console.error('Could not load fee details', err);
@@ -390,10 +403,10 @@
     payBtn.disabled = true;
     loadingOverlay.style.display = 'flex';
     try {
-      const res = await fetch(API_BASE + '/api/create-student-payment-link', {
+      const res = await fetch(API_BASE + '/api/create-fee-payment-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentId })
+        body: JSON.stringify({ requestId })
       });
       const data = await res.json();
       if (data.short_url){
@@ -415,6 +428,13 @@
   // and razorpay_payment_id in the URL once the payment goes through.
   if (params.get('razorpay_payment_link_status') === 'paid'){
     showSuccess();
+    // Fill the hero with the student's name too.
+    if (requestId){
+      fetch(API_BASE + '/api/fee-request/' + encodeURIComponent(requestId))
+        .then(r => r.ok ? r.json() : null)
+        .then(f => { if (f){ fee = f; showSuccess(); } })
+        .catch(() => {});
+    }
     // Fire once per payment so the ad campaign can count the conversion.
     const pid = params.get('razorpay_payment_id') || '';
     try {
