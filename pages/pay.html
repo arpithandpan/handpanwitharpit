@@ -133,13 +133,18 @@
     gap:1.25rem; padding:1.5rem 0 0.5rem;
   }
   .success-check{
-    width:56px; height:56px; border-radius:50%; background:var(--moss);
+    width:56px; height:56px; border-radius:50%; background:#5E7B5A;
     display:flex; align-items:center; justify-content:center; color:var(--cream);
   }
   .success-check svg{ width:30px; height:30px; stroke-width:2.4; }
   .success-heading{ font-weight:600; font-size:24px; color:var(--maroon); }
   .success-text{ font-size:15px; color:var(--text-mid); line-height:1.7; max-width:340px; }
   .success-ref{ font-size:13.5px; color:var(--text-light); background:var(--sand); padding:8px 14px; border-radius:20px; }
+  .success-summary{ font-size:15.5px; color:var(--text-dark); font-weight:500; margin-top:-0.5rem; }
+  .wrap.is-success .hero-photo, .wrap.is-success .details-section{ display:none; }
+  .wrap.is-success .hero-content{ padding:1.6rem 1.25rem 1.5rem; gap:1rem; }
+  .wrap.is-success .hero h1{ font-size:26px; }
+  .wrap.is-success .hero h1 em{ font-size:22px; }
   .success-instagram{
     width:100%; margin-top:0.25rem; padding-top:1.25rem;
     border-top:1px solid var(--clay-pale);
@@ -218,6 +223,7 @@
     <div class="booking-success" id="booking-success" style="display:none;">
       <div class="success-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg></div>
       <h3 class="success-heading" id="success-heading">Payment received</h3>
+      <div class="success-summary" id="success-summary" style="display:none;"></div>
       <p class="success-text" id="success-text">Thank you! Your invoice will reach your email within 24 hours. Arpit will message you shortly to set up your class schedule.</p>
       <div class="success-ref" id="success-ref" style="display:none;"></div>
       <div class="success-instagram">
@@ -299,6 +305,8 @@
   const successHeading = document.getElementById('success-heading');
   const successText = document.getElementById('success-text');
   const feeNote = document.getElementById('fee-note');
+  const successSummary = document.getElementById('success-summary');
+  const wrap = document.querySelector('.wrap');
   const loadingOverlay = document.getElementById('loading-overlay');
 
   let fee = null;
@@ -340,11 +348,15 @@
   }
 
   function showSuccess(paymentId, alreadyPaid){
+    wrap.classList.add('is-success');
     if (fee){
       heroProgram.textContent = 'Handpan classes';
       heroFor.textContent = 'for ' + firstName(fee.name);
-      heroStudent.textContent = fee.name;
-      heroLevel.textContent = fee.level ? fee.level + ' level' : 'Personalised to your level';
+      successSummary.textContent = fee.label + ' · ' + fmtAmount(fee.amount, fee.currency) + ' ' + fee.currency;
+      successSummary.style.display = '';
+    } else {
+      heroProgram.textContent = 'Handpan classes';
+      heroFor.textContent = 'with Arpit';
     }
     includedSection.style.display = 'none';
     bookingContent.style.display = 'none';
