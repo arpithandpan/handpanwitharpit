@@ -2596,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v59</span>
+        <span style="color:var(--clay);font-weight:500;">v60</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2664,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v59</span>
+        <span style="color:var(--clay);font-weight:500;">v60</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4142,18 +4142,20 @@ table#paymentsTable { min-width: 700px; }
         <div class="form-group"><label class="form-label">Student</label>
           <input type="text" class="form-input" id="fr-student-name" readonly style="opacity:0.85;"/>
           <input type="hidden" id="fr-student-id"/></div>
+        <div class="form-group"><label class="form-label">For month&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
+          <select class="form-input" id="fr-month" onchange="frUpdatePreview()"></select></div>
+      </div>
+      <div class="form-row">
         <div class="form-group"><label class="form-label">Currency</label>
           <select class="form-input" id="fr-currency">
             <option value="INR">INR (₹)</option><option value="USD">USD ($)</option>
             <option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option><option value="CHF">CHF</option>
           </select></div>
-      </div>
-      <div class="form-row">
         <div class="form-group"><label class="form-label">Classes&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
           <input type="number" class="form-input" id="fr-classes" placeholder="e.g. 4" min="1" step="1" oninput="frUpdatePreview()"/></div>
-        <div class="form-group"><label class="form-label">Amount&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
-          <input type="number" class="form-input" id="fr-amount" placeholder="e.g. 4000" min="1" step="1" oninput="frUpdatePreview()"/></div>
       </div>
+      <div class="form-group"><label class="form-label">Amount&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
+          <input type="number" class="form-input" id="fr-amount" placeholder="e.g. 4000" min="1" step="1" oninput="frUpdatePreview()"/></div>
       <div class="form-group">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
           <label class="form-label" style="margin-bottom:0;">Note (optional, shown on the page)</label>
@@ -5938,6 +5940,26 @@ function frFmt(amount, currency) {
   return (FR_SYMBOL[c] || (c + ' ')) + Number(amount || 0).toLocaleString(loc, { maximumFractionDigits: 0 });
 }
 function feeRequestLink(id) { return FEE_REQUEST_PAGE + encodeURIComponent(id); }
+// 'YYYY-MM' → 'September 2026'
+function frMonthLabel(ym) {
+  const m = String(ym || '').match(/^(\d{4})-(\d{2})$/); if (!m) return '';
+  return new Date(Number(m[1]), Number(m[2]) - 1, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+}
+// Fill the For month select: two months back, current (selected), three ahead.
+function frFillMonths() {
+  const sel = document.getElementById('fr-month'); if (!sel) return;
+  const now = new Date(); const cur = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  let html = '';
+  for (let off = -2; off <= 3; off++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + off, 1);
+    const ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    html += '<option value="' + ym + '"' + (ym === cur ? ' selected' : '') + '>' + frMonthLabel(ym) + '</option>';
+  }
+  sel.innerHTML = html;
+  const wrap = sel.nextElementSibling;
+  if (wrap && wrap.classList.contains('form-select-wrap')) wrap.remove();
+  delete sel.dataset.customized;
+}
 
 async function nextFeeRequestId() {
   const existing = await sbGetAll('fee_requests', 'select=id');
@@ -5954,8 +5976,9 @@ function frUpdatePreview() {
   const a = Number(document.getElementById('fr-amount').value) || 0;
   const cur = document.getElementById('fr-currency').value || 'INR';
   const el = document.getElementById('fr-preview');
+  const mon = frMonthLabel(document.getElementById('fr-month')?.value);
   if (!c || !a) { el.textContent = ''; return; }
-  el.textContent = 'The page will say: Fee for ' + c + (c === 1 ? ' class' : ' classes') + ' · ' + frFmt(a, cur) + ' ' + cur;
+  el.textContent = 'The page will say: ' + (mon ? mon + ' · ' : '') + 'Fee for ' + c + (c === 1 ? ' class' : ' classes') + ' · ' + frFmt(a, cur) + ' ' + cur;
 }
 
 async function openRequestFee(studentId) {
@@ -5966,6 +5989,7 @@ async function openRequestFee(studentId) {
   if (!stu) { showToast('Student not found', 'error'); return; }
   document.getElementById('fr-student-id').value = stu.id;
   document.getElementById('fr-student-name').value = stu.full_name + ' (' + stu.id + ')';
+  frFillMonths();
   document.getElementById('fr-classes').value = '';
   document.getElementById('fr-amount').value = '';
   document.getElementById('fr-amount').placeholder = stu.monthly_fee ? ('e.g. ' + stu.monthly_fee + ' (monthly fee)') : 'e.g. 4000';
@@ -5991,7 +6015,9 @@ async function saveFeeRequest() {
   const amount = Number(document.getElementById('fr-amount').value);
   const currency = (document.getElementById('fr-currency').value || 'INR').toUpperCase();
   const note = document.getElementById('fr-note').value.trim();
+  const month = document.getElementById('fr-month').value || '';
   if (!studentId) { showToast('Pick a student first', 'error'); return; }
+  if (!/^\d{4}-\d{2}$/.test(month)) { showToast('Pick the month', 'error'); return; }
   if (!classes || classes < 1) { showToast('Enter the number of classes', 'error'); return; }
   if (!amount || amount <= 0) { showToast('Enter the amount', 'error'); return; }
 
@@ -5999,16 +6025,16 @@ async function saveFeeRequest() {
   saveBtn.disabled = true; saveBtn.textContent = 'Creating…';
   try {
     const id = await nextFeeRequestId();
-    await sbPost('fee_requests', { id, student_id: studentId, classes, amount, currency, note: note || null, status: 'pending' });
+    await sbPost('fee_requests', { id, student_id: studentId, classes, amount, currency, month, note: note || null, status: 'pending' });
     const stu = (_recordCache.students && _recordCache.students[studentId]) || {};
     const link = feeRequestLink(id);
     document.getElementById('fr-form-fields').style.display = 'none';
     document.getElementById('fr-result').style.display = '';
-    document.getElementById('fr-result-title').textContent = id + ' · ' + frFmt(amount, currency) + ' ' + currency + ' · ' + classes + (classes === 1 ? ' class' : ' classes');
+    document.getElementById('fr-result-title').textContent = id + ' · ' + frMonthLabel(month) + ' · ' + frFmt(amount, currency) + ' ' + currency + ' · ' + classes + (classes === 1 ? ' class' : ' classes');
     document.getElementById('fr-result-sub').textContent = 'Send this to ' + (stu.full_name || studentId) + '. It can only be paid once.';
     document.getElementById('fr-result-link').value = link;
     const first = (stu.full_name || '').trim().split(/\s+/)[0] || '';
-    const waText = 'Hi ' + first + ', here\'s your payment link for ' + classes + (classes === 1 ? ' class' : ' classes') + ' (' + frFmt(amount, currency) + '): ' + link;
+    const waText = 'Hi ' + first + ', here\'s your payment link for ' + frMonthLabel(month) + ', ' + classes + (classes === 1 ? ' class' : ' classes') + ' (' + frFmt(amount, currency) + '): ' + link;
     const wa = document.getElementById('fr-result-wa');
     const phone = String(stu.phone || '').replace(/[^\d]/g, '');
     wa.href = 'https://wa.me/' + (phone ? (phone.length === 10 ? '91' + phone : phone) : '') + '?text=' + encodeURIComponent(waText);
@@ -6064,12 +6090,13 @@ async function loadFeeRequests() {
     const nameOf = r => (_recordCache.students && _recordCache.students[r.student_id] && _recordCache.students[r.student_id].full_name) || r.student_id;
     const when = r => r.created_at ? fmtDate(String(r.created_at).slice(0,10)) : '—';
     document.getElementById('feeRequestsTable').innerHTML = reqs.map(r => `<tr>
-      <td>${r.id}</td><td style="font-weight:500;">${nameOf(r)}</td><td>${r.classes}</td>
+      <td>${r.id}</td><td style="font-weight:500;">${nameOf(r)}</td><td>${r.classes}${r.month ? ` <span style="color:var(--text-light);font-size:0.85em;">· ${frMonthLabel(r.month)}</span>` : ''}</td>
       <td>${frFmt(r.amount, r.currency)} <span style="color:var(--text-light);font-size:0.85em;">${r.currency}</span>${r.note ? ` <span style="color:var(--text-light);font-size:0.85em;">· ${r.note}</span>` : ''}</td>
       <td>${when(r)}</td>
       <td class="ws-action-sticky"><span class="action-wrap"><button class="icon-action-btn" data-tip="Copy link" onclick="copyFeeRequestLink('${feeRequestLink(r.id)}')">${COPY_SVG}</button><button class="icon-action-btn danger" data-tip="Cancel" onclick="cancelFeeRequest('${r.id}')">${X_SVG}</button></span></td>
     </tr>`).join('');
     document.getElementById('feeRequestsCards').innerHTML = reqs.map(r => `<div class="m-card"><div class="m-card-title">${nameOf(r)} <span class="badge badge-clay" style="float:right">${r.id}</span></div>
+      ${r.month ? `<div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${frMonthLabel(r.month)}</span></div>` : ''}
       <div class="m-card-row"><span class="m-card-label">Classes</span><span class="m-card-val">${r.classes}</span></div>
       <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val">${frFmt(r.amount, r.currency)} ${r.currency}</span></div>
       ${r.note ? `<div class="m-card-row"><span class="m-card-label">Note</span><span class="m-card-val">${r.note}</span></div>` : ''}

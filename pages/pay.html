@@ -18,7 +18,7 @@
   fbq('track', 'PageView');
 </script>
 <!-- End Meta Pixel Code -->
-<title>Handpan with Arpit | Pay your fee</title>
+<title>Arpit Pandey | Pay your fee</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -183,7 +183,7 @@
   <!-- HERO -->
   <section class="hero" id="hero-section">
     <div class="hero-content">
-      <div class="hero-eyebrow">Handpan with Arpit</div>
+      <div class="hero-eyebrow">Arpit Pandey</div>
       <h1><span id="hero-program"><span class="skel-bar" style="width:220px;"></span></span><em id="hero-for"><span class="skel-bar" style="width:160px;"></span></em></h1>
       <div class="details-section">
         <div class="detail-card"><span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/></svg></span><span class="detail-value" id="hero-student"><span class="skel-bar" style="width:140px;"></span></span></div>
@@ -352,7 +352,7 @@
     if (fee){
       heroProgram.textContent = 'Handpan classes';
       heroFor.textContent = 'for ' + firstName(fee.name);
-      successSummary.textContent = fee.label + ' · ' + fmtAmount(fee.amount, fee.currency) + ' ' + fee.currency;
+      successSummary.textContent = (fee.monthLabel ? fee.monthLabel + ' · ' : '') + fee.label + ' · ' + fmtAmount(fee.amount, fee.currency) + ' ' + fee.currency;
       successSummary.style.display = '';
     } else {
       heroProgram.textContent = 'Handpan classes';
@@ -383,14 +383,14 @@
     incSessions.textContent = fee.classes === 1
       ? '1 live one-to-one session on Zoom'
       : fee.classes + ' live one-to-one sessions on Zoom';
-    totalLabel.textContent = fee.label || 'Amount due';
+    totalLabel.textContent = (fee.monthLabel ? fee.monthLabel + ' · ' : '') + (fee.label || 'Amount due');
     totalAmount.innerHTML = fmtAmount(fee.amount, fee.currency) + '<small>' + fee.currency + '</small>';
     if (fee.note){ feeNote.textContent = fee.note; feeNote.style.display = ''; }
     payBtn.innerHTML = 'Pay ' + fmtAmount(fee.amount, fee.currency) + ' ' + ICON_ARROW;
     payBtn.disabled = false;
     const c = CURRENCY[fee.currency];
     if (c) methodsEl.innerHTML = c.methods.map(m => '<span>' + ICON_CARD + m + '</span>').join('');
-    document.title = 'Pay your fee | Handpan with Arpit';
+    document.title = 'Pay your fee | Arpit Pandey';
   }
 
   // ── LOAD ──
