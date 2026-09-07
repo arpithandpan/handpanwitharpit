@@ -2595,7 +2595,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v54</span>
+        <span style="color:var(--clay);font-weight:500;">v55</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2663,7 +2663,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v54</span>
+        <span style="color:var(--clay);font-weight:500;">v55</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3717,6 +3717,11 @@ table#paymentsTable { min-width: 700px; }
 .inv-switch input:checked + .sl{background:#7da55e;}
 .inv-switch input:checked + .sl:before{transform:translateX(15px);}
 #filter-bar-invoices{display:flex;flex-wrap:wrap;align-items:center;gap:0.7rem;margin-bottom:0.9rem;}
+.inv-auto-badge{display:inline-block;margin-left:7px;padding:1px 7px;border-radius:10px;font-size:0.64rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--moss);background:rgba(122,140,106,0.18);border:0.5px solid rgba(122,140,106,0.4);vertical-align:middle;}
+.inv-fail-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e8856a;margin-left:6px;cursor:help;}
+.inv-show-row{display:flex;flex-wrap:wrap;gap:0.6rem 1.4rem;}
+.inv-show-row label{display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;cursor:pointer;color:var(--text);}
+.inv-show-row input{width:16px;height:16px;accent-color:var(--clay);}
 .inv-seg{display:inline-flex;border:1px solid var(--clay-pale);border-radius:999px;padding:3px;gap:2px;height:48px;align-items:center;}
 .inv-fstatus{background:transparent;border:none;color:var(--text-light);font-size:0.8rem;padding:0 18px;height:40px;cursor:pointer;font-weight:500;border-radius:999px;transition:background 0.15s,color 0.15s;}
 .inv-fstatus.active{background:var(--clay);color:#1a1208;font-weight:600;}
@@ -3737,7 +3742,7 @@ table#paymentsTable { min-width: 700px; }
     <button type="button" class="btn-dash btn-dash-primary btn-dash-sm" style="padding:0 1.6rem;" onclick="saveInvoice()">Save</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
-    <div style="background:rgba(193,127,82,0.08);border:1px solid var(--clay-pale);border-radius:8px;padding:0.7rem 0.9rem;font-size:0.82rem;color:var(--text-light);line-height:1.5;margin-bottom:0.9rem;">Your name, email, UPI and bank details are added to every invoice automatically. Below you only enter the customer and payment details.</div>
+    <div style="background:rgba(193,127,82,0.08);border:1px solid var(--clay-pale);border-radius:8px;padding:0.7rem 0.9rem;font-size:0.82rem;color:var(--text-light);line-height:1.5;margin-bottom:0.9rem;">Your name, phone and email are added to every invoice automatically. Below you only enter the customer and payment details. The PDF is built by the server, the same one students receive after paying.</div>
 
     <div class="inv-card">
       <div class="inv-card-h"><span class="inv-card-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--clay)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span class="inv-card-t">Invoice</span><span class="inv-no-pill" id="inv-no" style="margin-left:auto;">INV-008</span></div>
@@ -3752,7 +3757,11 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Phone</label><input type="text" class="form-input" id="inv-phone" placeholder="Phone (optional)"/></div>
-        <div class="form-group"><label class="form-label">City</label><input type="text" class="form-input" id="inv-city" placeholder="City (optional)"/></div>
+        <div class="form-group"><label class="form-label">Address / City</label><input type="text" class="form-input" id="inv-city" placeholder="Address or city (optional)"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Company</label><input type="text" class="form-input" id="inv-company" maxlength="80" placeholder="For corporate invoices (optional)"/></div>
+        <div class="form-group"><label class="form-label">GSTIN</label><input type="text" class="form-input" id="inv-gstin" maxlength="15" oninput="this.value=this.value.toUpperCase()" placeholder="Customer GSTIN (optional)"/></div>
       </div>
     </div>
 
@@ -3768,6 +3777,7 @@ table#paymentsTable { min-width: 700px; }
           </select></div>
       </div>
       <div class="form-group" style="margin-bottom:0;"><label class="form-label">Reference number</label><input type="text" class="form-input" id="inv-pay-ref" placeholder="UPI / UTR reference (optional)"/></div>
+      <div style="font-size:0.78rem;color:var(--text-light);margin-top:0.6rem;line-height:1.5;">Leave Received on blank to issue an unpaid invoice. It will show Payment Due with your UPI and bank details, due 14 days from the invoice date.</div>
     </div>
 
     <div class="inv-card">
@@ -3783,10 +3793,19 @@ table#paymentsTable { min-width: 700px; }
       <div id="inv-words" style="text-align:right;font-size:0.8rem;color:var(--text-light);font-style:italic;margin-top:0.25rem;min-height:1rem;"></div>
     </div>
 
-    <div class="inv-pan-add" id="inv-pan-toggle" onclick="invTogglePan(true)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add your PAN (optional)</div>
-    <div class="inv-card" id="inv-pan-wrap" style="display:none;">
-      <div class="inv-card-h" style="margin-bottom:0.7rem;"><span class="inv-card-t">Your PAN</span><span class="inv-card-opt" style="cursor:pointer;" onclick="invTogglePan(false)">Remove</span></div>
-      <div class="form-group" style="margin-bottom:0;"><input type="text" class="form-input" id="inv-pan" maxlength="10" oninput="this.value=this.value.toUpperCase()" placeholder="PAN (optional, e.g. ABCDE1234F)"/></div>
+    <div class="inv-card">
+      <div class="inv-card-h"><span class="inv-card-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--clay)" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="inv-card-t">Show on invoice</span><span class="inv-card-opt">Corporate clients only</span></div>
+      <div class="inv-show-row">
+        <label><input type="checkbox" id="inv-show-pan"/> Your PAN</label>
+        <label><input type="checkbox" id="inv-show-bank"/> Bank details</label>
+        <label><input type="checkbox" id="inv-show-address"/> Full address</label>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text-light);margin-top:0.6rem;line-height:1.5;">Students never need these. Bank details are always shown on unpaid invoices.</div>
+    </div>
+
+    <div class="inv-card">
+      <div class="inv-card-h"><span class="inv-card-t">Notes</span><span class="inv-card-opt">Optional</span></div>
+      <div class="form-group" style="margin-bottom:0;"><textarea class="form-input" id="inv-notes" rows="2" maxlength="300" placeholder="Printed under the total, e.g. Please share the UTR once transferred."></textarea></div>
     </div>
 
     <div style="margin-top:1.5rem;">
@@ -4370,6 +4389,30 @@ table#paymentsTable { min-width: 700px; }
 const SUPABASE_URL = 'https://sabdevsguuobgqjputtv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhYmRldnNndXVvYmdxanB1dHR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyODIyMTcsImV4cCI6MjA5NDg1ODIxN30.fQBjimq7wvOA53oy3b_uKo1Ezh0oQOzHca7UhyxhxGQ';
 const VIEWER_EMAIL = 'arpitbam@gmail.com';
+// Railway server: renders invoice PDFs and sends them. Same server as book.html and pay.html.
+const API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
+async function invApi(path, opts) {
+  const token = sessionStorage.getItem('dash_token') || '';
+  const res = await fetch(API_BASE + path, Object.assign({}, opts || {}, {
+    headers: Object.assign({ 'Authorization': 'Bearer ' + token }, (opts && opts.headers) || {})
+  }));
+  if (!res.ok) {
+    let msg = 'Server error (' + res.status + ')';
+    try { const j = await res.json(); if (j && j.error) msg = j.error; } catch (e) {}
+    if (res.status === 401) msg = 'Session expired. Sign out and sign in again.';
+    throw new Error(msg);
+  }
+  return res;
+}
+// Open a PDF blob in a new tab. The tab is opened first so browsers don't block it.
+function invOpenPdfBlob(blob, title) {
+  const url = URL.createObjectURL(blob);
+  const w = window.open('', '_blank');
+  if (!w) { showToast('Allow pop-ups to view the invoice', 'error'); return; }
+  w.location = url;
+  try { w.document.title = title || 'Invoice'; } catch (e) {}
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
 
 const SB_HEADERS = {
   'Content-Type': 'application/json',
@@ -6291,10 +6334,13 @@ async function invBulkDownload() {
   const ids = invSelectedIds(); if (!ids.length) return;
   showToast('Preparing ' + ids.length + ' invoice' + (ids.length > 1 ? 's' : '') + '...', 'info');
   try {
-    await invEnsureLibs();
+    if (!window.JSZip) await invLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
     const list = invAllCache.filter(r => ids.includes(r.id));
     const zip = new JSZip();
-    for (const r of list) { const blob = await invMakePdfBlob(invDataFromRow(r)); zip.file(invDataFromRow(r).title + '.pdf', blob); }
+    for (const r of list) {
+      const res = await invApi('/api/invoice/' + encodeURIComponent(r.id) + '/pdf');
+      zip.file(invDataFromRow(r).title + '.pdf', await res.blob());
+    }
     const content = await zip.generateAsync({ type: 'blob' });
     invDownloadBlob(content, 'invoices_' + new Date().toISOString().slice(0,10) + '.zip');
     showToast('Downloaded ' + list.length + ' invoice' + (list.length > 1 ? 's' : ''), 'success');
@@ -6336,10 +6382,10 @@ function invRenderInvoices() {
       const cancDate = inv.cancelled_at ? fmtDate(inv.cancelled_at) : '';
       const statusCell = canc
         ? `<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;"><span class="inv-cancelled-badge">Cancelled</span>${cancDate?`<span style="font-size:0.7rem;color:var(--text-light);">Cancelled on ${cancDate}</span>`:''}</div>`
-        : `<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;"><div style="display:flex;align-items:center;gap:8px;"><label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="font-size:0.78rem;color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}</span></div>${inv.sent&&inv.sent_at?`<span style="font-size:0.7rem;color:var(--text-light);">${fmtDate(inv.sent_at)}</span>`:''}</div>`;
+        : `<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;"><div style="display:flex;align-items:center;gap:8px;"><label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="font-size:0.78rem;color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':(inv.email_error?'Failed':'Not sent')}</span>${(!inv.sent&&inv.email_error)?`<span class="inv-fail-dot" title="${String(inv.email_error).replace(/"/g,'&quot;')}"></span>`:''}</div>${inv.sent&&inv.sent_at?`<span style="font-size:0.7rem;color:var(--text-light);">${fmtDate(inv.sent_at)}</span>`:''}</div>`;
       const cancelBtn = canc ? `<button class="icon-action-btn" data-tip="Reinstate invoice" onclick="invReinstate('${inv.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg></button>` : `<button class="icon-action-btn" data-tip="Cancel invoice" onclick="invCancelAsk('${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>`;
       const emailDim = canc ? ' inv-dim' : '';
-      return `<tr class="${canc?'inv-row-cancelled':''}" data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="invoices" data-id="'+inv.id+'" data-name="'+(inv.billed_name||inv.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span></td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmt(inv.total_amount)}</td><td>${statusCell}</td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button><button class="icon-action-btn${emailDim}" data-tip="Email to customer" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">${MAIL}</button>${cancelBtn}${isAdmin()?`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"/><path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2\"/></svg></button>`:''}</div></td></tr>`;
+      return `<tr class="${canc?'inv-row-cancelled':''}" data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="invoices" data-id="'+inv.id+'" data-name="'+(inv.billed_name||inv.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span>${inv.auto_generated?'<span class="inv-auto-badge" title="Created and emailed automatically after payment">Auto</span>':''}</td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmt(inv.total_amount)}</td><td>${statusCell}</td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button><button class="icon-action-btn${emailDim}" data-tip="Email to customer" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">${MAIL}</button>${cancelBtn}${isAdmin()?`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"/><path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2\"/></svg></button>`:''}</div></td></tr>`;
     }).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.invoices}</td></tr>`;
 
     const _t = document.getElementById('invoicesTable');
@@ -6357,7 +6403,7 @@ function invRenderInvoices() {
     }
 
     const cards = document.getElementById('invoicesCards');
-    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card${inv.cancelled?' inv-card-cancelled':''}" id="icard-${inv.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;"><label class="cb-box"><input type="checkbox" class="row-select-cb row-cb" data-table="invoices" data-id="${inv.id}" data-name="${(inv.billed_name||inv.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('icard-'+inv.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span></div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmt(inv.total_amount)}</span></div><div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val" style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">${inv.cancelled?`<span class="inv-cancelled-badge">Cancelled</span>${inv.cancelled_at?` <span style="color:var(--text-light);font-size:0.72rem;">on ${fmtDate(inv.cancelled_at)}</span>`:''}`:`<label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${fmtDate(inv.sent_at)}`:''}</span>`}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${inv.cancelled?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invReinstate('${inv.id}')">Reinstate</button>`:''}${(!inv.cancelled && isAdmin())?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invCancelAsk('${inv.id}','${invFmtNo(inv.invoice_number)}')">Cancel</button>`:''}${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || ('<div class="mobile-cards-empty">' + (invAllCache.length > 0 ? '<div class="empty-state"><div class="empty-state-title">No invoices match these filters</div><div class="empty-state-text">Try a different date range or status, or clear the filters.</div></div>' : EMPTY_STATES.invoices) + '</div>');
+    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card${inv.cancelled?' inv-card-cancelled':''}" id="icard-${inv.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;"><label class="cb-box"><input type="checkbox" class="row-select-cb row-cb" data-table="invoices" data-id="${inv.id}" data-name="${(inv.billed_name||inv.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('icard-'+inv.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span>${inv.auto_generated?'<span class="inv-auto-badge">Auto</span>':''}</div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmt(inv.total_amount)}</span></div><div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val" style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">${inv.cancelled?`<span class="inv-cancelled-badge">Cancelled</span>${inv.cancelled_at?` <span style="color:var(--text-light);font-size:0.72rem;">on ${fmtDate(inv.cancelled_at)}</span>`:''}`:`<label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${fmtDate(inv.sent_at)}`:''}</span>`}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${inv.cancelled?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invReinstate('${inv.id}')">Reinstate</button>`:''}${(!inv.cancelled && isAdmin())?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invCancelAsk('${inv.id}','${invFmtNo(inv.invoice_number)}')">Cancel</button>`:''}${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || ('<div class="mobile-cards-empty">' + (invAllCache.length > 0 ? '<div class="empty-state"><div class="empty-state-title">No invoices match these filters</div><div class="empty-state-text">Try a different date range or status, or clear the filters.</div></div>' : EMPTY_STATES.invoices) + '</div>');
 }
 // ── INVOICES: EDITOR + GENERATION ──
 const INV_BIZ = {
@@ -6438,23 +6484,28 @@ async function invConsumeNumber() {
 
 function invMapSource(table, r) {
   if (table === 'fee_payments') {
-    const cls = r.classes ? ' (' + r.classes + ' classes)' : '';
+    // Same wording as the auto invoices: qty = classes when the rate divides cleanly.
+    const amt = Number(r.amount) || 0, cls = parseInt(r.classes, 10) || 0;
+    const rate = cls > 0 ? Math.round((amt / cls) * 100) / 100 : amt;
+    const clean = cls > 0 && Math.round(rate * cls * 100) === Math.round(amt * 100);
     return {
-      billed: { name: r.student_name || '', email: r.email || '', city: '', phone: r.phone || r.contact || '' },
-      payment: { date: invToISO(r.payment_date), mode: r.payment_mode || 'UPI', ref: '' },
-      lines: [{ desc: 'Handpan Online Classes \u2013 ' + invMonthLabel(r.month) + cls, qty: 1, rate: Number(r.amount)||0 }]
+      billed: { name: r.student_name || '', email: r.email || '', city: '', phone: r.phone || r.contact || '', company: '', gstin: '' },
+      payment: { date: invToISO(r.payment_date), mode: r.payment_mode || 'UPI', ref: r.razorpay_payment_id || '' },
+      lines: clean ? [{ desc: 'Online Handpan Classes', qty: cls, rate }] : [{ desc: 'Online Handpan Classes' + (cls ? ' (' + cls + ' classes)' : ''), qty: 1, rate: amt }]
     };
   }
   if (table === 'participants') {
+    const when = r.created_at || r.date;
+    const month = when ? new Date(String(when).slice(0,10) + 'T00:00:00').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : '';
     return {
-      billed: { name: r.full_name || r.razorpay_name || '', email: r.email || '', city: '', phone: r.phone || r.razorpay_contact || r.contact || '' },
-      payment: { date: invToISO(r.created_at), mode: r.payment_mode || 'UPI', ref: '' },
-      lines: [{ desc: 'Handpan Workshop' + (r.workshop_id ? ' \u2013 ' + r.workshop_id : ''), qty: 1, rate: Number(r.amount_paid)||0 }]
+      billed: { name: r.full_name || r.razorpay_name || '', email: r.email || '', city: '', phone: r.phone || r.razorpay_contact || r.contact || '', company: '', gstin: '' },
+      payment: { date: invToISO(r.created_at), mode: r.payment_mode || 'UPI', ref: r.razorpay_payment_id || '' },
+      lines: [{ desc: 'Handpan Workshop' + (month ? ', ' + month : ''), qty: 1, rate: Number(r.amount_paid)||0 }]
     };
   }
   if (table === 'payments') {
     return {
-      billed: { name: r.payer_name || '', email: '', city: '', phone: r.payer_phone || r.phone || r.contact || '' },
+      billed: { name: r.payer_name || '', email: '', city: '', phone: r.payer_phone || r.phone || r.contact || '', company: '', gstin: '' },
       payment: { date: invToISO(r.date), mode: r.payment_mode || 'UPI', ref: '' },
       lines: [{ desc: r.description || r.category || 'Handpan services', qty: 1, rate: Number(r.amount)||0 }]
     };
@@ -6469,9 +6520,11 @@ async function openInvoiceEditor(prefill) {
     number,
     invoiceDate: invToISO(new Date()),
     source: { table: null, id: null },
-    billed: { name: '', email: '', city: '', phone: '' },
+    billed: { name: '', email: '', city: '', phone: '', company: '', gstin: '' },
     payment: { date: '', mode: 'UPI', ref: '' },
     pan: '',
+    show: { pan: false, bank: false, address: false },
+    notes: '',
     saved: false,
     _committing: false,
     lines: [{ desc: '', qty: 1, rate: 0 }]
@@ -6497,12 +6550,7 @@ async function openInvoiceEditor(prefill) {
   if (typeof lockScroll === 'function') lockScroll();
 }
 
-function invTogglePan(show) {
-  const w = document.getElementById('inv-pan-wrap'); const t = document.getElementById('inv-pan-toggle');
-  if (w) w.style.display = show ? '' : 'none';
-  if (t) t.style.display = show ? 'none' : 'flex';
-  if (!show) { const pi = document.getElementById('inv-pan'); if (pi) pi.value = ''; }
-}
+function invTogglePan(show) { /* replaced by the Show on invoice toggles */ }
 function invRenderEditor() {
   const s = invState;
   document.getElementById('invEditorTitle').textContent = 'New Invoice';
@@ -6515,9 +6563,14 @@ function invRenderEditor() {
   document.getElementById('inv-pay-date').value = s.payment.date || '';
   document.getElementById('inv-pay-mode').value = s.payment.mode || 'UPI';
   document.getElementById('inv-pay-ref').value = s.payment.ref || '';
+  document.getElementById('inv-company').value = s.billed.company || '';
+  document.getElementById('inv-gstin').value = s.billed.gstin || '';
+  document.getElementById('inv-notes').value = s.notes || '';
+  document.getElementById('inv-show-pan').checked = !!(s.show && s.show.pan);
+  document.getElementById('inv-show-bank').checked = !!(s.show && s.show.bank);
+  document.getElementById('inv-show-address').checked = !!(s.show && s.show.address);
   const di = document.getElementById('inv-date'); if (di && di._dpRefresh) di._dpRefresh();
   const pdi = document.getElementById('inv-pay-date'); if (pdi && pdi._dpRefresh) pdi._dpRefresh();
-  if (s.pan) { invTogglePan(true); document.getElementById('inv-pan').value = s.pan; } else { invTogglePan(false); }
   invRenderLines();
 }
 
@@ -6561,7 +6614,11 @@ function invCollect() {
   s.billed.email = document.getElementById('inv-email').value.trim();
   s.billed.phone = document.getElementById('inv-phone').value.trim();
   s.billed.city = document.getElementById('inv-city').value.trim();
-  s.pan = document.getElementById('inv-pan').value.trim().toUpperCase();
+  s.billed.company = document.getElementById('inv-company').value.trim();
+  s.billed.gstin = document.getElementById('inv-gstin').value.trim().toUpperCase();
+  s.notes = document.getElementById('inv-notes').value.trim();
+  s.show = { pan: document.getElementById('inv-show-pan').checked, bank: document.getElementById('inv-show-bank').checked, address: document.getElementById('inv-show-address').checked };
+  s.pan = '';
   s.payment.date = document.getElementById('inv-pay-date').value;
   s.payment.mode = document.getElementById('inv-pay-mode').value;
   s.payment.ref = document.getElementById('inv-pay-ref').value.trim();
@@ -6571,7 +6628,7 @@ function invValidate(s) {
   if (!s.billed.name) { showToast('Add who the invoice is billed to', 'error'); return false; }
   const valid = s.lines.filter(l => (Number(l.rate)||0) > 0 && String(l.desc||'').trim());
   if (!valid.length) { showToast('Add at least one line with a description and amount', 'error'); return false; }
-  if (s.pan && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(s.pan)) { showToast('PAN should look like ABCDE1234F, or leave it blank', 'error'); return false; }
+  if (s.billed.gstin && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(s.billed.gstin)) { showToast('GSTIN should be 15 characters like 29ABCDE1234F1Z5, or leave it blank', 'error'); return false; }
   return true;
 }
 
@@ -6631,6 +6688,34 @@ function invBuildHTML(d, autoPrint) {
     + '</div>' + ap + '</body></html>';
 }
 
+// The invoices row for the current editor state. Used for saving and for the server preview.
+function invRowPayload(s, d) {
+  return {
+    invoice_number: s.number,
+    invoice_date: s.invoiceDate,
+    source_table: s.source.table || null,
+    source_id: s.source.id || null,
+    billed_name: s.billed.name,
+    billed_email: s.billed.email || null,
+    billed_city: s.billed.city || null,
+    billed_address: s.billed.city || null,
+    billed_phone: s.billed.phone || null,
+    billed_company: s.billed.company || null,
+    billed_gstin: s.billed.gstin || null,
+    payment_received_date: s.payment.date || null,
+    payment_mode: s.payment.date ? (s.payment.mode || null) : null,
+    payment_reference: s.payment.ref || null,
+    line_items: d.lines,
+    total_amount: d.total,
+    amount_in_words: d.words,
+    currency: 'INR',
+    notes: s.notes || null,
+    show_pan: !!(s.show && s.show.pan),
+    show_bank: !!(s.show && s.show.bank),
+    show_address: !!(s.show && s.show.address),
+    pan: null
+  };
+}
 function invDataFromState(s) {
   const lines = s.lines.filter(l => String(l.desc||'').trim() && (Number(l.rate)||0)>0).map(l => ({ desc:l.desc, qty:Number(l.qty)||1, rate:Number(l.rate)||0 }));
   const total = lines.reduce((a,l)=> a + l.qty*l.rate, 0);
@@ -6664,12 +6749,31 @@ function invEmailBody(no, amount, dateISO) {
   return 'Hi,\n\nPlease find attached your invoice.\n\nThank you for being part of the journey.\n\nWarm regards,\nArpit Pandey\nhttps://arpitpandey.com/\nhttps://www.instagram.com/pandeyarpit';
 }
 function invEmail(id, email, no, amount, dateISO) {
-  const su = 'Your invoice from Arpit Pandey';
-  const body = invEmailBody(no, amount, dateISO);
-  const gmail = 'https://mail.google.com/mail/?view=cm&fs=1&authuser=' + encodeURIComponent('arpithandpan@gmail.com') + '&to=' + encodeURIComponent(email||'') + '&su=' + encodeURIComponent(su) + '&body=' + encodeURIComponent(body);
-  const w = window.open(gmail, '_blank');
-  if (!w) { showToast('Allow pop-ups to open Gmail', 'error'); return; }
-  showToast(email ? 'Gmail opened. Attach the PDF and send, then switch this invoice to Sent' : 'Gmail opened. Add the recipient, attach the PDF and send, then switch this invoice to Sent', 'success');
+  if (!isAdmin()) { showToast('Viewer access only — contact admin', 'error'); return; }
+  const row = invAllCache.find(r => r.id === id) || {};
+  if (row.cancelled) { showToast('This invoice is cancelled', 'error'); return; }
+  let to = (email || row.billed_email || '').trim();
+  if (!to) {
+    to = (prompt('No email on this invoice. Send ' + no + ' to which address?') || '').trim();
+    if (!to) return;
+  }
+  document.getElementById('archiveConfirmTitle').textContent = (row.sent ? 'Resend ' : 'Send ') + no + '?';
+  document.getElementById('archiveConfirmDesc').textContent = 'The PDF will be emailed to ' + to + ' from invoices@arpitpandey.com.';
+  const btn = document.getElementById('archiveConfirmBtn');
+  btn.textContent = row.sent ? 'Resend' : 'Send';
+  btn.onclick = async function () {
+    closeArchiveConfirm();
+    showToast('Sending ' + no + '...', 'info');
+    try {
+      await invApi('/api/invoice/' + encodeURIComponent(id) + '/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to }) });
+      showToast(no + ' sent to ' + to, 'success');
+    } catch (e) {
+      console.error('invEmail', e); showToast('Could not send: ' + e.message, 'error');
+    }
+    if (sessionStorage.getItem('dash_section') === 'invoices') loadInvoices();
+  };
+  document.getElementById('archiveConfirmModal').style.display = 'flex';
+  lockScroll();
 }
 async function invMarkSent(id) {
   try {
@@ -6716,11 +6820,23 @@ async function invReinstate(id) {
   } catch (e) { console.error('invReinstate', e); showToast('Could not reinstate — try again', 'error'); }
 }
 
-function previewInvoice() {
+async function previewInvoice() {
   const s = invCollect();
   if (!invValidate(s)) return;
   const d = invDataFromState(s);
-  invOpenPrint(invBuildHTML(d, false), d.title);
+  const w = window.open('', '_blank');
+  if (!w) { showToast('Allow pop-ups to preview the invoice', 'error'); return; }
+  try {
+    w.document.write('<p style="font-family:sans-serif;padding:2rem;color:#555;">Building the preview...</p>');
+    const res = await invApi('/api/invoice/preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(invRowPayload(s, d)) });
+    const url = URL.createObjectURL(await res.blob());
+    w.location = url;
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch (e) {
+    console.error('previewInvoice', e);
+    try { w.close(); } catch (_) {}
+    showToast('Could not build the preview: ' + e.message, 'error');
+  }
 }
 
 async function invCommit() {
@@ -6730,23 +6846,7 @@ async function invCommit() {
   if (invState.saved) return { ok: true, d: invDataFromState(s), already: true };
   invState._committing = true;
   const d = invDataFromState(s);
-  const payload = {
-    invoice_number: s.number,
-    invoice_date: s.invoiceDate,
-    source_table: s.source.table || null,
-    source_id: s.source.id || null,
-    billed_name: s.billed.name,
-    billed_email: s.billed.email || null,
-    billed_city: s.billed.city || null,
-    billed_phone: s.billed.phone || null,
-    payment_received_date: s.payment.date || null,
-    payment_mode: s.payment.mode || null,
-    payment_reference: s.payment.ref || null,
-    line_items: d.lines,
-    total_amount: d.total,
-    amount_in_words: d.words,
-    pan: s.pan || null
-  };
+  const payload = invRowPayload(s, d);
   try {
     await sbPost('invoices', payload);
   } catch(e) {
@@ -6765,6 +6865,12 @@ async function invCommit() {
   }
   invState.saved = true;
   invState._committing = false;
+  // Build and store the PDF on the server so the list, download and email all use the same file.
+  try {
+    const rows = await sbGet('invoices', 'invoice_number=eq.' + encodeURIComponent(s.number) + '&select=id');
+    const list = Array.isArray(rows) ? rows : (rows && rows.data ? rows.data : []);
+    if (list[0]) { invState.savedId = list[0].id; invApi('/api/invoice/' + encodeURIComponent(list[0].id) + '/pdf?fresh=1').catch(e => console.warn('invoice render', e.message)); }
+  } catch (e) { console.warn('invoice id lookup', e); }
   if (sessionStorage.getItem('dash_section') === 'invoices') loadInvoices();
   return { ok: true, d };
 }
@@ -6780,7 +6886,7 @@ async function generateInvoice() {
   const r = await invCommit();
   if (!r.ok) return;
   closeInvoiceEditor();
-  invShowDocBanner(r.d.no, invBuildHTML(r.d, true), r.d.title);
+  if (invState.savedId) openInvoicePreview(invState.savedId);
 }
 
 function closeInvoiceEditor() {
@@ -6789,25 +6895,20 @@ function closeInvoiceEditor() {
 }
 
 async function openInvoicePreview(id) {
+  const w = window.open('', '_blank');
+  if (!w) { showToast('Allow pop-ups to view the invoice', 'error'); return; }
   try {
-    const rows = await sbGet('invoices', 'id=eq.' + encodeURIComponent(id));
-    const list = Array.isArray(rows) ? rows : (rows && rows.data ? rows.data : []);
-    const r = list[0];
-    if (!r) { showToast('Invoice not found', 'error'); return; }
-    const lines = (r.line_items||[]).map(l => ({ desc:l.desc||l.description||'', qty:Number(l.qty)||1, rate:Number(l.rate)||0 }));
-    const no = 'INV-' + String(r.invoice_number).padStart(3,'0');
-    const nameSlug = (r.billed_name||'invoice').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'');
-    const d = {
-      no, invoiceDate: r.invoice_date,
-      billed: { name: r.billed_name||'', email: r.billed_email||'', city: r.billed_city||'', phone: r.billed_phone||'' },
-      pan: r.pan||'',
-      payment: { date: r.payment_received_date||'', mode: r.payment_mode||'', ref: r.payment_reference||'' },
-      lines, total: Number(r.total_amount)||0, words: r.amount_in_words || invAmountInWords(r.total_amount),
-      cancelled: !!r.cancelled, cancelledAt: (r.cancelled_at||'').slice(0,10),
-      title: no + '_' + nameSlug
-    };
-    invOpenPrint(invBuildHTML(d, true), d.title);
-  } catch(e) { console.error('openInvoicePreview', e); showToast('Could not open the invoice', 'error'); }
+    w.document.write('<p style="font-family:sans-serif;padding:2rem;color:#555;">Preparing the invoice...</p>');
+    const res = await invApi('/api/invoice/' + encodeURIComponent(id) + '/pdf');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    w.location = url;
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch(e) {
+    console.error('openInvoicePreview', e);
+    try { w.close(); } catch (_) {}
+    showToast('Could not open the invoice: ' + e.message, 'error');
+  }
 }
 
 function filterInvoices(q) {
