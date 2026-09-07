@@ -833,7 +833,8 @@ tr.ws-row-cancelled td:nth-child(4),tr.ws-row-cancelled td:nth-child(5),tr.ws-ro
 .inv-reinstate-link:hover{opacity:0.8;}
 tr.inv-row-cancelled td{opacity:0.55;}
 tr.inv-row-cancelled td:nth-child(6),tr.inv-row-cancelled td.ws-action-sticky{opacity:1;}
-tr.inv-row-cancelled td:nth-child(2) span,tr.inv-row-cancelled td:nth-child(3),tr.inv-row-cancelled td:nth-child(5){text-decoration:line-through;}
+tr.inv-row-cancelled td:nth-child(2) span:not(.inv-auto-badge),tr.inv-row-cancelled td:nth-child(3),tr.inv-row-cancelled td:nth-child(5){text-decoration:line-through;}
+tr.inv-row-cancelled .inv-auto-badge{text-decoration:none;}
 .icon-action-btn.inv-dim{opacity:0.4;pointer-events:none;}
 .m-card.inv-card-cancelled{opacity:0.7;}
 .btn-dash-danger:hover { background: rgba(180,60,40,0.06); border-color: #B43C28; }
@@ -2595,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v55</span>
+        <span style="color:var(--clay);font-weight:500;">v56</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2663,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v55</span>
+        <span style="color:var(--clay);font-weight:500;">v56</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4267,13 +4268,18 @@ table#paymentsTable { min-width: 700px; }
     <div style="padding:1.5rem 1.5rem 1rem;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
         <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          <svg id="archiveConfirmIconBin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          <svg id="archiveConfirmIconMail" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>
         </div>
         <div id="archiveConfirmTitle" style="font-size:1.15rem;font-weight:600;color:#e8d5c0;">Move to Bin?</div>
       </div>
       <p style="font-size:1rem;color:rgba(200,147,90,0.7);line-height:1.6;margin:0 0 1.25rem;">
         <span id="archiveConfirmDesc">This record will be moved to Bin. You can restore it or delete it permanently from there.</span>
       </p>
+      <div id="archiveConfirmField" style="display:none;margin:-0.5rem 0 1.25rem;">
+        <label class="form-label" for="archiveConfirmInput">Send to</label>
+        <input type="email" class="form-input" id="archiveConfirmInput" autocomplete="off" spellcheck="false" placeholder="name@example.com"/>
+      </div>
     </div>
     <div style="display:flex;border-top:1px solid rgba(193,127,90,0.2);">
       <button onclick="closeArchiveConfirm()" style="flex:1;padding:1rem;background:transparent;border:none;border-right:1px solid rgba(193,127,90,0.2);font-size:1rem;color:#c8935a;cursor:pointer;font-family:var(--font-body);">Cancel</button>
@@ -4391,6 +4397,12 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const VIEWER_EMAIL = 'arpitbam@gmail.com';
 // Railway server: renders invoice PDFs and sends them. Same server as book.html and pay.html.
 const API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
+// Local calendar date as YYYY-MM-DD. toISOString() gives the UTC date, which is
+// yesterday until 5:30 AM in India, so never use it for "today".
+function localISODate(d) {
+  const dt = d || new Date();
+  return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+}
 async function invApi(path, opts) {
   const token = sessionStorage.getItem('dash_token') || '';
   const res = await fetch(API_BASE + path, Object.assign({}, opts || {}, {
@@ -6141,7 +6153,7 @@ async function markReferralReceived(id, name, amount) {
     // Create income entry in payments
     const payBody = {
       id: 'PAY-' + Date.now(),
-      date: new Date().toISOString().split('T')[0],
+      date: localISODate(),
       amount: amount,
       type: 'income',
       category: 'referral',
@@ -6342,7 +6354,7 @@ async function invBulkDownload() {
       zip.file(invDataFromRow(r).title + '.pdf', await res.blob());
     }
     const content = await zip.generateAsync({ type: 'blob' });
-    invDownloadBlob(content, 'invoices_' + new Date().toISOString().slice(0,10) + '.zip');
+    invDownloadBlob(content, 'invoices_' + localISODate() + '.zip');
     showToast('Downloaded ' + list.length + ' invoice' + (list.length > 1 ? 's' : ''), 'success');
   } catch(e) { console.error('invBulkDownload', e); showToast('Could not prepare the ZIP. Check your connection and try again.', 'error'); }
 }
@@ -6418,7 +6430,8 @@ let invState = null;
 
 function invToISO(d) {
   if (!d) return '';
-  try { const dt = new Date(d); if (isNaN(dt)) return ''; return dt.toISOString().slice(0,10); } catch(e){ return ''; }
+  if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+  try { const dt = new Date(d); if (isNaN(dt)) return ''; return localISODate(dt); } catch(e){ return ''; }
 }
 function invLongDate(iso) {
   if (!iso) return '';
@@ -6752,16 +6765,16 @@ function invEmail(id, email, no, amount, dateISO) {
   if (!isAdmin()) { showToast('Viewer access only — contact admin', 'error'); return; }
   const row = invAllCache.find(r => r.id === id) || {};
   if (row.cancelled) { showToast('This invoice is cancelled', 'error'); return; }
-  let to = (email || row.billed_email || '').trim();
-  if (!to) {
-    to = (prompt('No email on this invoice. Send ' + no + ' to which address?') || '').trim();
-    if (!to) return;
-  }
+  const input = document.getElementById('archiveConfirmInput');
+  input.value = (email || row.billed_email || '').trim();
+  archiveConfirmSetMode('send');
   document.getElementById('archiveConfirmTitle').textContent = (row.sent ? 'Resend ' : 'Send ') + no + '?';
-  document.getElementById('archiveConfirmDesc').textContent = 'The PDF will be emailed to ' + to + ' from invoices@arpitpandey.com.';
+  document.getElementById('archiveConfirmDesc').textContent = 'The PDF will be emailed from invoices@arpitpandey.com. Change the address below if needed.';
   const btn = document.getElementById('archiveConfirmBtn');
   btn.textContent = row.sent ? 'Resend' : 'Send';
   btn.onclick = async function () {
+    const to = (input.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) { showToast('Enter a valid email address', 'error'); input.focus(); return; }
     closeArchiveConfirm();
     showToast('Sending ' + no + '...', 'info');
     try {
@@ -6774,6 +6787,7 @@ function invEmail(id, email, no, amount, dateISO) {
   };
   document.getElementById('archiveConfirmModal').style.display = 'flex';
   lockScroll();
+  setTimeout(() => { try { input.focus(); input.select(); } catch(e){} }, 50);
 }
 async function invMarkSent(id) {
   try {
@@ -7266,7 +7280,7 @@ async function saveLead() {
       email: (document.getElementById('lead-email')?.value || '').trim() || null,
       workshop_attended: document.getElementById('lead-workshop-attended')?.value || null,
       participant_id: document.getElementById('lead-participant-id')?.value || null,
-      date_added: new Date().toISOString().split('T')[0],
+      date_added: localISODate(),
       handpan_maker_amount: boughtHandpan ? (parseFloat(document.getElementById('lead-maker-amt')?.value) || 0) : 0,
       referral_amount: boughtHandpan ? (parseFloat(document.getElementById('lead-referral-amt')?.value) || 0) : 0,
       bought_handpan: boughtHandpan,
@@ -7313,7 +7327,7 @@ async function saveWaitlist() {
       preferred_month: month,
       contacted: !!document.getElementById('wl-contacted')?.checked,
       notes: (document.getElementById('wl-notes')?.value || '').trim() || null,
-      date_added: new Date().toISOString().split('T')[0],
+      date_added: localISODate(),
       archived: false
     };
     await sbPost('workshop_waitlist', body);
@@ -7392,7 +7406,7 @@ async function saveFeePayment() {
       payment_mode: document.getElementById('fee-mode').value,
       description: document.getElementById('fee-desc')?.value || null,
       paid: true,
-      payment_date: (document.getElementById('fee-date')?.value || '') || new Date().toISOString().split('T')[0]
+      payment_date: (document.getElementById('fee-date')?.value || '') || localISODate()
     };
     await sbPost('fee_payments', body);
     closeFormPage('addFeePayment');
@@ -7420,7 +7434,7 @@ async function saveParticipant() {
     const count = (existing.data || []).length;
     const nextNum = String(count + 1).padStart(4, '0');
     const id = 'P-' + nextNum;
-    const dateVal = document.getElementById('par-date').value || new Date().toISOString().split('T')[0];
+    const dateVal = document.getElementById('par-date').value || localISODate();
     const body = {
       id,
       workshop_id: document.getElementById('par-workshop').value,
@@ -7516,7 +7530,7 @@ async function exportData(entity) {
     const blob = new Blob([csv], {type:'text/csv'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = entity + '_' + new Date().toISOString().split('T')[0] + '.csv';
+    a.download = entity + '_' + localISODate() + '.csv';
     a.click();
     showToast(entity + ' exported!', 'success');
   } catch(e) { showToast('Export failed', 'error'); }
@@ -7658,6 +7672,18 @@ function closeArchiveConfirm() {
   document.getElementById('archiveConfirmModal').style.display = 'none';
   unlockScroll();
   _archivePending = null;
+  archiveConfirmSetMode('bin');
+}
+// The confirm modal is shared. 'send' shows the envelope icon and an editable
+// address field, 'bin' (default) shows the trash icon and hides the field.
+function archiveConfirmSetMode(mode) {
+  const send = mode === 'send';
+  const bin = document.getElementById('archiveConfirmIconBin');
+  const mail = document.getElementById('archiveConfirmIconMail');
+  const field = document.getElementById('archiveConfirmField');
+  if (bin) bin.style.display = send ? 'none' : '';
+  if (mail) mail.style.display = send ? '' : 'none';
+  if (field) field.style.display = send ? '' : 'none';
 }
 async function confirmArchive() {
   if (!_archivePending) return;
@@ -10559,7 +10585,7 @@ async function loadUnassignedPayments() {
             type: 'income',
             category: 'unassigned',
             payment_mode: 'Razorpay UPI',
-            date: p.date || new Date().toISOString().split('T')[0],
+            date: p.date || localISODate(),
             description: 'Unassigned payment — moved to bin',
             synced_from_razorpay: true,
             archived: true
@@ -10736,7 +10762,7 @@ async function saveAssignPaymentPage() {
         full_name: nName,
         phone: nPhone,
         email: null,
-        join_date: (_currentAssignPayment.date || new Date().toISOString().split('T')[0]),
+        join_date: (_currentAssignPayment.date || localISODate()),
         status: 'Active',
         monthly_fee: parseFloat(document.getElementById('assign-new-fee')?.value) || null,
         payer_name: (_currentAssignName || '').trim() || null,
@@ -10767,7 +10793,7 @@ async function saveAssignPaymentPage() {
 
 async function _doAssign(type, notes, workshopId, studentId, feeMonth, feeClasses) {
   try {
-    const payDate = _currentAssignPayment.date || new Date().toISOString().split('T')[0];
+    const payDate = _currentAssignPayment.date || localISODate();
     if (type === 'ignore') {
       await sbPatch('unassigned_payments', _currentAssignId, { status: 'ignored' });
       showToast('Payment skipped', 'success');
