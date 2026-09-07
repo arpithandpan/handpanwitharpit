@@ -2596,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v60</span>
+        <span style="color:var(--clay);font-weight:500;">v61</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2664,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v60</span>
+        <span style="color:var(--clay);font-weight:500;">v61</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4055,7 +4055,7 @@ table#paymentsTable { min-width: 700px; }
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Phone / Landline&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><div class="phone-wrap" id="stu-phone-wrap"><button type="button" class="phone-flag-btn" id="stu-phone-cc-btn" onclick="openCCPicker('stu-phone-cc-btn','stu-phone-cc','stu-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="stu-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="stu-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="stu-phone" placeholder="Phone number"/></div></div>
-      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="stu-email" maxlength="120" placeholder="email@example.com"/></div>
+      <div class="form-group"><label class="form-label">Email&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="email" class="form-input" id="stu-email" maxlength="120" placeholder="email@example.com"/><span class="inv-date-hint">Invoices are emailed here after every fee payment.</span></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Level</label>
@@ -7416,8 +7416,10 @@ async function saveStudent() {
   if (!(document.getElementById('stu-id').value || '').trim()) { markFieldError('stu-id'); showToast('Student ID is required', 'error'); return; }
   if (!(document.getElementById('stu-name').value || '').trim()) { markFieldError('stu-name'); showToast('Full name is required', 'error'); return; }
   if (!(document.getElementById('stu-phone').value || '').trim()) { markFieldError('stu-phone'); showToast('Phone number is required', 'error'); return; }
+  const stuEmail = (document.getElementById('stu-email').value || '').trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stuEmail)) { markFieldError('stu-email'); showToast('A valid email is required, invoices are sent there', 'error'); return; }
   try {
-    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:document.getElementById('stu-email').value||null, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, payer_name:(document.getElementById('stu-payer')?.value||'').trim()||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, description:document.getElementById('stu-desc')?.value||null };
+    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:stuEmail, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, payer_name:(document.getElementById('stu-payer')?.value||'').trim()||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, description:document.getElementById('stu-desc')?.value||null };
     await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
   } catch(e) { console.error('saveStudent error:', e); showToast('Error: ' + (e.message || 'Save failed'), 'error'); }
 }
@@ -8843,7 +8845,8 @@ async function saveEdit() {
         body = { full_name:g('par-name'), phone:getPhoneValue('ef-par-phone','ef-par-phone-cc')||null, email:g('par-email')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), bringing_own_handpan:g('par-handpan')||null, date:gd('par-date'), description:g('par-desc')||null };
       }
     } else if (_editEntity === 'students') {
-      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:g('stu-email')||null, status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, payer_name:g('stu-payer')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((g('stu-email')||'').trim())) { markFieldError('stu-email'); showToast('A valid email is required, invoices are sent there', 'error'); return; }
+      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:(g('stu-email')||'').trim(), status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, payer_name:g('stu-payer')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
     } else if (_editEntity === 'fee_payments') {
       body = { month:normMonth(g('fee-month'))||null, classes:gn('fee-classes')||0, amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', description:g('fee-desc')||null };
     } else if (_editEntity === 'payments') {
