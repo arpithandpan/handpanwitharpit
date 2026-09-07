@@ -826,7 +826,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .ws-cancelled-badge{display:inline-block;font-size:0.68rem;font-weight:600;color:#e87a60;border:1px solid rgba(232,122,96,0.5);border-radius:999px;padding:1px 8px;letter-spacing:0.04em;white-space:nowrap;vertical-align:middle;margin-left:0.4rem;text-transform:uppercase;}
 tr.ws-row-cancelled td{opacity:0.5;}
 tr.ws-row-cancelled td:first-child,tr.ws-row-cancelled td.ws-action-sticky{opacity:1;}
-tr.ws-row-cancelled td:nth-child(4),tr.ws-row-cancelled td:nth-child(5),tr.ws-row-cancelled td:nth-child(7){text-decoration:line-through;}
+tr.ws-row-cancelled td:nth-child(4),tr.ws-row-cancelled td:nth-child(5){text-decoration:line-through;}
 .m-card.ws-card-cancelled{opacity:0.65;}
 .inv-cancelled-badge{display:inline-block;font-size:0.72rem;font-weight:600;color:#e87a60;border:1px solid rgba(220,100,80,0.5);border-radius:999px;padding:1px 9px;letter-spacing:0.02em;white-space:nowrap;}
 .inv-reinstate-link{background:none;border:none;color:var(--clay);font-size:0.7rem;cursor:pointer;padding:0;text-decoration:underline;font-family:inherit;}
@@ -2596,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v57</span>
+        <span style="color:var(--clay);font-weight:500;">v58</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2664,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v57</span>
+        <span style="color:var(--clay);font-weight:500;">v58</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4400,6 +4400,8 @@ const VIEWER_EMAIL = 'arpitbam@gmail.com';
 const API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
 // Local calendar date as YYYY-MM-DD. toISOString() gives the UTC date, which is
 // yesterday until 5:30 AM in India, so never use it for "today".
+// Green for profit, red for loss. Used wherever a net figure is coloured.
+function profitColor(n) { return (Number(n) || 0) < 0 ? '#e87a60' : 'var(--moss)'; }
 function localISODate(d) {
   const dt = d || new Date();
   return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
@@ -5567,7 +5569,7 @@ async function loadOverview() {
 
     // Mobile cards for overview
     const owc = document.getElementById('overviewWorkshopsCards');
-    if (owc) owc.innerHTML = ws.slice(0,5).map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">${fmtDate(w.date)}</div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div></div>`).join('') || '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">🎵</div><div class="empty-state-title" style="font-size:1rem;">No workshops yet</div></div>';
+    if (owc) owc.innerHTML = ws.slice(0,5).map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">${fmtDate(w.date)}</div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:${profitColor(w.net_profit)};font-weight:600">${fmt(w.net_profit)}</span></div></div>`).join('') || '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">🎵</div><div class="empty-state-title" style="font-size:1rem;">No workshops yet</div></div>';
 
     const opc = document.getElementById('overviewPaymentsCards');
     if (opc) opc.innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<div class="m-card"><div class="m-card-title" style="color:var(--moss)">${fmt(p.amount)}<span class="badge badge-clay" style="float:right">${fmtMode(p.payment_mode)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Name</span><span class="m-card-val">${p.payer_name||'—'}</span></div></div>`).join('') || '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">💳</div><div class="empty-state-title" style="font-size:1rem;">No payments yet</div></div>';
@@ -5618,7 +5620,7 @@ async function loadWorkshops() {
         + '<td>'+(w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0))+'</td>'
         + '<td>'+fmt(w.total_revenue)+'</td>'
         + '<td>'+fmt(w.total_expense)+'</td>'
-        + '<td style="color:var(--moss);font-weight:500">'+fmt(w.net_profit)+'</td>'
+        + '<td style="color:'+profitColor(w.net_profit)+';font-weight:500">'+fmt(w.net_profit)+'</td>'
         + '<td>'+fmtPct(w.margin)+'</td>'
         + '<td class="ws-action-sticky"><div class="action-wrap">'
         + editBtn
@@ -5644,7 +5646,7 @@ async function loadWorkshops() {
           </div>
           <div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div>
           <div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div>
-          <div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:var(--moss);font-weight:600">${fmt(w.net_profit)}</span></div>
+          <div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:${profitColor(w.net_profit)};font-weight:600">${fmt(w.net_profit)}</span></div>
           <div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div>
         </div>
         <div style="padding:0.85rem 1.5rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;justify-content:flex-end;">
