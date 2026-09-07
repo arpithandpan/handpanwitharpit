@@ -826,7 +826,7 @@ tr:hover td { background: rgba(193,127,82,0.04); }
 .ws-cancelled-badge{display:inline-block;font-size:0.68rem;font-weight:600;color:#e87a60;border:1px solid rgba(232,122,96,0.5);border-radius:999px;padding:1px 8px;letter-spacing:0.04em;white-space:nowrap;vertical-align:middle;margin-left:0.4rem;text-transform:uppercase;}
 tr.ws-row-cancelled td{opacity:0.5;}
 tr.ws-row-cancelled td:first-child,tr.ws-row-cancelled td.ws-action-sticky{opacity:1;}
-tr.ws-row-cancelled td:nth-child(4),tr.ws-row-cancelled td:nth-child(5),tr.ws-row-cancelled td:nth-child(6),tr.ws-row-cancelled td:nth-child(7){text-decoration:line-through;}
+tr.ws-row-cancelled td:nth-child(4),tr.ws-row-cancelled td:nth-child(5),tr.ws-row-cancelled td:nth-child(7){text-decoration:line-through;}
 .m-card.ws-card-cancelled{opacity:0.65;}
 .inv-cancelled-badge{display:inline-block;font-size:0.72rem;font-weight:600;color:#e87a60;border:1px solid rgba(220,100,80,0.5);border-radius:999px;padding:1px 9px;letter-spacing:0.02em;white-space:nowrap;}
 .inv-reinstate-link{background:none;border:none;color:var(--clay);font-size:0.7rem;cursor:pointer;padding:0;text-decoration:underline;font-family:inherit;}
@@ -2596,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v56</span>
+        <span style="color:var(--clay);font-weight:500;">v57</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2664,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v56</span>
+        <span style="color:var(--clay);font-weight:500;">v57</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4307,8 +4307,9 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <p style="font-size:0.82rem;color:rgba(200,147,90,0.55);line-height:1.5;margin:0.75rem 0 0;">
         Nothing is deleted. Bookings and payments are moved to Bin, so this
-        workshop stops counting toward revenue, expenses and your completed
-        total. Refunds still have to be issued in Razorpay yourself.
+        workshop stops counting toward revenue and your completed total. Its
+        expenses still count, as a loss. Refunds still have to be issued in
+        Razorpay yourself.
       </p>
     </div>
     <div style="display:flex;border-top:1px solid rgba(193,127,90,0.2);">
@@ -7610,8 +7611,8 @@ async function cancelWorkshop(id) {
     const total = income.reduce((t, p) => t + Number(p.amount || 0), 0);
     document.getElementById('cancelWsDesc').textContent =
       people.length + ' booking' + (people.length === 1 ? '' : 's') +
-      ' and ' + fmt(total) + ' taken. Both will be moved to Bin and this ' +
-      'workshop\u2019s costs set to zero.';
+      ' and ' + fmt(total) + ' taken. Both will be moved to Bin. Costs stay ' +
+      'as they are, since that money was spent.';
   } catch (e) {
     document.getElementById('cancelWsDesc').textContent =
       'Could not read the bookings. Cancelling will still mark the workshop, but check the numbers afterwards.';
@@ -7635,11 +7636,13 @@ async function confirmCancelWs() {
     for (const p of pays) await sbPatch('payments', p.id, { archived: true });
     // 2. the people who booked
     for (const p of parts) await sbPatch('participants', p.id, { archived: true });
-    // 3. the costs. Zeroing these makes the sync trigger delete its WSC- rows,
-    //    which is what takes the spend out of both the workshop and Overview.
+    // 3. the summary. Costs are left untouched: that money was really spent,
+    //    so the WSC- expense rows stay and the workshop shows as a loss.
+    //    Revenue goes to zero because the bookings just went to Bin.
+    const w = (_recordCache.workshops && _recordCache.workshops[id]) || {};
+    const expense = Number(w.total_expense) || 0;
     await sbPatch('workshops', id, {
-      venue_rent: 0, handpan_rental: 0, porter_delivery: 0,
-      snacks_misc: 0, ads_spend: 0,
+      total_revenue: 0, net_profit: -expense, margin: 0,
       cancelled: true, cancelled_reason: reason,
       cancelled_at: new Date().toISOString()
     });
@@ -7658,7 +7661,7 @@ async function uncancelWorkshop(id) {
   try {
     await sbPatch('workshops', id, { cancelled: false, cancelled_reason: null, cancelled_at: null });
     loadWorkshops();
-    showToast('\u2713 ' + id + ' is active again. Restore its bookings from Bin if you need them.', 'success');
+    showToast('\u2713 ' + id + ' is active again. Restore its bookings from Bin, then open Edit and Save to recalculate revenue.', 'success');
   } catch (e) {
     showToast('Could not restore: ' + e.message, 'error');
   }
