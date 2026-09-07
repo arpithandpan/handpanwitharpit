@@ -6474,16 +6474,22 @@ async function invNextNumber() {
   } catch(e) { console.error('invNextNumber', e); }
   return max + 1;
 }
+// Preview number for the editor. The counter table can lag behind the invoices
+// table (the server reserves numbers with greatest(counter, max) but does not
+// always write the counter back), so take whichever of the two is higher.
+// The real number is still reserved by next_invoice_number() at save time.
 async function invPeekNumber() {
+  let peek = 0;
   try {
     const result = await safeFetch(SUPABASE_URL + '/rest/v1/rpc/peek_invoice_number',
       { method: 'POST', headers: { ...SB_HEADERS, 'Content-Type': 'application/json' }, body: '{}' });
     if (result.ok && result.data != null) {
       const n = Number(Array.isArray(result.data) ? result.data[0] : result.data);
-      if (n > 0) return n;
+      if (n > 0) peek = n;
     }
   } catch(e) { console.error('invPeekNumber', e); }
-  return await invNextNumber();
+  const fromTable = await invNextNumber();
+  return Math.max(peek, fromTable, 1);
 }
 async function invConsumeNumber() {
   const result = await safeFetch(SUPABASE_URL + '/rest/v1/rpc/next_invoice_number',
