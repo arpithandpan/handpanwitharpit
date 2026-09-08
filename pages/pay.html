@@ -36,6 +36,7 @@
     --sand:#F5EEE5;
     --sand-deep:#EDE3D9;
     --cream:#FFFDFA;
+    --stone:#BFA9A8;
     --field-fill:#F5EEE5;
     --field-border:#D9C8C6;
     --text-dark:#5A4645;
@@ -141,6 +142,36 @@
   .form-card input[readonly]:focus{ border-color:var(--field-border); }
   .form-card input.is-error{ border-color:#8A2614; }
   .field-hint{ font-size:14.5px; color:var(--text-light); }
+  .phone-row{ display:flex; gap:8px; }
+  .country-select{
+    display:flex; align-items:center; gap:6px; height:48px; padding:0 30px 0 18px;
+    border-radius:var(--radius); border:1px solid var(--field-border); background:var(--field-fill);
+    font-family:inherit; font-size:16px; color:var(--text-dark); cursor:pointer;
+    flex-shrink:0; white-space:nowrap;
+  }
+  .country-select svg{ transition:transform 0.15s; }
+  .country-select.open svg{ transform:rotate(180deg); }
+  .phone-row input{ flex:1; min-width:0; }
+  .country-dropdown{
+    display:none; flex-direction:column; gap:8px; margin-top:8px;
+    border:1px solid var(--stone); border-radius:var(--radius);
+    background:var(--cream); padding:0.75rem; max-height:320px;
+  }
+  .country-dropdown.open{ display:flex; }
+  .country-search{
+    width:100%; height:48px; flex-shrink:0; border-radius:var(--radius); border:1px solid var(--stone);
+    padding:0 14px; font-family:inherit; font-size:16px; background:var(--sand);
+    color:var(--text-dark); outline:none;
+  }
+  .country-search:focus{ border-color:var(--clay); }
+  .country-list{ overflow-y:auto; max-height:260px; display:flex; flex-direction:column; }
+  .country-item{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:0.85rem 0.6rem; min-height:48px; cursor:pointer; border-radius:4px; font-size:17px;
+    color:var(--text-dark);
+  }
+  .country-item .ci-name{ display:flex; align-items:center; gap:8px; }
+  .country-item .ci-code{ color:var(--text-light); font-size:16px; }
   .field-error{
     font-size:14px; color:#8A2614; font-weight:500; line-height:1.45; min-height:1px;
     display:none; background:#F4D8CE; border-radius:8px; padding:10px 12px; margin-top:3px;
@@ -244,7 +275,18 @@
             <input type="text" id="f-name" placeholder="Full name" readonly tabindex="-1"/>
           </div>
           <div class="field-group">
-            <input type="tel" id="f-phone" inputmode="tel" autocomplete="tel" placeholder="Phone"/>
+            <div class="phone-row">
+              <button type="button" class="country-select" id="country-select">
+                <span id="country-flag">🇮🇳</span>
+                <span id="country-code">+91</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px;"><path d="M6 9l6 6l6 -6"/></svg>
+              </button>
+              <input type="tel" id="f-phone" inputmode="tel" autocomplete="tel" placeholder="Number"/>
+            </div>
+            <div class="country-dropdown" id="country-dropdown">
+              <input type="text" class="country-search" id="country-search" placeholder="Search country..."/>
+              <div class="country-list" id="country-list"></div>
+            </div>
             <p class="field-error" id="f-phone-err">Enter a valid phone number</p>
           </div>
           <div class="field-group">
@@ -375,9 +417,106 @@
   const fEmail = document.getElementById('f-email');
   const fPhoneErr = document.getElementById('f-phone-err');
   const fEmailErr = document.getElementById('f-email-err');
-  [fPhone, fEmail].forEach(el => el.addEventListener('input', () => { el.classList.remove('is-error'); (el === fPhone ? fPhoneErr : fEmailErr).classList.remove('show'); }));
-  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-  function validPhone(v){ return v.replace(/\D/g, '').length >= 8; }
+  // Same rules as book.html. Phone may carry a country code (+91 ...).
+  // Indian numbers: 10 digits starting 6 to 9. Other countries: 7 to 15 digits.
+  function setError(input, errEl, msg){
+    if (msg){ input.classList.add('is-error'); errEl.textContent = msg; errEl.classList.add('show'); }
+    else { input.classList.remove('is-error'); errEl.textContent = ''; errEl.classList.remove('show'); }
+  }
+  const countries = [
+    { name: 'India', flag: '🇮🇳', code: '+91', minLen: 10, maxLen: 10 },
+    { name: 'United States', flag: '🇺🇸', code: '+1', minLen: 10, maxLen: 10 },
+    { name: 'United Kingdom', flag: '🇬🇧', code: '+44', minLen: 10, maxLen: 10 },
+    { name: 'Canada', flag: '🇨🇦', code: '+1', minLen: 10, maxLen: 10 },
+    { name: 'Germany', flag: '🇩🇪', code: '+49', minLen: 9, maxLen: 11 },
+    { name: 'Australia', flag: '🇦🇺', code: '+61', minLen: 9, maxLen: 9 },
+    { name: 'United Arab Emirates', flag: '🇦🇪', code: '+971', minLen: 9, maxLen: 9 },
+    { name: 'Singapore', flag: '🇸🇬', code: '+65', minLen: 8, maxLen: 8 },
+    { name: 'France', flag: '🇫🇷', code: '+33', minLen: 9, maxLen: 9 },
+    { name: 'Netherlands', flag: '🇳🇱', code: '+31', minLen: 9, maxLen: 9 },
+    { name: 'Switzerland', flag: '🇨🇭', code: '+41', minLen: 9, maxLen: 9 },
+    { name: 'New Zealand', flag: '🇳🇿', code: '+64', minLen: 8, maxLen: 9 },
+    { name: 'Nepal', flag: '🇳🇵', code: '+977', minLen: 10, maxLen: 10 },
+  ];
+  let selectedCountry = countries[0];
+  const countrySelect = document.getElementById('country-select');
+  const countryFlag = document.getElementById('country-flag');
+  const countryCode = document.getElementById('country-code');
+  const countryDropdown = document.getElementById('country-dropdown');
+  const countrySearch = document.getElementById('country-search');
+  const countryList = document.getElementById('country-list');
+  function setCountry(c){
+    selectedCountry = c; countryFlag.textContent = c.flag; countryCode.textContent = c.code;
+  }
+  function renderCountryList(filter){
+    const f = (filter || '').trim().toLowerCase();
+    countryList.innerHTML = '';
+    countries
+      .filter(c => c.name.toLowerCase().includes(f) || c.code.includes(f))
+      .forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'country-item';
+        item.innerHTML = `<span class="ci-name"><span>${c.flag}</span><span>${c.name}</span></span><span class="ci-code">${c.code}</span>`;
+        item.addEventListener('click', () => {
+          setCountry(c);
+          countryDropdown.classList.remove('open');
+          countrySelect.classList.remove('open');
+          countrySearch.value = '';
+          renderCountryList('');
+          if (fPhone.value.trim()) validatePhone();
+        });
+        countryList.appendChild(item);
+      });
+  }
+  renderCountryList('');
+  countrySelect.addEventListener('click', () => {
+    countryDropdown.classList.toggle('open');
+    countrySelect.classList.toggle('open', countryDropdown.classList.contains('open'));
+    if (countryDropdown.classList.contains('open')) countrySearch.focus();
+  });
+  countrySearch.addEventListener('input', () => renderCountryList(countrySearch.value));
+  document.addEventListener('click', (e) => {
+    if (!countryDropdown.contains(e.target) && !countrySelect.contains(e.target)){
+      countryDropdown.classList.remove('open');
+      countrySelect.classList.remove('open');
+    }
+  });
+  // Split a stored number like "+91 8867729451" into picker + digits.
+  function applyStoredPhone(raw){
+    const v = String(raw || '').trim();
+    if (!v) return;
+    let digits = v.replace(/\D/g, '');
+    if (v.startsWith('+')){
+      const match = countries.slice().sort((a, b) => b.code.length - a.code.length).find(c => v.replace(/\s/g, '').startsWith(c.code));
+      if (match){ setCountry(match); digits = digits.slice(match.code.length - 1); }
+    } else if (digits.length === 12 && digits.startsWith('91')){ digits = digits.slice(2); }
+    fPhone.value = digits;
+  }
+  function phoneMessage(raw){
+    const val = raw.trim();
+    if (!val) return 'Please enter your phone number.';
+    if (!/^\d+$/.test(val)) return 'Phone number should contain digits only.';
+    if (val.length < selectedCountry.minLen || val.length > selectedCountry.maxLen){
+      const expected = selectedCountry.minLen === selectedCountry.maxLen
+        ? `${selectedCountry.minLen} digits`
+        : `${selectedCountry.minLen}-${selectedCountry.maxLen} digits`;
+      return `Enter a valid mobile number (${expected} for ${selectedCountry.name}). Landline numbers are not accepted.`;
+    }
+    if (selectedCountry.code === '+91' && !/^[6-9]/.test(val)) return 'Enter a valid Indian mobile number. It should start with 6, 7, 8 or 9.';
+    return '';
+  }
+  function emailMessage(raw){
+    const v = raw.trim();
+    if (!v) return 'Please enter your email.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Please enter a valid email.';
+    return '';
+  }
+  function validatePhone(){ const m = phoneMessage(fPhone.value); setError(fPhone, fPhoneErr, m); return !m; }
+  function validateEmail(){ const m = emailMessage(fEmail.value); setError(fEmail, fEmailErr, m); return !m; }
+  fPhone.addEventListener('blur', validatePhone);
+  fPhone.addEventListener('input', () => { if (fPhone.classList.contains('is-error')) validatePhone(); });
+  fEmail.addEventListener('blur', validateEmail);
+  fEmail.addEventListener('input', () => { if (fEmail.classList.contains('is-error')) validateEmail(); });
 
   let fee = null;
   const ICON_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></svg>';
@@ -458,7 +597,7 @@
     totalLabel.textContent = (fee.monthLabel ? fee.monthLabel + ' · ' : '') + (fee.label || 'Amount due');
     totalAmount.innerHTML = fmtAmount(fee.amount, fee.currency) + '<small>' + fee.currency + '</small>';
     fName.value = name;
-    if (!fPhone.value) fPhone.value = fee.phone || '';
+    if (!fPhone.value) applyStoredPhone(fee.phone);
     if (!fEmail.value) fEmail.value = fee.email || '';
     payBtn.innerHTML = 'Pay ' + fmtAmount(fee.amount, fee.currency) + ' ' + ICON_ARROW;
     payBtn.disabled = false;
@@ -489,12 +628,11 @@
   // bookkeeping; the handler here only switches the page to its success state.
   payBtn.addEventListener('click', async () => {
     if (!fee) return;
-    const phone = fPhone.value.trim();
+    const phone = selectedCountry.code + ' ' + fPhone.value.trim();
     const email = fEmail.value.trim();
-    let bad = false;
-    if (!validPhone(phone)){ fPhone.classList.add('is-error'); fPhoneErr.classList.add('show'); bad = true; }
-    if (!validEmail(email)){ fEmail.classList.add('is-error'); fEmailErr.classList.add('show'); bad = true; }
-    if (bad){ (validPhone(phone) ? fEmail : fPhone).focus(); return; }
+    const okPhone = validatePhone();
+    const okEmail = validateEmail();
+    if (!okPhone || !okEmail){ (okPhone ? fEmail : fPhone).focus(); return; }
     if (typeof Razorpay !== 'function'){
       alert('The payment window could not load. Check your connection and refresh, or message Arpit.');
       return;
