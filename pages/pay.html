@@ -123,6 +123,21 @@
   .cta:disabled{ background:var(--text-light); cursor:not-allowed; }
   .cta svg{ width:20px; height:20px; }
   .fineprint{ font-size:15px; color:var(--text-light); text-align:center; margin-top:0.85rem; line-height:1.55; }
+
+  /* YOUR DETAILS */
+  .details-hint{ font-size:15px; color:var(--text-light); margin:-0.6rem 0 1.1rem; line-height:1.55; }
+  .field{ margin-bottom:0.9rem; }
+  .field-label{ display:block; font-size:13px; color:var(--text-light); text-transform:uppercase; letter-spacing:0.08em; font-weight:500; margin-bottom:6px; }
+  .field-input{
+    width:100%; height:50px; padding:0 14px; border-radius:12px;
+    border:1px solid rgba(80,0,24,0.18); background:#fff; color:var(--text-dark);
+    font-family:inherit; font-size:16px; outline:none; transition:border-color 0.15s, box-shadow 0.15s;
+  }
+  .field-input:focus{ border-color:var(--maroon); box-shadow:0 0 0 3px rgba(80,0,24,0.12); }
+  .field-input[readonly]{ background:var(--cream); color:var(--text-mid); }
+  .field-input.is-error{ border-color:#b43c28; box-shadow:0 0 0 3px rgba(180,60,40,0.14); }
+  .field-error{ display:none; font-size:13.5px; color:#b43c28; margin-top:6px; }
+  .field-error.show{ display:block; }
   .methods{ display:flex; justify-content:center; gap:14px; margin-top:1rem; color:var(--text-light); font-size:13.5px; }
   .methods span{ display:inline-flex; align-items:center; gap:5px; }
   .methods svg{ width:17px; height:17px; }
@@ -203,6 +218,15 @@
     </ul>
   </section>
 
+  <!-- YOUR DETAILS -->
+  <section class="section" id="details-section" style="padding-top:0;">
+    <h2 class="section-title">Your details</h2>
+    <p class="details-hint">Check these before paying. Your invoice goes to this email.</p>
+    <div class="field"><label class="field-label" for="f-name">Name</label><input class="field-input" id="f-name" type="text" readonly tabindex="-1"/></div>
+    <div class="field"><label class="field-label" for="f-phone">Phone</label><input class="field-input" id="f-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+91 98765 43210"/><div class="field-error" id="f-phone-err">Enter a valid phone number</div></div>
+    <div class="field" style="margin-bottom:0;"><label class="field-label" for="f-email">Email</label><input class="field-input" id="f-email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com"/><div class="field-error" id="f-email-err">Enter a valid email address</div></div>
+  </section>
+
   <!-- PAYMENT -->
   <section class="section booking" id="booking-section">
     <div id="booking-content">
@@ -216,7 +240,7 @@
         <span class="total-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"/><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/></svg> Secure</span>
       </div>
       <button class="cta" id="pay-btn" disabled>Loading <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></svg></button>
-      <p class="fineprint">You'll be taken to Razorpay to complete the payment, then brought straight back here.</p>
+      <p class="fineprint">A secure Razorpay window opens right here. Pick UPI, card or net banking and you're done.</p>
       <div class="methods" id="methods"></div>
     </div>
 
@@ -276,10 +300,11 @@
         <ellipse cx="80" cy="80" rx="13" ry="10" transform="rotate(-45 80 80)" fill="#500018"/>
       </svg>
     </div>
-    <p style="margin-top:1.25rem; font-size:15px; color:var(--text-mid);">Taking you to Razorpay…</p>
+    <p style="margin-top:1.25rem; font-size:15px; color:var(--text-mid);">Opening secure payment…</p>
   </div>
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
   // ── CONFIG ──
   const API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
@@ -308,6 +333,15 @@
   const successSummary = document.getElementById('success-summary');
   const wrap = document.querySelector('.wrap');
   const loadingOverlay = document.getElementById('loading-overlay');
+  const detailsSection = document.getElementById('details-section');
+  const fName = document.getElementById('f-name');
+  const fPhone = document.getElementById('f-phone');
+  const fEmail = document.getElementById('f-email');
+  const fPhoneErr = document.getElementById('f-phone-err');
+  const fEmailErr = document.getElementById('f-email-err');
+  [fPhone, fEmail].forEach(el => el.addEventListener('input', () => { el.classList.remove('is-error'); (el === fPhone ? fPhoneErr : fEmailErr).classList.remove('show'); }));
+  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function validPhone(v){ return v.replace(/\D/g, '').length >= 8; }
 
   let fee = null;
   const ICON_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></svg>';
@@ -342,6 +376,7 @@
     heroFormat.parentElement.style.display = 'none';
     heroLevel.parentElement.style.display = 'none';
     includedSection.style.display = 'none';
+    detailsSection.style.display = 'none';
     bookingContent.style.display = 'none';
     bookingSuccess.style.display = 'none';
     bookingUnavailable.style.display = '';
@@ -359,6 +394,7 @@
       heroFor.textContent = 'with Arpit';
     }
     includedSection.style.display = 'none';
+    detailsSection.style.display = 'none';
     bookingContent.style.display = 'none';
     bookingUnavailable.style.display = 'none';
     bookingSuccess.style.display = '';
@@ -386,6 +422,9 @@
     totalLabel.textContent = (fee.monthLabel ? fee.monthLabel + ' · ' : '') + (fee.label || 'Amount due');
     totalAmount.innerHTML = fmtAmount(fee.amount, fee.currency) + '<small>' + fee.currency + '</small>';
     if (fee.note){ feeNote.textContent = fee.note; feeNote.style.display = ''; }
+    fName.value = name;
+    if (!fPhone.value) fPhone.value = fee.phone || '';
+    if (!fEmail.value) fEmail.value = fee.email || '';
     payBtn.innerHTML = 'Pay ' + fmtAmount(fee.amount, fee.currency) + ' ' + ICON_ARROW;
     payBtn.disabled = false;
     const c = CURRENCY[fee.currency];
@@ -410,25 +449,63 @@
   }
 
   // ── PAY ──
+  // Razorpay Checkout opens as a popup on this page with the details below
+  // prefilled, so nothing is typed twice. The webhook still does the real
+  // bookkeeping; the handler here only switches the page to its success state.
   payBtn.addEventListener('click', async () => {
     if (!fee) return;
+    const phone = fPhone.value.trim();
+    const email = fEmail.value.trim();
+    let bad = false;
+    if (!validPhone(phone)){ fPhone.classList.add('is-error'); fPhoneErr.classList.add('show'); bad = true; }
+    if (!validEmail(email)){ fEmail.classList.add('is-error'); fEmailErr.classList.add('show'); bad = true; }
+    if (bad){ (validPhone(phone) ? fEmail : fPhone).focus(); return; }
+    if (typeof Razorpay !== 'function'){
+      alert('The payment window could not load. Check your connection and refresh, or message Arpit.');
+      return;
+    }
     payBtn.disabled = true;
     loadingOverlay.style.display = 'flex';
     try {
-      const res = await fetch(API_BASE + '/api/create-fee-payment-link', {
+      const res = await fetch(API_BASE + '/api/create-fee-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ requestId })
+        body: JSON.stringify({ requestId, phone, email })
       });
       const data = await res.json();
-      if (data.short_url){
-        try { sessionStorage.setItem('pending_fee', JSON.stringify({ amount: fee.amount, currency: fee.currency })); } catch (e) {}
-        window.location.href = data.short_url;
-      } else {
-        throw new Error(data.error || 'No payment link returned');
-      }
+      if (!res.ok || !data.orderId) throw new Error(data.error || 'No order returned');
+      try { sessionStorage.setItem('pending_fee', JSON.stringify({ amount: fee.amount, currency: fee.currency })); } catch (e) {}
+      loadingOverlay.style.display = 'none';
+      const rzp = new Razorpay({
+        key: data.keyId,
+        amount: data.amount,
+        currency: data.currency,
+        order_id: data.orderId,
+        name: 'Arpit Pandey',
+        description: data.description,
+        image: 'https://arpitpandey.com/android-chrome-192x192.png',
+        prefill: { name: data.name, email: data.email, contact: data.phone },
+        notes: data.notes,
+        theme: { color: '#500018' },
+        retry: { enabled: true },
+        modal: { ondismiss: function(){ payBtn.disabled = false; render(); } },
+        handler: function(resp){
+          try {
+            const pid = resp.razorpay_payment_id || '';
+            if (window.fbq && !sessionStorage.getItem('purchase_' + pid)){
+              fbq('track', 'Purchase', { content_name: 'Handpan classes', value: fee.amount || 0, currency: fee.currency || 'INR' });
+              sessionStorage.setItem('purchase_' + pid, '1');
+            }
+          } catch (e) {}
+          showSuccess(resp.razorpay_payment_id);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+      rzp.on('payment.failed', function(){ payBtn.disabled = false; render(); });
+      rzp.open();
     } catch (err){
-      alert('Something went wrong creating your payment link. Please try again or message Arpit directly.');
+      console.error(err);
+      alert((err && err.message && !/HTTP|order/i.test(err.message)) ? err.message : 'Something went wrong starting your payment. Please try again or message Arpit directly.');
       loadingOverlay.style.display = 'none';
       payBtn.disabled = false;
       render();
