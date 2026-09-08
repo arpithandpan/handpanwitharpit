@@ -2596,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v64</span>
+        <span style="color:var(--clay);font-weight:500;">v65</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2664,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v64</span>
+        <span style="color:var(--clay);font-weight:500;">v65</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4162,10 +4162,10 @@ table#paymentsTable { min-width: 700px; }
           <input type="number" class="form-input" id="fr-amount" placeholder="e.g. 4000" min="1" step="1" oninput="frUpdatePreview()"/></div>
       <div class="form-group">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
-          <label class="form-label" style="margin-bottom:0;">Note (optional, shown on the page)</label>
+          <label class="form-label" style="margin-bottom:0;">Note (optional, for your reference)</label>
           <span id="fr-note-count" style="font-size:0.75rem;color:var(--text-light);">0/80</span>
         </div>
-        <input type="text" class="form-input" id="fr-note" placeholder="e.g. First instalment" maxlength="80" oninput="updateCharCount('fr-note','fr-note-count',80)"/>
+        <input type="text" class="form-input" id="fr-note" placeholder="e.g. Includes the missed class from August" maxlength="80" oninput="updateCharCount('fr-note','fr-note-count',80)"/>
       </div>
       <div id="fr-preview" style="font-size:0.95rem;color:var(--text-light);margin-top:0.25rem;"></div>
     </div>
@@ -6358,28 +6358,6 @@ function invLoadScript(src) {
     document.head.appendChild(sc);
   });
 }
-async function invEnsureLibs() {
-  if (!window.JSZip) await invLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
-  if (!window.html2canvas) await invLoadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-  if (!(window.jspdf && window.jspdf.jsPDF)) await invLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-}
-async function invMakePdfBlob(d) {
-  const iframe = document.createElement('iframe');
-  iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;height:1123px;border:0;';
-  document.body.appendChild(iframe);
-  iframe.contentDocument.open(); iframe.contentDocument.write(invBuildHTML(d, false)); iframe.contentDocument.close();
-  await new Promise(r => setTimeout(r, 160));
-  const target = iframe.contentDocument.querySelector('.sheet') || iframe.contentDocument.body;
-  const canvas = await html2canvas(target, { scale: 2, backgroundColor: '#ffffff' });
-  document.body.removeChild(iframe);
-  const img = canvas.toDataURL('image/jpeg', 0.92);
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF('p', 'pt', 'a4');
-  const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
-  const ratio = Math.min(pw / canvas.width, ph / canvas.height);
-  pdf.addImage(img, 'JPEG', (pw - canvas.width * ratio) / 2, 0, canvas.width * ratio, canvas.height * ratio);
-  return pdf.output('blob');
-}
 function invDownloadBlob(blob, name) {
   const u = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = u; a.download = name;
@@ -6695,62 +6673,6 @@ function invValidate(s) {
   return true;
 }
 
-function invBuildHTML(d, autoPrint) {
-  const watermark = d.cancelled ? '<div class="wm">CANCELLED</div>' : '';
-  const banner = d.cancelled ? (
-    '<div class="banner-x"><div class="bm-x">&#10005;&nbsp;&nbsp;INVOICE CANCELLED</div>'
-    + (d.cancelledAt ? '<div class="bs-x">on <b>' + invLongDate(d.cancelledAt) + '</b></div>' : '') + '</div>'
-  ) : (d.payment && d.payment.date ? (
-    '<div class="banner"><div class="bm">&#10003;&nbsp;&nbsp;PAYMENT RECEIVED</div><div class="bs">on <b>' + invLongDate(d.payment.date) + '</b>'
-    + (d.payment.mode ? ' &middot; ' + d.payment.mode : '')
-    + (d.payment.ref ? ' &middot; Ref <b>' + d.payment.ref + '</b>' : '') + '</div></div>'
-  ) : '');
-  const cityRow = d.billed.city ? '<div><span class="g">City:</span> <span>' + d.billed.city + '</span></div>' : '';
-  const emailRow = d.billed.email ? '<div><span class="g">Email:</span> <span>' + d.billed.email + '</span></div>' : '';
-  const phoneRow = d.billed.phone ? '<div><span class="g">Phone:</span> <span>' + d.billed.phone + '</span></div>' : '';
-  const panRow = d.pan ? '<div style="color:#333;">PAN: ' + d.pan + '</div>' : '';
-  const rows = d.lines.map(ln => '<tr><td class="desc">' + (ln.desc||'') + '</td><td>' + (ln.qty||0) + '</td><td>' + invINR(ln.rate) + '</td><td>' + invINR((Number(ln.qty)||0)*(Number(ln.rate)||0)) + '</td></tr>').join('');
-  const ap = autoPrint ? '<script>window.onload=function(){setTimeout(function(){window.print();},350);};<\/script>' : '';
-  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + d.title + '</title><style>'
-    + '@page{size:A4;margin:0;}*{box-sizing:border-box;}html,body{margin:0;padding:0;}'
-    + 'body{font-family:\'Helvetica Neue\',Arial,sans-serif;color:#1a1a1a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    + '.sheet{width:210mm;min-height:297mm;padding:18mm 16mm;position:relative;overflow:hidden;background:#fff;}'
-    + '.row{display:flex;justify-content:space-between;align-items:flex-start;}'
-    + '.bn{font-size:26px;font-weight:700;letter-spacing:-0.3px;}.bsub{font-size:13px;color:#555;margin-top:10px;line-height:1.6;}'
-    + '.it{font-size:26px;font-weight:700;letter-spacing:0.5px;text-align:right;}'
-    + '.meta{margin-top:10px;margin-left:auto;font-size:13px;border-collapse:collapse;}.meta td{padding:2px 0;}'
-    + '.meta .l{color:#555;text-align:right;padding-right:8px;}.meta .v{font-weight:700;padding:2px 0;}'
-    + '.divider{border-top:1.5px solid #1a1a1a;margin:18px 0 20px;}'
-    + '.bl{font-weight:700;font-size:11px;letter-spacing:0.5px;margin-bottom:4px;}'
-    + '.from{font-size:13px;line-height:1.65;}.billed{font-size:13px;line-height:1.95;text-align:right;}'
-    + '.g{color:#555;}.hl{padding:0;}'
-    + '.banner{background:#e9f3ec;border:1px solid #bcd9c4;text-align:center;padding:11px;margin:20px 0;border-radius:2px;}'
-    + '.bm{color:#2f7d4f;font-weight:700;font-size:14px;}.bs{color:#3f8a5e;font-size:11.5px;margin-top:3px;}'
-    + '.banner-x{background:#faece8;border:1px solid #e2b3a4;text-align:center;padding:11px;margin:20px 0;border-radius:2px;}'
-    + '.bm-x{color:#b4452c;font-weight:700;font-size:14px;}.bs-x{color:#b4452c;font-size:11.5px;margin-top:3px;opacity:0.85;}'
-    + '.wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-26deg);font-size:130px;font-weight:800;letter-spacing:0.08em;color:#b4452c;opacity:0.08;white-space:nowrap;z-index:0;pointer-events:none;}'  
-    + 'table.items{width:100%;border-collapse:collapse;font-size:13px;}table.items thead tr{background:#111;color:#fff;}'
-    + 'table.items th{padding:8px 12px;font-weight:700;text-align:right;}table.items th.desc{text-align:left;}'
-    + 'table.items td{padding:9px 12px;text-align:right;}table.items td.desc{text-align:left;}table.items tbody tr:nth-child(even){background:#f6f6f6;}'
-    + '.tot{background:#111;color:#fff;display:flex;justify-content:flex-end;gap:48px;padding:10px 12px;font-size:15px;font-weight:700;margin-top:30px;}'
-    + '.tot .a{min-width:110px;text-align:right;}.words{text-align:right;font-size:12px;color:#555;font-style:italic;margin-top:6px;}'
-    + '.pay{background:#f4f4f4;padding:14px 16px;margin-top:22px;font-size:12.5px;line-height:1.7;border-radius:2px;}.pay .h{font-weight:700;margin-bottom:3px;}.pay .i{font-style:italic;}'
-    + '.foot{text-align:center;font-style:italic;color:#888;font-size:12px;margin-top:24px;}'
-    + '</style></head><body><div class="sheet">' + watermark
-    + '<div class="row"><div><div class="bn">' + INV_BIZ.name + '</div><div class="bsub">' + INV_BIZ.role + '<br>' + INV_BIZ.loc + '<br>' + INV_BIZ.email + '</div></div>'
-    + '<div><div class="it">INVOICE</div><table class="meta"><tr><td class="l">No:</td><td class="v">' + d.no + '</td></tr><tr><td class="l">Date:</td><td class="v">' + invLongDate(d.invoiceDate) + '</td></tr></table></div></div>'
-    + '<div class="divider"></div>'
-    + '<div class="row"><div class="from"><div class="bl">FROM</div><div style="font-weight:700;">' + INV_BIZ.name + '</div><div style="color:#333;">' + INV_BIZ.email + '</div><div style="color:#333;">UPI: ' + INV_BIZ.upi + '</div>' + panRow + '</div>'
-    + '<div class="billed"><div class="bl">BILLED TO</div><div><span class="g">Name:</span> <span style="font-weight:500;">' + d.billed.name + '</span></div>' + emailRow + phoneRow + cityRow + '</div></div>'
-    + banner
-    + '<table class="items"><thead><tr><th class="desc">Description</th><th style="width:60px;">Qty</th><th style="width:100px;">Rate (\u20B9)</th><th style="width:110px;">Amount (\u20B9)</th></tr></thead><tbody>' + rows + '</tbody></table>'
-    + '<div class="tot"><span>TOTAL</span><span class="a">\u20B9' + invINR(d.total) + '</span></div>'
-    + '<div class="words">' + (d.words||'') + '</div>'
-    + '<div class="pay"><div class="h">PAYMENT DETAILS</div><div>UPI ID:&nbsp;&nbsp;' + INV_BIZ.upi + '</div><div>Bank:&nbsp;&nbsp;' + INV_BIZ.bank + '&nbsp;&nbsp;|&nbsp;&nbsp;Account Name: ' + INV_BIZ.acName + '</div><div class="i">Account No:&nbsp;&nbsp;' + INV_BIZ.acNo + '&nbsp;&nbsp;|&nbsp;&nbsp;IFSC: ' + INV_BIZ.ifsc + '</div></div>'
-    + '<div class="foot">This is a self-generated invoice for handpan services rendered by ' + INV_BIZ.name + ' (individual).</div>'
-    + '</div>' + ap + '</body></html>';
-}
-
 // The invoices row for the current editor state. Used for saving and for the server preview.
 function invRowPayload(s, d) {
   return {
@@ -6791,21 +6713,6 @@ function invDataFromState(s) {
   };
 }
 
-function invOpenPrint(html, title) {
-  const w = window.open('', '_blank');
-  if (!w) { showToast('Allow pop-ups to view or save the invoice', 'error'); return; }
-  w.document.open(); w.document.write(html); w.document.close();
-  try { w.document.title = title; } catch(e){}
-}
-let invLastDoc = null;
-function invViewLastDoc() { if (invLastDoc) invOpenPrint(invLastDoc.html, invLastDoc.title); }
-function invDismissBanner() { const b = document.getElementById('invDocBanner'); if (b) b.style.display = 'none'; }
-function invShowDocBanner(no, html, title) {
-  invLastDoc = { html: html, title: title };
-  const b = document.getElementById('invDocBanner'); if (!b) return;
-  const m = document.getElementById('invDocBannerMsg'); if (m) m.textContent = 'Invoice ' + no + ' saved';
-  b.style.display = 'flex';
-}
 function invEmailBody(no, amount, dateISO) {
   const amt = '\u20B9' + (Number(amount)||0).toLocaleString('en-IN');
   const when = dateISO ? invLongDate(dateISO) : '';
