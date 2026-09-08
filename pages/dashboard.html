@@ -2596,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v62</span>
+        <span style="color:var(--clay);font-weight:500;">v63</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2664,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v62</span>
+        <span style="color:var(--clay);font-weight:500;">v63</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3589,7 +3589,7 @@ table#paymentsTable { min-width: 700px; }
         <option value="workshop">Workshop participant</option>
         <option value="classes">Class fee payment</option>
         <option value="commission">Handpan sale commission</option>
-        <option value="sale">Handpan / accessories sale</option>
+        <option value="sale">Handpan &amp; accessories</option>
         <option value="gig">Gig / Performance</option>
         <option value="other">Other income</option>
         <option value="ignore">Skip for now</option>
@@ -3668,15 +3668,11 @@ table#paymentsTable { min-width: 700px; }
         <select class="form-input" id="pay-type" onchange="onPayTypeChange()"><option value="income">Income</option><option value="expense">Expense</option><option value="general_expense">General Expense</option></select></div>
       <div class="form-group"><label class="form-label">Category</label>
         <select class="form-input" id="pay-category">
-          <optgroup label="Income">
-            <option value="workshop">Workshop</option><option value="class">Classes</option>
-            <option value="commission">Handpan sale commission</option><option value="sale">Handpan / accessories sale</option>
-            <option value="gig">Gig / Performance</option><option value="other">Other income</option>
-          </optgroup>
-          <optgroup label="Expense">
-            <option value="venue">Venue Rent</option><option value="handpan_rental">Handpan Rental</option>
-            <option value="porter">Porter / Delivery</option><option value="misc">Misc</option>
-          </optgroup>
+          <option value="workshop">Workshop</option><option value="class">Classes</option>
+          <option value="commission">Handpan sale commission</option><option value="sale">Handpan &amp; accessories</option>
+          <option value="gig">Gig / Performance</option><option value="other">Other income</option>
+          <option value="venue">Venue Rent</option><option value="handpan_rental">Handpan Rental</option>
+          <option value="porter">Porter / Delivery</option><option value="misc">Misc</option>
         </select></div>
     </div>
     <div class="form-row">
@@ -5167,6 +5163,8 @@ async function openFormPage(name) {
   } else if (name === 'addFeePayment') {
     const sel = document.getElementById('fee-student');
     if (sel) sel.dataset.customized = 'pending';
+  } else if (name === 'addPayment') {
+    onPayTypeChange();   // category list matches the current type before the select is customized
   }
   setTimeout(() => { initFormSelects(); initDatePickers(); }, 50);
   // Populate dropdowns and auto-fill IDs per form
@@ -7035,11 +7033,23 @@ async function syncAll() {
 }
 
 // ── Save FUNCTIONS ──
+const PAY_INCOME_CATS = [['workshop','Workshop'],['class','Classes'],['commission','Handpan sale commission'],['sale','Handpan & accessories'],['gig','Gig / Performance'],['other','Other income']];
+const PAY_EXPENSE_CATS = [['venue','Venue Rent'],['handpan_rental','Handpan Rental'],['porter','Porter / Delivery'],['misc','Misc']];
 function onPayTypeChange() {
   const type = document.getElementById('pay-type').value;
   const genCatWrap = document.getElementById('pay-gen-cat-wrap');
-  const catWrap = document.getElementById('pay-category') && document.getElementById('pay-category').closest('.form-group');
   if (genCatWrap) genCatWrap.style.display = type === 'general_expense' ? '' : 'none';
+  // Category list follows the type: income categories for income, expense ones otherwise.
+  const sel = document.getElementById('pay-category');
+  if (!sel) return;
+  const cats = type === 'income' ? PAY_INCOME_CATS : PAY_EXPENSE_CATS;
+  const keep = sel.value;
+  sel.innerHTML = cats.map(([v, l]) => '<option value="' + v + '">' + l + '</option>').join('');
+  if (cats.some(([v]) => v === keep)) sel.value = keep;
+  const wrap = sel.nextElementSibling;
+  if (wrap && wrap.classList.contains('form-select-wrap')) wrap.remove();
+  delete sel.dataset.customized;
+  if (typeof initFormSelects === 'function') initFormSelects();
 }
 
 
@@ -8801,7 +8811,7 @@ function buildEditForm(entity, r) {
   if (entity === 'payments') return `
     ${row(fi('Date','pay-date','date',r.date), fi('Amount (₹)','pay-amount','number',r.amount))}
     ${row(sel('Type','pay-type',[['income','Income'],['expense','Expense']],r.type),
-          sel('Category','pay-category',[['workshop','Workshop'],['class','Classes'],['commission','Handpan sale commission'],['sale','Handpan / accessories sale'],['gig','Gig / Performance'],['other','Other income'],['general','Other income (old)'],['venue','Venue Rent'],['handpan_rental','Handpan Rental'],['porter','Porter / Delivery'],['misc','Misc']],r.category))}
+          sel('Category','pay-category',[['workshop','Workshop'],['class','Classes'],['commission','Handpan sale commission'],['sale','Handpan & accessories'],['gig','Gig / Performance'],['other','Other income'],['general','Other income (old)'],['venue','Venue Rent'],['handpan_rental','Handpan Rental'],['porter','Porter / Delivery'],['misc','Misc']],r.category))}
     ${row(sel('Payment Mode','pay-mode',[['razorpay','Razorpay'],['upi','UPI'],['cash','Cash'],['bms','BMS'],['wise','Wise'],['other','Other']],r.payment_mode),
           fi('Payer / Payee','pay-name','text',r.payer_name,'maxlength="80"'))}
     ${fi('Description','pay-desc','textarea',r.description||'')}
@@ -10896,7 +10906,7 @@ async function _doAssign(type, notes, workshopId, studentId, feeMonth, feeClasse
       loadStudents();
     } else {
       const categoryMap = { workshop: 'workshop', classes: 'class', commission: 'commission', sale: 'sale', gig: 'gig', other: 'other', general: 'other' };
-      const labelMap = { workshop: 'Workshop', classes: 'Classes', commission: 'Handpan sale commission', sale: 'Handpan / accessories sale', gig: 'Gig / Performance', other: 'Other income', general: 'Other income' };
+      const labelMap = { workshop: 'Workshop', classes: 'Classes', commission: 'Handpan sale commission', sale: 'Handpan & accessories', gig: 'Gig / Performance', other: 'Other income', general: 'Other income' };
       const payId = 'PAY-' + Date.now();
       await sbPost('payments', {
         id: payId,
@@ -11464,7 +11474,7 @@ async function doObsPopupToggle(rec, newCount) {
           <option value="workshop">Workshop</option>
           <option value="class">Classes</option>
           <option value="commission">Handpan sale commission</option>
-          <option value="sale">Handpan / accessories sale</option>
+          <option value="sale">Handpan &amp; accessories</option>
           <option value="gig">Gig / Performance</option>
           <option value="other">Other income</option>
           <option value="misc">Misc</option>
