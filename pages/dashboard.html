@@ -2596,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v61</span>
+        <span style="color:var(--clay);font-weight:500;">v62</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2664,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v61</span>
+        <span style="color:var(--clay);font-weight:500;">v62</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3588,7 +3588,10 @@ table#paymentsTable { min-width: 700px; }
         <option value="">None</option>
         <option value="workshop">Workshop participant</option>
         <option value="classes">Class fee payment</option>
-        <option value="general">General income</option>
+        <option value="commission">Handpan sale commission</option>
+        <option value="sale">Handpan / accessories sale</option>
+        <option value="gig">Gig / Performance</option>
+        <option value="other">Other income</option>
         <option value="ignore">Skip for now</option>
       </select>
     </div>
@@ -3665,10 +3668,15 @@ table#paymentsTable { min-width: 700px; }
         <select class="form-input" id="pay-type" onchange="onPayTypeChange()"><option value="income">Income</option><option value="expense">Expense</option><option value="general_expense">General Expense</option></select></div>
       <div class="form-group"><label class="form-label">Category</label>
         <select class="form-input" id="pay-category">
-          <option value="workshop">Workshop</option><option value="class">Class</option>
-          <option value="gig">Gig / Performance</option><option value="sale">Miscellaneous</option>
-          <option value="venue">Venue Rent</option><option value="handpan_rental">Handpan Rental</option>
-          <option value="porter">Porter / Delivery</option><option value="misc">Misc</option>
+          <optgroup label="Income">
+            <option value="workshop">Workshop</option><option value="class">Classes</option>
+            <option value="commission">Handpan sale commission</option><option value="sale">Handpan / accessories sale</option>
+            <option value="gig">Gig / Performance</option><option value="other">Other income</option>
+          </optgroup>
+          <optgroup label="Expense">
+            <option value="venue">Venue Rent</option><option value="handpan_rental">Handpan Rental</option>
+            <option value="porter">Porter / Delivery</option><option value="misc">Misc</option>
+          </optgroup>
         </select></div>
     </div>
     <div class="form-row">
@@ -5491,7 +5499,7 @@ async function loadOverview() {
       const exp = pays.filter(p => p.type === 'expense');
       const sum = arr => arr.reduce((s,p) => s + Number(p.amount || 0), 0);
       const clampPct = p => Math.max(0, Math.min(100, p || 0));
-      const CAT_LABELS = { venue:'Venue rent', handpan_rental:'Handpan rental', porter:'Porter / delivery', misc:'Misc', marketing:'Marketing / ads', equipment:'Gear / equipment', maintenance:'Maintenance', accessories:'Accessories', travel:'Travel', workshop:'Workshops', class:'Classes', classes:'Classes', gig:'Gigs', sale:'Miscellaneous' };
+      const CAT_LABELS = { venue:'Venue rent', handpan_rental:'Handpan rental', porter:'Porter / delivery', misc:'Misc', marketing:'Marketing / ads', equipment:'Gear / equipment', maintenance:'Maintenance', accessories:'Accessories', travel:'Travel', workshop:'Workshops', class:'Classes', classes:'Classes', gig:'Gigs', commission:'Handpan commission', sale:'Handpan / accessories sale', other:'Other income', general:'Other income' };
       const prettify = c => CAT_LABELS[c] || (c ? c.replace(/_/g,' ').replace(/\b\w/g, m => m.toUpperCase()) : 'Uncategorised');
       const sdRow = (name, sub, val, pct, color) => `<div class="sd-row"><div class="sd-top"><span class="sd-name">${name}</span><span class="sd-amt">${fmt(val)}</span></div>${sub?`<div class="sd-sub">${sub}</div>`:''}<div class="sd-bar"><div class="sd-fill" style="width:${clampPct(pct)}%;background:${color}"></div></div></div>`;
       const sdDeduct = (name, sub, val, pct) => `<div class="sd-row deduct"><div class="sd-top"><span class="sd-name">${name}</span><span class="sd-amt">\u2212 ${fmt(val)}</span></div>${sub?`<div class="sd-sub">${sub}</div>`:''}<div class="sd-bar"><div class="sd-fill" style="width:${clampPct(pct)}%;background:rgba(199,123,94,0.55)"></div></div></div>`;
@@ -5500,12 +5508,18 @@ async function loadOverview() {
       // Revenue by source
       const wsInc = sum(inc.filter(p => p.category === 'workshop'));
       const classInc = sum(inc.filter(p => p.category === 'class' || p.category === 'classes'));
-      const othersInc = income - wsInc - classInc;
+      const commInc = sum(inc.filter(p => p.category === 'commission'));
+      const saleInc = sum(inc.filter(p => p.category === 'sale'));
+      const gigInc  = sum(inc.filter(p => p.category === 'gig'));
+      const othersInc = income - wsInc - classInc - commInc - saleInc - gigInc;
       const revEl = document.getElementById('rev-split');
       if (revEl) revEl.innerHTML = income > 0
         ? sdRow('Workshops', Math.round(wsInc/income*100)+'% of revenue', wsInc, wsInc/income*100, '#c8935a')
           + sdRow('Classes', Math.round(classInc/income*100)+'% of revenue', classInc, classInc/income*100, '#8aaa6e')
-          + sdRow('Others', 'gigs and misc', othersInc, othersInc/income*100, '#9a7d63')
+          + (commInc > 0 ? sdRow('Handpan commission', Math.round(commInc/income*100)+'% of revenue', commInc, commInc/income*100, '#9a7d63') : '')
+          + (saleInc > 0 ? sdRow('Handpan / accessories', Math.round(saleInc/income*100)+'% of revenue', saleInc, saleInc/income*100, '#9a7d63') : '')
+          + (gigInc > 0 ? sdRow('Gigs', Math.round(gigInc/income*100)+'% of revenue', gigInc, gigInc/income*100, '#9a7d63') : '')
+          + (othersInc > 0 ? sdRow('Other income', Math.round(othersInc/income*100)+'% of revenue', othersInc, othersInc/income*100, '#9a7d63') : '')
           + sdFoot('Total in', income, 'clay')
         : '<div class="sd-empty">No income recorded yet.</div>';
 
@@ -5529,15 +5543,17 @@ async function loadOverview() {
       if (profitEl) {
         const wsCost = sum(exp.filter(p => ['venue','handpan_rental','porter','misc'].includes(p.category)));
         const classCost = sum(exp.filter(p => p.category === 'class' || p.category === 'classes'));
-        const othersCost = sum(exp.filter(p => ['gig','sale'].includes(p.category)));
+        const othersCost = sum(exp.filter(p => ['gig','sale','commission','other','general'].includes(p.category)));
         const sharedCost = expense - wsCost - classCost - othersCost;
-        const wsProfit = wsInc - wsCost, classProfit = classInc - classCost, othersProfit = othersInc - othersCost;
+        // "Others" here is everything that is not workshops or classes: commission, sales, gigs, other.
+        const othersAllInc = income - wsInc - classInc;
+        const wsProfit = wsInc - wsCost, classProfit = classInc - classCost, othersProfit = othersAllInc - othersCost;
         const net = income - expense;
         const scale = Math.max(wsProfit, classProfit, othersProfit, sharedCost, 1);
         profitEl.innerHTML =
             sdRow('Workshops', 'after its own costs', wsProfit, wsProfit/scale*100, '#c8935a')
           + sdRow('Classes', 'no direct costs', classProfit, classProfit/scale*100, '#8aaa6e')
-          + sdRow('Others', 'gigs and misc', othersProfit, othersProfit/scale*100, '#9a7d63')
+          + sdRow('Others', 'commission, sales, gigs', othersProfit, othersProfit/scale*100, '#9a7d63')
           + (Math.round(sharedCost) !== 0 ? sdDeduct('Shared costs', 'shared, not per stream', sharedCost, sharedCost/scale*100) : '')
           + sdFoot('Net profit', net, 'green');
       }
@@ -6556,7 +6572,7 @@ function invMapSource(table, r) {
     return {
       billed: { name: r.payer_name || '', email: '', city: '', phone: r.payer_phone || r.phone || r.contact || '', company: '', gstin: '' },
       payment: { date: invToISO(r.date), mode: r.payment_mode || 'UPI', ref: '' },
-      lines: [{ desc: r.description || r.category || 'Handpan services', qty: 1, rate: Number(r.amount)||0 }]
+      lines: [{ desc: ({ commission: 'Handpan sale commission', sale: 'Handpan / accessories', gig: 'Live handpan performance', workshop: 'Handpan Workshop', class: 'Online Handpan Classes' })[r.category] || r.description || 'Handpan services', qty: 1, rate: Number(r.amount)||0 }]
     };
   }
   return null;
@@ -8785,7 +8801,7 @@ function buildEditForm(entity, r) {
   if (entity === 'payments') return `
     ${row(fi('Date','pay-date','date',r.date), fi('Amount (₹)','pay-amount','number',r.amount))}
     ${row(sel('Type','pay-type',[['income','Income'],['expense','Expense']],r.type),
-          sel('Category','pay-category',[['workshop','Workshop'],['class','Class'],['gig','Gig / Performance'],['sale','Accessory Sale'],['venue','Venue Rent'],['handpan_rental','Handpan Rental'],['porter','Porter / Delivery'],['misc','Misc']],r.category))}
+          sel('Category','pay-category',[['workshop','Workshop'],['class','Classes'],['commission','Handpan sale commission'],['sale','Handpan / accessories sale'],['gig','Gig / Performance'],['other','Other income'],['general','Other income (old)'],['venue','Venue Rent'],['handpan_rental','Handpan Rental'],['porter','Porter / Delivery'],['misc','Misc']],r.category))}
     ${row(sel('Payment Mode','pay-mode',[['razorpay','Razorpay'],['upi','UPI'],['cash','Cash'],['bms','BMS'],['wise','Wise'],['other','Other']],r.payment_mode),
           fi('Payer / Payee','pay-name','text',r.payer_name,'maxlength="80"'))}
     ${fi('Description','pay-desc','textarea',r.description||'')}
@@ -10879,8 +10895,8 @@ async function _doAssign(type, notes, workshopId, studentId, feeMonth, feeClasse
       loadPayments();
       loadStudents();
     } else {
-      const categoryMap = { workshop: 'workshop', classes: 'class', general: 'general' };
-      const labelMap = { workshop: 'Workshop', classes: 'Classes', general: 'General Income' };
+      const categoryMap = { workshop: 'workshop', classes: 'class', commission: 'commission', sale: 'sale', gig: 'gig', other: 'other', general: 'other' };
+      const labelMap = { workshop: 'Workshop', classes: 'Classes', commission: 'Handpan sale commission', sale: 'Handpan / accessories sale', gig: 'Gig / Performance', other: 'Other income', general: 'Other income' };
       const payId = 'PAY-' + Date.now();
       await sbPost('payments', {
         id: payId,
@@ -11446,9 +11462,11 @@ async function doObsPopupToggle(rec, newCount) {
         <select class="form-input" id="reassign-category">
           <option value="">None</option>
           <option value="workshop">Workshop</option>
-          <option value="class">Class</option>
-          <option value="general">General income</option>
+          <option value="class">Classes</option>
+          <option value="commission">Handpan sale commission</option>
+          <option value="sale">Handpan / accessories sale</option>
           <option value="gig">Gig / Performance</option>
+          <option value="other">Other income</option>
           <option value="misc">Misc</option>
         </select>
       </div>
