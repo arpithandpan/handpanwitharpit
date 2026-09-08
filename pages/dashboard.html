@@ -2596,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v63</span>
+        <span style="color:var(--clay);font-weight:500;">v64</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2664,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v63</span>
+        <span style="color:var(--clay);font-weight:500;">v64</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -7040,8 +7040,11 @@ function onPayTypeChange() {
   const genCatWrap = document.getElementById('pay-gen-cat-wrap');
   if (genCatWrap) genCatWrap.style.display = type === 'general_expense' ? '' : 'none';
   // Category list follows the type: income categories for income, expense ones otherwise.
+  // General expenses use their own Expense Category field, so hide this one for them.
   const sel = document.getElementById('pay-category');
   if (!sel) return;
+  const catGroup = sel.closest('.form-group');
+  if (catGroup) catGroup.style.display = type === 'general_expense' ? 'none' : '';
   const cats = type === 'income' ? PAY_INCOME_CATS : PAY_EXPENSE_CATS;
   const keep = sel.value;
   sel.innerHTML = cats.map(([v, l]) => '<option value="' + v + '">' + l + '</option>').join('');
