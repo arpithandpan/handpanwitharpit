@@ -58,9 +58,8 @@
   /* HERO */
   .hero{ position:relative; overflow:hidden; background:#080E0C; }
   .hero-content{ display:flex; flex-direction:column; gap:1.4rem; padding:2.25rem 1.25rem 1.7rem; }
-  .hero-eyebrow{ margin-bottom:-0.6rem; }
   .hero-eyebrow{
-    font-size:13.5px; letter-spacing:0.25em; text-transform:uppercase;
+    margin:12px 0 0; font-size:11.5px; letter-spacing:0.25em; text-transform:uppercase;
     color:var(--clay-light); font-weight:500;
   }
   .hero h1{
@@ -234,10 +233,10 @@
   .handpan-spinner{ width:56px; height:56px; margin:0 auto; animation:spin 1.9s linear infinite; }
   @keyframes spin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
 
-  .contact-block{ padding:0 1.75rem 2rem; }
+  .contact-block{ padding:2rem 1.75rem 2.25rem; }
   .contact-heading{ font-size:19px; font-weight:500; color:var(--text-dark); margin-bottom:0.6rem; }
   .contact-row{ display:flex; align-items:center; gap:8px; font-size:17px; color:var(--text-mid); text-decoration:none; padding:0.5rem 0; min-height:48px; }
-  .contact-row .contact-label{ color:var(--text-light); min-width:84px; }
+  .contact-row .contact-label{ color:var(--text-light); min-width:104px; }
   .contact-row .contact-value{ color:var(--clay); font-weight:500; }
   footer{ text-align:center; padding:1.5rem; font-size:15px; color:var(--text-light); border-top:1px solid var(--clay-pale); line-height:1.9; }
 </style>
@@ -248,8 +247,10 @@
   <!-- HERO -->
   <section class="hero" id="hero-section">
     <div class="hero-content">
-      <div class="hero-eyebrow">Arpit Pandey</div>
-      <h1><span id="hero-program"><span class="skel-bar" style="width:220px;"></span></span><em id="hero-for"><span class="skel-bar" style="width:160px;"></span></em></h1>
+      <div>
+        <h1><span id="hero-program"><span class="skel-bar" style="width:220px;"></span></span><em id="hero-for"><span class="skel-bar" style="width:160px;"></span></em></h1>
+        <p class="hero-eyebrow">Online classes</p>
+      </div>
       <div class="details-section">
         <div class="detail-card"><span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/></svg></span><span class="detail-value" id="hero-student"><span class="skel-bar" style="width:140px;"></span></span></div>
         <div class="detail-card"><span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z"/><path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"/></svg></span><span class="detail-value" id="hero-format">Live 1:1 classes on Zoom</span></div>
@@ -351,7 +352,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v2)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v4)</span>
   </footer>
 </div>
 
@@ -412,8 +413,17 @@
   const successText = document.getElementById('success-text');
   const successSummary = document.getElementById('success-summary');
   const wrap = document.querySelector('.wrap');
+  // Always open at the top. iOS Safari restores the old scroll position a
+  // moment after load when the same tab is reused, so we push to the top on
+  // every load event and once more after the first render.
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  window.addEventListener('pageshow', () => window.scrollTo(0, 0));
+  let userScrolled = false;
+  window.addEventListener('touchstart', () => { userScrolled = true; }, { passive: true, once: true });
+  window.addEventListener('wheel', () => { userScrolled = true; }, { passive: true, once: true });
+  function forceTop(){ if (!userScrolled) window.scrollTo(0, 0); }
+  forceTop();
+  window.addEventListener('load', () => { forceTop(); setTimeout(forceTop, 60); setTimeout(forceTop, 250); });
+  window.addEventListener('pageshow', () => { forceTop(); setTimeout(forceTop, 60); });
   const loadingOverlay = document.getElementById('loading-overlay');
   const detailsSection = document.getElementById('details-section');
   const fName = document.getElementById('f-name');
@@ -590,7 +600,7 @@
     if (fee){
       heroProgram.textContent = 'Handpan classes';
       heroFor.textContent = 'for ' + firstName(fee.name);
-      successSummary.textContent = (fee.monthLabel ? fee.monthLabel + ' · ' : '') + fee.label + ' · ' + fmtAmount(fee.amount, fee.currency) + ' ' + fee.currency;
+      successSummary.textContent = fee.label + ' · ' + fmtAmount(fee.amount, fee.currency) + ' ' + fee.currency;
       successSummary.style.display = '';
     } else {
       heroProgram.textContent = 'Handpan classes';
@@ -613,7 +623,9 @@
   }
 
   // ── RENDER ──
+  let firstRender = true;
   function render(){
+    if (firstRender){ firstRender = false; requestAnimationFrame(forceTop); }
     const name = fee.name || 'Student';
     heroProgram.textContent = 'Handpan classes';
     heroFor.textContent = 'for ' + firstName(name);
@@ -622,7 +634,7 @@
     incSessions.textContent = fee.classes === 1
       ? '1 live one-to-one session on Zoom'
       : fee.classes + ' live one-to-one sessions on Zoom';
-    totalLabel.textContent = (fee.monthLabel ? fee.monthLabel + ' · ' : '') + (fee.label || 'Amount due');
+    totalLabel.textContent = fee.label || 'Amount due';
     totalAmount.innerHTML = fmtAmount(fee.amount, fee.currency) + '<small>' + fee.currency + '</small>';
     fName.value = name;
     if (!fPhone.value) applyStoredPhone(fee.phone);
