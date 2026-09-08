@@ -771,7 +771,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v13)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v14)</span>
   </footer>
 
 </div>
@@ -866,6 +866,8 @@
   let observerPrice = null;
   let participantMax = 50;
   let observerMax = 0;
+  let participantHasCap = false;
+  let observerHasCap = false;
   let workshopDateTime = null;
   let bookingCutoff = null;
   let lastPastCutoffState = false;
@@ -1408,7 +1410,10 @@
       participantStepper.style.display = '';
       participantWaitlist.style.display = 'none';
       participantWaitlistSuccess.style.display = 'none';
-      if (participantMax <= 2){
+      if (!participantHasCap){
+        participantSpotsBadge.textContent = '';
+        participantSpotsBadge.className = 'spots-badge';
+      } else if (participantMax <= 2){
         participantSpotsBadge.textContent = participantMax === 1 ? 'Only 1 spot left!' : ('Only ' + participantMax + ' spots left!');
         participantSpotsBadge.className = 'spots-badge spots-low';
       } else {
@@ -1433,7 +1438,10 @@
         observerDesc.textContent = '₹' + observerPrice.toLocaleString('en-IN') + ' per person';
         observerDesc.classList.remove('disabled');
         observerDesc.classList.remove('locked-hint');
-        if (observerMax <= 2){
+        if (!observerHasCap){
+          observerSpotsBadge.textContent = '';
+          observerSpotsBadge.className = 'spots-badge';
+        } else if (observerMax <= 2){
           observerSpotsBadge.textContent = observerMax === 1 ? 'Only 1 spot left!' : ('Only ' + observerMax + ' spots left!');
           observerSpotsBadge.className = 'spots-badge spots-low';
         } else {
@@ -1778,11 +1786,13 @@
         oCount = 0;
       } else {
         observerRow.style.display = '';
-        observerMax = (typeof data.observersRemaining === 'number') ? data.observersRemaining : 50;
+        observerHasCap = (typeof data.observersRemaining === 'number');
+        observerMax = observerHasCap ? data.observersRemaining : 50;
         if (oCount > observerMax) oCount = Math.max(0, observerMax);
       }
 
-      participantMax = (typeof data.participantsRemaining === 'number') ? data.participantsRemaining : 50;
+      participantHasCap = (typeof data.participantsRemaining === 'number');
+      participantMax = participantHasCap ? data.participantsRemaining : 50;
       if (pCount > participantMax) pCount = Math.max(0, participantMax);
 
       render();
