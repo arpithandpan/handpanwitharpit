@@ -359,9 +359,6 @@
   }
   .form-card input.invalid{ border-color:#8A2614; }
   .field-hint{ font-size:14.5px; color:var(--text-light); }
-  .field-suggest{ display:none; font-size:14.5px; color:var(--text-mid); }
-  .field-suggest.show{ display:block; }
-  .field-suggest a{ color:var(--clay); font-weight:500; text-decoration:underline; }
 
   .phone-row{ display:flex; gap:8px; }
   .country-select{
@@ -678,7 +675,6 @@
 
         <div class="field-group">
           <input type="email" id="email" placeholder="Email" autocomplete="email" aria-required="true"/>
-          <p class="field-suggest" id="email-suggest"></p>
           <p class="field-error" id="email-error"></p>
         </div>
       </div>
@@ -770,7 +766,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v12)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v11)</span>
   </footer>
 
 </div>
@@ -1113,33 +1109,8 @@
     setError(phoneInput, phoneError, '');
     return true;
   }
-  // Common domain typos. A suggestion, never a block: someone can really be on a .co address.
-  const EMAIL_TYPOS = {
-    'gmail.co':'gmail.com','gmail.con':'gmail.com','gmail.cm':'gmail.com','gmial.com':'gmail.com','gmal.com':'gmail.com','gamil.com':'gmail.com','gmail.comm':'gmail.com','gnail.com':'gmail.com',
-    'yahoo.co':'yahoo.com','yahoo.con':'yahoo.com','yaho.com':'yahoo.com',
-    'hotmail.co':'hotmail.com','hotmail.con':'hotmail.com','hotmial.com':'hotmail.com',
-    'outlook.co':'outlook.com','outlook.con':'outlook.com','icloud.co':'icloud.com'
-  };
-  function emailSuggestion(v){
-    const m = String(v || '').trim().toLowerCase().match(/^([^@]+)@([^@]+)$/);
-    if (!m) return null;
-    const fix = EMAIL_TYPOS[m[2]];
-    return fix ? m[1] + '@' + fix : null;
-  }
-  function showEmailSuggestion(input, el){
-    const fix = emailSuggestion(input.value);
-    if (!fix){ el.classList.remove('show'); el.innerHTML = ''; return; }
-    el.innerHTML = 'Did you mean <a href="#" class="email-fix">' + fix + '</a>?';
-    el.classList.add('show');
-    el.querySelector('.email-fix').addEventListener('click', (e) => {
-      e.preventDefault(); input.value = fix; el.classList.remove('show'); el.innerHTML = '';
-      input.dispatchEvent(new Event('input'));
-    });
-  }
-  const emailSuggest = document.getElementById('email-suggest');
   function validateEmail(){
     const val = emailInput.value.trim();
-    showEmailSuggestion(emailInput, emailSuggest);
     // Email is required for a booking. The waitlist opt-in skips this validator.
     if (!val){
       setError(emailInput, emailError, 'Please enter your email.');
