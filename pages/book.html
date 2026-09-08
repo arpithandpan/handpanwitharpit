@@ -358,6 +358,9 @@
     background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A2614' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 8v4'/><path d='M12 16h.01'/></svg>") center/contain no-repeat;
   }
   .form-card input.invalid{ border-color:#8A2614; }
+  .field-suggest{ display:none; font-size:14px; color:var(--text-mid); margin-top:3px; }
+  .field-suggest.show{ display:block; }
+  .field-suggest a{ color:var(--clay); font-weight:500; text-decoration:underline; }
   .field-hint{ font-size:14.5px; color:var(--text-light); }
 
   .phone-row{ display:flex; gap:8px; }
@@ -596,6 +599,7 @@
       </div>
       <h3 class="success-heading">You're all set!</h3>
       <p class="success-text">Thanks for booking. We've received your payment and will send your confirmation on WhatsApp shortly.</p>
+      <p class="success-text" id="success-ref" style="display:none; font-size:13px; color:var(--text-light);"></p>
       <div class="success-instagram">
         <p class="success-instagram-caption">Follow Arpit for more handpan content</p>
         <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener" class="success-instagram-btn">
@@ -675,6 +679,7 @@
 
         <div class="field-group">
           <input type="email" id="email" placeholder="Email" autocomplete="email" aria-required="true"/>
+          <p class="field-suggest" id="email-suggest"></p>
           <p class="field-error" id="email-error"></p>
         </div>
       </div>
@@ -766,7 +771,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v11)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v13)</span>
   </footer>
 
 </div>
@@ -832,10 +837,11 @@
       </svg>
     </div>
     <div style="font-size:18px;font-weight:500;color:var(--text-dark);margin-top:1.1rem;">Securing your spot…</div>
-    <div style="font-size:14px;color:var(--text-light);margin-top:0.5rem;line-height:1.5;">Please don't close this page, you'll be taken to payment in a moment.</div>
+    <div style="font-size:14px;color:var(--text-light);margin-top:0.5rem;line-height:1.5;">Please don't close this page, the secure payment window opens in a moment.</div>
   </div>
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
   // ── Prevent iOS double-tap-to-zoom (keeps pinch-zoom and rapid control taps) ──
   (function(){
@@ -1109,8 +1115,34 @@
     setError(phoneInput, phoneError, '');
     return true;
   }
+  // Common domain typos. A suggestion, never a block: someone can really be on a .co address.
+  const EMAIL_TYPOS = {
+    'gmail.co':'gmail.com','gmail.con':'gmail.com','gmail.cm':'gmail.com','gmial.com':'gmail.com','gmal.com':'gmail.com','gamil.com':'gmail.com','gmail.comm':'gmail.com','gnail.com':'gmail.com',
+    'yahoo.co':'yahoo.com','yahoo.con':'yahoo.com','yaho.com':'yahoo.com',
+    'hotmail.co':'hotmail.com','hotmail.con':'hotmail.com','hotmial.com':'hotmail.com',
+    'outlook.co':'outlook.com','outlook.con':'outlook.com','icloud.co':'icloud.com'
+  };
+  const emailSuggest = document.getElementById('email-suggest');
+  function emailSuggestion(v){
+    const m = String(v || '').trim().toLowerCase().match(/^([^@]+)@([^@]+)$/);
+    if (!m) return null;
+    const fix = EMAIL_TYPOS[m[2]];
+    return fix ? m[1] + '@' + fix : null;
+  }
+  function showEmailSuggestion(){
+    const fix = emailSuggestion(emailInput.value);
+    if (!fix){ emailSuggest.classList.remove('show'); emailSuggest.innerHTML = ''; return; }
+    emailSuggest.innerHTML = 'Did you mean <a href="#" class="email-fix">' + fix + '</a>?';
+    emailSuggest.classList.add('show');
+    emailSuggest.querySelector('.email-fix').addEventListener('click', (e) => {
+      e.preventDefault(); emailInput.value = fix; emailSuggest.classList.remove('show'); emailSuggest.innerHTML = '';
+      validateEmail();
+    });
+  }
+
   function validateEmail(){
     const val = emailInput.value.trim();
+    showEmailSuggestion();
     // Email is required for a booking. The waitlist opt-in skips this validator.
     if (!val){
       setError(emailInput, emailError, 'Please enter your email.');
@@ -1483,41 +1515,95 @@
     const email = emailInput.value.trim();
     const ownHandpanCountValue = bringingOwnHandpan !== 'Yes' ? 0
       : (pCount <= 1 ? 1 : ownHandpanCount);
-    payBtn.disabled = true;
-    loadingOverlay.style.display = 'flex';
-    try {
-      const res = await fetch(API_BASE + '/api/create-payment-link', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          workshopId,
-          participants: pCount,
-          observers: oCount,
-          name, phone, email: email || null,
-          guestNames: guestNames.map(n => n.trim()).filter(n => n.length > 0),
-          ownHandpanCount: ownHandpanCountValue,
-          bringingOwnHandpan
-        })
-      });
-      const data = await res.json();
-      if (res.status === 409){
-        alert("Sorry, those spots just got booked by someone else. Please refresh and try again with a smaller number of spots.");
-        loadingOverlay.style.display = 'none';
-        payBtn.disabled = false;
-        payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
-        loadWorkshop();
-        return;
-      }
-      if (data.short_url){
-        window.location.href = data.short_url;
-      } else {
-        throw new Error('No payment link returned');
-      }
-    } catch (err){
-      alert('Something went wrong creating your payment link. Please try again or contact us directly.');
+    const bookingBody = {
+      workshopId,
+      participants: pCount,
+      observers: oCount,
+      name, phone, email: email || null,
+      guestNames: guestNames.map(n => n.trim()).filter(n => n.length > 0),
+      ownHandpanCount: ownHandpanCountValue,
+      bringingOwnHandpan
+    };
+    const total = pCount * participantPrice + oCount * (observerPrice || 0);
+    const resetBtn = () => {
       loadingOverlay.style.display = 'none';
       payBtn.disabled = false;
       payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+    };
+    const handleSpotsGone = () => {
+      alert("Sorry, those spots just got booked by someone else. Please refresh and try again with a smaller number of spots.");
+      resetBtn();
+      loadWorkshop();
+    };
+
+    payBtn.disabled = true;
+    loadingOverlay.style.display = 'flex';
+
+    // Razorpay Checkout opens as a popup right here, with the details from
+    // the form prefilled. The webhook still does the real bookkeeping; the
+    // handler below only switches the page to its booked state. If
+    // checkout.js did not load (blocked script, flaky network), fall back to
+    // the hosted Payment Link so nobody is stuck.
+    if (typeof Razorpay !== 'function'){
+      try {
+        const res = await fetch(API_BASE + '/api/create-payment-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bookingBody)
+        });
+        const data = await res.json();
+        if (res.status === 409){ handleSpotsGone(); return; }
+        if (data.short_url){ window.location.href = data.short_url; return; }
+        throw new Error('No payment link returned');
+      } catch (err){
+        alert('Something went wrong starting your payment. Please try again or contact us directly.');
+        resetBtn();
+      }
+      return;
+    }
+
+    try {
+      const res = await fetch(API_BASE + '/api/create-booking-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingBody)
+      });
+      const data = await res.json();
+      if (res.status === 409){ handleSpotsGone(); return; }
+      if (!res.ok || !data.orderId) throw new Error(data.error || 'No order returned');
+
+      loadingOverlay.style.display = 'none';
+      const rzp = new Razorpay({
+        key: data.keyId,
+        amount: data.amount,
+        currency: data.currency,
+        order_id: data.orderId,
+        name: 'Arpit Pandey',
+        description: data.description,
+        image: 'https://arpitpandey.com/android-chrome-192x192.png',
+        prefill: { name: data.name, email: data.email, contact: data.phone },
+        notes: data.notes,
+        theme: { color: '#500018' },
+        retry: { enabled: true },
+        modal: { ondismiss: function(){ resetBtn(); } },
+        handler: function(resp){
+          const pid = resp.razorpay_payment_id || '';
+          try {
+            if (window.fbq && !sessionStorage.getItem('purchase_' + pid)){
+              fbq('track', 'Purchase', { content_name: 'Handpan workshop', value: total, currency: 'INR' });
+              sessionStorage.setItem('purchase_' + pid, '1');
+            }
+          } catch (e) {}
+          showSuccess(pid);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+      rzp.on('payment.failed', function(){ resetBtn(); });
+      rzp.open();
+    } catch (err){
+      console.error(err);
+      alert((err && err.message && !/HTTP|order/i.test(err.message)) ? err.message : 'Something went wrong starting your payment. Please try again or contact us directly.');
+      resetBtn();
     }
   });
 
@@ -1609,7 +1695,7 @@
     bookingUnavailable.style.display = '';
   }
 
-  function showSuccess(){
+  function showSuccess(paymentId){
     heroMeta.style.display = 'none';
     countdownEnabled = false;
     countdownEl.style.display = 'none';
@@ -1621,6 +1707,9 @@
     aboutSection.style.display = 'none';
     goodToKnowSection.style.display = 'none';
     bookingSuccess.style.display = '';
+    const successRef = document.getElementById('success-ref');
+    const pid = paymentId || new URLSearchParams(window.location.search).get('razorpay_payment_id');
+    if (pid){ successRef.textContent = 'Payment reference: ' + pid; successRef.style.display = ''; }
   }
 
   successRebookBtn.addEventListener('click', () => {
