@@ -2596,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v65</span>
+        <span style="color:var(--clay);font-weight:500;">v66</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2664,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v65</span>
+        <span style="color:var(--clay);font-weight:500;">v66</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -9356,6 +9356,7 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
   const CHECK_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>`;
   const CANCEL_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
   const UNDO_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M3.51 13a9 9 0 1 0 2.13-9.36L3 7"/></svg>`;
+  const LINK_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
   const wsCancelled = type === 'workshop' && !!((window._cachedWorkshops || []).find(w => w.id === id) || {}).cancelled;
 
   let html = '';
@@ -9372,7 +9373,7 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
     html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('participants','${id}')">${EDIT_SVG} Edit</button>`;
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('participants','${id}','${name}')">${TRASH_SVG} Delete</button>`;
   } else if (type === 'student') {
-    if (isAdmin) html += `<button class="m-dots-item" onclick="closeMDotsSheet();openRequestFee('${id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Request fee</button>`;
+    if (isAdmin) html += `<button class="m-dots-item" onclick="closeMDotsSheet();openRequestFee('${id}')">${LINK_SVG} Request fee</button>`;
     html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('students','${id}')">${EDIT_SVG} Edit</button>`;
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('students','${id}','${name}')">${TRASH_SVG} Delete</button>`;
   } else if (type === 'fee_payment') {
@@ -9405,6 +9406,7 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
         actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('participants', id) });
         actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('participants', id, name) });
       } else if (type === 'student') {
+        if (isAdmin) actions.push({ label: `${LINK_SVG} Request fee`, danger: false, fn: () => openRequestFee(id) });
         actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('students', id) });
         actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('students', id, name) });
       } else if (type === 'fee_payment') {
