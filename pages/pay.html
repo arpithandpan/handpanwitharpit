@@ -234,6 +234,13 @@
   }
   @media (hover:hover) and (pointer:fine){ .success-instagram-btn:hover{ background:var(--maroon-deep); } }
   .success-instagram-btn svg{ width:18px; height:18px; }
+  .success-email{ color:var(--text-dark); font-weight:500; word-break:break-word; }
+  .success-support{
+    width:100%; font-size:13.5px; color:var(--text-light); line-height:1.6;
+    text-align:center; margin-top:0.25rem;
+  }
+  .success-support a{ color:var(--maroon); text-decoration:none; font-weight:500; }
+  @media (hover:hover) and (pointer:fine){ .success-support a:hover{ text-decoration:underline; } }
 
   /* UNAVAILABLE */
   .unavailable{ text-align:center; padding:1rem 0; display:flex; flex-direction:column; align-items:center; gap:1rem; }
@@ -334,8 +341,9 @@
       <div class="success-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg></div>
       <h3 class="success-heading" id="success-heading">Payment received</h3>
       <div class="success-summary" id="success-summary" style="display:none;"></div>
-      <p class="success-text" id="success-text">Thank you! Your invoice is on its way to your email. Arpit will message you shortly to set up your class schedule.</p>
+      <p class="success-text" id="success-text">Your invoice is on its way to <span id="success-email" class="success-email">your email</span>. It usually arrives within a minute. If you don't see it, check your Spam or Promotions folder.</p>
       <div class="success-ref" id="success-ref" style="display:none;"></div>
+      <p class="success-support">Something not right? WhatsApp Arpit at <a href="https://wa.me/919019576583" target="_blank" rel="noopener">+91 90195 76583</a></p>
       <div class="success-instagram">
         <p class="success-instagram-caption">Follow Arpit for more handpan content</p>
         <a href="https://instagram.com/pandeyarpit" target="_blank" rel="noopener" class="success-instagram-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4m0 4a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z"/><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M16.5 7.5l0 .01"/></svg> @pandeyarpit</a>
@@ -367,7 +375,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v4)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v5)</span>
   </footer>
 </div>
 
@@ -629,6 +637,16 @@
     if (alreadyPaid){
       successHeading.textContent = 'This fee is already paid';
       successText.textContent = 'Nothing more to do here. If you were expecting a new payment link, message Arpit and he\'ll send a fresh one.';
+    } else {
+      const emailToShow = ((fEmail && fEmail.value) || (fee && fee.email) || '').trim();
+      const emailSpan = document.getElementById('success-email');
+      if (emailSpan){
+        if (emailToShow){
+          emailSpan.textContent = emailToShow;
+        } else {
+          successText.textContent = 'Your invoice is on its way. It usually arrives within a minute. If you don\'t see it, check your Spam or Promotions folder.';
+        }
+      }
     }
     const pid = paymentId || params.get('razorpay_payment_id');
     if (pid){
