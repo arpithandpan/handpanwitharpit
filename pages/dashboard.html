@@ -2596,7 +2596,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v66</span>
+        <span style="color:var(--clay);font-weight:500;">v67</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2664,7 +2664,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v66</span>
+        <span style="color:var(--clay);font-weight:500;">v67</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4435,6 +4435,20 @@ function invOpenPdfBlob(blob, title) {
   setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 
+// Bin tables — declared up here so loadBin/loadBinCount can run from the
+// init block below; a const declared further down would still be in its
+// temporal dead zone at that point and throw a ReferenceError.
+const BIN_TABLES = [
+  { key: 'workshops', label: 'Workshop', nameField: 'venue' },
+  { key: 'participants', label: 'Participant', nameField: 'full_name' },
+  { key: 'students', label: 'Student', nameField: 'full_name' },
+  { key: 'payments', label: 'Payment', nameField: 'payer_name' },
+  { key: 'leads', label: 'Lead', nameField: 'full_name' },
+  { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' },
+  { key: 'workshop_waitlist', label: 'Waitlist Signup', nameField: 'full_name' },
+  { key: 'invoices', label: 'Invoice', nameField: 'billed_name' }
+];
+
 const SB_HEADERS = {
   'Content-Type': 'application/json',
   'apikey': SUPABASE_KEY,
@@ -5345,8 +5359,7 @@ window.addEventListener('resize', function() {
 
 // ── LOAD ──
 function loadAll() {
-  const _saved = sessionStorage.getItem('dash_section') || 'overview';
-  const saved = _saved === 'bin' ? 'overview' : _saved;
+  const saved = sessionStorage.getItem('dash_section') || 'overview';
   // Immediately activate the correct section before loadSection fires
   // to prevent the Overview flash on refresh
   if (saved !== 'overview') {
@@ -7723,17 +7736,6 @@ async function wakeUpServer() {
 }
 
 // ── BIN ──
-const BIN_TABLES = [
-  { key: 'workshops', label: 'Workshop', nameField: 'venue' },
-  { key: 'participants', label: 'Participant', nameField: 'full_name' },
-  { key: 'students', label: 'Student', nameField: 'full_name' },
-  { key: 'payments', label: 'Payment', nameField: 'payer_name' },
-  { key: 'leads', label: 'Lead', nameField: 'full_name' },
-  { key: 'fee_payments', label: 'Fee Payment', nameField: 'student_name' },
-  { key: 'workshop_waitlist', label: 'Waitlist Signup', nameField: 'full_name' },
-  { key: 'invoices', label: 'Invoice', nameField: 'billed_name' }
-];
-
 let _binManualRefresh = false;
 async function loadBin(manual) {
   if (manual) _binManualRefresh = true;
@@ -8046,13 +8048,6 @@ function showToast(msg, type) {
 }
 
 
-
-if (sessionStorage.getItem('dash_auth') === '1') {
-  currentRole = sessionStorage.getItem('dash_role') || 'admin';
-  loadAll();
-  loadBinCount();
-  applyRole();
-}
 
 // ── PREVENT FORM PAGE DRAG ──
 document.addEventListener('touchmove', function(e) {
