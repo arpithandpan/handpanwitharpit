@@ -5345,7 +5345,8 @@ window.addEventListener('resize', function() {
 
 // ── LOAD ──
 function loadAll() {
-  const saved = sessionStorage.getItem('dash_section') || 'overview';
+  const _saved = sessionStorage.getItem('dash_section') || 'overview';
+  const saved = _saved === 'bin' ? 'overview' : _saved;
   // Immediately activate the correct section before loadSection fires
   // to prevent the Overview flash on refresh
   if (saved !== 'overview') {
