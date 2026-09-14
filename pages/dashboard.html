@@ -970,7 +970,7 @@ textarea.form-input {
 .form-input[type="number"] { -moz-appearance: textfield; }
 /* Hide native selects - replaced by custom */
 select.form-input { display: none; }
-select.form-input.native-select { display: block; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c8935a' stroke-width='2.5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.7rem center; padding-right: 2rem; }
+select.form-input.native-select { display: block !important; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c8935a' stroke-width='2.5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.7rem center; padding-right: 2rem; }
 
 /* ── CUSTOM DATE PICKER ── */
 .date-picker-wrap { position: relative; width: 100%; }
@@ -8362,7 +8362,7 @@ function selectCC(dial, flag, btnId, ccId, prefixId) {
   // Auto-set currency and country on student forms
   if (ccId === 'stu-phone-cc' || ccId === 'ef-stu-phone-cc') {
     const curSel = document.getElementById('stu-currency');
-    if (curSel) { curSel.value = dialToCurrency(dial); delete curSel.dataset.customized; const w = curSel.nextElementSibling; if (w && w.classList.contains('form-select-wrap')) w.remove(); }
+    if (curSel) { curSel.value = dialToCurrency(dial); }
     const countryEl = document.getElementById('stu-country');
     if (countryEl) countryEl.value = dialToCountry(dial);
   }
@@ -9910,6 +9910,7 @@ window.addEventListener('scroll', () => {
 // ── CUSTOM FORM SELECTS ──
 function makeFormSelect(nativeSelect) {
   if (!nativeSelect || nativeSelect.dataset.customized) return;
+  if (nativeSelect.classList.contains('native-select')) return;
   nativeSelect.dataset.customized = '1';
 
   // Derive a stable label for the mobile picker title from the preceding <label class="form-label">
