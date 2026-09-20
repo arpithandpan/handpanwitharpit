@@ -81,7 +81,7 @@
     font-family:'Fraunces', serif; font-weight:900; font-size:34px; line-height:1.2; color:var(--ivory);
     letter-spacing:0.005em; margin:0;
   }
-  .hero h1 em{ font-style:italic; font-weight:400; color:#EAD9CF; display:block; }
+  .hero h1 em{ font-style:italic; font-weight:400; color:#EAD9CF; display:block; overflow-wrap:anywhere; }
   .details-section{
     position:relative; padding-top:1.2rem;
     display:flex; flex-direction:column; gap:9px;
@@ -375,7 +375,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v5)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v6)</span>
   </footer>
 </div>
 
@@ -599,8 +599,8 @@
     const num = Number(amount).toLocaleString(c.locale, { maximumFractionDigits: 0 });
     return c.symbol + num;
   }
-  function firstName(full){
-    return (full || '').trim().split(/\s+/)[0] || '';
+  function fullName(full){
+    return (full || '').trim().replace(/\s+/g, ' ');
   }
 
   // ── STATES ──
@@ -622,7 +622,7 @@
     wrap.classList.add('is-success');
     if (fee){
       heroProgram.textContent = 'Handpan classes';
-      heroFor.textContent = 'for ' + firstName(fee.name);
+      heroFor.textContent = 'for ' + fullName(fee.name);
       successSummary.textContent = fee.label + ' · ' + fmtAmount(fee.amount, fee.currency) + ' ' + fee.currency;
       successSummary.style.display = '';
     } else {
@@ -661,7 +661,7 @@
     if (firstRender){ firstRender = false; requestAnimationFrame(forceTop); }
     const name = fee.name || 'Student';
     heroProgram.textContent = 'Handpan classes';
-    heroFor.textContent = 'for ' + firstName(name);
+    heroFor.textContent = 'for ' + fullName(name);
     heroStudent.textContent = name;
     heroLevel.textContent = fee.level ? fee.level + ' level' : 'Personalised to your level';
     incSessions.textContent = fee.classes === 1
