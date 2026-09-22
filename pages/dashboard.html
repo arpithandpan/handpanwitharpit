@@ -2597,7 +2597,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v85</span>
+        <span style="color:var(--clay);font-weight:500;">v86</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2665,7 +2665,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v85</span>
+        <span style="color:var(--clay);font-weight:500;">v86</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -8363,9 +8363,10 @@ function selectCC(dial, flag, btnId, ccId, prefixId) {
   closeAllCCPickers();
   // Auto-set currency and country on student forms
   if (ccId === 'stu-phone-cc' || ccId === 'ef-stu-phone-cc') {
-    const curSel = document.getElementById('stu-currency');
+    const pfx = ccId === 'ef-stu-phone-cc' ? 'ef-' : '';
+    const curSel = document.getElementById(pfx + 'stu-currency');
     if (curSel) { curSel.value = dialToCurrency(dial); }
-    const countryEl = document.getElementById('stu-country');
+    const countryEl = document.getElementById(pfx + 'stu-country');
     if (countryEl) countryEl.value = dialToCountry(dial);
   }
 }
@@ -8769,12 +8770,12 @@ function buildEditForm(entity, r) {
           fi('Start Date','stu-start','date',r.join_date))}
     <div class="form-group"><label class="form-label">Fee plan</label>
       <div style="display:flex;gap:0;">
-        <select class="form-input native-select" id="stu-basis" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:130px;"><option value="month" ${r.fee_basis==='month'?'selected':''}>Per month</option><option value="session" ${r.fee_basis==='session'?'selected':''}>Per session</option><option value="course" ${r.fee_basis==='course'?'selected':''}>Per course</option></select>
-        <select class="form-input native-select" id="stu-currency" data-customized="1" style="border-radius:0;border-right:none;max-width:90px;"><option value="INR" ${(r.currency||'INR')==='INR'?'selected':''}>INR</option><option value="USD" ${r.currency==='USD'?'selected':''}>USD</option><option value="EUR" ${r.currency==='EUR'?'selected':''}>EUR</option><option value="GBP" ${r.currency==='GBP'?'selected':''}>GBP</option><option value="CHF" ${r.currency==='CHF'?'selected':''}>CHF</option><option value="AUD" ${r.currency==='AUD'?'selected':''}>AUD</option><option value="SGD" ${r.currency==='SGD'?'selected':''}>SGD</option><option value="AED" ${r.currency==='AED'?'selected':''}>AED</option></select>
-        <input type="number" class="form-input" id="stu-fee" value="${r.monthly_fee||0}" style="border-radius:0 8px 8px 0;"/>
+        <select class="form-input native-select" id="ef-stu-basis" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:130px;"><option value="month" ${r.fee_basis==='month'?'selected':''}>Per month</option><option value="session" ${r.fee_basis==='session'?'selected':''}>Per session</option><option value="course" ${r.fee_basis==='course'?'selected':''}>Per course</option></select>
+        <select class="form-input native-select" id="ef-stu-currency" data-customized="1" style="border-radius:0;border-right:none;max-width:90px;"><option value="INR" ${(r.currency||'INR')==='INR'?'selected':''}>INR</option><option value="USD" ${r.currency==='USD'?'selected':''}>USD</option><option value="EUR" ${r.currency==='EUR'?'selected':''}>EUR</option><option value="GBP" ${r.currency==='GBP'?'selected':''}>GBP</option><option value="CHF" ${r.currency==='CHF'?'selected':''}>CHF</option><option value="AUD" ${r.currency==='AUD'?'selected':''}>AUD</option><option value="SGD" ${r.currency==='SGD'?'selected':''}>SGD</option><option value="AED" ${r.currency==='AED'?'selected':''}>AED</option></select>
+        <input type="number" class="form-input" id="ef-stu-fee" value="${r.monthly_fee||0}" style="border-radius:0 8px 8px 0;"/>
       </div>
     </div>
-    <input type="hidden" id="stu-country" value="${r.country||''}"/>
+    <input type="hidden" id="ef-stu-country" value="${r.country||''}"/>
     ${sel('Level','stu-level',[['Beginner','Beginner'],['Intermediate','Intermediate'],['Advanced','Advanced']],r.level)}
     ${fi('Payer Name','stu-payer','text',r.payer_name||'','maxlength="80"')}
     ${fi('Description','stu-desc','textarea',r.description)}
@@ -8853,7 +8854,7 @@ async function saveEdit() {
       }
     } else if (_editEntity === 'students') {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((g('stu-email')||'').trim())) { markFieldError('stu-email'); showToast('A valid email is required, invoices are sent there', 'error'); return; }
-      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:(g('stu-email')||'').trim(), status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, fee_basis:document.getElementById('stu-basis')?.value||'month', currency:(document.getElementById('stu-currency')?.value||'INR').toUpperCase(), country:(document.getElementById('stu-country')?.value||'').trim()||null, payer_name:g('stu-payer')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
+      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:(g('stu-email')||'').trim(), status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, fee_basis:g('stu-basis')||'month', currency:(g('stu-currency')||'INR').toUpperCase(), country:(g('stu-country')||'').trim()||null, payer_name:g('stu-payer')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
     } else if (_editEntity === 'fee_payments') {
       const _settledEl = document.getElementById('fee-settled-inr');
       body = { month:normMonth(g('fee-month'))||null, classes:gn('fee-classes')||0, amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', description:g('fee-desc')||null, settled_inr: _settledEl ? (parseFloat(_settledEl.value) || null) : null };
