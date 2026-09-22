@@ -375,7 +375,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v6)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v7)</span>
   </footer>
 </div>
 
@@ -590,13 +590,16 @@
   const CURRENCY = {
     INR: { symbol: '₹', locale: 'en-IN', methods: ['UPI', 'Cards', 'Net banking'] },
     USD: { symbol: '$', locale: 'en-US', methods: ['Visa', 'Mastercard', 'Amex'] },
+    AUD: { symbol: 'A$', locale: 'en-AU', methods: ['Visa', 'Mastercard'] },
+    SGD: { symbol: 'S$', locale: 'en-SG', methods: ['Visa', 'Mastercard'] },
+    AED: { symbol: 'AED ', locale: 'en-AE', methods: ['Visa', 'Mastercard'] },
     EUR: { symbol: '€', locale: 'de-DE', methods: ['Visa', 'Mastercard'] },
     GBP: { symbol: '£', locale: 'en-GB', methods: ['Visa', 'Mastercard'] },
     CHF: { symbol: 'CHF ', locale: 'de-CH', methods: ['Visa', 'Mastercard'] }
   };
   function fmtAmount(amount, currency){
     const c = CURRENCY[currency] || { symbol: currency + ' ', locale: 'en-US' };
-    const num = Number(amount).toLocaleString(c.locale, { maximumFractionDigits: 0 });
+    const num = Number(amount).toLocaleString(c.locale, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
     return c.symbol + num;
   }
   function fullName(full){
@@ -719,6 +722,7 @@
         body: JSON.stringify({ requestId, phone, email })
       });
       const data = await res.json();
+      if (res.status === 409){ loadingOverlay.style.display = 'none'; fee.status = 'paid'; showSuccess(null, true); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
       if (!res.ok || !data.orderId) throw new Error(data.error || 'No order returned');
       try { sessionStorage.setItem('pending_fee', JSON.stringify({ amount: fee.amount, currency: fee.currency })); } catch (e) {}
       loadingOverlay.style.display = 'none';

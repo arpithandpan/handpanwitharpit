@@ -2597,7 +2597,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v86</span>
+        <span style="color:var(--clay);font-weight:500;">v87</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2665,7 +2665,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v86</span>
+        <span style="color:var(--clay);font-weight:500;">v87</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3766,6 +3766,14 @@ table#paymentsTable { min-width: 700px; }
         <div class="form-group"><label class="form-label">Address / City</label><input type="text" class="form-input" id="inv-city" placeholder="Address or city (optional)"/></div>
       </div>
       <div class="form-row">
+        <div class="form-group"><label class="form-label">Country</label><input type="text" class="form-input" id="inv-country" placeholder="Leave blank for India"/></div>
+        <div class="form-group"><label class="form-label">Currency</label>
+          <select class="form-input" id="inv-currency" onchange="invSetCurrency(this.value)">
+            <option value="INR">INR (₹)</option><option value="USD">USD ($)</option><option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option>
+            <option value="CHF">CHF</option><option value="AUD">AUD (A$)</option><option value="SGD">SGD (S$)</option><option value="AED">AED</option>
+          </select></div>
+      </div>
+      <div class="form-row">
         <div class="form-group"><label class="form-label">Company</label><input type="text" class="form-input" id="inv-company" maxlength="80" placeholder="For corporate invoices (optional)"/></div>
         <div class="form-group"><label class="form-label">GSTIN</label><input type="text" class="form-input" id="inv-gstin" maxlength="15" oninput="this.value=this.value.toUpperCase()" placeholder="Customer GSTIN (optional)"/></div>
       </div>
@@ -4160,6 +4168,7 @@ table#paymentsTable { min-width: 700px; }
           <select class="form-input" id="fr-currency">
             <option value="INR">INR (₹)</option><option value="USD">USD ($)</option>
             <option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option><option value="CHF">CHF</option>
+            <option value="AUD">AUD (A$)</option><option value="SGD">SGD (S$)</option><option value="AED">AED</option>
           </select></div>
         <div class="form-group"><label class="form-label">Classes&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
           <input type="number" class="form-input" id="fr-classes" placeholder="e.g. 4" min="1" step="1" oninput="frUpdatePreview()"/></div>
@@ -4776,7 +4785,7 @@ const FORM_FIELDS = {
   addPayment:     ['pay-date','pay-amount','pay-name','pay-desc','pay-ref'],
   addLead:        ['lead-name','lead-phone','lead-email','lead-desc','lead-maker-amt'],
   addWorkshop:    ['ws-date','ws-venue','ws-price','ws-venue-rent','ws-hp-rent','ws-porter','ws-misc','ws-ads','ws-time','ws-observer-price','ws-cap-participant','ws-cap-observer','ws-venue-map'],
-  addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-desc'],
+  addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-desc','stu-fee','stu-payer'],
   addFeePayment:  ['fee-amount','fee-desc'],
   requestFee:     ['fr-classes','fr-amount','fr-note'],
   addParticipant:  ['par-name','par-phone','par-amount','par-date','par-desc'],
@@ -4831,7 +4840,14 @@ function resetForm(formName) {
   });
   // Also clear auto-filled IDs so they regenerate next open
   if (formName === 'addWorkshop') { const el = document.getElementById('ws-id'); if (el) el.value = ''; }
-  if (formName === 'addStudent') { const el = document.getElementById('stu-id'); if (el) el.value = ''; }
+  if (formName === 'addStudent') {
+    const el = document.getElementById('stu-id'); if (el) el.value = '';
+    // Hidden state set by the flag picker must not leak into the next student.
+    const set = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+    set('stu-country', 'India'); set('stu-phone-cc', '+91'); set('stu-phone-prefix', '+91'); set('stu-currency', 'INR'); set('stu-basis', 'month');
+    const btn = document.getElementById('stu-phone-cc-btn'); if (btn) btn.textContent = '🇮🇳';
+    ['stu-currency','stu-basis'].forEach(id => { const e = document.getElementById(id); if (e && e.dispatchEvent) e.dispatchEvent(new Event('change')); });
+  }
 }
 let _customConfirmResolve = null;
 function customConfirm(title, desc, okLabel = 'Confirm') {
@@ -5201,6 +5217,9 @@ async function openFormPage(name) {
     setLeadTab('manual');
     onLeadBoughtChange();
   } else if (name === 'addFeePayment') {
+    { const n = new Date(); const fm = document.getElementById('fee-month-m'), fy = document.getElementById('fee-month-y');
+      if (fm) fm.value = String(n.getMonth() + 1).padStart(2, '0');
+      if (fy) { const yv = String(n.getFullYear()); if ([...fy.options].some(o => o.value === yv)) fy.value = yv; } }
     await populateStudentDropdown('fee-student');
     const sel = document.getElementById('fee-student');
     if (sel) {
@@ -6004,11 +6023,11 @@ function feeStudentDisplay(f) {
 // The page reads the row through the Railway server; the Razorpay webhook
 // marks it paid and creates the matching fee_payments row.
 const FEE_REQUEST_PAGE = 'https://arpitpandey.com/pages/pay?r=';
-const FR_SYMBOL = { INR: '₹', USD: '$', EUR: '€', GBP: '£', CHF: 'CHF ' };
+const FR_SYMBOL = { INR: '₹', USD: '$', EUR: '€', GBP: '£', CHF: 'CHF ', AUD: 'A$', SGD: 'S$', AED: 'AED ' };
 function frFmt(amount, currency) {
   const c = (currency || 'INR').toUpperCase();
   const loc = c === 'INR' ? 'en-IN' : 'en-US';
-  return (FR_SYMBOL[c] || (c + ' ')) + Number(amount || 0).toLocaleString(loc, { maximumFractionDigits: 0 });
+  return (FR_SYMBOL[c] || (c + ' ')) + Number(amount || 0).toLocaleString(loc, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 }
 function feeRequestLink(id) { return FEE_REQUEST_PAGE + encodeURIComponent(id); }
 // 'YYYY-MM' → 'September 2026'
@@ -6063,11 +6082,12 @@ async function openRequestFee(studentId) {
   frFillMonths();
   document.getElementById('fr-classes').value = '';
   document.getElementById('fr-amount').value = '';
-  document.getElementById('fr-amount').placeholder = stu.monthly_fee ? ('e.g. ' + stu.monthly_fee + ' (monthly fee)') : 'e.g. 4000';
+  document.getElementById('fr-amount').placeholder = stu.monthly_fee ? ('e.g. ' + stu.monthly_fee + (stu.fee_basis === 'session' ? ' per class, enter the total' : stu.fee_basis === 'course' ? ' (course fee)' : ' (monthly fee)')) : 'e.g. 4000';
   document.getElementById('fr-note').value = '';
   updateCharCount('fr-note', 'fr-note-count', 80);
   const curSel = document.getElementById('fr-currency');
   curSel.value = (stu.currency || 'INR').toUpperCase();
+  if (!curSel.value) { curSel.value = 'INR'; showToast('This student\'s currency (' + stu.currency + ') is not in the list. Request set to INR, please check.', 'error'); }
   const wrap = curSel.nextElementSibling;
   if (wrap && wrap.classList.contains('form-select-wrap')) wrap.remove();
   delete curSel.dataset.customized;
@@ -6401,7 +6421,7 @@ function invDataFromRow(r) {
     billed: { name: r.billed_name || '', email: r.billed_email || '', city: r.billed_city || '', phone: r.billed_phone || '' },
     pan: r.pan || '',
     payment: { date: r.payment_received_date || '', mode: r.payment_mode || '', ref: r.payment_reference || '' },
-    lines, total: Number(r.total_amount) || 0, words: r.amount_in_words || invAmountInWords(r.total_amount),
+    lines, total: Number(r.total_amount) || 0, words: r.amount_in_words || invAmountInWords(r.total_amount, r.currency),
     cancelled: !!r.cancelled, cancelledAt: (r.cancelled_at || '').slice(0,10),
     title: no + '_' + nameSlug
   };
@@ -6476,7 +6496,7 @@ function invRenderInvoices() {
         : `<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;"><div style="display:flex;align-items:center;gap:8px;"><label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="font-size:0.78rem;color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':(inv.email_error?'Failed':'Not sent')}</span>${(!inv.sent&&inv.email_error)?`<span class="inv-fail-dot" title="${String(inv.email_error).replace(/"/g,'&quot;')}"></span>`:''}</div>${inv.sent&&inv.sent_at?`<span style="font-size:0.7rem;color:var(--text-light);">${fmtDate(inv.sent_at)}</span>`:''}</div>`;
       const cancelBtn = canc ? `<button class="icon-action-btn" data-tip="Reinstate invoice" onclick="invReinstate('${inv.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg></button>` : `<button class="icon-action-btn" data-tip="Cancel invoice" onclick="invCancelAsk('${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>`;
       const emailDim = canc ? ' inv-dim' : '';
-      return `<tr class="${canc?'inv-row-cancelled':''}" data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="invoices" data-id="'+inv.id+'" data-name="'+(inv.billed_name||inv.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span>${inv.auto_generated?'<span class="inv-auto-badge" title="Created and emailed automatically after payment">Auto</span>':''}</td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmt(inv.total_amount)}</td><td>${statusCell}</td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button><button class="icon-action-btn${emailDim}" data-tip="Email to customer" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">${MAIL}</button>${cancelBtn}${isAdmin()?`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"/><path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2\"/></svg></button>`:''}</div></td></tr>`;
+      return `<tr class="${canc?'inv-row-cancelled':''}" data-billed_name="${nm}" data-invoice_no="${invFmtNo(inv.invoice_number)}" data-billed_email="${(inv.billed_email||'').replace(/"/g,'&quot;')}"><td class="cb-td">${cbBox('row-select-cb row-cb','data-table="invoices" data-id="'+inv.id+'" data-name="'+(inv.billed_name||inv.id).replace(/"/g,'&quot;')+'" onchange="onRowCbChange(this)"')}</td><td><span style="font-weight:500;color:var(--clay);">${invFmtNo(inv.invoice_number)}</span>${inv.auto_generated?'<span class="inv-auto-badge" title="Created and emailed automatically after payment">Auto</span>':''}</td><td class="td-truncate td-name" data-tip="${nm}">${inv.billed_name || '—'}</td><td>${fmtDate(inv.invoice_date)}</td><td style="text-align:right;">${fmtMoney(inv.total_amount, inv.currency)}</td><td>${statusCell}</td><td class="ws-action-sticky"><div class="action-wrap"><button class="icon-action-btn" data-tip="View / download" onclick="openInvoicePreview('${inv.id}')">${DL}</button><button class="icon-action-btn${emailDim}" data-tip="Email to customer" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">${MAIL}</button>${cancelBtn}${isAdmin()?`<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"/><path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2\"/></svg></button>`:''}</div></td></tr>`;
     }).join('') || `<tr><td colspan="7" style="text-align:center;padding:3rem 1rem;">${EMPTY_STATES.invoices}</td></tr>`;
 
     const _t = document.getElementById('invoicesTable');
@@ -6494,7 +6514,7 @@ function invRenderInvoices() {
     }
 
     const cards = document.getElementById('invoicesCards');
-    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card${inv.cancelled?' inv-card-cancelled':''}" id="icard-${inv.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;"><label class="cb-box"><input type="checkbox" class="row-select-cb row-cb" data-table="invoices" data-id="${inv.id}" data-name="${(inv.billed_name||inv.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('icard-'+inv.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span>${inv.auto_generated?'<span class="inv-auto-badge">Auto</span>':''}</div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmt(inv.total_amount)}</span></div><div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val" style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">${inv.cancelled?`<span class="inv-cancelled-badge">Cancelled</span>${inv.cancelled_at?` <span style="color:var(--text-light);font-size:0.72rem;">on ${fmtDate(inv.cancelled_at)}</span>`:''}`:`<label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${fmtDate(inv.sent_at)}`:''}</span>`}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${inv.cancelled?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invReinstate('${inv.id}')">Reinstate</button>`:''}${(!inv.cancelled && isAdmin())?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invCancelAsk('${inv.id}','${invFmtNo(inv.invoice_number)}')">Cancel</button>`:''}${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || ('<div class="mobile-cards-empty">' + (invAllCache.length > 0 ? '<div class="empty-state"><div class="empty-state-title">No invoices match these filters</div><div class="empty-state-text">Try a different date range or status, or clear the filters.</div></div>' : EMPTY_STATES.invoices) + '</div>');
+    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card${inv.cancelled?' inv-card-cancelled':''}" id="icard-${inv.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;"><label class="cb-box"><input type="checkbox" class="row-select-cb row-cb" data-table="invoices" data-id="${inv.id}" data-name="${(inv.billed_name||inv.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('icard-'+inv.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span>${inv.auto_generated?'<span class="inv-auto-badge">Auto</span>':''}</div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmtMoney(inv.total_amount, inv.currency)}</span></div><div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val" style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">${inv.cancelled?`<span class="inv-cancelled-badge">Cancelled</span>${inv.cancelled_at?` <span style="color:var(--text-light);font-size:0.72rem;">on ${fmtDate(inv.cancelled_at)}</span>`:''}`:`<label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${fmtDate(inv.sent_at)}`:''}</span>`}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${inv.cancelled?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invReinstate('${inv.id}')">Reinstate</button>`:''}${(!inv.cancelled && isAdmin())?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invCancelAsk('${inv.id}','${invFmtNo(inv.invoice_number)}')">Cancel</button>`:''}${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || ('<div class="mobile-cards-empty">' + (invAllCache.length > 0 ? '<div class="empty-state"><div class="empty-state-title">No invoices match these filters</div><div class="empty-state-text">Try a different date range or status, or clear the filters.</div></div>' : EMPTY_STATES.invoices) + '</div>');
 }
 // ── INVOICES: EDITOR + GENERATION ──
 const INV_BIZ = {
@@ -6524,7 +6544,11 @@ function invMonthLabel(m) {
   if (mm) { const dt = new Date(Number(mm[1]), Number(mm[2])-1, 1); return dt.toLocaleDateString('en-GB',{month:'long',year:'numeric'}); }
   return m;
 }
-function invINR(n) { return Number(n||0).toLocaleString('en-IN'); }
+const INV_CUR = { INR: { sym: '\u20B9', word: 'Rupees', minor: 'Paise', locale: 'en-IN' }, USD: { sym: '$', word: 'US Dollars', minor: 'Cents', locale: 'en-US' }, EUR: { sym: '\u20AC', word: 'Euros', minor: 'Cents', locale: 'en-IE' }, GBP: { sym: '\u00A3', word: 'Pounds', minor: 'Pence', locale: 'en-GB' }, CHF: { sym: 'CHF ', word: 'Swiss Francs', minor: 'Rappen', locale: 'de-CH' }, AUD: { sym: 'A$', word: 'Australian Dollars', minor: 'Cents', locale: 'en-AU' }, SGD: { sym: 'S$', word: 'Singapore Dollars', minor: 'Cents', locale: 'en-SG' }, AED: { sym: 'AED ', word: 'Dirhams', minor: 'Fils', locale: 'en-AE' } };
+function invCur() { return (invState && invState.currency) || 'INR'; }
+function invSym(cur) { return (INV_CUR[cur || invCur()] || INV_CUR.INR).sym; }
+function invSetCurrency(v) { if (invState) { invState.currency = (v || 'INR').toUpperCase(); invRenderLines(); } }
+function invINR(n, cur) { const c = INV_CUR[cur || invCur()] || INV_CUR.INR; const v = Number(n||0); const hasMinor = Math.round(v * 100) % 100 !== 0; return v.toLocaleString(c.locale, { minimumFractionDigits: (c !== INV_CUR.INR || hasMinor) ? 2 : 0, maximumFractionDigits: 2 }); }
 function invNumToWords(num) {
   num = Math.round(Number(num)||0);
   if (num === 0) return 'Zero';
@@ -6542,7 +6566,25 @@ function invNumToWords(num) {
   if(num) out+=three(num);
   return out.trim();
 }
-function invAmountInWords(n) { return 'Rupees ' + invNumToWords(n) + ' Only'; }
+function invNumToWordsIntl(num) {
+  num = Math.round(Number(num)||0);
+  if (num === 0) return 'Zero';
+  const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  const two=n=> n<20?a[n]:(b[Math.floor(n/10)]+(n%10?' '+a[n%10]:''));
+  const three=n=> (Math.floor(n/100)?a[Math.floor(n/100)]+' Hundred'+(n%100?' ':''):'')+(n%100?two(n%100):'');
+  const parts=[], scales=['',' Thousand',' Million',' Billion']; let i=0;
+  while (num>0) { const ch=num%1000; if (ch) parts.unshift(three(ch)+scales[i]); num=Math.floor(num/1000); i++; }
+  return parts.join(' ').trim();
+}
+function invAmountInWords(n, cur) {
+  const code = (cur || invCur()).toUpperCase(); const c = INV_CUR[code] || INV_CUR.INR;
+  const v = Number(n)||0, whole = Math.floor(v), minor = Math.round((v - whole) * 100);
+  const fn = code === 'INR' ? invNumToWords : invNumToWordsIntl;
+  let out = c.word + ' ' + fn(whole);
+  if (minor) out += ' and ' + fn(minor) + ' ' + c.minor;
+  return out + ' Only';
+}
 
 async function invNextNumber() {
   let max = 0;
@@ -6587,7 +6629,8 @@ function invMapSource(table, r) {
     const rate = cls > 0 ? Math.round((amt / cls) * 100) / 100 : amt;
     const clean = cls > 0 && Math.round(rate * cls * 100) === Math.round(amt * 100);
     return {
-      billed: { name: r.student_name || '', email: r.email || '', city: '', phone: r.phone || r.contact || '', company: '', gstin: '' },
+      billed: (() => { const stu = (_recordCache.students && _recordCache.students[r.student_id]) || {}; return { name: r.student_name || stu.full_name || '', email: r.email || stu.email || '', city: '', country: stu.country || '', phone: r.phone || r.contact || stu.phone || '', company: '', gstin: '' }; })(),
+      currency: (r.currency || 'INR').toUpperCase(),
       payment: { date: invToISO(r.payment_date), mode: r.payment_mode || 'UPI', ref: r.razorpay_payment_id || '' },
       lines: clean ? [{ desc: 'Online Handpan Classes', qty: cls, rate }] : [{ desc: 'Online Handpan Classes' + (cls ? ' (' + cls + ' classes)' : ''), qty: 1, rate: amt }]
     };
@@ -6618,7 +6661,8 @@ async function openInvoiceEditor(prefill) {
     number,
     invoiceDate: invToISO(new Date()),
     source: { table: null, id: null },
-    billed: { name: '', email: '', city: '', phone: '', company: '', gstin: '' },
+    billed: { name: '', email: '', city: '', country: '', phone: '', company: '', gstin: '' },
+    currency: 'INR',
     payment: { date: '', mode: 'UPI', ref: '' },
     pan: '',
     show: { pan: false, bank: false, address: false },
@@ -6637,6 +6681,7 @@ async function openInvoiceEditor(prefill) {
         if (mapped) {
           invState.source = { table: prefill.source, id: prefill.id };
           invState.billed = mapped.billed;
+          invState.currency = (mapped.currency || 'INR').toUpperCase();
           invState.payment = mapped.payment;
           invState.lines = mapped.lines.length ? mapped.lines : invState.lines;
         }
@@ -6658,6 +6703,8 @@ function invRenderEditor() {
   document.getElementById('inv-email').value = s.billed.email || '';
   document.getElementById('inv-phone').value = s.billed.phone || '';
   document.getElementById('inv-city').value = s.billed.city || '';
+  document.getElementById('inv-country').value = s.billed.country || '';
+  { const cs = document.getElementById('inv-currency'); if (cs) { cs.value = s.currency || 'INR'; if (!cs.value) cs.value = 'INR'; } }
   document.getElementById('inv-pay-date').value = s.payment.date || '';
   document.getElementById('inv-pay-mode').value = s.payment.mode || 'UPI';
   document.getElementById('inv-pay-ref').value = s.payment.ref || '';
@@ -6680,7 +6727,7 @@ function invRenderLines() {
       + '<input class="form-input" style="flex:1;min-width:0;" placeholder="Description" value="' + String(ln.desc||'').replace(/"/g,'&quot;') + '" oninput="invSetLine(' + i + ',\'desc\',this.value)"/>'
       + '<input type="number" class="form-input" style="width:54px;text-align:center;" value="' + (ln.qty!=null?ln.qty:1) + '" oninput="invSetLine(' + i + ',\'qty\',this.value)"/>'
       + '<input type="number" class="form-input" style="width:84px;text-align:right;" placeholder="0" value="' + (ln.rate!=null?ln.rate:'') + '" oninput="invSetLine(' + i + ',\'rate\',this.value)"/>'
-      + '<span style="width:90px;text-align:right;font-weight:500;color:var(--clay);">\u20B9' + invINR(amt) + '</span>'
+      + '<span style="width:90px;text-align:right;font-weight:500;color:var(--clay);">' + invSym() + invINR(amt) + '</span>'
       + '<button type="button" class="icon-action-btn danger" data-tip="Remove line" onclick="invRemoveLine(' + i + ')" ' + (invState.lines.length<=1?'style="visibility:hidden;"':'') + '><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
       + '</div>';
   }).join('');
@@ -6692,7 +6739,7 @@ function invSetLine(i, key, val) {
   if (key !== 'desc') {
     const amt = (Number(invState.lines[i].qty)||0) * (Number(invState.lines[i].rate)||0);
     const row = document.querySelectorAll('#inv-lines .inv-line')[i];
-    if (row) row.querySelector('span').textContent = '\u20B9' + invINR(amt);
+    if (row) row.querySelector('span').textContent = invSym() + invINR(amt);
     invRecalc();
   }
 }
@@ -6700,7 +6747,7 @@ function invAddLine() { invState.lines.push({ desc:'', qty:1, rate:0 }); invRend
 function invRemoveLine(i) { if (invState.lines.length<=1) return; invState.lines.splice(i,1); invRenderLines(); }
 function invRecalc() {
   const total = invState.lines.reduce((s,ln)=> s + (Number(ln.qty)||0)*(Number(ln.rate)||0), 0);
-  document.getElementById('inv-total').textContent = '\u20B9' + invINR(total);
+  document.getElementById('inv-total').textContent = invSym() + invINR(total);
   document.getElementById('inv-words').textContent = total>0 ? invAmountInWords(total) : '';
   return total;
 }
@@ -6712,6 +6759,8 @@ function invCollect() {
   s.billed.email = document.getElementById('inv-email').value.trim();
   s.billed.phone = document.getElementById('inv-phone').value.trim();
   s.billed.city = document.getElementById('inv-city').value.trim();
+  s.billed.country = document.getElementById('inv-country').value.trim();
+  s.currency = (document.getElementById('inv-currency').value || 'INR').toUpperCase();
   s.billed.company = document.getElementById('inv-company').value.trim();
   s.billed.gstin = document.getElementById('inv-gstin').value.trim().toUpperCase();
   s.notes = document.getElementById('inv-notes').value.trim();
@@ -6741,6 +6790,7 @@ function invRowPayload(s, d) {
     billed_email: s.billed.email || null,
     billed_city: s.billed.city || null,
     billed_address: s.billed.city || null,
+    billed_country: (s.billed.country || '').trim() || null,
     billed_phone: s.billed.phone || null,
     billed_company: s.billed.company || null,
     billed_gstin: s.billed.gstin || null,
@@ -6750,7 +6800,7 @@ function invRowPayload(s, d) {
     line_items: d.lines,
     total_amount: d.total,
     amount_in_words: d.words,
-    currency: 'INR',
+    currency: (s.currency || 'INR').toUpperCase(),
     notes: s.notes || null,
     show_pan: !!(s.show && s.show.pan),
     show_bank: !!(s.show && s.show.bank),
@@ -6765,7 +6815,7 @@ function invDataFromState(s) {
   const nameSlug = (s.billed.name||'invoice').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'');
   return {
     no, invoiceDate: s.invoiceDate, billed: s.billed, pan: s.pan, payment: s.payment,
-    lines, total, words: invAmountInWords(total),
+    lines, total, words: invAmountInWords(total, s.currency),
     title: no + '_' + nameSlug
   };
 }
@@ -7412,7 +7462,14 @@ async function saveStudent() {
   const stuEmail = (document.getElementById('stu-email').value || '').trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stuEmail)) { markFieldError('stu-email'); showToast('A valid email is required, invoices are sent there', 'error'); return; }
   try {
-    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:stuEmail, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, fee_basis:document.getElementById('stu-basis')?.value||'month', currency:(document.getElementById('stu-currency')?.value||'INR').toUpperCase(), country:(document.getElementById('stu-country')?.value||'').trim()||null, payer_name:(document.getElementById('stu-payer')?.value||'').trim()||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, description:document.getElementById('stu-desc')?.value||null };
+    const stuPhone = getPhoneValue('stu-phone','stu-phone-cc');
+    let stuCountry = (document.getElementById('stu-country')?.value||'').trim()||null;
+    let stuCurrency = (document.getElementById('stu-currency')?.value||'INR').toUpperCase();
+    // Country was typed as a dial code without using the flag picker: do not save 'India' for a +1 number.
+    const dial = getCountryCodes().map(c => c[0]).sort((a, b) => b.length - a.length).find(c => String(stuPhone||'').startsWith(c)) || '';
+    if (dial && dial !== '+91' && (!stuCountry || /india/i.test(stuCountry))) { stuCountry = dialToCountry(dial) || null; if (stuCurrency === 'INR') stuCurrency = dialToCurrency(dial) || 'INR'; }
+    const stuFeeRaw = parseFloat(document.getElementById('stu-fee')?.value);
+    const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:stuPhone, email:stuEmail, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:isNaN(stuFeeRaw)?null:stuFeeRaw, fee_basis:document.getElementById('stu-basis')?.value||'month', currency:stuCurrency, country:stuCountry, payer_name:(document.getElementById('stu-payer')?.value||'').trim()||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, description:document.getElementById('stu-desc')?.value||null };
     await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
   } catch(e) { console.error('saveStudent error:', e); showToast('Error: ' + (e.message || 'Save failed'), 'error'); }
 }
@@ -7462,8 +7519,9 @@ async function saveParticipant() {
   if (parErrors.length) { showToast('Please fill in all required fields', 'error'); return; }
   try {
     const existing = await sbGetAll('participants');
-    const count = (existing.data || []).length;
-    const nextNum = String(count + 1).padStart(4, '0');
+    let maxNum = 0;
+    ((existing && existing.data) || []).forEach(r => { const m = String(r.id || '').match(/^P-(\d+)$/i); if (m) maxNum = Math.max(maxNum, parseInt(m[1], 10)); });
+    const nextNum = String(maxNum + 1).padStart(4, '0');
     const id = 'P-' + nextNum;
     const dateVal = document.getElementById('par-date').value || localISODate();
     const body = {
@@ -8416,7 +8474,8 @@ function buildPhoneWrap(inputId, phone, ccId) {
 }
 function getPhoneValue(inputId, ccId) {
   if (!ccId) ccId = inputId + '-cc';
-  const cc = document.getElementById(ccId)?.value || '+91';
+  const pref = (document.getElementById(inputId + '-prefix')?.value || '').trim();
+  const cc = (/^\+\d{1,4}$/.test(pref) ? pref : document.getElementById(ccId)?.value) || '+91';
   const num = (document.getElementById(inputId)?.value || '').trim();
   if (!num) return null;
   if (num.startsWith('+')) return num;
@@ -8727,7 +8786,10 @@ function buildEditForm(entity, r) {
   const fi = (label, id, type='text', val='', extra='') => `<div class="form-group"><label class="form-label">${label}</label>${type === 'textarea'
     ? `<textarea class="form-input" id="ef-${id}" rows="3" maxlength="200" ${extra}>${(val||'').toString().replace(/</g,'&lt;')}</textarea>`
     : `<input type="${type}" class="form-input" id="ef-${id}" value="${(val||'').toString().replace(/\"/g,'&quot;')}" ${extra}/>`}</div>`;
-  const sel = (label, id, opts, val='') => `<div class="form-group"><label class="form-label">${label}</label><select class="form-input" id="ef-${id}">${opts.map(([v,t])=>`<option value="${v}"${v==val?' selected':''}>${t}</option>`).join('')}</select></div>`;
+  // If the stored value is not one of the listed options (older rows, webhook-written rows like
+  // 'Razorpay UPI', general-expense categories), keep it as the selected option instead of silently
+  // switching the record to the first option on save.
+  const sel = (label, id, opts, val='') => { const cur = (val === null || val === undefined) ? '' : String(val); const list = (cur !== '' && !opts.some(([v]) => String(v) === cur)) ? [[cur.replace(/"/g,'&quot;'), cur.replace(/</g,'&lt;')]].concat(opts) : opts; return `<div class="form-group"><label class="form-label">${label}</label><select class="form-input" id="ef-${id}">${list.map(([v,t])=>`<option value="${v}"${String(v)===cur?' selected':''}>${t}</option>`).join('')}</select></div>`; };
   const row = (...items) => `<div class="form-row">${items.join('')}</div>`;
   const readOnly = (label, val) => `<div class="form-group"><label class="form-label">${label}</label><input type="text" class="form-input" value="${val||'—'}" disabled style="opacity:0.5;cursor:not-allowed;"/></div>`;
   // Computed values render as text, never as a greyed-out input that looks typeable.
@@ -8748,7 +8810,7 @@ function buildEditForm(entity, r) {
   if (entity === 'participants') {
     const isRzp = r.payment_mode === 'Razorpay UPI';
     return `
-    ${row(fi('Full Name','par-name','text',r.full_name,'maxlength="80"'), isRzp ? readOnly('Phone / Landline', r.phone) : `<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('par-phone', r.phone, 'par-phone-cc')}</div>`)}
+    ${row(fi('Full Name','par-name','text',r.full_name,'maxlength="80"'), isRzp ? readOnly('Phone / Landline', r.phone) : `<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('ef-par-phone', r.phone, 'ef-par-phone-cc')}</div>`)}
     ${isRzp && r.razorpay_name && r.razorpay_name !== r.full_name ? '<div style="margin-bottom:1rem;padding:0.6rem 0.85rem;background:rgba(200,147,90,0.08);border:1px solid rgba(200,147,90,0.2);border-radius:8px;font-size:0.85rem;color:var(--text-light);">Razorpay original name: <strong style="color:var(--bark);">' + r.razorpay_name + '</strong></div>' : ''}
     ${row(readOnly('Workshop', r.workshop_id), isRzp ? readOnly('Amount Paid', '₹' + (r.amount_paid||0)) : fi('Amount Paid (₹)','par-amount','number',r.amount_paid))}
     ${row(isRzp ? readOnly('Payment Mode', r.payment_mode) : sel('Payment Mode','par-mode',[['Razorpay UPI','Razorpay UPI'],['UPI','UPI'],['Cash','Cash'],['BMS','BMS']],r.payment_mode),
@@ -8786,7 +8848,7 @@ function buildEditForm(entity, r) {
     ${row(readOnly('FP ID', r.id), readOnly('Student', feeStudentDisplay(r)))}
     ${row(fi('Month (YYYY-MM)','fee-month','text',normMonth(r.month),'placeholder="2026-08"'), fi('Classes Paid','fee-classes','number',Number(r.classes)||0))}
     ${row(fi('Amount (' + (MONEY_SYM[(r.currency||'INR').toUpperCase()]||'₹').trim() + ')','fee-amount','number',r.amount), sel('Payment Mode','fee-mode',[['Razorpay UPI','Razorpay UPI'],['UPI','UPI'],['Cash','Cash'],['Other','Other']],r.payment_mode))}
-    ${row(fi('Payment Date','fee-date','date',r.payment_date), sel('Paid','fee-paid',[['true','Paid'],['false','Pending']],String(r.paid)))}
+    ${row(fi('Payment Date','fee-date','date',r.payment_date), sel('Paid','fee-paid',[['true','Paid'],['false','Pending']],String(!!r.paid)))}
     ${(r.currency && r.currency.toUpperCase() !== 'INR') ? row(fi('Settled INR','fee-settled-inr','number',r.settled_inr||'','placeholder="Actual ₹ received after Razorpay fees"'), '<div class="form-group"><label class="form-label" style="color:var(--text-light);font-size:0.85rem;line-height:1.5;">Enter the INR amount that landed in your bank after Razorpay settled this payment.</label></div>') : ''}
     ${fi('Description','fee-desc','textarea',r.description)}`;
 
@@ -8846,17 +8908,17 @@ async function saveEdit() {
       // pax / revenue / expense / profit / margin are derived by a DB trigger from the rows — never written from this form.
       body = { date:gd('ws-date'), venue:g('ws-venue'), price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, ads_spend:ads, notes:(document.getElementById('ws-notes')?.value||null), workshop_time:(g('ws-time')||'').trim()||null, observer_price:gn('ws-observer-price'), participant_capacity:gn('ws-cap-participant'), observer_capacity:gn('ws-cap-observer'), venue_map_url:(g('ws-venue-map')||'').trim()||null };
     } else if (_editEntity === 'participants') {
-      const isRzpPar = document.getElementById('par-phone')?.disabled || !document.getElementById('par-phone');
+      const isRzpPar = !document.getElementById('ef-par-phone');
       if (isRzpPar) {
         body = { full_name:g('par-name'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), date:gd('par-date'), description:g('par-desc')||null };
       } else {
         body = { full_name:g('par-name'), phone:getPhoneValue('ef-par-phone','ef-par-phone-cc')||null, email:g('par-email')||null, amount_paid:gn('par-amount'), payment_mode:g('par-mode'), booking_source:g('par-source'), interested_in_handpan:g('par-interested'), bringing_own_handpan:g('par-handpan')||null, date:gd('par-date'), description:g('par-desc')||null };
       }
     } else if (_editEntity === 'students') {
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((g('stu-email')||'').trim())) { markFieldError('stu-email'); showToast('A valid email is required, invoices are sent there', 'error'); return; }
-      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:(g('stu-email')||'').trim(), status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, fee_basis:g('stu-basis')||'month', currency:(g('stu-currency')||'INR').toUpperCase(), country:(g('stu-country')||'').trim()||null, payer_name:g('stu-payer')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((g('stu-email')||'').trim())) { markFieldError('ef-stu-email'); showToast('A valid email is required, invoices are sent there', 'error'); return; }
+      body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:(g('stu-email')||'').trim(), status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee'), fee_basis:g('stu-basis')||'month', currency:(g('stu-currency')||'INR').toUpperCase(), country:(g('stu-country')||'').trim()||null, payer_name:g('stu-payer')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
     } else if (_editEntity === 'fee_payments') {
-      const _settledEl = document.getElementById('fee-settled-inr');
+      const _settledEl = document.getElementById('ef-fee-settled-inr');
       body = { month:normMonth(g('fee-month'))||null, classes:gn('fee-classes')||0, amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', description:g('fee-desc')||null, settled_inr: _settledEl ? (parseFloat(_settledEl.value) || null) : null };
     } else if (_editEntity === 'payments') {
       body = { date:gd('pay-date'), amount:gn('pay-amount'), type:g('pay-type'), category:g('pay-category'), payment_mode:g('pay-mode'), payer_name:g('pay-name')||null, description:g('pay-desc')||null, reference_id:g('pay-ref')||null };
