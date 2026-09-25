@@ -2351,7 +2351,7 @@ body:not(.dark-mode) #section-bin .dash-table-wrap { background: #ffffff; }
 table#workshopsTable { min-width: 720px; }
 table#participantsTable { min-width: 900px; }
 table#leadsTable { min-width: 680px; }
-table#studentsTable { min-width: 860px; }
+table#studentsTable { min-width: 980px; }
 table#feePaymentsTable { min-width: 780px; }
 table#paymentsTable { min-width: 700px; }
 
@@ -2597,7 +2597,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v87</span>
+        <span style="color:var(--clay);font-weight:500;">v88</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2665,7 +2665,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v87</span>
+        <span style="color:var(--clay);font-weight:500;">v88</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2943,13 +2943,14 @@ table#paymentsTable { min-width: 700px; }
           <th class="sortable-th" onclick="sortTable('classes','join_date',this)">Joined <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Status</th>
           <th>Level</th>
-          <th>Fee</th>
+          <th>Rate</th>
           <th class="sortable-th" onclick="sortTable('classes','total_classes',this)">Classes Paid <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
+          <th class="sortable-th" onclick="sortTable('classes','remaining',this)">Remaining <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th class="sortable-th" onclick="sortTable('classes','total_paid',this)">Total Paid <span class="sort-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg></span></th>
           <th>Description</th>
           <th class="ws-action-sticky">Action</th>
         </tr></thead>
-        <tbody id="studentsTable"><tr><td colspan="12" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <tbody id="studentsTable"><tr><td colspan="13" class="loading"><div class="spinner"></div></td></tr></tbody></table>
       <div class="mobile-cards" id="studentsCards"></div>
       </div>
       <div id="studentsEmptyState" style="display:none;"></div>
@@ -3616,7 +3617,7 @@ table#paymentsTable { min-width: 700px; }
         <div class="form-group"><label class="form-label">Phone&nbsp;<span style="color:#e8856a;font-size:0.85em;">*</span></label><input type="text" class="form-input" id="assign-new-phone" maxlength="20" placeholder="9876543210"/></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Fee</label><input type="number" class="form-input" id="assign-new-fee" placeholder="4000"/></div>
+        <div class="form-group"><label class="form-label">Per class rate</label><input type="number" class="form-input" id="assign-new-fee" placeholder="1000"/></div>
         <div class="form-group"><label class="form-label">Level</label>
           <select class="form-input" id="assign-new-level">
             <option value="Beginner">Beginner</option>
@@ -4068,10 +4069,10 @@ table#paymentsTable { min-width: 700px; }
       <div class="form-group"><label class="form-label">Status</label>
         <select class="form-input" id="stu-status"><option value="Active">Active</option><option value="On Break">On Break</option><option value="Completed">Completed</option></select></div>
     </div>
-    <div class="form-group"><label class="form-label">Fee plan</label>
+    <div class="form-group"><label class="form-label">Per class rate</label>
+      <input type="hidden" id="stu-basis" value="session"/>
       <div style="display:flex;gap:0;">
-        <select class="form-input native-select" id="stu-basis" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:130px;"><option value="month">Per month</option><option value="session">Per session</option><option value="course">Per course</option></select>
-        <select class="form-input native-select" id="stu-currency" data-customized="1" style="border-radius:0;border-right:none;max-width:90px;"><option value="INR">INR</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="CHF">CHF</option><option value="AUD">AUD</option><option value="SGD">SGD</option><option value="AED">AED</option></select>
+        <select class="form-input native-select" id="stu-currency" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:90px;"><option value="INR">INR</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="CHF">CHF</option><option value="AUD">AUD</option><option value="SGD">SGD</option><option value="AED">AED</option></select>
         <input type="number" class="form-input" id="stu-fee" placeholder="0" style="border-radius:0 8px 8px 0;"/>
       </div>
     </div>
@@ -4151,21 +4152,21 @@ table#paymentsTable { min-width: 700px; }
       <div class="form-row">
         <div class="form-group"><label class="form-label">Student</label>
           <input type="text" class="form-input" id="fr-student-name" readonly style="opacity:0.85;"/>
-          <input type="hidden" id="fr-student-id"/></div>
-        <div class="form-group" id="fr-month-wrap"><label class="form-label">For month&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
-          <select class="form-input" id="fr-month" onchange="frUpdatePreview()"></select></div>
-      </div>
-      <div class="form-row">
+          <input type="hidden" id="fr-student-id"/>
+          <input type="hidden" id="fr-month"/></div>
         <div class="form-group"><label class="form-label">Currency</label>
           <select class="form-input" id="fr-currency">
             <option value="INR">INR (₹)</option><option value="USD">USD ($)</option>
             <option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option><option value="CHF">CHF</option>
           </select></div>
-        <div class="form-group"><label class="form-label">Classes&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
-          <input type="number" class="form-input" id="fr-classes" placeholder="e.g. 4" min="1" step="1" oninput="frUpdatePreview()"/></div>
       </div>
-      <div class="form-group"><label class="form-label">Amount&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
-          <input type="number" class="form-input" id="fr-amount" placeholder="e.g. 4000" min="1" step="1" oninput="_frAmountTouched=true;frUpdatePreview()"/></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Classes&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
+          <input type="number" class="form-input" id="fr-classes" placeholder="e.g. 4 or 12" min="1" step="1" oninput="frUpdatePreview()"/></div>
+        <div class="form-group"><label class="form-label">Amount&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
+          <input type="number" class="form-input" id="fr-amount" placeholder="e.g. 4000" min="1" step="1" oninput="_frAmountTouched=true;frUpdatePreview()"/>
+          <span class="inv-date-hint" id="fr-rate-hint"></span></div>
+      </div>
       <div class="form-group">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
           <label class="form-label" style="margin-bottom:0;">Note (optional, for your reference)</label>
@@ -4188,6 +4189,24 @@ table#paymentsTable { min-width: 700px; }
         </div>
       </div>
     </div>
+  </div></div>
+</div>
+
+<!-- Class Log -->
+<div class="form-page" id="form-classLog">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="closeFormPage('classLog')">← Back</button>
+    <div class="form-page-title" id="clTitle">Classes</div>
+    <button class="btn-dash-save" id="clSaveBtn" onclick="saveClassLog()">+1 Class</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <div id="clSummary" style="font-size:0.95rem;color:var(--text-light);margin-bottom:1.5rem;"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Class date</label><input type="date" class="form-input" id="cl-date"/></div>
+      <div class="form-group"><label class="form-label">Note (optional)</label><input type="text" class="form-input" id="cl-note" maxlength="120" placeholder="e.g. Worked on the D Kurd scale"/></div>
+    </div>
+    <div style="font-weight:500;margin:0.5rem 0 0.75rem;">History</div>
+    <div id="clList"></div>
   </div></div>
 </div>
 
@@ -5459,7 +5478,7 @@ async function handleSectionSearch(query) {
 // ── FORMAT ──
 const fmt = n => { const v = Number(n || 0); return (v < 0 ? '-₹' : '₹') + Math.abs(v).toLocaleString('en-IN'); };
 const MONEY_SYM = { INR: '₹', USD: '$', EUR: '€', GBP: '£', CHF: 'CHF ', AUD: 'A$', CAD: 'C$', SGD: 'S$', AED: 'AED ' };
-const FEE_BASIS_LABEL = { month: '/ mo', session: '/ session', course: '/ course' };
+const FEE_BASIS_LABEL = { month: '/ mo', session: '/ class', course: '/ course' };
 function fmtMoney(n, cur, basis) {
   const c = (cur || 'INR').toUpperCase();
   const v = Number(n || 0);
@@ -5909,22 +5928,92 @@ async function applyStudentTotals(stus) {
       } else {
         s._totalDisplay = curKeys.map(c => fmtMoney(r.byCur[c], c)).join(' · ');
       }
-      // Balance for per-course students
-      if (s.fee_basis === 'course' && s.monthly_fee > 0) {
-        const paidInCur = r.byCur[stuCur] || 0;
-        const bal = Math.round((s.monthly_fee - paidInCur) * 100) / 100;
-        if (bal <= 0) {
-          s._balanceDisplay = '<span style="color:var(--moss);">Paid in full</span>';
-        } else {
-          s._balanceDisplay = fmtMoney(bal, stuCur) + ' due';
-        }
-      } else {
-        s._balanceDisplay = '';
-      }
     });
   } catch (e) {
     console.warn('student totals rollup skipped:', e);
   }
+  // Classes taken come from the class log. Remaining is never stored.
+  try {
+    const logs = (await sbGetAll('class_log')).data || [];
+    const taken = {};
+    logs.forEach(l => { if (l && l.student_id) taken[l.student_id] = (taken[l.student_id] || 0) + 1; });
+    stus.forEach(s => {
+      s.classes_taken = taken[s.id] || 0;
+      s.remaining = (Number(s.total_classes) || 0) - s.classes_taken;
+    });
+  } catch (e) {
+    console.warn('class log not available yet:', e);
+  }
+}
+
+function remainingBadge(s) {
+  if (s.remaining == null) return '—';
+  const n = s.remaining;
+  if (n < 0) return '<span class="badge badge-red" data-tip="Took more classes than paid for">' + (-n) + ' unpaid</span>';
+  if (n <= 1) return '<span class="badge badge-clay" data-tip="Time to send a fee request">' + n + ' left</span>';
+  return '<span style="color:var(--bark);font-weight:500;">' + n + ' left</span>';
+}
+
+// ── CLASS LOG ──
+let _clStudentId = null;
+function classLogStudent() { return (_recordCache.students && _recordCache.students[_clStudentId]) || {}; }
+async function openClassLog(studentId) {
+  if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
+  _clStudentId = studentId;
+  const stu = classLogStudent();
+  document.getElementById('clTitle').textContent = 'Classes · ' + (stu.full_name || studentId);
+  const d = document.getElementById('cl-date');
+  d.value = localISODate();
+  if (d._dpRefresh) d._dpRefresh();
+  document.getElementById('cl-note').value = '';
+  document.getElementById('clList').innerHTML = '<div class="empty-state" style="min-height:20vh;"><div class="spinner"></div></div>';
+  openFormPage('classLog');
+  renderClassLog();
+}
+async function renderClassLog() {
+  const list = document.getElementById('clList');
+  const sum = document.getElementById('clSummary');
+  try {
+    const rows = (await sbGetAll('class_log', 'student_id=eq.' + encodeURIComponent(_clStudentId) + '&order=class_date.desc,created_at.desc')).data || [];
+    const stu = classLogStudent();
+    const paid = Number(stu.total_classes) || 0;
+    stu.classes_taken = rows.length; stu.remaining = paid - rows.length;
+    sum.innerHTML = 'Paid for <strong>' + paid + '</strong> · Taken <strong>' + rows.length + '</strong> · ' + remainingBadge(stu);
+    if (!rows.length) { list.innerHTML = '<div class="ws-pax-empty">No classes logged yet</div>'; return; }
+    const TR = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
+    list.innerHTML = rows.map((r, i) => '<div class="ws-pax-row"><div><div class="ws-pax-name">Class ' + (rows.length - i) + ' · ' + fmtDate(r.class_date) + '</div>'
+      + (r.note ? '<div class="ws-pax-meta">' + String(r.note).replace(/</g, '&lt;') + '</div>' : '')
+      + '</div><button class="icon-action-btn danger" data-tip="Remove" onclick="deleteClassLog(\'' + r.id + '\')">' + TR + '</button></div>').join('');
+  } catch (e) {
+    sum.textContent = '';
+    list.innerHTML = '<div class="ws-pax-empty">Could not load the class log. Has the class_log table been created in Supabase?</div>';
+  }
+}
+async function saveClassLog() {
+  const date = document.getElementById('cl-date').value || localISODate();
+  const note = (document.getElementById('cl-note').value || '').trim();
+  const btn = document.getElementById('clSaveBtn');
+  btn.disabled = true;
+  try {
+    await sbPost('class_log', { student_id: _clStudentId, class_date: date, note: note || null });
+    document.getElementById('cl-note').value = '';
+    showToast('✓ Class logged for ' + (classLogStudent().full_name || _clStudentId), 'success');
+    await renderClassLog();
+    loadStudents();
+  } catch (e) {
+    showToast('Could not log class: ' + e.message, 'error');
+  } finally { btn.disabled = false; }
+}
+async function deleteClassLog(id) {
+  const ok = await customConfirm('Remove this class?', 'It will no longer count as taken.', 'Remove');
+  if (!ok) return;
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/class_log?id=eq.' + encodeURIComponent(id), { method: 'DELETE', headers: SB_HEADERS });
+    if (!res.ok) throw new Error('status ' + res.status);
+    showToast('✓ Class removed', 'success');
+    await renderClassLog();
+    loadStudents();
+  } catch (e) { showToast('Could not remove: ' + e.message, 'error'); }
 }
 
 async function loadStudents() {
@@ -5948,7 +6037,7 @@ async function loadStudents() {
     window._cachedStudents = stus;
     populateFeeStudentDropdown(stus);
     populateClassesBatchDropdown(stus);
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}"><td>${s.id}</td><td class="td-truncate td-name" data-tip="${(s.full_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${s.full_name}</span>${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);">' + s.country + '</span>' : ''}</td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td class="td-truncate td-email" data-tip="${s.email||''}">${s.email||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.level||'—'}</td><td>${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</td><td>${s.total_classes||0}</td><td style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</td><td class="td-truncate td-desc" data-tip="${(s.description||'').replace(/"/g,'&quot;')}">${s.description||'—'}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Request fee" onclick="openRequestFee('${s.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="12" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}" data-remaining="${s.remaining==null?'':s.remaining}"><td>${s.id}</td><td class="td-truncate td-name" data-tip="${(s.full_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${s.full_name}</span>${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);">' + s.country + '</span>' : ''}</td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td class="td-truncate td-email" data-tip="${s.email||''}">${s.email||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.level||'—'}</td><td>${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</td><td>${s.total_classes||0}</td><td>${remainingBadge(s)}</td><td style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</td><td class="td-truncate td-desc" data-tip="${(s.description||'').replace(/"/g,'&quot;')}">${s.description||'—'}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Log a class" onclick="openClassLog('${s.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button><button class="icon-action-btn" data-tip="Request fee" onclick="openRequestFee('${s.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="13" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.students}
     </td></tr>`;
 
@@ -5960,7 +6049,7 @@ async function loadStudents() {
   const _e_studentsTable = document.getElementById('studentsEmptyState');
   if (_e_studentsTable) { _e_studentsTable.innerHTML = EMPTY_STATES.students; _e_studentsTable.style.display = _hd_studentsTable ? 'none' : ''; }
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name}${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);font-weight:400;">' + s.country + '</span>' : ''} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Level</span><span class="m-card-val">${s.level||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Fee</span><span class="m-card-val">${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</span></div>${s._balanceDisplay ? '<div class="m-card-row"><span class="m-card-label">Balance</span><span class="m-card-val" style="color:var(--clay)">' + s._balanceDisplay + '</span></div>' : ''}<div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">${s.email||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${s.description||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${s.id}','${s.full_name}','student',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name}${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);font-weight:400;">' + s.country + '</span>' : ''} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Level</span><span class="m-card-val">${s.level||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Rate</span><span class="m-card-val">${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Remaining</span><span class="m-card-val">${remainingBadge(s)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">${s.email||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${s.description||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="margin-right:auto;" onclick="openClassLog('${s.id}')">+1 Class</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${s.id}','${s.full_name}','student',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
   } catch(e) { console.warn('loadStudents error:', e.message); } finally { hideLoader(); }
 }
 function normMonth(m) {
@@ -6021,19 +6110,11 @@ function frMonthLabel(ym) {
   return new Date(Number(m[1]), Number(m[2]) - 1, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 }
 // Fill the For month select: two months back, current (selected), three ahead.
+// Every fee is per class. The month is stamped automatically (current month)
+// so the server and Fee Tracker keep working, but it is never asked for.
 function frFillMonths() {
-  const sel = document.getElementById('fr-month'); if (!sel) return;
-  const now = new Date(); const cur = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-  let html = '';
-  for (let off = -2; off <= 3; off++) {
-    const d = new Date(now.getFullYear(), now.getMonth() + off, 1);
-    const ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-    html += '<option value="' + ym + '"' + (ym === cur ? ' selected' : '') + '>' + frMonthLabel(ym) + '</option>';
-  }
-  sel.innerHTML = html;
-  const wrap = sel.nextElementSibling;
-  if (wrap && wrap.classList.contains('form-select-wrap')) wrap.remove();
-  delete sel.dataset.customized;
+  const now = new Date();
+  document.getElementById('fr-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
 }
 
 async function nextFeeRequestId() {
@@ -6046,24 +6127,19 @@ async function nextFeeRequestId() {
   return 'FR-' + String(max + 1).padStart(3, '0');
 }
 
-// Request fee adapts to the student's fee plan. Per session: no month field,
-// amount = classes x rate unless edited by hand. Per month: month picker shown.
-// The month is still saved on every request (current month by default) so the
-// server and Fee Tracker keep working unchanged.
-let _frBasis = 'month', _frRate = 0, _frAmountTouched = false;
-function frShowsMonth() { return _frBasis === 'month'; }
+// Amount = classes x per class rate, until you type your own amount (discounts, packages).
+let _frRate = 0, _frAmountTouched = false;
 function frUpdatePreview() {
   const c = parseInt(document.getElementById('fr-classes').value, 10) || 0;
   const amtEl = document.getElementById('fr-amount');
-  if (_frBasis === 'session' && _frRate > 0 && !_frAmountTouched) {
+  if (_frRate > 0 && !_frAmountTouched) {
     amtEl.value = c > 0 ? String(Math.round(c * _frRate * 100) / 100) : '';
   }
   const a = Number(amtEl.value) || 0;
   const cur = document.getElementById('fr-currency').value || 'INR';
   const el = document.getElementById('fr-preview');
-  const mon = frShowsMonth() ? frMonthLabel(document.getElementById('fr-month')?.value) : '';
   if (!c || !a) { el.textContent = ''; return; }
-  el.textContent = 'The page will say: ' + (mon ? mon + ' · ' : '') + 'Fee for ' + c + (c === 1 ? ' class' : ' classes') + ' · ' + frFmt(a, cur) + ' ' + cur;
+  el.textContent = 'The page will say: Fee for ' + c + (c === 1 ? ' class' : ' classes') + ' · ' + frFmt(a, cur) + ' ' + cur;
 }
 
 async function openRequestFee(studentId) {
@@ -6076,15 +6152,12 @@ async function openRequestFee(studentId) {
   document.getElementById('fr-student-name').value = stu.full_name + ' (' + stu.id + ')';
   frFillMonths();
   document.getElementById('fr-classes').value = '';
-  _frBasis = stu.fee_basis || 'month';
   _frRate = Number(stu.monthly_fee) || 0;
   _frAmountTouched = false;
-  document.getElementById('fr-month-wrap').style.display = frShowsMonth() ? '' : 'none';
-  const _amt = document.getElementById('fr-amount');
-  _amt.value = (_frBasis === 'month' && _frRate) ? String(_frRate) : '';
-  _amt.placeholder = _frBasis === 'session' && _frRate ? ('Fills in from ' + _frRate + ' per class')
-    : _frBasis === 'course' && _frRate ? ('Course fee ' + _frRate)
-    : 'e.g. 4000';
+  document.getElementById('fr-amount').value = '';
+  document.getElementById('fr-rate-hint').textContent = _frRate
+    ? ('Fills in at ' + frFmt(_frRate, stu.currency) + ' per class. Type your own amount for a package price.')
+    : 'No per class rate saved for this student. Enter the amount.';
   document.getElementById('fr-note').value = '';
   updateCharCount('fr-note', 'fr-note-count', 80);
   const curSel = document.getElementById('fr-currency');
@@ -6107,9 +6180,9 @@ async function saveFeeRequest() {
   const amount = Number(document.getElementById('fr-amount').value);
   const currency = (document.getElementById('fr-currency').value || 'INR').toUpperCase();
   const note = document.getElementById('fr-note').value.trim();
-  const month = document.getElementById('fr-month').value || '';
+  let month = document.getElementById('fr-month').value || '';
   if (!studentId) { showToast('Pick a student first', 'error'); return; }
-  if (!/^\d{4}-\d{2}$/.test(month)) { showToast('Pick the month', 'error'); return; }
+  if (!/^\d{4}-\d{2}$/.test(month)) { frFillMonths(); month = document.getElementById('fr-month').value; }
   if (!classes || classes < 1) { showToast('Enter the number of classes', 'error'); return; }
   if (!amount || amount <= 0) { showToast('Enter the amount', 'error'); return; }
 
@@ -6122,11 +6195,11 @@ async function saveFeeRequest() {
     const link = feeRequestLink(id);
     document.getElementById('fr-form-fields').style.display = 'none';
     document.getElementById('fr-result').style.display = '';
-    document.getElementById('fr-result-title').textContent = id + ' · ' + (frShowsMonth() ? frMonthLabel(month) + ' · ' : '') + frFmt(amount, currency) + ' ' + currency + ' · ' + classes + (classes === 1 ? ' class' : ' classes');
+    document.getElementById('fr-result-title').textContent = id + ' · ' + frFmt(amount, currency) + ' ' + currency + ' · ' + classes + (classes === 1 ? ' class' : ' classes');
     document.getElementById('fr-result-sub').textContent = 'Send this to ' + (stu.full_name || studentId) + '. It can only be paid once.';
     document.getElementById('fr-result-link').value = link;
     const first = (stu.full_name || '').trim().split(/\s+/)[0] || '';
-    const waText = 'Hi ' + first + ', here\'s your payment link for ' + (frShowsMonth() ? frMonthLabel(month) + ', ' : '') + classes + (classes === 1 ? ' class' : ' classes') + ' (' + frFmt(amount, currency) + '): ' + link;
+    const waText = 'Hi ' + first + ', here\'s your payment link for ' + classes + (classes === 1 ? ' class' : ' classes') + ' (' + frFmt(amount, currency) + '): ' + link;
     const wa = document.getElementById('fr-result-wa');
     const phone = String(stu.phone || '').replace(/[^\d]/g, '');
     wa.href = 'https://wa.me/' + (phone ? (phone.length === 10 ? '91' + phone : phone) : '') + '?text=' + encodeURIComponent(waText);
@@ -6182,13 +6255,12 @@ async function loadFeeRequests() {
     const nameOf = r => (_recordCache.students && _recordCache.students[r.student_id] && _recordCache.students[r.student_id].full_name) || r.student_id;
     const when = r => r.created_at ? fmtDate(String(r.created_at).slice(0,10)) : '—';
     document.getElementById('feeRequestsTable').innerHTML = reqs.map(r => `<tr>
-      <td>${r.id}</td><td style="font-weight:500;">${nameOf(r)}</td><td>${r.classes}${r.month ? ` <span style="color:var(--text-light);font-size:0.85em;">· ${frMonthLabel(r.month)}</span>` : ''}</td>
+      <td>${r.id}</td><td style="font-weight:500;">${nameOf(r)}</td><td>${r.classes}</td>
       <td>${frFmt(r.amount, r.currency)} <span style="color:var(--text-light);font-size:0.85em;">${r.currency}</span>${r.note ? ` <span style="color:var(--text-light);font-size:0.85em;">· ${r.note}</span>` : ''}</td>
       <td>${when(r)}</td>
       <td class="ws-action-sticky"><span class="action-wrap"><button class="icon-action-btn" data-tip="Copy link" onclick="copyFeeRequestLink('${feeRequestLink(r.id)}')">${COPY_SVG}</button><button class="icon-action-btn danger" data-tip="Cancel" onclick="cancelFeeRequest('${r.id}')">${X_SVG}</button></span></td>
     </tr>`).join('');
     document.getElementById('feeRequestsCards').innerHTML = reqs.map(r => `<div class="m-card"><div class="m-card-title">${nameOf(r)} <span class="badge badge-clay" style="float:right">${r.id}</span></div>
-      ${r.month ? `<div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${frMonthLabel(r.month)}</span></div>` : ''}
       <div class="m-card-row"><span class="m-card-label">Classes</span><span class="m-card-val">${r.classes}</span></div>
       <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val">${frFmt(r.amount, r.currency)} ${r.currency}</span></div>
       ${r.note ? `<div class="m-card-row"><span class="m-card-label">Note</span><span class="m-card-val">${r.note}</span></div>` : ''}
@@ -8789,19 +8861,20 @@ function buildEditForm(entity, r) {
     ${row(`<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('ef-stu-phone', r.phone, 'ef-stu-phone-cc')}</div>`, fi('Email','stu-email','email',r.email,'maxlength="120"'))}
     ${row(sel('Status','stu-status',[['Active','Active'],['On Break','On Break'],['Completed','Completed']],r.status),
           fi('Start Date','stu-start','date',r.join_date))}
-    <div class="form-group"><label class="form-label">Fee plan</label>
+    <div class="form-group"><label class="form-label">Per class rate</label>
+      <input type="hidden" id="ef-stu-basis" value="session"/>
       <div style="display:flex;gap:0;">
-        <select class="form-input native-select" id="ef-stu-basis" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:130px;"><option value="month" ${r.fee_basis==='month'?'selected':''}>Per month</option><option value="session" ${r.fee_basis==='session'?'selected':''}>Per session</option><option value="course" ${r.fee_basis==='course'?'selected':''}>Per course</option></select>
-        <select class="form-input native-select" id="ef-stu-currency" data-customized="1" style="border-radius:0;border-right:none;max-width:90px;"><option value="INR" ${(r.currency||'INR')==='INR'?'selected':''}>INR</option><option value="USD" ${r.currency==='USD'?'selected':''}>USD</option><option value="EUR" ${r.currency==='EUR'?'selected':''}>EUR</option><option value="GBP" ${r.currency==='GBP'?'selected':''}>GBP</option><option value="CHF" ${r.currency==='CHF'?'selected':''}>CHF</option><option value="AUD" ${r.currency==='AUD'?'selected':''}>AUD</option><option value="SGD" ${r.currency==='SGD'?'selected':''}>SGD</option><option value="AED" ${r.currency==='AED'?'selected':''}>AED</option></select>
+        <select class="form-input native-select" id="ef-stu-currency" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:90px;"><option value="INR" ${(r.currency||'INR')==='INR'?'selected':''}>INR</option><option value="USD" ${r.currency==='USD'?'selected':''}>USD</option><option value="EUR" ${r.currency==='EUR'?'selected':''}>EUR</option><option value="GBP" ${r.currency==='GBP'?'selected':''}>GBP</option><option value="CHF" ${r.currency==='CHF'?'selected':''}>CHF</option><option value="AUD" ${r.currency==='AUD'?'selected':''}>AUD</option><option value="SGD" ${r.currency==='SGD'?'selected':''}>SGD</option><option value="AED" ${r.currency==='AED'?'selected':''}>AED</option></select>
         <input type="number" class="form-input" id="ef-stu-fee" value="${r.monthly_fee||0}" style="border-radius:0 8px 8px 0;"/>
       </div>
+      ${r.fee_basis && r.fee_basis !== 'session' ? '<span class="inv-date-hint" style="color:var(--clay);">This was saved as a per ' + (r.fee_basis === 'month' ? 'month' : 'course') + ' fee. Change it to one class’s rate before saving.</span>' : ''}
     </div>
     <input type="hidden" id="ef-stu-country" value="${r.country||''}"/>
     ${sel('Level','stu-level',[['Beginner','Beginner'],['Intermediate','Intermediate'],['Advanced','Advanced']],r.level)}
     ${fi('Payer Name','stu-payer','text',r.payer_name||'','maxlength="80"')}
     ${fi('Description','stu-desc','textarea',r.description)}
     ${row(derived('Classes Paid For', r.total_classes||0, 'Counted from fee payments'), derived('Total Paid', r._totalDisplay || fmt(r.total_paid||0), 'Sum of all fee payments'))}
-    ${r._balanceDisplay ? '<div style="margin:-0.5rem 0 1rem;padding:0.6rem 0.85rem;background:rgba(200,147,90,0.06);border:1px solid rgba(200,147,90,0.15);border-radius:8px;font-size:0.95rem;">Balance: ' + r._balanceDisplay + '</div>' : ''}`;
+    ${row(derived('Classes Taken', r.classes_taken == null ? '—' : r.classes_taken, 'Counted from the class log'), derived('Remaining', remainingBadge(r), 'Paid minus taken'))}`;
 
   if (entity === 'fee_payments') return `
     ${row(readOnly('FP ID', r.id), readOnly('Student', feeStudentDisplay(r)))}
@@ -9467,6 +9540,7 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
     html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('participants','${id}')">${EDIT_SVG} Edit</button>`;
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('participants','${id}','${name}')">${TRASH_SVG} Delete</button>`;
   } else if (type === 'student') {
+    if (isAdmin) html += `<button class="m-dots-item" onclick="closeMDotsSheet();openClassLog('${id}')">${LINK_SVG} Classes</button>`;
     if (isAdmin) html += `<button class="m-dots-item" onclick="closeMDotsSheet();openRequestFee('${id}')">${LINK_SVG} Request fee</button>`;
     html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('students','${id}')">${EDIT_SVG} Edit</button>`;
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('students','${id}','${name}')">${TRASH_SVG} Delete</button>`;
@@ -9500,6 +9574,7 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
         actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('participants', id) });
         actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('participants', id, name) });
       } else if (type === 'student') {
+        if (isAdmin) actions.push({ label: `${LINK_SVG} Classes`, danger: false, fn: () => openClassLog(id) });
         if (isAdmin) actions.push({ label: `${LINK_SVG} Request fee`, danger: false, fn: () => openRequestFee(id) });
         actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('students', id) });
         actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('students', id, name) });
@@ -10839,6 +10914,7 @@ async function saveAssignPaymentPage() {
         join_date: (_currentAssignPayment.date || localISODate()),
         status: 'Active',
         monthly_fee: parseFloat(document.getElementById('assign-new-fee')?.value) || null,
+        fee_basis: 'session',
         payer_name: (_currentAssignName || '').trim() || null,
         level: document.getElementById('assign-new-level')?.value || 'Beginner',
         total_classes: 0,
