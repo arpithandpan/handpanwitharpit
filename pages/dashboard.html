@@ -2597,7 +2597,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v96</span>
+        <span style="color:var(--clay);font-weight:500;">v97</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2665,7 +2665,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v96</span>
+        <span style="color:var(--clay);font-weight:500;">v97</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4150,13 +4150,24 @@ table#paymentsTable { min-width: 700px; }
 .fr-chip.active{background:rgba(200,147,90,0.18);border-color:var(--clay);color:var(--clay);}
 .fr-chip.active b{color:var(--clay);}
 .fr-chip-off{font-size:0.72rem;font-weight:600;color:var(--moss);}
+.cl-more{position:relative;flex-shrink:0;}
+.cl-more-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid transparent;
+  background:transparent;color:var(--text-light);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.cl-more-btn:hover{border-color:var(--clay-pale);color:var(--clay);}
+.cl-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);z-index:50;min-width:200px;padding:0.35rem;
+  background:#2a1e12;border:1px solid rgba(193,127,90,0.3);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+.cl-menu.open{display:block;}
+.cl-menu button{display:flex;align-items:center;gap:0.5rem;width:100%;padding:0.6rem 0.75rem;border:none;background:none;border-radius:6px;
+  color:var(--bark);font-family:var(--font-body);font-size:0.9rem;text-align:left;cursor:pointer;}
+.cl-menu button:hover{background:rgba(200,147,90,0.1);}
+.cl-menu button.danger{color:#e8856a;}
 @media (max-width:900px){
+  .cl-more-btn{width:44px;height:44px;}
+  .cl-menu button{padding:0.85rem 0.75rem;font-size:0.95rem;}
   .fr-chip{height:44px;padding:0 0.95rem;font-size:0.88rem;}
   .fr-chips{margin:-0.5rem 0 1.75rem !important;}
-  #clList .ws-pax-row{flex-wrap:wrap;padding:1rem 0.25rem;}
-  #clList .ws-pax-row > div:first-child{flex:1 1 60%;min-width:0;}
-  #clList .btn-dash-sm{min-height:44px;}
-  #clList .icon-action-btn{width:44px;height:44px;}
+  #clList .ws-pax-row{padding:1rem 0.25rem;}
+  #clList .ws-pax-row > div:first-child{flex:1 1 auto;min-width:0;}
 }
 </style>
 
@@ -6017,12 +6028,16 @@ async function renderClassLog() {
     document.getElementById('cl-free').checked = showTrial;
     if (!rows.length) { list.innerHTML = '<div class="ws-pax-empty">No classes logged yet</div>'; return; }
     const TR = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
+    const DOTS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
     let n = counted;
     list.innerHTML = rows.map(r => '<div class="ws-pax-row"><div><div class="ws-pax-name">' + (r.is_free ? '<span class="badge badge-green" style="margin-right:6px;">Free trial</span>' : 'Class ' + (n--) + ' · ') + fmtDate(r.class_date) + '</div>'
       + (r.note ? '<div class="ws-pax-meta">' + String(r.note).replace(/</g, '&lt;') + '</div>' : '')
-      + '</div><div style="display:flex;gap:0.5rem;align-items:center;flex-shrink:0;">'
-      + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="toggleClassFree(\'' + r.id + '\',' + (r.is_free ? 'true' : 'false') + ')">' + (r.is_free ? 'Mark paid' : 'Mark free') + '</button>'
-      + '<button class="icon-action-btn danger" data-tip="Remove" onclick="deleteClassLog(\'' + r.id + '\')">' + TR + '</button></div></div>').join('');
+      + '</div><div class="cl-more">'
+      + '<button class="cl-more-btn" aria-label="More" onclick="clToggleMenu(event,this)">' + DOTS + '</button>'
+      + '<div class="cl-menu">'
+      + '<button onclick="clCloseMenus();toggleClassFree(\'' + r.id + '\',' + (r.is_free ? 'true' : 'false') + ')">' + (r.is_free ? 'Count as paid class' : 'Mark as free class') + '</button>'
+      + '<button class="danger" onclick="clCloseMenus();deleteClassLog(\'' + r.id + '\')">' + TR + ' Remove</button>'
+      + '</div></div></div>').join('');
   } catch (e) {
     sum.textContent = '';
     list.innerHTML = '<div class="ws-pax-empty">Could not load the class log. Has the class_log table been created in Supabase?</div>';
@@ -6044,6 +6059,14 @@ async function saveClassLog() {
     showToast('Could not log class: ' + e.message, 'error');
   } finally { btn.disabled = false; }
 }
+function clCloseMenus() { document.querySelectorAll('.cl-menu.open').forEach(m => m.classList.remove('open')); }
+function clToggleMenu(e, btn) {
+  e.stopPropagation();
+  const m = btn.nextElementSibling, was = m.classList.contains('open');
+  clCloseMenus();
+  if (!was) m.classList.add('open');
+}
+document.addEventListener('click', e => { if (!e.target.closest('.cl-more')) clCloseMenus(); });
 async function toggleClassFree(id, isFree) {
   try {
     await sbPatch('class_log', id, { is_free: !isFree });
