@@ -2597,7 +2597,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v90</span>
+        <span style="color:var(--clay);font-weight:500;">v91</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2665,7 +2665,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v90</span>
+        <span style="color:var(--clay);font-weight:500;">v91</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4162,7 +4162,11 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Classes&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
-          <input type="number" class="form-input" id="fr-classes" placeholder="e.g. 4 or 12" min="1" step="1" oninput="frUpdatePreview()"/></div>
+          <input type="number" class="form-input" id="fr-classes" placeholder="e.g. 4 or 12" min="1" step="1" oninput="frUpdatePreview()"/>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.6rem;">
+            <button type="button" class="btn-dash btn-dash-outline btn-dash-sm" onclick="frPickClasses(4)">Monthly · 4</button>
+            <button type="button" class="btn-dash btn-dash-outline btn-dash-sm" onclick="frPickClasses(12)">Quarterly · 12 (10% off)</button>
+          </div></div>
         <div class="form-group"><label class="form-label">Amount&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
           <input type="number" class="form-input" id="fr-amount" placeholder="e.g. 4000" min="1" step="1" oninput="_frAmountTouched=true;frUpdatePreview()"/>
           <span class="inv-date-hint" id="fr-rate-hint"></span></div>
@@ -6150,13 +6154,34 @@ async function nextFeeRequestId() {
   return 'FR-' + String(max + 1).padStart(3, '0');
 }
 
-// Amount = classes x per class rate, until you type your own amount (discounts, packages).
-let _frRate = 0, _frAmountTouched = false;
+// Amount = classes x per class rate, 10% off for 12 or more classes, rounded to a whole number.
+// Typing your own amount stops the auto fill.
+const FR_PACKAGE_MIN = 12, FR_PACKAGE_OFF = 0.10;
+let _frRate = 0, _frAmountTouched = false, _frHintDefault = '';
+function frCalc(c) {
+  const base = Math.round(c * _frRate);
+  const off = c >= FR_PACKAGE_MIN ? Math.round(base * FR_PACKAGE_OFF) : 0;
+  return { base, off, total: base - off };
+}
+function frPickClasses(n) {
+  document.getElementById('fr-classes').value = n;
+  _frAmountTouched = false;
+  frUpdatePreview();
+}
 function frUpdatePreview() {
   const c = parseInt(document.getElementById('fr-classes').value, 10) || 0;
   const amtEl = document.getElementById('fr-amount');
-  if (_frRate > 0 && !_frAmountTouched) {
-    amtEl.value = c > 0 ? String(Math.round(c * _frRate * 100) / 100) : '';
+  const hint = document.getElementById('fr-rate-hint');
+  const curH = document.getElementById('fr-currency').value || 'INR';
+  if (_frRate > 0 && c > 0) {
+    const k = frCalc(c);
+    if (!_frAmountTouched) amtEl.value = String(k.total);
+    hint.textContent = c + ' × ' + frFmt(_frRate, curH) + ' = ' + frFmt(k.base, curH)
+      + (k.off ? ' · 10% package discount · ' + frFmt(k.total, curH) : '')
+      + (_frAmountTouched ? ' (you changed the amount)' : '');
+  } else {
+    if (_frRate > 0 && !_frAmountTouched) amtEl.value = '';
+    hint.textContent = _frHintDefault;
   }
   const a = Number(amtEl.value) || 0;
   const cur = document.getElementById('fr-currency').value || 'INR';
@@ -6178,9 +6203,10 @@ async function openRequestFee(studentId) {
   _frRate = Number(stu.monthly_fee) || 0;
   _frAmountTouched = false;
   document.getElementById('fr-amount').value = '';
-  document.getElementById('fr-rate-hint').textContent = _frRate
-    ? ('Fills in at ' + frFmt(_frRate, stu.currency) + ' per class. Type your own amount for a package price.')
+  _frHintDefault = _frRate
+    ? ('Fills in at ' + frFmt(_frRate, stu.currency) + ' per class. 12 or more classes get 10% off.')
     : 'No per class rate saved for this student. Enter the amount.';
+  document.getElementById('fr-rate-hint').textContent = _frHintDefault;
   document.getElementById('fr-note').value = '';
   updateCharCount('fr-note', 'fr-note-count', 80);
   const curSel = document.getElementById('fr-currency');
