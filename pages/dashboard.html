@@ -2597,7 +2597,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v91</span>
+        <span style="color:var(--clay);font-weight:500;">v92</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2665,7 +2665,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v91</span>
+        <span style="color:var(--clay);font-weight:500;">v92</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4140,6 +4140,17 @@ table#paymentsTable { min-width: 700px; }
 </div>
 
 <!-- Request Fee -->
+<style>
+.fr-chips{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.6rem;}
+.fr-chip{display:inline-flex;align-items:center;gap:0.35rem;height:34px;padding:0 0.8rem;border-radius:999px;
+  background:rgba(200,147,90,0.06);border:1px solid rgba(200,147,90,0.28);color:var(--text-light);
+  font-family:var(--font-body);font-size:0.82rem;cursor:pointer;white-space:nowrap;transition:all 0.15s;touch-action:manipulation;}
+.fr-chip b{color:var(--bark);font-weight:600;}
+.fr-chip:hover{border-color:var(--clay);color:var(--clay);}
+.fr-chip.active{background:rgba(200,147,90,0.18);border-color:var(--clay);color:var(--clay);}
+.fr-chip.active b{color:var(--clay);}
+.fr-chip-off{font-size:0.72rem;font-weight:600;color:var(--moss);}
+</style>
 
 <div class="form-page" id="form-requestFee">
   <div class="form-page-header">
@@ -4163,9 +4174,10 @@ table#paymentsTable { min-width: 700px; }
       <div class="form-row">
         <div class="form-group"><label class="form-label">Classes&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
           <input type="number" class="form-input" id="fr-classes" placeholder="e.g. 4 or 12" min="1" step="1" oninput="frUpdatePreview()"/>
-          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.6rem;">
-            <button type="button" class="btn-dash btn-dash-outline btn-dash-sm" onclick="frPickClasses(4)">Monthly · 4</button>
-            <button type="button" class="btn-dash btn-dash-outline btn-dash-sm" onclick="frPickClasses(12)">Quarterly · 12 (10% off)</button>
+          <div class="fr-chips">
+            <button type="button" class="fr-chip" data-n="4" onclick="frPickClasses(4)"><b>4</b> Monthly</button>
+            <button type="button" class="fr-chip" data-n="12" onclick="frPickClasses(12)"><b>12</b> Quarterly <span class="fr-chip-off">−10%</span></button>
+            <button type="button" class="fr-chip" data-n="48" onclick="frPickClasses(48)"><b>48</b> Annual <span class="fr-chip-off">−10%</span></button>
           </div></div>
         <div class="form-group"><label class="form-label">Amount&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
           <input type="number" class="form-input" id="fr-amount" placeholder="e.g. 4000" min="1" step="1" oninput="_frAmountTouched=true;frUpdatePreview()"/>
@@ -6172,6 +6184,7 @@ function frUpdatePreview() {
   const c = parseInt(document.getElementById('fr-classes').value, 10) || 0;
   const amtEl = document.getElementById('fr-amount');
   const hint = document.getElementById('fr-rate-hint');
+  document.querySelectorAll('.fr-chip').forEach(ch => ch.classList.toggle('active', Number(ch.dataset.n) === c));
   const curH = document.getElementById('fr-currency').value || 'INR';
   if (_frRate > 0 && c > 0) {
     const k = frCalc(c);
