@@ -2597,7 +2597,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v88</span>
+        <span style="color:var(--clay);font-weight:500;">v89</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2665,7 +2665,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v88</span>
+        <span style="color:var(--clay);font-weight:500;">v89</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4204,6 +4204,10 @@ table#paymentsTable { min-width: 700px; }
     <div class="form-row">
       <div class="form-group"><label class="form-label">Class date</label><input type="date" class="form-input" id="cl-date"/></div>
       <div class="form-group"><label class="form-label">Note (optional)</label><input type="text" class="form-input" id="cl-note" maxlength="120" placeholder="e.g. Worked on the D Kurd scale"/></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1rem;background:rgba(200,147,90,0.06);border:1px solid var(--clay-pale);border-radius:10px;margin-bottom:2rem;">
+      <div style="flex:1;"><div style="font-size:0.95rem;color:var(--bark);font-weight:500;">Free trial class</div><div style="font-size:0.8rem;color:var(--text-light);margin-top:2px;">Shows in history but doesn’t use up a paid class</div></div>
+      <label class="checkin-toggle" style="margin:0;"><input type="checkbox" id="cl-free"><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>
     </div>
     <div style="font-weight:500;margin:0.5rem 0 0.75rem;">History</div>
     <div id="clList"></div>
@@ -5936,7 +5940,7 @@ async function applyStudentTotals(stus) {
   try {
     const logs = (await sbGetAll('class_log')).data || [];
     const taken = {};
-    logs.forEach(l => { if (l && l.student_id) taken[l.student_id] = (taken[l.student_id] || 0) + 1; });
+    logs.forEach(l => { if (l && l.student_id && !l.is_free) taken[l.student_id] = (taken[l.student_id] || 0) + 1; });
     stus.forEach(s => {
       s.classes_taken = taken[s.id] || 0;
       s.remaining = (Number(s.total_classes) || 0) - s.classes_taken;
@@ -5977,11 +5981,16 @@ async function renderClassLog() {
     const rows = (await sbGetAll('class_log', 'student_id=eq.' + encodeURIComponent(_clStudentId) + '&order=class_date.desc,created_at.desc')).data || [];
     const stu = classLogStudent();
     const paid = Number(stu.total_classes) || 0;
-    stu.classes_taken = rows.length; stu.remaining = paid - rows.length;
-    sum.innerHTML = 'Paid for <strong>' + paid + '</strong> · Taken <strong>' + rows.length + '</strong> · ' + remainingBadge(stu);
+    const counted = rows.filter(r => !r.is_free).length;
+    const free = rows.length - counted;
+    stu.classes_taken = counted; stu.remaining = paid - counted;
+    sum.innerHTML = 'Paid for <strong>' + paid + '</strong> · Taken <strong>' + counted + '</strong>' + (free ? ' <span style="opacity:0.75;">(+' + free + ' free)</span>' : '') + ' · ' + remainingBadge(stu);
+    // First class is a free trial for everyone, so the toggle starts on until one is logged.
+    document.getElementById('cl-free').checked = free === 0;
     if (!rows.length) { list.innerHTML = '<div class="ws-pax-empty">No classes logged yet</div>'; return; }
     const TR = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
-    list.innerHTML = rows.map((r, i) => '<div class="ws-pax-row"><div><div class="ws-pax-name">Class ' + (rows.length - i) + ' · ' + fmtDate(r.class_date) + '</div>'
+    let n = counted;
+    list.innerHTML = rows.map(r => '<div class="ws-pax-row"><div><div class="ws-pax-name">' + (r.is_free ? '<span class="badge badge-green" style="margin-right:6px;">Free trial</span>' : 'Class ' + (n--) + ' · ') + fmtDate(r.class_date) + '</div>'
       + (r.note ? '<div class="ws-pax-meta">' + String(r.note).replace(/</g, '&lt;') + '</div>' : '')
       + '</div><button class="icon-action-btn danger" data-tip="Remove" onclick="deleteClassLog(\'' + r.id + '\')">' + TR + '</button></div>').join('');
   } catch (e) {
@@ -5992,12 +6001,13 @@ async function renderClassLog() {
 async function saveClassLog() {
   const date = document.getElementById('cl-date').value || localISODate();
   const note = (document.getElementById('cl-note').value || '').trim();
+  const isFree = document.getElementById('cl-free').checked;
   const btn = document.getElementById('clSaveBtn');
   btn.disabled = true;
   try {
-    await sbPost('class_log', { student_id: _clStudentId, class_date: date, note: note || null });
+    await sbPost('class_log', { student_id: _clStudentId, class_date: date, note: note || null, is_free: isFree });
     document.getElementById('cl-note').value = '';
-    showToast('✓ Class logged for ' + (classLogStudent().full_name || _clStudentId), 'success');
+    showToast((isFree ? '✓ Free trial logged for ' : '✓ Class logged for ') + (classLogStudent().full_name || _clStudentId), 'success');
     await renderClassLog();
     loadStudents();
   } catch (e) {
