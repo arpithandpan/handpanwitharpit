@@ -2597,7 +2597,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v86</span>
+        <span style="color:var(--clay);font-weight:500;">v87</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2665,7 +2665,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v86</span>
+        <span style="color:var(--clay);font-weight:500;">v87</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4152,7 +4152,7 @@ table#paymentsTable { min-width: 700px; }
         <div class="form-group"><label class="form-label">Student</label>
           <input type="text" class="form-input" id="fr-student-name" readonly style="opacity:0.85;"/>
           <input type="hidden" id="fr-student-id"/></div>
-        <div class="form-group"><label class="form-label">For month&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
+        <div class="form-group" id="fr-month-wrap"><label class="form-label">For month&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
           <select class="form-input" id="fr-month" onchange="frUpdatePreview()"></select></div>
       </div>
       <div class="form-row">
@@ -4165,7 +4165,7 @@ table#paymentsTable { min-width: 700px; }
           <input type="number" class="form-input" id="fr-classes" placeholder="e.g. 4" min="1" step="1" oninput="frUpdatePreview()"/></div>
       </div>
       <div class="form-group"><label class="form-label">Amount&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label>
-          <input type="number" class="form-input" id="fr-amount" placeholder="e.g. 4000" min="1" step="1" oninput="frUpdatePreview()"/></div>
+          <input type="number" class="form-input" id="fr-amount" placeholder="e.g. 4000" min="1" step="1" oninput="_frAmountTouched=true;frUpdatePreview()"/></div>
       <div class="form-group">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
           <label class="form-label" style="margin-bottom:0;">Note (optional, for your reference)</label>
@@ -5201,6 +5201,10 @@ async function openFormPage(name) {
     setLeadTab('manual');
     onLeadBoughtChange();
   } else if (name === 'addFeePayment') {
+    const _now = new Date();
+    const _fm = document.getElementById('fee-month-m'), _fy = document.getElementById('fee-month-y');
+    if (_fm) { _fm.value = String(_now.getMonth() + 1).padStart(2, '0'); _fm.dispatchEvent(new Event('change')); }
+    if (_fy) { _fy.value = String(_now.getFullYear()); _fy.dispatchEvent(new Event('change')); }
     await populateStudentDropdown('fee-student');
     const sel = document.getElementById('fee-student');
     if (sel) {
@@ -6042,12 +6046,22 @@ async function nextFeeRequestId() {
   return 'FR-' + String(max + 1).padStart(3, '0');
 }
 
+// Request fee adapts to the student's fee plan. Per session: no month field,
+// amount = classes x rate unless edited by hand. Per month: month picker shown.
+// The month is still saved on every request (current month by default) so the
+// server and Fee Tracker keep working unchanged.
+let _frBasis = 'month', _frRate = 0, _frAmountTouched = false;
+function frShowsMonth() { return _frBasis === 'month'; }
 function frUpdatePreview() {
   const c = parseInt(document.getElementById('fr-classes').value, 10) || 0;
-  const a = Number(document.getElementById('fr-amount').value) || 0;
+  const amtEl = document.getElementById('fr-amount');
+  if (_frBasis === 'session' && _frRate > 0 && !_frAmountTouched) {
+    amtEl.value = c > 0 ? String(Math.round(c * _frRate * 100) / 100) : '';
+  }
+  const a = Number(amtEl.value) || 0;
   const cur = document.getElementById('fr-currency').value || 'INR';
   const el = document.getElementById('fr-preview');
-  const mon = frMonthLabel(document.getElementById('fr-month')?.value);
+  const mon = frShowsMonth() ? frMonthLabel(document.getElementById('fr-month')?.value) : '';
   if (!c || !a) { el.textContent = ''; return; }
   el.textContent = 'The page will say: ' + (mon ? mon + ' · ' : '') + 'Fee for ' + c + (c === 1 ? ' class' : ' classes') + ' · ' + frFmt(a, cur) + ' ' + cur;
 }
@@ -6062,8 +6076,15 @@ async function openRequestFee(studentId) {
   document.getElementById('fr-student-name').value = stu.full_name + ' (' + stu.id + ')';
   frFillMonths();
   document.getElementById('fr-classes').value = '';
-  document.getElementById('fr-amount').value = '';
-  document.getElementById('fr-amount').placeholder = stu.monthly_fee ? ('e.g. ' + stu.monthly_fee + ' (monthly fee)') : 'e.g. 4000';
+  _frBasis = stu.fee_basis || 'month';
+  _frRate = Number(stu.monthly_fee) || 0;
+  _frAmountTouched = false;
+  document.getElementById('fr-month-wrap').style.display = frShowsMonth() ? '' : 'none';
+  const _amt = document.getElementById('fr-amount');
+  _amt.value = (_frBasis === 'month' && _frRate) ? String(_frRate) : '';
+  _amt.placeholder = _frBasis === 'session' && _frRate ? ('Fills in from ' + _frRate + ' per class')
+    : _frBasis === 'course' && _frRate ? ('Course fee ' + _frRate)
+    : 'e.g. 4000';
   document.getElementById('fr-note').value = '';
   updateCharCount('fr-note', 'fr-note-count', 80);
   const curSel = document.getElementById('fr-currency');
@@ -6101,11 +6122,11 @@ async function saveFeeRequest() {
     const link = feeRequestLink(id);
     document.getElementById('fr-form-fields').style.display = 'none';
     document.getElementById('fr-result').style.display = '';
-    document.getElementById('fr-result-title').textContent = id + ' · ' + frMonthLabel(month) + ' · ' + frFmt(amount, currency) + ' ' + currency + ' · ' + classes + (classes === 1 ? ' class' : ' classes');
+    document.getElementById('fr-result-title').textContent = id + ' · ' + (frShowsMonth() ? frMonthLabel(month) + ' · ' : '') + frFmt(amount, currency) + ' ' + currency + ' · ' + classes + (classes === 1 ? ' class' : ' classes');
     document.getElementById('fr-result-sub').textContent = 'Send this to ' + (stu.full_name || studentId) + '. It can only be paid once.';
     document.getElementById('fr-result-link').value = link;
     const first = (stu.full_name || '').trim().split(/\s+/)[0] || '';
-    const waText = 'Hi ' + first + ', here\'s your payment link for ' + frMonthLabel(month) + ', ' + classes + (classes === 1 ? ' class' : ' classes') + ' (' + frFmt(amount, currency) + '): ' + link;
+    const waText = 'Hi ' + first + ', here\'s your payment link for ' + (frShowsMonth() ? frMonthLabel(month) + ', ' : '') + classes + (classes === 1 ? ' class' : ' classes') + ' (' + frFmt(amount, currency) + '): ' + link;
     const wa = document.getElementById('fr-result-wa');
     const phone = String(stu.phone || '').replace(/[^\d]/g, '');
     wa.href = 'https://wa.me/' + (phone ? (phone.length === 10 ? '91' + phone : phone) : '') + '?text=' + encodeURIComponent(waText);
