@@ -121,6 +121,9 @@
   .total-label{ font-size:14.5px; color:var(--text-light); text-transform:uppercase; letter-spacing:0.08em; font-weight:500; }
   .total-amount{ font-size:34px; font-weight:400; color:var(--text-dark); margin-top:2px; line-height:1.2; }
   .total-amount small{ font-size:15px; color:var(--text-light); margin-left:4px; }
+  .total-was{ font-size:14.5px; color:var(--text-light); margin-top:6px; line-height:1.5; }
+  .total-was s{ opacity:0.8; }
+  .total-was .save{ color:var(--moss); font-weight:500; }
   .total-badge{
     display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:500;
     padding:6px 12px; border-radius:20px; background:var(--clay-pale); color:var(--maroon); white-space:nowrap;
@@ -329,6 +332,7 @@
         <div>
           <div class="total-label" id="total-label">Amount due</div>
           <div class="total-amount" id="total-amount"><span class="skel-bar" style="width:120px; background:#ddd;"></span></div>
+          <div class="total-was" id="total-was" style="display:none;"></div>
         </div>
         <span class="total-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"/><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/></svg> Secure</span>
       </div>
@@ -672,6 +676,15 @@
       : fee.classes + ' live one-to-one sessions on Zoom';
     totalLabel.textContent = fee.label || 'Amount due';
     totalAmount.innerHTML = fmtAmount(fee.amount, fee.currency) + '<small>' + fee.currency + '</small>';
+    const wasEl = document.getElementById('total-was');
+    if (fee.listAmount && fee.discountAmount > 0){
+      wasEl.innerHTML = '<s>' + fmtAmount(fee.listAmount, fee.currency) + '</s> · '
+        + (fee.discountPct ? fee.discountPct + '% package discount' : 'Package discount')
+        + ' · <span class="save">you save ' + fmtAmount(fee.discountAmount, fee.currency) + '</span>';
+      wasEl.style.display = '';
+    } else {
+      wasEl.style.display = 'none';
+    }
     fName.value = name;
     if (!fPhone.value) applyStoredPhone(fee.phone);
     if (!fEmail.value) fEmail.value = fee.email || '';
