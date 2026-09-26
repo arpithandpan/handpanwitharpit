@@ -563,7 +563,7 @@ body { overflow-x: clip; max-width: 100vw; }
 
 /* ── HIDE MOBILE CARDS ON DESKTOP ── */
 @media (min-width: 901px) {
-  #workshopsCards, #participantsCards, #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #waitlistCards, #overviewWorkshopsCards, #overviewPaymentsCards, #feeRequestsCards { display: none !important; }
+  #workshopsCards, #participantsCards, #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #waitlistCards, #overviewWorkshopsCards, #overviewPaymentsCards, #feeRequestsCards, #zoomReviewCards { display: none !important; }
   .mobile-search-fullscreen { display: none !important; }
   .mobile-only { display: none !important; }
 }
@@ -1244,7 +1244,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   .mobile-only { display: flex !important; }
   .dash-table-wrap table, .dash-table-wrap .desktop-table { display: none !important; }
   .dash-table-wrap { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; width: 100% !important; box-sizing: border-box !important; overflow: hidden !important; }
-  #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #waitlistCards, #workshopsCards, #participantsCards, #feeRequestsCards { display: flex !important; }
+  #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #waitlistCards, #workshopsCards, #participantsCards, #feeRequestsCards, #zoomReviewCards { display: flex !important; }
   .mobile-cards { display: flex !important; flex-direction: column !important; gap: 16px !important; width: 100% !important; padding: 0 0 max(2rem, env(safe-area-inset-bottom)) !important; box-sizing: border-box !important; }
   .m-card { box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; margin-bottom: 0 !important; overflow: hidden !important; }
   .m-card-row { box-sizing: border-box !important; width: 100% !important; }
@@ -2597,7 +2597,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v97</span>
+        <span style="color:var(--clay);font-weight:500;">v98</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2665,7 +2665,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v97</span>
+        <span style="color:var(--clay);font-weight:500;">v98</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2904,6 +2904,19 @@ table#paymentsTable { min-width: 700px; }
         <div class="stat-card"><div class="stat-label">Active Students</div><div class="stat-value clay" id="classActiveStudents">—</div></div>
         <div class="stat-card"><div class="stat-label">Total Classes Revenue</div><div class="stat-value green" id="classTotalRevenue">—</div></div>
         <div class="stat-card"><div class="stat-label">Students on Break</div><div class="stat-value" id="classOnBreak">—</div></div>
+      </div>
+      <div id="zoomReviewPanel" style="display:none;margin-bottom:2rem;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.6rem;">
+          <div style="font-weight:500;">Zoom: needs review</div>
+          <div style="font-size:0.85rem;color:var(--text-light);" id="zoomReviewCount"></div>
+        </div>
+        <div style="font-size:0.85rem;color:var(--text-light);margin-bottom:0.75rem;">These people attended a Zoom meeting but aren’t linked to a student. Pick the student to log the class. The Zoom name is remembered for next time.</div>
+        <div class="dash-table-wrap" style="margin:0;">
+          <table class="desktop-table" style="min-width:760px;"><thead><tr>
+            <th>Date</th><th>Zoom name</th><th>Meeting</th><th>Minutes</th><th>Student</th><th class="ws-action-sticky">Action</th>
+          </tr></thead><tbody id="zoomReviewTable"></tbody></table>
+          <div class="mobile-cards" id="zoomReviewCards"></div>
+        </div>
       </div>
             <div class="section-search-wrap" id="search-wrap-classes">
         <svg class="section-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -4079,6 +4092,7 @@ table#paymentsTable { min-width: 700px; }
     <input type="hidden" id="stu-country" value="India"/>
     <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" id="stu-start"/></div>
     <div class="form-group"><label class="form-label">Payer Name (if someone else pays)</label><input type="text" class="form-input" id="stu-payer" placeholder="e.g. Anurag" maxlength="80"/></div>
+    <div class="form-group"><label class="form-label">Zoom names</label><input type="text" class="form-input" id="stu-zoom" placeholder="e.g. Sound BALA, soundbsk@gmail.com" maxlength="300"/><span class="inv-date-hint">Names or emails this student shows up with in Zoom, separated by commas. Classes are logged automatically when they match.</span></div>
     <div class="form-group">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.35rem;">
         <label class="form-label" style="margin-bottom:0;">Description</label>
@@ -4835,7 +4849,7 @@ const FORM_FIELDS = {
   addPayment:     ['pay-date','pay-amount','pay-name','pay-desc','pay-ref'],
   addLead:        ['lead-name','lead-phone','lead-email','lead-desc','lead-maker-amt'],
   addWorkshop:    ['ws-date','ws-venue','ws-price','ws-venue-rent','ws-hp-rent','ws-porter','ws-misc','ws-ads','ws-time','ws-observer-price','ws-cap-participant','ws-cap-observer','ws-venue-map'],
-  addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-desc'],
+  addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-desc','stu-zoom'],
   addFeePayment:  ['fee-amount','fee-desc'],
   requestFee:     ['fr-classes','fr-amount','fr-note'],
   addParticipant:  ['par-name','par-phone','par-amount','par-date','par-desc'],
@@ -6030,7 +6044,7 @@ async function renderClassLog() {
     const TR = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
     const DOTS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
     let n = counted;
-    list.innerHTML = rows.map(r => '<div class="ws-pax-row"><div><div class="ws-pax-name">' + (r.is_free ? '<span class="badge badge-green" style="margin-right:6px;">Free trial</span>' : 'Class ' + (n--) + ' · ') + fmtDate(r.class_date) + '</div>'
+    list.innerHTML = rows.map(r => '<div class="ws-pax-row"><div><div class="ws-pax-name">' + (r.is_free ? '<span class="badge badge-green" style="margin-right:6px;">Free trial</span>' : 'Class ' + (n--) + ' · ') + fmtDate(r.class_date) + (r.source === 'zoom' ? ' <span class="badge badge-clay" style="margin-left:6px;font-size:0.72em;" data-tip="Logged automatically from Zoom">Zoom</span>' : '') + '</div>'
       + (r.note ? '<div class="ws-pax-meta">' + String(r.note).replace(/</g, '&lt;') + '</div>' : '')
       + '</div><div class="cl-more">'
       + '<button class="cl-more-btn" aria-label="More" onclick="clToggleMenu(event,this)">' + DOTS + '</button>'
@@ -6087,6 +6101,94 @@ async function deleteClassLog(id) {
   } catch (e) { showToast('Could not remove: ' + e.message, 'error'); }
 }
 
+// ── ZOOM REVIEW ──
+// Unmatched Zoom attendees (zoom_unmatched, filled by the Railway server).
+// Picking a student calls the server, which logs the class with the same
+// rules as the auto-log and saves the Zoom name on the student.
+function parseZoomNames(v) {
+  const seen = new Set(), out = [];
+  String(v || '').split(',').map(x => x.trim()).filter(Boolean).forEach(x => {
+    const k = x.toLowerCase();
+    if (!seen.has(k)) { seen.add(k); out.push(x); }
+  });
+  return out;
+}
+function zEsc(v) { return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function zoomGuessStudent(row, stus) {
+  const t = ' ' + String((row.topic || '') + ' ' + (row.zoom_name || '')).toLowerCase().replace(/[^a-z0-9]+/g, ' ') + ' ';
+  const hits = stus.filter(s => {
+    const terms = [s.full_name, (s.full_name || '').split(' ')[0], s.payer_name, (s.payer_name || '').split(' ')[0]]
+      .map(x => String(x || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()).filter(x => x.length >= 3);
+    return terms.some(x => t.includes(' ' + x + ' '));
+  });
+  return hits.length === 1 ? hits[0].id : '';
+}
+async function loadZoomReview(stusIn) {
+  const panel = document.getElementById('zoomReviewPanel');
+  if (!panel) return;
+  if (!isAdmin()) { panel.style.display = 'none'; return; }
+  try {
+    const res = await sbGetAll('zoom_unmatched', 'status=eq.pending&order=class_date.desc,created_at.desc');
+    const rows = res.data || [];
+    if (!rows.length) { panel.style.display = 'none'; return; }
+    const stus = (stusIn || window._cachedStudents || []).filter(s => !s.archived).slice().sort((a, b) => String(a.full_name || '').localeCompare(String(b.full_name || '')));
+    const opts = sel => '<option value="">Choose student…</option>' + stus.map(s => `<option value="${zEsc(s.id)}"${s.id === sel ? ' selected' : ''}>${zEsc(s.full_name)} (${zEsc(s.id)})</option>`).join('');
+    const who = r => `<span style="font-weight:500;">${zEsc(r.zoom_name || '—')}</span>${r.zoom_email ? `<div style="font-size:0.8rem;color:var(--text-light);">${zEsc(r.zoom_email)}</div>` : ''}`;
+    const CHECK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    const X_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+    panel.style.display = 'block';
+    document.getElementById('zoomReviewCount').textContent = rows.length + ' to review';
+    document.getElementById('zoomReviewTable').innerHTML = rows.map(r => `<tr>
+      <td>${fmtDate(r.class_date)}</td><td>${who(r)}</td>
+      <td class="td-truncate" data-tip="${zEsc(r.topic || '')}">${zEsc(r.topic || '—')}</td>
+      <td>${Number(r.minutes) || 0} min</td>
+      <td><select class="form-input native-select" data-customized="1" id="zr-sel-${r.id}" style="min-width:190px;padding:0.45rem 0.6rem;">${opts(zoomGuessStudent(r, stus))}</select></td>
+      <td class="ws-action-sticky"><span class="action-wrap"><button class="icon-action-btn" data-tip="Log class" onclick="resolveZoomReview('${r.id}','zr-sel-${r.id}',this)">${CHECK}</button><button class="icon-action-btn danger" data-tip="Ignore" onclick="ignoreZoomReview('${r.id}')">${X_SVG}</button></span></td>
+    </tr>`).join('');
+    document.getElementById('zoomReviewCards').innerHTML = rows.map(r => `<div class="m-card"><div class="m-card-title">${zEsc(r.zoom_name || r.zoom_email || '—')} <span class="badge badge-clay" style="float:right">${Number(r.minutes) || 0} min</span></div>
+      <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(r.class_date)}</span></div>
+      ${r.zoom_email ? `<div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">${zEsc(r.zoom_email)}</span></div>` : ''}
+      <div class="m-card-row"><span class="m-card-label">Meeting</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;display:inline-block;vertical-align:bottom;text-align:right;">${zEsc(r.topic || '—')}</span></div>
+      <div style="margin-top:0.85rem;"><select class="form-input native-select" data-customized="1" id="zr-msel-${r.id}" style="width:100%;">${opts(zoomGuessStudent(r, stus))}</select></div>
+      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;">
+        <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="ignoreZoomReview('${r.id}')">Ignore</button>
+        <button class="btn-dash btn-dash-primary btn-dash-sm" onclick="resolveZoomReview('${r.id}','zr-msel-${r.id}',this)">Log class</button>
+      </div></div>`).join('');
+  } catch (e) { console.warn('loadZoomReview skipped:', e.message); panel.style.display = 'none'; }
+}
+async function resolveZoomReview(id, selId, btn) {
+  if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
+  const studentId = (document.getElementById(selId) || {}).value || '';
+  if (!studentId) { showToast('Choose the student first', 'error'); return; }
+  if (btn) btn.disabled = true;
+  try {
+    const res = await invApi('/api/zoom/unmatched/' + encodeURIComponent(id) + '/resolve', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ studentId })
+    });
+    const out = await res.json();
+    const results = out.results || [];
+    const logged = results.filter(x => x.logged).length;
+    const skipped = results.filter(x => x.skipped).length;
+    let msg = logged ? ('✓ ' + logged + (logged === 1 ? ' class' : ' classes') + ' logged for ' + out.student) : ('✓ Linked to ' + out.student);
+    if (skipped) msg += ' · ' + skipped + ' already logged that day';
+    showToast(msg, 'success');
+    loadStudents();
+  } catch (e) {
+    showToast('Could not log: ' + e.message, 'error');
+    if (btn) btn.disabled = false;
+  }
+}
+async function ignoreZoomReview(id) {
+  if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
+  const ok = await customConfirm('Ignore this Zoom attendee?', 'No class will be logged. It disappears from the review list.', 'Ignore');
+  if (!ok) return;
+  try {
+    await sbPatch('zoom_unmatched', id, { status: 'ignored', resolved_at: new Date().toISOString() });
+    showToast('Ignored', 'success');
+    loadZoomReview();
+  } catch (e) { showToast('Could not ignore: ' + e.message, 'error'); }
+}
+
 async function loadStudents() {
   try {
     const stus = currentRole === 'viewer' ? DUMMY.students : await (async () => {
@@ -6106,6 +6208,7 @@ async function loadStudents() {
     const adminS = isAdmin();
     const PENCIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     window._cachedStudents = stus;
+    loadZoomReview(stus);
     populateFeeStudentDropdown(stus);
     populateClassesBatchDropdown(stus);
     document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}" data-remaining="${s.remaining==null?'':s.remaining}"><td>${s.id}</td><td class="td-truncate td-name" data-tip="${(s.full_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${s.full_name}</span>${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);">' + s.country + '</span>' : ''}</td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td class="td-truncate td-email" data-tip="${s.email||''}">${s.email||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.level||'—'}</td><td>${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</td><td>${s.total_classes||0}</td><td>${remainingBadge(s)}</td><td style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</td><td class="td-truncate td-desc" data-tip="${(s.description||'').replace(/"/g,'&quot;')}">${s.description||'—'}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Log a class" onclick="openClassLog('${s.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button><button class="icon-action-btn" data-tip="Request fee" onclick="openRequestFee('${s.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="13" style="text-align:center;padding:3rem 1rem;">
@@ -7609,6 +7712,8 @@ async function saveStudent() {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stuEmail)) { markFieldError('stu-email'); showToast('A valid email is required, invoices are sent there', 'error'); return; }
   try {
     const body = { id:document.getElementById('stu-id').value, full_name:document.getElementById('stu-name').value, phone:getPhoneValue('stu-phone','stu-phone-cc'), email:stuEmail, join_date:document.getElementById('stu-start').value||null, status:document.getElementById('stu-status').value, monthly_fee:parseFloat(document.getElementById('stu-fee')?.value)||null, fee_basis:document.getElementById('stu-basis')?.value||'month', currency:(document.getElementById('stu-currency')?.value||'INR').toUpperCase(), country:(document.getElementById('stu-country')?.value||'').trim()||null, payer_name:(document.getElementById('stu-payer')?.value||'').trim()||null, level:document.getElementById('stu-level')?.value||null, total_classes:0, total_paid:0, description:document.getElementById('stu-desc')?.value||null };
+    const _zn = parseZoomNames(document.getElementById('stu-zoom')?.value);
+    if (_zn.length) body.zoom_names = _zn;
     await sbPost('students', body); closeFormPage('addStudent'); resetForm('addStudent'); loadStudents(); showToast('✓ Student saved successfully!','success');
   } catch(e) { console.error('saveStudent error:', e); showToast('Error: ' + (e.message || 'Save failed'), 'error'); }
 }
@@ -8975,6 +9080,7 @@ function buildEditForm(entity, r) {
     <input type="hidden" id="ef-stu-country" value="${r.country||''}"/>
     ${sel('Level','stu-level',[['Beginner','Beginner'],['Intermediate','Intermediate'],['Advanced','Advanced']],r.level)}
     ${fi('Payer Name','stu-payer','text',r.payer_name||'','maxlength="80"')}
+    <div class="form-group"><label class="form-label">Zoom names</label><input type="text" class="form-input" id="ef-stu-zoom" value="${(Array.isArray(r.zoom_names)?r.zoom_names.join(', '):'').replace(/"/g,'&quot;')}" maxlength="300" placeholder="e.g. Sound BALA, soundbsk@gmail.com"/><span class="inv-date-hint">Names or emails this student shows up with in Zoom, separated by commas.</span></div>
     ${fi('Description','stu-desc','textarea',r.description)}
     ${row(derived('Classes Paid For', r.total_classes||0, 'Counted from fee payments'), derived('Total Paid', r._totalDisplay || fmt(r.total_paid||0), 'Sum of all fee payments'))}
     ${row(derived('Classes Taken', r.classes_taken == null ? '—' : r.classes_taken, 'Counted from the class log'), derived('Remaining', remainingBadge(r), 'Paid minus taken'))}`;
@@ -9052,6 +9158,7 @@ async function saveEdit() {
     } else if (_editEntity === 'students') {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((g('stu-email')||'').trim())) { markFieldError('stu-email'); showToast('A valid email is required, invoices are sent there', 'error'); return; }
       body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:(g('stu-email')||'').trim(), status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, fee_basis:g('stu-basis')||'month', currency:(g('stu-currency')||'INR').toUpperCase(), country:(g('stu-country')||'').trim()||null, payer_name:g('stu-payer')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
+      if (document.getElementById('ef-stu-zoom')) body.zoom_names = parseZoomNames(g('stu-zoom'));
     } else if (_editEntity === 'fee_payments') {
       const _settledEl = document.getElementById('fee-settled-inr');
       body = { month:normMonth(g('fee-month'))||null, classes:gn('fee-classes')||0, amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', description:g('fee-desc')||null, settled_inr: _settledEl ? (parseFloat(_settledEl.value) || null) : null };
