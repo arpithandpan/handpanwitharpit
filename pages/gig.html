@@ -610,9 +610,14 @@
     if (opts.allPaid){
       successHeading.textContent = 'All payments received';
       successSummary.style.display = 'none';
-      successText.innerHTML = gig && gig.eventDate
-        ? 'This booking is fully paid. See you on ' + fmtEventDate(gig.eventDate) + '!'
-        : 'This booking is fully paid. Nothing more to do here.';
+      // Before the event: "see you there". After it (the usual case, since the
+      // balance comes in after the performance): a thank-you instead.
+      const eventOver = gig && gig.eventDate && (new Date(gig.eventDate + 'T23:59:59+05:30') < new Date());
+      successText.innerHTML = !gig || !gig.eventDate
+        ? 'This booking is fully paid. Nothing more to do here.'
+        : (eventOver
+          ? 'This booking is fully paid. Thank you for having Arpit perform at your event — it was a pleasure!'
+          : 'This booking is fully paid. See you on ' + fmtEventDate(gig.eventDate) + '!');
     } else {
       successHeading.textContent = stageWord(opts.stage) + ' payment received';
       if (gig){
