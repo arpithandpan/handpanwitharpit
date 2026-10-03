@@ -352,7 +352,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v1)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v3)</span>
   </footer>
 </div>
 
@@ -619,9 +619,10 @@
           ? 'This booking is fully paid. Thank you for having Arpit perform at your event — it was a pleasure!'
           : 'This booking is fully paid. See you on ' + fmtEventDate(gig.eventDate) + '!');
     } else {
-      successHeading.textContent = stageWord(opts.stage) + ' payment received';
+      const stageName = (gig && !(gig.advanceAmount > 0)) ? 'Payment' : (stageWord(opts.stage) + ' payment');
+      successHeading.textContent = stageName + ' received';
       if (gig){
-        successSummary.textContent = stageWord(opts.stage) + ' · ' + fmtAmount(opts.amount, gig.currency) + ' ' + gig.currency;
+        successSummary.textContent = (gig && !(gig.advanceAmount > 0) ? 'Performance fee' : stageWord(opts.stage)) + ' · ' + fmtAmount(opts.amount, gig.currency) + ' ' + gig.currency;
         successSummary.style.display = '';
       }
       const emailToShow = ((fEmail && fEmail.value) || '').trim();
@@ -667,13 +668,15 @@
       if (gig.advancePaid) items.push(scheduleItem('done', ICON_CHECK, 'Advance', 'Received, thank you', fmtAmount(gig.advanceAmount, gig.currency)));
       else items.push(scheduleItem(gig.stage === 'advance' ? 'due' : 'later', gig.stage === 'advance' ? ICON_RUPEE : ICON_DOT, 'Advance', gig.stage === 'advance' ? 'Due now, to confirm the booking' : '', fmtAmount(gig.advanceAmount, gig.currency)));
     }
+    const single = !(gig.advanceAmount > 0);
     if (gig.balanceAmount > 0){
-      if (gig.balancePaid) items.push(scheduleItem('done', ICON_CHECK, 'Balance', 'Received, thank you', fmtAmount(gig.balanceAmount, gig.currency)));
-      else items.push(scheduleItem(gig.stage === 'balance' ? 'due' : 'later', gig.stage === 'balance' ? ICON_RUPEE : ICON_DOT, 'Balance', gig.stage === 'balance' ? 'Due now' : 'After the performance, on this same link', fmtAmount(gig.balanceAmount, gig.currency)));
+      const balName = single ? 'Performance fee' : 'Balance';
+      if (gig.balancePaid) items.push(scheduleItem('done', ICON_CHECK, balName, 'Received, thank you', fmtAmount(gig.balanceAmount, gig.currency)));
+      else items.push(scheduleItem(gig.stage === 'balance' ? 'due' : 'later', gig.stage === 'balance' ? ICON_RUPEE : ICON_DOT, balName, gig.stage === 'balance' ? (single ? 'Due now, to confirm the booking' : 'Due now') : 'After the performance, on this same link', fmtAmount(gig.balanceAmount, gig.currency)));
     }
     scheduleList.innerHTML = items.join('');
 
-    totalLabel.textContent = stageWord(gig.stage) + ' payment';
+    totalLabel.textContent = (gig.advanceAmount > 0) ? (stageWord(gig.stage) + ' payment') : 'Full payment';
     totalAmount.innerHTML = fmtAmount(gig.dueAmount, gig.currency) + '<small>' + gig.currency + '</small>';
     if (gig.stage === 'advance' && gig.balanceAmount > 0){
       totalWas.textContent = 'of ' + fmtAmount(gig.agreedFee, gig.currency) + ' total · balance after the performance';
