@@ -2548,6 +2548,10 @@ table#paymentsTable { min-width: 700px; }
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Participants
     </a>
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('gigs',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      Performances
+    </a>
     <div style="height:1px;background:rgba(193,127,82,0.2);margin:0.5rem 2.5rem;"></div>
     <div style="padding:0.75rem 2.5rem 0.25rem;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(200,147,90,0.7);font-weight:500;">Students</div>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('classes',this);toggleMobileMenu()">
@@ -2647,6 +2651,7 @@ table#paymentsTable { min-width: 700px; }
     <ul class="dash-nav">
       <li><a href="#" onclick="showSection('workshops',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span> Workshops</a></li>
       <li><a href="#" onclick="showSection('participants',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Participants</a></li>
+      <li><a href="#" onclick="showSection('gigs',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span> Performances</a></li>
     </ul>
     <div class="dash-nav-divider"></div>
     <div class="dash-sidebar-title">Students</div>
@@ -2903,6 +2908,33 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <div id="participantsEmptyState" style="display:none;"></div>
       <div class="mobile-cards" id="participantsCards"></div>
+    </section>
+
+    <!-- ── PERFORMANCES ── -->
+    <section class="dash-section" id="section-gigs">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Performances</div>
+          <div class="dash-section-subtitle" id="gigsCount">Paid gigs and events</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button class="btn-dash btn-dash-primary admin-only" onclick="openModal('addGig')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Performance</button>
+        </div>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem;">
+        <div class="stat-card"><div class="stat-label">Upcoming</div><div class="stat-value clay" id="gigStatUpcoming">—</div><div class="stat-sub">Booked performances</div></div>
+        <div class="stat-card"><div class="stat-label">Gig Revenue</div><div class="stat-value green" id="gigStatRevenue">—</div><div class="stat-sub">All time, from Payments</div></div>
+        <div class="stat-card"><div class="stat-label">To Collect</div><div class="stat-value" id="gigStatPending">—</div><div class="stat-sub">Due on booked gigs</div></div>
+      </div>
+      <div class="dash-table-wrap">
+        <table class="desktop-table"><thead><tr>
+          <th>GIG #</th><th>Client</th><th>Event</th><th>Date</th><th>Fee</th><th>Advance</th><th>Balance</th><th>Status</th>
+          <th class="ws-action-sticky">Action</th>
+        </tr></thead>
+        <tbody id="gigsTable"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table>
+        <div class="mobile-cards" id="gigsCards"></div>
+      </div>
     </section>
 
     <!-- ── CLASSES ── -->
@@ -4026,6 +4058,38 @@ table#paymentsTable { min-width: 700px; }
   </div></div>
 </div>
 
+<!-- ── ADD PERFORMANCE FORM PAGE ── -->
+<div class="form-page" id="form-addGig">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="tryCloseFormPage('addGig')">← Back</button>
+    <div class="form-page-title">Add Performance</div>
+    <button class="btn-dash-save" onclick="saveGig()">Save</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Client Name&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="gig-client" placeholder="Who booked you" maxlength="80"/></div>
+      <div class="form-group"><label class="form-label">Agency (optional)</label><input type="text" class="form-input" id="gig-agency" placeholder="e.g. Prominence" maxlength="80"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Contact Email</label><input type="email" class="form-input" id="gig-email" placeholder="Payment link &amp; invoice go here" maxlength="120"/></div>
+      <div class="form-group"><label class="form-label">Contact Phone</label><input type="text" class="form-input" id="gig-phone" placeholder="+91..." maxlength="20"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Performance Title</label><input type="text" class="form-input" id="gig-title" placeholder="e.g. 45-minute solo handpan performance" maxlength="120"/></div>
+    <div class="form-group"><label class="form-label">Venue</label><input type="text" class="form-input" id="gig-venue" placeholder="Venue, area, city" maxlength="160"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Event Date</label><input type="date" class="form-input" id="gig-date"/></div>
+      <div class="form-group"><label class="form-label">Event Time</label><input type="text" class="form-input" id="gig-time" placeholder="e.g. 8:00 PM onwards" maxlength="40"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Duration</label><input type="text" class="form-input" id="gig-duration" placeholder="e.g. 45 minutes" maxlength="40"/></div>
+      <div class="form-group"><label class="form-label">Agreed Fee (₹)&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="number" class="form-input" id="gig-fee" placeholder="25000"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Advance Amount (₹)</label><input type="number" class="form-input" id="gig-advance" placeholder="0 for full payment in one go"/><span class="inv-date-hint">The payment link asks for this first, then the balance after it is paid. Leave 0 to collect the full fee in one payment.</span></div>
+    <div class="form-group"><label class="form-label">Terms (shown on the payment page)</label><textarea class="form-input" id="gig-terms" rows="2" maxlength="300" style="resize:none;">Net artist fee — any applicable taxes/TDS to be borne by the client.</textarea></div>
+    <div class="form-group"><label class="form-label">Notes (private)</label><textarea class="form-input" id="gig-notes" rows="2" maxlength="300" placeholder="Sound setup, contacts, anything..." style="resize:none;"></textarea></div>
+  </div></div>
+</div>
+
 <!-- ── EDIT FORM PAGE ── -->
 <div class="form-page" id="form-addWorkshop">
   <div class="form-page-header">
@@ -4536,6 +4600,7 @@ function invOpenPdfBlob(blob, title) {
 // temporal dead zone at that point and throw a ReferenceError.
 const BIN_TABLES = [
   { key: 'workshops', label: 'Workshop', nameField: 'venue' },
+  { key: 'gigs', label: 'Performance', nameField: 'client_name' },
   { key: 'participants', label: 'Participant', nameField: 'full_name' },
   { key: 'students', label: 'Student', nameField: 'full_name' },
   { key: 'payments', label: 'Payment', nameField: 'payer_name' },
@@ -4871,7 +4936,8 @@ const FORM_FIELDS = {
   requestFee:     ['fr-classes','fr-amount','fr-note'],
   addParticipant:  ['par-name','par-phone','par-amount','par-date','par-desc'],
   assignPayment:   ['assign-page-notes'],
-  addWaitlist:     ['wl-name','wl-phone','wl-email','wl-notes']
+  addWaitlist:     ['wl-name','wl-phone','wl-email','wl-notes'],
+  addGig:          ['gig-client','gig-agency','gig-email','gig-phone','gig-title','gig-venue','gig-date','gig-time','gig-duration','gig-fee','gig-advance','gig-notes']
 };
 
 function isFormDirty(formName) {
@@ -5493,6 +5559,7 @@ function loadSection(name) {
   else if (name === 'participants') { loadParticipants(); }
   else if (name === 'classes') { loadStudents(); }
   else if (name === 'fee-payments') { loadFeePayments(); }
+  else if (name === 'gigs') { loadGigs(); }
   else if (name === 'payments') loadPayments();
   else if (name === 'unassigned') loadUnassignedPayments();
   else if (name === 'leads') loadLeads();
@@ -8083,10 +8150,157 @@ async function reloadEntity(entity) {
   else if (entity === 'participants') { await loadParticipants(); }
   else if (entity === 'students') { await loadStudents(); }
   else if (entity === 'fee_payments') { await loadFeePayments(); }
+  else if (entity === 'gigs') { await loadGigs(); }
   else if (entity === 'payments') { await loadPayments(); }
   else if (entity === 'leads') { await loadLeads(); }
   else if (entity === 'workshop_waitlist') { await loadWaitlist(); }
   else if (entity === 'invoices') { await loadInvoices(); }
+}
+
+// ── PERFORMANCES / GIGS ──
+// One payment link serves a gig's whole life: it collects the advance first,
+// then the balance, then shows "paid". Money lands in Payments (category gig)
+// via the webhook; these rows are the bookings themselves.
+const GIG_PAY_BASE = 'https://arpitpandey.com/pages/gig?g=';
+
+function gigMoneyChip(amount, paid, cur) {
+  if (!(amount > 0)) return '<span style="color:var(--text-light);opacity:0.5;">—</span>';
+  return '<span class="badge ' + (paid ? 'badge-green' : 'badge-clay') + '" style="white-space:nowrap;">'
+    + fmtCur(amount, cur) + ' · ' + (paid ? 'Paid' : 'Due') + '</span>';
+}
+
+function gigStatusBadge(st) {
+  if (st === 'completed') return '<span class="badge badge-green">Completed</span>';
+  if (st === 'cancelled') return '<span class="badge" style="background:rgba(199,90,74,0.15);color:#c75a4a;">Cancelled</span>';
+  return '<span class="badge badge-clay">Upcoming</span>';
+}
+
+async function copyGigLink(id) {
+  const url = GIG_PAY_BASE + encodeURIComponent(id);
+  try { await navigator.clipboard.writeText(url); showToast('✓ Payment link copied — share it with the client', 'success'); }
+  catch(e) { prompt('Copy this link:', url); }
+}
+
+async function nextGigId() {
+  const existing = await sbGetAll('gigs', '');
+  let max = 0;
+  (existing.data || []).forEach(r => {
+    const m = String(r.id || '').match(/^GIG-(\d+)$/i);
+    if (m) max = Math.max(max, parseInt(m[1]));
+  });
+  return 'GIG-' + String(max + 1).padStart(3, '0');
+}
+
+async function saveGig() {
+  const client = (document.getElementById('gig-client').value || '').trim();
+  const fee = parseFloat(document.getElementById('gig-fee').value) || 0;
+  const advance = parseFloat(document.getElementById('gig-advance').value) || 0;
+  const email = (document.getElementById('gig-email').value || '').trim();
+  if (!client) { markFieldError('gig-client'); showToast('Client name is required', 'error'); return; }
+  if (!(fee > 0)) { markFieldError('gig-fee'); showToast('Agreed fee is required', 'error'); return; }
+  if (advance > fee) { markFieldError('gig-advance'); showToast('Advance cannot be more than the agreed fee', 'error'); return; }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { markFieldError('gig-email'); showToast('Enter a valid email address', 'error'); return; }
+  try {
+    const id = await nextGigId();
+    const body = {
+      id,
+      client_name: client,
+      agency: (document.getElementById('gig-agency').value || '').trim() || null,
+      contact_email: email || null,
+      contact_phone: (document.getElementById('gig-phone').value || '').trim() || null,
+      title: (document.getElementById('gig-title').value || '').trim() || null,
+      venue: (document.getElementById('gig-venue').value || '').trim() || null,
+      event_date: document.getElementById('gig-date').value || null,
+      event_time: (document.getElementById('gig-time').value || '').trim() || null,
+      duration: (document.getElementById('gig-duration').value || '').trim() || null,
+      agreed_fee: fee,
+      advance_amount: advance,
+      currency: 'INR',
+      status: 'upcoming',
+      terms: (document.getElementById('gig-terms').value || '').trim() || null,
+      notes: (document.getElementById('gig-notes').value || '').trim() || null
+    };
+    await sbPost('gigs', body);
+    closeFormPage('addGig'); resetForm('addGig');
+    loadGigs();
+    showToast('✓ ' + id + ' saved — copy its payment link from the table', 'success');
+  } catch(e) { console.error('saveGig error:', e); showToast('Error saving performance: ' + e.message, 'error'); }
+}
+
+async function loadGigs() {
+  const tbody = document.getElementById('gigsTable');
+  const cards = document.getElementById('gigsCards');
+  try {
+    const [gigRes, payRes] = await Promise.all([
+      api('/gigs'),
+      sbGetAll('payments', 'type=eq.income&category=eq.gig')
+    ]);
+    const gigs = (gigRes.data || []).sort((a, b) => String(b.event_date || '').localeCompare(String(a.event_date || '')));
+    gigs.forEach(r => cacheRecord('gigs', r));
+
+    const upcoming = gigs.filter(g => g.status === 'upcoming').length;
+    const revenue = (payRes.data || []).filter(p => !p.archived).reduce((sum, p) => sum + Number(p.amount || 0), 0);
+    const pending = gigs.filter(g => g.status !== 'cancelled').reduce((sum, g) => {
+      const f = Number(g.agreed_fee) || 0;
+      const a = Math.min(Number(g.advance_amount) || 0, f);
+      let due = 0;
+      if (!g.advance_paid) due += a;
+      if (!g.balance_paid) due += (f - a);
+      return sum + Math.max(0, due);
+    }, 0);
+    const elUp = document.getElementById('gigStatUpcoming'); if (elUp) elUp.textContent = upcoming;
+    const elRev = document.getElementById('gigStatRevenue'); if (elRev) elRev.textContent = fmt(revenue);
+    const elPen = document.getElementById('gigStatPending'); if (elPen) elPen.textContent = fmt(pending);
+    const elCnt = document.getElementById('gigsCount'); if (elCnt) elCnt.textContent = gigs.length ? (gigs.length + ' performance' + (gigs.length === 1 ? '' : 's')) : 'Paid gigs and events';
+
+    const LINK_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+    const PENCIL_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+    const TRASH_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+
+    if (tbody) tbody.innerHTML = gigs.map(g => {
+      const f = Number(g.agreed_fee) || 0;
+      const a = Math.min(Number(g.advance_amount) || 0, f);
+      const bal = Math.round((f - a) * 100) / 100;
+      const nm = (g.client_name || '').replace(/"/g, '&quot;');
+      return '<tr>'
+        + '<td><span style="font-weight:500;color:var(--clay);">' + g.id + '</span></td>'
+        + '<td class="td-truncate td-name" data-tip="' + nm + '">' + (g.client_name || '—') + (g.agency ? '<div style="font-size:0.78rem;color:var(--text-light);">via ' + g.agency + '</div>' : '') + '</td>'
+        + '<td class="td-truncate" data-tip="' + ((g.title || '') + (g.venue ? ' · ' + g.venue : '')).replace(/"/g, '&quot;') + '">' + (g.title || '—') + (g.venue ? '<div style="font-size:0.78rem;color:var(--text-light);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + g.venue + '</div>' : '') + '</td>'
+        + '<td>' + (g.event_date ? fmtDate(g.event_date) : '—') + (g.event_time ? '<div style="font-size:0.78rem;color:var(--text-light);">' + g.event_time + '</div>' : '') + '</td>'
+        + '<td style="font-weight:500;">' + fmtCur(f, g.currency) + '</td>'
+        + '<td>' + gigMoneyChip(a, g.advance_paid, g.currency) + '</td>'
+        + '<td>' + gigMoneyChip(bal, g.balance_paid, g.currency) + '</td>'
+        + '<td>' + gigStatusBadge(g.status) + '</td>'
+        + '<td class="ws-action-sticky"><div class="action-wrap">'
+        + '<button class="icon-action-btn" data-tip="Copy payment link" onclick="copyGigLink(\'' + g.id + '\')">' + LINK_SVG + '</button>'
+        + (isAdmin() ? '<button class="icon-action-btn" data-tip="Edit" onclick="openEdit(\'gigs\',\'' + g.id + '\')">' + PENCIL_SVG + '</button>'
+        + '<button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord(\'gigs\',\'' + g.id + '\',\'' + (g.client_name || g.id).replace(/'/g, '') + '\')">' + TRASH_SVG + '</button>' : '')
+        + '</div></td></tr>';
+    }).join('') || '<tr><td colspan="9"><div class="empty-state" style="padding:2.5rem 0;"><div style="font-size:2.2rem;margin-bottom:0.5rem;">🎵</div><div class="empty-state-title">No performances yet</div><div class="empty-state-sub">Add your first gig and share its payment link with the client</div></div></td></tr>';
+
+    if (cards) cards.innerHTML = gigs.map(g => {
+      const f = Number(g.agreed_fee) || 0;
+      const a = Math.min(Number(g.advance_amount) || 0, f);
+      const bal = Math.round((f - a) * 100) / 100;
+      return '<div class="m-card">'
+        + '<div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;justify-content:space-between;"><span style="color:var(--clay);font-weight:600;">' + g.id + '</span>' + gigStatusBadge(g.status) + '</div>'
+        + '<div class="m-card-row"><span class="m-card-label">Client</span><span class="m-card-val">' + (g.client_name || '—') + (g.agency ? ' · via ' + g.agency : '') + '</span></div>'
+        + (g.title ? '<div class="m-card-row"><span class="m-card-label">Event</span><span class="m-card-val">' + g.title + '</span></div>' : '')
+        + (g.venue ? '<div class="m-card-row"><span class="m-card-label">Venue</span><span class="m-card-val">' + g.venue + '</span></div>' : '')
+        + '<div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">' + (g.event_date ? fmtDate(g.event_date) : '—') + (g.event_time ? ' · ' + g.event_time : '') + '</span></div>'
+        + '<div class="m-card-row"><span class="m-card-label">Fee</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">' + fmtCur(f, g.currency) + '</span></div>'
+        + '<div class="m-card-row"><span class="m-card-label">Advance</span><span class="m-card-val">' + gigMoneyChip(a, g.advance_paid, g.currency) + '</span></div>'
+        + '<div class="m-card-row"><span class="m-card-label">Balance</span><span class="m-card-val">' + gigMoneyChip(bal, g.balance_paid, g.currency) + '</span></div>'
+        + '<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;flex-wrap:wrap;gap:0.5rem;">'
+        + '<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="copyGigLink(\'' + g.id + '\')">Copy link</button>'
+        + (isAdmin() ? '<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openEdit(\'gigs\',\'' + g.id + '\')">Edit</button>'
+        + '<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="archiveRecord(\'gigs\',\'' + g.id + '\',\'' + (g.client_name || g.id).replace(/'/g, '') + '\')">Delete</button>' : '')
+        + '</div></div>';
+    }).join('') || '<div class="mobile-cards-empty"><div class="empty-state"><div style="font-size:2.2rem;margin-bottom:0.5rem;">🎵</div><div class="empty-state-title">No performances yet</div><div class="empty-state-sub">Add your first gig and share its payment link</div></div></div>';
+  } catch(e) {
+    console.error('loadGigs error:', e);
+    showToast('Error loading performances', 'error');
+  }
 }
 
 
@@ -9031,7 +9245,7 @@ function openEdit(entity, id) {
   // Razorpay participants are now editable (name only; amount/mode/phone locked in the form)
   _editEntity = entity;
   _editId = id;
-  const title = { workshops:'Edit Workshop', participants:'Edit Participant', students:'Edit Student', fee_payments:'Edit Fee Payment', payments:'Edit Payment', leads:'Edit Lead', workshop_waitlist:'Edit Waitlist Entry' }[entity] || 'Edit';
+  const title = { workshops:'Edit Workshop', gigs:'Edit Performance', participants:'Edit Participant', students:'Edit Student', fee_payments:'Edit Fee Payment', payments:'Edit Payment', leads:'Edit Lead', workshop_waitlist:'Edit Waitlist Entry' }[entity] || 'Edit';
   document.getElementById('editFormTitle').textContent = title;
   document.getElementById('editFormBody').innerHTML = buildEditForm(entity, record);
   if (entity === 'leads') {
@@ -9079,6 +9293,26 @@ function buildEditForm(entity, r) {
   const readOnly = (label, val) => `<div class="form-group"><label class="form-label">${label}</label><input type="text" class="form-input" value="${val||'—'}" disabled style="opacity:0.5;cursor:not-allowed;"/></div>`;
   // Computed values render as text, never as a greyed-out input that looks typeable.
   const derived = (label, val, hint) => `<div class="form-group"><label class="form-label">${label}</label><div style="padding:0.85rem 1rem;border:1px dashed rgba(200,147,90,0.32);border-radius:10px;font-size:0.95rem;color:var(--bark);background:rgba(200,147,90,0.04);">${val}</div>${hint ? `<div style="font-size:0.78rem;color:var(--text-light);margin-top:0.4rem;">${hint}</div>` : ''}</div>`;
+
+  if (entity === 'gigs') return `
+    ${row(readOnly('Gig ID', r.id), sel('Status','gig-status',[['upcoming','Upcoming'],['completed','Completed'],['cancelled','Cancelled']],r.status||'upcoming'))}
+    ${row(fi('Client Name','gig-client','text',r.client_name,'maxlength="80"'), fi('Agency','gig-agency','text',r.agency||'','maxlength="80"'))}
+    ${row(fi('Contact Email','gig-email','email',r.contact_email||'','maxlength="120"'), fi('Contact Phone','gig-phone','text',r.contact_phone||'','maxlength="20"'))}
+    ${fi('Performance Title','gig-title','text',r.title||'','maxlength="120"')}
+    ${fi('Venue','gig-venue','text',r.venue||'','maxlength="160"')}
+    ${row(fi('Event Date','gig-date','date',r.event_date), fi('Event Time','gig-time','text',r.event_time||'','maxlength="40"'))}
+    ${row(fi('Duration','gig-duration','text',r.duration||'','maxlength="40"'), fi('Agreed Fee (₹)','gig-fee','number',r.agreed_fee))}
+    ${row(fi('Advance Amount (₹)','gig-advance','number',r.advance_amount), '<div class="form-group"></div>')}
+    <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1rem;background:rgba(200,147,90,0.06);border:1px solid var(--clay-pale);border-radius:10px;margin-bottom:1rem;">
+      <span style="font-size:0.95rem;color:var(--bark);font-weight:500;flex:1;">Advance received${r.advance_payment_id ? ' <span style=\'font-size:0.78em;color:var(--text-light);\'>· ' + r.advance_payment_id + '</span>' : ''}</span>
+      <label class="checkin-toggle" style="margin:0;"><input type="checkbox" id="ef-gig-advance-paid" ${r.advance_paid?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1rem;background:rgba(200,147,90,0.06);border:1px solid var(--clay-pale);border-radius:10px;margin-bottom:1.25rem;">
+      <span style="font-size:0.95rem;color:var(--bark);font-weight:500;flex:1;">Balance received${r.balance_payment_id ? ' <span style=\'font-size:0.78em;color:var(--text-light);\'>· ' + r.balance_payment_id + '</span>' : ''}</span>
+      <label class="checkin-toggle" style="margin:0;"><input type="checkbox" id="ef-gig-balance-paid" ${r.balance_paid?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>
+    </div>
+    ${fi('Terms (shown on the payment page)','gig-terms','textarea',r.terms)}
+    ${fi('Notes (private)','gig-notes','textarea',r.notes)}`;
 
   if (entity === 'workshops') return `
     ${row(readOnly('Workshop ID', r.id), fi('Date','ws-date','date',r.date))}
@@ -9194,6 +9428,30 @@ async function saveEdit() {
       const venueRent=parseFloat(g('ws-venue-rent'))||0, hpRent=parseFloat(g('ws-hp-rent'))||0, porter=parseFloat(g('ws-porter'))||0, misc=parseFloat(g('ws-misc'))||0, ads=parseFloat(g('ws-ads'))||0;
       // pax / revenue / expense / profit / margin are derived by a DB trigger from the rows — never written from this form.
       body = { date:gd('ws-date'), venue:g('ws-venue'), price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, ads_spend:ads, notes:(document.getElementById('ws-notes')?.value||null), workshop_time:(g('ws-time')||'').trim()||null, observer_price:gn('ws-observer-price'), participant_capacity:gn('ws-cap-participant'), observer_capacity:gn('ws-cap-observer'), venue_map_url:(g('ws-venue-map')||'').trim()||null };
+    } else if (_editEntity === 'gigs') {
+      const advPaidEl = document.getElementById('ef-gig-advance-paid');
+      const balPaidEl = document.getElementById('ef-gig-balance-paid');
+      body = {
+        client_name: g('gig-client'),
+        agency: (g('gig-agency')||'').trim()||null,
+        contact_email: (g('gig-email')||'').trim()||null,
+        contact_phone: (g('gig-phone')||'').trim()||null,
+        title: (g('gig-title')||'').trim()||null,
+        venue: (g('gig-venue')||'').trim()||null,
+        event_date: gd('gig-date'),
+        event_time: (g('gig-time')||'').trim()||null,
+        duration: (g('gig-duration')||'').trim()||null,
+        agreed_fee: gn('gig-fee')||0,
+        advance_amount: gn('gig-advance')||0,
+        status: g('gig-status')||'upcoming',
+        advance_paid: advPaidEl ? advPaidEl.checked : false,
+        balance_paid: balPaidEl ? balPaidEl.checked : false,
+        terms: g('gig-terms')||null,
+        notes: g('gig-notes')||null
+      };
+      if (!body.client_name) { markFieldError('gig-client'); showToast('Client name is required', 'error'); return; }
+      if (!(body.agreed_fee > 0)) { markFieldError('gig-fee'); showToast('Agreed fee is required', 'error'); return; }
+      if (body.advance_amount > body.agreed_fee) { markFieldError('gig-advance'); showToast('Advance cannot be more than the agreed fee', 'error'); return; }
     } else if (_editEntity === 'participants') {
       const isRzpPar = document.getElementById('par-phone')?.disabled || !document.getElementById('par-phone');
       if (isRzpPar) {
