@@ -2632,7 +2632,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v101</span>
+        <span style="color:var(--clay);font-weight:500;">v102</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2701,7 +2701,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v101</span>
+        <span style="color:var(--clay);font-weight:500;">v102</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5729,7 +5729,8 @@ function makeCurrencySelect(sel) {
   btn.type = 'button';
   btn.className = 'form-select-btn';
   btn.style.cssText = sel.style.cssText; // joined-row radius / border / width carry over
-  btn.innerHTML = '<span class="fs-label"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex:0 0 auto;"><polyline points="6 9 12 15 18 9"/></svg>';
+  if (sel.style.maxWidth) { btn.style.padding = '0 9px'; btn.style.gap = '4px'; } // narrow trigger: keep "CAD" from truncating
+  btn.innerHTML = '<span class="fs-label"></span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex:0 0 auto;"><polyline points="6 9 12 15 18 9"/></svg>';
 
   const menu = document.createElement('div');
   menu.className = 'form-select-menu';
@@ -9170,7 +9171,7 @@ function closeAllCCPickers() {
   _ccPickerBtn = null;
 }
 
-function buildPhoneWrap(inputId, phone, ccId) {
+function buildPhoneWrap(inputId, phone, ccId, country) {
   if (!ccId) ccId = inputId + '-cc';
   const prefixId = inputId + '-prefix';
   const btnId = ccId + '-btn';
@@ -9178,13 +9179,16 @@ function buildPhoneWrap(inputId, phone, ccId) {
   let detectedFlag = '🇮🇳';
   let localNum = phone || '';
   if (localNum.startsWith('+')) {
-    const allCodes = getCountryCodes().map(c => [c[0],c[1]]).sort((a,b) => b[0].length - a[0].length);
-    for (const [cc, flag] of allCodes) {
-      if (localNum.startsWith(cc + ' ') || localNum === cc) {
-        detectedCC = cc; detectedFlag = flag;
-        localNum = localNum.slice(cc.length).replace(/^\s+/,'').trim();
-        break;
-      }
+    // Several countries share a dial code (+1 is USA and Canada), so the stored
+    // country name decides the tie instead of whichever comes first in the list.
+    const allCodes = getCountryCodes().sort((a,b) => b[0].length - a[0].length);
+    const matches = allCodes.filter(c => localNum.startsWith(c[0] + ' ') || localNum === c[0]);
+    if (matches.length) {
+      const tied = matches.filter(c => c[0].length === matches[0][0].length);
+      const wanted = (country || '').trim().toLowerCase();
+      const pick = tied.find(c => c[2].toLowerCase() === wanted) || tied[0];
+      detectedCC = pick[0]; detectedFlag = pick[1];
+      localNum = localNum.slice(detectedCC.length).replace(/^\s+/,'').trim();
     }
   }
   const safeNum = (localNum||'').replace(/"/g,'&quot;');
@@ -9566,7 +9570,7 @@ function buildEditForm(entity, r) {
 
   if (entity === 'students') return `
     ${row(readOnly('Student ID', r.id), fi('Full Name','stu-name','text',r.full_name,'maxlength="80"'))}
-    ${row(`<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('ef-stu-phone', r.phone, 'ef-stu-phone-cc')}</div>`, fi('Email','stu-email','email',r.email,'maxlength="120"'))}
+    ${row(`<div class="form-group"><label class="form-label">Phone / Landline</label>${buildPhoneWrap('ef-stu-phone', r.phone, 'ef-stu-phone-cc', r.country)}</div>`, fi('Email','stu-email','email',r.email,'maxlength="120"'))}
     ${row(sel('Status','stu-status',[['Active','Active'],['On Break','On Break'],['Completed','Completed']],r.status),
           fi('Start Date','stu-start','date',r.join_date))}
     <div class="form-group"><label class="form-label">Per class rate</label>
