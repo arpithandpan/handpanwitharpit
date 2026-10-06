@@ -1065,15 +1065,18 @@ body.dark-mode .date-picker-btn { background: #2a2018; border-color: rgba(200,14
 .form-select-opt.selected { color: var(--clay); font-weight: 500; }
 .form-select-opt.selected::before { content: '✓'; font-size: 1.15rem; color: var(--clay); }
 .fs-cur-search-wrap { padding: 8px; border-bottom: 1px solid rgba(193,127,82,0.12); position: sticky; top: 0; background: white; z-index: 1; }
-.fs-cur-search {
-  width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px;
-  border: 1.5px solid var(--clay-pale); background: transparent;
+input.fs-cur-search {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px;
+  border: 1.5px solid var(--clay-pale); background: rgba(193,127,82,0.06);
   color: var(--text-dark); font-size: 1rem; font-family: var(--font-body);
-  outline: none; box-sizing: border-box;
+  outline: none; box-sizing: border-box; color-scheme: light;
 }
-.fs-cur-search:focus { border-color: var(--clay); }
+input.fs-cur-search::placeholder { color: rgba(140,110,90,0.6); }
+input.fs-cur-search:focus { border-color: var(--clay); }
 body.dark-mode .fs-cur-search-wrap { background: #2a2018; border-bottom-color: rgba(200,147,90,0.2); }
-body.dark-mode .fs-cur-search { color: #e8d5c0; border-color: rgba(200,147,90,0.25); }
+body.dark-mode input.fs-cur-search { background: rgba(255,255,255,0.06); color: #e8d5c0; border-color: rgba(200,147,90,0.25); color-scheme: dark; }
+body.dark-mode input.fs-cur-search::placeholder { color: rgba(200,147,90,0.5); }
 .fs-cur-name { opacity: 0.55; font-size: 0.85em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }
 .form-select-opt:not(.selected)::before { content: ''; display: inline-block; width: 1em; }
 body.dark-mode .form-select-btn { background: #2a2018; border-color: rgba(200,147,90,0.25); color: #e8d5c0; }
@@ -2629,7 +2632,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v100</span>
+        <span style="color:var(--clay);font-weight:500;">v101</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2698,7 +2701,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v100</span>
+        <span style="color:var(--clay);font-weight:500;">v101</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5716,6 +5719,7 @@ function makeCurrencySelect(sel) {
   if (!sel || sel.dataset.curDone) return;
   sel.dataset.curDone = '1';
   sel.dataset.customized = '1'; // keep makeFormSelect away
+  sel.classList.remove('native-select'); // its display:block !important would keep the select visible
 
   const wrap = document.createElement('div');
   wrap.className = 'form-select-wrap';
@@ -5729,6 +5733,7 @@ function makeCurrencySelect(sel) {
 
   const menu = document.createElement('div');
   menu.className = 'form-select-menu';
+  menu.style.maxHeight = '400px'; // search bar + ~6 rows visible
   const searchWrap = document.createElement('div');
   searchWrap.className = 'fs-cur-search-wrap';
   const searchInput = document.createElement('input');
@@ -5798,7 +5803,7 @@ function makeCurrencySelect(sel) {
     btn.classList.add('open');
     const rect = btn.getBoundingClientRect();
     menu.style.width = Math.max(rect.width, 250) + 'px';
-    if (window.innerHeight - rect.bottom < 300) { menu.style.top = 'auto'; menu.style.bottom = 'calc(100% + 4px)'; }
+    if (window.innerHeight - rect.bottom < 440) { menu.style.top = 'auto'; menu.style.bottom = 'calc(100% + 4px)'; }
     else { menu.style.top = 'calc(100% + 4px)'; menu.style.bottom = 'auto'; }
     setTimeout(() => searchInput.focus(), 30);
   }
@@ -5835,7 +5840,7 @@ function makeCurrencySelect(sel) {
   btn.onclick = (e) => { e.stopPropagation(); menu.classList.contains('open') ? closeMenu() : openMenu(); };
   sel.addEventListener('change', setLabel);
 
-  sel.style.display = 'none';
+  sel.style.setProperty('display', 'none', 'important');
   sel.parentNode.insertBefore(wrap, sel.nextSibling);
   wrap.appendChild(btn);
   wrap.appendChild(menu);
