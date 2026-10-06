@@ -337,7 +337,7 @@
         <span class="total-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"/><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/></svg> Secure</span>
       </div>
       <button class="cta" id="pay-btn" disabled>Loading <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></svg></button>
-      <p class="fineprint">A secure Razorpay window opens right here. Pick UPI, card or net banking and you're done.</p>
+      <p class="fineprint" id="fineprint">A secure Razorpay window opens right here. Pick UPI, card or net banking and you're done.</p>
       <div class="methods" id="methods"></div>
     </div>
 
@@ -379,7 +379,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v8)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v9)</span>
   </footer>
 </div>
 
@@ -701,6 +701,9 @@
     payBtn.disabled = false;
     const c = CURRENCY[fee.currency] || { methods: ['Visa', 'Mastercard'] };
     methodsEl.innerHTML = c.methods.map(m => '<span>' + ICON_CARD + m + '</span>').join('');
+    document.getElementById('fineprint').textContent = fee.currency === 'INR'
+      ? "A secure Razorpay window opens right here. Pick UPI, card or net banking and you're done."
+      : "A secure Razorpay window opens right here. Pay with your card and you're done.";
     document.title = 'Pay your fee | Arpit Pandey';
   }
 
