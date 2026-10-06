@@ -1064,6 +1064,17 @@ body.dark-mode .date-picker-btn { background: #2a2018; border-color: rgba(200,14
 .form-select-opt:hover { background: rgba(193,127,82,0.06); }
 .form-select-opt.selected { color: var(--clay); font-weight: 500; }
 .form-select-opt.selected::before { content: '✓'; font-size: 1.15rem; color: var(--clay); }
+.fs-cur-search-wrap { padding: 8px; border-bottom: 1px solid rgba(193,127,82,0.12); position: sticky; top: 0; background: white; z-index: 1; }
+.fs-cur-search {
+  width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px;
+  border: 1.5px solid var(--clay-pale); background: transparent;
+  color: var(--text-dark); font-size: 1rem; font-family: var(--font-body);
+  outline: none; box-sizing: border-box;
+}
+.fs-cur-search:focus { border-color: var(--clay); }
+body.dark-mode .fs-cur-search-wrap { background: #2a2018; border-bottom-color: rgba(200,147,90,0.2); }
+body.dark-mode .fs-cur-search { color: #e8d5c0; border-color: rgba(200,147,90,0.25); }
+.fs-cur-name { opacity: 0.55; font-size: 0.85em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }
 .form-select-opt:not(.selected)::before { content: ''; display: inline-block; width: 1em; }
 body.dark-mode .form-select-btn { background: #2a2018; border-color: rgba(200,147,90,0.25); color: #e8d5c0; }
 body.dark-mode .form-select-menu { background: #2a2018; border-color: rgba(200,147,90,0.25); }
@@ -2618,7 +2629,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v99</span>
+        <span style="color:var(--clay);font-weight:500;">v100</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2687,7 +2698,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v99</span>
+        <span style="color:var(--clay);font-weight:500;">v100</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4166,7 +4177,7 @@ table#paymentsTable { min-width: 700px; }
     <div class="form-group"><label class="form-label">Per class rate</label>
       <input type="hidden" id="stu-basis" value="session"/>
       <div style="display:flex;gap:0;">
-        <select class="form-input native-select" id="stu-currency" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:90px;"><option value="INR">INR</option></select>
+        <select class="form-input native-select" id="stu-currency" data-customized="1" data-currency-select="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:90px;"><option value="INR">INR</option></select>
         <input type="number" class="form-input" id="stu-fee" placeholder="0" style="border-radius:0 8px 8px 0;"/>
       </div>
     </div>
@@ -4280,7 +4291,7 @@ table#paymentsTable { min-width: 700px; }
           <input type="hidden" id="fr-student-id"/>
           <input type="hidden" id="fr-month"/></div>
         <div class="form-group"><label class="form-label">Currency</label>
-          <select class="form-input" id="fr-currency">
+          <select class="form-input" id="fr-currency" data-customized="1" data-currency-select="1" data-label="Currency">
             <option value="INR">INR (₹)</option>
           </select></div>
       </div>
@@ -5659,12 +5670,189 @@ function currencyOptionsHtml(selected, withSym) {
     return '<option value="' + c + '"' + (c === sel ? ' selected' : '') + '>' + label + '</option>';
   }).join('');
 }
+// Currency names + country keywords, for the searchable picker
+const CURRENCY_INFO = {
+  AED:'UAE Dirham|united arab emirates dubai abu dhabi',ALL:'Albanian Lek|albania',AMD:'Armenian Dram|armenia',AUD:'Australian Dollar|australia',
+  AWG:'Aruban Florin|aruba',AZN:'Azerbaijani Manat|azerbaijan',BAM:'Convertible Mark|bosnia herzegovina',BBD:'Barbadian Dollar|barbados',
+  BDT:'Bangladeshi Taka|bangladesh',BGN:'Bulgarian Lev|bulgaria',BHD:'Bahraini Dinar|bahrain',BIF:'Burundian Franc|burundi',
+  BMD:'Bermudian Dollar|bermuda',BND:'Brunei Dollar|brunei',BOB:'Bolivian Boliviano|bolivia',BRL:'Brazilian Real|brazil',
+  BSD:'Bahamian Dollar|bahamas',BTN:'Bhutanese Ngultrum|bhutan',BWP:'Botswana Pula|botswana',BZD:'Belize Dollar|belize',
+  CAD:'Canadian Dollar|canada',CHF:'Swiss Franc|switzerland',CLP:'Chilean Peso|chile',CNY:'Chinese Yuan|china',
+  COP:'Colombian Peso|colombia',CRC:'Costa Rican Colon|costa rica',CUP:'Cuban Peso|cuba',CVE:'Cabo Verde Escudo|cape verde',
+  CZK:'Czech Koruna|czech republic czechia',DJF:'Djiboutian Franc|djibouti',DKK:'Danish Krone|denmark',DOP:'Dominican Peso|dominican republic',
+  DZD:'Algerian Dinar|algeria',EGP:'Egyptian Pound|egypt',ETB:'Ethiopian Birr|ethiopia',EUR:'Euro|europe germany france spain italy netherlands portugal ireland austria belgium finland greece',
+  FJD:'Fijian Dollar|fiji',GBP:'British Pound|united kingdom uk britain england scotland wales',GHS:'Ghanaian Cedi|ghana',GIP:'Gibraltar Pound|gibraltar',
+  GMD:'Gambian Dalasi|gambia',GNF:'Guinean Franc|guinea',GTQ:'Guatemalan Quetzal|guatemala',GYD:'Guyanese Dollar|guyana',
+  HKD:'Hong Kong Dollar|hong kong',HNL:'Honduran Lempira|honduras',HRK:'Croatian Kuna|croatia',HTG:'Haitian Gourde|haiti',
+  HUF:'Hungarian Forint|hungary',IDR:'Indonesian Rupiah|indonesia',ILS:'Israeli New Shekel|israel',INR:'Indian Rupee|india',
+  IQD:'Iraqi Dinar|iraq',ISK:'Icelandic Krona|iceland',JMD:'Jamaican Dollar|jamaica',JOD:'Jordanian Dinar|jordan',
+  JPY:'Japanese Yen|japan',KES:'Kenyan Shilling|kenya',KGS:'Kyrgyzstani Som|kyrgyzstan',KHR:'Cambodian Riel|cambodia',
+  KMF:'Comorian Franc|comoros',KRW:'Korean Won|south korea',KWD:'Kuwaiti Dinar|kuwait',KYD:'Cayman Islands Dollar|cayman islands',
+  KZT:'Kazakhstani Tenge|kazakhstan',LAK:'Lao Kip|laos',LKR:'Sri Lankan Rupee|sri lanka',LRD:'Liberian Dollar|liberia',
+  LSL:'Lesotho Loti|lesotho',MAD:'Moroccan Dirham|morocco',MDL:'Moldovan Leu|moldova',MGA:'Malagasy Ariary|madagascar',
+  MKD:'Macedonian Denar|north macedonia',MMK:'Myanmar Kyat|myanmar burma',MNT:'Mongolian Tugrik|mongolia',MOP:'Macanese Pataca|macau',
+  MUR:'Mauritian Rupee|mauritius',MVR:'Maldivian Rufiyaa|maldives',MWK:'Malawian Kwacha|malawi',MXN:'Mexican Peso|mexico',
+  MYR:'Malaysian Ringgit|malaysia',MZN:'Mozambican Metical|mozambique',NAD:'Namibian Dollar|namibia',NGN:'Nigerian Naira|nigeria',
+  NIO:'Nicaraguan Cordoba|nicaragua',NOK:'Norwegian Krone|norway',NPR:'Nepalese Rupee|nepal',NZD:'New Zealand Dollar|new zealand',
+  OMR:'Omani Rial|oman',PEN:'Peruvian Sol|peru',PGK:'Papua New Guinean Kina|papua new guinea',PHP:'Philippine Peso|philippines',
+  PKR:'Pakistani Rupee|pakistan',PLN:'Polish Zloty|poland',PYG:'Paraguayan Guarani|paraguay',QAR:'Qatari Riyal|qatar',
+  RON:'Romanian Leu|romania',RSD:'Serbian Dinar|serbia',RUB:'Russian Ruble|russia',RWF:'Rwandan Franc|rwanda',
+  SAR:'Saudi Riyal|saudi arabia',SCR:'Seychellois Rupee|seychelles',SEK:'Swedish Krona|sweden',SGD:'Singapore Dollar|singapore',
+  SLL:'Sierra Leonean Leone|sierra leone',SOS:'Somali Shilling|somalia',SVC:'Salvadoran Colon|el salvador',SZL:'Swazi Lilangeni|eswatini swaziland',
+  THB:'Thai Baht|thailand',TND:'Tunisian Dinar|tunisia',TRY:'Turkish Lira|turkey',TTD:'Trinidad and Tobago Dollar|trinidad tobago',
+  TWD:'New Taiwan Dollar|taiwan',TZS:'Tanzanian Shilling|tanzania',UAH:'Ukrainian Hryvnia|ukraine',UGX:'Ugandan Shilling|uganda',
+  USD:'US Dollar|united states america usa',UYU:'Uruguayan Peso|uruguay',UZS:'Uzbekistani Som|uzbekistan',VND:'Vietnamese Dong|vietnam',
+  VUV:'Vanuatu Vatu|vanuatu',XAF:'Central African CFA Franc|cameroon chad gabon congo',XCD:'East Caribbean Dollar|grenada saint lucia dominica',XOF:'West African CFA Franc|senegal ivory coast benin mali burkina togo niger',
+  XPF:'CFP Franc|french polynesia new caledonia tahiti',YER:'Yemeni Rial|yemen',ZAR:'South African Rand|south africa',ZMW:'Zambian Kwacha|zambia'
+};
+
+// ── SEARCHABLE CURRENCY PICKER ──
+// Same look as the form-select component, plus a search bar that matches
+// code ("CAD"), currency name ("rupee") or country ("canada", "japan").
+// The native select stays in the DOM (hidden) as the value holder, so all
+// existing code that reads or sets .value keeps working. Programmatic sets
+// should dispatch a 'change' event so the visible label stays in sync.
+function makeCurrencySelect(sel) {
+  if (!sel || sel.dataset.curDone) return;
+  sel.dataset.curDone = '1';
+  sel.dataset.customized = '1'; // keep makeFormSelect away
+
+  const wrap = document.createElement('div');
+  wrap.className = 'form-select-wrap';
+  if (sel.style.maxWidth) { wrap.style.maxWidth = sel.style.maxWidth; wrap.style.flex = '0 0 ' + sel.style.maxWidth; }
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'form-select-btn';
+  btn.style.cssText = sel.style.cssText; // joined-row radius / border / width carry over
+  btn.innerHTML = '<span class="fs-label"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex:0 0 auto;"><polyline points="6 9 12 15 18 9"/></svg>';
+
+  const menu = document.createElement('div');
+  menu.className = 'form-select-menu';
+  const searchWrap = document.createElement('div');
+  searchWrap.className = 'fs-cur-search-wrap';
+  const searchInput = document.createElement('input');
+  searchInput.type = 'text';
+  searchInput.className = 'fs-cur-search';
+  searchInput.placeholder = 'Search currency or country…';
+  searchInput.autocomplete = 'off';
+  searchWrap.appendChild(searchInput);
+  const list = document.createElement('div');
+  menu.appendChild(searchWrap);
+  menu.appendChild(list);
+
+  function setLabel() {
+    const o = sel.options[sel.selectedIndex];
+    btn.querySelector('.fs-label').textContent = o ? o.text : (sel.value || 'INR');
+  }
+
+  function matches(c, q) {
+    if (!q) return true;
+    const info = CURRENCY_INFO[c] || '';
+    return c.toLowerCase().indexOf(q) !== -1 || info.toLowerCase().indexOf(q) !== -1;
+  }
+
+  function renderList(q, makeRow, target) {
+    const query = (q || '').trim().toLowerCase();
+    target.innerHTML = '';
+    let shown = 0;
+    ALL_CURRENCIES.forEach(c => {
+      if (!matches(c, query)) return;
+      shown++;
+      target.appendChild(makeRow(c));
+    });
+    if (!shown) {
+      const empty = document.createElement('div');
+      empty.className = 'form-select-opt';
+      empty.style.cssText = 'opacity:0.5;cursor:default;';
+      empty.textContent = 'No match';
+      target.appendChild(empty);
+    }
+  }
+
+  function pick(c) {
+    sel.value = c;
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+    setLabel();
+  }
+
+  function desktopRow(c) {
+    const div = document.createElement('div');
+    div.className = 'form-select-opt' + (sel.value === c ? ' selected' : '');
+    const name = (CURRENCY_INFO[c] || '').split('|')[0];
+    div.innerHTML = '<span class="form-select-opt-text">' + c + '</span>'
+      + (name ? '<span class="fs-cur-name">' + name + '</span>' : '');
+    div.onclick = (e) => { e.stopPropagation(); pick(c); closeMenu(); };
+    return div;
+  }
+
+  searchInput.oninput = () => renderList(searchInput.value, desktopRow, list);
+  searchInput.onclick = (e) => e.stopPropagation();
+
+  function openMenu() {
+    if (window.innerWidth <= 900) { openSheet(); return; }
+    if (typeof closeAllDropdowns === 'function') closeAllDropdowns();
+    searchInput.value = '';
+    renderList('', desktopRow, list);
+    menu.classList.add('open');
+    btn.classList.add('open');
+    const rect = btn.getBoundingClientRect();
+    menu.style.width = Math.max(rect.width, 250) + 'px';
+    if (window.innerHeight - rect.bottom < 300) { menu.style.top = 'auto'; menu.style.bottom = 'calc(100% + 4px)'; }
+    else { menu.style.top = 'calc(100% + 4px)'; menu.style.bottom = 'auto'; }
+    setTimeout(() => searchInput.focus(), 30);
+  }
+  function closeMenu() { menu.classList.remove('open'); btn.classList.remove('open'); }
+
+  function openSheet() {
+    openMobilePicker(sel.dataset.label || 'Currency', (body) => {
+      const sw = document.createElement('div');
+      sw.style.cssText = 'padding:2px 2px 10px;';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'form-input';
+      inp.placeholder = 'Search currency or country…';
+      inp.autocomplete = 'off';
+      sw.appendChild(inp);
+      const lst = document.createElement('div');
+      body.appendChild(sw);
+      body.appendChild(lst);
+      const mobileRow = (c) => {
+        const div = document.createElement('div');
+        div.className = 'mobile-picker-opt' + (sel.value === c ? ' selected' : '');
+        const name = (CURRENCY_INFO[c] || '').split('|')[0];
+        div.innerHTML = '<div class="mobile-picker-opt-radio"><div class="mobile-picker-opt-radio-dot"></div></div>'
+          + '<span class="mobile-picker-opt-text">' + c + (name ? ' · ' + name : '') + '</span>';
+        div.onclick = () => { pick(c); closeMobilePicker(); };
+        return div;
+      };
+      inp.oninput = () => renderList(inp.value, mobileRow, lst);
+      renderList('', mobileRow, lst);
+    }, () => btn.classList.remove('open'));
+    btn.classList.add('open');
+  }
+
+  btn.onclick = (e) => { e.stopPropagation(); menu.classList.contains('open') ? closeMenu() : openMenu(); };
+  sel.addEventListener('change', setLabel);
+
+  sel.style.display = 'none';
+  sel.parentNode.insertBefore(wrap, sel.nextSibling);
+  wrap.appendChild(btn);
+  wrap.appendChild(menu);
+  setLabel();
+}
+
+function initCurrencySelects() {
+  document.querySelectorAll('select[data-currency-select]:not([data-cur-done])').forEach(makeCurrencySelect);
+}
+
 // Fill the static currency dropdowns (Add Student, Request Fee) with the full list
 (function () {
   const stuCur = document.getElementById('stu-currency');
   if (stuCur) stuCur.innerHTML = currencyOptionsHtml('INR');
   const frCur = document.getElementById('fr-currency');
   if (frCur) frCur.innerHTML = currencyOptionsHtml('INR', true);
+  initCurrencySelects();
 })();
 // Small caption shown under a person's name: guest rows point back to
 // whoever they booked with, and the lead's own row shows how many people
@@ -6481,10 +6669,9 @@ async function openRequestFee(studentId) {
   document.getElementById('fr-note').value = '';
   updateCharCount('fr-note', 'fr-note-count', 80);
   const curSel = document.getElementById('fr-currency');
+  curSel.onchange = null;
   curSel.value = (stu.currency || 'INR').toUpperCase();
-  const wrap = curSel.nextElementSibling;
-  if (wrap && wrap.classList.contains('form-select-wrap')) wrap.remove();
-  delete curSel.dataset.customized;
+  curSel.dispatchEvent(new Event('change'));
   curSel.onchange = frUpdatePreview;
   document.getElementById('fr-form-fields').style.display = '';
   document.getElementById('fr-result').style.display = 'none';
@@ -8954,7 +9141,7 @@ function selectCC(dial, flag, name, btnId, ccId, prefixId) {
   if (ccId === 'stu-phone-cc' || ccId === 'ef-stu-phone-cc') {
     const pfx = ccId === 'ef-stu-phone-cc' ? 'ef-' : '';
     const curSel = document.getElementById(pfx + 'stu-currency');
-    if (curSel) { curSel.value = (name === 'Canada') ? 'CAD' : dialToCurrency(dial); }
+    if (curSel) { curSel.value = (name === 'Canada') ? 'CAD' : dialToCurrency(dial); curSel.dispatchEvent(new Event('change')); }
     const countryEl = document.getElementById(pfx + 'stu-country');
     if (countryEl) countryEl.value = name || dialToCountry(dial);
   }
@@ -9380,7 +9567,7 @@ function buildEditForm(entity, r) {
     <div class="form-group"><label class="form-label">Per class rate</label>
       <input type="hidden" id="ef-stu-basis" value="session"/>
       <div style="display:flex;gap:0;">
-        <select class="form-input native-select" id="ef-stu-currency" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:90px;">${currencyOptionsHtml(r.currency)}</select>
+        <select class="form-input native-select" id="ef-stu-currency" data-customized="1" data-currency-select="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:90px;">${currencyOptionsHtml(r.currency)}</select>
         <input type="number" class="form-input" id="ef-stu-fee" value="${r.monthly_fee||0}" style="border-radius:0 8px 8px 0;"/>
       </div>
       ${r.fee_basis && r.fee_basis !== 'session' ? '<span class="inv-date-hint" style="color:var(--clay);">This was saved as a per ' + (r.fee_basis === 'month' ? 'month' : 'course') + ' fee. Change it to one class’s rate before saving.</span>' : ''}
@@ -10701,6 +10888,7 @@ function refreshFormSelect(nativeSelect) {
 
 function initFormSelects() {
   document.querySelectorAll('select.form-input:not([data-customized])').forEach(makeFormSelect);
+  if (typeof initCurrencySelects === 'function') initCurrencySelects();
 }
 
 // Re-run after modals open to catch dynamically added selects
