@@ -2618,7 +2618,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v98</span>
+        <span style="color:var(--clay);font-weight:500;">v99</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2687,7 +2687,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v98</span>
+        <span style="color:var(--clay);font-weight:500;">v99</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4166,7 +4166,7 @@ table#paymentsTable { min-width: 700px; }
     <div class="form-group"><label class="form-label">Per class rate</label>
       <input type="hidden" id="stu-basis" value="session"/>
       <div style="display:flex;gap:0;">
-        <select class="form-input native-select" id="stu-currency" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:90px;"><option value="INR">INR</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="CHF">CHF</option><option value="AUD">AUD</option><option value="SGD">SGD</option><option value="AED">AED</option></select>
+        <select class="form-input native-select" id="stu-currency" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:90px;"><option value="INR">INR</option></select>
         <input type="number" class="form-input" id="stu-fee" placeholder="0" style="border-radius:0 8px 8px 0;"/>
       </div>
     </div>
@@ -4281,8 +4281,7 @@ table#paymentsTable { min-width: 700px; }
           <input type="hidden" id="fr-month"/></div>
         <div class="form-group"><label class="form-label">Currency</label>
           <select class="form-input" id="fr-currency">
-            <option value="INR">INR (₹)</option><option value="USD">USD ($)</option>
-            <option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option><option value="CHF">CHF</option>
+            <option value="INR">INR (₹)</option>
           </select></div>
       </div>
       <div class="form-row">
@@ -5618,7 +5617,7 @@ const fmt = n => { const v = Number(n || 0); return (v < 0 ? '-₹' : '₹') + M
 // Currency-aware version for rows that store their own currency (invoices).
 // INR looks exactly like fmt(); foreign currency gets its symbol + code,
 // e.g. "$72 USD", so dollar invoices never show up as rupees.
-const CUR_SYM = { INR: '₹', USD: '$', EUR: '€', GBP: '£', CHF: 'CHF ', AUD: 'A$', SGD: 'S$', AED: 'AED ' };
+const CUR_SYM = { INR: '₹', USD: '$', EUR: '€', GBP: '£', CHF: 'CHF ', AUD: 'A$', CAD: 'C$', SGD: 'S$', AED: 'AED ' };
 const fmtCur = (n, cur) => {
   const c = String(cur || 'INR').toUpperCase();
   if (c === 'INR') return fmt(n);
@@ -5638,6 +5637,35 @@ function fmtMoney(n, cur, basis) {
   return formatted;
 }
 const fmtMode = m => (!m ? '—' : m === 'Razorpay UPI' ? 'RZP UPI' : m);
+
+// ── CURRENCIES ──
+// Every currency Razorpay accepts for international payments (Razorpay docs, Oct 2026).
+// Common ones first, rest A-Z. One source of truth for all currency dropdowns.
+const ALL_CURRENCIES = ['INR','USD','EUR','GBP','CAD','AUD','SGD','AED','CHF',
+  'ALL','AMD','AWG','AZN','BAM','BBD','BDT','BGN','BHD','BIF','BMD','BND','BOB','BRL','BSD','BTN',
+  'BWP','BZD','CLP','CNY','COP','CRC','CUP','CVE','CZK','DJF','DKK','DOP','DZD','EGP','ETB','FJD',
+  'GHS','GIP','GMD','GNF','GTQ','GYD','HKD','HNL','HRK','HTG','HUF','IDR','ILS','IQD','ISK','JMD',
+  'JOD','JPY','KES','KGS','KHR','KMF','KRW','KWD','KYD','KZT','LAK','LKR','LRD','LSL','MAD','MDL',
+  'MGA','MKD','MMK','MNT','MOP','MUR','MVR','MWK','MXN','MYR','MZN','NAD','NGN','NIO','NOK','NPR',
+  'NZD','OMR','PEN','PGK','PHP','PKR','PLN','PYG','QAR','RON','RSD','RUB','RWF','SAR','SCR','SEK',
+  'SLL','SOS','SVC','SZL','THB','TND','TRY','TTD','TWD','TZS','UAH','UGX','UYU','UZS','VND','VUV',
+  'XAF','XCD','XOF','XPF','YER','ZAR','ZMW'];
+function currencyOptionsHtml(selected, withSym) {
+  const sel = (selected || 'INR').toUpperCase();
+  const listed = ALL_CURRENCIES.includes(sel) ? ALL_CURRENCIES : [sel].concat(ALL_CURRENCIES);
+  return listed.map(c => {
+    const s = (CUR_SYM[c] || '').trim();
+    const label = (withSym && s && s !== c) ? c + ' (' + s + ')' : c;
+    return '<option value="' + c + '"' + (c === sel ? ' selected' : '') + '>' + label + '</option>';
+  }).join('');
+}
+// Fill the static currency dropdowns (Add Student, Request Fee) with the full list
+(function () {
+  const stuCur = document.getElementById('stu-currency');
+  if (stuCur) stuCur.innerHTML = currencyOptionsHtml('INR');
+  const frCur = document.getElementById('fr-currency');
+  if (frCur) frCur.innerHTML = currencyOptionsHtml('INR', true);
+})();
 // Small caption shown under a person's name: guest rows point back to
 // whoever they booked with, and the lead's own row shows how many people
 // came with them, so the connection reads in both directions.
@@ -6366,7 +6394,7 @@ function feeStudentDisplay(f) {
 // The page reads the row through the Railway server; the Razorpay webhook
 // marks it paid and creates the matching fee_payments row.
 const FEE_REQUEST_PAGE = 'https://arpitpandey.com/pages/pay?r=';
-const FR_SYMBOL = { INR: '₹', USD: '$', EUR: '€', GBP: '£', CHF: 'CHF ' };
+const FR_SYMBOL = { INR: '₹', USD: '$', EUR: '€', GBP: '£', CHF: 'CHF ', CAD: 'C$' };
 function frFmt(amount, currency) {
   const c = (currency || 'INR').toUpperCase();
   const loc = c === 'INR' ? 'en-IN' : 'en-US';
@@ -8829,8 +8857,8 @@ function updateExpandBtn() {
 
 // ── DIAL → CURRENCY / COUNTRY MAPPING ──
 const DIAL_CURRENCY = {'+1':'USD','+44':'GBP','+61':'AUD','+49':'EUR','+33':'EUR','+39':'EUR','+34':'EUR','+31':'EUR','+46':'SEK','+47':'NOK','+45':'DKK','+358':'EUR','+41':'CHF','+43':'EUR','+32':'EUR','+351':'EUR','+353':'EUR','+48':'PLN','+420':'CZK','+36':'HUF','+40':'RON','+30':'EUR','+972':'ILS','+971':'AED','+966':'SAR','+974':'QAR','+965':'KWD','+973':'BHD','+968':'OMR','+65':'SGD','+82':'KRW','+81':'JPY','+86':'CNY','+852':'HKD','+886':'TWD','+55':'BRL','+52':'MXN'};
-// Only currencies Razorpay supports for international: map others to USD
-const RAZORPAY_CURRENCIES = ['INR','USD','EUR','GBP','CHF','AUD','CAD','SGD','AED'];
+// Razorpay supports everything in ALL_CURRENCIES, so dial-mapped currencies pass through as-is
+const RAZORPAY_CURRENCIES = ALL_CURRENCIES;
 function dialToCurrency(dial) {
   if (dial === '+91') return 'INR';
   const mapped = DIAL_CURRENCY[dial] || 'USD';
@@ -8893,7 +8921,7 @@ function openCCPicker(btnId, ccId, prefixId) {
   const currentCC = document.getElementById(ccId)?.value || '+91';
   const list = document.getElementById('cc-list');
   list.innerHTML = getCountryCodes().map(([dial, flag, name]) =>
-    `<div class="cc-item${dial===currentCC?' selected':''}" onclick="selectCC('${dial}','${flag}','${btnId}','${ccId}','${prefixId}')">`+
+    `<div class="cc-item${dial===currentCC?' selected':''}" onclick="selectCC('${dial}','${flag}','${name}','${btnId}','${ccId}','${prefixId}')">`+
     `<span class="cc-flag">${flag}</span><span class="cc-name">${name}</span><span class="cc-dial">${dial}</span></div>`
   ).join('');
   picker.classList.add('open');
@@ -8914,7 +8942,7 @@ function filterCCList(q) {
   });
 }
 
-function selectCC(dial, flag, btnId, ccId, prefixId) {
+function selectCC(dial, flag, name, btnId, ccId, prefixId) {
   const btn = document.getElementById(btnId);
   const ccEl = document.getElementById(ccId);
   const prefEl = document.getElementById(prefixId);
@@ -8926,9 +8954,9 @@ function selectCC(dial, flag, btnId, ccId, prefixId) {
   if (ccId === 'stu-phone-cc' || ccId === 'ef-stu-phone-cc') {
     const pfx = ccId === 'ef-stu-phone-cc' ? 'ef-' : '';
     const curSel = document.getElementById(pfx + 'stu-currency');
-    if (curSel) { curSel.value = dialToCurrency(dial); }
+    if (curSel) { curSel.value = (name === 'Canada') ? 'CAD' : dialToCurrency(dial); }
     const countryEl = document.getElementById(pfx + 'stu-country');
-    if (countryEl) countryEl.value = dialToCountry(dial);
+    if (countryEl) countryEl.value = name || dialToCountry(dial);
   }
 }
 
@@ -9352,7 +9380,7 @@ function buildEditForm(entity, r) {
     <div class="form-group"><label class="form-label">Per class rate</label>
       <input type="hidden" id="ef-stu-basis" value="session"/>
       <div style="display:flex;gap:0;">
-        <select class="form-input native-select" id="ef-stu-currency" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:90px;"><option value="INR" ${(r.currency||'INR')==='INR'?'selected':''}>INR</option><option value="USD" ${r.currency==='USD'?'selected':''}>USD</option><option value="EUR" ${r.currency==='EUR'?'selected':''}>EUR</option><option value="GBP" ${r.currency==='GBP'?'selected':''}>GBP</option><option value="CHF" ${r.currency==='CHF'?'selected':''}>CHF</option><option value="AUD" ${r.currency==='AUD'?'selected':''}>AUD</option><option value="SGD" ${r.currency==='SGD'?'selected':''}>SGD</option><option value="AED" ${r.currency==='AED'?'selected':''}>AED</option></select>
+        <select class="form-input native-select" id="ef-stu-currency" data-customized="1" style="border-radius:8px 0 0 8px;border-right:none;max-width:90px;">${currencyOptionsHtml(r.currency)}</select>
         <input type="number" class="form-input" id="ef-stu-fee" value="${r.monthly_fee||0}" style="border-radius:0 8px 8px 0;"/>
       </div>
       ${r.fee_basis && r.fee_basis !== 'session' ? '<span class="inv-date-hint" style="color:var(--clay);">This was saved as a per ' + (r.fee_basis === 'month' ? 'month' : 'course') + ' fee. Change it to one class’s rate before saving.</span>' : ''}
