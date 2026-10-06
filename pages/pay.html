@@ -379,7 +379,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v7)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v8)</span>
   </footer>
 </div>
 
@@ -594,6 +594,7 @@
   const CURRENCY = {
     INR: { symbol: '₹', locale: 'en-IN', methods: ['UPI', 'Cards', 'Net banking'] },
     USD: { symbol: '$', locale: 'en-US', methods: ['Visa', 'Mastercard', 'Amex'] },
+    CAD: { symbol: 'C$', locale: 'en-CA', methods: ['Visa', 'Mastercard'] },
     AUD: { symbol: 'A$', locale: 'en-AU', methods: ['Visa', 'Mastercard'] },
     SGD: { symbol: 'S$', locale: 'en-SG', methods: ['Visa', 'Mastercard'] },
     AED: { symbol: 'AED ', locale: 'en-AE', methods: ['Visa', 'Mastercard'] },
@@ -608,6 +609,13 @@
   }
   function fullName(full){
     return (full || '').trim().replace(/\s+/g, ' ');
+  }
+  // The small code after the amount ("$72 USD") disambiguates symbols shared by
+  // many currencies. When the symbol IS the code (CHF, AED, or any currency not
+  // in the map above), adding it again would read "CAD 100 CAD", so skip it.
+  function currencyCodeSuffix(currency){
+    const sym = (CURRENCY[currency] || { symbol: currency + ' ' }).symbol;
+    return sym.trim() === currency ? '' : currency;
   }
 
   // ── STATES ──
@@ -630,7 +638,7 @@
     if (fee){
       heroProgram.textContent = 'Handpan classes';
       heroFor.textContent = 'for ' + fullName(fee.name);
-      successSummary.textContent = fee.label + ' · ' + fmtAmount(fee.amount, fee.currency) + ' ' + fee.currency;
+      successSummary.textContent = fee.label + ' · ' + fmtAmount(fee.amount, fee.currency) + (currencyCodeSuffix(fee.currency) ? ' ' + fee.currency : '');
       successSummary.style.display = '';
     } else {
       heroProgram.textContent = 'Handpan classes';
@@ -675,7 +683,8 @@
       ? '1 live one-to-one session on Zoom'
       : fee.classes + ' live one-to-one sessions on Zoom';
     totalLabel.textContent = fee.label || 'Amount due';
-    totalAmount.innerHTML = fmtAmount(fee.amount, fee.currency) + '<small>' + fee.currency + '</small>';
+    const codeSuffix = currencyCodeSuffix(fee.currency);
+    totalAmount.innerHTML = fmtAmount(fee.amount, fee.currency) + (codeSuffix ? '<small>' + codeSuffix + '</small>' : '');
     const wasEl = document.getElementById('total-was');
     if (fee.listAmount && fee.discountAmount > 0){
       wasEl.innerHTML = '<s>' + fmtAmount(fee.listAmount, fee.currency) + '</s> · '
@@ -690,8 +699,8 @@
     if (!fEmail.value) fEmail.value = fee.email || '';
     payBtn.innerHTML = 'Pay ' + fmtAmount(fee.amount, fee.currency) + ' ' + ICON_ARROW;
     payBtn.disabled = false;
-    const c = CURRENCY[fee.currency];
-    if (c) methodsEl.innerHTML = c.methods.map(m => '<span>' + ICON_CARD + m + '</span>').join('');
+    const c = CURRENCY[fee.currency] || { methods: ['Visa', 'Mastercard'] };
+    methodsEl.innerHTML = c.methods.map(m => '<span>' + ICON_CARD + m + '</span>').join('');
     document.title = 'Pay your fee | Arpit Pandey';
   }
 
