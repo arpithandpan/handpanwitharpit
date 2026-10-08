@@ -981,9 +981,6 @@ select.form-input.native-select { display: block !important; -webkit-appearance:
 
 /* ── CUSTOM DATE PICKER ── */
 .date-picker-wrap { position: relative; width: 100%; }
-#trialAddRow .date-picker-wrap { flex: 0 1 180px; width: auto; }
-#trialAddRow .form-input, #trialAddRow .date-picker-btn { min-height: 48px; height: 48px; padding-top: 0; padding-bottom: 0; box-sizing: border-box; }
-#trialAddRow .btn-dash { height: 48px; }
 .date-picker-btn {
   width: 100%; min-height: 52px; padding: 0 1rem;
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -2635,7 +2632,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v105</span>
+        <span style="color:var(--clay);font-weight:500;">v106</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2704,7 +2701,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v105</span>
+        <span style="color:var(--clay);font-weight:500;">v106</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2990,16 +2987,6 @@ table#paymentsTable { min-width: 700px; }
           <div style="font-size:0.85rem;color:var(--text-light);" id="trialsStats"></div>
         </div>
         <div style="font-size:0.85rem;color:var(--text-light);margin-bottom:0.75rem;">People who took a trial but aren&rsquo;t students yet. Convert creates the student with details prefilled, so the students list stays paying-only.</div>
-        <div id="trialAddRow" style="display:none;flex-wrap:wrap;gap:0.6rem;margin-bottom:0.85rem;align-items:center;">
-          <input type="text" class="form-input" id="t-name" placeholder="Full name" style="flex:1 1 170px;min-height:44px;"/>
-          <input type="text" class="form-input" id="t-contact" placeholder="Phone / Instagram / email" style="flex:1 1 190px;min-height:44px;"/>
-          <input type="text" class="form-input" id="t-notes" placeholder="Notes (optional)" style="flex:1 1 160px;min-height:44px;"/>
-          <input type="hidden" id="t-edit-id"/>
-          <input type="date" class="form-input" id="t-date"/>
-          <script>(function(){var d=new Date(),el=document.getElementById('t-date');if(el)el.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');})();</script>
-          <button class="btn-dash btn-dash-primary btn-dash-sm" id="t-save-btn" onclick="saveTrial()">Save</button>
-          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="toggleTrialAdd(false)">Cancel</button>
-        </div>
         <div class="dash-table-wrap" style="margin:0;">
           <table class="desktop-table" style="min-width:760px;table-layout:fixed;"><thead><tr>
             <th style="width:17%;">Date</th><th style="width:22%;">Name</th><th style="width:22%;">Contact</th><th style="width:21%;">Status</th><th class="ws-action-sticky" style="width:18%;">Action</th>
@@ -4186,6 +4173,25 @@ table#paymentsTable { min-width: 700px; }
 
 <!-- Add Student -->
 
+<div class="form-page" id="form-addTrial">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="tryCloseFormPage('addTrial')">← Back</button>
+    <div class="form-page-title" id="t-form-title">Add Trial</div>
+    <button class="btn-dash-save" id="t-save-btn" onclick="saveTrial()">Save</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
+    <input type="hidden" id="t-edit-id"/>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="t-name" maxlength="80" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Trial Date&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="date" class="form-input" id="t-date"/>
+        <script>(function(){var d=new Date(),el=document.getElementById('t-date');if(el)el.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');})();</script></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Contact</label><input type="text" class="form-input" id="t-contact" maxlength="120" placeholder="Phone, Instagram or email"/><span class="inv-date-hint">Whatever you'd use to follow up with them.</span></div>
+      <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="t-notes" maxlength="200" placeholder="e.g. Wants evening slots"/></div>
+    </div>
+  </div></div>
+</div>
 <div class="form-page" id="form-addStudent">
   <div class="form-page-header">
     <button class="form-page-back" onclick="tryCloseFormPage('addStudent')">← Back</button>
@@ -4975,6 +4981,7 @@ const FORM_FIELDS = {
   addLead:        ['lead-name','lead-phone','lead-email','lead-desc','lead-maker-amt'],
   addWorkshop:    ['ws-date','ws-venue','ws-price','ws-venue-rent','ws-hp-rent','ws-porter','ws-misc','ws-ads','ws-time','ws-observer-price','ws-cap-participant','ws-cap-observer','ws-venue-map'],
   addStudent:     ['stu-name','stu-phone','stu-email','stu-start','stu-desc','stu-zoom'],
+  addTrial:       ['t-name','t-contact','t-notes'],
   addFeePayment:  ['fee-amount','fee-desc'],
   requestFee:     ['fr-classes','fr-amount','fr-note'],
   addParticipant:  ['par-name','par-phone','par-amount','par-date','par-desc'],
@@ -4984,6 +4991,7 @@ const FORM_FIELDS = {
 };
 
 function isFormDirty(formName) {
+  if (formName === 'addTrial' && typeof trialFormDirty === 'function') return trialFormDirty();
   const fields = FORM_FIELDS[formName] || [];
   return fields.some(id => {
     const el = document.getElementById(id);
@@ -6631,29 +6639,32 @@ function setTrialDate(v) {
   el.value = v || '';
   if (typeof el._dpRefresh === 'function') el._dpRefresh();
 }
+let _trialFormSnap = '';
+function trialFormValues() {
+  return ['t-name', 't-contact', 't-notes', 't-date'].map(id => (document.getElementById(id)?.value || '').trim()).join('|');
+}
+function trialFormDirty() { return trialFormValues() !== _trialFormSnap; }
 function fillTrialForm(t) {
   document.getElementById('t-edit-id').value = t ? t.id : '';
   document.getElementById('t-name').value = t ? (t.full_name || '') : '';
   document.getElementById('t-contact').value = t ? (t.contact || '') : '';
   document.getElementById('t-notes').value = t ? (t.notes || '') : '';
   setTrialDate(t ? t.trial_date : trialTodayStr());
-  document.getElementById('t-save-btn').textContent = t ? 'Update' : 'Save';
+  document.getElementById('t-form-title').textContent = t ? 'Edit Trial' : 'Add Trial';
+  _trialFormSnap = trialFormValues();
 }
-function toggleTrialAdd(show) {
-  const row = document.getElementById('trialAddRow');
-  if (!row) return;
-  row.style.display = show ? 'flex' : 'none';
-  if (!show) fillTrialForm(null);
-  else document.getElementById('t-name')?.focus();
+function openTrialAdd() {
+  if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
+  fillTrialForm(null);
+  openFormPage('addTrial');
+  setTimeout(() => document.getElementById('t-name')?.focus(), 120);
 }
-function openTrialAdd() { fillTrialForm(null); toggleTrialAdd(true); }
 function editTrial(id) {
   if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
   const t = _recordCache.trials && _recordCache.trials[id];
   if (!t) { showToast('Entry not found. Refresh and try again.', 'error'); return; }
   fillTrialForm(t);
-  toggleTrialAdd(true);
-  document.getElementById('trialAddRow').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  openFormPage('addTrial');
 }
 function toggleTrialHistory(e) { if (e) e.preventDefault(); _trialsShowHistory = !_trialsShowHistory; loadTrials(); }
 async function saveTrial() {
@@ -6663,7 +6674,7 @@ async function saveTrial() {
   const notes = (document.getElementById('t-notes').value || '').trim();
   const date = document.getElementById('t-date').value;
   const editId = document.getElementById('t-edit-id').value;
-  if (!name) { showToast('Enter the name', 'error'); return; }
+  if (!name) { markFieldError('t-name'); showToast('Enter the name', 'error'); return; }
   if (!date) { showToast('Pick the trial date', 'error'); return; }
   try {
     if (editId) {
@@ -6671,7 +6682,8 @@ async function saveTrial() {
     } else {
       await sbPost('trials', { full_name: name, contact: contact || null, notes: notes || null, trial_date: date, source: 'manual', status: 'pending' });
     }
-    toggleTrialAdd(false);
+    closeFormPage('addTrial');
+    fillTrialForm(null);
     showToast(editId ? '✓ Trial updated' : '✓ Trial saved', 'success');
     loadTrials();
   } catch (e) { showToast('Could not save: ' + e.message, 'error'); }
