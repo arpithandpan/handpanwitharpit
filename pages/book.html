@@ -290,6 +290,14 @@
     border:1px solid transparent; text-align:center;
   }
   .soldout-panel.soldout-red{ background:#F3E1E5; border-color:#E6CBD2; }
+  /* Late booking link countdown */
+  .late-banner{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    background:var(--clay-pale); color:var(--maroon); border:1px solid #E3D2CC;
+    border-radius:12px; padding:14px 18px; margin-bottom:1.25rem; font-size:15px; line-height:1.4;
+  }
+  .late-banner .late-time{ font-variant-numeric:tabular-nums; font-weight:600; font-size:20px; white-space:nowrap; }
+  .late-banner.late-urgent{ background:#F3E1E5; border-color:#E6CBD2; color:#8E3F55; }
   .soldout-panel.soldout-grey{ background:#EDE6E1; border-color:#E0D6D0; }
   .soldout-icon{
     width:52px; height:52px; border-radius:50%; margin:0 auto 14px;
@@ -621,6 +629,10 @@
     </div>
 
     <div id="booking-content">
+    <div class="late-banner" id="late-banner" style="display:none;" role="timer" aria-live="off">
+      <span><strong>Late booking</strong><br/>This link expires in</span>
+      <span class="late-time" id="late-time">60:00</span>
+    </div>
     <div class="ticket-card" id="ticket-card">
       <div class="ticket-row">
         <div>
@@ -781,7 +793,7 @@
   </div>
 
   <footer>
-    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v14)</span>
+    Arpit Pandey<br/>Handpan artist · Bengaluru, India <span style="font-size:0.78rem;color:var(--text-light);letter-spacing:0.03em;">(v15)</span>
   </footer>
 
 </div>
@@ -867,6 +879,11 @@
   // ── CONFIG ──
   const API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
   const workshopId = new URLSearchParams(window.location.search).get('ws');
+  // Late booking link (?k=). The server checks the code and only tells us how
+  // many seconds are left, so the timer never depends on the visitor's clock.
+  const lateCode = (new URLSearchParams(window.location.search).get('k') || '').trim();
+  let lateUntil = null;     // ms timestamp on this device when the late window ends
+  let lateState = null;     // 'valid' | 'invalid' | null (no code in the link)
 
   // Pricing and capacity come from the workshop's own record in Supabase —
   // nothing is hardcoded here anymore. observerPrice stays null until we
@@ -881,6 +898,11 @@
   let workshopDateTime = null;
   let bookingCutoff = null;
   let lastPastCutoffState = false;
+  // Past the normal cutoff, unless a live late link is holding the window open.
+  function isPastCutoff(){
+    if (lateUntil && Date.now() < lateUntil) return false;
+    return !!(bookingCutoff && new Date() >= bookingCutoff);
+  }
   let countdownEnabled = false;
 
   let pCount = 1;
@@ -1340,7 +1362,7 @@
   }
 
   function render(){
-    const pastCutoff = !!(bookingCutoff && new Date() >= bookingCutoff);
+    const pastCutoff = isPastCutoff();
     const participantClosed = participantMax === 0 || pastCutoff;
     // Audience passes only make sense alongside at least one participant ticket.
     const audienceLocked = pCount === 0 || participantClosed;
@@ -1372,7 +1394,9 @@
         soldoutPanel.className = 'soldout-panel soldout-grey';
         soldoutIcon.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0 -3 -3.85"/></svg>';
       }
-      if (pastCutoff && participantMax > 0){
+      if (pastCutoff && participantMax > 0 && lateState){
+        soldoutMessage.textContent = "This late booking link has expired or was already used. Message Arpit on WhatsApp for a new one, or leave your details below for the next workshop.";
+      } else if (pastCutoff && participantMax > 0){
         soldoutMessage.textContent = "Bookings for this session have closed. Let us know which month works for you, and we'll reach out for the next one.";
       } else {
         soldoutMessage.textContent = "All spots for this session are taken. Let us know which month works for you, and we'll reach out the moment a new workshop opens.";
@@ -1535,6 +1559,7 @@
     const ownHandpanCountValue = bringingOwnHandpan !== 'Yes' ? 0
       : (pCount <= 1 ? 1 : ownHandpanCount);
     const bookingBody = {
+      ...(lateCode ? { lateCode } : {}),
       workshopId,
       participants: pCount,
       observers: oCount,
@@ -1548,6 +1573,13 @@
       loadingOverlay.style.display = 'none';
       payBtn.disabled = false;
       payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+    };
+    // Server refused: window closed, late link expired/used, or workshop started.
+    const handleClosed = (data) => {
+      alert((data && data.error) || 'Bookings for this workshop have closed.');
+      resetBtn();
+      if (data && data.reason === 'late_expired'){ lateUntil = null; lateState = 'invalid'; }
+      loadWorkshop();
     };
     const handleSpotsGone = () => {
       alert("Sorry, those spots just got booked by someone else. Please refresh and try again with a smaller number of spots.");
@@ -1572,6 +1604,7 @@
         });
         const data = await res.json();
         if (res.status === 409){ handleSpotsGone(); return; }
+        if (res.status === 403){ handleClosed(data); return; }
         if (data.short_url){ window.location.href = data.short_url; return; }
         throw new Error('No payment link returned');
       } catch (err){
@@ -1589,6 +1622,7 @@
       });
       const data = await res.json();
       if (res.status === 409){ handleSpotsGone(); return; }
+      if (res.status === 403){ handleClosed(data); return; }
       if (!res.ok || !data.orderId) throw new Error(data.error || 'No order returned');
 
       loadingOverlay.style.display = 'none';
@@ -1674,7 +1708,7 @@
   const cdMins = document.getElementById('cd-mins');
   const cdSecs = document.getElementById('cd-secs');
   function updateCountdown(){
-    const bookingClosed = participantMax === 0 || !!(bookingCutoff && new Date() >= bookingCutoff);
+    const bookingClosed = participantMax === 0 || isPastCutoff();
     if (!countdownEnabled || !workshopDateTime || bookingClosed){
       countdownEl.style.display = 'none';
     } else {
@@ -1695,11 +1729,27 @@
     }
     // Catch the exact moment the booking window closes for anyone who has
     // the page open across that boundary, without re-rendering every tick.
-    const pastCutoffNow = !!(bookingCutoff && new Date() >= bookingCutoff);
+    updateLateBanner();
+    const pastCutoffNow = isPastCutoff();
     if (pastCutoffNow !== lastPastCutoffState){
       lastPastCutoffState = pastCutoffNow;
       render();
     }
+  }
+
+  // ── LATE LINK BANNER ──
+  const lateBanner = document.getElementById('late-banner');
+  const lateTimeEl = document.getElementById('late-time');
+  function updateLateBanner(){
+    const left = lateUntil ? Math.floor((lateUntil - Date.now()) / 1000) : 0;
+    if (!lateUntil || left <= 0 || participantMax === 0){
+      lateBanner.style.display = 'none';
+      return;
+    }
+    const m = Math.floor(left / 60), sec = left % 60;
+    lateTimeEl.textContent = String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+    lateBanner.classList.toggle('late-urgent', left <= 300);
+    lateBanner.style.display = '';
   }
 
   // ── UNAVAILABLE STATE ──
@@ -1750,7 +1800,8 @@
       return;
     }
     try {
-      const res = await fetch(API_BASE + '/api/workshop/' + encodeURIComponent(workshopId) + '/availability');
+      const res = await fetch(API_BASE + '/api/workshop/' + encodeURIComponent(workshopId) + '/availability'
+        + (lateCode ? '?k=' + encodeURIComponent(lateCode) : ''));
       if (!res.ok){
         showUnavailable("This workshop isn't available right now. It may have already happened, been cancelled, or the link may be incorrect.");
         return;
@@ -1781,7 +1832,14 @@
       // Bookings close at the start of the workshop's own calendar day —
       // i.e. the last bookable moment is 23:59:59 the day before.
       bookingCutoff = data.date ? new Date(`${data.date}T00:00:00+05:30`) : null;
-      lastPastCutoffState = bookingCutoff ? (new Date() >= bookingCutoff) : false;
+      if (data.late && data.late.valid && data.late.secondsLeft > 0){
+        lateUntil = Date.now() + data.late.secondsLeft * 1000;
+        lateState = 'valid';
+      } else {
+        lateUntil = null;
+        lateState = lateCode ? 'invalid' : null;
+      }
+      lastPastCutoffState = isPastCutoff();
 
       if (data.participantPrice == null || data.participantPrice <= 0){
         showUnavailable("Bookings for this workshop aren't open yet. Please check back soon or contact us directly.");
