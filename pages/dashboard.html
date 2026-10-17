@@ -901,7 +901,7 @@ tr.inv-row-cancelled .inv-auto-badge{text-decoration:none;}
   font-family: var(--font-body); font-size: 1.15rem; color: var(--text-dark);
   background: white; border: 1.5px solid var(--clay-pale); border-radius: 8px;
   transition: border-color 0.2s; outline: none; min-height: 48px;
-  color-scheme: light;
+  color-scheme: light; box-sizing: border-box; max-width: 100%;
 }
 .form-input:focus { border-color: var(--clay); }
 /* The browser draws its own focus ring around focused fields, coloured by the
@@ -2636,7 +2636,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v110</span>
+        <span style="color:var(--clay);font-weight:500;">v112</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2706,7 +2706,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v110</span>
+        <span style="color:var(--clay);font-weight:500;">v112</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2973,7 +2973,7 @@ table#paymentsTable { min-width: 700px; }
         <div class="stat-card"><div class="stat-label">Total Classes Revenue</div><div class="stat-value green" id="classTotalRevenue">—</div></div>
         <div class="stat-card"><div class="stat-label">Students on Break</div><div class="stat-value" id="classOnBreak">—</div></div>
       </div>
-      <div id="zoomReviewPanel" style="display:none;margin-bottom:2rem;">
+      <div id="zoomReviewPanel" style="display:none;margin-bottom:2rem;"><style>@media (min-width:901px){#zoomReviewPanel .dash-table-wrap{overflow:visible;}#zoomReviewTable .form-select-wrap{min-width:190px;}}</style>
         <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.6rem;">
           <div style="font-weight:500;">Zoom: needs review</div>
           <div style="font-size:0.85rem;color:var(--text-light);" id="zoomReviewCount"></div>
@@ -5077,6 +5077,7 @@ function resetForm(formName) {
 let _customConfirmResolve = null;
 // icon: 'trash' (default, for deletes), 'star', or 'x'
 const CONFIRM_ICONS = {
+  undo: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>',
   trash: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
   star: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 5.7 6 .3-4.7 3.8 1.6 5.9L12 15.4l-5 3.3 1.6-5.9L3.9 9l6-.3z"/></svg>',
   x: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
@@ -5093,6 +5094,11 @@ function customConfirm(title, desc, okLabel = 'Confirm', icon = 'trash') {
     document.getElementById('customConfirmModal').style.display = 'flex';
     lockScroll();
   });
+}
+// Shown only if the browser blocks clipboard access: the link in our own popup, selectable.
+function copyFallback(url, title) {
+  customConfirm(title || 'Copy this link', url, 'Done', 'star').then(() => {});
+  const d = document.getElementById('customConfirmDesc'); if (d) { d.style.userSelect = 'all'; d.style.wordBreak = 'break-all'; }
 }
 function customConfirmCancel() { customConfirmClose(); if (_customConfirmResolve) _customConfirmResolve(false); }
 function customConfirmClose() {
@@ -6546,19 +6552,20 @@ async function loadZoomReview(stusIn) {
       <td>${fmtDate(r.class_date)}</td><td>${who(r)}</td>
       <td class="td-truncate" data-tip="${zEsc(r.topic || '')}">${zEsc(r.topic || '—')}</td>
       <td>${Number(r.minutes) || 0} min</td>
-      <td><select class="form-input native-select" data-customized="1" id="zr-sel-${r.id}" style="min-width:190px;padding:0.45rem 0.6rem;">${opts(zoomGuessStudent(r, stus))}</select></td>
+      <td><select class="form-input" data-label="Student" id="zr-sel-${r.id}">${opts(zoomGuessStudent(r, stus))}</select></td>
       <td class="ws-action-sticky"><span class="action-wrap"><button class="icon-action-btn" data-tip="Log class" onclick="resolveZoomReview('${r.id}','zr-sel-${r.id}',this)">${CHECK}</button><button class="icon-action-btn" data-tip="Save as trial (not a student yet)" onclick="markZoomTrial('${r.id}')">${STAR_SVG}</button><button class="icon-action-btn danger" data-tip="Ignore" onclick="ignoreZoomReview('${r.id}')">${X_SVG}</button></span></td>
     </tr>`).join('');
     document.getElementById('zoomReviewCards').innerHTML = rows.map(r => `<div class="m-card"><div class="m-card-title">${zEsc(r.zoom_name || r.zoom_email || '—')} <span class="badge badge-clay" style="float:right">${Number(r.minutes) || 0} min</span></div>
       <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(r.class_date)}</span></div>
       ${r.zoom_email ? `<div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">${zEsc(r.zoom_email)}</span></div>` : ''}
       <div class="m-card-row"><span class="m-card-label">Meeting</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;display:inline-block;vertical-align:bottom;text-align:right;">${zEsc(r.topic || '—')}</span></div>
-      <div style="margin-top:0.85rem;"><select class="form-input native-select" data-customized="1" id="zr-msel-${r.id}" style="width:100%;">${opts(zoomGuessStudent(r, stus))}</select></div>
+      <div style="margin-top:0.85rem;"><select class="form-input" data-label="Student" id="zr-msel-${r.id}">${opts(zoomGuessStudent(r, stus))}</select></div>
       <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;">
         <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="ignoreZoomReview('${r.id}')">Ignore</button>
         <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="markZoomTrial('${r.id}')">Trial</button>
         <button class="btn-dash btn-dash-primary btn-dash-sm" onclick="resolveZoomReview('${r.id}','zr-msel-${r.id}',this)">Log class</button>
       </div></div>`).join('');
+    initFormSelects();
   } catch (e) { console.warn('loadZoomReview skipped:', e.message); panel.style.display = 'none'; }
 }
 async function resolveZoomReview(id, selId, btn) {
@@ -7043,8 +7050,8 @@ function copyFeeRequestLink(link) {
   const val = link || document.getElementById('fr-result-link').value;
   if (!val) return;
   const done = () => showToast('Link copied', 'success');
-  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(val).then(done).catch(() => { prompt('Copy this link:', val); });
-  else prompt('Copy this link:', val);
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(val).then(done).catch(() => { copyFallback(val); });
+  else copyFallback(val);
 }
 
 function cancelFeeRequest(id) {
@@ -8602,7 +8609,7 @@ async function copyLateLink(id) {
   const tillTxt = until.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' })
     + (until === start ? ' (workshop start)' : '');
   if (copied) showToast('✓ Late link copied · valid till ' + tillTxt + ' · one booking only', 'success');
-  else { prompt('Copy this late link (valid till ' + tillTxt + '):', url); }
+  else { copyFallback(url, 'Late link, valid till ' + tillTxt); }
 }
 
 async function cancelWorkshop(id) {
@@ -8770,7 +8777,7 @@ function gigStatusBadge(st) {
 async function copyGigLink(id) {
   const url = GIG_PAY_BASE + encodeURIComponent(id);
   try { await navigator.clipboard.writeText(url); showToast('✓ Payment link copied — share it with the client', 'success'); }
-  catch(e) { prompt('Copy this link:', url); }
+  catch(e) { copyFallback(url); }
 }
 
 async function nextGigId() {
@@ -12745,36 +12752,29 @@ async function doObsPopupToggle(rec, newCount) {
 </script>
 <!-- ── CLASS SCHEDULE (weekly slots, skip / move, extra numbers) ── -->
 <style>
-.sch-modal-bg { position: fixed; inset: 0; background: rgba(10,6,3,0.75); backdrop-filter: blur(2px); z-index: 39000; display: none; align-items: center; justify-content: center; padding: 1.5rem; }
-.sch-modal-bg.open { display: flex; }
-.sch-modal { background: #3d2c1e; color: #e8d5c0; border: 1px solid rgba(200,147,90,0.65); border-radius: 12px; width: 100%; max-width: 420px; max-height: calc(100vh - 3rem); max-height: calc(100dvh - 3rem); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); box-sizing: border-box; }
-.sch-modal-body { padding: 1.5rem 1.5rem 0.5rem; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.sch-modal h3 { margin: 0 0 0.35rem; font-weight: 600; font-size: 1.15rem; color: #e8d5c0; }
-.sch-modal .sch-sub { font-size: 0.92rem; color: rgba(200,147,90,0.75); line-height: 1.5; margin-bottom: 1.1rem; }
-.sch-field { margin-bottom: 0.9rem; }
-.sch-field label { display: block; font-size: 0.8rem; color: rgba(200,147,90,0.8); margin-bottom: 0.35rem; }
-.sch-field input, .sch-field select { width: 100%; box-sizing: border-box; padding: 0.7rem 0.75rem; border-radius: 8px; border: 1px solid rgba(200,147,90,0.35); background: rgba(0,0,0,0.18); color: #e8d5c0; font-family: var(--font-body); font-size: 16px; min-height: 44px; -webkit-appearance: none; appearance: none; color-scheme: dark; }
-.sch-field select { background-image: linear-gradient(45deg, transparent 50%, #c8935a 50%), linear-gradient(135deg, #c8935a 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 2rem; }
-.sch-field select:disabled { opacity: 0.7; }
-.sch-field select option { background: #3d2c1e; color: #e8d5c0; }
-.sch-field input:focus, .sch-field select:focus { outline: none; border-color: #c8935a; }
-.sch-check { display: flex !important; align-items: center; gap: 0.6rem; color: #e8d5c0 !important; font-size: 0.95rem !important; cursor: pointer; }
-.sch-check input { width: 20px !important; height: 20px; min-height: 0 !important; accent-color: #c8935a; -webkit-appearance: auto; appearance: auto; }
-.sch-row2 { display: flex; gap: 0.6rem; }
-.sch-row2 > .sch-field { flex: 1; min-width: 0; }
-.sch-hint { font-size: 0.8rem; color: rgba(200,147,90,0.7); margin-top: 0.35rem; line-height: 1.45; }
-.sch-foot { display: flex; border-top: 1px solid rgba(193,127,90,0.2); flex-shrink: 0; }
-.sch-foot button { flex: 1; padding: 1rem; background: transparent; border: none; font-size: 1rem; color: #c8935a; cursor: pointer; font-family: var(--font-body); }
-.sch-foot button + button { border-left: 1px solid rgba(193,127,90,0.2); font-weight: 600; }
-.sch-foot button:active { background: rgba(200,147,90,0.08); }
-@media (max-width: 480px) { .sch-modal-bg { padding: 1rem; } .sch-row2 { flex-direction: column; gap: 0; } }
-.sch-day-head td { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); padding-top: 1rem !important; border-bottom: none !important; }
+.sch-day-head td { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); padding-top: 1.1rem !important; padding-bottom: 0.35rem !important; border-bottom: none !important; }
 .sch-muted { color: var(--text-light); font-size: 0.85rem; }
 .sch-strike { text-decoration: line-through; opacity: 0.55; }
+.sch-note { font-size: 0.85rem; color: var(--text-light); line-height: 1.5; margin: 0 0 1.25rem; }
+.sch-time { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+.sch-time > div { min-width: 0; }
 </style>
 
-<div class="sch-modal-bg" id="schModalBg" onclick="if(event.target===this)schCloseModal()">
-  <div class="sch-modal" id="schModal"></div>
+<div class="form-page" id="form-schSlot">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="schCloseForm('slot')">&larr; Back</button>
+    <div class="form-page-title" id="sch-slot-title">Weekly Slot</div>
+    <button class="btn-dash-save" id="sch-slot-save">Save</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;" id="sch-slot-body"></div></div>
+</div>
+<div class="form-page" id="form-schMove">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="schCloseForm('move')">&larr; Back</button>
+    <div class="form-page-title" id="sch-move-title">Move class</div>
+    <button class="btn-dash-save" id="sch-move-save">Move</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;" id="sch-move-body"></div></div>
 </div>
 
 <script>
@@ -12960,17 +12960,40 @@ function schRender() {
   if (cnt) cnt.textContent = active + ' active weekly slot' + (active === 1 ? '' : 's') + ' · ' + plan.filter(o => o.state === 'scheduled' || o.state === 'moved-in').length + ' classes in the next 14 days';
 }
 
-// ── modal ──
-function schOpenModal(html) {
-  // Split the trailing action row into the fixed footer so long forms scroll but buttons stay visible.
-  const i = html.lastIndexOf('<div class="sch-actions">');
-  const body = i >= 0 ? html.slice(0, i) : html;
-  const foot = i >= 0 ? html.slice(i).replace('<div class="sch-actions">', '<div class="sch-foot">') : '';
-  document.getElementById('schModal').innerHTML = '<div class="sch-modal-body">' + body + '</div>' + foot;
-  document.getElementById('schModalBg').classList.add('open');
-  if (typeof lockScroll === 'function') lockScroll();
+// ── form pages (same component as Add Trial / Add Student) ──
+// Selects become the dashboard's custom dropdown (bottom sheet on phones),
+// dates become the dashboard's date picker, times use three dropdowns.
+function schOpenForm(name, title, bodyHtml) {
+  document.getElementById('sch-' + name + '-title').textContent = title;
+  document.getElementById('sch-' + name + '-body').innerHTML = bodyHtml;
+  openFormPage('sch' + name.charAt(0).toUpperCase() + name.slice(1));
+  initFormSelects();
+  initDatePickers();
 }
-function schCloseModal() { document.getElementById('schModalBg').classList.remove('open'); if (typeof unlockScroll === 'function') unlockScroll(); }
+function schCloseForm(name) { closeFormPage('sch' + name.charAt(0).toUpperCase() + name.slice(1)); }
+
+// Time picker built from three custom dropdowns: hour, minute, AM/PM.
+function schTimeField(id, hhmm) {
+  const [h24, m] = String(hhmm || '20:00').slice(0, 5).split(':').map(Number);
+  const h12 = (h24 % 12) || 12, ap = h24 < 12 ? 'AM' : 'PM';
+  const mins = []; for (let i = 0; i < 60; i += 5) mins.push(i);
+  if (!mins.includes(m)) { mins.push(m); mins.sort((x, y) => x - y); }
+  const opt = (v, txt, sel) => '<option value="' + v + '"' + (sel ? ' selected' : '') + '>' + txt + '</option>';
+  let hs = ''; for (let i = 1; i <= 12; i++) hs += opt(i, String(i), i === h12);
+  const ms = mins.map(x => opt(x, String(x).padStart(2, '0'), x === m)).join('');
+  return '<div class="sch-time" id="' + id + '">'
+    + '<div><select class="form-input" data-label="Hour" id="' + id + '-h">' + hs + '</select></div>'
+    + '<div><select class="form-input" data-label="Minute" id="' + id + '-m">' + ms + '</select></div>'
+    + '<div><select class="form-input" data-label="AM / PM" id="' + id + '-ap">' + opt('AM', 'AM', ap === 'AM') + opt('PM', 'PM', ap === 'PM') + '</select></div>'
+    + '</div>';
+}
+function schTimeValue(id) {
+  const h = Number(document.getElementById(id + '-h').value), m = Number(document.getElementById(id + '-m').value);
+  const ap = document.getElementById(id + '-ap').value;
+  const h24 = ap === 'AM' ? (h % 12) : ((h % 12) + 12);
+  return String(h24).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+}
+function schOnTimeChange(id, fn) { ['-h', '-m', '-ap'].forEach(k => document.getElementById(id + k).addEventListener('change', fn)); }
 
 async function schPostException(row) {
   const res = await safeFetch(SUPABASE_URL + '/rest/v1/class_exceptions', { method: 'POST', headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' }, body: JSON.stringify(row) });
@@ -12992,28 +13015,31 @@ async function schSkip(i) {
 function schOpenMove(i) {
   if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
   const o = _sch.upcoming[i]; if (!o) return;
-  schOpenModal('<h3>Move a class</h3><div class="sch-sub">' + zEsc(schStudentName(o.slot.student_id)) + ', normally ' + schDayLabel(o.ymd) + ' at ' + schTime12(o.hhmm) + ' IST</div>'
-    + '<div class="sch-row2"><div class="sch-field"><label>New date</label><input type="date" id="schMoveDate" value="' + o.ymd + '"></div>'
-    + '<div class="sch-field"><label>New time (IST)</label><input type="time" id="schMoveTime" value="' + o.hhmm + '"></div></div>'
-    + '<div class="sch-hint" id="schMoveLocal"></div>'
-    + '<div class="sch-hint">The reminder will go about an hour before the new time, with the same Zoom link. Update the calendar event too if the student uses it.</div>'
-    + '<div class="sch-actions"><button onclick="schCloseModal()">Cancel</button><button onclick="schSaveMove(' + i + ')">Move class</button></div>');
+  const g = (label, inner, hint) => '<div class="form-group"><label class="form-label">' + label + '</label>' + inner + (hint ? '<span class="inv-date-hint">' + hint + '</span>' : '') + '</div>';
+  schOpenForm('move', 'Move class',
+    '<div class="sch-note">' + zEsc(schStudentName(o.slot.student_id)) + ', normally ' + schDayLabel(o.ymd) + ' at ' + schTime12(o.hhmm) + ' IST</div>'
+    + '<div class="form-row">' + g('New date', '<input type="date" class="form-input" id="schMoveDate" data-placeholder="Pick a date" value="' + o.ymd + '">')
+    + g('New time (IST)', schTimeField('schMoveTime', o.hhmm)) + '</div>'
+    + '<div class="sch-note" id="schMoveLocal"></div>'
+    + '<div class="sch-note">The reminder goes about an hour before the new time, with the same Zoom link. Update the calendar event too if the student uses it.</div>');
+  document.getElementById('sch-move-save').onclick = () => schSaveMove(i);
   const upd = () => {
-    const d = document.getElementById('schMoveDate').value, t = document.getElementById('schMoveTime').value;
+    const d = document.getElementById('schMoveDate').value, t = schTimeValue('schMoveTime');
     const tz = o.slot.student_tz;
-    document.getElementById('schMoveLocal').textContent = (d && t && tz && tz !== 'Asia/Kolkata') ? 'For the student that is ' + schLocalLabel(new Date(d + 'T' + t + ':00+05:30'), tz) + '.' : '';
+    document.getElementById('schMoveLocal').textContent = (d && tz && tz !== 'Asia/Kolkata') ? 'For the student that is ' + schLocalLabel(new Date(d + 'T' + t + ':00+05:30'), tz) + '.' : '';
   };
-  document.getElementById('schMoveDate').oninput = upd; document.getElementById('schMoveTime').oninput = upd; upd();
+  document.getElementById('schMoveDate').addEventListener('change', upd);
+  schOnTimeChange('schMoveTime', upd); upd();
 }
 
 async function schSaveMove(i) {
   const o = _sch.upcoming[i]; if (!o) return;
-  const d = document.getElementById('schMoveDate').value, t = document.getElementById('schMoveTime').value;
+  const d = document.getElementById('schMoveDate').value, t = schTimeValue('schMoveTime');
   if (!d || !t) { showToast('Pick the new date and time', 'error'); return; }
   if (new Date(d + 'T' + t + ':00+05:30') < new Date()) { showToast('The new time is already in the past', 'error'); return; }
   try {
     await schPostException({ student_id: o.slot.student_id, original_date: o.ymd, action: 'move', new_date: d, new_time_ist: t });
-    schCloseModal();
+    schCloseForm('move');
     showToast('Moved to ' + schDayLabel(d) + ', ' + schTime12(t) + ' IST', 'success');
     loadSchedule();
   } catch (e) { showToast('Could not move: ' + e.message, 'error'); }
@@ -13021,7 +13047,7 @@ async function schSaveMove(i) {
 
 async function schUndo(id) {
   if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
-  if (!(await customConfirm('Undo this change?', 'The class goes back to its normal slot and the reminder will go as usual.', 'Undo', 'star'))) return;
+  if (!(await customConfirm('Undo this change?', 'The class goes back to its normal slot and the reminder will go as usual.', 'Undo', 'undo'))) return;
   const res = await safeFetch(SUPABASE_URL + '/rest/v1/class_exceptions?id=eq.' + encodeURIComponent(id), { method: 'DELETE', headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' } });
   if (!res.ok) { showToast('Could not undo: ' + (res.error || res.status), 'error'); return; }
   showToast('Back to the normal slot', 'success');
@@ -13047,20 +13073,27 @@ function schOpenSlot(id) {
   const s = r ? (_sch.students.find(x => x.id === r.student_id) || {}) : {};
   const isLocal = r && r.local_time != null && r.local_weekday != null && tz !== 'Asia/Kolkata';
   const dayOpts = sel => SCH_DAYS.map((d, i) => '<option value="' + i + '"' + (i === sel ? ' selected' : '') + '>' + d + '</option>').join('');
-  const stuOpts = _sch.students.map(x => '<option value="' + zEsc(x.id) + '"' + (r && r.student_id === x.id ? ' selected' : '') + '>' + zEsc(x.full_name) + ' (' + zEsc(x.id) + ')</option>').join('');
   const tzOpts = SCH_TZS.map(([v, l]) => '<option value="' + v + '"' + (v === tz ? ' selected' : '') + '>' + l + '</option>').join('') + (SCH_TZS.some(x => x[0] === tz) ? '' : '<option value="' + zEsc(tz) + '" selected>' + zEsc(tz) + '</option>');
-  schOpenModal('<h3>' + (r ? 'Edit weekly slot' : 'Add weekly slot') + '</h3><div class="sch-sub">The WhatsApp reminder goes about an hour before every class in this slot.</div>'
-    + '<div class="sch-field"><label>Student</label><select id="schStu"' + (r ? ' disabled' : '') + ' onchange="schFillExtra()">' + (r ? '' : '<option value="">Choose a student</option>') + stuOpts + '</select></div>'
-    + '<div class="sch-field"><label>Student\'s timezone</label><select id="schTz" onchange="schTzChanged()">' + tzOpts + '</select></div>'
-    + '<div id="schIstBox"><div class="sch-row2"><div class="sch-field"><label>Day (IST)</label><select id="schDay">' + dayOpts(r ? Number(r.weekday) : 1) + '</select></div>'
-    + '<div class="sch-field"><label>Time (IST)</label><input type="time" id="schTime" value="' + (r ? String(r.time_ist).slice(0, 5) : '20:00') + '"></div></div></div>'
-    + '<div id="schLocalBox"><div class="sch-row2"><div class="sch-field"><label>Day (their time)</label><select id="schLDay" oninput="schLocalHint()">' + dayOpts(isLocal ? Number(r.local_weekday) : 1) + '</select></div>'
-    + '<div class="sch-field"><label>Time (their time)</label><input type="time" id="schLTime" oninput="schLocalHint()" value="' + (isLocal ? String(r.local_time).slice(0, 5) : '10:00') + '"></div></div>'
-    + '<div class="sch-hint" id="schLocalHint"></div><div class="sch-hint">Their local time stays fixed through daylight saving. The IST time moves by itself.</div></div>'
-    + '<div class="sch-field" style="margin-top:0.9rem;"><label>Zoom link (their permanent meeting)</label><input type="url" id="schLink" placeholder="https://us06web.zoom.us/j/..." value="' + zEsc(r ? (r.zoom_link || '') : '') + '"></div>'
-    + '<div class="sch-field"><label>Extra WhatsApp numbers (optional)</label><input type="text" id="schExtra" placeholder="+919876543210, +14155550123" value="' + zEsc(Array.isArray(s.extra_phones) ? s.extra_phones.join(', ') : '') + '"><div class="sch-hint">Fee links and class reminders also go to these, e.g. both parents. The main number is the one on the student.</div></div>'
-    + '<div class="sch-field"><label class="sch-check"><input type="checkbox" id="schActive"' + (!r || r.active ? ' checked' : '') + '> Active (untick while the student is on a break)</label></div>'
-    + '<div class="sch-actions"><button onclick="schCloseModal()">Cancel</button><button onclick="schSaveSlot(' + (r ? r.id : 'null') + ')">Save</button></div>');
+  const g = (label, inner, hint) => '<div class="form-group"><label class="form-label">' + label + '</label>' + inner + (hint ? '<span class="inv-date-hint">' + hint + '</span>' : '') + '</div>';
+  const stuField = r
+    ? '<select class="form-input" id="schStu" data-label="Student"><option value="' + zEsc(r.student_id) + '" selected>' + zEsc((s.full_name || r.student_id) + ' (' + r.student_id + ')') + '</option></select>'
+    : '<select class="form-input" id="schStu" data-label="Student"><option value="">Choose a student</option>' + _sch.students.map(x => '<option value="' + zEsc(x.id) + '">' + zEsc(x.full_name) + ' (' + zEsc(x.id) + ')</option>').join('') + '</select>';
+  schOpenForm('slot', r ? 'Edit Weekly Slot' : 'Add Weekly Slot',
+    '<div class="sch-note">The WhatsApp reminder goes about an hour before every class in this slot.</div>'
+    + '<div class="form-row">' + g('Student', stuField) + g('Student\'s timezone', '<select class="form-input" id="schTz" data-label="Timezone">' + tzOpts + '</select>') + '</div>'
+    + '<div id="schIstBox"><div class="form-row">' + g('Day (IST)', '<select class="form-input" id="schDay" data-label="Day">' + dayOpts(r ? Number(r.weekday) : 1) + '</select>')
+    + g('Time (IST)', schTimeField('schTime', r ? r.time_ist : '20:00')) + '</div></div>'
+    + '<div id="schLocalBox"><div class="form-row">' + g('Day (their time)', '<select class="form-input" id="schLDay" data-label="Day">' + dayOpts(isLocal ? Number(r.local_weekday) : 1) + '</select>')
+    + g('Time (their time)', schTimeField('schLTime', isLocal ? r.local_time : '10:00')) + '</div>'
+    + '<div class="sch-note" id="schLocalHint"></div><div class="sch-note">Their local time stays fixed through daylight saving. The IST time moves by itself.</div></div>'
+    + '<div class="form-row">' + g('Zoom link', '<input type="url" class="form-input" id="schLink" placeholder="https://us06web.zoom.us/j/..." value="' + zEsc(r ? (r.zoom_link || '') : '') + '">', 'Their permanent recurring meeting link.')
+    + g('Extra WhatsApp numbers', '<input type="text" class="form-input" id="schExtra" inputmode="tel" placeholder="+919876543210, +14155550123" value="' + zEsc(Array.isArray(s.extra_phones) ? s.extra_phones.join(', ') : '') + '">', 'Optional. Fee links and reminders also go here, e.g. both parents.') + '</div>'
+    + '<div class="form-group"><label class="form-label">Status</label><select class="form-input" id="schActive" data-label="Status"><option value="1"' + (!r || r.active ? ' selected' : '') + '>Active</option><option value="0"' + (r && !r.active ? ' selected' : '') + '>Paused (student on a break)</option></select></div>');
+  document.getElementById('sch-slot-save').onclick = () => schSaveSlot(r ? r.id : null);
+  document.getElementById('schTz').addEventListener('change', schTzChanged);
+  document.getElementById('schLDay').addEventListener('change', schLocalHint);
+  schOnTimeChange('schLTime', schLocalHint);
+  if (!r) document.getElementById('schStu').addEventListener('change', schFillExtra);
   schTzChanged();
 }
 function schTzChanged() {
@@ -13073,7 +13106,7 @@ function schLocalHint() {
   const el = document.getElementById('schLocalHint'); if (!el) return;
   const tz = document.getElementById('schTz').value;
   if (tz === 'Asia/Kolkata') { el.textContent = ''; return; }
-  const ist = schLocalToIst(document.getElementById('schLDay').value, document.getElementById('schLTime').value || '10:00', tz);
+  const ist = schLocalToIst(document.getElementById('schLDay').value, schTimeValue('schLTime'), tz);
   el.textContent = ist ? 'This week that is ' + SCH_DAYS[ist.weekday] + ', ' + schTime12(ist.time) + ' IST for you.' : '';
 }
 function schFillExtra() {
@@ -13085,14 +13118,12 @@ async function schSaveSlot(id) {
   const studentId = document.getElementById('schStu').value;
   if (!studentId) { showToast('Choose a student', 'error'); return; }
   const tz = document.getElementById('schTz').value;
-  const row = { student_id: studentId, student_tz: tz, zoom_link: document.getElementById('schLink').value.trim() || null, active: document.getElementById('schActive').checked };
+  const row = { student_id: studentId, student_tz: tz, zoom_link: document.getElementById('schLink').value.trim() || null, active: document.getElementById('schActive').value === '1' };
   if (tz === 'Asia/Kolkata') {
-    const t = document.getElementById('schTime').value;
-    if (!t) { showToast('Pick the time', 'error'); return; }
+    const t = schTimeValue('schTime');
     Object.assign(row, { weekday: Number(document.getElementById('schDay').value), time_ist: t, local_weekday: null, local_time: null });
   } else {
-    const lt = document.getElementById('schLTime').value, ld = Number(document.getElementById('schLDay').value);
-    if (!lt) { showToast('Pick their time', 'error'); return; }
+    const lt = schTimeValue('schLTime'), ld = Number(document.getElementById('schLDay').value);
     const ist = schLocalToIst(ld, lt, tz);
     if (!ist) { showToast('Could not work out the IST time', 'error'); return; }
     Object.assign(row, { weekday: ist.weekday, time_ist: ist.time, local_weekday: ld, local_time: lt });
@@ -13108,7 +13139,7 @@ async function schSaveSlot(id) {
     const s = _sch.students.find(x => x.id === studentId) || {};
     const before = (Array.isArray(s.extra_phones) ? s.extra_phones : []).join('|');
     if (before !== extra.join('|')) await sbPatch('students', studentId, { extra_phones: extra });
-    schCloseModal();
+    schCloseForm('slot');
     showToast('Saved', 'success');
     loadSchedule();
   } catch (e) { showToast('Could not save: ' + e.message, 'error'); }
@@ -13124,6 +13155,5 @@ async function schDeleteSlot(id) {
   loadSchedule();
 }
 </script>
-
 </body>
 </html>
