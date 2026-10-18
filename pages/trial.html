@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Arpit Pandey"/>
+<meta property="og:title" content="Book a free handpan trial · Arpit Pandey"/>
+<meta property="og:description" content="A free 45 minute 1:1 handpan session on Zoom with Arpit Pandey. Pick a time that suits you."/>
+<meta property="og:url" content="https://arpitpandey.com/pages/trial"/>
+<meta property="og:image" content="https://arpitpandey.com/images/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<title>Free Trial Class | Arpit Pandey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+.tb-wrap { max-width: 760px; margin: 0 auto; }
+.tb-card { background: var(--card); border-radius: var(--card-radius); padding: 2rem 2rem 2.2rem; }
+.tb-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.6rem; }
+.tb-chip { font-size: 0.86rem; line-height: 1.3; padding: 0.4rem 0.85rem; border-radius: 40px; border: 1px solid var(--rule); color: var(--maroon); }
+.tb-chip.solid { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.tb-step { padding-top: 1.5rem; margin-top: 1.5rem; border-top: 1px solid var(--rule); }
+.tb-step:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+.tb-label { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
+.tb-label strong { color: var(--maroon); font-weight: 600; font-size: 1.02rem; }
+.tb-label span { font-size: 0.85rem; color: var(--text-mid); }
+.tb-weeknav { display: flex; align-items: center; gap: 0.4rem; }
+.tb-arrow { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--rule); background: transparent; color: var(--maroon); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.tb-arrow:disabled { opacity: 0.35; cursor: default; }
+.tb-weeklabel { font-size: 0.85rem; color: var(--text-mid); min-width: 92px; text-align: center; }
+.tb-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.45rem; }
+.tb-day, .tb-time, .tb-opt { font-family: var(--font-body); border: 1px solid var(--rule); background: transparent; color: var(--maroon); border-radius: 12px; cursor: pointer; transition: background .15s, border-color .15s; }
+.tb-day { padding: 0.55rem 0.2rem; text-align: center; line-height: 1.25; }
+.tb-day .d1 { display: block; font-size: 0.78rem; }
+.tb-day .d2 { display: block; font-size: 1.05rem; font-weight: 600; }
+.tb-day:disabled { color: rgba(80,0,24,0.3); border-color: rgba(80,0,24,0.12); cursor: default; }
+.tb-day.on, .tb-time.on, .tb-opt.on { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.tb-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 0.5rem; }
+.tb-time { padding: 0.65rem 0.4rem; font-size: 0.98rem; }
+.tb-empty { font-size: 0.95rem; color: var(--text-mid); padding: 0.6rem 0; }
+.tb-fields { display: grid; gap: 0.85rem; }
+.tb-field label { display: block; font-size: 0.85rem; color: var(--maroon); margin-bottom: 0.3rem; font-weight: 500; }
+.tb-input { width: 100%; height: 48px; padding: 0 0.95rem; font-family: var(--font-body); font-size: 1rem; color: var(--maroon); background: #fff; border: 1px solid var(--rule); border-radius: 12px; outline: none; -webkit-appearance: none; appearance: none; }
+.tb-input:focus { border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(80,0,24,0.10); }
+.tb-input.err, .tb-cc.err { border-color: #B3261E; }
+.tb-err { font-size: 0.82rem; color: #B3261E; margin-top: 0.3rem; display: none; }
+.tb-err.show { display: block; }
+.tb-phone { display: flex; gap: 0.5rem; position: relative; }
+.tb-cc { flex: 0 0 auto; height: 48px; padding: 0 0.7rem; display: inline-flex; align-items: center; gap: 0.35rem; font-family: var(--font-body); font-size: 1rem; color: var(--maroon); background: #fff; border: 1px solid var(--rule); border-radius: 12px; cursor: pointer; }
+.tb-cc svg { flex-shrink: 0; }
+.tb-pop { position: absolute; top: 54px; left: 0; z-index: 30; width: min(340px, 100%); background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: 0 12px 32px rgba(58,0,17,0.14); padding: 0.5rem; display: none; }
+.tb-pop.open { display: block; }
+.tb-pop input { height: 42px; margin-bottom: 0.4rem; }
+.tb-list { max-height: 260px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.tb-list button { width: 100%; display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.6rem; border: none; background: transparent; font-family: var(--font-body); font-size: 0.95rem; color: var(--text-dark); text-align: left; border-radius: 8px; cursor: pointer; }
+.tb-list button:hover, .tb-list button.hl { background: var(--ivory); }
+.tb-list .dial { margin-left: auto; color: var(--text-mid); font-size: 0.88rem; }
+.tb-opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+.tb-opt { padding: 0.7rem 0.4rem; font-size: 0.95rem; }
+.tb-summary { margin-top: 1.4rem; background: var(--ivory); border-radius: 12px; padding: 0.85rem 1rem; color: var(--maroon); font-size: 0.98rem; display: flex; gap: 0.6rem; align-items: center; }
+.tb-book { width: 100%; margin-top: 1rem; height: 54px; font-size: 1.05rem; }
+.tb-book[aria-busy="true"] { opacity: 0.7; pointer-events: none; }
+.tb-fine { text-align: center; font-size: 0.85rem; color: var(--text-mid); margin-top: 0.7rem; }
+.tb-alert { display: none; margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 12px; background: #FBEAEA; color: #8C1D18; font-size: 0.95rem; }
+.tb-alert.show { display: block; }
+.tb-alert a { color: inherit; }
+.tb-done { text-align: center; padding: 1rem 0 0.5rem; }
+.tb-done .tick { width: 58px; height: 58px; border-radius: 50%; background: var(--maroon); color: var(--ivory); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.tb-done h2 { color: var(--maroon); font-size: 1.6rem; font-weight: 600; margin-bottom: 0.5rem; }
+.tb-done .when { font-size: 1.1rem; color: var(--maroon); margin-bottom: 1.4rem; }
+.tb-done .btns { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+.tb-help { margin-top: 2.5rem; background: var(--card); border-radius: var(--card-radius); padding: 1.4rem 1.6rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.tb-help p { margin: 0; color: var(--maroon); font-weight: 500; }
+.tb-wa { display: inline-flex; align-items: center; gap: 0.5rem; }
+.faq-list { max-width: 760px; margin: 0 auto; }
+.faq-item { border-bottom: 1px solid var(--rule); }
+.faq-q { padding: 1.15rem 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: var(--maroon); background: none; border: none; width: 100%; text-align: left; font-family: var(--font-body); font-size: 1rem; }
+.faq-q::after { content: '+'; color: var(--maroon); font-size: 1.2rem; }
+.faq-item.open .faq-q::after { content: '−'; }
+.faq-a { display: none; padding-bottom: 1.15rem; color: var(--text-mid); line-height: 1.7; }
+.faq-item.open .faq-a { display: block; }
+.tb-skel { height: 44px; border-radius: 12px; background: linear-gradient(90deg, #f1e9df 0%, #f8f2ea 50%, #f1e9df 100%); background-size: 200% 100%; animation: sk 1.2s infinite; }
+@keyframes sk { to { background-position: -200% 0; } }
+@media (max-width: 600px) {
+  .tb-card { padding: 1.4rem 1.1rem 1.6rem; }
+  .tb-days { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.3rem; }
+  .tb-day { padding: 0.45rem 0; border-radius: 10px; }
+  .tb-day .d1 { font-size: 0.68rem; }
+  .tb-day .d2 { font-size: 0.95rem; }
+  .tb-times { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tb-time { font-size: 0.92rem; padding: 0.6rem 0.2rem; }
+  .tb-opts { grid-template-columns: 1fr; }
+  .tb-help { padding: 1.2rem; }
+  .tb-help .btn-primary { width: 100%; text-align: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-logo"><img src="../images/handpan-logo.svg" alt="Handpan with Arpit" width="44" height="44" style="display:block;"></a>
+  <button class="nav-hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li><li><a href="about.html">About</a></li>
+    <li><a href="music.html">Music</a></li><li><a href="workshops.html">Workshops</a></li>
+    <li><a href="classes.html" class="active">Classes</a></li><li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+<div class="mobile-menu"><div class="mobile-menu-inner">
+  <a href="../index.html">Home</a><a href="about.html">About</a><a href="music.html">Music</a>
+  <a href="workshops.html">Workshops</a><a href="classes.html">Classes</a><a href="contact.html">Contact</a>
+</div></div>
+
+<section class="page-hero">
+  <p class="page-hero-eyebrow">Free trial</p>
+  <h1 class="page-hero-title">Book your free handpan trial</h1>
+  <p class="page-hero-sub">45 minutes, one to one on Zoom with Arpit. Pick a time that works for you.</p>
+</section>
+<div class="page-hero-rule" aria-hidden="true"></div>
+
+<section class="section" style="padding-top:0;">
+  <div class="tb-wrap">
+    <div class="tb-card" id="tbCard">
+      <div class="tb-chips" id="tbChips">
+        <span class="tb-chip solid">Free</span>
+        <span class="tb-chip">Beginners welcome</span>
+        <span class="tb-chip" id="tbPriceChip">After the trial: …</span>
+      </div>
+
+      <div id="tbForm">
+        <div class="tb-step">
+          <div class="tb-label">
+            <strong>1. Pick a day</strong>
+            <div class="tb-weeknav">
+              <button class="tb-arrow" id="tbPrev" aria-label="Previous week" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <span class="tb-weeklabel" id="tbWeekLabel">This week</span>
+              <button class="tb-arrow" id="tbNext" aria-label="Next week"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+            </div>
+          </div>
+          <div class="tb-days" id="tbDays"><div class="tb-skel" style="grid-column:1/-1;"></div></div>
+        </div>
+
+        <div class="tb-step">
+          <div class="tb-label"><strong>2. Pick a time</strong><span id="tbTzNote"></span></div>
+          <div id="tbTimes"><div class="tb-empty">Pick a day first.</div></div>
+        </div>
+
+        <div class="tb-step">
+          <div class="tb-label"><strong>3. Your details</strong></div>
+          <div class="tb-fields">
+            <div class="tb-field">
+              <label for="tbName">Your name</label>
+              <input class="tb-input" id="tbName" autocomplete="name" placeholder="Lena Schmidt" maxlength="80"/>
+              <div class="tb-err" id="err-name"></div>
+            </div>
+            <div class="tb-field">
+              <label for="tbEmail">Email</label>
+              <input class="tb-input" id="tbEmail" type="email" inputmode="email" autocomplete="email" placeholder="name@email.com" maxlength="120"/>
+              <div class="tb-err" id="err-email"></div>
+            </div>
+            <div class="tb-field">
+              <label for="tbPhone">WhatsApp number</label>
+              <div class="tb-phone">
+                <button type="button" class="tb-cc" id="tbCc" aria-haspopup="listbox" aria-expanded="false"><span id="tbCcFlag"></span><span id="tbCcDial"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+                <input class="tb-input" id="tbPhone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Phone number" maxlength="20"/>
+                <div class="tb-pop" id="tbPop" role="dialog" aria-label="Choose country">
+                  <input class="tb-input" id="tbCcSearch" placeholder="Search country" autocomplete="off"/>
+                  <div class="tb-list" id="tbCcList" role="listbox"></div>
+                </div>
+              </div>
+              <div class="tb-err" id="err-phone"></div>
+            </div>
+            <div class="tb-field">
+              <label>Do you have a handpan?</label>
+              <div class="tb-opts" id="tbHandpan">
+                <button type="button" class="tb-opt" data-v="yes">Yes</button>
+                <button type="button" class="tb-opt" data-v="not_yet">Not yet</button>
+                <button type="button" class="tb-opt" data-v="planning">Planning to buy</button>
+              </div>
+              <div class="tb-err" id="err-handpan"></div>
+            </div>
+            <input type="text" id="tbWebsite" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"/>
+          </div>
+          <div class="tb-summary" id="tbSummary" style="display:none;"></div>
+          <button class="btn-primary tb-book" id="tbBook">Book my free trial</button>
+          <div class="tb-alert" id="tbAlert"></div>
+          <p class="tb-fine">You'll get the Zoom link by email right away.</p>
+        </div>
+      </div>
+
+      <div class="tb-done" id="tbDone" style="display:none;"></div>
+    </div>
+
+    <div class="tb-help">
+      <p>Still have a question?</p>
+      <a class="btn-primary tb-wa" id="tbWa" href="https://wa.me/919019576583" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.47-1.76-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.75-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35M12.05 21.5h-.01a9.4 9.4 0 0 1-4.8-1.31l-.34-.2-3.57.93.95-3.48-.22-.36a9.4 9.4 0 0 1-1.44-5.02c0-5.2 4.24-9.43 9.44-9.43 2.52 0 4.89.98 6.67 2.77a9.37 9.37 0 0 1 2.76 6.67c0 5.2-4.24 9.43-9.44 9.43m8.03-17.46A11.27 11.27 0 0 0 12.05.7C5.8.7.7 5.8.7 12.05c0 2 .52 3.95 1.52 5.67L.6 23.3l5.72-1.5a11.33 11.33 0 0 0 5.72 1.46h.01c6.25 0 11.35-5.09 11.35-11.35 0-3.03-1.18-5.88-3.33-8.02"/></svg>
+        Ask Arpit on WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="section-header" style="justify-content:center;text-align:center;"><h2 class="section-title">Common <em>Questions</em></h2></div>
+  <div class="faq-list">
+    <div class="faq-item"><button class="faq-q">Do I need my own handpan?</button><div class="faq-a">Yes. Online classes are hands on, so you'll need a handpan at home. Don't have one yet? Message me on WhatsApp and we'll set up a quick call to help you pick the right one.</div></div>
+    <div class="faq-item"><button class="faq-q">I've never played music before. Can I still learn?</button><div class="faq-a">Absolutely. Most of my students start from zero. The free trial is a relaxed first session to see how it feels.</div></div>
+    <div class="faq-item"><button class="faq-q">What happens in the free trial?</button><div class="faq-a">A 45 minute 1:1 Zoom session. We'll check your setup, learn the basics of sound and posture, and play your first simple pattern. No payment needed.</div></div>
+    <div class="faq-item"><button class="faq-q">How much are regular classes?</button><div class="faq-a" id="faqPrice">₹1500 per class in India, $18 per class everywhere else. Each class is 1 hour, 1:1 on Zoom. Pay monthly (4 classes) or quarterly (12 classes, 10% off).</div></div>
+    <div class="faq-item"><button class="faq-q">What if I need to miss or move a class?</button><div class="faq-a">You can move or skip a class from your personal page up to 4 hours before it starts. Skipped classes aren't charged, and your unused classes carry forward.</div></div>
+    <div class="faq-item"><button class="faq-q">Which time zone are the times in?</button><div class="faq-a">Times on this page are shown in your own local time, so what you pick is what you get.</div></div>
+    <div class="faq-item"><button class="faq-q">Are classes available for kids?</button><div class="faq-a">Yes, for ages 12 and up. A parent should join the first session.</div></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <span class="footer-brand-name">Arpit <em>Pandey</em></span>
+      <span class="footer-brand-tag">Handpan artist · Bengaluru, India</span>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="about.html">About</a></li><li><a href="music.html">Music</a></li>
+      <li><a href="workshops.html">Workshops</a></li><li><a href="classes.html">Classes</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Learn</h4><ul>
+      <li><a href="trial.html">Free trial</a></li><li><a href="classes.html">Online classes</a></li><li><a href="workshops.html">Live workshops</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Connect</h4><ul>
+      <li><a href="https://www.instagram.com/pandeyarpit" target="_blank">Instagram</a></li>
+      <li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank">YouTube</a></li>
+      <li><a href="mailto:arpithandpan@gmail.com">Email</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Arpit Pandey</p></div>
+</footer>
+
+<script src="../js/main.js"></script>
+<script>
+(function () {
+  const API = 'https://handpan-webhook-server-production.up.railway.app';
+  const $ = id => document.getElementById(id);
+
+  // ── Countries: [ISO, name, dial] ──
+  const COUNTRIES = [
+    ['IN','India','91'],['US','United States','1'],['GB','United Kingdom','44'],['CA','Canada','1'],['AU','Australia','61'],
+    ['DE','Germany','49'],['FR','France','33'],['NL','Netherlands','31'],['ES','Spain','34'],['IT','Italy','39'],['PT','Portugal','351'],
+    ['IE','Ireland','353'],['BE','Belgium','32'],['CH','Switzerland','41'],['AT','Austria','43'],['SE','Sweden','46'],['NO','Norway','47'],
+    ['DK','Denmark','45'],['FI','Finland','358'],['PL','Poland','48'],['CZ','Czechia','420'],['HU','Hungary','36'],['GR','Greece','30'],
+    ['RO','Romania','40'],['BG','Bulgaria','359'],['HR','Croatia','385'],['SI','Slovenia','386'],['SK','Slovakia','421'],['EE','Estonia','372'],
+    ['LV','Latvia','371'],['LT','Lithuania','370'],['LU','Luxembourg','352'],['IS','Iceland','354'],['MT','Malta','356'],['CY','Cyprus','357'],
+    ['UA','Ukraine','380'],['TR','Turkey','90'],['IL','Israel','972'],['AE','United Arab Emirates','971'],['SA','Saudi Arabia','966'],
+    ['QA','Qatar','974'],['KW','Kuwait','965'],['BH','Bahrain','973'],['OM','Oman','968'],['JO','Jordan','962'],['EG','Egypt','20'],
+    ['ZA','South Africa','27'],['NG','Nigeria','234'],['KE','Kenya','254'],['MA','Morocco','212'],
+    ['JP','Japan','81'],['KR','South Korea','82'],['CN','China','86'],['HK','Hong Kong','852'],['TW','Taiwan','886'],['SG','Singapore','65'],
+    ['MY','Malaysia','60'],['TH','Thailand','66'],['VN','Vietnam','84'],['ID','Indonesia','62'],['PH','Philippines','63'],
+    ['LK','Sri Lanka','94'],['NP','Nepal','977'],['BD','Bangladesh','880'],['PK','Pakistan','92'],['MV','Maldives','960'],
+    ['NZ','New Zealand','64'],['MX','Mexico','52'],['BR','Brazil','55'],['AR','Argentina','54'],['CL','Chile','56'],['CO','Colombia','57'],
+    ['PE','Peru','51'],['CR','Costa Rica','506'],['UY','Uruguay','598'],['RU','Russia','7'],['KZ','Kazakhstan','7'],['GE','Georgia','995'],['AM','Armenia','374']
+  ];
+  const CURRENCY = { GB:'GBP', DE:'EUR', FR:'EUR', NL:'EUR', ES:'EUR', IT:'EUR', PT:'EUR', IE:'EUR', BE:'EUR', AT:'EUR', FI:'EUR', GR:'EUR', SK:'EUR', SI:'EUR', EE:'EUR', LV:'EUR', LT:'EUR', LU:'EUR', MT:'EUR', CY:'EUR', HR:'EUR',
+    CH:'CHF', SE:'SEK', NO:'NOK', DK:'DKK', PL:'PLN', CZ:'CZK', HU:'HUF', RO:'RON', BG:'BGN', IS:'ISK', UA:'UAH', TR:'TRY', IL:'ILS', AE:'AED', SA:'SAR', QA:'QAR', KW:'KWD', BH:'BHD', OM:'OMR', JO:'JOD', EG:'EGP',
+    ZA:'ZAR', NG:'NGN', KE:'KES', MA:'MAD', JP:'JPY', KR:'KRW', CN:'CNY', HK:'HKD', TW:'TWD', SG:'SGD', MY:'MYR', TH:'THB', VN:'VND', ID:'IDR', PH:'PHP', LK:'LKR', NP:'NPR', BD:'BDT', PK:'PKR', MV:'MVR',
+    AU:'AUD', NZ:'NZD', CA:'CAD', MX:'MXN', BR:'BRL', AR:'ARS', CL:'CLP', CO:'COP', PE:'PEN', CR:'CRC', UY:'UYU', RU:'RUB', KZ:'KZT', GE:'GEL', AM:'AMD' };
+  // Time zone → country, for a sensible default. Anything unknown falls back to the browser language.
+  const TZ_COUNTRY = { 'Asia/Kolkata':'IN','Asia/Calcutta':'IN','Europe/London':'GB','Europe/Dublin':'IE','Europe/Berlin':'DE','Europe/Paris':'FR','Europe/Amsterdam':'NL','Europe/Madrid':'ES','Europe/Rome':'IT','Europe/Lisbon':'PT',
+    'Europe/Brussels':'BE','Europe/Zurich':'CH','Europe/Vienna':'AT','Europe/Stockholm':'SE','Europe/Oslo':'NO','Europe/Copenhagen':'DK','Europe/Helsinki':'FI','Europe/Warsaw':'PL','Europe/Prague':'CZ','Europe/Budapest':'HU',
+    'Europe/Athens':'GR','Europe/Bucharest':'RO','Europe/Sofia':'BG','Europe/Zagreb':'HR','Europe/Kiev':'UA','Europe/Kyiv':'UA','Europe/Istanbul':'TR','Asia/Jerusalem':'IL','Asia/Dubai':'AE','Asia/Riyadh':'SA','Asia/Qatar':'QA',
+    'Asia/Tokyo':'JP','Asia/Seoul':'KR','Asia/Shanghai':'CN','Asia/Hong_Kong':'HK','Asia/Taipei':'TW','Asia/Singapore':'SG','Asia/Kuala_Lumpur':'MY','Asia/Bangkok':'TH','Asia/Ho_Chi_Minh':'VN','Asia/Jakarta':'ID','Asia/Manila':'PH',
+    'Asia/Colombo':'LK','Asia/Kathmandu':'NP','Asia/Katmandu':'NP','Asia/Dhaka':'BD','Asia/Karachi':'PK','Australia/Sydney':'AU','Australia/Melbourne':'AU','Australia/Brisbane':'AU','Australia/Perth':'AU','Australia/Adelaide':'AU',
+    'Pacific/Auckland':'NZ','America/Toronto':'CA','America/Vancouver':'CA','America/Edmonton':'CA','America/Winnipeg':'CA','America/Halifax':'CA','America/Mexico_City':'MX','America/Sao_Paulo':'BR','America/Argentina/Buenos_Aires':'AR',
+    'America/Santiago':'CL','America/Bogota':'CO','America/Lima':'PE','Africa/Johannesburg':'ZA','Africa/Lagos':'NG','Africa/Nairobi':'KE','Africa/Cairo':'EG','Europe/Moscow':'RU' };
+
+  const flag = iso => iso.replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt(0)));
+  const TZ = (Intl.DateTimeFormat().resolvedOptions().timeZone) || 'Asia/Kolkata';
+  function guessCountry() {
+    if (TZ_COUNTRY[TZ]) return TZ_COUNTRY[TZ];
+    if (/^America\//.test(TZ) || /^US\//.test(TZ) || TZ === 'Pacific/Honolulu') return 'US';
+    if (/^Europe\//.test(TZ)) return 'DE';
+    const m = (navigator.language || '').match(/-([A-Z]{2})$/i);
+    if (m && COUNTRIES.some(c => c[0] === m[1].toUpperCase())) return m[1].toUpperCase();
+    return 'IN';
+  }
+  const HOME = guessCountry();
+  let cc = COUNTRIES.find(c => c[0] === HOME) || COUNTRIES[0];
+
+  // ── State ──
+  let data = null, byDay = {}, dayKeys = [], week = 0, selDay = null, selSlot = null, handpan = null;
+  const isIndiaTz = TZ === 'Asia/Kolkata' || TZ === 'Asia/Calcutta';
+
+  // ── Date helpers in the visitor's zone ──
+  const fmtDayKey = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' });
+  const fmtTime = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', minute: '2-digit' });
+  // Day chips are built from 'YYYY-MM-DD' keys, so label them in UTC to avoid shifting a day.
+  const fmtWk = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'short' });
+  const fmtDnum = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', day: 'numeric' });
+  const fmtLongU = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
+  const fmtLong = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' });
+  const fmtMin = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  function localMinutes(d) { const [h, m] = fmtMin.format(d).split(':').map(Number); return h * 60 + m; }
+  function tzName() {
+    if (isIndiaTz) return 'IST';
+    try {
+      const p = new Intl.DateTimeFormat('en-US', { timeZone: TZ, timeZoneName: 'short' }).formatToParts(new Date()).find(x => x.type === 'timeZoneName');
+      if (p && !/^GMT/.test(p.value)) return p.value;
+    } catch (e) {}
+    return TZ.split('/').pop().replace(/_/g, ' ') + ' time';
+  }
+  function money(cur, n) {
+    try { return new Intl.NumberFormat('en', { style: 'currency', currency: cur, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n); }
+    catch (e) { return cur + ' ' + n; }
+  }
+
+  // ── Prices ──
+  function renderPrice() {
+    if (!data) return;
+    const inIndia = cc[0] === 'IN';
+    let txt;
+    if (inIndia) txt = '₹' + data.prices.inr.toLocaleString('en-IN') + ' per class';
+    else {
+      txt = '$' + data.prices.usd + ' per class';
+      if (data.approx) txt += ' (about ' + money(data.approx.currency, data.approx.amount) + ')';
+    }
+    $('tbPriceChip').textContent = 'After the trial: ' + txt;
+  }
+
+  // ── Slots ──
+  async function loadSlots(keepSelection) {
+    const cur = CURRENCY[HOME] || '';
+    try {
+      const r = await fetch(API + '/api/trial/slots' + (cur ? '?cur=' + cur : ''), { cache: 'no-store' });
+      data = await r.json();
+      if (!r.ok || !data.ok) throw new Error(data.error || 'load failed');
+    } catch (e) {
+      $('tbDays').innerHTML = '<div class="tb-empty" style="grid-column:1/-1;">Couldn\'t load times right now. Please refresh, or <a href="' + waLink('Hi Arpit, I\'d like to book a free trial.') + '" target="_blank" rel="noopener" style="color:var(--maroon);">message Arpit on WhatsApp</a>.</div>';
+      return;
+    }
+    $('tbWa').href = waLink('Hi Arpit, I have a question about the free trial.');
+    renderPrice();
+    if (!data.open) {
+      $('tbDays').innerHTML = '<div class="tb-empty" style="grid-column:1/-1;">Trial bookings are paused for now. Please <a href="' + waLink('Hi Arpit, I\'d like to book a free trial.') + '" target="_blank" rel="noopener" style="color:var(--maroon);">message Arpit on WhatsApp</a>.</div>';
+      $('tbTimes').innerHTML = '';
+      return;
+    }
+    byDay = {};
+    const [lo, hi] = data.bookerDay || [420, 1380];
+    for (const iso of data.slots) {
+      const d = new Date(iso);
+      if (!isIndiaTz) {
+        // Only times that are comfortable for the visitor too.
+        const s = localMinutes(d), e = s + (data.trialMin || 45);
+        if (s < lo || e > hi) continue;
+      }
+      const k = fmtDayKey.format(d);
+      (byDay[k] = byDay[k] || []).push(iso);
+    }
+    // 14 local days from today, split into two weeks.
+    dayKeys = [];
+    const now = new Date();
+    for (let i = 0; i < 15; i++) dayKeys.push(fmtDayKey.format(new Date(now.getTime() + i * 86400000)));
+    dayKeys = [...new Set(dayKeys)].slice(0, 14);
+    if (!keepSelection) {
+      selSlot = null;
+      selDay = dayKeys.find(k => byDay[k]) || null;
+      week = selDay && dayKeys.indexOf(selDay) >= 7 ? 1 : 0;
+    } else if (selDay && !byDay[selDay]) selDay = dayKeys.find(k => byDay[k]) || null;
+    renderDays();
+    renderTimes();
+  }
+
+  function renderDays() {
+    const keys = dayKeys.slice(week * 7, week * 7 + 7);
+    $('tbWeekLabel').textContent = week === 0 ? 'This week' : 'Next week';
+    $('tbPrev').disabled = week === 0;
+    $('tbNext').disabled = week === 1;
+    if (!Object.keys(byDay).length) {
+      $('tbDays').innerHTML = '<div class="tb-empty" style="grid-column:1/-1;">No free times in the next two weeks. Please <a href="' + waLink('Hi Arpit, I\'d like to book a free trial but no times were free.') + '" target="_blank" rel="noopener" style="color:var(--maroon);">message Arpit on WhatsApp</a> and he\'ll find one.</div>';
+      return;
+    }
+    $('tbDays').innerHTML = keys.map(k => {
+      const d = new Date(k + 'T12:00:00Z');
+      const has = !!byDay[k];
+      return '<button type="button" class="tb-day' + (k === selDay ? ' on' : '') + '" data-k="' + k + '"' + (has ? '' : ' disabled') +
+        ' aria-label="' + fmtLongU.format(d) + (has ? '' : ', no free times') + '"><span class="d1">' + fmtWk.format(d) + '</span><span class="d2">' + fmtDnum.format(d) + '</span></button>';
+    }).join('');
+  }
+
+  function renderTimes() {
+    $('tbTzNote').textContent = 'Shown in your time (' + tzName() + ')';
+    if (!selDay || !byDay[selDay]) { $('tbTimes').innerHTML = '<div class="tb-empty">Pick a day first.</div>'; renderSummary(); return; }
+    $('tbTimes').innerHTML = '<div class="tb-times">' + byDay[selDay].map(iso =>
+      '<button type="button" class="tb-time' + (iso === selSlot ? ' on' : '') + '" data-iso="' + iso + '">' + fmtTime.format(new Date(iso)) + '</button>').join('') + '</div>';
+    renderSummary();
+  }
+
+  function renderSummary() {
+    const el = $('tbSummary');
+    if (!selSlot) { el.style.display = 'none'; return; }
+    const d = new Date(selSlot);
+    el.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+      '<span>' + fmtLong.format(d) + ', ' + fmtTime.format(d) + ' · 45 min · Zoom</span>';
+    el.style.display = 'flex';
+  }
+
+  $('tbDays').addEventListener('click', e => {
+    const b = e.target.closest('.tb-day'); if (!b || b.disabled) return;
+    selDay = b.dataset.k; selSlot = null; renderDays(); renderTimes();
+  });
+  $('tbTimes').addEventListener('click', e => {
+    const b = e.target.closest('.tb-time'); if (!b) return;
+    selSlot = b.dataset.iso; renderTimes(); hideAlert();
+  });
+  $('tbPrev').onclick = () => { if (week > 0) { week = 0; renderDays(); } };
+  $('tbNext').onclick = () => { if (week < 1) { week = 1; renderDays(); } };
+
+  // ── Handpan choice ──
+  $('tbHandpan').addEventListener('click', e => {
+    const b = e.target.closest('.tb-opt'); if (!b) return;
+    handpan = b.dataset.v;
+    [...$('tbHandpan').children].forEach(x => x.classList.toggle('on', x === b));
+    setErr('handpan', '');
+  });
+
+  // ── Country picker ──
+  function renderCc() { $('tbCcFlag').textContent = flag(cc[0]); $('tbCcDial').textContent = '+' + cc[2]; }
+  function renderCcList(q) {
+    q = (q || '').trim().toLowerCase();
+    const list = COUNTRIES.filter(c => !q || c[1].toLowerCase().includes(q) || c[2].startsWith(q.replace('+', '')));
+    $('tbCcList').innerHTML = list.map(c => '<button type="button" role="option" data-iso="' + c[0] + '"' + (c === cc ? ' class="hl"' : '') + '><span>' + flag(c[0]) + '</span><span>' + c[1] + '</span><span class="dial">+' + c[2] + '</span></button>').join('') ||
+      '<div class="tb-empty" style="padding:0.6rem;">No match</div>';
+  }
+  function openCc(open) {
+    $('tbPop').classList.toggle('open', open);
+    $('tbCc').setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) { $('tbCcSearch').value = ''; renderCcList(''); setTimeout(() => $('tbCcSearch').focus(), 30); }
+  }
+  $('tbCc').onclick = e => { e.stopPropagation(); openCc(!$('tbPop').classList.contains('open')); };
+  $('tbCcSearch').oninput = e => renderCcList(e.target.value);
+  $('tbCcSearch').onkeydown = e => {
+    if (e.key === 'Escape') openCc(false);
+    if (e.key === 'Enter') { e.preventDefault(); const f = $('tbCcList').querySelector('button'); if (f) f.click(); }
+  };
+  $('tbCcList').addEventListener('click', e => {
+    const b = e.target.closest('button[data-iso]'); if (!b) return;
+    cc = COUNTRIES.find(c => c[0] === b.dataset.iso) || cc;
+    renderCc(); openCc(false); renderPrice(); $('tbPhone').focus();
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.tb-phone')) openCc(false); });
+
+  // ── Validation ──
+  function setErr(f, msg) {
+    const el = $('err-' + f); if (!el) return;
+    el.textContent = msg; el.classList.toggle('show', !!msg);
+    const input = f === 'name' ? $('tbName') : f === 'email' ? $('tbEmail') : f === 'phone' ? $('tbPhone') : null;
+    if (input) input.classList.toggle('err', !!msg);
+  }
+  ['tbName', 'tbEmail', 'tbPhone'].forEach(id => $(id).addEventListener('input', () => setErr(id === 'tbName' ? 'name' : id === 'tbEmail' ? 'email' : 'phone', '')));
+  function showAlert(html) { $('tbAlert').innerHTML = html; $('tbAlert').classList.add('show'); }
+  function hideAlert() { $('tbAlert').classList.remove('show'); }
+  function waLink(text) { return 'https://wa.me/' + ((data && data.whatsapp) || '919019576583') + '?text=' + encodeURIComponent(text); }
+
+  // ── Book ──
+  $('tbBook').onclick = async () => {
+    hideAlert();
+    const name = $('tbName').value.trim(), email = $('tbEmail').value.trim(), phone = $('tbPhone').value.replace(/\D/g, '');
+    let bad = false;
+    if (!selSlot) { showAlert('Pick a day and a time first.'); bad = true; }
+    if (name.length < 2) { setErr('name', 'Enter your name'); bad = true; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setErr('email', 'Enter a valid email'); bad = true; }
+    if (phone.replace(/^0+/, '').length < 6) { setErr('phone', 'Enter your WhatsApp number'); bad = true; }
+    if (!handpan) { setErr('handpan', 'Choose one'); bad = true; }
+    if (bad) { const first = document.querySelector('.tb-err.show, .tb-alert.show'); if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+
+    const btn = $('tbBook');
+    btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Booking…';
+    try {
+      const r = await fetch(API + '/api/trial/book', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, dial: cc[2], phone, tz: TZ, handpan, start: selSlot, website: $('tbWebsite').value })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) {
+        if (j.field) setErr(j.field, j.error);
+        else if (j.code === 'slot_taken') { showAlert(j.error); await loadSlots(true); }
+        else showAlert((j.error || 'Something went wrong. Please try again.') + (j.code === 'repeat' ? ' <a href="' + waLink('Hi Arpit, I tried to book a free trial.') + '" target="_blank" rel="noopener">Open WhatsApp</a>' : ''));
+        return;
+      }
+      showDone(j);
+    } catch (e) {
+      showAlert('Couldn\'t reach the booking system. Check your connection and try again.');
+    } finally {
+      btn.removeAttribute('aria-busy'); btn.textContent = 'Book my free trial';
+    }
+  };
+
+  function showDone(j) {
+    const d = new Date(j.start);
+    $('tbForm').style.display = 'none';
+    $('tbChips').style.display = 'none';
+    $('tbDone').innerHTML =
+      '<div class="tick"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+      '<h2>You\'re booked</h2>' +
+      '<p class="when">' + fmtLong.format(d) + ', ' + fmtTime.format(d) + ' (' + tzName() + ')</p>' +
+      '<div class="btns">' +
+        (j.joinUrl ? '<a class="btn-primary" href="' + j.joinUrl + '" target="_blank" rel="noopener">Zoom link</a>' : '') +
+        '<a class="btn-outline" href="' + j.calendarUrl + '" target="_blank" rel="noopener">Add to Google Calendar</a>' +
+      '</div>' +
+      '<p class="tb-fine">' + (j.joinUrl ? 'The Zoom link and a calendar invite are on their way to your email.' : 'Arpit will email you the Zoom link shortly.') + '<br>Need to change the time? <a href="' + waLink('Hi Arpit, about my trial on ' + fmtLong.format(d)) + '" target="_blank" rel="noopener" style="color:var(--maroon);">Message Arpit on WhatsApp</a>.</p>';
+    $('tbDone').style.display = 'block';
+    const top = $('tbCard').getBoundingClientRect().top + window.scrollY - 110;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+  }
+
+  // ── FAQ ──
+  document.querySelectorAll('.faq-q').forEach(q => q.addEventListener('click', () => q.parentElement.classList.toggle('open')));
+
+  renderCc();
+  loadSlots(false);
+})();
+</script>
+</body>
+</html>
