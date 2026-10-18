@@ -243,8 +243,10 @@
   .tb-crow .lbl { font-size: 13px; }
   .tb-opt { font-size: 15px; }
 }
-.tb-tgroup + .tb-tgroup { margin-top: 1.25rem; }
-.tb-tgroup-h { font-size: 14.5px; font-weight: 500; color: var(--bk-light); margin-bottom: 0.6rem; }
+.tb-tgroup + .tb-tgroup { margin-top: 1.4rem; padding-top: 1.4rem; border-top: 1px dashed var(--bk-border); }
+.tb-tgroup-h { display: flex; align-items: center; gap: 8px; font-size: 15.5px; font-weight: 500; color: var(--bk-dark); margin-bottom: 0.75rem; }
+.tb-tgroup-h svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--maroon); }
+.tb-tgroup-h small { font-size: 14px; font-weight: 400; color: var(--bk-light); }
 @media (max-width: 380px) {
   .tb-opt { white-space: normal; line-height: 1.25; padding: 0.6rem 0.35rem; gap: 4px; }
   .tb-opt .check-icon { width: 16px; height: 16px; }
@@ -596,7 +598,15 @@
     $('tbTzNote').textContent = 'Shown in your time (' + tzName() + ')';
     if (!selDay || !byDay[selDay]) { $('tbTimes').innerHTML = '<div class="tb-empty">Pick a day first.</div>'; renderSummary(); return; }
     // Group slots in the order of the day: Morning, Afternoon, Evening, then Late night (after midnight).
-    const ORDER = ['Morning', 'Afternoon', 'Evening', 'Late night (after 12 AM)'];
+    const ORDER = ['Morning', 'Afternoon', 'Evening', 'Late night'];
+    const SV = p => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
+    const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+    const HEAD = {
+      'Morning': SV('<path d="M17 18a5 5 0 0 0-10 0"/><path d="M12 9V2M4.2 10.2l1.4 1.4M1 18h2M21 18h2M18.4 11.6l1.4-1.4M23 22H1M8 6l4-4 4 4"/>') + 'Morning',
+      'Afternoon': SV(SUN) + 'Afternoon',
+      'Evening': SV('<path d="M17 18a5 5 0 0 0-10 0"/><path d="M12 2v7M4.2 10.2l1.4 1.4M1 18h2M21 18h2M18.4 11.6l1.4-1.4M23 22H1M16 5l-4 4-4-4"/>') + 'Evening',
+      'Late night': SV('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>') + 'Late night <small>after 12 AM</small>'
+    };
     const buckets = {};
     byDay[selDay].slice().sort().forEach(iso => {
       const m = localMinutes(new Date(iso));
@@ -605,7 +615,7 @@
     });
     const groups = ORDER.filter(n => buckets[n]).map(n => ({ name: n, items: buckets[n] }));
     $('tbTimes').innerHTML = groups.map(g =>
-      '<div class="tb-tgroup"><div class="tb-tgroup-h">' + g.name + '</div><div class="tb-times">' + g.items.map(iso =>
+      '<div class="tb-tgroup"><div class="tb-tgroup-h">' + HEAD[g.name] + '</div><div class="tb-times">' + g.items.map(iso =>
         '<button type="button" class="tb-time' + (iso === selSlot ? ' on' : '') + '" data-iso="' + iso + '">' + fmtTime.format(new Date(iso)) + '</button>').join('') + '</div></div>').join('');
     renderSummary();
   }
