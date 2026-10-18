@@ -20,6 +20,9 @@
 .tb-intro { color: var(--maroon); font-size: 0.98rem; margin: 0 0 1.5rem; }
 .tb-dow { font-size: 0.74rem; color: var(--text-mid); text-align: center; padding-bottom: 0.15rem; }
 .tb-day.blank { visibility: hidden; }
+.tb-month { color: var(--maroon); font-weight: 600; font-size: 0.92rem; margin: 0 0 0.5rem; }
+.tb-days + .tb-month { margin-top: 1.2rem; }
+.tb-day .d1 { display: block; font-size: 0.66rem; line-height: 1; margin-bottom: 1px; text-transform: uppercase; letter-spacing: 0.04em; }
 .tb-nohp { background: var(--ivory); border-radius: 14px; padding: 1.3rem 1.3rem 1.2rem !important; border-top: none !important; }
 .tb-nohp h3 { color: var(--maroon); font-size: 1.1rem; font-weight: 600; margin: 0 0 0.3rem; }
 .tb-nohp p { margin: 0 0 1rem; font-size: 0.97rem; }
@@ -155,7 +158,7 @@
         <div id="tbYes">
         <div class="tb-step">
           <div class="tb-label"><strong>2. Pick a day</strong><span id="tbMonths"></span></div>
-          <div class="tb-days" id="tbDays"><div class="tb-skel" style="grid-column:1/-1;"></div></div>
+          <div class="tb-cal" id="tbDays"><div class="tb-skel"></div></div>
         </div>
 
         <div class="tb-step">
@@ -306,7 +309,7 @@
   const fmtWk = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'short' });
   const fmtDnum = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', day: 'numeric' });
   const fmtLongU = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
-  const fmtMonU = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', month: 'short' });
+  const fmtMonthYearU = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', month: 'long', year: 'numeric' });
   const fmtWkLocal = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'short' });
   const fmtLong = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' });
   const fmtMin = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
@@ -382,23 +385,34 @@
 
   function renderDays() {
     const keys = dayKeys;
-    const m1 = fmtMonU.format(new Date(keys[0] + 'T12:00:00Z')), m2 = fmtMonU.format(new Date(keys[keys.length - 1] + 'T12:00:00Z'));
-    $('tbMonths').textContent = m1 === m2 ? m1 : m1 + ' – ' + m2;
     if (!Object.keys(byDay).length) {
       $('tbDays').innerHTML = '<div class="tb-empty" style="grid-column:1/-1;">No free times in the next two weeks. Please <a href="' + waLink('Hi Arpit, I\'d like to book a free trial but no times were free.') + '" target="_blank" rel="noopener" style="color:var(--maroon);">message Arpit on WhatsApp</a> and he\'ll find one.</div>';
       return;
     }
-    // Weekday header, then blanks so the first day sits under its weekday.
-    const lead = new Date(keys[0] + 'T12:00:00Z').getUTCDay();
-    let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(w => '<div class="tb-dow">' + w + '</div>').join('');
-    for (let i = 0; i < lead; i++) html += '<span class="tb-day blank" aria-hidden="true"></span>';
-    html += keys.map(k => {
-      const d = new Date(k + 'T12:00:00Z');
-      const has = !!byDay[k];
-      return '<button type="button" class="tb-day' + (k === selDay ? ' on' : '') + '" data-k="' + k + '"' + (has ? '' : ' disabled') +
-        ' aria-label="' + fmtLongU.format(d) + (has ? '' : ', no free times') + '"><span class="d2">' + fmtDnum.format(d) + '</span></button>';
+    // One small calendar per month, stacked, so crossing into a new month is obvious.
+    const months = [];
+    for (const k of keys) {
+      const ym = k.slice(0, 7);
+      if (!months.length || months[months.length - 1].ym !== ym) months.push({ ym, keys: [] });
+      months[months.length - 1].keys.push(k);
+    }
+    // A month with no free day at all (say a lone Sunday the 1st) adds nothing, so drop it.
+    for (let i = months.length - 1; i >= 0 && months.length > 1; i--) if (!months[i].keys.some(k => byDay[k])) months.splice(i, 1);
+    $('tbMonths').textContent = months.length > 1 ? '' : fmtMonthYearU.format(new Date(keys[0] + 'T12:00:00Z'));
+    const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(w => '<div class="tb-dow">' + w + '</div>').join('');
+    $('tbDays').innerHTML = months.map(m => {
+      const lead = new Date(m.keys[0] + 'T12:00:00Z').getUTCDay();
+      let html = months.length > 1 ? '<div class="tb-month">' + fmtMonthYearU.format(new Date(m.keys[0] + 'T12:00:00Z')) + '</div>' : '';
+      html += '<div class="tb-days">' + dow;
+      for (let i = 0; i < lead; i++) html += '<span class="tb-day blank" aria-hidden="true"></span>';
+      html += m.keys.map(k => {
+        const d = new Date(k + 'T12:00:00Z');
+        const has = !!byDay[k];
+        return '<button type="button" class="tb-day' + (k === selDay ? ' on' : '') + '" data-k="' + k + '"' + (has ? '' : ' disabled') +
+          ' aria-label="' + fmtLongU.format(d) + (has ? '' : ', no free times') + '"><span class="d2">' + fmtDnum.format(d) + '</span></button>';
+      }).join('');
+      return html + '</div>';
     }).join('');
-    $('tbDays').innerHTML = html;
   }
 
   function renderTimes() {
