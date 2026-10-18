@@ -2636,7 +2636,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v114</span>
+        <span style="color:var(--clay);font-weight:500;">v115</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2706,7 +2706,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v114</span>
+        <span style="color:var(--clay);font-weight:500;">v115</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -6671,7 +6671,9 @@ async function loadTrials() {
     const pending = upcoming.concat(rows.filter(t => t.status === 'pending' || t.status === 'no_show'));
     const converted = rows.filter(t => t.status === 'converted');
     const decided = rows.filter(t => !['pending', 'booked', 'no_show'].includes(t.status));
-    const pct = decided.length ? Math.round(converted.length / decided.length * 100) : null;
+    // Cancelled trials never happened, so they stay out of the conversion rate.
+    const finished = decided.filter(t => t.status !== 'cancelled');
+    const pct = finished.length ? Math.round(converted.length / finished.length * 100) : null;
     document.getElementById('trialsStats').textContent = rows.length
       ? (upcoming.length ? upcoming.length + ' upcoming · ' : '') + (pending.length - upcoming.length) + ' pending · ' + converted.length + ' converted' + (pct == null ? '' : ' · ' + pct + '% conversion')
       : '';
@@ -6765,10 +6767,17 @@ async function dropTrial(id, name) {
 }
 async function cancelTrialBooking(id, name) {
   if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
-  const ok = await customConfirm('Cancel ' + (name || 'this') + '\'s trial?', 'The time opens up on the booking page again. Message them yourself so they know.', 'Cancel trial', 'x');
+  const ok = await customConfirm('Cancel ' + (name || 'this') + '\'s trial?', 'The Zoom meeting is deleted, they get an email with a link to pick a new time, and the event leaves both calendars. The time opens up on the booking page again.', 'Cancel trial', 'x');
   if (!ok) return;
-  try { await sbPatch('trials', id, { status: 'cancelled' }); showToast('Trial cancelled', 'success'); loadTrials(); }
-  catch (e) { showToast('Could not update: ' + e.message, 'error'); }
+  try {
+    const res = await invApi('/api/trial/' + encodeURIComponent(id) + '/cancel', { method: 'POST' });
+    const out = await res.json();
+    const issues = [];
+    if (out.zoom && out.zoom !== 'deleted') issues.push('Zoom meeting not deleted');
+    if (out.email && out.email !== 'sent') issues.push('email not sent');
+    showToast(issues.length ? 'Trial cancelled, but ' + issues.join(' and ') + '. Please check.' : '✓ Trial cancelled. Zoom deleted and they were emailed.', issues.length ? 'error' : 'success');
+    loadTrials();
+  } catch (e) { showToast('Could not cancel: ' + e.message, 'error'); }
 }
 async function reopenTrial(id) {
   if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
