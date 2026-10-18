@@ -1972,6 +1972,87 @@ body.dark-mode .checkin-cb.checked { background: #c8935a; border-color: #c8935a;
 body.dark-mode .checkin-toggle-track { background: rgba(200,147,90,0.15); border-color: rgba(200,147,90,0.3); }
 body.dark-mode .checkin-toggle input:checked + .checkin-toggle-track { background: rgba(122,140,106,0.85); border-color: #7a8c6a; }
 
+
+/* ── WHATSAPP CONVERSATIONS (studio number) ── */
+#section-whatsapp { --wa-card: #fff; --wa-thread: #faf6f0; --wa-in: #fff; --wa-out: #f3e6d6; --wa-line: rgba(184,114,42,0.2); --wa-sel: rgba(184,114,42,0.12); --wa-blue: #4a86c8; --wa-red: #a3341f; }
+body.dark-mode #section-whatsapp { --wa-card: #231c16; --wa-thread: #19140f; --wa-in: #2a2018; --wa-out: #3a2a1c; --wa-line: rgba(200,147,90,0.22); --wa-sel: rgba(200,147,90,0.16); --wa-blue: #7fb0e6; --wa-red: #e58a76; }
+.wa-box { display: grid; grid-template-columns: 340px minmax(0, 1fr); background: var(--wa-card); border: 1px solid var(--wa-line); border-radius: 14px; overflow: hidden; height: calc(100vh - 230px); min-height: 520px; }
+.wa-list { border-right: 1px solid var(--wa-line); display: flex; flex-direction: column; min-height: 0; }
+.wa-search { margin: 14px 14px 10px; position: relative; }
+.wa-search input { width: 100%; box-sizing: border-box; height: 42px; border: 1px solid var(--wa-line); border-radius: 10px; background: var(--cream); color: var(--text-dark); font-family: var(--font-body); font-size: 15px; padding: 0 12px 0 36px; outline: none; }
+.wa-search input:focus { border-color: var(--clay); }
+.wa-search svg { position: absolute; left: 12px; top: 13px; color: var(--text-light); }
+.wa-tabs { display: flex; gap: 6px; padding: 0 14px 12px; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
+.wa-tabs::-webkit-scrollbar { display: none; }
+.wa-tab { flex-shrink: 0; font-family: var(--font-body); font-size: 13.5px; padding: 6px 12px; min-height: 32px; border-radius: 20px; color: var(--text-mid); border: 1px solid var(--wa-line); background: transparent; cursor: pointer; white-space: nowrap; }
+.wa-tab.on { background: var(--bark); color: var(--cream); border-color: var(--bark); }
+.wa-rows { overflow-y: auto; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; }
+.wa-row { display: flex; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--wa-line); cursor: pointer; width: 100%; text-align: left; background: transparent; border-left: 0; border-right: 0; border-bottom: 0; font-family: var(--font-body); color: var(--text-dark); }
+.wa-row:hover { background: var(--wa-sel); }
+.wa-row.on { background: var(--wa-sel); }
+.wa-av { width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 500; color: #fff; font-size: 16px; }
+.wa-rmain { flex: 1; min-width: 0; }
+.wa-rtop { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.wa-nm { font-weight: 500; font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wa-tm { font-size: 12.5px; color: var(--text-light); white-space: nowrap; }
+.wa-row.unread .wa-tm { color: var(--moss); font-weight: 500; }
+.wa-pv { font-size: 14px; color: var(--text-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.wa-row.unread .wa-pv { color: var(--text-dark); font-weight: 500; }
+.wa-tagrow { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
+.wa-tag { font-size: 11.5px; padding: 2px 8px; border-radius: 6px; background: var(--sand); color: var(--text-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+.wa-tag.trial { background: rgba(122,74,126,0.14); color: #7a4a7e; }
+body.dark-mode .wa-tag.trial { color: #d3a6d6; }
+.wa-tag.unknown { background: transparent; border: 1px dashed var(--wa-line); }
+.wa-unread { min-width: 20px; height: 20px; border-radius: 10px; background: var(--moss); color: #fff; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; margin-left: auto; box-sizing: border-box; }
+.wa-empty { padding: 2.5rem 1.5rem; text-align: center; color: var(--text-light); font-size: 15px; line-height: 1.6; }
+.wa-thread { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--wa-card); }
+.wa-th { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--wa-line); flex-shrink: 0; }
+.wa-th-info { flex: 1; min-width: 0; }
+.wa-th-info .wa-nm { font-size: 16.5px; }
+.wa-meta { font-size: 13px; color: var(--text-light); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wa-back { display: none; width: 40px; height: 40px; border: none; background: transparent; color: var(--text-mid); cursor: pointer; border-radius: 50%; align-items: center; justify-content: center; flex-shrink: 0; margin-left: -8px; }
+.wa-msgs { flex: 1; min-height: 0; overflow-y: auto; padding: 18px 22px 24px; background: var(--wa-thread); display: flex; flex-direction: column; gap: 10px; -webkit-overflow-scrolling: touch; }
+.wa-day { align-self: center; font-size: 12.5px; color: var(--text-light); background: var(--wa-card); border: 1px solid var(--wa-line); padding: 3px 12px; border-radius: 12px; margin: 8px 0 2px; }
+.wa-b { max-width: min(68%, 560px); padding: 9px 12px 6px; border-radius: 12px; font-size: 15px; line-height: 1.45; position: relative; color: var(--text-dark); overflow-wrap: anywhere; white-space: pre-wrap; }
+.wa-b.in { align-self: flex-start; background: var(--wa-in); border: 1px solid var(--wa-line); border-top-left-radius: 4px; }
+.wa-b.out { align-self: flex-end; background: var(--wa-out); border-top-right-radius: 4px; }
+.wa-b.has-react { margin-bottom: 12px; }
+.wa-b .wa-kind { font-size: 11.5px; font-weight: 600; color: var(--clay); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; white-space: normal; }
+.wa-b .wa-t { font-size: 11.5px; color: var(--text-light); margin-top: 3px; display: flex; gap: 5px; justify-content: flex-end; align-items: center; white-space: nowrap; }
+.wa-tick { display: inline-flex; color: var(--text-light); }
+.wa-tick.read { color: var(--wa-blue); }
+.wa-b .wa-fail { font-size: 12.5px; color: var(--wa-red); font-weight: 500; margin-top: 4px; white-space: normal; }
+.wa-b.failed { border: 1px dashed var(--wa-red); }
+.wa-react { position: absolute; bottom: -13px; left: 10px; background: var(--wa-card); border: 1px solid var(--wa-line); border-radius: 12px; font-size: 13px; padding: 0 6px; line-height: 22px; }
+.wa-b.out .wa-react { left: auto; right: 10px; }
+.wa-media { display: flex; align-items: center; gap: 8px; color: var(--text-mid); white-space: normal; }
+.wa-media svg { flex-shrink: 0; color: var(--clay); }
+.wa-media small { display: block; font-size: 12px; color: var(--text-light); }
+.wa-params { margin-top: 2px; font-size: 14px; color: var(--text-mid); }
+.wa-sysline { align-self: center; font-size: 12.5px; color: var(--text-light); padding: 2px 10px; }
+.wa-foot { border-top: 1px solid var(--wa-line); padding: 12px 16px; display: flex; gap: 12px; align-items: center; background: var(--wa-card); flex-shrink: 0; }
+.wa-foot p { flex: 1; font-size: 13.5px; color: var(--text-mid); line-height: 1.45; margin: 0; }
+.wa-foot .btn-dash { white-space: nowrap; flex-shrink: 0; }
+.wa-placeholder { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text-light); text-align: center; padding: 2rem; font-size: 15px; background: var(--wa-thread); }
+.wa-placeholder svg { color: var(--clay); opacity: 0.7; }
+#sidebarWaBadge, #mobileWaBadge { display: none; background: var(--moss); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 6px; letter-spacing: 0; }
+@media (max-width: 1100px) and (min-width: 901px) { .wa-box { grid-template-columns: 290px minmax(0, 1fr); } }
+@media (max-width: 900px) {
+  #section-whatsapp { padding-left: 1rem; padding-right: 1rem; }
+  .wa-box { grid-template-columns: minmax(0, 1fr); height: auto; min-height: 0; border-radius: 12px; }
+  .wa-list, .wa-rows, .wa-row { min-width: 0; }
+  .wa-list { border-right: none; }
+  .wa-rows { overflow: visible; }
+  .wa-thread { display: none; }
+  #section-whatsapp.wa-open .wa-thread { display: flex; position: fixed; left: 0; right: 0; top: var(--wa-top, 68px); bottom: 0; z-index: 400; border-radius: 0; }
+  .wa-back { display: inline-flex; }
+  .wa-b { max-width: 84%; }
+  .wa-msgs { padding: 14px 12px 22px; }
+  .wa-th { padding: 10px 12px; }
+  .wa-foot { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .wa-foot .btn-dash { justify-content: center; min-height: 44px; }
+  .wa-th .btn-dash { display: none; }
+}
 </style>
 </head>
 <body>
@@ -2580,6 +2661,10 @@ table#paymentsTable { min-width: 700px; }
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       Fee Tracker
     </a>
+    <a href="#" class="admin-only" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('whatsapp',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/></svg>
+      WhatsApp <span id="mobileWaBadge"></span>
+    </a>
     <div style="height:1px;background:rgba(193,127,82,0.15);margin:0.25rem 2.5rem;"></div>
     <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(240,219,200,0.6);padding:0.75rem 2.5rem 0.25rem;">Finances</div>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('payments',this);toggleMobileMenu()">
@@ -2636,7 +2721,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v115</span>
+        <span style="color:var(--clay);font-weight:500;">v116</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2677,6 +2762,7 @@ table#paymentsTable { min-width: 700px; }
       <li><a href="#" onclick="showSection('classes',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Students</a></li>
       <li class="admin-only"><a href="#" onclick="showSection('schedule',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="15" r="2"/></svg></span> Schedule</a></li>
       <li><a href="#" onclick="showSection('fee-payments',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span> Fee Tracker</a></li>
+      <li class="admin-only"><a href="#" onclick="showSection('whatsapp',this)" style="white-space:nowrap;"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/></svg></span> WhatsApp <span id="sidebarWaBadge"></span></a></li>
     </ul>
     <div class="dash-nav-divider"></div>
     <div class="dash-sidebar-title">Finances</div>
@@ -2706,7 +2792,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v115</span>
+        <span style="color:var(--clay);font-weight:500;">v116</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3335,6 +3421,25 @@ table#paymentsTable { min-width: 700px; }
       <div class="mobile-cards mobile-only" id="invoicesCards"></div>
       </div>
       <div id="invoicesEmptyState" style="display:none;"></div>
+    </section>
+
+    <!-- ── WHATSAPP ── -->
+    <section class="dash-section" id="section-whatsapp">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">WhatsApp</div>
+          <div class="dash-section-subtitle">Conversations on the studio number +91 93801 40907. Messages show up here from the day this went live.</div>
+          <div class="dash-section-count" id="waCount"></div>
+        </div>
+      </div>
+      <div class="wa-box">
+        <div class="wa-list">
+          <div class="wa-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="waSearch" placeholder="Search name, number or message" autocomplete="off" oninput="waSearch(this.value)"/></div>
+          <div class="wa-tabs" id="waTabs"></div>
+          <div class="wa-rows" id="waRows"></div>
+        </div>
+        <div class="wa-thread" id="waThread"></div>
+      </div>
     </section>
 
     <!-- ── SCHEDULE ── -->
@@ -5416,6 +5521,7 @@ async function api(endpoint, method = 'GET', body = null) {
 
 // ── NAVIGATION ──
 function showSection(name, el) {
+  if (name !== 'whatsapp' && typeof waClose === 'function' && document.getElementById('section-whatsapp')?.classList.contains('wa-open')) waClose();
   document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.dash-nav a').forEach(a => a.classList.remove('active'));
   document.getElementById('section-' + name).classList.add('active');
@@ -5640,6 +5746,7 @@ function loadAll() {
     if (mobileLink) { document.querySelectorAll('.mob-nav a').forEach(a => a.classList.remove('active')); mobileLink.classList.add('active'); }
   }
   loadSection(saved);
+  if (typeof waBadgeStart === 'function') waBadgeStart();
 }
 async function syncAll() {
   showLoader('Refreshing data...');
@@ -5659,7 +5766,10 @@ function loadSection(name) {
   else if (name === 'workshops') { loadWorkshops(); }
   else if (name === 'participants') { loadParticipants(); }
   else if (name === 'classes') { loadStudents(); }
-  else if (name === 'schedule') { loadSchedule(); }
+  // Schedule and WhatsApp live in a later <script>. On a page refresh they are
+  // not defined yet; that script starts them itself once it has loaded.
+  else if (name === 'schedule') { if (typeof loadSchedule === 'function') loadSchedule(); }
+  else if (name === 'whatsapp') { if (typeof loadWhatsApp === 'function') { loadWhatsApp(); if (!_wa.sel) waRenderThread(false); } }
   else if (name === 'fee-payments') { loadFeePayments(); }
   else if (name === 'gigs') { loadGigs(); }
   else if (name === 'payments') loadPayments();
@@ -9209,7 +9319,7 @@ let _scrollLockY = 0;
 let _scrollLocked = false;
 function _preventScroll(e) {
   // Allow scroll inside mobile menu overlay, filter sheets, picker sheets, modals
-  const allowed = e.target.closest('#mobileMenuOverlay, .filter-sheet, .mobile-picker-sheet, .modal-body, .modal, .form-page-scroll, .checkin-body, .m-dots-popover, .mobile-search-fullscreen, textarea');
+  const allowed = e.target.closest('.wa-msgs, #mobileMenuOverlay, .filter-sheet, .mobile-picker-sheet, .modal-body, .modal, .form-page-scroll, .checkin-body, .m-dots-popover, .mobile-search-fullscreen, textarea');
   if (allowed) return;
   e.preventDefault();
 }
@@ -9219,7 +9329,7 @@ function _preventScroll(e) {
 // unlockScroll on close without unlocking the page from under the popup
 // that is still open underneath.
 function _anyOverlayOpen() {
-  if (document.querySelector('.form-page.open, .modal-overlay.open, .mobile-menu-overlay.open, .filter-sheet.open, .mobile-picker-sheet.open, .m-dots-popover.open, .checkin-screen.open, .mobile-search-fullscreen.open, .loading-overlay.active')) return true;
+  if (document.querySelector('#section-whatsapp.wa-open, .form-page.open, .modal-overlay.open, .mobile-menu-overlay.open, .filter-sheet.open, .mobile-picker-sheet.open, .m-dots-popover.open, .checkin-screen.open, .mobile-search-fullscreen.open, .loading-overlay.active')) return true;
   return ['unsavedModal','archiveConfirmModal','customConfirmModal','cancelWsModal','deleteForeverModal','modal-obsCheckin'].some(id => {
     const el = document.getElementById(id);
     return el && el.style.display && el.style.display !== 'none';
@@ -12916,6 +13026,312 @@ function schPlan(days) {
     out.push({ slot: r || { student_id: e.student_id, student_tz: 'Asia/Kolkata' }, utc: new Date(D + 'T' + hhmm + ':00+05:30'), ymd: D, hhmm, ex: e, state: 'moved-in' });
   });
   return out.sort((a, b) => a.utc - b.utc);
+}
+
+// ── WHATSAPP CONVERSATIONS (studio number, read-only for now) ──
+// Rows come from wa_messages, written by the server for every message in
+// and out of +91 93801 40907. Contacts are matched to students and trials
+// by the last 10 digits of the phone number.
+const _wa = { rows: [], students: [], trials: [], filter: 'all', q: '', sel: null, timer: null, loading: false };
+const WA_TPL_LABEL = {
+  class_reminder_v2: 'Class reminder', class_reminder: 'Class reminder',
+  fee_link: 'Fee link', payment_reminder: 'Payment reminder',
+  trial_confirmation: 'Trial confirmation', trial_reminder: 'Trial reminder'
+};
+const WA_ICON = {
+  search: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  back: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>',
+  one: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  two: '<svg width="18" height="14" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><polyline points="27 6 16 17"/></svg>',
+  chat: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/></svg>',
+  photo: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+  audio: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>',
+  video: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>',
+  doc: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  pin: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
+};
+const WA_MEDIA = {
+  image: ['photo', 'Photo'], sticker: ['photo', 'Sticker'], audio: ['audio', 'Voice note'],
+  video: ['video', 'Video'], document: ['doc', 'Document'], location: ['pin', 'Location']
+};
+
+function waDigits(v) { return String(v || '').replace(/\D/g, ''); }
+function waLast10(v) { const d = waDigits(v); return d.slice(-10); }
+function waIstParts(iso) {
+  const d = new Date(iso);
+  const f = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' });
+  return f.format(d).split('/').reverse().join('-');   // yyyy-mm-dd in IST
+}
+function waTime(iso) { return new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date(iso)).replace(/\s?(am|pm)$/i, m => ' ' + m.trim().toUpperCase()); }
+function waDayLabel(iso, short) {
+  const day = waIstParts(iso);
+  const today = waIstParts(new Date().toISOString());
+  const yest = waIstParts(new Date(Date.now() - 86400000).toISOString());
+  if (day === today) return short ? waTime(iso) : 'Today';
+  if (day === yest) return 'Yesterday';
+  const d = new Date(iso);
+  const ageDays = (Date.now() - d.getTime()) / 86400000;
+  if (short && ageDays < 6) return new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', weekday: 'short' }).format(d);
+  return new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', weekday: short ? undefined : 'short', day: 'numeric', month: 'short' }).format(d);
+}
+function waPrettyPhone(d) {
+  d = waDigits(d);
+  if (d.length === 12 && d.startsWith('91')) return '+91 ' + d.slice(2, 7) + ' ' + d.slice(7);
+  return '+' + d;
+}
+const WA_AV_COLORS = ['#8a4b5a', '#6b3a6e', '#4a7a38', '#b8722a', '#3f6a8a', '#7a5a3a', '#5a6e3a', '#9a4a3a'];
+function waAvColor(key) { let h = 0; for (const c of String(key)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return WA_AV_COLORS[h % WA_AV_COLORS.length]; }
+
+function waWho(phone, rows) {
+  const k = waLast10(phone);
+  const stu = _wa.students.find(s => !s.archived && [s.phone].concat(Array.isArray(s.extra_phones) ? s.extra_phones : []).some(p => p && waLast10(p) === k))
+    || _wa.students.find(s => [s.phone].concat(Array.isArray(s.extra_phones) ? s.extra_phones : []).some(p => p && waLast10(p) === k));
+  if (stu) return { name: stu.full_name, tag: 'Student' + (stu.status && stu.status !== 'Active' ? ' · ' + stu.status : ''), kind: 'student' };
+  const tr = _wa.trials.filter(t => waLast10((t.phone_dial || '') + (t.phone || '')) === k || waLast10(t.phone) === k)
+    .sort((a, b) => String(b.start_at || b.created_at || '').localeCompare(String(a.start_at || a.created_at || '')))[0];
+  if (tr) {
+    let tag = 'Trial';
+    if (tr.start_at && tr.status === 'booked') tag += ' · ' + waDayLabel(tr.start_at, false).replace(/^Today$/, 'today') + ', ' + waTime(tr.start_at);
+    else if (tr.status === 'no_show') tag += ' · no-show';
+    else if (tr.status === 'cancelled') tag += ' · cancelled';
+    return { name: tr.full_name, tag, kind: 'trial' };
+  }
+  const named = (rows || []).find(r => r.contact_name);
+  return { name: named ? named.contact_name : waPrettyPhone(phone), tag: 'Unknown', kind: 'unknown', sub: named ? waPrettyPhone(phone) : '' };
+}
+
+function waConversations() {
+  const by = {};
+  for (const r of _wa.rows) (by[r.phone] = by[r.phone] || []).push(r);
+  return Object.keys(by).map(phone => {
+    const rows = by[phone].slice().sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+    const who = waWho(phone, rows.slice().reverse());
+    const last = rows[rows.length - 1];
+    const unread = rows.filter(r => r.direction === 'in' && !r.read_at && r.type !== 'reaction').length;
+    return { phone, rows, who, last, unread };
+  }).sort((a, b) => String(b.last.created_at).localeCompare(String(a.last.created_at)));
+}
+
+function waPreview(r, rows) {
+  if (r.type === 'reaction') {
+    if (!r.emoji) return 'Removed a reaction';
+    const tgt = rows.find(x => x.wa_id === r.reaction_to);
+    return r.emoji + ' reacted to: ' + (tgt ? waSnippet(tgt) : 'a message');
+  }
+  const s = waSnippet(r);
+  if (r.direction === 'out') return (r.template ? 'Auto: ' : 'You: ') + s;
+  return s;
+}
+function waSnippet(r) {
+  if (r.template) return WA_TPL_LABEL[r.template] || r.template.replace(/_/g, ' ');
+  if (WA_MEDIA[r.type]) return (r.type === 'audio' ? '🎤 ' : r.type === 'image' ? '📷 ' : '') + WA_MEDIA[r.type][1] + (r.body && r.body !== '[' + r.type + ']' && !/^\[/.test(r.body) ? ': ' + r.body : '');
+  return r.body || '[' + r.type + ']';
+}
+
+async function loadWhatsApp(silent) {
+  const box = document.getElementById('waRows');
+  if (!box || _wa.loading) return;
+  _wa.loading = true;
+  if (!silent && !_wa.rows.length) box.innerHTML = '<div class="wa-empty"><div class="spinner" style="margin:0 auto;"></div></div>';
+  try {
+    const since = new Date(Date.now() - 180 * 86400000).toISOString();
+    const [msgs, stus, trs] = await Promise.all([
+      sbGetAll('wa_messages', 'created_at=gte.' + since + '&order=created_at.desc&limit=3000'),
+      _wa.students.length && silent ? Promise.resolve({ data: _wa.students }) : sbGetAll('students', 'order=full_name.asc'),
+      _wa.trials.length && silent ? Promise.resolve({ data: _wa.trials }) : sbGetAll('trials', 'order=created_at.desc&limit=500').catch(() => ({ data: [] }))
+    ]);
+    _wa.rows = msgs.data || [];
+    _wa.students = stus.data || [];
+    _wa.trials = trs.data || [];
+    waRenderList();
+    if (_wa.sel) waRenderThread(true);
+    waUpdateBadgeFromRows();
+  } catch (e) {
+    box.innerHTML = '<div class="wa-empty">Could not load conversations (' + zEsc(e.message) + ').<br>If this says 401/403/404, run the WhatsApp SQL in Supabase first.</div>';
+  } finally {
+    _wa.loading = false;
+  }
+  clearInterval(_wa.timer);
+  _wa.timer = setInterval(() => {
+    const sec = document.getElementById('section-whatsapp');
+    if (!sec || !sec.classList.contains('active') || document.hidden) return;
+    loadWhatsApp(true);
+  }, 20000);
+}
+
+function waSetFilter(f) { _wa.filter = f; waRenderList(); }
+function waSearch(v) { _wa.q = String(v || '').trim().toLowerCase(); waRenderList(); }
+
+function waRenderList() {
+  const convs = waConversations();
+  const totalUnread = convs.reduce((n, c) => n + (c.unread ? 1 : 0), 0);
+  const counts = { all: convs.length, unread: totalUnread, student: convs.filter(c => c.who.kind === 'student').length, trial: convs.filter(c => c.who.kind === 'trial').length, unknown: convs.filter(c => c.who.kind === 'unknown').length };
+  const tabs = [['all', 'All'], ['unread', 'Unread'], ['student', 'Students'], ['trial', 'Trials'], ['unknown', 'Others']];
+  document.getElementById('waTabs').innerHTML = tabs.map(([k, l]) =>
+    '<button type="button" class="wa-tab' + (_wa.filter === k ? ' on' : '') + '" onclick="waSetFilter(\'' + k + '\')">' + l + (k !== 'all' && counts[k] ? ' · ' + counts[k] : '') + '</button>').join('');
+  let list = convs;
+  if (_wa.filter === 'unread') list = list.filter(c => c.unread);
+  else if (_wa.filter !== 'all') list = list.filter(c => c.who.kind === _wa.filter);
+  if (_wa.q) {
+    const qd = waDigits(_wa.q);
+    list = list.filter(c => c.who.name.toLowerCase().includes(_wa.q) || (qd.length >= 3 && c.phone.includes(qd)) || c.rows.some(r => (r.body || '').toLowerCase().includes(_wa.q)));
+  }
+  const cnt = document.getElementById('waCount');
+  if (cnt) cnt.textContent = convs.length ? convs.length + ' conversation' + (convs.length === 1 ? '' : 's') + (totalUnread ? ' · ' + totalUnread + ' unread' : '') : '';
+  const box = document.getElementById('waRows');
+  if (!convs.length) {
+    box.innerHTML = '<div class="wa-empty">No messages yet.<br>Every message sent from or received on the studio number will show up here.</div>';
+    return;
+  }
+  if (!list.length) { box.innerHTML = '<div class="wa-empty">Nothing matches.</div>'; return; }
+  box.innerHTML = list.map(c => {
+    const initial = (c.who.kind === 'unknown' && !/[a-z]/i.test(c.who.name)) ? '+' : c.who.name.trim().charAt(0).toUpperCase();
+    return '<button type="button" class="wa-row' + (c.phone === _wa.sel ? ' on' : '') + (c.unread ? ' unread' : '') + '" onclick="waOpen(\'' + c.phone + '\')">' +
+      '<span class="wa-av" style="background:' + waAvColor(c.phone) + '">' + zEsc(initial) + '</span>' +
+      '<span class="wa-rmain"><span class="wa-rtop"><span class="wa-nm">' + zEsc(c.who.name) + '</span><span class="wa-tm">' + waDayLabel(c.last.created_at, true) + '</span></span>' +
+      '<span class="wa-pv" style="display:block;">' + zEsc(waPreview(c.last, c.rows)) + '</span>' +
+      '<span class="wa-tagrow"><span class="wa-tag' + (c.who.kind === 'trial' ? ' trial' : c.who.kind === 'unknown' ? ' unknown' : '') + '">' + zEsc(c.who.tag) + '</span>' +
+      (c.unread ? '<span class="wa-unread">' + c.unread + '</span>' : '') + '</span></span></button>';
+  }).join('');
+}
+
+async function waOpen(phone) {
+  _wa.sel = phone;
+  const sec = document.getElementById('section-whatsapp');
+  // On phones the chat covers the page right under the top bar.
+  const tb = document.querySelector('.mobile-topbar');
+  sec.style.setProperty('--wa-top', (tb && tb.offsetHeight ? Math.round(tb.getBoundingClientRect().bottom) : 68) + 'px');
+  sec.classList.add('wa-open');
+  if (window.matchMedia('(max-width: 900px)').matches) lockScroll();
+  waRenderList();
+  waRenderThread(false);
+  // Mark this person's incoming messages as read.
+  const unread = _wa.rows.filter(r => r.phone === phone && r.direction === 'in' && !r.read_at);
+  if (unread.length) {
+    const now = new Date().toISOString();
+    unread.forEach(r => { r.read_at = now; });
+    waRenderList();
+    waUpdateBadgeFromRows();
+    try {
+      await fetch(SUPABASE_URL + '/rest/v1/wa_messages?phone=eq.' + encodeURIComponent(phone) + '&direction=eq.in&read_at=is.null', {
+        method: 'PATCH',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': SB_HEADERS['Authorization'], 'Content-Type': 'application/json' },
+        body: JSON.stringify({ read_at: now })
+      });
+    } catch (e) {}
+  }
+}
+
+function waClose() {
+  _wa.sel = null;
+  document.getElementById('section-whatsapp').classList.remove('wa-open');
+  unlockScroll();
+  waRenderList();
+  waRenderThread(false);
+}
+
+function waTicks(r) {
+  if (r.status === 'read') return '<span class="wa-tick read" title="Read">' + WA_ICON.two + '</span>';
+  if (r.status === 'delivered') return '<span class="wa-tick" title="Delivered">' + WA_ICON.two + '</span>';
+  if (r.status === 'sent') return '<span class="wa-tick" title="Sent">' + WA_ICON.one + '</span>';
+  return '';
+}
+
+function waBubble(r, reaction) {
+  const out = r.direction === 'out';
+  let inner = '';
+  if (out) {
+    const label = r.template ? (WA_TPL_LABEL[r.template] || r.template.replace(/_/g, ' ')) + ' · auto' : 'Sent from the system';
+    inner += '<div class="wa-kind">' + zEsc(label) + '</div>';
+    if (r.body) inner += zEsc(r.body);
+    else if (r.template) inner += '<div class="wa-params">' + (Array.isArray(r.params) && r.params.length ? r.params.map(p => zEsc(p)).join('<br>') : 'Template sent') + '</div>';
+  } else if (WA_MEDIA[r.type]) {
+    const [ic, lbl] = WA_MEDIA[r.type];
+    const cap = r.body && !/^\[/.test(r.body) ? r.body : '';
+    inner += '<div class="wa-media">' + WA_ICON[ic] + '<span>' + lbl + '<small>Open on your phone to see it</small></span></div>' + (cap ? '<div style="margin-top:6px;">' + zEsc(cap) + '</div>' : '');
+  } else {
+    inner += zEsc(r.body || '[' + r.type + ']');
+  }
+  if (r.status === 'failed') inner += '<div class="wa-fail">Not delivered' + (r.error ? ': ' + zEsc(r.error) : '') + '</div>';
+  inner += '<div class="wa-t">' + waTime(r.created_at) + (out ? waTicks(r) : '') + '</div>';
+  if (reaction) inner += '<span class="wa-react" title="Reaction">' + zEsc(reaction) + '</span>';
+  return '<div class="wa-b ' + (out ? 'out' : 'in') + (reaction ? ' has-react' : '') + (r.status === 'failed' ? ' failed' : '') + '">' + inner + '</div>';
+}
+
+function waRenderThread(keepScroll) {
+  const pane = document.getElementById('waThread');
+  if (!_wa.sel) {
+    pane.innerHTML = '<div class="wa-placeholder">' + WA_ICON.chat + '<div>Pick a conversation to read it.</div></div>';
+    return;
+  }
+  const conv = waConversations().find(c => c.phone === _wa.sel);
+  if (!conv) { pane.innerHTML = '<div class="wa-placeholder">Conversation not found.</div>'; return; }
+  const oldMsgs = document.getElementById('waMsgs');
+  const atBottom = !oldMsgs || (oldMsgs.scrollHeight - oldMsgs.scrollTop - oldMsgs.clientHeight < 60);
+  const prevTop = oldMsgs ? oldMsgs.scrollTop : 0;
+  // Latest reaction per message wins; an empty emoji means it was removed.
+  const reacts = {};
+  const orphanReacts = [];
+  const ids = new Set(conv.rows.map(r => r.wa_id).filter(Boolean));
+  conv.rows.filter(r => r.type === 'reaction').forEach(r => {
+    if (r.reaction_to && ids.has(r.reaction_to)) reacts[r.reaction_to] = r.emoji || '';
+    else if (r.emoji) orphanReacts.push(r);
+  });
+  let html = '', lastDay = '';
+  for (const r of conv.rows) {
+    if (r.type === 'reaction' && !orphanReacts.includes(r)) continue;
+    const day = waIstParts(r.created_at);
+    if (day !== lastDay) { html += '<div class="wa-day">' + waDayLabel(r.created_at, false) + '</div>'; lastDay = day; }
+    if (r.type === 'reaction') { html += '<div class="wa-sysline">' + zEsc(r.emoji) + ' reacted to an earlier message · ' + waTime(r.created_at) + '</div>'; continue; }
+    html += waBubble(r, r.wa_id ? reacts[r.wa_id] : '');
+  }
+  const w = conv.who;
+  const initial = (w.kind === 'unknown' && !/[a-z]/i.test(w.name)) ? '+' : w.name.trim().charAt(0).toUpperCase();
+  const meta = [waPrettyPhone(conv.phone)].concat(w.kind === 'unknown' ? [] : [w.tag]).join(' · ');
+  pane.innerHTML =
+    '<div class="wa-th"><button type="button" class="wa-back" onclick="waClose()" aria-label="Back to conversations">' + WA_ICON.back + '</button>' +
+      '<span class="wa-av" style="background:' + waAvColor(conv.phone) + ';width:40px;height:40px;">' + zEsc(initial) + '</span>' +
+      '<div class="wa-th-info"><div class="wa-nm">' + zEsc(w.name) + '</div><div class="wa-meta">' + zEsc(meta) + '</div></div></div>' +
+    '<div class="wa-msgs" id="waMsgs">' + html + '</div>' +
+    '<div class="wa-foot"><p>Replying from the dashboard is coming next. For now, reply from your own WhatsApp.</p>' +
+      '<a class="btn-dash btn-dash-primary" href="https://wa.me/' + conv.phone + '" target="_blank" rel="noopener">Open in WhatsApp</a></div>';
+  const msgs = document.getElementById('waMsgs');
+  if (keepScroll && !atBottom) msgs.scrollTop = prevTop; else msgs.scrollTop = msgs.scrollHeight;
+}
+
+// Sidebar badge: conversations with unread messages. Checked once a minute.
+function waSetBadge(n) {
+  ['sidebarWaBadge', 'mobileWaBadge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = n > 9 ? '9+' : String(n);
+    el.style.display = n > 0 ? 'inline-block' : 'none';
+  });
+}
+function waUpdateBadgeFromRows() {
+  const phones = new Set(_wa.rows.filter(r => r.direction === 'in' && !r.read_at && r.type !== 'reaction').map(r => r.phone));
+  waSetBadge(phones.size);
+}
+let _waBadgeTimer = null;
+async function waRefreshBadge() {
+  if (typeof isAdmin === 'function' && !isAdmin()) return;
+  try {
+    const res = await sbGetAll('wa_messages', 'direction=eq.in&read_at=is.null&type=neq.reaction&limit=500');
+    waSetBadge(new Set((res.data || []).map(r => r.phone)).size);
+  } catch (e) { /* table not created yet: no badge */ }
+}
+function waBadgeStart() {
+  waRefreshBadge();
+  clearInterval(_waBadgeTimer);
+  _waBadgeTimer = setInterval(() => { if (!document.hidden) waRefreshBadge(); }, 60000);
+}
+// This script loads after the main one, so on a page refresh loadAll() runs
+// before these functions exist. Start the badge (and the section, if it was
+// the open one) from here once they do.
+if (sessionStorage.getItem('dash_auth') === '1') {
+  waBadgeStart();
+  if (sessionStorage.getItem('dash_section') === 'whatsapp') { loadWhatsApp(); waRenderThread(false); }
+  if (sessionStorage.getItem('dash_section') === 'schedule') loadSchedule();
 }
 
 async function loadSchedule() {
