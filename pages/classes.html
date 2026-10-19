@@ -21,164 +21,96 @@
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../css/style.css"/>
 <style>
+/* ---- CLASSES PAGE ----
+   Order: what it is, how it works, what it costs, what you learn, FAQ.
+   One action on the whole page: book a free trial. */
+.hero-cta { margin-top: 1.8rem; display: flex; gap: 1.2rem; align-items: center; flex-wrap: wrap; }
+.hero-facts { color: var(--text-mid); font-size: var(--t-small); }
 
+.block { max-width: 1120px; margin: 0 auto; }
+.block + .block { margin-top: 5.5rem; }
+.block-head { margin-bottom: 2rem; }
+.block-eyebrow { font-size: var(--t-micro); letter-spacing: 0.18em; text-transform: uppercase; color: var(--maroon); font-weight: 600; margin-bottom: 0.6rem; }
+.block-title { font-size: var(--t-2); color: var(--maroon); font-weight: 500; line-height: 1.15; margin: 0; }
+.block-lead { font-size: var(--t-lead); color: var(--text-dark); margin-top: 0.7rem; max-width: 52ch; line-height: 1.6; }
 
-/* ---- INTRO + HOW IT WORKS ----
-   One centred lede, then three steps across.
-   The old version was a 2-column grid with
-   align-items:center, so the shorter column
-   floated in the middle of the taller one. */
-.how-it-works {
-  margin-bottom: 5rem;
-  background: var(--card); border-radius: var(--card-radius);
-  padding: 2.4rem 2.4rem 2.6rem;
-}
-/* the label is the card header now, so it sits left with a rule
-   under it and agrees with the left-aligned steps below */
-.hiw-label {
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--maroon); text-align: left;
-  padding-bottom: 1.4rem; margin-bottom: 2rem;
-  border-bottom: 1px solid var(--rule);
-}
-.steps {
-  list-style: none; padding: 0; margin: 0;
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-}
-.step {
-  display: flex; flex-direction: column; gap: 0.9rem;
-  align-items: flex-start; padding: 0 2rem;
-}
+/* how it works: three steps in one card */
+.steps { list-style: none; padding: 2.2rem 2.4rem; margin: 0; background: var(--card); border-radius: var(--card-radius);
+  display: grid; grid-template-columns: repeat(3, 1fr); }
+.step { display: flex; flex-direction: column; gap: 0.8rem; padding: 0 2rem; }
 .step + .step { border-left: 1px solid var(--rule); }
-.step:first-child { padding-left: 0; }
-.step:last-child { padding-right: 0; }
-.step-num {
-  flex-shrink: 0;
-  width: 34px; height: 34px; border-radius: 50%;
-  background: var(--maroon); color: var(--ivory);
-  display: flex; align-items: center; justify-content: center;
-  line-height: 1;
-}
-.step-text strong {
-  display: block; font-weight: 600;
-  color: var(--maroon); margin-bottom: 0.3rem;
-}
-.step-text p { line-height: 1.7;
-  color: var(--text-dark); margin: 0;
-}
+.step:first-child { padding-left: 0; } .step:last-child { padding-right: 0; }
+.step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--maroon); color: var(--ivory);
+  display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: var(--t-small); }
+.step strong { display: block; font-weight: 600; color: var(--maroon); font-size: var(--t-body); margin-bottom: 0.25rem; }
+.step p { margin: 0; color: var(--text-dark); font-size: var(--t-small); line-height: 1.65; }
 
-/* ---- COURSE PATH ----
-   Two stages, not two products. Side by side above 900px,
-   stacked below, because an iPad in portrait gets cramped
-   long before a phone does. */
-/* two stages, two cards. They read as a path because they are
-   numbered 01 and 02, so the joining seam and the arrow that
-   used to bridge it are no longer doing any work. */
-.course-path {
-  display: flex; align-items: stretch; gap: 1.5rem;
-  margin-bottom: 4rem;
-}
-.course-stage {
-  flex: 1; background: var(--card);
-  border-radius: var(--card-radius);
-  padding: 2rem 2.2rem;
-  display: flex; flex-direction: column;
-}
-.course-stage.is-next { background: var(--maroon); }
+/* pricing */
+.price-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+.cur { display: inline-flex; background: var(--card); border: 1px solid var(--rule); border-radius: 40px; padding: 4px; }
+.cur button { font-family: var(--font-body); font-size: var(--t-small); font-weight: 600; border: 0; background: transparent;
+  color: var(--text-mid); padding: 0.55rem 1.1rem; border-radius: 40px; cursor: pointer; min-height: 40px; }
+.cur button.on { background: var(--maroon); color: var(--ivory); }
+.plans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; align-items: stretch; }
+.plan { background: var(--card); border-radius: var(--card-radius); padding: 2rem 2rem 2.1rem; display: flex; flex-direction: column; position: relative; border: 1px solid transparent; }
+.plan.best { background: var(--maroon); color: var(--ivory); }
+.plan-tag { position: absolute; top: 1.6rem; right: 1.6rem; font-size: var(--t-micro); font-weight: 600; letter-spacing: 0.06em;
+  background: var(--ivory); color: var(--maroon); padding: 0.3rem 0.75rem; border-radius: 40px; }
+.plan-name { font-size: var(--t-3); font-weight: 600; color: var(--maroon); margin: 0; }
+.plan-what { font-size: var(--t-small); color: var(--text-mid); margin-top: 0.25rem; }
+.plan-price { font-size: clamp(2.2rem, 1.8rem + 1.6vw, 2.9rem); font-weight: 600; color: var(--maroon); line-height: 1; margin-top: 1.6rem; letter-spacing: -0.01em; }
+.plan-per { font-size: var(--t-small); color: var(--text-mid); margin-top: 0.5rem; min-height: 1.4em; }
+.plan-per b { color: var(--maroon); font-weight: 600; }
+.plan-line { border: 0; border-top: 1px solid var(--rule); margin: 1.5rem 0 1.2rem; }
+.plan-fit { font-size: var(--t-small); color: var(--text-dark); line-height: 1.65; margin: 0; }
+.best .plan-name, .best .plan-price, .best .plan-per b { color: var(--ivory); }
+.best .plan-what, .best .plan-per, .best .plan-fit { color: var(--label-on-wine); }
+.best .plan-line { border-top-color: rgba(245,238,229,0.2); }
 
-.stage-head { display: flex; align-items: baseline; gap: 0.7rem; margin-bottom: 0.7rem; }
-.stage-num  { line-height: 1; color: var(--maroon); }
-.stage-name { color: var(--maroon); margin: 0; line-height: 1; }
-.is-next .stage-num, .is-next .stage-name { color: var(--ivory); }
+.includes { margin-top: 1.25rem; background: var(--card); border-radius: var(--card-radius); padding: 1.8rem 2.2rem;
+  display: grid; grid-template-columns: 220px 1fr; gap: 2rem; align-items: center; }
+.includes h3 { font-size: var(--t-body); color: var(--maroon); font-weight: 600; margin: 0; }
+.includes h3 span { display: block; font-weight: 400; color: var(--text-mid); font-size: var(--t-small); margin-top: 0.3rem; }
+.inc-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem 2rem; }
+.inc-list li { font-size: var(--t-small); color: var(--text-dark); display: flex; gap: 0.6rem; align-items: baseline; line-height: 1.5; }
+.inc-list li::before { content: ""; flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--maroon); transform: translateY(-1px); }
 
-.stage-facts   { color: var(--text-dark); margin-bottom: 1.1rem; }
-.stage-fit     { line-height: 1.7; color: var(--text-dark); margin-bottom: 1.1rem; }
-.stage-fit strong { color: var(--maroon); font-weight: 600; }
-.stage-detail  { margin-bottom: 1.2rem; }
-.stage-detail p { line-height: 1.7; color: var(--text-dark); margin-bottom: 0.4rem; }
-.stage-outcome { line-height: 1.7; color: var(--maroon); margin-bottom: 1.6rem; }
-.stage-outcome strong { font-weight: 600; }
+/* levels */
+.levels { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.level { background: var(--card); border-radius: var(--card-radius); padding: 2rem 2.2rem; }
+.level-head { display: flex; align-items: baseline; gap: 0.7rem; }
+.level-num { font-size: var(--t-3); color: var(--maroon); font-weight: 300; }
+.level-name { font-size: var(--t-3); color: var(--maroon); font-weight: 600; margin: 0; }
+.level-fit { font-size: var(--t-small); color: var(--text-dark); margin: 0.7rem 0 1.2rem; line-height: 1.6; }
+.level-fit b { color: var(--maroon); font-weight: 600; }
+.sd-step { display: grid; grid-template-columns: 22px 1fr; column-gap: 0.85rem; padding: 0.75rem 0; border-top: 1px solid var(--rule); }
+.sd-n { grid-row: 1 / span 2; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--maroon); font-size: 0.72rem; margin-top: 2px; }
+.sd-t { font-weight: 600; color: var(--maroon); font-size: var(--t-body); }
+.sd-d { color: var(--text-mid); font-size: var(--t-small); }
+.level-out { font-size: var(--t-small); color: var(--maroon); line-height: 1.6; margin: 1rem 0 0; padding-top: 1rem; border-top: 1px solid var(--rule); }
+.level-out b { font-weight: 600; }
 
-.is-next .stage-facts,
-.is-next .stage-fit,
-.is-next .stage-detail p { color: var(--ivory); }
-.is-next .stage-fit strong { color: var(--ivory); font-weight: 600; }
-.is-next .stage-outcome { color: var(--ivory); font-weight: 400; }
-
-.course-stage .btn-enroll-lg { margin-top: auto; align-self: flex-start; }
-.is-next .btn-enroll-lg {
-  background: var(--ivory); border-color: var(--ivory); color: var(--maroon);
-}
-.is-next .btn-enroll-lg:hover {
-  background: var(--ivory-warm); border-color: var(--ivory-warm); color: var(--maroon);
-}
-
-/* ---- BREAKPOINTS ----
-   900  iPad portrait and below: the path stacks, steps go
-        two across. Two columns at 768px are already tight.
-   600  phones: single column, left aligned, buttons full width. */
+/* closing call */
+.close-cta { text-align: center; background: var(--maroon); color: var(--ivory); border-radius: var(--card-radius); padding: 3rem 2rem; }
+.close-cta h2 { font-size: var(--t-2); font-weight: 500; margin: 0; color: var(--ivory); }
+.close-cta p { color: var(--label-on-wine); font-size: var(--t-body); margin: 0.8rem auto 1.8rem; max-width: 46ch; line-height: 1.6; }
+.close-cta .btn-primary { background: var(--ivory); color: var(--maroon); min-height: 56px; display: inline-flex; align-items: center; }
 
 @media (max-width: 900px) {
-  /* three items never go two across: 1 and 2 pair up and 3 is
-     orphaned, so the sequence stops reading as a sequence.
-     Three or one, nothing between. */
-  .steps { grid-template-columns: 1fr; gap: 0; }
-  .how-it-works { margin-bottom: 3.5rem; padding: 1.8rem 1.6rem 2rem; }
-  .step { padding: 1.5rem 0; }
-  .step + .step { border-left: none; border-top: 1px solid var(--rule); }
-  .step:first-child { padding-top: 0; }
-  .step:last-child { padding-bottom: 0; }
-
-  .course-path { flex-direction: column; gap: 1.2rem; }
-  .course-stage { padding: 1.6rem 1.5rem; }
-  /* the month detail turns a scannable card into a wall on a small
-     screen. the fit line and the outcome are what decide anything. */
-  .stage-detail { display: none; }
+  .steps { grid-template-columns: 1fr; padding: 1.6rem 1.5rem; }
+  .step { padding: 1.3rem 0; } .step + .step { border-left: 0; border-top: 1px solid var(--rule); }
+  .step:first-child { padding-top: 0; } .step:last-child { padding-bottom: 0; }
+  .plans { grid-template-columns: 1fr; }
+  .plan.best { order: -1; }
+  .includes { grid-template-columns: 1fr; gap: 1.2rem; padding: 1.6rem 1.5rem; }
+  .levels { grid-template-columns: 1fr; }
+  .level, .plan { padding: 1.7rem 1.5rem; }
+  .block + .block { margin-top: 4rem; }
 }
-
-.btn-enroll-lg {
-  display: block; align-self: flex-start; text-align: center; text-decoration: none; width: auto; padding: calc(0.79rem - 2px) 2rem;
-  font-family: var(--font-body); font-weight: 600; letter-spacing: 0.02em; text-transform: none;
-  border: 2px solid var(--bark); color: var(--bark); background: transparent;
-  border-radius: 40px; cursor: pointer; transition: all 0.2s; box-sizing: border-box; margin-top: auto;
-}
-.btn-enroll-lg:hover { background: var(--maroon-deep); color: var(--ivory); }
-
-/* FAQ: shared component in style.css */
-
-
 @media (max-width: 600px) {
-  .hiw-label { margin-bottom: 1.6rem; }
-  .btn-enroll-lg { align-self: stretch; width: 100%; text-align: center; }
-}
-
-/* --- mobile type step --- */
-
-/* The three curriculum lines were flat sentences all opening with
-   "Then", which is a sequence described in words rather than shown.
-   Numbering them makes the progression visible and lets each line
-   carry a title instead of a full sentence. */
-.stage-detail { display: flex; flex-direction: column; gap: 0; margin: 1.4rem 0; }
-.sd-step {
-  display: grid; grid-template-columns: 22px 1fr;
-  column-gap: 0.85rem; padding: 0.75rem 0;
-}
-.sd-step + .sd-step { border-top: 1px solid var(--rule); }
-.is-next .sd-step + .sd-step { border-top-color: rgba(245,238,229,0.18); }
-.sd-n {
-  grid-row: 1 / span 2; width: 22px; height: 22px; border-radius: 50%;
-  border: 1px solid var(--rule); display: flex;
-  align-items: center; justify-content: center;
-  font-weight: 600; color: var(--maroon); margin-top: 2px;
-}
-.is-next .sd-n { border-color: rgba(245,238,229,0.35); color: var(--ivory); }
-.sd-t { font-weight: 600; color: var(--maroon); font-size: var(--t-body); }
-.is-next .sd-t { color: var(--ivory); }
-.sd-d { color: var(--text-mid); font-size: var(--t-small); }
-.is-next .sd-d { color: var(--label-on-wine); }
-@media (max-width: 600px) {
-  .sd-step { padding: 0.65rem 0; column-gap: 0.7rem; }
+  .inc-list { grid-template-columns: 1fr; }
+  .hero-cta .btn-primary, .close-cta .btn-primary { width: 100%; justify-content: center; }
+  .price-top { align-items: flex-start; }
 }
 </style>
 </head>
@@ -203,89 +135,82 @@
 <section class="page-hero">
   <p class="page-hero-eyebrow">Learn online</p>
   <h1 class="page-hero-title">Online classes</h1>
-  <p class="page-hero-sub">Weekly sessions on Zoom, wherever you are. Start from nothing or build on what you have.</p>
+  <p class="page-hero-sub">Live one-to-one handpan lessons on Zoom, one hour a week, wherever you are.</p>
+  <div class="hero-cta">
+    <a href="trial.html" class="btn-primary" style="min-height:56px;display:inline-flex;align-items:center;">Book a free trial</a>
+    <span class="hero-facts">45 minutes · free · in your time zone</span>
+  </div>
 </section>
 <div class="page-hero-rule" aria-hidden="true"></div>
 
 <section class="section">
-  <div class="how-it-works">
-    <p class="hiw-label">How it works</p>
-    <ol class="steps">
-      <li class="step">
-        <span class="step-num">1</span>
-        <div class="step-text">
-          <strong>Book a free trial</strong>
-          <p>Pick a time on the <a href="trial.html" style="color:var(--maroon);">trial page</a>. It's a free 45 minute session on Zoom, shown in your own time zone.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="step-num">2</span>
-        <div class="step-text">
-          <strong>Join live on Zoom</strong>
-          <p>Weekly one hour sessions, live. Ask questions and get feedback as you play.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="step-num">3</span>
-        <div class="step-text">
-          <strong>Practise between sessions</strong>
-          <p>A week between classes to sit with what you learned. Arpit sends notes on what to work on.</p>
-        </div>
-      </li>
-    </ol>
+
+  <div class="block" id="pricing">
+    <div class="price-top">
+      <div><p class="block-eyebrow">Pricing</p><h2 class="block-title">Choose your plan</h2><p class="block-lead">Start with a free trial. If you enjoy it, pick a plan. Every class is one hour, one to one, on Zoom.</p></div>
+      <div class="cur" role="group" aria-label="Currency"><button type="button" class="on" data-c="inr">₹ INR</button><button type="button" data-c="usd">$ USD</button></div>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3 class="plan-name">Monthly</h3><p class="plan-what">4 classes</p>
+        <p class="plan-price" data-inr="₹6,000" data-usd="$72">₹6,000</p>
+        <p class="plan-per" data-inr="₹1,500 per class" data-usd="$18 per class">₹1,500 per class</p>
+        <hr class="plan-line"/>
+        <p class="plan-fit">One class a week for a month. The simplest way to build a habit.</p>
+      </div>
+      <div class="plan best">
+        <span class="plan-tag">Best value</span>
+        <h3 class="plan-name">Quarterly</h3><p class="plan-what">12 classes</p>
+        <p class="plan-price" data-inr="₹16,200" data-usd="$194">₹16,200</p>
+        <p class="plan-per" data-inr="&lt;b&gt;10% off&lt;/b&gt; · you save ₹1,800" data-usd="&lt;b&gt;10% off&lt;/b&gt; · you save $22"><b>10% off</b> · you save ₹1,800</p>
+        <hr class="plan-line"/>
+        <p class="plan-fit">Three months of steady weekly practice. Where most real progress happens.</p>
+      </div>
+    </div>
   </div>
 
-  <!-- COURSE CARDS -->
-  <div class="course-path">
-
-    <!-- Stage 1 -->
-    <div class="course-stage">
-      <div class="stage-head">
-        <span class="stage-num">01</span>
-        <h2 class="stage-name">Beginner</h2>
-      </div>
-      <p class="stage-facts">3 months · 12 sessions · 1hr weekly</p>
-      <p class="stage-fit"><strong>Start here if</strong> you have never touched a handpan.</p>
-      <div class="stage-detail">
+  <div class="block">
+    <div class="block-head"><p class="block-eyebrow">What you'll learn</p><h2 class="block-title">Two levels, one path</h2><p class="block-lead">Not sure where you fit? We'll work it out together in the trial.</p></div>
+    <div class="levels">
+      <div class="level">
+        <div class="level-head"><span class="level-num">01</span><h3 class="level-name">Beginner</h3></div>
+        <p class="level-fit"><b>Start here if</b> you have never played a handpan.</p>
         <div class="sd-step"><span class="sd-n">1</span><span class="sd-t">First sounds</span><span class="sd-d">Note layout and basic timing</span></div>
         <div class="sd-step"><span class="sd-n">2</span><span class="sd-t">Hands together</span><span class="sd-d">Coordination, dynamics, your first piece</span></div>
         <div class="sd-step"><span class="sd-n">3</span><span class="sd-t">Flow</span><span class="sd-d">Improvisation and a final performance</span></div>
+        <p class="level-out"><b>You'll be able to</b> play a short piece confidently and explore your own sound.</p>
       </div>
-      <p class="stage-outcome"><strong>You finish able to</strong> play a short piece confidently and start exploring your own sound.</p>
-      <a href="trial.html" class="btn-enroll-lg">Book a free trial</a>
-    </div>
-
-
-    <!-- Stage 2 -->
-    <div class="course-stage is-next">
-      <div class="stage-head">
-        <span class="stage-num">02</span>
-        <h2 class="stage-name">Intermediate</h2>
-      </div>
-      <p class="stage-facts">6 months · 24 sessions · 1hr weekly</p>
-      <p class="stage-fit"><strong>Start here if</strong> you already have a good command of the basics.</p>
-      <div class="stage-detail">
+      <div class="level">
+        <div class="level-head"><span class="level-num">02</span><h3 class="level-name">Intermediate</h3></div>
+        <p class="level-fit"><b>Start here if</b> you're comfortable with the basics.</p>
         <div class="sd-step"><span class="sd-n">1</span><span class="sd-t">Deeper rhythm</span><span class="sd-d">Polyrhythms and expressive playing</span></div>
         <div class="sd-step"><span class="sd-n">2</span><span class="sd-t">Theory</span><span class="sd-d">Scales and how the notes relate</span></div>
         <div class="sd-step"><span class="sd-n">3</span><span class="sd-t">Your own voice</span><span class="sd-d">Improvisation, composition, repertoire</span></div>
+        <p class="level-out"><b>You'll be able to</b> play your own piece and perform in front of others.</p>
       </div>
-      <p class="stage-outcome"><strong>You finish with</strong> your own piece, a stronger improvisational voice, and the confidence to play in front of others.</p>
-      <a href="trial.html" class="btn-enroll-lg">Book a free trial</a>
     </div>
+  </div>
 
+  <div class="block">
+    <div class="close-cta">
+      <h2>Start with a free trial</h2>
+      <p>45 minutes on Zoom, shown in your own time zone. No payment until you decide to continue.</p>
+      <a href="trial.html" class="btn-primary">Book a free trial</a>
+    </div>
   </div>
 </section>
+
 
 <!-- FAQ -->
 <section class="section bg-sand">
   <div class="section-header" style="justify-content:center;text-align:center;"><h2 class="section-title">Common <em>Questions</em></h2></div>
   <div class="faq-list">
     <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">Do I need to own a handpan to join?</button><div class="faq-a">Yes, you'll need one at home, since the classes are hands on. Don't have one yet? Message Arpit on WhatsApp and he'll help you pick the right one.</div></div>
-    <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">Which level should I start at?</button><div class="faq-a">If you've never played handpan before, start with the Beginner course. If you already have some experience and a good grasp of the basics, you can join the Intermediate course. When in doubt, just reach out and Arpit will help you decide.</div></div>
+    <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">Which level should I start at?</button><div class="faq-a">Never played before? Start with Beginner. Comfortable with the basics? Intermediate. Not sure? We'll figure it out in your free trial.</div></div>
     <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">What do I need for the online class?</button><div class="faq-a">Your handpan, a stable internet connection, and Zoom on your phone or laptop. That's it.</div></div>
     <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">Are the sessions recorded?</button><div class="faq-a">No. Classes are live, so you get feedback in the moment as you play. Arpit will happily go over anything you want to revisit at the start of the next session.</div></div>
     <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">How do I enroll?</button><div class="faq-a">Start with a <a href="trial.html">free trial</a>. If you enjoy it, you pick a plan and a weekly slot, and you're in.</div></div>
-    <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">Can I get a refund?</button><div class="faq-a">Fees aren't refunded, but your unused classes never expire. Take a break any time and pick up where you left off. For anything unusual, message Arpit.</div></div>
+    <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">Can I get a refund?</button><div class="faq-a">Fees aren't refunded. If you need to miss a class, message Arpit and we'll work something out.</div></div>
     <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">What payment methods are accepted?</button><div class="faq-a">UPI, credit/debit card, net banking, and international cards. Payment is processed securely via Razorpay.</div></div>
   </div>
 </section>
@@ -342,6 +267,14 @@ function toggleCourse(el) {
   toggle.textContent = isOpen ? '+ See details' : '− Hide details';
 }
 </script>
+</script>
+<script>
+(function(){var tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';}catch(e){}
+var india=/Kolkata|Calcutta/.test(tz);
+function set(c){document.querySelectorAll('.cur button').forEach(function(b){b.classList.toggle('on',b.dataset.c===c);});
+document.querySelectorAll('[data-inr]').forEach(function(el){el.innerHTML=el.getAttribute('data-'+c);});}
+document.querySelectorAll('.cur button').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.c);});});
+set(india||!tz?'inr':'usd');})();
 </script>
 </body>
 </html>
