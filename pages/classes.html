@@ -112,6 +112,14 @@
   .hero-cta .btn-primary, .close-cta .btn-primary { width: 100%; justify-content: center; }
   .price-top { align-items: flex-start; }
 }
+.plan-was { display: block; margin-top: 1.4rem; font-size: var(--t-lead); line-height: 1.3; color: var(--text-mid); text-decoration: line-through; text-decoration-thickness: 1.5px; }
+.plan-was + .plan-price { margin-top: 0.2rem; }
+.plan-was.is-spacer { text-decoration: none; visibility: hidden; }
+.best .plan-was { color: var(--label-on-wine); }
+.save-pill { position: absolute; top: 1.6rem; right: 1.6rem; background: var(--ivory); color: var(--maroon); font-weight: 600; font-size: var(--t-small); padding: 0.35rem 0.85rem; border-radius: 40px; }
+@media (max-width: 900px) { .plan-was.is-spacer { display: none; } .plan-was.is-spacer + .plan-price { margin-top: 1.6rem; } }
+.price-note { margin-top: 1.1rem; font-size: var(--t-small); color: var(--text-mid); }
+@media (max-width: 600px) { .cur { width: 100%; } .cur button { flex: 1; } }
 </style>
 </head>
 <body>
@@ -135,7 +143,7 @@
 <section class="page-hero">
   <p class="page-hero-eyebrow">Learn online</p>
   <h1 class="page-hero-title">Online classes</h1>
-  <p class="page-hero-sub">Live one-to-one handpan lessons on Zoom, one hour a week, wherever you are.</p>
+  <p class="page-hero-sub">Live one-to-one handpan lessons on Zoom, one hour a week. Students join from India, the US and Canada.</p>
   <div class="hero-cta">
     <a href="trial.html" class="btn-primary" style="min-height:56px;display:inline-flex;align-items:center;">Book a free trial</a>
     <span class="hero-facts">45 minutes · free · in your time zone</span>
@@ -148,25 +156,28 @@
   <div class="block" id="pricing">
     <div class="price-top">
       <div><p class="block-eyebrow">Pricing</p><h2 class="block-title">Choose your plan</h2><p class="block-lead">Start with a free trial. If you enjoy it, pick a plan. Every class is one hour, one to one, on Zoom.</p></div>
-      <div class="cur" role="group" aria-label="Currency"><button type="button" class="on" data-c="inr">₹ INR</button><button type="button" data-c="usd">$ USD</button></div>
+      <div class="cur" role="group" aria-label="Where are you"><button type="button" class="on" data-c="inr" aria-pressed="true">India · ₹</button><button type="button" data-c="usd" aria-pressed="false">International · $</button></div>
     </div>
     <div class="plans">
       <div class="plan">
         <h3 class="plan-name">Monthly</h3><p class="plan-what">4 classes</p>
+        <span class="plan-was is-spacer" aria-hidden="true">&nbsp;</span>
         <p class="plan-price" data-inr="₹6,000" data-usd="$72">₹6,000</p>
         <p class="plan-per" data-inr="₹1,500 per class" data-usd="$18 per class">₹1,500 per class</p>
         <hr class="plan-line"/>
         <p class="plan-fit">One class a week for a month. The simplest way to build a habit.</p>
       </div>
       <div class="plan best">
-        <span class="plan-tag">Best value</span>
+        <span class="save-pill">Save 10%</span>
         <h3 class="plan-name">Quarterly</h3><p class="plan-what">12 classes</p>
+        <span class="plan-was" data-inr="₹18,000" data-usd="$216">₹18,000</span>
         <p class="plan-price" data-inr="₹16,200" data-usd="$194">₹16,200</p>
-        <p class="plan-per" data-inr="&lt;b&gt;10% off&lt;/b&gt; · you save ₹1,800" data-usd="&lt;b&gt;10% off&lt;/b&gt; · you save $22"><b>10% off</b> · you save ₹1,800</p>
+        <p class="plan-per" data-inr="₹1,350 per class" data-usd="About $16 per class">₹1,350 per class</p>
         <hr class="plan-line"/>
         <p class="plan-fit">Three months of steady weekly practice. Where most real progress happens.</p>
       </div>
     </div>
+    <p class="price-note" data-inr="Pay by UPI, card or net banking." data-usd="Charged in US dollars. Pay with any international card and your bank converts it to your currency.">Pay by UPI, card or net banking.</p>
   </div>
 
   <div class="block">
@@ -211,7 +222,8 @@
     <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">Are the sessions recorded?</button><div class="faq-a">No. Classes are live, so you get feedback in the moment as you play. Arpit will happily go over anything you want to revisit at the start of the next session.</div></div>
     <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">How do I enroll?</button><div class="faq-a">Start with a <a href="trial.html">free trial</a>. If you enjoy it, you pick a plan and a weekly slot, and you're in.</div></div>
     <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">Can I get a refund?</button><div class="faq-a">Fees aren't refunded. If you need to miss a class, message Arpit and we'll work something out.</div></div>
-    <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">What payment methods are accepted?</button><div class="faq-a">UPI, credit/debit card, net banking, and international cards. Payment is processed securely via Razorpay.</div></div>
+    <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">What payment methods are accepted?</button><div class="faq-a">In India: UPI, cards and net banking. Outside India: any international card, charged in US dollars. All payments go securely through Razorpay.</div></div>
+    <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)">Which time zone are classes in?</button><div class="faq-a">Yours. The <a href="trial.html">trial page</a> shows every time in your local time, and your weekly class stays at the same local time even when clocks change for daylight saving.</div></div>
   </div>
 </section>
 
@@ -271,10 +283,11 @@ function toggleCourse(el) {
 <script>
 (function(){var tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';}catch(e){}
 var india=/Kolkata|Calcutta/.test(tz);
-function set(c){document.querySelectorAll('.cur button').forEach(function(b){b.classList.toggle('on',b.dataset.c===c);});
+function set(c){document.querySelectorAll('.cur button').forEach(function(b){b.classList.toggle('on',b.dataset.c===c);b.setAttribute('aria-pressed',b.dataset.c===c);});
 document.querySelectorAll('[data-inr]').forEach(function(el){el.innerHTML=el.getAttribute('data-'+c);});}
-document.querySelectorAll('.cur button').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.c);});});
-set(india||!tz?'inr':'usd');})();
+document.querySelectorAll('.cur button').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.c);try{localStorage.setItem('hp_region',b.dataset.c);}catch(e){}});});
+var saved=null;try{saved=localStorage.getItem('hp_region');}catch(e){}
+set(saved==='inr'||saved==='usd'?saved:(india||!tz?'inr':'usd'));})();
 </script>
 </body>
 </html>
