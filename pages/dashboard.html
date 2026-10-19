@@ -2036,6 +2036,65 @@ body.dark-mode .wa-tag.trial { color: #d3a6d6; }
 .wa-compose { border-top: 1px solid var(--wa-line); padding: 10px 16px 12px; background: var(--wa-card); flex-shrink: 0; }
 .wa-warn { font-size: 12.5px; color: var(--clay); font-weight: 500; display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
 .wa-crow { display: flex; gap: 10px; align-items: flex-end; }
+/* Saved replies: a button left of the reply box, a list above it (a sheet on phones). */
+.wa-compose { position: relative; }
+.wa-sr-btn { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--wa-line); background: transparent; color: var(--clay); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.wa-sr-btn:hover, .wa-sr-btn.on { background: var(--wa-sel); }
+.wa-sr-pop { position: absolute; left: 16px; bottom: calc(100% - 4px); width: min(420px, calc(100% - 32px)); background: var(--wa-card); border: 1px solid var(--wa-line); border-radius: 14px; box-shadow: 0 10px 30px rgba(40,10,10,0.16); z-index: 30; overflow: hidden; }
+.wa-sr-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 10px; border-bottom: 1px solid var(--wa-line); }
+.wa-sr-head b { font-size: 14.5px; font-weight: 600; color: var(--text-dark); }
+.wa-sr-manage { border: 0; background: transparent; color: var(--clay); font-family: var(--font-body); font-size: 14px; font-weight: 500; cursor: pointer; padding: 6px 4px; }
+.wa-sr-list { max-height: 320px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.wa-sr-item { display: block; width: 100%; text-align: left; border: 0; border-top: 1px solid var(--wa-line); background: transparent; padding: 11px 14px; cursor: pointer; font-family: var(--font-body); }
+.wa-sr-item:first-child { border-top: 0; }
+.wa-sr-item:hover { background: var(--wa-sel); }
+.wa-sr-t { display: block; font-size: 14.5px; font-weight: 500; color: var(--text-dark); }
+.wa-sr-p { display: block; font-size: 13px; color: var(--text-light); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wa-sr-empty { padding: 16px 14px; font-size: 14px; color: var(--text-mid); }
+.wa-sr-back { display: none; }
+/* media in bubbles */
+.wa-img { display: block; padding: 0; border: 0; background: var(--wa-line); border-radius: 8px; overflow: hidden; cursor: zoom-in; width: 260px; max-width: 100%; aspect-ratio: 4 / 3; margin: 2px 0 4px; }
+.wa-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.wa-img.stk { width: 140px; aspect-ratio: 1; background: transparent; }
+.wa-img.stk img { object-fit: contain; }
+.wa-img-ph { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; color: var(--clay); opacity: 0.7; font-size: 12px; text-align: center; padding: 8px; box-sizing: border-box; }
+.wa-cap { margin-top: 4px; white-space: pre-wrap; }
+.wa-aud { display: flex; align-items: center; gap: 10px; width: 240px; max-width: 100%; padding: 2px 0; }
+.wa-aud-btn { width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; border: 0; background: var(--bark); color: var(--cream); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.wa-aud-btn .pa, .wa-aud.playing .wa-aud-btn .pl { display: none; }
+.wa-aud.playing .wa-aud-btn .pa { display: block; }
+.wa-aud-bar { flex: 1; height: 6px; border-radius: 3px; background: var(--wa-line); cursor: pointer; position: relative; overflow: hidden; }
+.wa-aud-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--clay); border-radius: 3px; }
+.wa-aud-t { font-size: 12px; color: var(--text-light); min-width: 64px; text-align: right; white-space: nowrap; }
+.wa-aud-t a { color: var(--clay); }
+.wa-doc { display: flex; align-items: center; gap: 10px; width: 250px; max-width: 100%; border: 1px solid var(--wa-line); background: var(--wa-card); border-radius: 10px; padding: 10px 12px; cursor: pointer; text-align: left; font-family: var(--font-body); color: var(--text-dark); margin: 2px 0 4px; }
+.wa-doc svg { color: var(--clay); flex-shrink: 0; }
+.wa-doc-n { min-width: 0; font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wa-doc-n small { display: block; font-weight: 400; font-size: 12px; color: var(--text-light); }
+.wa-file { display: flex; align-items: center; gap: 10px; border: 1px solid var(--wa-line); border-radius: 12px; padding: 8px 8px 8px 12px; margin-bottom: 10px; background: var(--wa-thread); }
+.wa-file-ic { color: var(--clay); display: inline-flex; }
+.wa-file-n { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; color: var(--text-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wa-file-n small { display: block; font-size: 12px; font-weight: 400; color: var(--text-light); }
+.wa-file-x { width: 36px; height: 36px; border: 0; background: transparent; color: var(--text-mid); font-size: 22px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
+.wa-file-x:hover { background: var(--wa-sel); }
+.wa-lb { position: fixed; inset: 0; z-index: 2000; background: rgba(15,8,5,0.88); display: flex; align-items: center; justify-content: center; padding: 64px 16px 24px; box-sizing: border-box; }
+.wa-lb img { max-width: 100%; max-height: 100%; border-radius: 6px; object-fit: contain; }
+.wa-lb-top { position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; }
+.wa-lb-btn { height: 40px; min-width: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); color: #fff; font-family: var(--font-body); font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.wa-lb-btn:last-child { font-size: 24px; padding: 0; width: 40px; }
+@media (max-width: 900px) { .wa-img { width: 220px; } .wa-aud { width: 200px; } }
+.sr-row { border: 1px solid var(--wa-line, rgba(184,114,42,0.2)); border-radius: 12px; padding: 12px 12px 6px; margin-bottom: 12px; }
+.sr-row-top { display: flex; gap: 8px; align-items: flex-start; }
+.sr-row-top .form-group { flex: 1; margin-bottom: 8px; }
+.sr-del { width: 40px; height: 40px; flex-shrink: 0; margin-top: 26px; border-radius: 10px; border: 1px solid var(--wa-line, rgba(184,114,42,0.2)); background: transparent; color: var(--text-mid); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.sr-del:hover { color: #a3341f; border-color: #a3341f; }
+.sr-row textarea.form-input { min-height: 84px; resize: vertical; line-height: 1.45; }
+@media (max-width: 900px) {
+  .wa-sr-back { display: block; position: fixed; inset: 0; background: rgba(20,10,8,0.35); z-index: 450; }
+  .wa-sr-pop { position: fixed; left: 0; right: 0; bottom: 0; width: auto; border-radius: 16px 16px 0 0; z-index: 451; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .wa-sr-list { max-height: 60vh; }
+  .wa-sr-item { padding: 13px 16px; }
+}
 .wa-input { flex: 1; min-width: 0; min-height: 44px; max-height: 160px; resize: none; overflow-y: auto; border: 1px solid var(--wa-line); border-radius: 22px; background: var(--cream); padding: 11px 16px; font-family: var(--font-body); font-size: 15px; color: var(--text-dark); outline: none; line-height: 1.4; box-sizing: border-box; display: block; }
 .wa-input:focus, .wa-input:focus-visible { border-color: var(--clay); outline: none !important; box-shadow: none !important; }
 .wa-input::placeholder { color: var(--text-light); }
@@ -2071,6 +2130,49 @@ body.dark-mode .wa-tag.trial { color: #d3a6d6; }
   .wa-crow2 { flex-direction: column; }
   .wa-crow2 .btn-dash { width: 100%; }
   .wa-th .btn-dash { display: none; }
+}
+
+/* ── TODAY ── only what needs doing today. Each block hides when it has nothing to say. */
+.td-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.td-col { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+.td-card { background: var(--sand); border: 1px solid var(--clay-pale); border-radius: 12px; overflow: hidden; }
+.td-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem 0.75rem; }
+.td-head h3 { margin: 0; font-size: 1.1rem; font-weight: 600; color: var(--bark); }
+.td-head span { font-size: 0.85rem; color: var(--text-light); }
+.td-row { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.25rem; border-top: 1px solid var(--clay-pale); }
+.td-time { width: 84px; flex-shrink: 0; font-weight: 600; color: var(--bark); font-size: 1rem; }
+.td-time small { display: block; font-weight: 400; color: var(--text-light); font-size: 0.78rem; margin-top: 2px; }
+.td-main { flex: 1; min-width: 0; }
+.td-name { font-weight: 500; color: var(--text-dark); font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.td-sub { font-size: 0.85rem; color: var(--text-light); margin-top: 2px; }
+.td-row.done .td-time, .td-row.done .td-name { color: var(--text-light); }
+.td-row.off .td-time, .td-row.off .td-name { text-decoration: line-through; color: var(--text-light); }
+.td-join { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; border-radius: 20px; background: var(--bark); color: var(--cream); font-size: 0.88rem; font-weight: 500; text-decoration: none; }
+.td-join.ghost { background: transparent; color: var(--clay); border: 1px solid var(--clay-pale); }
+.td-now { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--moss); margin-left: 6px; }
+.td-empty { padding: 1.1rem 1.25rem 1.3rem; border-top: 1px solid var(--clay-pale); color: var(--text-light); font-size: 0.95rem; }
+.td-act { display: flex; align-items: center; gap: 0.9rem; width: 100%; text-align: left; padding: 0.9rem 1.25rem; border: 0; border-top: 1px solid var(--clay-pale); background: transparent; cursor: pointer; font-family: var(--font-body); color: var(--text-dark); }
+.td-act:hover { background: rgba(184,114,42,0.06); }
+.td-act-n { min-width: 28px; height: 28px; padding: 0 8px; border-radius: 14px; background: var(--clay); color: #fff; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; }
+.td-act-t { flex: 1; font-size: 0.95rem; }
+.td-act svg { color: var(--text-light); flex-shrink: 0; }
+.td-clear { padding: 1rem 1.25rem 1.2rem; border-top: 1px solid var(--clay-pale); color: var(--moss); font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+.td-stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--clay-pale); }
+.td-stat { padding: 1rem 1.25rem 1.15rem; }
+.td-stat + .td-stat { border-left: 1px solid var(--clay-pale); }
+.td-stat b { display: block; font-size: 1.6rem; font-weight: 500; color: var(--bark); line-height: 1.1; }
+.td-stat span { font-size: 0.82rem; color: var(--text-light); }
+.td-load { grid-column: 1 / -1; padding: 3rem; display: flex; justify-content: center; }
+@media (max-width: 900px) {
+  .td-wrap { grid-template-columns: 1fr; gap: 1rem; }
+  .td-col { gap: 1rem; }
+  .td-row { padding: 0.85rem 1rem; gap: 0.75rem; }
+  .td-time { width: 70px; font-size: 0.95rem; }
+  .td-head, .td-act, .td-empty, .td-clear { padding-left: 1rem; padding-right: 1rem; }
+  .td-stat { padding: 0.9rem 1rem 1rem; }
+  .td-stat b { font-size: 1.35rem; }
+  .td-join span { display: none; }
+  .td-join { width: 40px; padding: 0; justify-content: center; }
 }
 </style>
 </head>
@@ -2577,7 +2679,7 @@ table#paymentsTable { min-width: 700px; }
 
 <!-- ── DASHBOARD ROOT ── -->
 <div class="mobile-topbar" id="mobileTopbar" style="display:none;">
-  <div class="topbar-logo" style="display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity 0.15s;" onclick="showSection('overview',null);if(document.getElementById('mobileMenuOverlay').classList.contains('open'))toggleMobileMenu();">
+  <div class="topbar-logo" style="display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity 0.15s;" onclick="showSection('today',document.querySelector('.dash-nav a'));if(document.getElementById('mobileMenuOverlay').classList.contains('open'))toggleMobileMenu();">
     <svg width="30" height="30" viewBox="0 0 48 48" fill="none">
       <rect x="4" y="4" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
       <rect x="26" y="4" width="18" height="18" rx="4" fill="#c8935a" opacity="0.9"/>
@@ -2648,6 +2750,10 @@ table#paymentsTable { min-width: 700px; }
 <div class="mobile-menu-overlay" id="mobileMenuOverlay">
   <div class="mob-nav" style="display:flex;flex-direction:column;gap:0;padding:68px 0 2rem;align-items:stretch;">
 
+    <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('today',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      Today
+    </a>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1rem 2.5rem;font-size:1.2rem;color:#e8d5c0;text-decoration:none;letter-spacing:0;" onclick="showSection('overview',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       Overview
@@ -2740,7 +2846,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v117</span>
+        <span style="color:var(--clay);font-weight:500;">v118</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2751,7 +2857,7 @@ table#paymentsTable { min-width: 700px; }
 <div class="dash-root" id="dashRoot" style="display:none;">
   <!-- Sidebar -->
   <aside class="dash-sidebar" id="dashSidebar">
-    <div style="display:flex;align-items:center;gap:10px;padding:0 1.5rem;margin-bottom:1.5rem;cursor:pointer;" onclick="showSection('overview',document.querySelector('.dash-nav a'))">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 1.5rem;margin-bottom:1.5rem;cursor:pointer;" onclick="showSection('today',document.querySelector('.dash-nav a'))">
       <svg width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect x="4" y="4" width="18" height="18" rx="4" stroke="#c8935a" stroke-width="1.5" fill="none"/>
         <rect x="26" y="4" width="18" height="18" rx="4" fill="#c8935a" opacity="0.9"/>
@@ -2766,7 +2872,8 @@ table#paymentsTable { min-width: 700px; }
     </ul>
     <div class="dash-nav-divider"></div>
     <ul class="dash-nav">
-      <li><a href="#" class="active" onclick="showSection('overview',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span> Overview</a></li>
+      <li><a href="#" class="active" onclick="showSection('today',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span> Today</a></li>
+      <li><a href="#" onclick="showSection('overview',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span> Overview</a></li>
     </ul>
     <div class="dash-nav-divider"></div>
     <div class="dash-sidebar-title">Workshops</div>
@@ -2811,7 +2918,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v117</span>
+        <span style="color:var(--clay);font-weight:500;">v118</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2842,7 +2949,17 @@ table#paymentsTable { min-width: 700px; }
     </section>
 
     <!-- ── OVERVIEW ── -->
-    <section class="dash-section active" id="section-overview">
+    <section class="dash-section active" id="section-today">
+      <div class="dash-section-header">
+        <div>
+          <div class="dash-section-title">Today</div>
+          <div class="dash-section-subtitle" id="tdDate"></div>
+        </div>
+      </div>
+      <div class="td-wrap" id="tdWrap"><div class="td-load"><div class="spinner"></div></div></div>
+    </section>
+
+    <section class="dash-section" id="section-overview">
       <div class="dash-section-header">
         <div>
           <div class="dash-section-title">Overview</div>
@@ -5645,21 +5762,23 @@ async function populateStudentDropdown(selectId) {
   }
 }
 
+// Next free ID = highest number among ALL ids with this prefix, plus one.
+// (It used to look at the newest row only, so a row like S-DEMO made it suggest S-001.)
 async function autoFillNextId(table, inputId, prefix, padLength) {
   const el = document.getElementById(inputId);
   if (!el) return;
   try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?select=id&order=created_at.desc&limit=1', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': SB_HEADERS['Authorization'] }
-    });
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?select=id', { headers: SB_HEADERS });
+    if (!res.ok) return;
     const rows = await res.json();
-    let nextNum = 1;
-    if (rows.length) {
-      const lastId = rows[0].id || '';
-      const match = lastId.match(/(\d+)$/);
-      if (match) nextNum = parseInt(match[1]) + 1;
-    }
-    const nextId = prefix + String(nextNum).padStart(padLength, '0');
+    let max = 0;
+    rows.forEach(r => {
+      const id = String(r.id || '');
+      if (!id.startsWith(prefix)) return;
+      const m = id.slice(prefix.length).match(/^(\d+)$/);
+      if (m) max = Math.max(max, parseInt(m[1], 10));
+    });
+    const nextId = prefix + String(max + 1).padStart(padLength, '0');
     // Works for both input and select
     if (el.tagName === 'SELECT') {
       el.value = nextId;
@@ -5751,10 +5870,10 @@ window.addEventListener('resize', function() {
 
 // ── LOAD ──
 function loadAll() {
-  const saved = sessionStorage.getItem('dash_section') || 'overview';
+  const saved = sessionStorage.getItem('dash_section') || 'today';
   // Immediately activate the correct section before loadSection fires
-  // to prevent the Overview flash on refresh
-  if (saved !== 'overview') {
+  // to prevent the wrong section flashing on refresh
+  if (saved !== 'today') {
     document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
     const targetEl = document.getElementById('section-' + saved);
     if (targetEl) targetEl.classList.add('active');
@@ -5781,6 +5900,7 @@ async function syncAll() {
 }
 function loadSection(name) {
   if (name === 'overview') loadOverview();
+  else if (name === 'today') { if (typeof loadToday === 'function') loadToday(); }
   else if (name === 'search') { loadSearchSection(); }
   else if (name === 'workshops') { loadWorkshops(); }
   else if (name === 'participants') { loadParticipants(); }
@@ -12955,6 +13075,14 @@ async function doObsPopupToggle(rec, newCount) {
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;" id="sch-trial-body"></div></div>
 </div>
+<div class="form-page" id="form-schWasr">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="schCloseForm('wasr')">&larr; Back</button>
+    <div class="form-page-title" id="sch-wasr-title">Saved replies</div>
+    <button class="btn-dash-save" id="sch-wasr-save">Save</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;" id="sch-wasr-body"></div></div>
+</div>
 <div class="form-page" id="form-schMove">
   <div class="form-page-header">
     <button class="form-page-back" onclick="schCloseForm('move')">&larr; Back</button>
@@ -13057,7 +13185,9 @@ const WA_TPL_LABEL = {
   class_reminder_v2: 'Class reminder', class_reminder: 'Class reminder',
   fee_link: 'Fee link', payment_reminder: 'Payment reminder',
   trial_confirmation: 'Trial confirmation', trial_reminder: 'Trial reminder',
-  arpit_replied: 'Arpit replied'
+  arpit_replied: 'Arpit replied',
+  workshop_confirmation: 'Workshop confirmation', workshop_reminder: 'Workshop reminder', workshop_review: 'Review request',
+  workshop_followup_classes: 'Workshop follow-up', workshop_followup_handpan: 'Workshop follow-up'
 };
 const WA_ICON = {
   search: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
@@ -13265,12 +13395,13 @@ function waBubble(r, reaction) {
   if (out) {
     const label = r.template ? (WA_TPL_LABEL[r.template] || r.template.replace(/_/g, ' ')) + ' · ' + (r.template === (_wa.tpl && _wa.tpl.name) ? 'sent by you' : 'auto') : 'You · from dashboard';
     inner += '<div class="wa-kind"' + (r.template ? '' : ' style="color:var(--moss);"') + '>' + zEsc(label) + '</div>';
-    if (r.body) inner += zEsc(r.body);
+    if (WA_MEDIA[r.type] && r.type !== 'location') inner += waMediaHtml(r);
+    else if (r.body) inner += zEsc(r.body);
     else if (r.template) inner += '<div class="wa-params">' + (Array.isArray(r.params) && r.params.length ? r.params.map(p => zEsc(p)).join('<br>') : 'Template sent') + '</div>';
   } else if (WA_MEDIA[r.type]) {
-    const [ic, lbl] = WA_MEDIA[r.type];
-    const cap = r.body && !/^\[/.test(r.body) ? r.body : '';
-    inner += '<div class="wa-media">' + WA_ICON[ic] + '<span>' + lbl + '<small>Open on your phone to see it</small></span></div>' + (cap ? '<div style="margin-top:6px;">' + zEsc(cap) + '</div>' : '');
+    if (r.type === 'location') {
+      inner += '<div class="wa-media">' + WA_ICON.pin + '<span>Location<small>Open on your phone to see it</small></span></div>';
+    } else inner += waMediaHtml(r);
   } else {
     inner += zEsc(r.body || '[' + r.type + ']');
   }
@@ -13289,6 +13420,8 @@ function waRenderThread(keepScroll) {
   const conv = waConversations().find(c => c.phone === _wa.sel);
   if (!conv) { pane.innerHTML = '<div class="wa-placeholder">Conversation not found.</div>'; return; }
   // Keep what Arpit is typing when the 20-second refresh redraws the chat.
+  const srWasOpen = keepScroll && !!document.querySelector('.wa-sr-pop');
+  if (document.querySelector('.wa-sr-pop')) waSrClose();
   const oldInput = document.getElementById('waInput');
   let hadFocus = false, selStart = 0, selEnd = 0;
   if (oldInput && oldInput.dataset.phone) {
@@ -13331,6 +13464,8 @@ function waRenderThread(keepScroll) {
     waGrow(inp);
     if (hadFocus) { inp.focus(); try { inp.setSelectionRange(selStart, selEnd); } catch (e) {} }
   }
+  waHydrateMedia();
+  if (srWasOpen && document.getElementById('waSrBtn')) waSrToggle();
 }
 
 // ── REPLY BOX ──
@@ -13356,7 +13491,8 @@ function waComposerHtml(conv) {
     const warn = w.left < 2 * 3600 * 1000
       ? '<div class="wa-warn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Reply soon, the chat closes in ' + waDur(w.left) + '</div>' : '';
     return '<div class="wa-compose">' + warn +
-      '<div class="wa-crow"><textarea class="wa-input" id="waInput" data-phone="' + conv.phone + '" rows="1" placeholder="Type a reply…" maxlength="4000" oninput="waGrow(this)" onkeydown="waKey(event)"></textarea>' +
+      (_wa.file && _wa.file.phone === conv.phone ? '<div class="wa-file"><span class="wa-file-ic">' + WA_ICON[waFileIcon(_wa.file.mime)] + '</span><span class="wa-file-n">' + zEsc(_wa.file.name) + '<small>' + waSize(_wa.file.size) + ' · the text below becomes the caption</small></span><button type="button" class="wa-file-x" onclick="waClearFile()" aria-label="Remove file">&times;</button></div>' : '') +
+      '<div class="wa-crow"><button type="button" class="wa-sr-btn" id="waAttachBtn" onclick="document.getElementById(\'waFilePick\').click()" aria-label="Attach a photo or file" data-tip="Photo or file"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><input type="file" id="waFilePick" hidden accept="image/jpeg,image/png,application/pdf,audio/mpeg,audio/mp4,audio/aac,audio/ogg,video/mp4,.doc,.docx,.txt" onchange="waPickFile(this)"><button type="button" class="wa-sr-btn" id="waSrBtn" onclick="waSrToggle()" aria-label="Saved replies" aria-haspopup="true" data-tip="Saved replies"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg></button><textarea class="wa-input" id="waInput" data-phone="' + conv.phone + '" rows="1" placeholder="' + (_wa.file && _wa.file.phone === conv.phone ? 'Add a caption (optional)…' : 'Type a reply…') + '" maxlength="4000" oninput="waGrow(this)" onkeydown="waKey(event)"></textarea>' +
       '<button type="button" class="wa-send" id="waSendBtn" onclick="waSendReply()"' + (_wa.sending ? ' disabled' : '') + ' aria-label="Send">' +
       '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>' + (_wa.sending ? 'Sending…' : 'Send') + '</span></button></div>' +
       '<div class="wa-hint">Goes from the studio number into this same chat. Enter sends, Shift+Enter adds a new line.</div></div>';
@@ -13373,6 +13509,213 @@ function waComposerHtml(conv) {
   return '<div class="wa-compose closed"><div class="wa-closed-h">' + lock + zEsc(head) + '</div><p>' + zEsc(body) + '</p><div class="wa-crow2">' + tplBtn + own + '</div></div>';
 }
 function waGrow(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px'; }
+
+// ── MEDIA in the chat ──
+// Files come through the server (GET /api/wa/media/:waId) because the storage
+// bucket is private. Each one is fetched once and kept as a blob URL.
+_wa.blobs = _wa.blobs || {};
+function waSize(n) { n = Number(n) || 0; return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB'; }
+function waFileIcon(mime) { mime = String(mime || ''); return mime.startsWith('image/') ? 'photo' : mime.startsWith('audio/') ? 'audio' : mime.startsWith('video/') ? 'video' : 'doc'; }
+function waMediaInfo(r) { return r.params && !Array.isArray(r.params) && r.params.media ? r.params.media : null; }
+function waMediaHtml(r) {
+  const id = zEsc(r.wa_id || '');
+  const info = waMediaInfo(r) || {};
+  const cap = r.body && !/^\[/.test(r.body) && r.body !== info.name ? '<div class="wa-cap">' + zEsc(r.body) + '</div>' : '';
+  if (!r.wa_id || (!r.media_id && !info.path)) {
+    const [ic, lbl] = WA_MEDIA[r.type] || ['doc', 'File'];
+    return '<div class="wa-media">' + WA_ICON[ic] + '<span>' + lbl + '<small>Open on your phone to see it</small></span></div>' + cap;
+  }
+  if (r.type === 'image' || r.type === 'sticker') {
+    return '<button type="button" class="wa-img' + (r.type === 'sticker' ? ' stk' : '') + '" data-wa="' + id + '" onclick="waView(\'' + id + '\')" aria-label="Open photo"><span class="wa-img-ph">' + WA_ICON.photo + '</span></button>' + cap;
+  }
+  if (r.type === 'audio') {
+    return '<div class="wa-aud" data-wa="' + id + '"><button type="button" class="wa-aud-btn" onclick="waAudToggle(\'' + id + '\')" aria-label="Play voice note"><svg class="pl" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg><svg class="pa" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg></button>'
+      + '<div class="wa-aud-bar" onclick="waAudSeek(event,\'' + id + '\')"><i></i></div><span class="wa-aud-t">Voice note</span></div>' + cap;
+  }
+  const kind = r.type === 'video' ? 'Video' : (info.name || 'Document');
+  return '<button type="button" class="wa-doc" onclick="waOpenFile(\'' + id + '\')">' + WA_ICON[r.type === 'video' ? 'video' : 'doc'] + '<span class="wa-doc-n">' + zEsc(kind) + '<small>' + (info.size ? waSize(info.size) + ' · ' : '') + 'Tap to open</small></span></button>' + cap;
+}
+async function waBlob(id) {
+  if (_wa.blobs[id]) return _wa.blobs[id];
+  const p = invApi('/api/wa/media/' + encodeURIComponent(id)).then(r => r.blob()).then(b => ({ url: URL.createObjectURL(b), type: b.type, size: b.size }));
+  _wa.blobs[id] = p;
+  try { return await p; } catch (e) { delete _wa.blobs[id]; throw e; }
+}
+// Called after every thread render: fill in photos that are on screen.
+function waHydrateMedia() {
+  document.querySelectorAll('#waMsgs .wa-img[data-wa]').forEach(async el => {
+    const id = el.dataset.wa;
+    try {
+      const b = await waBlob(id);
+      if (!el.isConnected) return;
+      el.innerHTML = '<img src="' + b.url + '" alt="Photo">';
+    } catch (e) { el.classList.add('err'); el.innerHTML = '<span class="wa-img-ph">' + WA_ICON.photo + '<small>' + zEsc(e.message) + '</small></span>'; }
+  });
+  document.querySelectorAll('#waMsgs .wa-aud[data-wa]').forEach(el => {
+    const a = _wa.audio && _wa.audio.id === el.dataset.wa ? _wa.audio : null;
+    if (a) waAudPaint(el, a.el);
+  });
+}
+async function waView(id) {
+  let b;
+  try { b = await waBlob(id); } catch (e) { showToast('Could not open the photo: ' + e.message, 'error'); return; }
+  const box = document.createElement('div');
+  box.className = 'wa-lb';
+  box.innerHTML = '<div class="wa-lb-top"><a class="wa-lb-btn" href="' + b.url + '" download="photo-' + id.slice(-6) + '.jpg">Download</a><button type="button" class="wa-lb-btn" aria-label="Close">&times;</button></div><img src="' + b.url + '" alt="Photo">';
+  const close = () => { box.remove(); document.removeEventListener('keydown', esc); };
+  const esc = e => { if (e.key === 'Escape') close(); };
+  box.addEventListener('click', e => { if (e.target === box || e.target.closest('button')) close(); });
+  document.addEventListener('keydown', esc);
+  document.body.appendChild(box);
+}
+async function waOpenFile(id) {
+  const w = window.open('', '_blank');
+  try { const b = await waBlob(id); if (w) w.location = b.url; else showToast('Allow pop-ups to open files', 'error'); }
+  catch (e) { if (w) w.close(); showToast('Could not open the file: ' + e.message, 'error'); }
+}
+// Voice notes: our own small player (play/pause, progress, time).
+function waFmtSec(s) { s = Math.max(0, Math.round(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+function waAudPaint(el, a) {
+  if (!el) return;
+  const d = isFinite(a.duration) ? a.duration : 0;
+  el.classList.toggle('playing', !a.paused);
+  el.querySelector('.wa-aud-bar i').style.width = (d ? (a.currentTime / d) * 100 : 0) + '%';
+  el.querySelector('.wa-aud-t').textContent = d ? waFmtSec(a.paused && !a.currentTime ? d : a.currentTime) + (a.currentTime ? ' / ' + waFmtSec(d) : '') : 'Voice note';
+}
+async function waAudToggle(id) {
+  const box = () => document.querySelector('.wa-aud[data-wa="' + CSS.escape(id) + '"]');
+  if (_wa.audio && _wa.audio.id === id) { const a = _wa.audio.el; if (a.paused) a.play(); else a.pause(); return; }
+  if (_wa.audio) { _wa.audio.el.pause(); const old = document.querySelector('.wa-aud[data-wa="' + CSS.escape(_wa.audio.id) + '"]'); _wa.audio = null; if (old) old.classList.remove('playing'); }
+  const el0 = box(); if (el0) el0.querySelector('.wa-aud-t').textContent = 'Loading…';
+  let b; try { b = await waBlob(id); } catch (e) { if (el0) el0.querySelector('.wa-aud-t').textContent = 'Could not load'; return; }
+  const a = new Audio(b.url);
+  _wa.audio = { id, el: a };
+  ['timeupdate', 'play', 'pause', 'loadedmetadata', 'ended'].forEach(ev => a.addEventListener(ev, () => { if (ev === 'ended') a.currentTime = 0; waAudPaint(box(), a); }));
+  a.play().catch(() => { const el = box(); if (el) el.querySelector('.wa-aud-t').innerHTML = 'Can\'t play here. <a href="' + b.url + '" download>Download</a>'; });
+}
+function waAudSeek(e, id) {
+  if (!_wa.audio || _wa.audio.id !== id) return;
+  const a = _wa.audio.el, r = e.currentTarget.getBoundingClientRect();
+  if (isFinite(a.duration)) a.currentTime = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) * a.duration;
+}
+// Attaching a file to send
+function waPickFile(input) {
+  const f = input.files && input.files[0]; input.value = '';
+  if (!f) return;
+  const max = /^image\/(jpeg|png)$/.test(f.type) ? 5 : 16;
+  if (f.size > max * 1048576) { showToast((max === 5 ? 'Photos' : 'Files') + ' can be up to ' + max + ' MB on WhatsApp', 'error'); return; }
+  const inp = document.getElementById('waInput');
+  _wa.file = { phone: inp ? inp.dataset.phone : _wa.sel, file: f, name: f.name, size: f.size, mime: f.type || 'application/octet-stream' };
+  waRenderThread(true);
+  const el = document.getElementById('waInput'); if (el) el.focus();
+}
+function waClearFile() { _wa.file = null; waRenderThread(true); }
+async function waSendFile(caption) {
+  const f = _wa.file; if (!f) return;
+  _wa.sending = true;
+  const btn = document.getElementById('waSendBtn');
+  if (btn) { btn.disabled = true; const sp = btn.querySelector('span'); if (sp) sp.textContent = 'Sending…'; }
+  try {
+    const data = await new Promise((ok, bad) => { const fr = new FileReader(); fr.onload = () => ok(String(fr.result).split(',')[1] || ''); fr.onerror = () => bad(new Error('Could not read the file')); fr.readAsDataURL(f.file); });
+    const r = await invApi('/api/wa/send-media', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: f.phone, name: f.name, mime: f.mime, data, caption }) });
+    const j = await r.json();
+    _wa.blobs[j.row.wa_id] = Promise.resolve({ url: URL.createObjectURL(f.file), type: f.mime, size: f.size });
+    _wa.rows.unshift(Object.assign({ id: 'local-' + Date.now() }, j.row));
+    _wa.file = null; _wa.drafts[f.phone] = '';
+    const el = document.getElementById('waInput'); if (el) el.value = '';
+  } catch (e) {
+    if (/window_closed/.test(e.message)) showToast('The 24-hour window just closed. Use the template or your own WhatsApp.', 'error');
+    else showToast('Not sent: ' + e.message, 'error');
+  } finally {
+    _wa.sending = false;
+    if (_wa.sel) { waRenderList(); waRenderThread(false); }
+  }
+}
+
+// ── SAVED REPLIES ──
+// Kept in app_settings (key 'wa_saved_replies') so phone and laptop share them.
+// {name} becomes the person's first name when the reply is used.
+const WA_SR_DEFAULTS = [
+  { title: 'Free trial link', text: "Hi {name}! The best way to start is a free 1:1 trial with me. Pick a time that suits you here, it shows your own time zone:\n\nhttps://arpitpandey.com/trial" },
+  { title: 'Running late', text: "Hi {name}, I'm running about 10 minutes late today. Sorry! I'll be on Zoom shortly." },
+  { title: 'Class moved', text: "Done, your class is moved. You'll get the reminder about an hour before, as usual." },
+  { title: 'Fee reminder', text: "Hi {name}, just a gentle reminder about the fee link I sent. Let me know if anything doesn't work while paying." },
+  { title: 'Zoom sound tip', text: "Quick tip: please join from the Zoom app (not the browser) and turn on \"Original sound for musicians\" in audio settings, so the handpan comes through clearly." }
+];
+let _waSr = null;
+async function waSrLoad(force) {
+  if (_waSr && !force) return _waSr;
+  try {
+    const r = await sbGetAll('app_settings', 'key=eq.wa_saved_replies');
+    const v = r.data && r.data[0] && r.data[0].value;
+    _waSr = Array.isArray(v) ? v : WA_SR_DEFAULTS.slice();
+  } catch (e) { _waSr = _waSr || WA_SR_DEFAULTS.slice(); }
+  return _waSr;
+}
+function waSrClose() {
+  document.querySelectorAll('.wa-sr-pop, .wa-sr-back').forEach(e => e.remove());
+  const b = document.getElementById('waSrBtn'); if (b) { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }
+}
+async function waSrToggle() {
+  if (document.querySelector('.wa-sr-pop')) { waSrClose(); return; }
+  const comp = document.querySelector('.wa-compose'); if (!comp) return;
+  const list = await waSrLoad();
+  const first = waSrFirst();
+  const items = list.length
+    ? list.map((r, i) => '<button type="button" class="wa-sr-item" onclick="waSrUse(' + i + ')"><span class="wa-sr-t">' + zEsc(r.title || 'Reply ' + (i + 1)) + '</span><span class="wa-sr-p">' + zEsc(String(r.text || '').replace(/\{name\}/g, first || 'there').replace(/\s+/g, ' ')) + '</span></button>').join('')
+    : '<div class="wa-sr-empty">No saved replies yet. Tap Manage to add one.</div>';
+  const back = document.createElement('div'); back.className = 'wa-sr-back'; back.onclick = waSrClose;
+  const pop = document.createElement('div'); pop.className = 'wa-sr-pop'; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Saved replies');
+  pop.innerHTML = '<div class="wa-sr-head"><b>Saved replies</b><button type="button" class="wa-sr-manage" onclick="waSrManage()">Manage</button></div><div class="wa-sr-list">' + items + '</div>';
+  // On phones the chat sits in its own fixed layer, so the sheet goes on the section itself (which carries the colours) to stay above the backdrop.
+  document.body.appendChild(back);
+  (window.matchMedia('(max-width: 900px)').matches ? (document.getElementById('section-whatsapp') || document.body) : comp).appendChild(pop);
+  const b = document.getElementById('waSrBtn'); if (b) { b.classList.add('on'); b.setAttribute('aria-expanded', 'true'); }
+}
+function waSrFirst() {
+  const conv = waConversations().find(c => c.phone === _wa.sel);
+  const who = conv ? waWho(conv.phone, conv.rows) : null;
+  return who && who.kind !== 'unknown' ? String(who.name || '').trim().split(/\s+/)[0] : '';
+}
+function waSrUse(i) {
+  const r = (_waSr || [])[i]; const inp = document.getElementById('waInput'); if (!r || !inp) return;
+  const first = waSrFirst();
+  let text = String(r.text || '').replace(/\{name\}/g, first || 'there');
+  if (!first) text = text.replace(/^Hi there, /, 'Hi, ').replace(/^Hi there!/, 'Hi!');
+  inp.value = inp.value.trim() ? inp.value.replace(/\s+$/, '') + '\n' + text : text;
+  _wa.drafts[inp.dataset.phone] = inp.value;
+  waSrClose(); waGrow(inp); inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length);
+}
+function waSrRowHtml(r) {
+  return '<div class="sr-row"><div class="sr-row-top"><div class="form-group"><label class="form-label">Name</label><input type="text" class="form-input sr-title" maxlength="40" placeholder="e.g. Free trial link" value="' + zEsc(r.title || '') + '"></div>'
+    + '<button type="button" class="sr-del" aria-label="Delete this reply" onclick="this.closest(\'.sr-row\').remove()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button></div>'
+    + '<div class="form-group"><label class="form-label">Message</label><textarea class="form-input sr-text" maxlength="1500" placeholder="Type the message">' + zEsc(r.text || '') + '</textarea></div></div>';
+}
+async function waSrManage() {
+  waSrClose();
+  if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
+  const list = await waSrLoad(true);
+  schOpenForm('wasr', 'Saved replies',
+    '<div class="sch-note">Tap the speech bubble next to the reply box to use these. Write {name} where their first name should go.</div>'
+    + '<div id="srRows">' + list.map(waSrRowHtml).join('') + '</div>'
+    + '<button type="button" class="btn-dash btn-dash-outline" onclick="document.getElementById(\'srRows\').insertAdjacentHTML(\'beforeend\', waSrRowHtml({}))">+ Add a reply</button>');
+  document.getElementById('sch-wasr-save').onclick = waSrSave;
+}
+async function waSrSave() {
+  const rows = [...document.querySelectorAll('#srRows .sr-row')].map(el => ({ title: el.querySelector('.sr-title').value.trim(), text: el.querySelector('.sr-text').value.trim() })).filter(r => r.text);
+  if (rows.some(r => !r.title)) { showToast('Give every reply a name', 'error'); return; }
+  try {
+    const res = await safeFetch(SUPABASE_URL + '/rest/v1/app_settings?on_conflict=key', {
+      method: 'POST', headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ key: 'wa_saved_replies', value: rows, updated_at: new Date().toISOString() })
+    });
+    if (!res.ok) throw new Error(res.error || ('status ' + res.status));
+    _waSr = rows;
+    schCloseForm('wasr');
+    showToast('Saved replies updated', 'success');
+  } catch (e) { showToast('Could not save: ' + e.message, 'error'); }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.querySelector('.wa-sr-pop')) waSrClose(); });
 function waKey(e) {
   // Enter sends on a computer. On a phone the keyboard's return key adds a line; use the Send button.
   if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && !window.matchMedia('(pointer: coarse)').matches) { e.preventDefault(); waSendReply(); }
@@ -13387,6 +13730,7 @@ async function waSendReply() {
   if (!inp || _wa.sending) return;
   const text = inp.value.trim();
   const phone = inp.dataset.phone;
+  if (_wa.file && _wa.file.phone === phone) return waSendFile(text);
   if (!text) { inp.focus(); return; }
   _wa.sending = true;
   _wa.drafts[phone] = inp.value;
@@ -13453,8 +13797,90 @@ function waBadgeStart() {
 // This script loads after the main one, so on a page refresh loadAll() runs
 // before these functions exist. Start the badge (and the section, if it was
 // the open one) from here once they do.
+// ── TODAY ──
+// The landing page: today's classes and trials with their Zoom links, what needs
+// Arpit's attention, tomorrow at a glance, and a small weekly pulse.
+const TD_CHEV = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+const TD_CAM = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>';
+let _tdTimer = null;
+function tdGo(section) { const a = document.querySelector('.dash-nav a[onclick*="\'' + section + '\'"]'); showSection(section, a); }
+async function loadToday(silent) {
+  const wrap = document.getElementById('tdWrap'); if (!wrap) return;
+  const now = new Date();
+  const today = schIst(now).ymd, tomorrow = schAddDays(today, 1);
+  document.getElementById('tdDate').textContent = now.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', day: 'numeric', month: 'long' });
+  const dayStart = d => new Date(d + 'T00:00:00+05:30').toISOString();
+  // Monday of this week (IST)
+  const wd = (schWeekday(today) + 6) % 7, weekStart = schAddDays(today, -wd);
+  const q = (t, p) => sbGetAll(t, p).then(r => r.data || []).catch(() => null);
+  const [slots, exc, stus, trials, unread, zoomRev, feeOld, wkTrials, wkClasses] = await Promise.all([
+    q('class_schedule', 'order=weekday.asc,time_ist.asc'),
+    q('class_exceptions', 'or=(original_date.gte.' + schAddDays(today, -7) + ',new_date.gte.' + today + ')'),
+    q('students', 'order=full_name.asc'),
+    q('trials', 'status=eq.booked&start_at=gte.' + dayStart(today) + '&start_at=lt.' + dayStart(schAddDays(today, 2)) + '&order=start_at.asc'),
+    q('wa_messages', 'select=phone,type&direction=eq.in&read_at=is.null'),
+    q('zoom_unmatched', 'select=id&status=eq.pending'),
+    q('fee_requests', 'select=id&status=eq.pending&created_at=lt.' + new Date(now.getTime() - 3 * 86400000).toISOString()),
+    q('trials', 'select=id&created_at=gte.' + dayStart(weekStart)),
+    q('class_log', 'select=id&class_date=gte.' + weekStart)
+  ]);
+  if (!slots || !stus) {
+    if (!silent) wrap.innerHTML = '<div class="td-card" style="grid-column:1/-1;"><div class="td-empty" style="border-top:0;">Could not load today. Check your connection and refresh.</div></div>';
+    return;
+  }
+  _sch.slots = slots; _sch.exceptions = exc || []; _sch.students = stus.filter(s => !s.archived);
+  const plan = schPlan(2);
+  const nowMs = now.getTime();
+  const rowsFor = ymd => {
+    const items = plan.filter(o => o.ymd === ymd).map(o => ({
+      t: o.utc.getTime(), hhmm: o.hhmm, len: 60, name: schStudentName(o.slot.student_id),
+      sub: schLocalLabel(o.utc, o.slot.student_tz) || '', link: o.slot.zoom_link || '',
+      off: o.state === 'skip' || o.state === 'move',
+      note: o.state === 'skip' ? 'Skipped' : o.state === 'move' ? 'Moved to ' + schDayLabel(String(o.ex.new_date).slice(0, 10)) + ' ' + schTime12(o.ex.new_time_ist) : o.state === 'moved-in' ? 'Rescheduled' : ''
+    }));
+    (trials || []).filter(t => schIst(new Date(t.start_at)).ymd === ymd).forEach(t => {
+      const d = new Date(t.start_at);
+      let their = '';
+      if (t.tz && t.tz !== 'Asia/Kolkata') { try { their = d.toLocaleTimeString('en-US', { timeZone: t.tz, hour: 'numeric', minute: '2-digit' }) + ' their time'; } catch (e) {} }
+      items.push({ t: d.getTime(), hhmm: schIst(d).hhmm, len: 45, name: t.full_name || 'Trial', sub: 'Free trial' + (their ? ' · ' + their : ''), link: t.join_url || '', off: false, note: '' });
+    });
+    return items.sort((a, b) => a.t - b.t);
+  };
+  const rowHtml = (it, isToday) => {
+    const done = isToday && !it.off && nowMs > it.t + it.len * 60000;
+    const live = isToday && !it.off && nowMs >= it.t - 10 * 60000 && nowMs <= it.t + it.len * 60000;
+    const sub = [it.note, it.sub].filter(Boolean).join(' · ');
+    const join = (isToday && !it.off && !done && it.link)
+      ? '<a class="td-join' + (live ? '' : ' ghost') + '" href="' + zEsc(it.link) + '" target="_blank" rel="noopener" aria-label="Join Zoom">' + TD_CAM + '<span>Join</span></a>' : '';
+    return '<div class="td-row' + (it.off ? ' off' : done ? ' done' : '') + '"><div class="td-time">' + schTime12(it.hhmm) + '</div>'
+      + '<div class="td-main"><div class="td-name">' + zEsc(it.name) + (live ? '<span class="td-now">Now</span>' : '') + '</div>' + (sub ? '<div class="td-sub">' + zEsc(sub) + '</div>' : '') + '</div>' + join + '</div>';
+  };
+  const todayItems = rowsFor(today), tomItems = rowsFor(tomorrow);
+  const left = todayItems.filter(it => !it.off && nowMs <= it.t + it.len * 60000).length;
+  const todayCard = '<div class="td-card"><div class="td-head"><h3>Classes today</h3><span>' + (todayItems.length ? (left ? left + ' to go' : 'All done') : '') + '</span></div>'
+    + (todayItems.length ? todayItems.map(it => rowHtml(it, true)).join('') : '<div class="td-empty">No classes or trials today.</div>') + '</div>';
+  const tomCard = tomItems.length ? '<div class="td-card"><div class="td-head"><h3>Tomorrow</h3><span>' + schDayLabel(tomorrow) + '</span></div>' + tomItems.map(it => rowHtml(it, false)).join('') + '</div>' : '';
+  // Needs you: only things that wait on Arpit.
+  const unreadPeople = unread ? new Set(unread.filter(r => r.type !== 'reaction').map(r => r.phone)).size : 0;
+  const acts = [];
+  if (unreadPeople) acts.push([unreadPeople, unreadPeople === 1 ? 'person is waiting for a WhatsApp reply' : 'people are waiting for a WhatsApp reply', 'whatsapp']);
+  if (zoomRev && zoomRev.length) acts.push([zoomRev.length, 'Zoom attendance ' + (zoomRev.length === 1 ? 'needs' : 'need') + ' a student linked', 'classes']);
+  if (feeOld && feeOld.length) acts.push([feeOld.length, 'fee link' + (feeOld.length === 1 ? ' is' : 's are') + ' unpaid for 3+ days', 'fee-payments']);
+  const needCard = '<div class="td-card"><div class="td-head"><h3>Needs you</h3></div>'
+    + (acts.length ? acts.map(a => '<button type="button" class="td-act" onclick="tdGo(\'' + a[2] + '\')"><span class="td-act-n">' + a[0] + '</span><span class="td-act-t">' + a[1] + '</span>' + TD_CHEV + '</button>').join('')
+      : '<div class="td-clear"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Nothing waiting on you.</div>') + '</div>';
+  const newStu = stus.filter(s => !s.archived && s.join_date && String(s.join_date).slice(0, 10) >= weekStart && s.id !== 'S-DEMO').length;
+  const stat = (n, l) => '<div class="td-stat"><b>' + (n == null ? '—' : n) + '</b><span>' + l + '</span></div>';
+  const weekCard = '<div class="td-card"><div class="td-head"><h3>This week</h3><span>since Monday</span></div><div class="td-stats">'
+    + stat(wkTrials ? wkTrials.length : null, 'Trials booked') + stat(newStu, 'New students') + stat(wkClasses ? wkClasses.length : null, 'Classes taught') + '</div></div>';
+  wrap.innerHTML = '<div class="td-col">' + todayCard + tomCard + '</div><div class="td-col">' + needCard + weekCard + '</div>';
+  clearInterval(_tdTimer);
+  _tdTimer = setInterval(() => { if (document.getElementById('section-today')?.classList.contains('active') && !document.hidden) loadToday(true); }, 120000);
+}
+
 if (sessionStorage.getItem('dash_auth') === '1') {
   waBadgeStart();
+  if ((sessionStorage.getItem('dash_section') || 'today') === 'today') loadToday();
   if (sessionStorage.getItem('dash_section') === 'whatsapp') { loadWhatsApp(); waRenderThread(false); }
   if (sessionStorage.getItem('dash_section') === 'schedule') loadSchedule();
 }
