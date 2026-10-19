@@ -255,6 +255,21 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 .tb-day .ftag { display: block; font-size: 9.5px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1; margin-top: 3px; }
 .tb-day.fullday .ftag { color: var(--clay-light, #B98D9A); }
 .tb-day.fullday.on .ftag { color: var(--ivory); opacity: 0.85; }
+/* Months: each one its own block, so October and November never run together. */
+.tb-wrap .tb-month { font-size: 16px; font-weight: 600; color: var(--maroon); margin: 0 0 0.75rem; }
+.tb-wrap .tb-days + .tb-month { margin-top: 1.6rem; padding-top: 1.5rem; border-top: 1px solid var(--bk-pale); }
+/* While times load: the calendar is already there (dates need no server), the boxes pulse. */
+.tb-day.sk { cursor: default; border-color: transparent; color: var(--bk-stone); background: linear-gradient(90deg, #F1E9DF 0%, #F8F2EA 50%, #F1E9DF 100%); background-size: 200% 100%; animation: sk 1.2s infinite; display: flex; align-items: center; justify-content: center; }
+.tb-tsk { height: 48px; border-radius: 10px; background: linear-gradient(90deg, #F1E9DF 0%, #F8F2EA 50%, #F1E9DF 100%); background-size: 200% 100%; animation: sk 1.2s infinite; }
+.tb-tsk + .tb-tsk { margin-top: 0.55rem; }
+.tb-loadfail { grid-column: 1 / -1; text-align: center; padding: 1.4rem 1rem; border: 1px dashed var(--bk-border); border-radius: 12px; color: var(--bk-mid); font-size: 15px; line-height: 1.6; }
+.tb-loadfail strong { display: block; color: var(--bk-dark); font-weight: 600; margin-bottom: 0.2rem; }
+.tb-retry { margin: 0.9rem auto 0.6rem; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1.4rem; border-radius: 40px; border: 1.5px solid var(--maroon); background: transparent; color: var(--maroon); font-family: var(--font-body); font-weight: 600; font-size: 15px; cursor: pointer; }
+.tb-retry:hover { background: var(--maroon); color: var(--ivory); }
+.tb-loadfail .alt { display: block; font-size: 14px; }
+.tb-loadfail .alt a { color: var(--maroon); }
+.tb-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .tb-day.sk, .tb-tsk { animation: none; } }
 .tb-time.bkd { background: transparent; border-style: dashed; color: #8E7A79; cursor: default; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0.45rem 0.3rem; }
 .tb-time.bkd small { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; color: #8E7A79; }
 .tb-fullbox { background: var(--bk-fill); border-radius: 12px; padding: 26px 24px !important; border-top: none !important; margin-top: 1.75rem !important; text-align: center; }
@@ -583,7 +598,9 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
       data = await r.json();
       if (!r.ok || !data.ok) throw new Error(data.error || 'load failed');
     } catch (e) {
-      $('tbDays').innerHTML = '<div class="tb-empty" style="grid-column:1/-1;">Couldn\'t load times right now. Please refresh, or <a href="' + waLink('Hi Arpit, I\'d like to book a free trial.') + '" target="_blank" rel="noopener" style="color:var(--maroon);">message Arpit on WhatsApp</a>.</div>';
+      $('tbDays').innerHTML = '<div class="tb-loadfail" role="alert"><strong>Couldn\'t load the free times.</strong>Check your connection and try again.<br><button type="button" class="tb-retry" id="tbRetry">Try again</button><span class="alt">or <a href="' + waLink('Hi Arpit, I\'d like to book a free trial.') + '" target="_blank" rel="noopener">message Arpit on WhatsApp</a></span></div>';
+      $('tbTimes').innerHTML = '<div class="tb-empty">Pick a day first.</div>';
+      $('tbRetry').addEventListener('click', () => { renderSkeleton(); loadSlots(false); });
       return;
     }
     $('tbWa').href = waLink('Hi Arpit, I have a question about the free trial.');
@@ -626,6 +643,26 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     if (allFull) $('tbFullWa').href = waLink('Hi Arpit, all the trial slots were full. Can we find a time for my free trial?');
     renderDays();
     renderTimes();
+  }
+
+  // Dates are known without the server, so the calendar shows at once and pulses until the free times arrive.
+  function renderSkeleton() {
+    let ks = []; const now = new Date();
+    for (let i = 0; i < 15; i++) ks.push(fmtDayKey.format(new Date(now.getTime() + i * 86400000)));
+    ks = [...new Set(ks)].slice(0, 14);
+    const months = [];
+    for (const k of ks) { const ym = k.slice(0, 7); if (!months.length || months[months.length - 1].ym !== ym) months.push({ ym, keys: [] }); months[months.length - 1].keys.push(k); }
+    $('tbMonths').textContent = months.length > 1 ? '' : fmtMonthYearU.format(new Date(ks[0] + 'T12:00:00Z'));
+    const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(w => '<div class="tb-dow">' + w + '</div>').join('');
+    $('tbDays').innerHTML = '<span class="tb-sr" role="status">Loading free times</span>' + months.map(m => {
+      const lead = new Date(m.keys[0] + 'T12:00:00Z').getUTCDay();
+      let html = months.length > 1 ? '<div class="tb-month">' + fmtMonthYearU.format(new Date(m.keys[0] + 'T12:00:00Z')) + '</div>' : '';
+      html += '<div class="tb-days">' + dow;
+      for (let i = 0; i < lead; i++) html += '<span class="tb-day blank" aria-hidden="true"></span>';
+      html += m.keys.map(k => '<span class="tb-day sk" aria-hidden="true"><span class="d2">' + fmtDnum.format(new Date(k + 'T12:00:00Z')) + '</span></span>').join('');
+      return html + '</div>';
+    }).join('');
+    $('tbTimes').innerHTML = '<div class="tb-tsk"></div><div class="tb-tsk" style="width:72%"></div>';
   }
 
   function renderDays() {
@@ -841,6 +878,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
   document.querySelectorAll('.faq-q').forEach(q => q.addEventListener('click', () => q.parentElement.classList.toggle('open')));
 
   renderCc();
+  renderSkeleton();
   loadSlots(false);
 })();
 </script>
