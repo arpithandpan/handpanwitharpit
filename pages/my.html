@@ -667,7 +667,7 @@ a.mc-opt { text-decoration: none; }
     const el = $('otpResend');
     const tick = () => {
       if (sec <= 0) { clearInterval(resendT); el.innerHTML = 'Didn\'t get it? <button type="button" id="otpAgain">Send again</button>'; $('otpAgain').onclick = () => sendCode(true); return; }
-      el.textContent = 'Didn\'t get it? Send again in 0:' + String(sec).padStart(2, '0');
+      el.textContent = 'Didn\'t get it? Send again in ' + sec + (sec === 1 ? ' second' : ' seconds');
       sec--;
     };
     tick(); resendT = setInterval(tick, 1000);
@@ -694,7 +694,7 @@ a.mc-opt { text-decoration: none; }
         return;
       }
       btn.disabled = true; btn.classList.add('wait');
-      btn.textContent = left >= 90 ? 'Try again in ' + Math.ceil(left / 60) + ' min' : 'Try again in ' + Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+      btn.textContent = left >= 90 ? 'Try again in ' + Math.ceil(left / 60) + ' min' : 'Try again in ' + left + (left === 1 ? ' second' : ' seconds');
     };
     tick(); lockT = setInterval(tick, 1000);
   }
