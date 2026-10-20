@@ -413,7 +413,7 @@ a.mc-opt { text-decoration: none; }
       if (asked !== token) return;
       if (r.status === 404) { store(KEY, null); store(NAME_KEY, null); store(ROLE_KEY, null); navRefresh(); askForm(true); return; }
       if (!r.ok || !j.ok) throw new Error(j.error || 'Could not load your page.');
-      data = j;
+      data = j; timesCache = {};
       store(KEY, token); store(NAME_KEY, j.name || ''); store(ROLE_KEY, j.role || (j.classes ? 'Student' : '')); navRefresh();
       if (!location.hash) history.replaceState(null, '', '#' + token);
       render();
@@ -432,7 +432,7 @@ a.mc-opt { text-decoration: none; }
   // Forget the link on this device only. The link itself keeps working
   // (Arpit can reset it from the dashboard if it reached the wrong person).
   function signOut() {
-    token = ''; data = null; pendClear();
+    token = ''; data = null; timesCache = {}; pendClear();
     history.replaceState(null, '', location.pathname);
     scrollTo(0, 0);
     askForm(false);
@@ -520,7 +520,13 @@ a.mc-opt { text-decoration: none; }
     $('mcPage').querySelectorAll('[data-move]').forEach(b => b.onclick = () => openMove(b.dataset.move, 'move'));
     $('mcPage').querySelectorAll('[data-skip]').forEach(b => b.onclick = () => openSkip(b.dataset.skip));
     $('mcPage').querySelectorAll('[data-makeup]').forEach(b => b.onclick = () => openMove(b.dataset.makeup, 'makeup'));
-    $('mcPage').querySelectorAll('[data-opts]').forEach(b => b.onclick = () => openOptions(b.dataset.opts));
+    $('mcPage').querySelectorAll('[data-opts]').forEach(b => {
+      b.onclick = () => openOptions(b.dataset.opts);
+      const warm = () => { const u = cls(b.dataset.opts); if (u && u.canChange) preload('move', b.dataset.opts); };
+      b.addEventListener('pointerenter', warm, { once: true }); b.addEventListener('touchstart', warm, { once: true, passive: true }); b.addEventListener('focus', warm, { once: true });
+    });
+    // Give the page a moment to paint, then fetch free times quietly.
+    setTimeout(preloadPage, 300);
   }
 
   // ── workshops (read-only: tickets can't be moved or refunded here) ──
@@ -645,6 +651,32 @@ a.mc-opt { text-decoration: none; }
     if (k) k.onclick = () => openSkip(key);
   }
 
+  // Free times load in the background while the person reads the page, so
+  // Move / Skip / make-up sheets open already filled. Kept for a minute and
+  // dropped whenever the page data reloads (a change frees or takes a time).
+  let timesCache = {};
+  function getTimes(mode, key) {
+    const k = mode + '|' + key, hit = timesCache[k];
+    if (hit && Date.now() - hit.at < 60000) return hit.p;
+    const asked = token;
+    const p = fetch(API + '/api/my/' + asked + '/times?mode=' + mode + '&key=' + key, { cache: 'no-store' })
+      .then(r => r.json().catch(() => ({})).then(j => {
+        if (!r.ok || !j.ok) throw new Error(j.error || 'Could not load free times.');
+        return j.slots;
+      }));
+    timesCache[k] = { at: Date.now(), p };
+    p.catch(() => { if (timesCache[k] && timesCache[k].p === p) delete timesCache[k]; });
+    return p;
+  }
+  function preload(mode, key) { getTimes(mode, key).catch(() => {}); }
+  function preloadPage() {
+    const c = data && data.classes;
+    if (!c) return;
+    const next = c.upcoming.find(u => !u.later) || c.upcoming[0];
+    if (next && next.canChange && (c.changesLeft[next.key.slice(0, 7)] || 0) > 0) preload('move', next.key);
+    (c.makeups || []).slice(0, 2).forEach(m => preload('makeup', m.key));
+  }
+
   async function openMove(key, mode) {
     const u = cls(key);
     const title = mode === 'makeup' ? 'Book your make-up' : 'Move your class';
@@ -652,10 +684,7 @@ a.mc-opt { text-decoration: none; }
     const s = openSheet('<h3>' + title + '</h3><p class="lead">' + esc(lead) + '</p><div id="mvBody"><div class="mc-sk" style="height:180px;border-radius:14px;"></div></div>');
     let slots = [];
     try {
-      const r = await fetch(API + '/api/my/' + token + '/times?mode=' + mode + '&key=' + key, { cache: 'no-store' });
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok || !j.ok) throw new Error(j.error || 'Could not load free times.');
-      slots = j.slots;
+      slots = await getTimes(mode, key);
     } catch (e) {
       if (sheetEl !== s) return;
       s.querySelector('#mvBody').innerHTML = '<p class="msg">' + esc(e.message) + '</p><div class="acts"><button class="mc-btn line" type="button" id="mvClose">Close</button></div>';
