@@ -62,6 +62,19 @@
 .mc-empty { font-size: 0.95rem; color: var(--text-mid); margin: 0; }
 .mc-link { display: flex; align-items: center; gap: 0.85rem; padding: 1rem 0; border: 0; border-top: 1px solid rgba(80,0,24,0.12); color: var(--maroon); text-decoration: none; font-weight: 500; font-size: 0.98rem; background: none; width: 100%; font-family: var(--font-body); cursor: pointer; text-align: left; }
 .mc-link:first-child { border-top: none; padding-top: 0.2rem; }
+/* workshops */
+.ws-facts { list-style: none; margin: 0 0 1.4rem; padding: 0; display: grid; gap: 0.75rem; }
+.ws-facts li { display: flex; gap: 0.7rem; align-items: flex-start; color: var(--text-dark); font-size: 0.95rem; line-height: 1.45; }
+.ws-facts li > svg { flex-shrink: 0; color: var(--maroon); margin-top: 1px; width: 18px; height: 18px; }
+.ws-facts li > span { min-width: 0; }
+.ws-facts a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); margin-left: 0.4rem; }
+.ws-facts small { display: block; font-size: 0.85rem; color: var(--text-mid); margin-top: 2px; }
+.ws-policy { border-top: 1px solid rgba(80,0,24,0.12); padding-top: 1.2rem; }
+.ws-policy .mc-h { font-size: 0.98rem; margin-bottom: 0.4rem; }
+.ws-policy p:not(.mc-h) { font-size: 0.92rem; color: var(--text-mid); line-height: 1.55; margin: 0 0 0.5rem; }
+.ws-policy .mc-btn { margin-top: 0.6rem; }
+.mc-info small a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
+.mc-sec { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mid); margin: 0.8rem 0 -0.3rem 0.2rem; }
 .mc-help-h { font-size: 0.85rem; color: var(--text-mid); margin: 1.1rem 0 0.1rem; padding-top: 1rem; border-top: 1px solid rgba(80,0,24,0.12); }
 .mc-help-h:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .mc-help-h + .mc-link { border-top: 0; padding-top: 0.5rem; }
@@ -314,6 +327,9 @@ a.mc-opt { text-decoration: none; }
   const KEY = 'hp_my_token', NAME_KEY = 'hp_my_name', ROLE_KEY = 'hp_my_role';
   const ICON_MORE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
   const ICON_ZOOM = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="M15.5 10.5l6-3.5v10l-6-3.5"/></svg>';
+  const ICON_PIN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>';
+  const ICON_PPL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/></svg>';
+  const ICON_PAN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="12" rx="9" ry="6"/><circle cx="12" cy="11" r="2"/></svg>';
   const ICON_DOC = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>';
   const ICON_WA = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg>';
   const ICON_DOWN = '<svg class="end" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
@@ -398,7 +414,7 @@ a.mc-opt { text-decoration: none; }
       if (r.status === 404) { store(KEY, null); store(NAME_KEY, null); store(ROLE_KEY, null); navRefresh(); askForm(true); return; }
       if (!r.ok || !j.ok) throw new Error(j.error || 'Could not load your page.');
       data = j;
-      store(KEY, token); store(NAME_KEY, j.name || ''); store(ROLE_KEY, j.classes ? 'Student' : ''); navRefresh();
+      store(KEY, token); store(NAME_KEY, j.name || ''); store(ROLE_KEY, j.role || (j.classes ? 'Student' : '')); navRefresh();
       if (!location.hash) history.replaceState(null, '', '#' + token);
       render();
     } catch (e) {
@@ -436,11 +452,15 @@ a.mc-opt { text-decoration: none; }
     const c = data.classes;
     show('mcPage');
     const head = (sub) => '<div class="mc-head"><h1 class="mc-hi" id="mcTitle">Hi ' + esc(data.name) + '</h1><p class="mc-tz" id="mcSub">' + sub + '</p></div>';
-    if (!c) {
+    const w = data.workshops, wl = data.waitlist;
+    if (!c && !w && !wl) {
       $('mcPage').innerHTML = head('Nothing is booked under your name right now.') + '<div class="mc-card">' + linksHtml([]) + '</div>';
       bindLinks(); return;
     }
-    const html = [head('Times are in your time zone · ' + esc(c.tzCity))];
+    const html = [head(c ? 'Times are in your time zone · ' + esc(c.tzCity) : 'Your bookings with Arpit')];
+    const both = !!(c && (w || wl));
+    if (c) {
+    if (both) html.push('<p class="mc-sec">Classes</p>');
     const next = c.upcoming.find(u => !u.later) || c.upcoming[0];
 
     // Next class
@@ -475,7 +495,7 @@ a.mc-opt { text-decoration: none; }
     for (const m of c.makeups) {
       parts.push('<div class="mc-makeup"><p>Make up your ' + ymdLabel(m.key) + ' class by ' + ymdLabel(m.deadline) + '</p><button class="mc-btn solid" type="button" data-makeup="' + m.key + '">Pick a time</button></div>');
     }
-    const row = u => '<li class="mc-item' + (u.later ? ' later' : '') + '"><div class="mc-date"><b>' + f(u.start, { day: 'numeric' }) + '</b><span>' + f(u.start, { month: 'short' }) + '</span></div>'
+    const row = u => '<li class="mc-item' + (u.later ? ' later' : '') + '"><div class="mc-date"><b>' + f(u.start, { day: 'numeric' }) + '</b><span>' + new Intl.DateTimeFormat('en-US', { timeZone: tz(), month: 'short' }).format(new Date(u.start)) + '</span></div>'
       + '<div class="mc-info"><strong>' + f(u.start, { weekday: 'long' }) + ' · ' + time(u.start)
       + (u.makeup ? ' <span class="mc-tag">Make-up</span>' : u.moved ? ' <span class="mc-tag">Moved</span>' : '') + '</strong><small>' + (u.min || 60) + ' min</small></div>'
       + (u.later ? '' : '<button class="mc-more" type="button" aria-label="Change this class" data-opts="' + u.key + '">' + ICON_MORE + '</button>') + '</li>';
@@ -485,7 +505,12 @@ a.mc-opt { text-decoration: none; }
     if (parts.length) html.push('<div class="mc-card"><p class="mc-h">Coming up</p>' + parts.join('') + '</div>');
     if (!next && !parts.length) html.push('<div class="mc-card"><p class="mc-h">No classes coming up</p><p class="mc-empty">Nothing is scheduled for the next four weeks. Get in touch below to plan your next class.</p></div>');
 
-    html.push('<div class="mc-card">' + linksHtml(c.payments) + '</div>');
+    }
+    if (w || wl) {
+      if (both) html.push('<p class="mc-sec">Workshops</p>');
+      html.push(workshopsHtml(w, wl));
+    }
+    html.push('<div class="mc-card">' + linksHtml(c ? c.payments : []) + '</div>');
     $('mcPage').innerHTML = html.join('');
     bindLinks();
     if (/[?&]pay=1/.test(location.search) && $('mcPayToggle') && !render._payOpened) {
@@ -496,6 +521,62 @@ a.mc-opt { text-decoration: none; }
     $('mcPage').querySelectorAll('[data-skip]').forEach(b => b.onclick = () => openSkip(b.dataset.skip));
     $('mcPage').querySelectorAll('[data-makeup]').forEach(b => b.onclick = () => openMove(b.dataset.makeup, 'makeup'));
     $('mcPage').querySelectorAll('[data-opts]').forEach(b => b.onclick = () => openOptions(b.dataset.opts));
+  }
+
+  // ── workshops (read-only: tickets can't be moved or refunded here) ──
+  // Workshops happen in Bengaluru, so dates and times stay in India time.
+  function wsStart(b) {
+    const m = String(b.time || '').match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+    let h = 12, mi = 0;
+    if (m) { h = +m[1]; mi = +m[2]; const mer = (m[3] || '').toUpperCase(); if (mer === 'PM' && h < 12) h += 12; if (mer === 'AM' && h === 12) h = 0; }
+    return b.date + 'T' + String(h).padStart(2, '0') + ':' + String(mi).padStart(2, '0') + ':00+05:30';
+  }
+  function wsDay(b, opts) { return new Intl.DateTimeFormat(opts.month === 'short' ? 'en-US' : 'en-GB', { timeZone: 'Asia/Kolkata', ...opts }).format(new Date(wsStart(b))); }
+  function wsTime(b) { return String(b.time || '').replace(/\s*-\s*/, ' to ').trim(); }
+  function wsPeople(b) {
+    const n = b.people || 1;
+    let t = n === 1 ? '1 person' : n + ' people';
+    if (n > 1 && b.names && b.names.length > 1) t += ' · ' + (b.names.length === 2 ? b.names.join(' and ') : b.names.slice(0, -1).join(', ') + ' and ' + b.names[b.names.length - 1]);
+    if (b.observers) t += ' · ' + b.observers + ' audience pass' + (b.observers > 1 ? 'es' : '');
+    return t;
+  }
+  function wsOwn(b) {
+    const v = String(b.own || '').trim();
+    if (/^yes$/i.test(v)) return 'You\'re bringing your own handpan';
+    if (/^no$/i.test(v)) return 'Arpit brings a handpan for you';
+    const m = v.match(/^(\d+)\s+of\s+(\d+)$/i);
+    if (m) return +m[1] === 0 ? 'Arpit brings handpans for your group' : m[1] + ' of ' + m[2] + ' bringing their own handpan';
+    return '';
+  }
+  function invLink(id, label) { return '<a href="' + API + '/api/my/' + token + '/invoice/' + encodeURIComponent(id) + '" target="_blank" rel="noopener">' + (label || 'Invoice') + '</a>'; }
+  function workshopsHtml(w, wl) {
+    const out = [];
+    for (const b of (w ? w.upcoming : [])) {
+      const own = wsOwn(b), topic = 'the ' + ymdLabel(b.date) + ' workshop';
+      out.push('<div class="mc-card"><p class="mc-k">Workshop · ' + inDays(wsStart(b)) + '</p>'
+        + '<p class="mc-when">' + esc(wsDay(b, { weekday: 'long' }) + ', ' + wsDay(b, { day: 'numeric', month: 'long' })) + '</p>'
+        + '<p class="mc-sub">' + (b.time ? esc(wsTime(b)) : 'Time to be shared') + '</p>'
+        + '<ul class="ws-facts">'
+        + (b.venue ? '<li>' + ICON_PIN + '<span>' + esc(b.venue) + (b.map ? '<a href="' + esc(b.map) + '" target="_blank" rel="noopener">Map</a>' : '') + '</span></li>' : '')
+        + '<li>' + ICON_PPL + '<span>' + esc(wsPeople(b)) + '</span></li>'
+        + (own ? '<li>' + ICON_PAN + '<span>' + esc(own) + '<small>Need to change this? <button type="button" class="mc-inline js-contact" data-topic="' + esc('the handpan for ' + topic) + '">Contact Arpit</button></small></span></li>' : '')
+        + (b.invoice ? '<li>' + ICON_DOC + '<span>Paid' + invLink(b.invoice) + '</span></li>' : '')
+        + '</ul>'
+        + '<div class="ws-policy"><p class="mc-h">Can\'t make it?</p>'
+        + '<p>Tickets are non-refundable. You\'re welcome to send a friend in your place. Just let Arpit know their name beforehand.</p>'
+        + '<p>If Arpit cancels a workshop, you get a full refund.</p>'
+        + '<button type="button" class="mc-btn line js-contact" data-topic="' + esc(topic) + '">Contact Arpit</button></div>'
+        + '</div>');
+    }
+    if (wl) out.push('<div class="mc-card"><p class="mc-h">Waitlist</p><p class="mc-empty">You\'re on the waitlist' + (wl.month ? ' for ' + esc(wl.month) : '') + '. You\'ll hear from Arpit when new dates are out.</p></div>');
+    if (w && w.past.length) {
+      out.push('<div class="mc-card"><p class="mc-h">Past workshops</p><ul class="mc-list">' + w.past.map(b =>
+        '<li class="mc-item"><div class="mc-date"><b>' + wsDay(b, { day: 'numeric' }) + '</b><span>' + wsDay(b, { month: 'short' }) + '</span></div>'
+        + '<div class="mc-info"><strong>' + esc(String(b.venue || 'Handpan workshop').split(',')[0]) + (b.cancelled ? ' <span class="mc-tag">Cancelled</span>' : '') + '</strong>'
+        + '<small>' + esc(b.cancelled ? 'Cancelled by Arpit · full refund' : (b.people === 1 ? '1 person' : b.people + ' people'))
+        + (b.invoice && !b.cancelled ? ' · ' + invLink(b.invoice) : '') + '</small></div></li>').join('') + '</ul></div>');
+    }
+    return out.join('');
   }
 
   function linksHtml(payments) {
