@@ -50,7 +50,6 @@ window.hpAcct = (function () {
       menu.className = 'acct-menu'; menu.hidden = true;
       menu.innerHTML = '<div class="acct-head"><b>' + esc(me.name) + '</b>' + (me.role ? '<span>' + esc(me.role) + '</span>' : '') + '</div>'
         + '<a href="' + esc(href) + '">' + I.cal + 'My bookings</a>'
-        + '<a href="' + esc(href) + '?pay=1">' + I.doc + 'Payments and invoices</a>'
         + '<a href="' + WA + '" target="_blank" rel="noopener">' + I.wa + 'Help on WhatsApp</a>'
         + '<div class="acct-sep"></div><button type="button" class="out js-acct-out">' + I.out + 'Log out</button>';
       btn.onclick = (e) => {
