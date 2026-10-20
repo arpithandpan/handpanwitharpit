@@ -179,6 +179,10 @@ a.mc-opt { text-decoration: none; }
 /* Errors = Trial error box */
 .lk-card .lk-err { font-size: 14px; color: var(--bk-err); font-weight: 500; line-height: 1.45; background: var(--bk-err-bg); border-radius: 8px; padding: 10px 12px; margin: 0.6rem 0 0 !important; }
 .lk-card .otp-note.err, .mc-sheet .msg { color: var(--bk-err); }
+.mc-btn.wait, .mc-btn.wait:hover { background: var(--bk-pale) !important; color: var(--bk-mid) !important; border-color: var(--bk-pale) !important; cursor: default; }
+.nudge { animation: mcNudge .35s ease; }
+@keyframes mcNudge { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+@media (prefers-reduced-motion: reduce) { .nudge { animation: none; } }
 .lk-note { background: var(--bk-fill); }
 .otp-sent { background: var(--bk-fill); border-radius: 10px; }
 /* Day + time pickers = Trial calendar */
@@ -668,17 +672,52 @@ a.mc-opt { text-decoration: none; }
     };
     tick(); resendT = setInterval(tick, 1000);
   }
+  // Wrong contact: the same value isn't sent again, and after a few misses
+  // (or the hourly limit) the button waits with a countdown. The server
+  // enforces the same limits, so a refresh doesn't skip the wait.
+  let lastMiss = '', lockT = null;
+  const LOCK = 'hp_my_lock';
+  function norm(v) { return v.includes('@') ? v.trim().toLowerCase() : v.replace(/\D/g, '').slice(-10); }
+  function lockFor(sec) {
+    const until = Date.now() + sec * 1000;
+    try { sessionStorage.setItem(LOCK, String(until)); } catch (e) {}
+    runLock(until);
+  }
+  function runLock(until) {
+    const btn = $('lkSend');
+    clearInterval(lockT);
+    const tick = () => {
+      const left = Math.ceil((until - Date.now()) / 1000);
+      if (left <= 0) {
+        clearInterval(lockT); btn.disabled = false; btn.classList.remove('wait'); btn.textContent = 'Send code';
+        try { sessionStorage.removeItem(LOCK); } catch (e) {}
+        return;
+      }
+      btn.disabled = true; btn.classList.add('wait');
+      btn.textContent = left >= 90 ? 'Try again in ' + Math.ceil(left / 60) + ' min' : 'Try again in ' + Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+    };
+    tick(); lockT = setInterval(tick, 1000);
+  }
+  function nudge(el) { el.classList.remove('nudge'); void el.offsetWidth; el.classList.add('nudge'); }
+  try { const u = Number(sessionStorage.getItem(LOCK) || 0); if (u > Date.now()) runLock(u); } catch (e) {}
+
   async function sendCode(again) {
     const inp = $('lkInput'), err = $('lkErr'), btn = $('lkSend');
+    if (!again && btn.disabled) return;
     const v = again ? contact : inp.value.trim();
     const ok = v.includes('@') ? /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) : v.replace(/\D/g, '').length >= 7;
-    if (!ok) { inp.classList.add('err'); err.textContent = 'Please enter your phone number or email.'; err.hidden = false; inp.focus(); return; }
+    if (!ok) { inp.classList.add('err'); err.textContent = 'Please enter your phone number or email.'; err.hidden = false; nudge(err); inp.focus(); return; }
+    // Same value that just wasn't found: don't ask the server again.
+    if (!again && lastMiss && norm(v) === lastMiss && !err.hidden) { nudge(err); inp.focus(); return; }
     inp.classList.remove('err'); err.hidden = true;
-    if (!again) { btn.classList.add('busy'); btn.textContent = 'Sending…'; }
+    if (!again) { btn.classList.add('busy'); btn.textContent = 'Checking…'; }
+    let waitSec = 0;
     try {
       const r = await fetch(API + '/api/my/request-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact: v }) });
       const j = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(j.error || 'Could not send right now. Please try again.');
+      waitSec = Number(j.waitSec) || 0;
+      if (!r.ok) { if (j.code === 'not_found') lastMiss = norm(v); throw new Error(j.error || 'Could not send right now. Please try again.'); }
+      lastMiss = '';
       contact = v; pendSet(v);
       $('lkSentTo').textContent = 'Sent to ' + v;
       $('otpInput').value = ''; $('otpErr').hidden = true; paintBoxes(false);
@@ -690,9 +729,13 @@ a.mc-opt { text-decoration: none; }
       else note.hidden = true;
     } catch (e) {
       if (again) { const note = $('otpNote'); note.textContent = e.message; note.classList.add('err'); note.hidden = false; }
-      else { err.textContent = e.message; err.hidden = false; }
-    } finally { btn.classList.remove('busy'); btn.textContent = 'Send code'; }
+      else { err.textContent = e.message; err.hidden = false; nudge(err); }
+    } finally {
+      btn.classList.remove('busy'); btn.textContent = 'Send code';
+      if (waitSec > 0 && !again) lockFor(waitSec);
+    }
   }
+
   let verifying = false;
   async function verify() {
     const code = $('otpInput').value.replace(/\D/g, '');
