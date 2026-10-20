@@ -69,11 +69,22 @@
 .lk-input { width: 100%; height: 50px; padding: 0 1rem; font-family: var(--font-body); font-size: 1rem; color: var(--maroon); background: #fff; border: 1px solid var(--rule); border-radius: 12px; outline: none; -webkit-appearance: none; appearance: none; box-sizing: border-box; }
 .lk-input:focus { border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(80,0,24,0.10); }
 .lk-input.err { border-color: #B3261E; }
-.lk-err { font-size: 0.84rem; color: #B3261E; margin: 0.4rem 0 0 !important; }
+.lk-card .lk-err { font-size: 0.84rem; color: #B3261E; margin: 0.4rem 0 0 !important; }
 .lk-card .mc-btn.solid.wide { width: 100%; margin-top: 1rem; min-height: 50px; }
 .lk-card .lk-help { font-size: 0.88rem; color: var(--text-mid); text-align: center; margin: 1.2rem 0 0; }
 .lk-card .lk-help a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
-.lk-done { text-align: center; }
+.otp-sent { display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: var(--ivory); border-radius: 12px; padding: 0.75rem 1rem; margin: 0 0 1.4rem; font-size: 0.93rem; color: var(--maroon); }
+.otp-sent span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.otp-sent button { background: none; border: 0; padding: 0; font: inherit; font-weight: 500; color: var(--maroon); border-bottom: 1px solid rgba(80,0,24,.3); cursor: pointer; flex-shrink: 0; }
+.otp-wrap { position: relative; }
+.otp-boxes { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.5rem; }
+.otp-boxes span { height: 58px; border: 1px solid var(--rule); border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 600; color: var(--maroon); transition: border-color .15s, box-shadow .15s; }
+.otp-boxes span.cur { border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(80,0,24,0.10); }
+.otp-boxes.err span { border-color: #B3261E; box-shadow: none; }
+.otp-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0; font-size: 16px; color: transparent; background: transparent; caret-color: transparent; cursor: text; }
+.lk-card .otp-resend { text-align: center; font-size: 0.9rem; color: var(--text-mid); margin: 1.2rem 0 0; }
+.otp-resend button { background: none; border: 0; padding: 0; font: inherit; font-weight: 500; color: var(--maroon); border-bottom: 1px solid rgba(80,0,24,.3); cursor: pointer; }
+@media (max-width: 360px) { .otp-boxes { gap: 0.35rem; } .otp-boxes span { height: 52px; } }
 .lk-ic { width: 56px; height: 56px; border-radius: 50%; background: var(--ivory); color: var(--maroon); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
 .lk-done p { margin-bottom: 1.2rem; }
 .lk-again { background: none; border: 0; font-family: var(--font-body); font-size: 0.92rem; color: var(--maroon); font-weight: 500; cursor: pointer; border-bottom: 1px solid rgba(80,0,24,.25); padding: 0; }
@@ -163,19 +174,26 @@
       <div id="lkForm">
         <p class="lk-note" id="lkExpired" hidden>That login link isn't working any more. Get a fresh one below.</p>
         <h3>Log in with your phone or email</h3>
-        <p>We'll send you a login link on WhatsApp and email.</p>
+        <p>We'll send a 6-digit code to your WhatsApp and email.</p>
         <label for="lkInput">Phone number or email</label>
         <input class="lk-input" id="lkInput" placeholder="Phone or email" autocomplete="email" maxlength="120"/>
         <p class="lk-err" id="lkErr" hidden></p>
-        <button class="mc-btn solid wide" id="lkSend" type="button">Send login link</button>
+        <button class="mc-btn solid wide" id="lkSend" type="button">Send code</button>
         <p class="lk-help">New here? <a href="trial">Book a free trial</a></p>
       </div>
-      <div class="lk-done" id="lkDone" hidden>
-        <span class="lk-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg></span>
-        <h3>Check WhatsApp and email</h3>
-        <p>If this matches a booking, your login link is on its way. It can take a minute.</p>
-        <button class="lk-again" id="lkAgain" type="button">Try a different number or email</button>
-        <p class="lk-help">Didn't get it? <a class="mcWa" href="https://wa.me/919019576583" target="_blank" rel="noopener">Message Arpit on WhatsApp</a></p>
+      <div id="lkCode" hidden>
+        <h3>Enter your code</h3>
+        <p>We sent a 6-digit code to your WhatsApp and email. It works for 10 minutes.</p>
+        <div class="otp-sent"><span id="lkSentTo"></span><button type="button" id="lkChange">Change</button></div>
+        <div class="otp-wrap">
+          <div class="otp-boxes" id="otpBoxes" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <input class="otp-input" id="otpInput" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" aria-label="6-digit code"/>
+        </div>
+        <p class="lk-err" id="otpErr" hidden></p>
+        <button class="mc-btn solid wide" id="otpGo" type="button">Log in</button>
+        <p class="otp-resend" id="otpResend"></p>
+        <p class="lk-help">Code not coming? <a class="mcWa" href="https://wa.me/919019576583" target="_blank" rel="noopener">Message Arpit on WhatsApp</a></p>
+      </div>
       </div>
     </div>
   </div>
@@ -323,7 +341,7 @@
     $('mcTitle').textContent = 'Log in';
     $('mcSub').textContent = 'See your classes, workshops and payments in one place. No password needed.';
     $('lkExpired').hidden = !expired;
-    $('lkForm').hidden = false; $('lkDone').hidden = true;
+    $('lkForm').hidden = false; $('lkCode').hidden = true;
     show('mcAsk');
   }
 
@@ -530,26 +548,86 @@
     }
   }
 
-  // ── link form ──
-  async function sendLink() {
+  // ── log in with a code ──
+  let contact = '', resendT = null;
+  function showStep(code) { $('lkForm').hidden = code; $('lkCode').hidden = !code; }
+  function paintBoxes(err) {
+    const v = $('otpInput').value;
+    const boxes = $('otpBoxes').children;
+    for (let i = 0; i < 6; i++) {
+      boxes[i].textContent = v[i] || '';
+      boxes[i].classList.toggle('cur', !err && document.activeElement === $('otpInput') && i === Math.min(v.length, 5));
+    }
+    $('otpBoxes').classList.toggle('err', !!err);
+  }
+  function countdown(sec) {
+    clearInterval(resendT);
+    const el = $('otpResend');
+    const tick = () => {
+      if (sec <= 0) { clearInterval(resendT); el.innerHTML = 'Didn\'t get it? <button type="button" id="otpAgain">Send again</button>'; $('otpAgain').onclick = () => sendCode(true); return; }
+      el.textContent = 'Didn\'t get it? Send again in 0:' + String(sec).padStart(2, '0');
+      sec--;
+    };
+    tick(); resendT = setInterval(tick, 1000);
+  }
+  async function sendCode(again) {
     const inp = $('lkInput'), err = $('lkErr'), btn = $('lkSend');
-    const v = inp.value.trim();
+    const v = again ? contact : inp.value.trim();
     const ok = v.includes('@') ? /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) : v.replace(/\D/g, '').length >= 7;
     if (!ok) { inp.classList.add('err'); err.textContent = 'Please enter your phone number or email.'; err.hidden = false; inp.focus(); return; }
     inp.classList.remove('err'); err.hidden = true;
-    btn.classList.add('busy'); btn.textContent = 'Sending…';
+    if (!again) { btn.classList.add('busy'); btn.textContent = 'Sending…'; }
     try {
-      const r = await fetch(API + '/api/my/request-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact: v }) });
+      const r = await fetch(API + '/api/my/request-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact: v }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || 'Could not send right now. Please try again.');
-      $('lkForm').hidden = true; $('lkDone').hidden = false;
-    } catch (e) { err.textContent = e.message; err.hidden = false; }
-    finally { btn.classList.remove('busy'); btn.textContent = 'Send login link'; }
+      contact = v;
+      $('lkSentTo').textContent = 'Sent to ' + v;
+      $('otpInput').value = ''; $('otpErr').hidden = true; paintBoxes(false);
+      showStep(true);
+      countdown(j.resendIn || 30);
+      setTimeout(() => $('otpInput').focus(), 50);
+      if (again) toast('New code sent');
+    } catch (e) {
+      if (again) { $('otpErr').textContent = e.message; $('otpErr').hidden = false; }
+      else { err.textContent = e.message; err.hidden = false; }
+    } finally { btn.classList.remove('busy'); btn.textContent = 'Send code'; }
   }
-  $('lkSend').onclick = sendLink;
-  $('lkInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendLink(); });
+  let verifying = false;
+  async function verify() {
+    const code = $('otpInput').value.replace(/\D/g, '');
+    const e = $('otpErr');
+    if (code.length !== 6) { e.textContent = 'Please enter all 6 digits.'; e.hidden = false; paintBoxes(true); return; }
+    if (verifying) return;
+    verifying = true;
+    const btn = $('otpGo'); btn.classList.add('busy'); btn.textContent = 'Checking…';
+    try {
+      const r = await fetch(API + '/api/my/verify-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact, code }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok || !j.token) throw new Error(j.error || 'That code didn\'t match.');
+      clearInterval(resendT);
+      history.replaceState(null, '', location.pathname + location.search + '#' + j.token);
+      showStep(false); $('lkInput').value = '';
+      start();
+    } catch (err) {
+      e.textContent = err.message; e.hidden = false; paintBoxes(true);
+      $('otpInput').select();
+    } finally { verifying = false; btn.classList.remove('busy'); btn.textContent = 'Log in'; }
+  }
+  $('lkSend').onclick = () => sendCode(false);
+  $('lkInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendCode(false); });
   $('lkInput').addEventListener('input', () => { $('lkInput').classList.remove('err'); $('lkErr').hidden = true; });
-  $('lkAgain').onclick = () => { $('lkDone').hidden = true; $('lkForm').hidden = false; $('lkInput').value = ''; $('lkInput').focus(); };
+  $('lkChange').onclick = () => { clearInterval(resendT); showStep(false); $('lkInput').focus(); };
+  $('otpInput').addEventListener('input', () => {
+    const inp = $('otpInput');
+    inp.value = inp.value.replace(/\D/g, '').slice(0, 6);
+    $('otpErr').hidden = true; paintBoxes(false);
+    if (inp.value.length === 6) verify();
+  });
+  $('otpInput').addEventListener('focus', () => paintBoxes(false));
+  $('otpInput').addEventListener('blur', () => paintBoxes(!$('otpErr').hidden));
+  $('otpInput').addEventListener('keydown', e => { if (e.key === 'Enter') verify(); });
+  $('otpGo').onclick = verify;
 
   window.addEventListener('hashchange', start);
   document.addEventListener('visibilitychange', () => { if (!document.hidden && data) refresh(false); });
