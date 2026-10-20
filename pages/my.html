@@ -683,13 +683,17 @@ a.mc-opt { text-decoration: none; }
     try { sessionStorage.setItem(LOCK, String(until)); } catch (e) {}
     runLock(until);
   }
+  const LOCK_MSG = 'Too many tries. Please wait a moment.';
   function runLock(until) {
-    const btn = $('lkSend');
+    const btn = $('lkSend'), err = $('lkErr');
     clearInterval(lockT);
+    // After a refresh the earlier error is gone, so say why the button is off.
+    if (err.hidden) { err.textContent = LOCK_MSG; err.hidden = false; }
     const tick = () => {
       const left = Math.ceil((until - Date.now()) / 1000);
       if (left <= 0) {
         clearInterval(lockT); btn.disabled = false; btn.classList.remove('wait'); btn.textContent = 'Send code';
+        if (err.textContent === LOCK_MSG) err.hidden = true;
         try { sessionStorage.removeItem(LOCK); } catch (e) {}
         return;
       }
@@ -765,7 +769,11 @@ a.mc-opt { text-decoration: none; }
   }
   $('lkSend').onclick = () => sendCode(false);
   $('lkInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendCode(false); });
-  $('lkInput').addEventListener('input', () => { $('lkInput').classList.remove('err'); $('lkErr').hidden = true; });
+  $('lkInput').addEventListener('input', () => {
+    $('lkInput').classList.remove('err');
+    if ($('lkSend').disabled) { $('lkErr').textContent = LOCK_MSG; return; }
+    $('lkErr').hidden = true;
+  });
   $('lkChange').onclick = () => { clearInterval(resendT); pendClear(); showStep(false); $('lkInput').focus(); };
   // "Log in" in the menu while already on this page: stay, don't reload.
   document.querySelectorAll('a.nav-account, a.mm-account').forEach(a => a.addEventListener('click', (e) => {
