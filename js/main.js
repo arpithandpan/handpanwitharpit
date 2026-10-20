@@ -1,14 +1,99 @@
+// ---- ACCOUNT (Log in / initial + menu) ----
+// Logged out: the "Log in" pill in the nav. Logged in (the person opened their
+// personal link on this device): the first letter of their name, with a menu
+// for My bookings, payments, help and Log out. Nothing here talks to the
+// server. The page my.html saves the login, this only reads it.
+window.hpAcct = (function () {
+  const WA = 'https://wa.me/919019576583';
+  const I = {
+    cal: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+    doc: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>',
+    wa: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg>',
+    out: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>'
+  };
+  function get(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+  function del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+  function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function who() {
+    const token = get('hp_my_token'), name = get('hp_my_name');
+    return token && name ? { name, role: get('hp_my_role') } : null;
+  }
+
+  let docClick = null;
+  function close() {
+    document.querySelectorAll('.acct-menu').forEach(m => { m.hidden = true; });
+    document.querySelectorAll('.nav-avatar').forEach(b => b.setAttribute('aria-expanded', 'false'));
+  }
+
+  function logout() {
+    del('hp_my_token'); del('hp_my_name'); del('hp_my_role');
+    close();
+    render();
+    document.dispatchEvent(new Event('hp:logout'));
+  }
+
+  function render() {
+    const me = who();
+    document.querySelectorAll('.nav-account-li').forEach(li => {
+      const link = li.querySelector('.nav-account');
+      if (!link) return;
+      const href = link.getAttribute('href');
+      li.querySelectorAll('.nav-avatar, .acct-menu').forEach(x => x.remove());
+      link.hidden = !!me;
+      if (!me) return;
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'nav-avatar';
+      btn.setAttribute('aria-haspopup', 'true'); btn.setAttribute('aria-expanded', 'false');
+      btn.setAttribute('aria-label', 'Account menu for ' + me.name);
+      btn.textContent = me.name.charAt(0).toUpperCase();
+      const menu = document.createElement('div');
+      menu.className = 'acct-menu'; menu.hidden = true;
+      menu.innerHTML = '<div class="acct-head"><b>' + esc(me.name) + '</b>' + (me.role ? '<span>' + esc(me.role) + '</span>' : '') + '</div>'
+        + '<a href="' + esc(href) + '">' + I.cal + 'My bookings</a>'
+        + '<a href="' + esc(href) + '?pay=1">' + I.doc + 'Payments and invoices</a>'
+        + '<a href="' + WA + '" target="_blank" rel="noopener">' + I.wa + 'Help on WhatsApp</a>'
+        + '<div class="acct-sep"></div><button type="button" class="out js-acct-out">' + I.out + 'Log out</button>';
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const open = menu.hidden;
+        close();
+        menu.hidden = !open; btn.setAttribute('aria-expanded', String(open));
+      };
+      menu.querySelector('.js-acct-out').onclick = logout;
+      li.appendChild(btn); li.appendChild(menu);
+    });
+    document.querySelectorAll('.mobile-menu-inner').forEach(box => {
+      const link = box.querySelector('.mm-account');
+      if (!link) return;
+      const href = link.getAttribute('href');
+      box.querySelectorAll('.mm-acct').forEach(x => x.remove());
+      link.hidden = !!me;
+      if (!me) return;
+      const d = document.createElement('div');
+      d.className = 'mm-acct';
+      d.innerHTML = '<span class="who">Logged in as ' + esc(me.name) + '</span><a href="' + esc(href) + '">My bookings</a><button type="button" class="out js-acct-out">Log out</button>';
+      d.querySelector('.js-acct-out').onclick = logout;
+      box.appendChild(d);
+    });
+  }
+
+  function init() {
+    render();
+    if (!docClick) {
+      docClick = (e) => { if (!e.target.closest('.acct-menu')) close(); };
+      document.addEventListener('click', docClick);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  return { refresh: render, logout };
+})();
+
 // ============================================
 // HANDPAN WITH ARPIT — Global JS
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-
-  // ---- MY BOOKINGS: someone who has opened their personal page sees their name ----
-  try {
-    const myName = localStorage.getItem('hp_my_token') && localStorage.getItem('hp_my_name');
-    if (myName) document.querySelectorAll('.js-my-label').forEach(el => { el.textContent = 'Hi ' + myName; });
-  } catch (e) { /* storage blocked: keep "My bookings" */ }
 
   // ---- LOGO: Scroll rotation + press effect ----
   const navLogoImg = document.querySelector('.nav-logo img');
