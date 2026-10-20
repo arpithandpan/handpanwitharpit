@@ -2846,7 +2846,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v119</span>
+        <span style="color:var(--clay);font-weight:500;">v120</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2918,7 +2918,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v119</span>
+        <span style="color:var(--clay);font-weight:500;">v120</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -7125,7 +7125,7 @@ async function loadStudents() {
     loadTrials();
     populateFeeStudentDropdown(stus);
     populateClassesBatchDropdown(stus);
-    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}" data-remaining="${s.remaining==null?'':s.remaining}"><td>${s.id}</td><td class="td-truncate td-name" data-tip="${(s.full_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${s.full_name}</span>${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);">' + s.country + '</span>' : ''}</td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td class="td-truncate td-email" data-tip="${s.email||''}">${s.email||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.level||'—'}</td><td>${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</td><td>${s.total_classes||0}</td><td>${remainingBadge(s)}</td><td style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</td><td class="td-truncate td-desc" data-tip="${(s.description||'').replace(/"/g,'&quot;')}">${s.description||'—'}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Log a class" onclick="openClassLog('${s.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button><button class="icon-action-btn" data-tip="Request fee" onclick="openRequestFee('${s.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="13" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('studentsTable').innerHTML = stus.map(s => `<tr class="${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}" data-join_date="${s.join_date||''}" data-total_classes="${s.total_classes||0}" data-total_paid="${s.total_paid||0}" data-remaining="${s.remaining==null?'':s.remaining}"><td>${s.id}</td><td class="td-truncate td-name" data-tip="${(s.full_name||'').replace(/"/g,'&quot;')}"><span style="font-weight:500;">${s.full_name}</span>${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);">' + s.country + '</span>' : ''}</td><td class="td-truncate td-phone" data-tip="${s.phone||''}">${s.phone||'—'}</td><td class="td-truncate td-email" data-tip="${s.email||''}">${s.email||'—'}</td><td>${fmtDate(s.join_date)}</td><td><span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></td><td>${s.level||'—'}</td><td>${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</td><td>${s.total_classes||0}</td><td>${remainingBadge(s)}</td><td style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</td><td class="td-truncate td-desc" data-tip="${(s.description||'').replace(/"/g,'&quot;')}">${s.description||'—'}</td><td class="ws-action-sticky">${adminS?(s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap"><button class="icon-action-btn" data-tip="Log a class" onclick="openClassLog('${s.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button><button class="icon-action-btn" data-tip="Request fee" onclick="openRequestFee('${s.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button><button class="icon-action-btn" data-tip="My classes link" onclick="myClassesLink('${s.id}', false)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></button><button class="icon-action-btn" data-tip="Edit" onclick="openEdit('students','${s.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('students','${s.id}','${s.full_name}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`).join('') || `<tr><td colspan="13" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.students}
     </td></tr>`;
 
@@ -8890,9 +8890,14 @@ async function myClassesLink(id, reset) {
   // The copy happens on the button tap, so phones allow it.
   const pending = customConfirm('My classes link · ' + name, url, 'Copy link', 'star');
   const d = document.getElementById('customConfirmDesc');
-  if (d) { d.style.userSelect = 'all'; d.style.wordBreak = 'break-all'; }
+  if (d) {
+    d.innerHTML = '<span style="user-select:all;word-break:break-all;">' + zEsc(url) + '</span>'
+      + '<span style="display:block;margin-top:0.9rem;font-size:0.85em;">Shared it with the wrong person? '
+      + '<button type="button" id="myLinkReset" style="background:none;border:0;padding:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer;">Reset link</button></span>';
+    const rb = document.getElementById('myLinkReset');
+    if (rb) rb.onclick = () => { customConfirmCancel(); myClassesLink(id, true); };
+  }
   const ok = await pending;
-  if (d) { d.style.userSelect = ''; d.style.wordBreak = ''; }
   if (!ok) return;
   try { await navigator.clipboard.writeText(url); showToast('✓ Link copied. It\'s just for ' + name.split(' ')[0] + ', so send it to them directly.', 'success'); }
   catch (e) { copyFallback(url, 'My classes link · ' + name); }
@@ -10979,7 +10984,6 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
     if (isAdmin) html += `<button class="m-dots-item" onclick="closeMDotsSheet();openClassLog('${id}')">${CLS_SVG} Classes</button>`;
     if (isAdmin) html += `<button class="m-dots-item" onclick="closeMDotsSheet();openRequestFee('${id}')">${LINK_SVG} Request fee</button>`;
     if (isAdmin) html += `<button class="m-dots-item" onclick="closeMDotsSheet();myClassesLink('${id}', false)">${MY_SVG} My classes link</button>`;
-    if (isAdmin) html += `<button class="m-dots-item" onclick="closeMDotsSheet();myClassesLink('${id}', true)">${UNDO_SVG} Reset My classes link</button>`;
     html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('students','${id}')">${EDIT_SVG} Edit</button>`;
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('students','${id}','${name}')">${TRASH_SVG} Delete</button>`;
   } else if (type === 'fee_payment') {
@@ -11016,7 +11020,6 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
         if (isAdmin) actions.push({ label: `${CLS_SVG} Classes`, danger: false, fn: () => openClassLog(id) });
         if (isAdmin) actions.push({ label: `${LINK_SVG} Request fee`, danger: false, fn: () => openRequestFee(id) });
         if (isAdmin) actions.push({ label: `${MY_SVG} My classes link`, danger: false, fn: () => myClassesLink(id, false) });
-        if (isAdmin) actions.push({ label: `${UNDO_SVG} Reset My classes link`, danger: false, fn: () => myClassesLink(id, true) });
         actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('students', id) });
         actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('students', id, name) });
       } else if (type === 'fee_payment') {
