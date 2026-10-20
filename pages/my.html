@@ -232,7 +232,7 @@ a.mc-opt { text-decoration: none; }
       <div id="lkForm">
         <p class="lk-note" id="lkExpired" hidden>That login link isn't working any more. Get a fresh one below.</p>
         <h1 class="lk-title">Log in</h1>
-        <p>No password needed. We'll send a 6-digit code to your WhatsApp and email.</p>
+        <p>No password needed. We'll send a 6-digit code to the email on your booking.</p>
         <label for="lkInput">Phone number or email</label>
         <input class="lk-input" id="lkInput" placeholder="Phone or email" autocomplete="email" maxlength="120"/>
         <p class="lk-err" id="lkErr" hidden></p>
@@ -241,7 +241,7 @@ a.mc-opt { text-decoration: none; }
       </div>
       <div id="lkCode" hidden>
         <h3>Enter your code</h3>
-        <p>We sent a 6-digit code to your WhatsApp and email. It works for 10 minutes.</p>
+        <p id="lkCodeP">We sent a 6-digit code to your email. It works for 10 minutes.</p>
         <div class="otp-sent"><span id="lkSentTo"></span><button type="button" id="lkChange">Change</button></div>
         <div class="otp-wrap">
           <div class="otp-boxes" id="otpBoxes" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
@@ -640,13 +640,18 @@ a.mc-opt { text-decoration: none; }
   // "Log in" in the menu, for as long as the code works (10 minutes).
   const PEND = 'hp_my_pending';
   function pendGet() { try { const p = JSON.parse(sessionStorage.getItem(PEND) || 'null'); return p && Date.now() - p.at < 10 * 60 * 1000 ? p : null; } catch (e) { return null; } }
-  function pendSet(c) { try { sessionStorage.setItem(PEND, JSON.stringify({ contact: c, at: Date.now() })); } catch (e) {} }
+  function pendSet(c, to, wa) { try { sessionStorage.setItem(PEND, JSON.stringify({ contact: c, to: to, wa: !!wa, at: Date.now() })); } catch (e) {} }
+  // Show where the code went: a masked email, plus WhatsApp once that's on.
+  function showSentTo(to, wa, typed) {
+    $('lkSentTo').textContent = 'Sent to ' + (wa ? 'your WhatsApp' + (to ? ' and ' + to : '') : (to || typed));
+    $('lkCodeP').textContent = 'We sent a 6-digit code to your ' + (wa ? (to ? 'WhatsApp and email' : 'WhatsApp') : 'email') + '. It works for 10 minutes.';
+  }
   function pendClear() { try { sessionStorage.removeItem(PEND); } catch (e) {} }
   function resumeCode() {
     const p = pendGet();
     if (!p) return;
     contact = p.contact;
-    $('lkSentTo').textContent = 'Sent to ' + p.contact;
+    showSentTo(p.to, p.wa, p.contact);
     $('otpErr').hidden = true; $('otpNote').hidden = true;
     showStep(true);
     countdown(Math.max(0, 30 - Math.floor((Date.now() - p.at) / 1000)));
@@ -720,10 +725,10 @@ a.mc-opt { text-decoration: none; }
       const r = await fetch(API + '/api/my/request-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact: v }) });
       const j = await r.json().catch(() => ({}));
       waitSec = Number(j.waitSec) || 0;
-      if (!r.ok) { if (j.code === 'not_found') lastMiss = norm(v); throw new Error(j.error || 'Could not send right now. Please try again.'); }
+      if (!r.ok) { if (j.code === 'not_found' || j.code === 'no_channel') lastMiss = norm(v); throw new Error(j.error || 'Could not send right now. Please try again.'); }
       lastMiss = '';
-      contact = v; pendSet(v);
-      $('lkSentTo').textContent = 'Sent to ' + v;
+      contact = v; pendSet(v, j.sentTo, j.wa);
+      showSentTo(j.sentTo, j.wa, v);
       $('otpInput').value = ''; $('otpErr').hidden = true; paintBoxes(false);
       showStep(true);
       countdown(j.resendIn || 30);
