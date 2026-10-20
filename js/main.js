@@ -4,6 +4,12 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ---- MY BOOKINGS: someone who has opened their personal page sees their name ----
+  try {
+    const myName = localStorage.getItem('hp_my_token') && localStorage.getItem('hp_my_name');
+    if (myName) document.querySelectorAll('.js-my-label').forEach(el => { el.textContent = 'Hi ' + myName; });
+  } catch (e) { /* storage blocked: keep "My bookings" */ }
+
   // ---- LOGO: Scroll rotation + press effect ----
   const navLogoImg = document.querySelector('.nav-logo img');
   const navLogoEl = document.querySelector('.nav-logo');
