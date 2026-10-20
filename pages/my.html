@@ -12,9 +12,10 @@
 <link rel="stylesheet" href="../css/style.css"/>
 <style>
 [hidden] { display: none !important; }
-/* This page is the login page: no "Log in" button in the menu here.
-   When logged in, the initial + menu still shows (built by main.js). */
-.nav-links a.nav-account, .mobile-menu-inner a.mm-account { display: none !important; }
+/* This page is the login page: the "Log in" button shows as the current
+   page (filled), like the underline on other pages. Tapping it just scrolls
+   to the form. When logged in, main.js hides it and shows the initial. */
+.nav-links a.nav-account:not([hidden]), .mobile-menu-inner a.mm-account:not([hidden]) { background: var(--maroon); color: var(--ivory) !important; border-color: var(--maroon); }
 .mc-wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 1.25rem; }
 /* A working page, not a marketing page: a small greeting instead of the big hero. */
 .mc-section { padding-top: calc(var(--nav-h) + 2.75rem) !important; min-height: 60vh; }
@@ -61,6 +62,11 @@
 .mc-empty { font-size: 0.95rem; color: var(--text-mid); margin: 0; }
 .mc-link { display: flex; align-items: center; gap: 0.85rem; padding: 1rem 0; border: 0; border-top: 1px solid rgba(80,0,24,0.12); color: var(--maroon); text-decoration: none; font-weight: 500; font-size: 0.98rem; background: none; width: 100%; font-family: var(--font-body); cursor: pointer; text-align: left; }
 .mc-link:first-child { border-top: none; padding-top: 0.2rem; }
+.mc-help-h { font-size: 0.85rem; color: var(--text-mid); margin: 1.1rem 0 0.1rem; padding-top: 1rem; border-top: 1px solid rgba(80,0,24,0.12); }
+.mc-help-h:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.mc-help-h + .mc-link { border-top: 0; padding-top: 0.5rem; }
+button.mc-inline { background: none; border: 0; border-bottom: 1px solid rgba(80,0,24,.25); padding: 0; font: inherit; font-weight: 500; color: var(--maroon); cursor: pointer; }
+a.mc-opt { text-decoration: none; }
 .mc-link:last-child { padding-bottom: 0.2rem; }
 .mc-link .end { margin-left: auto; color: var(--text-mid); transition: transform .2s; }
 .mc-link[aria-expanded="true"] .end { transform: rotate(180deg); }
@@ -267,6 +273,7 @@
   const ICON_DOC = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>';
   const ICON_WA = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg>';
   const ICON_DOWN = '<svg class="end" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  const ICON_MAIL = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>';
   const ICON_RIGHT = '<svg class="end" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
   const ICON_CAL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
   const ICON_OUT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>';
@@ -304,6 +311,27 @@
     if (cur === 'CAD') return 'C$' + Number(n).toLocaleString('en-US');
     return cur + ' ' + n;
   }
+  const MAIL = 'arpithandpan@gmail.com';
+  function mailLink(subject) { return 'mailto:' + MAIL + '?subject=' + encodeURIComponent(subject || 'My classes') + '&body=' + encodeURIComponent('Hi Arpit,\n\n'); }
+  // One way to reach Arpit everywhere on the page: a small sheet with
+  // WhatsApp and email, so people without WhatsApp are never stuck.
+  function openContact(topic) {
+    const t = topic || 'my classes';
+    const s = openSheet('<h3>Contact Arpit</h3><p class="lead">About ' + esc(t) + '</p>'
+      + '<a class="mc-opt first" href="' + esc(waLink('Hi Arpit, about ' + t)) + '" target="_blank" rel="noopener"><span class="ic">' + ICON_WA + '</span><span><strong>WhatsApp</strong><small>Usually the quickest</small></span></a>'
+      + '<a class="mc-opt" href="' + esc(mailLink('About ' + t)) + '"><span class="ic">' + ICON_MAIL + '</span><span><strong>Email</strong><small>' + MAIL + '</small></span></a>'
+      + '<div class="acts" style="margin-top:1rem;"><button class="mc-btn line" type="button" id="ctClose">Close</button></div>');
+    s.querySelector('#ctClose').onclick = closeSheet;
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('.js-contact, .js-acct-help');
+    if (!b) return;
+    e.preventDefault();
+    try { if (window.hpAcct) document.querySelectorAll('.acct-menu').forEach(m => { m.hidden = true; }); } catch (x) {}
+    const mm = document.querySelector('.mobile-menu.open');
+    if (mm) { const hb = document.querySelector('.nav-hamburger'); if (hb) hb.click(); }
+    openContact(b.dataset.topic || '');
+  });
   function waLink(text) { return 'https://wa.me/' + ((data && data.whatsapp) || '919019576583') + (text ? '?text=' + encodeURIComponent(text) : ''); }
 
   // ── loading the page ──
@@ -383,8 +411,8 @@
           ? '<span class="mc-spacer"></span><button class="mc-btn line" type="button" data-move="' + next.key + '">Move</button><button class="mc-btn line" type="button" data-skip="' + next.key + '">Skip</button>'
           : '')
         + '</div>'
-        + (!next.canChange ? '<p class="mc-locked" style="margin-top:1rem;">Less than ' + c.noticeHours + ' hours to go. <a href="' + esc(waLink('Hi Arpit, about my class on ' + whenLong(next.start))) + '" target="_blank" rel="noopener">Message Arpit</a> if you can\'t make it.</p>'
-          : left <= 0 ? '<p class="mc-locked" style="margin-top:1rem;">You\'ve used both changes for ' + monthOf(next.key) + '. <a href="' + esc(waLink('Hi Arpit, about my class on ' + whenLong(next.start))) + '" target="_blank" rel="noopener">Message Arpit</a> if you need to change it.</p>' : '')
+        + (!next.canChange ? '<p class="mc-locked" style="margin-top:1rem;">Less than ' + c.noticeHours + ' hours to go. ' + '<button type="button" class="mc-inline js-contact" data-topic="' + esc('my class on ' + whenLong(next.start)) + '">Contact Arpit</button>' + ' if you can\'t make it.</p>'
+          : left <= 0 ? '<p class="mc-locked" style="margin-top:1rem;">You\'ve used both changes for ' + monthOf(next.key) + '. ' + '<button type="button" class="mc-inline js-contact" data-topic="' + esc('my class on ' + whenLong(next.start)) + '">Contact Arpit</button>' + ' if you need to change it.</p>' : '')
         + '</div>');
     }
 
@@ -411,7 +439,7 @@
     if (now.length) parts.push('<ul class="mc-list">' + now.map(row).join('') + '</ul>');
     if (later.length) parts.push('<p class="mc-group">After your next payment</p><ul class="mc-list">' + later.map(row).join('') + '</ul>');
     if (parts.length) html.push('<div class="mc-card"><p class="mc-h">Coming up</p>' + parts.join('') + '</div>');
-    if (!next && !parts.length) html.push('<div class="mc-card"><p class="mc-h">No classes coming up</p><p class="mc-empty">Nothing is scheduled for the next four weeks. <a class="mc-inline" href="' + esc(waLink('Hi Arpit, about my classes')) + '" target="_blank" rel="noopener">Message Arpit</a> to plan your next class.</p></div>');
+    if (!next && !parts.length) html.push('<div class="mc-card"><p class="mc-h">No classes coming up</p><p class="mc-empty">Nothing is scheduled for the next four weeks. Get in touch below to plan your next class.</p></div>');
 
     html.push('<div class="mc-card">' + linksHtml(c.payments) + '</div>');
     $('mcPage').innerHTML = html.join('');
@@ -433,7 +461,9 @@
         + '<div class="mc-pay" id="mcPays" hidden>' + payments.map(p => '<div><span>' + (p.date ? ymdLabel(p.date) + ' · ' : '') + money(p.amount, p.currency) + (p.classes ? ' · ' + p.classes + ' classes' : '') + '</span>'
           + (p.invoice ? '<a href="' + API + '/api/my/' + token + '/invoice/' + encodeURIComponent(p.invoice) + '" target="_blank" rel="noopener">Invoice</a>' : '') + '</div>').join('') + '</div>';
     }
-    h += '<a class="mc-link" href="' + esc(waLink('Hi Arpit')) + '" target="_blank" rel="noopener">' + ICON_WA + 'Message Arpit on WhatsApp' + ICON_RIGHT + '</a>';
+    h += '<p class="mc-help-h">Need help?</p>';
+    h += '<a class="mc-link" href="' + esc(waLink('Hi Arpit')) + '" target="_blank" rel="noopener">' + ICON_WA + 'WhatsApp Arpit' + ICON_RIGHT + '</a>';
+    h += '<a class="mc-link" href="' + esc(mailLink('My classes')) + '">' + ICON_MAIL + 'Email Arpit' + ICON_RIGHT + '</a>';
     return h;
   }
   function bindLinks() {
@@ -473,11 +503,11 @@
     const c = data.classes;
     let body;
     if (!u.canChange) {
-      body = '<p class="none">Less than ' + c.noticeHours + ' hours to go, so this class can\'t be changed here. Message Arpit if you can\'t make it.</p>'
-        + '<div class="acts"><a class="mc-btn solid" href="' + esc(waLink('Hi Arpit, about my class on ' + whenLong(u.start))) + '" target="_blank" rel="noopener">Message Arpit</a></div>';
+      body = '<p class="none">Less than ' + c.noticeHours + ' hours to go, so this class can\'t be changed here. Contact Arpit if you can\'t make it.</p>'
+        + '<div class="acts">' + '<button type="button" class="mc-btn solid js-contact" data-topic="' + esc('my class on ' + whenLong(u.start)) + '">Contact Arpit</button>' + '</div>';
     } else if (leftFor(key) <= 0) {
-      body = '<p class="none">You\'ve used both changes for ' + monthOf(key) + '. Message Arpit if you need to change this class.</p>'
-        + '<div class="acts"><a class="mc-btn solid" href="' + esc(waLink('Hi Arpit, about my class on ' + whenLong(u.start))) + '" target="_blank" rel="noopener">Message Arpit</a></div>';
+      body = '<p class="none">You\'ve used both changes for ' + monthOf(key) + '. Contact Arpit if you need to change this class.</p>'
+        + '<div class="acts">' + '<button type="button" class="mc-btn solid js-contact" data-topic="' + esc('my class on ' + whenLong(u.start)) + '">Contact Arpit</button>' + '</div>';
     } else {
       body = '<p class="lead">What would you like to do?</p>'
         + '<button class="mc-opt first" type="button" id="opMove"><span class="ic">' + ICON_CAL + '</span><span><strong>Move to another time</strong><small>Pick a new day and time now</small></span></button>'
@@ -508,7 +538,7 @@
     }
     if (sheetEl !== s) return;
     if (!slots.length) {
-      s.querySelector('#mvBody').innerHTML = '<p class="none">No free times right now. Message Arpit and he\'ll find one with you.</p><div class="acts"><button class="mc-btn line" type="button" id="mvClose">Close</button><a class="mc-btn solid" href="' + esc(waLink('Hi Arpit, I need to change my class on ' + (u ? whenLong(u.start) : ymdLabel(key)))) + '" target="_blank" rel="noopener">Message Arpit</a></div>';
+      s.querySelector('#mvBody').innerHTML = '<p class="none">No free times right now. Contact Arpit and he\'ll find one with you.</p><div class="acts"><button class="mc-btn line" type="button" id="mvClose">Close</button>' + '<button type="button" class="mc-btn solid js-contact" data-topic="' + esc('changing my class on ' + (u ? whenLong(u.start) : ymdLabel(key))) + '">Contact Arpit</button>' + '</div>';
       s.querySelector('#mvClose').onclick = closeSheet; return;
     }
     const byDay = {};
