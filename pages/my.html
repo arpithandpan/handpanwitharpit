@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex"/>
+<meta name="referrer" content="no-referrer"/>
+<title>My classes | Arpit Pandey</title>
+<link rel="icon" href="../favicon.ico"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+[hidden] { display: none !important; }
+.mc-wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 1.25rem; }
+.mc-narrow { max-width: 520px; }
+.mc-card { background: var(--card); border-radius: var(--card-radius); padding: 1.75rem 2rem; }
+.mc-k { font-size: 0.85rem; color: var(--text-mid); margin: 0 0 0.35rem; }
+.mc-when { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; color: var(--maroon); font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.5rem); line-height: 1.05; margin: 0 0 0.35rem; }
+.mc-sub { font-size: 0.97rem; color: var(--text-dark); margin: 0 0 1.4rem; }
+.mc-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+.mc-btn { font-family: var(--font-body); font-size: 0.98rem; font-weight: 500; border-radius: 40px; padding: 0 1.4rem; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; border: 1px solid var(--maroon); text-decoration: none; transition: background .15s, color .15s, border-color .15s; -webkit-tap-highlight-color: transparent; }
+.mc-btn.solid { background: var(--maroon); color: var(--ivory); }
+.mc-btn.line { background: transparent; color: var(--maroon); border-color: var(--rule); }
+@media (hover: hover) { .mc-btn.solid:hover { background: var(--maroon-deep); } .mc-btn.line:hover { border-color: var(--maroon); } }
+.mc-btn.busy { pointer-events: none; opacity: 0.6; }
+.mc-spacer { flex: 1; }
+.mc-locked { font-size: 0.92rem; color: var(--text-mid); margin: 0; line-height: 1.55; }
+.mc-locked a, .mc-inline { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
+.mc-bal { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.mc-bal h3 { color: var(--maroon); font-size: 1.1rem; font-weight: 600; margin: 0 0 0.25rem; }
+.mc-bal p { margin: 0; font-size: 0.95rem; color: var(--text-dark); }
+.mc-h { color: var(--maroon); font-size: 1.05rem; font-weight: 600; margin: 0 0 0.6rem; }
+.mc-list { list-style: none; margin: 0; padding: 0; }
+.mc-item { display: flex; align-items: center; gap: 1rem; padding: 0.95rem 0; border-top: 1px solid rgba(80,0,24,0.12); }
+.mc-item:first-child { border-top: none; }
+.mc-item.later { opacity: 0.55; }
+.mc-date { width: 52px; flex-shrink: 0; text-align: center; color: var(--maroon); line-height: 1.1; }
+.mc-date b { display: block; font-size: 1.35rem; font-weight: 600; }
+.mc-date span { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.mc-info { flex: 1; min-width: 0; }
+.mc-info strong { display: block; color: var(--maroon); font-weight: 500; font-size: 0.98rem; }
+.mc-info small { font-size: 0.85rem; color: var(--text-mid); }
+.mc-tag { display: inline-block; font-size: 0.74rem; font-weight: 500; padding: 2px 8px; border-radius: 20px; background: var(--ivory); color: var(--maroon); margin-left: 6px; vertical-align: 1px; white-space: nowrap; }
+.mc-more { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--rule); background: transparent; color: var(--maroon); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+@media (hover: hover) { .mc-more:hover { border-color: var(--maroon); } }
+.mc-group { font-size: 0.82rem; color: var(--text-mid); margin: 0.9rem 0 0; padding-top: 0.9rem; border-top: 1px solid rgba(80,0,24,0.12); }
+.mc-makeup { display: flex; align-items: center; gap: 1rem; background: var(--ivory); border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 0.4rem; }
+.mc-makeup p { margin: 0; flex: 1; font-size: 0.95rem; color: var(--maroon); }
+.mc-makeup .mc-btn { min-height: 40px; padding: 0 1.1rem; font-size: 0.92rem; }
+.mc-empty { font-size: 0.95rem; color: var(--text-mid); margin: 0; }
+.mc-link { display: flex; align-items: center; gap: 0.85rem; padding: 1rem 0; border: 0; border-top: 1px solid rgba(80,0,24,0.12); color: var(--maroon); text-decoration: none; font-weight: 500; font-size: 0.98rem; background: none; width: 100%; font-family: var(--font-body); cursor: pointer; text-align: left; }
+.mc-link:first-child { border-top: none; padding-top: 0.2rem; }
+.mc-link:last-child { padding-bottom: 0.2rem; }
+.mc-link .end { margin-left: auto; color: var(--text-mid); transition: transform .2s; }
+.mc-link[aria-expanded="true"] .end { transform: rotate(180deg); }
+.mc-pay { padding: 0 0 0.6rem 2.1rem; }
+.mc-pay div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.92rem; padding: 0.45rem 0; color: var(--text-dark); }
+.mc-pay a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
+/* skeleton */
+.mc-sk { background: var(--card); border-radius: var(--card-radius); height: 210px; position: relative; overflow: hidden; }
+.mc-sk.s2 { height: 300px; }
+.mc-sk::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(80,0,24,0.04), transparent); animation: mcShimmer 1.4s infinite; }
+@keyframes mcShimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+/* link form */
+.lk-card h3 { color: var(--maroon); font-size: 1.15rem; font-weight: 600; margin: 0 0 0.35rem; }
+.lk-card p { font-size: 0.97rem; color: var(--text-dark); margin: 0 0 1.4rem; line-height: 1.55; }
+.lk-card label { display: block; font-size: 0.85rem; color: var(--maroon); font-weight: 500; margin-bottom: 0.35rem; }
+.lk-input { width: 100%; height: 50px; padding: 0 1rem; font-family: var(--font-body); font-size: 1rem; color: var(--maroon); background: #fff; border: 1px solid var(--rule); border-radius: 12px; outline: none; -webkit-appearance: none; appearance: none; box-sizing: border-box; }
+.lk-input:focus { border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(80,0,24,0.10); }
+.lk-input.err { border-color: #B3261E; }
+.lk-err { font-size: 0.84rem; color: #B3261E; margin: 0.4rem 0 0 !important; }
+.lk-card .mc-btn.solid.wide { width: 100%; margin-top: 1rem; min-height: 50px; }
+.lk-card .lk-help { font-size: 0.88rem; color: var(--text-mid); text-align: center; margin: 1.2rem 0 0; }
+.lk-card .lk-help a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
+.lk-done { text-align: center; }
+.lk-ic { width: 56px; height: 56px; border-radius: 50%; background: var(--ivory); color: var(--maroon); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.lk-done p { margin-bottom: 1.2rem; }
+.lk-again { background: none; border: 0; font-family: var(--font-body); font-size: 0.92rem; color: var(--maroon); font-weight: 500; cursor: pointer; border-bottom: 1px solid rgba(80,0,24,.25); padding: 0; }
+.lk-note { background: var(--ivory); border-radius: 12px; padding: 0.85rem 1rem; font-size: 0.92rem !important; color: var(--maroon) !important; }
+/* sheets */
+.mc-scrim { position: fixed; inset: 0; background: rgba(40,10,15,0.45); z-index: 200; opacity: 0; transition: opacity .2s; }
+.mc-scrim.open { opacity: 1; }
+.mc-sheet { position: fixed; z-index: 201; background: var(--card); padding: 1.6rem 1.5rem 1.5rem; box-sizing: border-box; }
+@media (max-width: 640px) {
+  .mc-sheet { left: 0; right: 0; bottom: 0; border-radius: 22px 22px 0 0; max-height: 88vh; overflow: auto; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .25s ease; }
+  .mc-sheet.open { transform: none; }
+  .mc-sheet::before { content: ""; display: block; width: 40px; height: 4px; border-radius: 2px; background: rgba(80,0,24,0.2); margin: -0.6rem auto 1.1rem; }
+}
+@media (min-width: 641px) {
+  .mc-sheet { top: 50%; left: 50%; transform: translate(-50%,-48%); width: 520px; max-height: 86vh; overflow: auto; border-radius: 22px; padding: 2rem; opacity: 0; transition: opacity .2s, transform .2s; }
+  .mc-sheet.open { opacity: 1; transform: translate(-50%,-50%); }
+}
+.mc-sheet h3 { color: var(--maroon); font-size: 1.2rem; font-weight: 600; margin: 0 0 0.3rem; }
+.mc-sheet .lead { font-size: 0.95rem; color: var(--text-dark); margin: 0 0 1.3rem; line-height: 1.55; }
+.mc-sheet .lbl { font-size: 0.85rem; color: var(--text-mid); margin: 0 0 0.6rem; }
+.mc-days { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 0.5rem; margin-bottom: 1.3rem; }
+.mc-day, .mc-time { font-family: var(--font-body); border: 1px solid var(--rule); background: transparent; color: var(--maroon); border-radius: 12px; cursor: pointer; }
+.mc-day { padding: 0.65rem 0.2rem; text-align: center; line-height: 1.25; }
+.mc-day .d1 { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.mc-day .d2 { display: block; font-size: 1.05rem; font-weight: 600; }
+.mc-times { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0.55rem; margin-bottom: 1.4rem; }
+.mc-time { padding: 0.8rem 0.4rem; font-size: 0.95rem; }
+.mc-day.on, .mc-time.on { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.mc-sheet .acts { display: flex; gap: 0.7rem; }
+.mc-sheet .acts .mc-btn { flex: 1; padding: 0 1rem; }
+.mc-sheet .fine { font-size: 0.84rem; color: var(--text-mid); margin: 1rem 0 0; text-align: center; }
+.mc-sheet .msg { font-size: 0.9rem; color: #B3261E; margin: 0 0 1rem; }
+.mc-sheet .none { font-size: 0.95rem; color: var(--text-mid); margin: 0 0 1.4rem; line-height: 1.55; }
+.mc-opt { display: flex; align-items: center; gap: 0.9rem; width: 100%; padding: 1rem 0; border: 0; border-top: 1px solid rgba(80,0,24,0.12); background: none; font-family: var(--font-body); text-align: left; cursor: pointer; color: var(--maroon); }
+.mc-opt.first { border-top: 0; }
+.mc-opt strong { display: block; font-weight: 500; font-size: 1rem; }
+.mc-opt small { display: block; font-size: 0.86rem; color: var(--text-mid); }
+.mc-opt .ic { width: 40px; height: 40px; border-radius: 50%; background: var(--ivory); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mc-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); background: var(--maroon); color: var(--ivory); padding: 0.85rem 1.2rem; border-radius: 14px; font-size: 0.95rem; z-index: 300; opacity: 0; transition: opacity .2s, transform .2s; max-width: calc(100% - 32px); box-sizing: border-box; text-align: center; }
+.mc-toast.show { opacity: 1; transform: translate(-50%, 0); }
+@media (max-width: 600px) {
+  .mc-card { padding: 1.4rem 1.25rem; }
+  .mc-row .mc-btn.solid { flex: 1 1 100%; }
+  .mc-row .mc-btn.line { flex: 1; }
+  .mc-spacer { display: none; }
+  .mc-makeup { flex-wrap: wrap; }
+  .mc-days { grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+@media (max-width: 360px) { .mc-times { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-logo"><img src="../images/handpan-logo.svg" alt="Handpan with Arpit" width="44" height="44" style="display:block;">
+  </a>
+  <button class="nav-hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li><li><a href="about.html">About</a></li>
+    <li><a href="music.html">Music</a></li><li><a href="workshops.html">Workshops</a></li>
+    <li><a href="classes.html">Classes</a></li><li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+<div class="mobile-menu">
+<div class="mobile-menu-inner">
+  <a href="../index.html">Home</a><a href="about.html">About</a><a href="music.html">Music</a>
+  <a href="workshops.html">Workshops</a><a href="classes.html">Classes</a><a href="contact.html">Contact</a>
+</div>
+</div>
+
+
+<section class="page-hero">
+  <p class="page-hero-eyebrow">My classes</p>
+  <h1 class="page-hero-title" id="mcTitle">Get your class link</h1>
+  <p class="page-hero-sub" id="mcSub">Your personal page has your schedule, Zoom link and payments.</p>
+</section>
+<div class="page-hero-rule" aria-hidden="true"></div>
+
+<section class="section" style="padding-top:0;">
+  <!-- loading -->
+  <div class="mc-wrap" id="mcLoading" hidden><div class="mc-sk"></div><div class="mc-sk s2"></div></div>
+
+  <!-- ask for link -->
+  <div class="mc-wrap mc-narrow" id="mcAsk" hidden>
+    <div class="mc-card lk-card">
+      <div id="lkForm">
+        <p class="lk-note" id="lkExpired" hidden>That link isn't working any more. Get a fresh one below.</p>
+        <h3>Where should we send it?</h3>
+        <p>Enter the phone number or email you use for classes. Your link will come on WhatsApp and email.</p>
+        <label for="lkInput">Phone number or email</label>
+        <input class="lk-input" id="lkInput" placeholder="Phone or email" autocomplete="email" maxlength="120"/>
+        <p class="lk-err" id="lkErr" hidden></p>
+        <button class="mc-btn solid wide" id="lkSend" type="button">Send my link</button>
+        <p class="lk-help">New here? <a href="trial">Book a free trial</a></p>
+      </div>
+      <div class="lk-done" id="lkDone" hidden>
+        <span class="lk-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg></span>
+        <h3>Check WhatsApp and email</h3>
+        <p>If this matches a student, your link is on its way. It can take a minute.</p>
+        <button class="lk-again" id="lkAgain" type="button">Try a different number or email</button>
+        <p class="lk-help">Didn't get it? <a class="mcWa" href="https://wa.me/919019576583" target="_blank" rel="noopener">Message Arpit on WhatsApp</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- the page -->
+  <div class="mc-wrap" id="mcPage" hidden></div>
+</section>
+
+<div class="mc-toast" id="mcToast" role="status" aria-live="polite"></div>
+
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <span class="footer-brand-name">Arpit <em>Pandey</em></span>
+      <span class="footer-brand-tag">Handpan artist · Bengaluru, India</span>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="music.html">Music</a></li>
+        <li><a href="workshops.html">Workshops</a></li>
+        <li><a href="classes.html">Classes</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="dashboard.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;">Dashboard <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></svg></a></li>
+        <li><a href="../privacy.html">Privacy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Learn</h4>
+      <ul>
+        <li><a href="trial.html">Free trial</a></li>
+        <li><a href="classes.html">Online classes</a></li>
+        <li><a href="workshops.html">Live workshops</a></li>
+        <li><a href="my.html">My classes</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.instagram.com/pandeyarpit" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank" rel="noopener">Spotify</a></li>
+        <li><a href="mailto:arpithandpan@gmail.com">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Arpit Pandey</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+<script>
+(function () {
+  const API = 'https://handpan-webhook-server-production.up.railway.app';
+  const $ = id => document.getElementById(id);
+  const KEY = 'hp_my_token';
+  const ICON_MORE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
+  const ICON_ZOOM = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="M15.5 10.5l6-3.5v10l-6-3.5"/></svg>';
+  const ICON_DOC = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>';
+  const ICON_WA = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg>';
+  const ICON_DOWN = '<svg class="end" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  const ICON_RIGHT = '<svg class="end" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  const ICON_CAL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+  const ICON_X = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>';
+
+  let token = '', data = null;
+
+  function store(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function show(id) { ['mcLoading', 'mcAsk', 'mcPage'].forEach(x => { $(x).hidden = x !== id; }); }
+
+  let toastT = null;
+  function toast(msg) {
+    const t = $('mcToast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3800);
+  }
+
+  // ── formatting in the student's own zone ──
+  function tz() { return (data && data.classes && data.classes.tz) || Intl.DateTimeFormat().resolvedOptions().timeZone; }
+  function f(iso, opts) { return new Intl.DateTimeFormat('en-GB', { timeZone: tz(), ...opts }).format(new Date(iso)); }
+  function time(iso) { return new Intl.DateTimeFormat('en-US', { timeZone: tz(), hour: 'numeric', minute: '2-digit' }).format(new Date(iso)); }
+  function whenLong(iso) { return f(iso, { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + time(iso); }
+  function localYmd(iso) { return new Intl.DateTimeFormat('en-CA', { timeZone: tz() }).format(new Date(iso)); }
+  function ymdLabel(ymd) { return new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', day: 'numeric', month: 'short' }).format(new Date(ymd + 'T00:00:00Z')); }
+  function monthOf(ymd) { return new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', month: 'long' }).format(new Date(ymd.slice(0, 7) + '-01T00:00:00Z')); }
+  function inDays(iso) {
+    const a = localYmd(new Date().toISOString()), b = localYmd(iso);
+    const n = Math.round((new Date(b + 'T00:00:00Z') - new Date(a + 'T00:00:00Z')) / 86400000);
+    if (n <= 0) return 'today'; if (n === 1) return 'tomorrow'; return 'in ' + n + ' days';
+  }
+  function money(n, cur) {
+    if (cur === 'INR') return '₹' + Number(n).toLocaleString('en-IN');
+    if (cur === 'USD') return '$' + Number(n).toLocaleString('en-US');
+    if (cur === 'CAD') return 'C$' + Number(n).toLocaleString('en-US');
+    return cur + ' ' + n;
+  }
+  function waLink(text) { return 'https://wa.me/' + ((data && data.whatsapp) || '919019576583') + (text ? '?text=' + encodeURIComponent(text) : ''); }
+
+  // ── loading the page ──
+  async function start() {
+    const h = (location.hash || '').replace(/^#/, '').trim();
+    token = /^[a-f0-9]{40,64}$/i.test(h) ? h.toLowerCase() : load(KEY);
+    if (!token) { askForm(false); return; }
+    show('mcLoading');
+    await refresh(true);
+  }
+
+  async function refresh(first) {
+    try {
+      const r = await fetch(API + '/api/my/' + token, { cache: 'no-store' });
+      const j = await r.json().catch(() => ({}));
+      if (r.status === 404) { store(KEY, null); askForm(true); return; }
+      if (!r.ok || !j.ok) throw new Error(j.error || 'Could not load your page.');
+      data = j;
+      store(KEY, token);
+      if (!location.hash) history.replaceState(null, '', '#' + token);
+      render();
+    } catch (e) {
+      if (first) {
+        show('mcPage');
+        $('mcPage').innerHTML = '<div class="mc-card"><p class="mc-h">Could not load your page</p><p class="mc-empty" style="margin-bottom:1.2rem;">Please check your internet and try again.</p><button class="mc-btn solid" type="button" id="mcRetry">Try again</button></div>';
+        $('mcRetry').onclick = () => { show('mcLoading'); refresh(true); };
+      } else toast(e.message);
+    }
+  }
+
+  function askForm(expired) {
+    $('mcTitle').textContent = 'Get your class link';
+    $('mcSub').textContent = 'Your personal page has your schedule, Zoom link and payments.';
+    $('lkExpired').hidden = !expired;
+    $('lkForm').hidden = false; $('lkDone').hidden = true;
+    show('mcAsk');
+  }
+
+  // ── render ──
+  function render() {
+    const c = data.classes;
+    $('mcTitle').textContent = 'Hi ' + data.name;
+    show('mcPage');
+    if (!c) {
+      $('mcSub').textContent = 'Nothing is booked under your name right now.';
+      $('mcPage').innerHTML = '<div class="mc-card">' + linksHtml([]) + '</div>';
+      bindLinks(); return;
+    }
+    $('mcSub').textContent = 'All times are in your time zone, ' + c.tzCity + '.';
+    const html = [];
+    const next = c.upcoming.find(u => !u.later) || c.upcoming[0];
+
+    // Next class
+    if (next) {
+      const left = c.changesLeft[next.key.slice(0, 7)] || 0;
+      html.push('<div class="mc-card"><p class="mc-k">Next class · ' + inDays(next.start) + '</p>'
+        + '<p class="mc-when">' + esc(whenLong(next.start)) + '</p>'
+        + '<p class="mc-sub">' + (next.min || 60) + ' min on Zoom' + (next.makeup ? ' · make-up class' : next.moved ? ' · moved' : '') + '</p>'
+        + '<div class="mc-row">'
+        + (c.zoom ? '<a class="mc-btn solid" href="' + esc(c.zoom) + '" target="_blank" rel="noopener">' + ICON_ZOOM + 'Join Zoom</a>' : '')
+        + (next.canChange && left > 0
+          ? '<span class="mc-spacer"></span><button class="mc-btn line" type="button" data-move="' + next.key + '">Move</button><button class="mc-btn line" type="button" data-skip="' + next.key + '">Skip</button>'
+          : '')
+        + '</div>'
+        + (!next.canChange ? '<p class="mc-locked" style="margin-top:1rem;">Less than ' + c.noticeHours + ' hours to go. <a href="' + esc(waLink('Hi Arpit, about my class on ' + whenLong(next.start))) + '" target="_blank" rel="noopener">Message Arpit</a> if you can\'t make it.</p>'
+          : left <= 0 ? '<p class="mc-locked" style="margin-top:1rem;">You\'ve used both changes for ' + monthOf(next.key) + '. <a href="' + esc(waLink('Hi Arpit, about my class on ' + whenLong(next.start))) + '" target="_blank" rel="noopener">Message Arpit</a> if you need to change it.</p>' : '')
+        + '</div>');
+    }
+
+    // Payment due
+    if (c.pay) {
+      const due = c.left <= 0;
+      html.push('<div class="mc-card"><div class="mc-bal"><div>'
+        + '<h3>' + (due ? 'Payment due' : (c.left === 1 ? '1 class left' : c.left + ' classes left')) + '</h3>'
+        + '<p>' + (due ? c.pay.classes + ' classes · ' + money(c.pay.amount, c.pay.currency) : 'Your next payment link is ready.') + '</p>'
+        + '</div><a class="mc-btn solid" href="' + esc(c.pay.url) + '">Pay ' + money(c.pay.amount, c.pay.currency) + '</a></div></div>');
+    }
+
+    // Coming up (skip the next class, it has its own card)
+    const rest = c.upcoming.filter(u => !next || u.key !== next.key);
+    const parts = [];
+    for (const m of c.makeups) {
+      parts.push('<div class="mc-makeup"><p>Make up your ' + ymdLabel(m.key) + ' class by ' + ymdLabel(m.deadline) + '</p><button class="mc-btn solid" type="button" data-makeup="' + m.key + '">Pick a time</button></div>');
+    }
+    const row = u => '<li class="mc-item' + (u.later ? ' later' : '') + '"><div class="mc-date"><b>' + f(u.start, { day: 'numeric' }) + '</b><span>' + f(u.start, { month: 'short' }) + '</span></div>'
+      + '<div class="mc-info"><strong>' + f(u.start, { weekday: 'long' }) + ' · ' + time(u.start)
+      + (u.makeup ? ' <span class="mc-tag">Make-up</span>' : u.moved ? ' <span class="mc-tag">Moved</span>' : '') + '</strong><small>' + (u.min || 60) + ' min</small></div>'
+      + (u.later ? '' : '<button class="mc-more" type="button" aria-label="Change this class" data-opts="' + u.key + '">' + ICON_MORE + '</button>') + '</li>';
+    const now = rest.filter(u => !u.later), later = rest.filter(u => u.later);
+    if (now.length) parts.push('<ul class="mc-list">' + now.map(row).join('') + '</ul>');
+    if (later.length) parts.push('<p class="mc-group">After your next payment</p><ul class="mc-list">' + later.map(row).join('') + '</ul>');
+    if (parts.length) html.push('<div class="mc-card"><p class="mc-h">Coming up</p>' + parts.join('') + '</div>');
+    if (!next && !parts.length) html.push('<div class="mc-card"><p class="mc-h">No classes coming up</p><p class="mc-empty">Nothing is scheduled for the next four weeks. <a class="mc-inline" href="' + esc(waLink('Hi Arpit, about my classes')) + '" target="_blank" rel="noopener">Message Arpit</a> to plan your next class.</p></div>');
+
+    html.push('<div class="mc-card">' + linksHtml(c.payments) + '</div>');
+    $('mcPage').innerHTML = html.join('');
+    bindLinks();
+    $('mcPage').querySelectorAll('[data-move]').forEach(b => b.onclick = () => openMove(b.dataset.move, 'move'));
+    $('mcPage').querySelectorAll('[data-skip]').forEach(b => b.onclick = () => openSkip(b.dataset.skip));
+    $('mcPage').querySelectorAll('[data-makeup]').forEach(b => b.onclick = () => openMove(b.dataset.makeup, 'makeup'));
+    $('mcPage').querySelectorAll('[data-opts]').forEach(b => b.onclick = () => openOptions(b.dataset.opts));
+  }
+
+  function linksHtml(payments) {
+    let h = '';
+    if (payments.length) {
+      h += '<button class="mc-link" type="button" id="mcPayToggle" aria-expanded="false" aria-controls="mcPays">' + ICON_DOC + 'Payments and invoices' + ICON_DOWN + '</button>'
+        + '<div class="mc-pay" id="mcPays" hidden>' + payments.map(p => '<div><span>' + (p.date ? ymdLabel(p.date) + ' · ' : '') + money(p.amount, p.currency) + (p.classes ? ' · ' + p.classes + ' classes' : '') + '</span>'
+          + (p.invoice ? '<a href="' + API + '/api/my/' + token + '/invoice/' + encodeURIComponent(p.invoice) + '" target="_blank" rel="noopener">Invoice</a>' : '') + '</div>').join('') + '</div>';
+    }
+    h += '<a class="mc-link" href="' + esc(waLink('Hi Arpit')) + '" target="_blank" rel="noopener">' + ICON_WA + 'Message Arpit on WhatsApp' + ICON_RIGHT + '</a>';
+    return h;
+  }
+  function bindLinks() {
+    const t = $('mcPayToggle');
+    if (t) t.onclick = () => { const open = t.getAttribute('aria-expanded') === 'true'; t.setAttribute('aria-expanded', String(!open)); $('mcPays').hidden = open; };
+  }
+
+  // ── sheets ──
+  let sheetEl = null, scrimEl = null, lastFocus = null;
+  function closeSheet() {
+    if (!sheetEl) return;
+    const s = sheetEl, k = scrimEl; sheetEl = scrimEl = null;
+    s.classList.remove('open'); k.classList.remove('open');
+    setTimeout(() => { s.remove(); k.remove(); }, 260);
+    document.removeEventListener('keydown', onKey);
+    if (lastFocus) try { lastFocus.focus(); } catch (e) {}
+  }
+  function onKey(e) { if (e.key === 'Escape') closeSheet(); }
+  function openSheet(inner) {
+    if (sheetEl) { sheetEl.remove(); scrimEl.remove(); sheetEl = scrimEl = null; }
+    lastFocus = document.activeElement;
+    scrimEl = document.createElement('div'); scrimEl.className = 'mc-scrim'; scrimEl.onclick = closeSheet;
+    sheetEl = document.createElement('div'); sheetEl.className = 'mc-sheet'; sheetEl.setAttribute('role', 'dialog'); sheetEl.setAttribute('aria-modal', 'true');
+    sheetEl.innerHTML = inner;
+    document.body.appendChild(scrimEl); document.body.appendChild(sheetEl);
+    requestAnimationFrame(() => { scrimEl.classList.add('open'); sheetEl.classList.add('open'); });
+    document.addEventListener('keydown', onKey);
+    return sheetEl;
+  }
+  function cls(key) { return data.classes.upcoming.find(u => u.key === key); }
+  function leftFor(key) { return data.classes.changesLeft[key.slice(0, 7)] || 0; }
+  function leftLine(key) { const n = leftFor(key); return (n === 1 ? '1 change' : n + ' changes') + ' left in ' + monthOf(key); }
+
+  function openOptions(key) {
+    const u = cls(key); if (!u) return;
+    const c = data.classes;
+    let body;
+    if (!u.canChange) {
+      body = '<p class="none">Less than ' + c.noticeHours + ' hours to go, so this class can\'t be changed here. Message Arpit if you can\'t make it.</p>'
+        + '<div class="acts"><a class="mc-btn solid" href="' + esc(waLink('Hi Arpit, about my class on ' + whenLong(u.start))) + '" target="_blank" rel="noopener">Message Arpit</a></div>';
+    } else if (leftFor(key) <= 0) {
+      body = '<p class="none">You\'ve used both changes for ' + monthOf(key) + '. Message Arpit if you need to change this class.</p>'
+        + '<div class="acts"><a class="mc-btn solid" href="' + esc(waLink('Hi Arpit, about my class on ' + whenLong(u.start))) + '" target="_blank" rel="noopener">Message Arpit</a></div>';
+    } else {
+      body = '<p class="lead">What would you like to do?</p>'
+        + '<button class="mc-opt first" type="button" id="opMove"><span class="ic">' + ICON_CAL + '</span><span><strong>Move to another time</strong><small>Pick a new day and time now</small></span></button>'
+        + '<button class="mc-opt" type="button" id="opSkip"><span class="ic">' + ICON_X + '</span><span><strong>Skip this class</strong><small>Pick a make-up time later this month</small></span></button>'
+        + '<p class="fine">' + leftLine(key) + '</p>';
+    }
+    const s = openSheet('<h3>' + esc(whenLong(u.start)) + '</h3>' + body);
+    const m = s.querySelector('#opMove'), k = s.querySelector('#opSkip');
+    if (m) m.onclick = () => openMove(key, 'move');
+    if (k) k.onclick = () => openSkip(key);
+  }
+
+  async function openMove(key, mode) {
+    const u = cls(key);
+    const title = mode === 'makeup' ? 'Book your make-up' : 'Move your class';
+    const lead = mode === 'makeup' ? 'For your ' + ymdLabel(key) + ' class. Any free time until ' + ymdLabel((data.classes.makeups.find(m => m.key === key) || {}).deadline || key) + '.' : (u ? whenLong(u.start) : '');
+    const s = openSheet('<h3>' + title + '</h3><p class="lead">' + esc(lead) + '</p><div id="mvBody"><div class="mc-sk" style="height:180px;border-radius:14px;"></div></div>');
+    let slots = [];
+    try {
+      const r = await fetch(API + '/api/my/' + token + '/times?mode=' + mode + '&key=' + key, { cache: 'no-store' });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error(j.error || 'Could not load free times.');
+      slots = j.slots;
+    } catch (e) {
+      if (sheetEl !== s) return;
+      s.querySelector('#mvBody').innerHTML = '<p class="msg">' + esc(e.message) + '</p><div class="acts"><button class="mc-btn line" type="button" id="mvClose">Close</button></div>';
+      s.querySelector('#mvClose').onclick = closeSheet; return;
+    }
+    if (sheetEl !== s) return;
+    if (!slots.length) {
+      s.querySelector('#mvBody').innerHTML = '<p class="none">No free times right now. Message Arpit and he\'ll find one with you.</p><div class="acts"><button class="mc-btn line" type="button" id="mvClose">Close</button><a class="mc-btn solid" href="' + esc(waLink('Hi Arpit, I need to change my class on ' + (u ? whenLong(u.start) : ymdLabel(key)))) + '" target="_blank" rel="noopener">Message Arpit</a></div>';
+      s.querySelector('#mvClose').onclick = closeSheet; return;
+    }
+    const byDay = {};
+    for (const t of slots) (byDay[localYmd(t)] = byDay[localYmd(t)] || []).push(t);
+    const days = Object.keys(byDay).sort();
+    let day = days[0], pick = null;
+    function paint() {
+      s.querySelector('#mvBody').innerHTML = '<p class="lbl">New day</p><div class="mc-days">'
+        + days.map(d => '<button type="button" class="mc-day' + (d === day ? ' on' : '') + '" data-d="' + d + '"><span class="d1">' + new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'short' }).format(new Date(d + 'T00:00:00Z')) + '</span><span class="d2">' + Number(d.slice(8)) + '</span></button>').join('')
+        + '</div><p class="lbl">New time</p><div class="mc-times">'
+        + byDay[day].map(t => '<button type="button" class="mc-time' + (t === pick ? ' on' : '') + '" data-t="' + t + '">' + time(t) + '</button>').join('')
+        + '</div><p class="msg" id="mvMsg" hidden></p><div class="acts"><button class="mc-btn line" type="button" id="mvCancel">Cancel</button><button class="mc-btn solid" type="button" id="mvGo">' + (mode === 'makeup' ? 'Book make-up' : 'Move class') + '</button></div>'
+        + '<p class="fine">' + (mode === 'makeup' ? 'Same Zoom link as always' : leftLine(key) + ' · Same Zoom link') + '</p>';
+      s.querySelectorAll('.mc-day').forEach(b => b.onclick = () => { day = b.dataset.d; pick = null; paint(); });
+      s.querySelectorAll('.mc-time').forEach(b => b.onclick = () => { pick = b.dataset.t; paint(); });
+      s.querySelector('#mvCancel').onclick = closeSheet;
+      s.querySelector('#mvGo').onclick = async (ev) => {
+        if (!pick) { const m = s.querySelector('#mvMsg'); m.textContent = 'Pick a time first.'; m.hidden = false; return; }
+        await doChange(ev.currentTarget, { action: mode, key, start: pick }, mode === 'makeup' ? 'Make-up booked for ' + whenLong(pick) : 'Moved to ' + whenLong(pick));
+      };
+    }
+    paint();
+  }
+
+  function openSkip(key) {
+    const u = cls(key); if (!u) return;
+    const deadline = (() => { const d = new Date(key.slice(0, 7) + '-01T00:00:00Z'); d.setUTCMonth(d.getUTCMonth() + 1); d.setUTCDate(0); return d.toISOString().slice(0, 10); })();
+    const s = openSheet('<h3>Skip ' + esc(f(u.start, { weekday: 'short', day: 'numeric', month: 'short' })) + '?</h3>'
+      + '<p class="lead">You can pick a make-up time any day until ' + ymdLabel(deadline) + '. A class not made up by then doesn\'t carry over.</p>'
+      + '<p class="msg" id="skMsg" hidden></p><div class="acts"><button class="mc-btn line" type="button" id="skNo">Keep class</button><button class="mc-btn solid" type="button" id="skGo">Skip class</button></div>'
+      + '<p class="fine">' + leftLine(key) + '</p>');
+    s.querySelector('#skNo').onclick = closeSheet;
+    s.querySelector('#skGo').onclick = (ev) => doChange(ev.currentTarget, { action: 'skip', key }, 'Class skipped. Book a make-up any time this month.');
+  }
+
+  async function doChange(btn, body, okMsg) {
+    btn.classList.add('busy'); btn.textContent = 'Saving…';
+    try {
+      const r = await fetch(API + '/api/my/' + token + '/change', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error(j.error || 'Could not save that change.');
+      closeSheet(); toast(okMsg);
+      await refresh(false);
+    } catch (e) {
+      const m = sheetEl && sheetEl.querySelector('.msg');
+      if (m) { m.textContent = e.message; m.hidden = false; }
+      btn.classList.remove('busy'); btn.textContent = 'Try again';
+      if (/taken/i.test(e.message) && body.action !== 'skip') setTimeout(() => openMove(body.key, body.action), 1400);
+    }
+  }
+
+  // ── link form ──
+  async function sendLink() {
+    const inp = $('lkInput'), err = $('lkErr'), btn = $('lkSend');
+    const v = inp.value.trim();
+    const ok = v.includes('@') ? /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) : v.replace(/\D/g, '').length >= 7;
+    if (!ok) { inp.classList.add('err'); err.textContent = 'Please enter your phone number or email.'; err.hidden = false; inp.focus(); return; }
+    inp.classList.remove('err'); err.hidden = true;
+    btn.classList.add('busy'); btn.textContent = 'Sending…';
+    try {
+      const r = await fetch(API + '/api/my/request-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact: v }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || 'Could not send right now. Please try again.');
+      $('lkForm').hidden = true; $('lkDone').hidden = false;
+    } catch (e) { err.textContent = e.message; err.hidden = false; }
+    finally { btn.classList.remove('busy'); btn.textContent = 'Send my link'; }
+  }
+  $('lkSend').onclick = sendLink;
+  $('lkInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendLink(); });
+  $('lkInput').addEventListener('input', () => { $('lkInput').classList.remove('err'); $('lkErr').hidden = true; });
+  $('lkAgain').onclick = () => { $('lkDone').hidden = true; $('lkForm').hidden = false; $('lkInput').value = ''; $('lkInput').focus(); };
+
+  window.addEventListener('hashchange', start);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && data) refresh(false); });
+  start();
+})();
+</script>
+</body>
+</html>
