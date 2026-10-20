@@ -12,7 +12,17 @@
 <link rel="stylesheet" href="../css/style.css"/>
 <style>
 [hidden] { display: none !important; }
+/* This page is the login page: no "Log in" button in the menu here.
+   When logged in, the initial + menu still shows (built by main.js). */
+.nav-links a.nav-account, .mobile-menu-inner a.mm-account { display: none !important; }
 .mc-wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 1.25rem; }
+/* A working page, not a marketing page: a small greeting instead of the big hero. */
+.mc-section { padding-top: calc(var(--nav-h) + 2.75rem) !important; min-height: 60vh; }
+.mc-head { padding: 0 0.25rem 0.25rem; }
+.mc-hi { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; color: var(--maroon); font-size: clamp(2rem, 1.6rem + 1.4vw, 2.6rem); line-height: 1.05; margin: 0 0 0.35rem; }
+.mc-tz { font-size: 0.95rem; color: var(--text-mid); margin: 0; }
+.lk-card .lk-title { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; color: var(--maroon); font-size: clamp(2.1rem, 1.7rem + 1.4vw, 2.6rem); line-height: 1; margin: 0 0 0.6rem; }
+@media (max-width: 1080px) { .mc-section { padding-top: calc(var(--nav-h) + 1.75rem) !important; } }
 .mc-narrow { max-width: 520px; }
 .mc-card { background: var(--card); border-radius: var(--card-radius); padding: 1.75rem 2rem; }
 .mc-k { font-size: 0.85rem; color: var(--text-mid); margin: 0 0 0.35rem; }
@@ -157,14 +167,7 @@
 </div>
 
 
-<section class="page-hero">
-  <p class="page-hero-eyebrow">My bookings</p>
-  <h1 class="page-hero-title" id="mcTitle">Log in</h1>
-  <p class="page-hero-sub" id="mcSub">See your classes, workshops and payments in one place. No password needed.</p>
-</section>
-<div class="page-hero-rule" aria-hidden="true"></div>
-
-<section class="section" style="padding-top:0;">
+<section class="section mc-section">
   <!-- loading -->
   <div class="mc-wrap" id="mcLoading" hidden><div class="mc-sk"></div><div class="mc-sk s2"></div></div>
 
@@ -173,8 +176,8 @@
     <div class="mc-card lk-card">
       <div id="lkForm">
         <p class="lk-note" id="lkExpired" hidden>That login link isn't working any more. Get a fresh one below.</p>
-        <h3>Log in with your phone or email</h3>
-        <p>We'll send a 6-digit code to your WhatsApp and email.</p>
+        <h1 class="lk-title">Log in</h1>
+        <p>No password needed. We'll send a 6-digit code to your WhatsApp and email.</p>
         <label for="lkInput">Phone number or email</label>
         <input class="lk-input" id="lkInput" placeholder="Phone or email" autocomplete="email" maxlength="120"/>
         <p class="lk-err" id="lkErr" hidden></p>
@@ -334,7 +337,7 @@
   // Forget the link on this device only. The link itself keeps working
   // (Arpit can reset it from the dashboard if it reached the wrong person).
   function signOut() {
-    token = ''; data = null;
+    token = ''; data = null; pendClear();
     history.replaceState(null, '', location.pathname);
     scrollTo(0, 0);
     askForm(false);
@@ -343,25 +346,22 @@
   document.addEventListener('hp:logout', signOut);
 
   function askForm(expired) {
-    $('mcTitle').textContent = 'Log in';
-    $('mcSub').textContent = 'See your classes, workshops and payments in one place. No password needed.';
     $('lkExpired').hidden = !expired;
     $('lkForm').hidden = false; $('lkCode').hidden = true;
     show('mcAsk');
+    resumeCode();
   }
 
   // ── render ──
   function render() {
     const c = data.classes;
-    $('mcTitle').textContent = 'Hi ' + data.name;
     show('mcPage');
+    const head = (sub) => '<div class="mc-head"><h1 class="mc-hi" id="mcTitle">Hi ' + esc(data.name) + '</h1><p class="mc-tz" id="mcSub">' + sub + '</p></div>';
     if (!c) {
-      $('mcSub').textContent = 'Nothing is booked under your name right now.';
-      $('mcPage').innerHTML = '<div class="mc-card">' + linksHtml([]) + '</div>';
+      $('mcPage').innerHTML = head('Nothing is booked under your name right now.') + '<div class="mc-card">' + linksHtml([]) + '</div>';
       bindLinks(); return;
     }
-    $('mcSub').textContent = 'All times are in your time zone, ' + c.tzCity + '.';
-    const html = [];
+    const html = [head('Times are in your time zone · ' + esc(c.tzCity))];
     const next = c.upcoming.find(u => !u.later) || c.upcoming[0];
 
     // Next class
@@ -555,6 +555,22 @@
 
   // ── log in with a code ──
   let contact = '', resendT = null;
+  // A code that was sent but not entered yet survives a reload or a tap on
+  // "Log in" in the menu, for as long as the code works (10 minutes).
+  const PEND = 'hp_my_pending';
+  function pendGet() { try { const p = JSON.parse(sessionStorage.getItem(PEND) || 'null'); return p && Date.now() - p.at < 10 * 60 * 1000 ? p : null; } catch (e) { return null; } }
+  function pendSet(c) { try { sessionStorage.setItem(PEND, JSON.stringify({ contact: c, at: Date.now() })); } catch (e) {} }
+  function pendClear() { try { sessionStorage.removeItem(PEND); } catch (e) {} }
+  function resumeCode() {
+    const p = pendGet();
+    if (!p) return;
+    contact = p.contact;
+    $('lkSentTo').textContent = 'Sent to ' + p.contact;
+    $('otpErr').hidden = true;
+    showStep(true);
+    countdown(Math.max(0, 30 - Math.floor((Date.now() - p.at) / 1000)));
+    setTimeout(() => { $('otpInput').focus(); paintBoxes(false); }, 50);
+  }
   function showStep(code) { $('lkForm').hidden = code; $('lkCode').hidden = !code; }
   function paintBoxes(err) {
     const v = $('otpInput').value;
@@ -586,7 +602,7 @@
       const r = await fetch(API + '/api/my/request-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact: v }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || 'Could not send right now. Please try again.');
-      contact = v;
+      contact = v; pendSet(v);
       $('lkSentTo').textContent = 'Sent to ' + v;
       $('otpInput').value = ''; $('otpErr').hidden = true; paintBoxes(false);
       showStep(true);
@@ -611,6 +627,7 @@
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok || !j.token) throw new Error(j.error || 'That code didn\'t match.');
       clearInterval(resendT);
+      pendClear();
       history.replaceState(null, '', location.pathname + location.search + '#' + j.token);
       showStep(false); $('lkInput').value = '';
       start();
@@ -622,7 +639,14 @@
   $('lkSend').onclick = () => sendCode(false);
   $('lkInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendCode(false); });
   $('lkInput').addEventListener('input', () => { $('lkInput').classList.remove('err'); $('lkErr').hidden = true; });
-  $('lkChange').onclick = () => { clearInterval(resendT); showStep(false); $('lkInput').focus(); };
+  $('lkChange').onclick = () => { clearInterval(resendT); pendClear(); showStep(false); $('lkInput').focus(); };
+  // "Log in" in the menu while already on this page: stay, don't reload.
+  document.querySelectorAll('a.nav-account, a.mm-account').forEach(a => a.addEventListener('click', (e) => {
+    if (token) return;
+    e.preventDefault();
+    scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => { const t = $('lkCode').hidden ? $('lkInput') : $('otpInput'); try { t.focus({ preventScroll: true }); } catch (x) { t.focus(); } }, 250);
+  }));
   $('otpInput').addEventListener('input', () => {
     const inp = $('otpInput');
     inp.value = inp.value.replace(/\D/g, '').slice(0, 6);
