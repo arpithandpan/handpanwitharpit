@@ -306,9 +306,13 @@
   }
 
   async function refresh(first) {
+    const asked = token;
+    if (!asked) return;
     try {
-      const r = await fetch(API + '/api/my/' + token, { cache: 'no-store' });
+      const r = await fetch(API + '/api/my/' + asked, { cache: 'no-store' });
       const j = await r.json().catch(() => ({}));
+      // Logged out (or switched person) while this was loading: drop the answer.
+      if (asked !== token) return;
       if (r.status === 404) { store(KEY, null); store(NAME_KEY, null); store(ROLE_KEY, null); navRefresh(); askForm(true); return; }
       if (!r.ok || !j.ok) throw new Error(j.error || 'Could not load your page.');
       data = j;
@@ -316,6 +320,7 @@
       if (!location.hash) history.replaceState(null, '', '#' + token);
       render();
     } catch (e) {
+      if (asked !== token) return;
       if (first) {
         show('mcPage');
         $('mcPage').innerHTML = '<div class="mc-card"><p class="mc-h">Could not load your page</p><p class="mc-empty" style="margin-bottom:1.2rem;">Please check your internet and try again.</p><button class="mc-btn solid" type="button" id="mcRetry">Try again</button></div>';
@@ -330,7 +335,7 @@
   // (Arpit can reset it from the dashboard if it reached the wrong person).
   function signOut() {
     token = ''; data = null;
-    history.replaceState(null, '', location.pathname + location.search);
+    history.replaceState(null, '', location.pathname);
     scrollTo(0, 0);
     askForm(false);
     toast('Logged out on this device');
