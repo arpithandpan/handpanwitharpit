@@ -1,7 +1,7 @@
 // ---- ACCOUNT (Log in / initial + menu) ----
 // Logged out: the "Log in" pill in the nav. Logged in (the person opened their
 // personal link on this device): the first letter of their name, with a menu
-// for My bookings, payments, help and Log out. Nothing here talks to the
+// for My bookings and Log out. Nothing here talks to the
 // server. The page my.html saves the login, this only reads it.
 window.hpAcct = (function () {
   const WA = 'https://wa.me/919019576583';
@@ -50,7 +50,6 @@ window.hpAcct = (function () {
       menu.className = 'acct-menu'; menu.hidden = true;
       menu.innerHTML = '<div class="acct-head"><b>' + esc(me.name) + '</b>' + (me.role ? '<span>' + esc(me.role) + '</span>' : '') + '</div>'
         + '<a href="' + esc(href) + '">' + I.cal + 'My bookings</a>'
-        + '<a class="js-acct-help" href="' + esc(href.replace(/my\.html$/, 'contact.html')) + '">' + I.wa + 'Help</a>'
         + '<div class="acct-sep"></div><button type="button" class="out js-acct-out">' + I.out + 'Log out</button>';
       btn.onclick = (e) => {
         e.stopPropagation();
