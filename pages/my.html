@@ -91,6 +91,11 @@
 .otp-boxes span { height: 58px; border: 1px solid var(--rule); border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 600; color: var(--maroon); transition: border-color .15s, box-shadow .15s; }
 .otp-boxes span.cur { border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(80,0,24,0.10); }
 .otp-boxes.err span { border-color: #B3261E; box-shadow: none; }
+.otp-boxes.busy span { opacity: 0.55; }
+.otp-boxes.ok span { border-color: #2E7D4F; box-shadow: none; }
+.lk-card .otp-checking { font-size: 0.86rem; color: var(--text-mid); margin: 0.4rem 0 0; }
+.lk-card .otp-note { text-align: center; font-size: 0.86rem; margin: 0.5rem 0 0; color: var(--text-mid); }
+.lk-card .otp-note.err { color: #B3261E; }
 .otp-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0; font-size: 16px; color: transparent; background: transparent; caret-color: transparent; cursor: text; }
 .lk-card .otp-resend { text-align: center; font-size: 0.9rem; color: var(--text-mid); margin: 1.2rem 0 0; }
 .otp-resend button { background: none; border: 0; padding: 0; font: inherit; font-weight: 500; color: var(--maroon); border-bottom: 1px solid rgba(80,0,24,.3); cursor: pointer; }
@@ -193,9 +198,11 @@
           <input class="otp-input" id="otpInput" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" aria-label="6-digit code"/>
         </div>
         <p class="lk-err" id="otpErr" hidden></p>
+        <p class="otp-checking" id="otpChecking" hidden>Checking your code…</p>
         <button class="mc-btn solid wide" id="otpGo" type="button">Log in</button>
         <p class="otp-resend" id="otpResend"></p>
-        <p class="lk-help">Code not coming? <a class="mcWa" href="https://wa.me/919019576583" target="_blank" rel="noopener">Message Arpit on WhatsApp</a></p>
+        <p class="otp-note" id="otpNote" hidden></p>
+        <p class="lk-help">Code not coming? <a class="mcWa" href="https://wa.me/919019576583" target="_blank" rel="noopener">WhatsApp</a> or <a href="mailto:arpithandpan@gmail.com?subject=Login%20code%20not%20coming">email</a> Arpit</p>
       </div>
       </div>
     </div>
@@ -566,7 +573,7 @@
     if (!p) return;
     contact = p.contact;
     $('lkSentTo').textContent = 'Sent to ' + p.contact;
-    $('otpErr').hidden = true;
+    $('otpErr').hidden = true; $('otpNote').hidden = true;
     showStep(true);
     countdown(Math.max(0, 30 - Math.floor((Date.now() - p.at) / 1000)));
     setTimeout(() => { $('otpInput').focus(); paintBoxes(false); }, 50);
@@ -608,9 +615,11 @@
       showStep(true);
       countdown(j.resendIn || 30);
       setTimeout(() => $('otpInput').focus(), 50);
-      if (again) toast('New code sent');
+      const note = $('otpNote');
+      if (again) { toast('New code sent'); note.textContent = 'Use the newest code. Older ones stop working.'; note.classList.remove('err'); note.hidden = false; }
+      else note.hidden = true;
     } catch (e) {
-      if (again) { $('otpErr').textContent = e.message; $('otpErr').hidden = false; }
+      if (again) { const note = $('otpNote'); note.textContent = e.message; note.classList.add('err'); note.hidden = false; }
       else { err.textContent = e.message; err.hidden = false; }
     } finally { btn.classList.remove('busy'); btn.textContent = 'Send code'; }
   }
@@ -622,11 +631,16 @@
     if (verifying) return;
     verifying = true;
     const btn = $('otpGo'); btn.classList.add('busy'); btn.textContent = 'Checking…';
+    $('otpBoxes').classList.add('busy'); $('otpChecking').hidden = false; e.hidden = true;
     try {
       const r = await fetch(API + '/api/my/verify-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact, code }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok || !j.token) throw new Error(j.error || 'That code didn\'t match.');
       clearInterval(resendT);
+      $('otpBoxes').classList.remove('busy'); $('otpBoxes').classList.add('ok');
+      $('otpChecking').textContent = 'Logged in ✓';
+      await new Promise(x => setTimeout(x, 450));
+      $('otpBoxes').classList.remove('ok'); $('otpChecking').hidden = true; $('otpChecking').textContent = 'Checking your code…';
       pendClear();
       history.replaceState(null, '', location.pathname + location.search + '#' + j.token);
       showStep(false); $('lkInput').value = '';
@@ -634,7 +648,7 @@
     } catch (err) {
       e.textContent = err.message; e.hidden = false; paintBoxes(true);
       $('otpInput').select();
-    } finally { verifying = false; btn.classList.remove('busy'); btn.textContent = 'Log in'; }
+    } finally { verifying = false; btn.classList.remove('busy'); btn.textContent = 'Log in'; $('otpBoxes').classList.remove('busy'); if ($('otpChecking').textContent !== 'Logged in ✓') $('otpChecking').hidden = true; }
   }
   $('lkSend').onclick = () => sendCode(false);
   $('lkInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendCode(false); });
