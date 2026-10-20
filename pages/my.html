@@ -413,7 +413,7 @@ a.mc-opt { text-decoration: none; }
       if (asked !== token) return;
       if (r.status === 404) { store(KEY, null); store(NAME_KEY, null); store(ROLE_KEY, null); navRefresh(); askForm(true); return; }
       if (!r.ok || !j.ok) throw new Error(j.error || 'Could not load your page.');
-      data = j; timesCache = {};
+      data = j;
       store(KEY, token); store(NAME_KEY, j.name || ''); store(ROLE_KEY, j.role || (j.classes ? 'Student' : '')); navRefresh();
       if (!location.hash) history.replaceState(null, '', '#' + token);
       render();
@@ -493,7 +493,7 @@ a.mc-opt { text-decoration: none; }
     const rest = c.upcoming.filter(u => !next || u.key !== next.key);
     const parts = [];
     for (const m of c.makeups) {
-      parts.push('<div class="mc-makeup"><p>Make up your ' + ymdLabel(m.key) + ' class by ' + ymdLabel(m.deadline) + '</p><button class="mc-btn solid" type="button" data-makeup="' + m.key + '">Pick a time</button></div>');
+      parts.push('<div class="mc-makeup"><p>' + (charges() ? 'Make up your ' + ymdLabel(m.key) + ' class by ' + ymdLabel(m.deadline) : 'Want to take your ' + ymdLabel(m.key) + ' class another day? Any time until ' + ymdLabel(m.deadline)) + '</p><button class="mc-btn solid" type="button" data-makeup="' + m.key + '">Pick a time</button></div>');
     }
     const row = u => '<li class="mc-item' + (u.later ? ' later' : '') + '"><div class="mc-date"><b>' + f(u.start, { day: 'numeric' }) + '</b><span>' + new Intl.DateTimeFormat('en-US', { timeZone: tz(), month: 'short' }).format(new Date(u.start)) + '</span></div>'
       + '<div class="mc-info"><strong>' + f(u.start, { weekday: 'long' }) + ' · ' + time(u.start)
@@ -627,7 +627,12 @@ a.mc-opt { text-decoration: none; }
   }
   function cls(key) { return data.classes.upcoming.find(u => u.key === key); }
   function leftFor(key) { return data.classes.changesLeft[key.slice(0, 7)] || 0; }
-  function leftLine(key) { const n = leftFor(key); return (n === 1 ? '1 change' : n + ' changes') + ' left in ' + monthOf(key); }
+  // No monthly limit (maxChanges 0) → no "changes left" line at all.
+  function limited() { return !!(data.classes && data.classes.maxChanges); }
+  function leftLine(key) { if (!limited()) return ''; const n = leftFor(key); return (n === 1 ? '1 change' : n + ' changes') + ' left in ' + monthOf(key); }
+  function fine(t) { return t ? '<p class="fine">' + t + '</p>' : ''; }
+  // Skips aren't counted unless Arpit turns that back on.
+  function charges() { return !!(data.classes && data.classes.chargeSkips); }
 
   function openOptions(key) {
     const u = cls(key); if (!u) return;
@@ -642,8 +647,8 @@ a.mc-opt { text-decoration: none; }
     } else {
       body = '<p class="lead">What would you like to do?</p>'
         + '<button class="mc-opt first" type="button" id="opMove"><span class="ic">' + ICON_CAL + '</span><span><strong>Move to another time</strong><small>Pick a new day and time now</small></span></button>'
-        + '<button class="mc-opt" type="button" id="opSkip"><span class="ic">' + ICON_X + '</span><span><strong>Skip this class</strong><small>Pick a make-up time later this month</small></span></button>'
-        + '<p class="fine">' + leftLine(key) + '</p>';
+        + '<button class="mc-opt" type="button" id="opSkip"><span class="ic">' + ICON_X + '</span><span><strong>Skip this class</strong><small>' + (charges() ? 'Pick a make-up time later this month' : 'Not counted. Take it another day if you like') + '</small></span></button>'
+        + fine(leftLine(key));
     }
     const s = openSheet('<h3>' + esc(whenLong(u.start)) + '</h3>' + body);
     const m = s.querySelector('#opMove'), k = s.querySelector('#opSkip');
@@ -705,7 +710,7 @@ a.mc-opt { text-decoration: none; }
         + '</div><p class="lbl">New time</p><div class="mc-times">'
         + byDay[day].map(t => '<button type="button" class="mc-time' + (t === pick ? ' on' : '') + '" data-t="' + t + '">' + time(t) + '</button>').join('')
         + '</div><p class="msg" id="mvMsg" hidden></p><div class="acts"><button class="mc-btn line" type="button" id="mvCancel">Cancel</button><button class="mc-btn solid" type="button" id="mvGo">' + (mode === 'makeup' ? 'Book make-up' : 'Move class') + '</button></div>'
-        + '<p class="fine">' + (mode === 'makeup' ? 'Same Zoom link as always' : leftLine(key) + ' · Same Zoom link') + '</p>';
+        + '<p class="fine">' + (mode === 'makeup' || !limited() ? 'Same Zoom link as always' : leftLine(key) + ' · Same Zoom link') + '</p>';
       s.querySelectorAll('.mc-day').forEach(b => b.onclick = () => { day = b.dataset.d; pick = null; paint(); });
       s.querySelectorAll('.mc-time').forEach(b => b.onclick = () => { pick = b.dataset.t; paint(); });
       s.querySelector('#mvCancel').onclick = closeSheet;
@@ -721,11 +726,13 @@ a.mc-opt { text-decoration: none; }
     const u = cls(key); if (!u) return;
     const deadline = (() => { const d = new Date(key.slice(0, 7) + '-01T00:00:00Z'); d.setUTCMonth(d.getUTCMonth() + 1); d.setUTCDate(0); return d.toISOString().slice(0, 10); })();
     const s = openSheet('<h3>Skip ' + esc(f(u.start, { weekday: 'short', day: 'numeric', month: 'short' })) + '?</h3>'
-      + '<p class="lead">You can pick a make-up time any day until ' + ymdLabel(deadline) + '. A class not made up by then doesn\'t carry over.</p>'
+      + '<p class="lead">' + (charges()
+        ? 'You can pick a make-up time any day until ' + ymdLabel(deadline) + '. A class not made up by then doesn\'t carry over.'
+        : 'This class won\'t be counted. Want to take it another day? Pick a time any day until ' + ymdLabel(deadline) + '.') + '</p>'
       + '<p class="msg" id="skMsg" hidden></p><div class="acts"><button class="mc-btn line" type="button" id="skNo">Keep class</button><button class="mc-btn solid" type="button" id="skGo">Skip class</button></div>'
-      + '<p class="fine">' + leftLine(key) + '</p>');
+      + fine(leftLine(key)));
     s.querySelector('#skNo').onclick = closeSheet;
-    s.querySelector('#skGo').onclick = (ev) => doChange(ev.currentTarget, { action: 'skip', key }, 'Class skipped. Book a make-up any time this month.');
+    s.querySelector('#skGo').onclick = (ev) => doChange(ev.currentTarget, { action: 'skip', key }, (charges() ? 'Class skipped. Book a make-up any time this month.' : 'Class skipped. It won\'t be counted.'));
   }
 
   async function doChange(btn, body, okMsg) {
@@ -734,7 +741,9 @@ a.mc-opt { text-decoration: none; }
       const r = await fetch(API + '/api/my/' + token + '/change', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) throw new Error(j.error || 'Could not save that change.');
+      // A change frees or takes a time, so forget loaded free times.
       // Update the page first, so the sheet closes onto the new state.
+      timesCache = {};
       await refresh(false);
       closeSheet(); toast(okMsg);
     } catch (e) {
