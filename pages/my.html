@@ -734,8 +734,9 @@ a.mc-opt { text-decoration: none; }
       const r = await fetch(API + '/api/my/' + token + '/change', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) throw new Error(j.error || 'Could not save that change.');
-      closeSheet(); toast(okMsg);
+      // Update the page first, so the sheet closes onto the new state.
       await refresh(false);
+      closeSheet(); toast(okMsg);
     } catch (e) {
       const m = sheetEl && sheetEl.querySelector('.msg');
       if (m) { m.textContent = e.message; m.hidden = false; }
