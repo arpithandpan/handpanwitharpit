@@ -100,6 +100,24 @@
 .w-meta span { color: var(--text-light); }
 .w-counts { color: var(--text-mid); margin-top: 0.55rem; }
 .w-counts .w-dim { color: var(--text-light); }
+.w-empty { color: var(--text-light); padding: 1.5rem 0; margin: 0; }
+.w-notify { display: grid; grid-template-columns: 1fr 1.15fr; gap: 2.5rem; align-items: start; background: var(--card, #FDFBF7); border: 1px solid var(--card-rule, rgba(80,0,24,0.12)); border-radius: var(--card-radius, 16px); padding: 2.2rem 2.4rem; }
+.w-notify-title { font-size: 1.35rem; font-weight: 500; color: var(--maroon); margin: 0 0 0.5rem; }
+.w-notify-sub { color: var(--text-mid); line-height: 1.6; margin: 0; }
+.w-notify-form { display: flex; flex-direction: column; gap: 1rem; }
+.w-nf label { display: block; font-size: 0.92rem; font-weight: 500; color: var(--text-mid); margin-bottom: 0.4rem; }
+.w-nf label span { font-weight: 400; color: var(--text-light); }
+.w-in { width: 100%; height: 48px; padding: 0 16px; box-sizing: border-box; border-radius: 10px; border: 1px solid #D9C8C6; background: #F5EEE5; color: #5A4645; font-family: var(--font-body); font-size: 16px; outline: none; transition: border-color .15s; }
+.w-in::placeholder { color: #8A7560; }
+.w-in:focus { border-color: var(--maroon); }
+.w-err { display: none; font-size: 14px; color: #8A2614; font-weight: 500; line-height: 1.45; background: #F4D8CE; border-radius: 8px; padding: 10px 12px; margin: 0; }
+.w-err.show { display: flex; align-items: flex-start; }
+.w-err::before { content: ''; flex-shrink: 0; width: 16px; height: 16px; margin-right: 8px; margin-top: 2px; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A2614' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 8v4'/><path d='M12 16h.01'/></svg>") center/contain no-repeat; }
+.w-notify-btn { align-self: flex-start; border: 0; cursor: pointer; font-size: 1rem; padding: 0.85rem 2.2rem; }
+.w-notify-btn:disabled { opacity: 0.6; cursor: default; }
+.w-notify-done { grid-column: 1 / -1; display: flex; gap: 1rem; align-items: flex-start; }
+.w-tick { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; background: #CFE5C4 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232F6522' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center/18px no-repeat; }
+@media (max-width: 760px) { .w-notify { grid-template-columns: 1fr; gap: 1.5rem; padding: 1.6rem 1.25rem; } .w-notify-btn { align-self: stretch; } }
 .w-pill-off { font-weight:500; cursor:not-allowed; white-space:nowrap; color:var(--text-light); border:1.5px solid rgba(80,0,24,0.28); padding:calc(0.79rem - 1.5px) 2rem; border-radius:40px; display:inline-block; letter-spacing:0.08em; text-transform:none; }
 .w-meta span + span::before { content: none; }
 .w-action { text-align: right; flex-shrink: 0; }
@@ -222,28 +240,7 @@
 <section class="section" id="upcoming">
   <div class="section-header"><h2 class="section-title">Upcoming <em>Workshops</em></h2></div>
 
-  <div class="workshop-rows">
-    <div class="workshop-row is-open" data-ws="WS-007" data-date="2026-09-06">
-      <div class="w-date"><span class="w-day">06</span><span class="w-month">Sep 2026</span></div>
-      <div><p class="w-title">Between Stillness and Storm</p><div class="w-meta"><span>Creative Bloom, Haralur, Bengaluru · 2 hours · Beginner</span></div><p class="w-counts" hidden></p></div>
-      <div class="w-action"><a href="/pages/book?ws=WS-007" class="btn-primary" style="font-size:1rem;padding:0.79rem 2rem;">Book now</a></div>
-    </div>
-    <div class="workshop-row is-open" data-ws="WS-008" data-date="2026-10-10">
-      <div class="w-date"><span class="w-day">10</span><span class="w-month">Oct 2026</span></div>
-      <div><p class="w-title">Breath, Pause, Resonance</p><div class="w-meta"><span>Creative Bloom, Haralur (Near HSR Layout), Bengaluru · 2 hours · Beginner</span></div><p class="w-counts" hidden></p></div>
-      <div class="w-action"><a href="/pages/book?ws=WS-008" class="btn-primary" style="font-size:1rem;padding:0.79rem 2rem;">Book now</a></div>
-    </div>
-    <div class="workshop-row">
-      <div class="w-date"><span class="w-day">01</span><span class="w-month">Nov 2026</span></div>
-      <div><p class="w-title">Echoes of the Inner Self</p><div class="w-meta"><span>Venue to be announced, Bengaluru · 2 hours · Beginner</span></div></div>
-      <div class="w-action w-status"><span class="w-status-label">Scheduled</span><span class="w-status-note">Booking opens Oct</span></div>
-    </div>
-    <div class="workshop-row">
-      <div class="w-date"><span class="w-day">06</span><span class="w-month">Dec 2026</span></div>
-      <div><p class="w-title">Winter Stillness Circle</p><div class="w-meta"><span>Venue to be announced, Bengaluru · 2 hours · Beginner</span></div></div>
-      <div class="w-action w-status"><span class="w-status-label">Scheduled</span><span class="w-status-note">Booking opens Nov</span></div>
-    </div>
-  </div>
+  <div class="workshop-rows" id="wsUpcoming" data-empty="notify" aria-live="polite"><p class="w-empty">Loading workshop dates…</p></div>
 </section>
 
 <!-- PAST WORKSHOPS -->
@@ -385,78 +382,118 @@
 
 <script src="../js/main.js"></script>
 <script>
+// Upcoming workshops come from the dashboard (Workshops), so the site never
+// shows a stale date, venue or "booking opens" note. One request returns
+// every upcoming workshop with the seats left.
 (function () {
   var API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
   var LOW_SEATS = 2;
+  var box = document.getElementById('wsUpcoming');
+  if (!box) return;
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-  function istDate(dateStr, timeStr) {
-    return new Date(dateStr + 'T' + timeStr + '+05:30');
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function clockMin(t) {
+    var m = String(t || '').match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
+    if (!m) return null;
+    var h = +m[1], mi = +(m[2] || 0), ap = (m[3] || '').toUpperCase();
+    if (ap === 'PM' && h < 12) h += 12;
+    if (ap === 'AM' && h === 12) h = 0;
+    return h * 60 + mi;
   }
-  function setPill(row, text) {
-    var a = row.querySelector('.w-action');
-    if (a) a.innerHTML = '<span class="w-pill-off">' + text + '</span>';
+  // "4:00 PM - 6:00 PM" → "2 hours"
+  function duration(time) {
+    var p = String(time || '').split(/\s*(?:-|–|to)\s*/i);
+    if (p.length < 2) return '';
+    var a = clockMin(p[0]), b = clockMin(p[1]);
+    if (a == null || b == null) return '';
+    if (!/AM|PM/i.test(p[0]) && /PM/i.test(p[1]) && a < 720 && a + 720 < b + 60) a += 720;
+    var d = b - a; if (d <= 0) return '';
+    var h = d / 60;
+    return (h % 1 === 0 ? h : h.toFixed(1)) + (h === 1 ? ' hour' : ' hours');
   }
-  // the sticker is gone; state now rides on the counts line as a dot
-  function setBadge(row, cls, text) {
-    row.dataset.state = cls.indexOf('full') > -1 ? 'full'
-                      : cls.indexOf('few') > -1 ? 'few' : '';
-    row.dataset.stateLabel = text;
-  }
-  function showCounts(row, html) {
-    var el = row.querySelector('.w-counts');
-    if (!el) return;
-    var st = row.dataset.state || '';
-    var lbl = row.dataset.stateLabel || 'Bookings open';
-    // the dot is decorative on its own, so it carries the wording for screen readers
-    el.innerHTML = '<span class="w-dot ' + st + '" role="img" aria-label="' + lbl + '"></span>' + html;
-    el.hidden = false;
-  }
-  function processRow(row) {
-    var ws = row.getAttribute('data-ws');
-    var date = row.getAttribute('data-date');
-    if (!ws || !date) return;
+  function row(w) {
+    var d = String(w.date).slice(0, 10).split('-');
+    var title = w.title || 'Handpan Workshop';
+    var meta = [w.venue || 'Venue to be announced, Bengaluru', duration(w.time), 'Beginner friendly'].filter(Boolean).join(' · ');
+    var dayStart = new Date(w.date + 'T00:00:00+05:30');
     var now = new Date();
-    var dayStart = istDate(date, '00:00');
-
-    if (now >= new Date(dayStart.getTime() + 86400000)) { row.style.display = 'none'; return; }
-
-    if (now >= dayStart) {
-      setBadge(row, 'spots-badge full', 'Booking closed');
-      setPill(row, 'Booking closed');
-      return;
-    }
-
-    fetch(API_BASE + '/api/workshop/' + encodeURIComponent(ws) + '/availability')
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (data) {
-        if (!data) return;
-        var pn = Number(data.participantsRemaining);
-        var on = Number(data.observersRemaining);
-        if (isNaN(pn)) return;
-
-        if (pn <= 0) {
-          setBadge(row, 'spots-badge full', 'Slots full');
-          setPill(row, 'Slots full');
-          return;
-        }
-
-        if (pn <= LOW_SEATS) {
-          setBadge(row, 'spots-badge few', 'Only ' + pn + (pn === 1 ? ' spot left' : ' spots left'));
-        } else {
-          setBadge(row, 'spots-badge', 'Bookings open');
-        }
-
+    var action = '', counts = '', open = false;
+    if (!w.bookingOpen) {
+      action = '<div class="w-action w-status"><span class="w-status-label">Coming soon</span><span class="w-status-note">Booking opens soon</span></div>';
+    } else if (now >= dayStart) {
+      action = '<div class="w-action"><span class="w-pill-off">Booking closed</span></div>';
+    } else if (w.participantsRemaining != null && w.participantsRemaining <= 0) {
+      action = '<div class="w-action"><span class="w-pill-off">Slots full</span></div>';
+      counts = '<p class="w-counts"><span class="w-dot full" role="img" aria-label="Slots full"></span>All participant spots are taken</p>';
+    } else {
+      open = true;
+      action = '<div class="w-action"><a href="/pages/book?ws=' + encodeURIComponent(w.id) + '" class="btn-primary" style="font-size:1rem;padding:0.79rem 2rem;">Book now</a></div>';
+      var pn = w.participantsRemaining, on = w.observersRemaining;
+      if (pn != null) {
+        var few = pn <= LOW_SEATS;
         var line = pn + ' participant ' + (pn === 1 ? 'spot' : 'spots') + ' left';
-        if (!isNaN(on)) {
-          line += (on > 0)
-            ? ' <span class="w-dim">\u00b7</span> ' + on + ' audience ' + (on === 1 ? 'pass' : 'passes') + ' left'
-            : ' <span class="w-dim">\u00b7 audience full</span>';
-        }
-        showCounts(row, line);
-      })
-      .catch(function () {});
+        if (on != null) line += on > 0 ? ' <span class="w-dim">·</span> ' + on + ' audience ' + (on === 1 ? 'pass' : 'passes') + ' left' : ' <span class="w-dim">· audience full</span>';
+        counts = '<p class="w-counts"><span class="w-dot' + (few ? ' few' : '') + '" role="img" aria-label="' + (few ? 'Only a few spots left' : 'Bookings open') + '"></span>' + line + '</p>';
+      }
+    }
+    return '<div class="workshop-row' + (open ? ' is-open' : '') + '">'
+      + '<div class="w-date"><span class="w-day">' + d[2] + '</span><span class="w-month">' + MONTHS[+d[1] - 1] + ' ' + d[0] + '</span></div>'
+      + '<div><p class="w-title">' + esc(title) + '</p><div class="w-meta"><span>' + esc(meta) + '</span></div>' + counts + '</div>'
+      + action + '</div>';
   }
-  document.querySelectorAll('.workshop-row[data-ws]').forEach(processRow);
+  // Nothing to list (none planned, or the list could not load): the home page
+  // hides the whole section; the workshops page offers "Notify me", which
+  // saves to the dashboard's Waitlist.
+  function empty() {
+    if (box.getAttribute('data-empty') === 'hide') { var sec = box.closest('section'); if (sec) sec.style.display = 'none'; return; }
+    box.innerHTML = '<div class="w-notify" id="wNotify">'
+      + '<div class="w-notify-text"><p class="w-notify-title">New dates coming soon</p>'
+      + '<p class="w-notify-sub">Leave your details and Arpit will message you as soon as the next workshop opens for booking.</p></div>'
+      + '<form class="w-notify-form" id="wNotifyForm" novalidate>'
+      + '<div class="w-nf"><label for="wnName">Name</label><input class="w-in" id="wnName" autocomplete="name" placeholder="Your name"/></div>'
+      + '<div class="w-nf"><label for="wnPhone">WhatsApp number</label><input class="w-in" id="wnPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+91 98765 43210"/></div>'
+      + '<div class="w-nf"><label for="wnEmail">Email <span>(optional)</span></label><input class="w-in" id="wnEmail" type="email" autocomplete="email" placeholder="you@example.com"/></div>'
+      + '<p class="w-err" id="wnErr" role="alert"></p>'
+      + '<button type="submit" class="btn-primary w-notify-btn" id="wnBtn">Notify me</button>'
+      + '</form></div>';
+    var form = document.getElementById('wNotifyForm');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = document.getElementById('wnName').value.trim();
+      var phone = document.getElementById('wnPhone').value.trim();
+      var email = document.getElementById('wnEmail').value.trim();
+      var err = document.getElementById('wnErr'), btn = document.getElementById('wnBtn');
+      var digits = phone.replace(/\D/g, '');
+      var msg = !name ? 'Please enter your name.'
+        : digits.length < 10 ? 'Please enter a WhatsApp number with at least 10 digits.'
+        : (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) ? 'That email doesn\'t look right.' : '';
+      if (msg) { err.textContent = msg; err.classList.add('show'); return; }
+      err.classList.remove('show');
+      if (digits.length === 10) phone = '+91' + digits; else if (phone.charAt(0) !== '+') phone = '+' + digits;
+      btn.disabled = true; btn.textContent = 'Saving…';
+      fetch(API_BASE + '/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, phone: phone, email: email || null }) })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); })
+        .then(function () {
+          document.getElementById('wNotify').innerHTML = '<div class="w-notify-done"><span class="w-tick" aria-hidden="true"></span><div><p class="w-notify-title">You\'re on the list</p><p class="w-notify-sub">Thanks, ' + esc(name.split(' ')[0]) + '. Arpit will message you when the next workshop opens.</p></div></div>';
+        })
+        .catch(function () {
+          btn.disabled = false; btn.textContent = 'Notify me';
+          err.textContent = 'Something went wrong. Please try again, or message Arpit on WhatsApp.'; err.classList.add('show');
+        });
+    });
+  }
+
+  fetch(API_BASE + '/api/workshops/upcoming')
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (data) {
+      var list = (data && data.workshops) || [];
+      var today = new Date(Date.now() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
+      list = list.filter(function (w) { return String(w.date).slice(0, 10) >= today; });
+      if (!list.length) { empty(); return; }
+      box.innerHTML = list.map(row).join('');
+    })
+    .catch(function () { empty(); });
 })();
 </script>
 </body>
