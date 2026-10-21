@@ -4491,6 +4491,7 @@ table#paymentsTable { min-width: 700px; }
       <div class="form-group"><label class="form-label">Date&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="date" class="form-input" id="ws-date"/></div>
     </div>
     <div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="ws-title" maxlength="80" placeholder="e.g. Breath, Pause, Resonance"/></div>
+    <div class="form-group"><label class="form-label">On the website</label><select class="form-input" id="ws-open"><option value="true">Bookings open</option><option value="false">Coming soon (no booking yet)</option></select></div>
     <div class="form-group"><label class="form-label">Venue&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="ws-venue" placeholder="Venue name and location"/></div>
     <div class="form-group"><label class="form-label">Participant Price (₹)</label><input type="number" class="form-input" id="ws-price" placeholder="0"/></div>
     <div class="form-row">
@@ -5397,7 +5398,7 @@ function resetForm(formName) {
     if (el) el.value = '';
   });
   // Also clear auto-filled IDs so they regenerate next open
-  if (formName === 'addWorkshop') { const el = document.getElementById('ws-id'); if (el) el.value = ''; }
+  if (formName === 'addWorkshop') { const el = document.getElementById('ws-id'); if (el) el.value = ''; const op = document.getElementById('ws-open'); if (op) { op.value = 'true'; op.dispatchEvent(new Event('change')); } }
   if (formName === 'addStudent') { const el = document.getElementById('stu-id'); if (el) el.value = ''; }
 }
 let _customConfirmResolve = null;
@@ -6481,7 +6482,7 @@ async function loadWorkshops() {
       return '<tr class="'+(isCancelled?'ws-row-cancelled':'')+'" data-year="'+(w.date||'').substring(0,4)+'" data-date="'+(w.date||'')+'" data-total_pax="'+(w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0))+'" data-total_revenue="'+(w.total_revenue||0)+'" data-total_expense="'+(w.total_expense||0)+'" data-net_profit="'+(w.net_profit||0)+'" data-margin="'+(w.margin||0)+'" id="ws-tr-'+w.id+'">'
         + '<td><strong>'+w.id+'</strong>'+(isCancelled?' <span class="ws-cancelled-badge">Cancelled</span>':'')+'</td>'
         + '<td>'+fmtDate(w.date)+'</td>'
-        + '<td class="td-truncate td-venue" data-tip="'+encodeForAttr((w.title?w.title+' · ':'')+(w.venue||''))+'">'+(w.title?'<div style="font-weight:500;overflow:hidden;text-overflow:ellipsis;">'+zEsc(w.title)+'</div><div style="font-size:0.85rem;color:var(--text-light);overflow:hidden;text-overflow:ellipsis;">'+zEsc(w.venue||'—')+'</div>':(w.venue||'—'))+'</td>'
+        + '<td class="td-truncate td-venue" data-tip="'+encodeForAttr((w.title?w.title+' · ':'')+(w.venue||''))+'">'+(w.booking_open===false?'<span class="badge badge-gray" style="margin-bottom:4px;display:inline-block;">Coming soon</span>':'')+(w.title?'<div style="font-weight:500;overflow:hidden;text-overflow:ellipsis;">'+zEsc(w.title)+'</div><div style="font-size:0.85rem;color:var(--text-light);overflow:hidden;text-overflow:ellipsis;">'+zEsc(w.venue||'—')+'</div>':(w.venue||'—'))+'</td>'
         + '<td>'+(w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0))+'</td>'
         + '<td>'+fmt(w.total_revenue)+'</td>'
         + '<td>'+fmt(w.total_expense)+'</td>'
@@ -6505,7 +6506,7 @@ async function loadWorkshops() {
           <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.6rem;">
             <div>
               <div style="font-size:11px;font-weight:600;color:var(--clay);letter-spacing:0.02em;text-transform:none;margin-bottom:3px;">${w.id}${w.cancelled ? ' <span class="ws-cancelled-badge">Cancelled</span>' : ''}</div>
-              <div style="font-size:17px;font-weight:600;color:var(--bark);">${w.title ? zEsc(w.title) : (w.venue||'—')}</div>${w.title ? `<div style="font-size:13px;color:var(--text-light);margin-top:2px;">${zEsc(w.venue||'')}</div>` : ''}
+              ${w.booking_open===false ? '<span class="badge badge-gray" style="display:inline-block;margin-bottom:4px;">Coming soon</span>' : ''}<div style="font-size:17px;font-weight:600;color:var(--bark);">${w.title ? zEsc(w.title) : (w.venue||'—')}</div>${w.title ? `<div style="font-size:13px;color:var(--text-light);margin-top:2px;">${zEsc(w.venue||'')}</div>` : ''}
               <div style="font-size:12px;color:var(--text-light);margin-top:2px;">${fmtDate(w.date)}</div>
             </div>
             <span class="badge badge-clay" style="margin-top:2px;">${w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0)} pax</span>
@@ -8697,7 +8698,7 @@ async function saveWorkshop() {
     const participantCapacity = (capParRaw === '' || capParRaw == null) ? null : parseInt(capParRaw);
     const capObsRaw = document.getElementById('ws-cap-observer')?.value;
     const observerCapacity = (capObsRaw === '' || capObsRaw == null) ? null : parseInt(capObsRaw);
-    const body = { id:document.getElementById('ws-id').value, date:document.getElementById('ws-date').value, venue:document.getElementById('ws-venue').value, title:((document.getElementById('ws-title')||{}).value||'').trim()||null, bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, ads_spend:ads, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0, notes:(document.getElementById('ws-notes')?.value||null), workshop_time:wsTime, observer_price:observerPrice, participant_capacity:participantCapacity, observer_capacity:observerCapacity, venue_map_url:venueMapUrl };
+    const body = { id:document.getElementById('ws-id').value, date:document.getElementById('ws-date').value, venue:document.getElementById('ws-venue').value, title:((document.getElementById('ws-title')||{}).value||'').trim()||null, booking_open:((document.getElementById('ws-open')||{}).value||'true')!=='false', bms_pax:bms, upi_pax:upi, razorpay_pax:rzp, total_pax:totalPax, price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, ads_spend:ads, total_expense:totalExpense, total_revenue:totalRevenue, net_profit:netProfit, margin:totalRevenue?netProfit/totalRevenue:0, notes:(document.getElementById('ws-notes')?.value||null), workshop_time:wsTime, observer_price:observerPrice, participant_capacity:participantCapacity, observer_capacity:observerCapacity, venue_map_url:venueMapUrl };
     await sbPost('workshops', body); closeFormPage('addWorkshop'); resetForm('addWorkshop'); loadWorkshops(); showToast('✓ Workshop saved successfully!','success');
   } catch(e) { console.error('saveWorkshop error:', e); showToast('Error saving workshop: ' + e.message,'error'); }
 }
@@ -10321,6 +10322,7 @@ function buildEditForm(entity, r) {
   if (entity === 'workshops') return `
     ${row(readOnly('Workshop ID', r.id), fi('Date','ws-date','date',r.date))}
     ${fi('Title','ws-title','text',r.title||'','maxlength="80" placeholder="e.g. Breath, Pause, Resonance"')}
+    ${sel('On the website','ws-open',[['true','Bookings open'],['false','Coming soon (no booking yet)']], r.booking_open === false ? 'false' : 'true')}
     ${fi('Venue','ws-venue','text',r.venue)}
     ${row(readOnly('Participants (auto)', `${r.total_pax||0} total · Razorpay ${r.razorpay_pax||0} · BMS ${r.bms_pax||0}`), fi('Participant Price (₹)','ws-price','number',r.price_per_head||0))}
     ${row(fi('Venue Rent (₹)','ws-venue-rent','number',r.venue_rent||0), fi('Handpan Rental (₹)','ws-hp-rent','number',r.handpan_rental||0))}
@@ -10432,7 +10434,7 @@ async function saveEdit() {
       const price=parseFloat(g('ws-price'))||0;
       const venueRent=parseFloat(g('ws-venue-rent'))||0, hpRent=parseFloat(g('ws-hp-rent'))||0, porter=parseFloat(g('ws-porter'))||0, misc=parseFloat(g('ws-misc'))||0, ads=parseFloat(g('ws-ads'))||0;
       // pax / revenue / expense / profit / margin are derived by a DB trigger from the rows — never written from this form.
-      body = { date:gd('ws-date'), title:(g('ws-title')||'').trim()||null, venue:g('ws-venue'), price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, ads_spend:ads, notes:(document.getElementById('ws-notes')?.value||null), workshop_time:(g('ws-time')||'').trim()||null, observer_price:gn('ws-observer-price'), participant_capacity:gn('ws-cap-participant'), observer_capacity:gn('ws-cap-observer'), venue_map_url:(g('ws-venue-map')||'').trim()||null };
+      body = { date:gd('ws-date'), title:(g('ws-title')||'').trim()||null, booking_open:(g('ws-open')||'true')!=='false', venue:g('ws-venue'), price_per_head:price, venue_rent:venueRent, handpan_rental:hpRent, porter_delivery:porter, snacks_misc:misc, ads_spend:ads, notes:(document.getElementById('ws-notes')?.value||null), workshop_time:(g('ws-time')||'').trim()||null, observer_price:gn('ws-observer-price'), participant_capacity:gn('ws-cap-participant'), observer_capacity:gn('ws-cap-observer'), venue_map_url:(g('ws-venue-map')||'').trim()||null };
     } else if (_editEntity === 'gigs') {
       const advPaidEl = document.getElementById('ef-gig-advance-paid');
       const balPaidEl = document.getElementById('ef-gig-balance-paid');
