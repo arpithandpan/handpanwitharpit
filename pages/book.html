@@ -457,6 +457,13 @@
   @media (hover:hover) and (pointer:fine){ .cta:hover{ background:var(--maroon-deep); } }
   .cta:disabled{ background:var(--text-light); cursor:not-allowed; }
   .booking-terms{ margin:0.1rem 0 1.5rem; display:flex; flex-direction:column; gap:0.85rem; }
+  /* Same look as .field-error and the trial page's alert. */
+  .pay-error{ display:flex; align-items:flex-start; margin:12px 0 0; padding:10px 12px; border-radius:8px; background:#F4D8CE; color:#8A2614; font-size:14px; font-weight:500; line-height:1.45; }
+  .pay-error[hidden]{ display:none; }
+  .pay-error::before{
+    content:''; flex-shrink:0; width:16px; height:16px; margin-right:8px; margin-top:2px;
+    background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A2614' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 8v4'/><path d='M12 16h.01'/></svg>") center/contain no-repeat;
+  }
   .refund-note{ display:flex; gap:18px; align-items:flex-start; background:var(--sand); border-radius:10px; padding:0.85rem 0.95rem; font-size:14.5px; color:var(--text-mid); line-height:1.5; }
   .refund-note svg{ flex-shrink:0; width:22px; height:22px; color:var(--clay); margin-top:0; }
   .agree-row{ display:flex; gap:14px; align-items:center; cursor:pointer; padding:0 0.95rem; }
@@ -770,6 +777,7 @@
     <button class="cta" id="pay-btn">
       Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>
     </button>
+    <p class="pay-error" id="pay-error" role="alert" hidden></p>
     </div>
   </div>
 
@@ -879,6 +887,7 @@
   </div>
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
   // ── Prevent iOS double-tap-to-zoom (keeps pinch-zoom and rapid control taps) ──
   (function(){
@@ -894,6 +903,8 @@
   // ── CONFIG ──
   const API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
   const workshopId = new URLSearchParams(window.location.search).get('ws');
+  // Late booking link from the dashboard (?k=…): lets one booking through after the normal cutoff.
+  const lateCode = (new URLSearchParams(window.location.search).get('k') || '').trim();
 
   // Pricing and capacity come from the workshop's own record in Supabase —
   // nothing is hardcoded here anymore. observerPrice stays null until we
@@ -931,6 +942,7 @@
   const handpanHint = document.getElementById('handpan-hint');
   const observerRow = document.getElementById('observer-row');
   const payBtn = document.getElementById('pay-btn');
+  const payError = document.getElementById('pay-error');
   const loadingOverlay = document.getElementById('loading-overlay');
   const bookingContent = document.getElementById('booking-content');
   const ticketCard = document.getElementById('ticket-card');
@@ -1508,7 +1520,8 @@
 
   payBtn.addEventListener('click', async () => {
     if (pCount + oCount <= 0){
-      alert('Please select at least one ticket before reserving.');
+      payError.textContent = 'Please select at least one spot before reserving.';
+      payError.hidden = false;
       return;
     }
     const nameValid = validateName();
@@ -1527,9 +1540,21 @@
     const ownHandpanCountValue = bringingOwnHandpan !== 'Yes' ? 0
       : (pCount <= 1 ? 1 : ownHandpanCount);
     payBtn.disabled = true;
+    payError.hidden = true;
     loadingOverlay.style.display = 'flex';
+    const resetBtn = () => {
+      loadingOverlay.style.display = 'none';
+      payBtn.disabled = false;
+      payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+    };
+    const showPayError = (msg) => {
+      payError.textContent = msg;
+      payError.hidden = false;
+      payError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
     try {
-      const res = await fetch(API_BASE + '/api/create-payment-link', {
+      if (typeof Razorpay !== 'function') throw new Error('checkout_not_loaded');
+      const res = await fetch(API_BASE + '/api/create-booking-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1539,28 +1564,56 @@
           name, phone, email: email || null,
           guestNames: guestNames.map(n => n.trim()).filter(n => n.length > 0),
           ownHandpanCount: ownHandpanCountValue,
-          bringingOwnHandpan
+          bringingOwnHandpan,
+          lateCode: lateCode || undefined
         })
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.status === 409){
-        alert("Sorry, those spots just got booked by someone else. Please refresh and try again with a smaller number of spots.");
-        loadingOverlay.style.display = 'none';
-        payBtn.disabled = false;
-        payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+        resetBtn();
+        showPayError('Sorry, those spots were just booked by someone else. The numbers above are updated, please try again.');
         loadWorkshop();
         return;
       }
-      if (data.short_url){
-        window.location.href = data.short_url;
-      } else {
-        throw new Error('No payment link returned');
+      if (!res.ok || !data.orderId){
+        resetBtn();
+        showPayError(data.error ? data.error + '.' : 'Something went wrong starting the payment. Please try again, or message Arpit on WhatsApp.');
+        return;
       }
-    } catch (err){
-      alert('Something went wrong creating your payment link. Please try again or contact us directly.');
       loadingOverlay.style.display = 'none';
-      payBtn.disabled = false;
-      payBtn.innerHTML = 'Reserve my spot <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+      let paid = false;
+      const rzp = new Razorpay({
+        key: data.keyId,
+        amount: data.amount,
+        currency: data.currency,
+        order_id: data.orderId,
+        name: 'Arpit Pandey',
+        description: data.description,
+        image: 'https://arpitpandey.com/android-chrome-192x192.png',
+        prefill: { name: data.name, email: data.email, contact: data.phone },
+        notes: data.notes,
+        theme: { color: '#500018' },
+        retry: { enabled: true },
+        modal: { ondismiss: function(){ if (!paid) resetBtn(); } },
+        handler: function(resp){
+          paid = true;
+          try {
+            const pid = resp.razorpay_payment_id || '';
+            if (window.fbq && !sessionStorage.getItem('purchase_' + pid)){
+              fbq('track', 'Purchase', { content_name: 'Handpan workshop', value: (data.amount || 0) / 100, currency: data.currency || 'INR' });
+              sessionStorage.setItem('purchase_' + pid, '1');
+            }
+          } catch (e) {}
+          showSuccess();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+      rzp.open();
+    } catch (err){
+      resetBtn();
+      showPayError(err && err.message === 'checkout_not_loaded'
+        ? 'The payment window could not load. Please check your connection and refresh the page.'
+        : 'Something went wrong starting the payment. Please try again, or message Arpit on WhatsApp.');
     }
   });
 
@@ -1685,7 +1738,7 @@
       return;
     }
     try {
-      const res = await fetch(API_BASE + '/api/workshop/' + encodeURIComponent(workshopId) + '/availability');
+      const res = await fetch(API_BASE + '/api/workshop/' + encodeURIComponent(workshopId) + '/availability' + (lateCode ? '?k=' + encodeURIComponent(lateCode) : ''));
       if (!res.ok){
         showUnavailable("This workshop isn't available right now. It may have already happened, been cancelled, or the link may be incorrect.");
         return;
