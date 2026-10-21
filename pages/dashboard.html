@@ -2163,8 +2163,54 @@ body.dark-mode .wa-tag.trial { color: #d3a6d6; }
 .td-stat b { display: block; font-size: 1.6rem; font-weight: 500; color: var(--bark); line-height: 1.1; }
 .td-stat span { font-size: 0.82rem; color: var(--text-light); }
 .td-load { grid-column: 1 / -1; padding: 3rem; display: flex; justify-content: center; }
+/* Next up */
+.td-next { display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 1.4rem; border-color: rgba(212,106,124,0.45); background: linear-gradient(90deg, rgba(107,31,42,0.16), rgba(107,31,42,0.03) 70%), var(--sand); }
+body.dark-mode .td-next { background: linear-gradient(90deg, rgba(107,31,42,0.5), rgba(107,31,42,0.08) 70%), #231c16; }
+.td-next.soon { box-shadow: 0 0 0 2px rgba(212,106,124,0.55); }
+.td-next-l { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: #a8394b; }
+body.dark-mode .td-next-l { color: #e39aa6; }
+.td-next-n { font-size: 1.5rem; font-weight: 500; color: var(--text-dark); margin: 2px 0 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.td-next-w { font-size: 0.9rem; color: var(--text-light); }
+.td-next-main { min-width: 0; flex: 1; }
+.td-next-in { text-align: right; flex-shrink: 0; }
+.td-next-in b { display: block; font-size: 1.6rem; font-weight: 500; color: var(--text-dark); line-height: 1.1; }
+.td-next-in small { font-size: 0.8rem; color: var(--text-light); }
+.td-next-zoom { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border-radius: 10px; background: var(--clay); color: #1a0e06; font-weight: 500; font-size: 0.95rem; text-decoration: none; }
+/* Timeline */
+.td-tl { padding: 0.9rem 1.25rem 0.6rem; border-top: 1px solid var(--clay-pale); }
+.td-bar { position: relative; height: 40px; border-radius: 8px; background: rgba(184,114,42,0.06); border: 1px solid rgba(184,114,42,0.16); }
+.td-blk { position: absolute; top: 5px; bottom: 5px; border-radius: 4px; min-width: 6px; }
+.td-blk.cls { background: #6b1f2a; border-left: 3px solid #d46a7c; }
+.td-blk.tr { background: #2f5a34; border-left: 3px solid #7fbf6a; }
+.td-blk.off { background: transparent; border: 1px dashed rgba(184,114,42,0.55); }
+.td-blk.done { opacity: 0.45; }
+.td-nowline { position: absolute; top: -6px; bottom: -6px; width: 2px; background: #e0664f; }
+.td-nowline:before { content: ""; position: absolute; top: -4px; left: -4px; width: 10px; height: 10px; border-radius: 50%; background: #e0664f; }
+.td-ticks { position: relative; height: 18px; margin-top: 5px; font-size: 0.72rem; color: var(--text-light); }
+.td-ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.td-ticks span:first-child { transform: none; }
+.td-tag { flex-shrink: 0; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; color: var(--moss); background: rgba(122,140,106,0.15); }
+/* Needs you icons */
+.td-ico { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; }
+.td-ico svg { color: inherit !important; }
+.td-ico.fee { background: rgba(184,114,42,0.15); color: var(--clay); }
+.td-ico.wa { background: rgba(122,140,106,0.18); color: var(--moss); }
+.td-ico.zoom { background: rgba(168,57,75,0.14); color: #a8394b; }
+body.dark-mode .td-ico.zoom { color: #e39aa6; }
+.td-act-t small { display: block; font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
+.td-act-c { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--clay); color: #fff; font-size: 0.78rem; font-weight: 600; margin-left: 6px; vertical-align: 1px; box-sizing: border-box; }
+body.dark-mode .td-act-c { color: #1a0e06; }
 @media (max-width: 900px) {
   .td-wrap { grid-template-columns: 1fr; gap: 1rem; }
+  /* Phone order: Next up, Needs you, Today, Tomorrow, This week */
+  .td-wrap .td-col { display: contents; }
+  .td-o-next { order: 1; } .td-o-need { order: 2; } .td-o-today { order: 3; } .td-o-tom { order: 4; } .td-o-week { order: 5; }
+  .td-next { flex-wrap: wrap; gap: 0.75rem; padding: 1.1rem 1rem; }
+  .td-next-main { flex-basis: 100%; }
+  .td-next-in { text-align: left; }
+  .td-next-in b { display: inline; font-size: 1.25rem; margin-right: 4px; }
+  .td-next-zoom { flex: 1; justify-content: center; }
+  .td-tl { padding-left: 1rem; padding-right: 1rem; }
   .td-col { gap: 1rem; }
   .td-row { padding: 0.85rem 1rem; gap: 0.75rem; }
   .td-time { width: 70px; font-size: 0.95rem; }
@@ -3595,8 +3641,8 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <div class="sch-bar">
         <div class="sch-seg" role="tablist">
-          <button type="button" id="schSegList" onclick="schSetView('list')">List</button>
           <button type="button" id="schSegCal" onclick="schSetView('cal')"><span class="sch-lbl-wk">Week</span><span class="sch-lbl-day">Day</span></button>
+          <button type="button" id="schSegList" onclick="schSetView('list')">List</button>
         </div>
         <div class="sch-nav" id="schNav">
           <button type="button" class="sch-ic" onclick="schCalShift(-1)" aria-label="Previous week">&#8249;</button>
@@ -3606,12 +3652,12 @@ table#paymentsTable { min-width: 700px; }
         </div>
         <div class="sch-legend" id="schLegend"><span><i class="lg-cls"></i>Class</span><span><i class="lg-mv"></i>Moved / make-up</span><span><i class="lg-tr"></i>Trial</span><span><i class="lg-bl"></i>Workshop / gig (blocked)</span><span><i class="lg-sk"></i>Skipped</span></div>
       </div>
-      <div id="schCalWrap" style="display:none;margin:0 0 2rem;">
+      <div id="schCalWrap" style="margin:0 0 2rem;">
         <div class="schw" id="schWeek"></div>
         <div class="schd" id="schDay"></div>
         <div class="sch-cal-note">Times in IST. Click a class to move or skip it. Empty space is free time.</div>
       </div>
-      <div id="schListWrap">
+      <div id="schListWrap" style="display:none;">
       <div style="font-weight:500;margin-bottom:0.6rem;">Next 14 days</div>
       <div class="dash-table-wrap" style="margin:0 0 2rem;">
         <table class="desktop-table" style="min-width:720px;"><thead><tr>
@@ -13970,9 +14016,9 @@ async function loadToday(silent) {
     q('class_exceptions', 'or=(original_date.gte.' + schAddDays(today, -7) + ',new_date.gte.' + today + ')'),
     q('students', 'order=full_name.asc'),
     q('trials', 'status=eq.booked&start_at=gte.' + dayStart(today) + '&start_at=lt.' + dayStart(schAddDays(today, 2)) + '&order=start_at.asc'),
-    q('wa_messages', 'select=phone,type&direction=eq.in&read_at=is.null'),
+    q('wa_messages', 'select=phone,type,created_at&direction=eq.in&read_at=is.null'),
     q('zoom_unmatched', 'select=id&status=eq.pending'),
-    q('fee_requests', 'select=id&status=eq.pending&created_at=lt.' + new Date(now.getTime() - 3 * 86400000).toISOString()),
+    q('fee_requests', 'select=id,student_id,created_at&status=eq.pending&order=created_at.asc&created_at=lt.' + new Date(now.getTime() - 3 * 86400000).toISOString()),
     q('trials', 'select=id&created_at=gte.' + dayStart(weekStart)),
     q('class_log', 'select=id&class_date=gte.' + weekStart)
   ]);
@@ -13985,7 +14031,7 @@ async function loadToday(silent) {
   const nowMs = now.getTime();
   const rowsFor = ymd => {
     const items = plan.filter(o => o.ymd === ymd).map(o => ({
-      t: o.utc.getTime(), hhmm: o.hhmm, len: 60, name: schStudentName(o.slot.student_id),
+      kind: 'cls', t: o.utc.getTime(), hhmm: o.hhmm, len: 60, name: schStudentName(o.slot.student_id),
       sub: schLocalLabel(o.utc, o.slot.student_tz) || '', link: o.slot.zoom_link || '',
       off: o.state === 'skip' || o.state === 'move',
       note: (o.state === 'skip' ? 'Skipped' : o.state === 'move' ? 'Moved to ' + schDayLabel(String(o.ex.new_date).slice(0, 10)) + ' ' + schTime12(o.ex.new_time_ist) : o.state === 'moved-in' ? (o.ex && o.ex.makeup ? 'Make-up' : 'Rescheduled') : '')
@@ -13995,7 +14041,7 @@ async function loadToday(silent) {
       const d = new Date(t.start_at);
       let their = '';
       if (t.tz && t.tz !== 'Asia/Kolkata') { try { their = d.toLocaleTimeString('en-US', { timeZone: t.tz, hour: 'numeric', minute: '2-digit' }) + ' their time'; } catch (e) {} }
-      items.push({ t: d.getTime(), hhmm: schIst(d).hhmm, len: 45, name: t.full_name || 'Trial', sub: 'Free trial' + (their ? ' · ' + their : ''), link: t.join_url || '', off: false, note: '' });
+      items.push({ kind: 'tr', t: d.getTime(), hhmm: schIst(d).hhmm, len: 45, name: t.full_name || 'Trial', sub: 'Free trial' + (their ? ' · ' + their : ''), link: t.join_url || '', off: false, note: '' });
     });
     return items.sort((a, b) => a.t - b.t);
   };
@@ -14006,27 +14052,71 @@ async function loadToday(silent) {
     const join = (isToday && !it.off && !done && it.link)
       ? '<a class="td-join' + (live ? '' : ' ghost') + '" href="' + zEsc(it.link) + '" target="_blank" rel="noopener" aria-label="Join Zoom">' + TD_CAM + '<span>Join</span></a>' : '';
     return '<div class="td-row' + (it.off ? ' off' : done ? ' done' : '') + '"><div class="td-time">' + schTime12(it.hhmm) + '</div>'
-      + '<div class="td-main"><div class="td-name">' + zEsc(it.name) + (live ? '<span class="td-now">Now</span>' : '') + '</div>' + (sub ? '<div class="td-sub">' + zEsc(sub) + '</div>' : '') + '</div>' + join + '</div>';
+      + '<div class="td-main"><div class="td-name">' + zEsc(it.name) + (live ? '<span class="td-now">Now</span>' : '') + '</div>' + (sub ? '<div class="td-sub">' + zEsc(sub) + '</div>' : '') + '</div>' + join + (done ? '<span class="td-tag">Done</span>' : '') + '</div>';
+  };
+  const dur = m => m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '');
+  const ago = iso => { const m = Math.max(1, Math.round((nowMs - new Date(iso).getTime()) / 60000)); return m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' day' + (Math.round(m / 1440) === 1 ? '' : 's') + ' ago'; };
+  // A thin bar from morning to midnight with today's classes and trials and a "now" line.
+  const timeline = items => {
+    if (!items.length) return '';
+    const h0 = Math.max(0, Math.min(7, Math.floor(Math.min.apply(null, items.map(it => schHhmmToMin(it.hhmm))) / 60))), h1 = 24, span = (h1 - h0) * 60;
+    const pos = min => ((min - h0 * 60) / span * 100);
+    const nowMin = schHhmmToMin(schIst(now).hhmm);
+    const blocks = items.map(it => {
+      const st = schHhmmToMin(it.hhmm), done = !it.off && nowMs > it.t + it.len * 60000;
+      return '<div class="td-blk ' + (it.off ? 'off' : it.kind) + (done ? ' done' : '') + '" style="left:' + pos(st) + '%;width:calc(' + Math.min(it.len, 1440 - st) / span * 100 + '% - 2px)" title="' + zEsc(schTime12(it.hhmm) + ' ' + it.name + (it.note ? ' (' + it.note + ')' : '')) + '"></div>';
+    }).join('');
+    const ticks = []; for (let h = h0; h < h1; h += 3) ticks.push('<span style="left:' + pos(h * 60) + '%">' + schTime12(String(h).padStart(2, '0') + ':00').replace(':00', '') + '</span>');
+    return '<div class="td-tl"><div class="td-bar">' + blocks + (nowMin >= h0 * 60 ? '<div class="td-nowline" style="left:' + pos(nowMin) + '%"></div>' : '') + '</div><div class="td-ticks">' + ticks.join('') + '</div></div>';
   };
   const todayItems = rowsFor(today), tomItems = rowsFor(tomorrow);
   const left = todayItems.filter(it => !it.off && nowMs <= it.t + it.len * 60000).length;
-  const todayCard = '<div class="td-card"><div class="td-head"><h3>Classes today</h3><span>' + (todayItems.length ? (left ? left + ' to go' : 'All done') : '') + '</span></div>'
+  const todayCard = '<div class="td-card td-o-today"><div class="td-head"><h3>Classes today</h3><span>' + (todayItems.length ? (left ? left + ' to go' : 'All done') : '') + '</span></div>'
+    + timeline(todayItems)
     + (todayItems.length ? todayItems.map(it => rowHtml(it, true)).join('') : '<div class="td-empty">No classes or trials today.</div>') + '</div>';
-  const tomCard = tomItems.length ? '<div class="td-card"><div class="td-head"><h3>Tomorrow</h3><span>' + schDayLabel(tomorrow) + '</span></div>' + tomItems.map(it => rowHtml(it, false)).join('') + '</div>' : '';
+  // Next up: the next class or trial today, or tomorrow's first one.
+  const nxt = todayItems.concat(tomItems).find(it => !it.off && nowMs <= it.t + it.len * 60000);
+  let nextCard = '';
+  if (nxt) {
+    const isTom = schIst(new Date(nxt.t)).ymd !== today;
+    const live = nowMs >= nxt.t, mins = Math.max(0, Math.round((nxt.t - nowMs) / 60000));
+    const remindAt = nxt.t - 60 * 60000;
+    const info = (isTom ? 'Tomorrow, ' : '') + schTime12(nxt.hhmm) + ' IST'
+      + (nxt.kind === 'tr' ? ' · free trial' : nxt.note ? ' · ' + nxt.note : '')
+      + (nxt.sub && nxt.kind === 'cls' ? ' · ' + nxt.sub : '')
+      + (nxt.kind === 'cls' && !isTom && !live ? (nowMs >= remindAt ? ' · reminder sent' : ' · reminder at ' + schTime12(schIst(new Date(remindAt)).hhmm)) : '');
+    nextCard = '<div class="td-card td-next td-o-next' + (!live && mins <= 10 ? ' soon' : '') + '"><div class="td-next-main"><div class="td-next-l">' + (live ? 'On now' : 'Next up') + '</div>'
+      + '<div class="td-next-n">' + zEsc(nxt.name) + '</div><div class="td-next-w">' + zEsc(info) + '</div></div>'
+      + (live ? '' : '<div class="td-next-in"><b>' + (isTom && mins >= 600 ? schTime12(nxt.hhmm) : dur(mins)) + '</b><small>' + (isTom && mins >= 600 ? 'tomorrow' : 'to go') + '</small></div>')
+      + (nxt.link && !isTom ? '<a class="td-next-zoom" href="' + zEsc(nxt.link) + '" target="_blank" rel="noopener">' + TD_CAM + 'Join Zoom</a>' : '') + '</div>';
+  }
+  const tomCard = tomItems.length ? '<div class="td-card td-o-tom"><div class="td-head"><h3>Tomorrow</h3><span>' + schDayLabel(tomorrow) + '</span></div>' + tomItems.map(it => rowHtml(it, false)).join('') + '</div>' : '';
   // Needs you: only things that wait on Arpit.
-  const unreadPeople = unread ? new Set(unread.filter(r => r.type !== 'reaction').map(r => r.phone)).size : 0;
+  const unreadRows = unread ? unread.filter(r => r.type !== 'reaction') : [];
+  const unreadPeople = new Set(unreadRows.map(r => r.phone)).size;
+  const ICO = {
+    wa: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3 21l2.2-5.4A8.5 8.5 0 1 1 21 11.5z"/></svg>',
+    zoom: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    fee: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 8h12M6 13l8.5 8M6 13h3a5 5 0 0 0 0-10"/></svg>'
+  };
   const acts = [];
-  if (unreadPeople) acts.push([unreadPeople, unreadPeople === 1 ? 'person is waiting for a WhatsApp reply' : 'people are waiting for a WhatsApp reply', 'whatsapp']);
-  if (zoomRev && zoomRev.length) acts.push([zoomRev.length, 'Zoom attendance ' + (zoomRev.length === 1 ? 'needs' : 'need') + ' a student linked', 'classes']);
-  if (feeOld && feeOld.length) acts.push([feeOld.length, 'fee link' + (feeOld.length === 1 ? ' is' : 's are') + ' unpaid for 3+ days', 'fee-payments']);
-  const needCard = '<div class="td-card"><div class="td-head"><h3>Needs you</h3></div>'
-    + (acts.length ? acts.map(a => '<button type="button" class="td-act" onclick="tdGo(\'' + a[2] + '\')"><span class="td-act-n">' + a[0] + '</span><span class="td-act-t">' + a[1] + '</span>' + TD_CHEV + '</button>').join('')
+  if (unreadPeople) {
+    const oldest = unreadRows.filter(r => r.created_at).map(r => r.created_at).sort()[0];
+    acts.push([unreadPeople, unreadPeople === 1 ? 'person is waiting for a WhatsApp reply' : 'people are waiting for a WhatsApp reply', 'whatsapp', 'wa', oldest ? 'Oldest message ' + ago(oldest) : '']);
+  }
+  if (zoomRev && zoomRev.length) acts.push([zoomRev.length, 'Zoom attendance ' + (zoomRev.length === 1 ? 'needs' : 'need') + ' a student linked', 'classes', 'zoom', '']);
+  if (feeOld && feeOld.length) {
+    const o = feeOld[0], days = o.created_at ? Math.floor((nowMs - new Date(o.created_at).getTime()) / 86400000) : 0;
+    acts.push([feeOld.length, 'fee link' + (feeOld.length === 1 ? ' is' : 's are') + ' unpaid for 3+ days', 'fee-payments', 'fee', o.student_id && days ? 'Oldest: ' + schStudentName(o.student_id) + ', ' + days + ' days' : '']);
+  }
+  const needCard = '<div class="td-card td-o-need"><div class="td-head"><h3>Needs you</h3>' + (acts.length ? '<span>' + acts.length + '</span>' : '') + '</div>'
+    + (acts.length ? acts.map(a => '<button type="button" class="td-act" onclick="tdGo(\'' + a[2] + '\')"><span class="td-ico ' + a[3] + '">' + ICO[a[3]] + '</span><span class="td-act-t">' + a[0] + ' ' + a[1] + (a[4] ? '<small>' + zEsc(a[4]) + '</small>' : '') + '</span>' + TD_CHEV + '</button>').join('')
       : '<div class="td-clear"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Nothing waiting on you.</div>') + '</div>';
   const newStu = stus.filter(s => !s.archived && s.join_date && String(s.join_date).slice(0, 10) >= weekStart && s.id !== 'S-DEMO').length;
   const stat = (n, l) => '<div class="td-stat"><b>' + (n == null ? '—' : n) + '</b><span>' + l + '</span></div>';
-  const weekCard = '<div class="td-card"><div class="td-head"><h3>This week</h3><span>since Monday</span></div><div class="td-stats">'
+  const weekCard = '<div class="td-card td-o-week"><div class="td-head"><h3>This week</h3><span>since Monday</span></div><div class="td-stats">'
     + stat(wkTrials ? wkTrials.length : null, 'Trials booked') + stat(newStu, 'New students') + stat(wkClasses ? wkClasses.length : null, 'Classes taught') + '</div></div>';
-  wrap.innerHTML = '<div class="td-col">' + todayCard + tomCard + '</div><div class="td-col">' + needCard + weekCard + '</div>';
+  wrap.innerHTML = '<div class="td-col">' + nextCard + todayCard + tomCard + '</div><div class="td-col">' + needCard + weekCard + '</div>';
   clearInterval(_tdTimer);
   _tdTimer = setInterval(() => { if (document.getElementById('section-today')?.classList.contains('active') && !document.hidden) loadToday(true); }, 60000);
 }
@@ -14350,8 +14440,9 @@ async function schUndo(id) {
 // plus booked trials and the time workshops and gigs block (2 h before to
 // 1 h after, like the trial page). Everything is placed in IST.
 const SCH_HOUR_PX = 48, SCH_DAY_HOUR_PX = 52;
-let _schView = 'list', _schWeekStart = null, _schDaySel = null;
-try { if (localStorage.getItem('sch_view') === 'cal') _schView = 'cal'; } catch (e) {}
+// Calendar is the default; List only when Arpit picked it last time.
+let _schView = 'cal', _schWeekStart = null, _schDaySel = null;
+try { if (localStorage.getItem('sch_view') === 'list') _schView = 'list'; } catch (e) {}
 
 function schMonday(ymd) { const w = schWeekday(ymd); return schAddDays(ymd, w === 0 ? -6 : 1 - w); }
 function schShortDate(ymd) { return new Date(ymd + 'T00:00:00Z').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' }); }
