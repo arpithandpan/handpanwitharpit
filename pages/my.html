@@ -567,7 +567,7 @@ a.mc-opt { text-decoration: none; }
       const own = wsOwn(b), topic = 'the ' + ymdLabel(b.date) + ' workshop';
       out.push('<div class="mc-card"><p class="mc-k">Workshop · ' + inDays(wsStart(b)) + '</p>'
         + '<p class="mc-when">' + esc(wsDay(b, { weekday: 'long' }) + ', ' + wsDay(b, { day: 'numeric', month: 'long' })) + '</p>'
-        + '<p class="mc-sub">' + (b.time ? esc(wsTime(b)) : 'Time to be shared') + '</p>'
+        + '<p class="mc-sub">' + (b.title ? esc(b.title) + ' · ' : '') + (b.time ? esc(wsTime(b)) : 'Time to be shared') + '</p>'
         + '<ul class="ws-facts">'
         + (b.venue ? '<li>' + ICON_PIN + '<span>' + esc(b.venue) + (b.map ? '<a href="' + esc(b.map) + '" target="_blank" rel="noopener">Map</a>' : '') + '</span></li>' : '')
         + '<li>' + ICON_PPL + '<span>' + esc(wsPeople(b)) + '</span></li>'
@@ -584,7 +584,7 @@ a.mc-opt { text-decoration: none; }
     if (w && w.past.length) {
       out.push('<div class="mc-card"><p class="mc-h">Past workshops</p><ul class="mc-list">' + w.past.map(b =>
         '<li class="mc-item"><div class="mc-date"><b>' + wsDay(b, { day: 'numeric' }) + '</b><span>' + wsDay(b, { month: 'short' }) + '</span></div>'
-        + '<div class="mc-info"><strong>' + esc(String(b.venue || 'Handpan workshop').split(',')[0]) + (b.cancelled ? ' <span class="mc-tag">Cancelled</span>' : '') + '</strong>'
+        + '<div class="mc-info"><strong>' + esc(b.title || String(b.venue || 'Handpan workshop').split(',')[0]) + (b.cancelled ? ' <span class="mc-tag">Cancelled</span>' : '') + '</strong>'
         + '<small>' + esc(b.cancelled ? 'Cancelled by Arpit · full refund' : (b.people === 1 ? '1 person' : b.people + ' people'))
         + (b.invoice && !b.cancelled ? ' · ' + invLink(b.invoice) : '') + '</small></div></li>').join('') + '</ul></div>');
     }
