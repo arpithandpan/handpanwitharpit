@@ -157,8 +157,13 @@ a.mc-opt { text-decoration: none; }
 .mc-opt strong { display: block; font-weight: 500; font-size: 1rem; }
 .mc-opt small { display: block; font-size: 0.86rem; color: var(--text-mid); }
 .mc-opt .ic { width: 40px; height: 40px; border-radius: 50%; background: var(--ivory); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.mc-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); background: var(--maroon); color: var(--ivory); padding: 0.85rem 1.2rem; border-radius: 14px; font-size: 0.95rem; z-index: 300; opacity: 0; transition: opacity .2s, transform .2s; max-width: calc(100% - 32px); box-sizing: border-box; text-align: center; }
-.mc-toast.show { opacity: 1; transform: translate(-50%, 0); }
+.mc-toast { position: fixed; left: 50%; top: calc(var(--nav-h, 72px) + 14px); transform: translate(-50%, -12px); width: max-content; max-width: calc(100% - 32px); box-sizing: border-box; background: #CFE5C4; color: #1E3816; border-left: 4px solid #2F6522; border-radius: 10px; padding: 0.85rem 0.75rem 0.85rem 1rem; font-size: 0.95rem; line-height: 1.45; z-index: 300; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; display: flex; align-items: center; gap: 0.75rem; box-shadow: 0 8px 24px rgba(30,56,22,0.20); }
+.mc-toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.mc-toast .ic { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: #2F6522 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/13px no-repeat; }
+.mc-toast .tx { flex: 1; min-width: 0; }
+.mc-toast .x { flex-shrink: 0; width: 32px; height: 32px; margin: -6px -2px -6px 0.25rem; border: 0; background: none; color: #24401B; cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.mc-toast .x:hover { background: rgba(47,101,34,0.14); }
+@media (max-width: 600px) { .mc-toast { width: calc(100% - 32px); } }
 @media (max-width: 600px) {
   .mc-card { padding: 1.4rem 1.25rem; }
   .mc-row .mc-btn.solid { flex: 1 1 100%; }
@@ -348,7 +353,11 @@ a.mc-opt { text-decoration: none; }
 
   let toastT = null;
   function toast(msg) {
-    const t = $('mcToast'); t.textContent = msg; t.classList.add('show');
+    const t = $('mcToast');
+    t.innerHTML = '<span class="ic" aria-hidden="true"></span><span class="tx"></span><button type="button" class="x" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
+    t.querySelector('.tx').textContent = msg;
+    t.querySelector('.x').onclick = () => { clearTimeout(toastT); t.classList.remove('show'); };
+    t.classList.add('show');
     clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3800);
   }
 
