@@ -113,6 +113,18 @@
 .w-err { display: none; font-size: 14px; color: #8A2614; font-weight: 500; line-height: 1.45; background: #F4D8CE; border-radius: 8px; padding: 10px 12px; margin: 0; }
 .w-err.show { display: flex; align-items: flex-start; }
 .w-err::before { content: ''; flex-shrink: 0; width: 16px; height: 16px; margin-right: 8px; margin-top: 2px; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A2614' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 8v4'/><path d='M12 16h.01'/></svg>") center/contain no-repeat; }
+.w-phone { display: flex; gap: 8px; }
+.w-phone .w-in { flex: 1; min-width: 0; }
+.w-cc { display: flex; align-items: center; gap: 6px; height: 48px; padding: 0 14px; flex-shrink: 0; border-radius: 10px; border: 1px solid #D9C8C6; background: #F5EEE5; color: #5A4645; font-family: var(--font-body); font-size: 16px; cursor: pointer; white-space: nowrap; }
+.w-cc svg { transition: transform .15s; }
+.w-cc.open svg { transform: rotate(180deg); }
+.w-ccd { display: none; flex-direction: column; gap: 8px; margin-top: 8px; border: 1px solid #D9C8C6; border-radius: 10px; background: var(--cream, #F5EEE5); padding: 0.75rem; }
+.w-ccd.open { display: flex; }
+.w-ccl { overflow-y: auto; max-height: 240px; display: flex; flex-direction: column; }
+.w-cci { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0.75rem 0.6rem; min-height: 46px; cursor: pointer; border-radius: 6px; color: #5A4645; }
+@media (hover: hover) { .w-cci:hover { background: #EDE3D9; } }
+.w-cci-code { color: var(--text-light); }
+.w-hint { font-size: 14px; color: var(--text-light); margin: 0.45rem 0 0; line-height: 1.5; }
 .w-notify-btn { align-self: flex-start; border: 0; cursor: pointer; font-size: 1rem; padding: 0.85rem 2.2rem; }
 .w-notify-btn:disabled { opacity: 0.6; cursor: default; }
 .w-notify-done { grid-column: 1 / -1; display: flex; gap: 1rem; align-items: flex-start; }
@@ -445,34 +457,91 @@
   // Nothing to list (none planned, or the list could not load): the home page
   // hides the whole section; the workshops page offers "Notify me", which
   // saves to the dashboard's Waitlist.
+  // Same country list and phone rules as the booking page.
+  var COUNTRIES = [
+    { name: 'India', flag: '🇮🇳', code: '+91', minLen: 10, maxLen: 10 },
+    { name: 'United States', flag: '🇺🇸', code: '+1', minLen: 10, maxLen: 10 },
+    { name: 'United Kingdom', flag: '🇬🇧', code: '+44', minLen: 10, maxLen: 10 },
+    { name: 'Canada', flag: '🇨🇦', code: '+1', minLen: 10, maxLen: 10 },
+    { name: 'Germany', flag: '🇩🇪', code: '+49', minLen: 9, maxLen: 11 },
+    { name: 'Australia', flag: '🇦🇺', code: '+61', minLen: 9, maxLen: 9 },
+    { name: 'United Arab Emirates', flag: '🇦🇪', code: '+971', minLen: 9, maxLen: 9 },
+    { name: 'Singapore', flag: '🇸🇬', code: '+65', minLen: 8, maxLen: 8 },
+    { name: 'France', flag: '🇫🇷', code: '+33', minLen: 9, maxLen: 9 },
+    { name: 'Netherlands', flag: '🇳🇱', code: '+31', minLen: 9, maxLen: 9 },
+    { name: 'Switzerland', flag: '🇨🇭', code: '+41', minLen: 9, maxLen: 9 },
+    { name: 'New Zealand', flag: '🇳🇿', code: '+64', minLen: 8, maxLen: 9 },
+    { name: 'Nepal', flag: '🇳🇵', code: '+977', minLen: 10, maxLen: 10 }
+  ];
+  var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M6 9l6 6l6 -6"/></svg>';
+
+  // Nothing to list (none planned, or the list could not load): the home page
+  // hides the whole section; the workshops page offers "Notify me", which
+  // saves to the dashboard's Waitlist. Same fields as the booking page's
+  // sold-out form: name, phone with country, optional email.
   function empty() {
     if (box.getAttribute('data-empty') === 'hide') { var sec = box.closest('section'); if (sec) sec.style.display = 'none'; return; }
     box.innerHTML = '<div class="w-notify" id="wNotify">'
       + '<div class="w-notify-text"><p class="w-notify-title">New dates coming soon</p>'
       + '<p class="w-notify-sub">Leave your details and Arpit will message you as soon as the next workshop opens for booking.</p></div>'
       + '<form class="w-notify-form" id="wNotifyForm" novalidate>'
-      + '<div class="w-nf"><label for="wnName">Name</label><input class="w-in" id="wnName" autocomplete="name" placeholder="Your name"/></div>'
-      + '<div class="w-nf"><label for="wnPhone">WhatsApp number</label><input class="w-in" id="wnPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+91 98765 43210"/></div>'
+      + '<div class="w-nf"><label for="wnName">Name</label><input class="w-in" id="wnName" autocomplete="name" placeholder="Full name"/></div>'
+      + '<div class="w-nf"><label for="wnPhone">Phone</label><div class="w-phone"><button type="button" class="w-cc" id="wnCc" aria-haspopup="listbox" aria-expanded="false"><span id="wnFlag">🇮🇳</span><span id="wnCode">+91</span>' + CHEV + '</button>'
+      + '<input class="w-in" id="wnPhone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="Number"/></div>'
+      + '<div class="w-ccd" id="wnCcd"><input class="w-in" id="wnCcs" placeholder="Search country..." autocomplete="off"/><div class="w-ccl" id="wnCcl" role="listbox"></div></div>'
+      + '<p class="w-hint">We\'ll message you on WhatsApp when the next workshop opens.</p></div>'
       + '<div class="w-nf"><label for="wnEmail">Email <span>(optional)</span></label><input class="w-in" id="wnEmail" type="email" autocomplete="email" placeholder="you@example.com"/></div>'
       + '<p class="w-err" id="wnErr" role="alert"></p>'
       + '<button type="submit" class="btn-primary w-notify-btn" id="wnBtn">Notify me</button>'
       + '</form></div>';
-    var form = document.getElementById('wNotifyForm');
-    form.addEventListener('submit', function (e) {
+
+    var country = COUNTRIES[0];
+    var cc = document.getElementById('wnCc'), ccd = document.getElementById('wnCcd'), ccs = document.getElementById('wnCcs'), ccl = document.getElementById('wnCcl');
+    function closeCc() { ccd.classList.remove('open'); cc.classList.remove('open'); cc.setAttribute('aria-expanded', 'false'); }
+    function renderCc(f) {
+      f = (f || '').trim().toLowerCase();
+      ccl.innerHTML = '';
+      COUNTRIES.filter(function (c) { return c.name.toLowerCase().indexOf(f) > -1 || c.code.indexOf(f) > -1; }).forEach(function (c) {
+        var it = document.createElement('div');
+        it.className = 'w-cci'; it.setAttribute('role', 'option');
+        it.innerHTML = '<span><span>' + c.flag + '</span> ' + c.name + '</span><span class="w-cci-code">' + c.code + '</span>';
+        it.addEventListener('click', function () {
+          country = c;
+          document.getElementById('wnFlag').textContent = c.flag;
+          document.getElementById('wnCode').textContent = c.code;
+          ccs.value = ''; renderCc(''); closeCc();
+          document.getElementById('wnPhone').focus();
+        });
+        ccl.appendChild(it);
+      });
+    }
+    renderCc('');
+    cc.addEventListener('click', function () {
+      var open = !ccd.classList.contains('open');
+      ccd.classList.toggle('open', open); cc.classList.toggle('open', open); cc.setAttribute('aria-expanded', String(open));
+      if (open) ccs.focus();
+    });
+    ccs.addEventListener('input', function () { renderCc(ccs.value); });
+    document.addEventListener('click', function (e) { if (!ccd.contains(e.target) && !cc.contains(e.target)) closeCc(); });
+
+    // Typing again clears an old error.
+    document.getElementById('wNotifyForm').addEventListener('input', function () { document.getElementById('wnErr').classList.remove('show'); });
+    document.getElementById('wNotifyForm').addEventListener('submit', function (e) {
       e.preventDefault();
       var name = document.getElementById('wnName').value.trim();
-      var phone = document.getElementById('wnPhone').value.trim();
+      var num = document.getElementById('wnPhone').value.replace(/[\s-]/g, '');
       var email = document.getElementById('wnEmail').value.trim();
       var err = document.getElementById('wnErr'), btn = document.getElementById('wnBtn');
-      var digits = phone.replace(/\D/g, '');
+      var len = country.minLen === country.maxLen ? country.minLen + ' digits' : country.minLen + '-' + country.maxLen + ' digits';
       var msg = !name ? 'Please enter your name.'
-        : digits.length < 10 ? 'Please enter a WhatsApp number with at least 10 digits.'
-        : (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) ? 'That email doesn\'t look right.' : '';
+        : !num ? 'Please enter your phone number.'
+        : !/^\d+$/.test(num) ? 'Phone number should contain digits only.'
+        : (num.length < country.minLen || num.length > country.maxLen) ? 'Enter a valid mobile number (' + len + ' for ' + country.name + ').'
+        : (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) ? 'Please enter a valid email.' : '';
       if (msg) { err.textContent = msg; err.classList.add('show'); return; }
       err.classList.remove('show');
-      if (digits.length === 10) phone = '+91' + digits; else if (phone.charAt(0) !== '+') phone = '+' + digits;
       btn.disabled = true; btn.textContent = 'Saving…';
-      fetch(API_BASE + '/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, phone: phone, email: email || null }) })
+      fetch(API_BASE + '/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, phone: country.code + num, email: email || null }) })
         .then(function (r) { if (!r.ok) throw new Error(r.status); })
         .then(function () {
           document.getElementById('wNotify').innerHTML = '<div class="w-notify-done"><span class="w-tick" aria-hidden="true"></span><div><p class="w-notify-title">You\'re on the list</p><p class="w-notify-sub">Thanks, ' + esc(name.split(' ')[0]) + '. Arpit will message you when the next workshop opens.</p></div></div>';
