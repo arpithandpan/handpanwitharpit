@@ -2847,7 +2847,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v122</span>
+        <span style="color:var(--clay);font-weight:500;">v123</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2919,7 +2919,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v122</span>
+        <span style="color:var(--clay);font-weight:500;">v123</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3593,6 +3593,25 @@ table#paymentsTable { min-width: 700px; }
             Add weekly slot</button>
         </div>
       </div>
+      <div class="sch-bar">
+        <div class="sch-seg" role="tablist">
+          <button type="button" id="schSegList" onclick="schSetView('list')">List</button>
+          <button type="button" id="schSegCal" onclick="schSetView('cal')"><span class="sch-lbl-wk">Week</span><span class="sch-lbl-day">Day</span></button>
+        </div>
+        <div class="sch-nav" id="schNav">
+          <button type="button" class="sch-ic" onclick="schCalShift(-1)" aria-label="Previous week">&#8249;</button>
+          <span id="schWeekLabel"></span>
+          <button type="button" class="sch-ic" onclick="schCalShift(1)" aria-label="Next week">&#8250;</button>
+          <button type="button" class="sch-today" onclick="schCalToday()">Today</button>
+        </div>
+        <div class="sch-legend" id="schLegend"><span><i class="lg-cls"></i>Class</span><span><i class="lg-mv"></i>Moved / make-up</span><span><i class="lg-tr"></i>Trial</span><span><i class="lg-bl"></i>Workshop / gig (blocked)</span><span><i class="lg-sk"></i>Skipped</span></div>
+      </div>
+      <div id="schCalWrap" style="display:none;margin:0 0 2rem;">
+        <div class="schw" id="schWeek"></div>
+        <div class="schd" id="schDay"></div>
+        <div class="sch-cal-note">Times in IST. Click a class to move or skip it. Empty space is free time.</div>
+      </div>
+      <div id="schListWrap">
       <div style="font-weight:500;margin-bottom:0.6rem;">Next 14 days</div>
       <div class="dash-table-wrap" style="margin:0 0 2rem;">
         <table class="desktop-table" style="min-width:720px;"><thead><tr>
@@ -3600,6 +3619,9 @@ table#paymentsTable { min-width: 700px; }
         </tr></thead><tbody id="schUpcomingTable"><tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards mobile-only" id="schUpcomingCards"></div>
       </div>
+      </div>
+      <div class="sch-pop-shade" id="schPopShade" onclick="schPopClose()"></div>
+      <div class="sch-pop" id="schPop" role="dialog"></div>
       <div style="font-weight:500;margin-bottom:0.6rem;">Weekly slots</div>
       <div class="dash-table-wrap" style="margin:0;">
         <table class="desktop-table" style="min-width:860px;"><thead><tr>
@@ -13094,6 +13116,84 @@ async function doObsPopupToggle(rec, newCount) {
 .sch-muted { color: var(--text-light); font-size: 0.85rem; }
 .sch-strike { text-decoration: line-through; opacity: 0.55; }
 .sch-note { font-size: 0.85rem; color: var(--text-light); line-height: 1.5; margin: 0 0 1.25rem; }
+/* ── Schedule: List | Week (desktop) / Day (phone) ── */
+.sch-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 0 0 14px; }
+.sch-seg { display: inline-flex; border: 1px solid rgba(184,114,42,0.4); border-radius: 8px; overflow: hidden; }
+.sch-seg button { font: inherit; font-size: 0.95rem; padding: 7px 18px; border: 0; background: transparent; color: var(--text-light); cursor: pointer; }
+.sch-seg button.on { background: rgba(184,114,42,0.16); color: var(--text-dark); }
+.sch-lbl-day { display: none; }
+.sch-nav { display: none; align-items: center; gap: 8px; }
+.sch-nav #schWeekLabel { font-weight: 500; min-width: 120px; text-align: center; color: var(--text-dark); }
+.sch-ic, .sch-today { font: inherit; height: 34px; border-radius: 8px; border: 1px solid rgba(184,114,42,0.4); background: transparent; color: var(--text-mid); cursor: pointer; }
+.sch-ic { width: 34px; font-size: 1.2rem; line-height: 1; }
+.sch-today { padding: 0 12px; font-size: 0.9rem; }
+.sch-ic:hover, .sch-today:hover { border-color: var(--clay); color: var(--clay); }
+.sch-legend { display: none; margin-left: auto; gap: 16px; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-light); }
+.sch-legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.lg-cls { background: #6b1f2a; } .lg-mv { background: #4a3570; } .lg-tr { background: #2f5a34; }
+.lg-bl { background: rgba(184,114,42,0.35); } .lg-sk { border: 1px dashed rgba(184,114,42,0.6); }
+.sch-bar.cal .sch-nav, .sch-bar.cal .sch-legend { display: flex; }
+.schw, .schd { --sch-line: rgba(184,114,42,0.13); --sch-panel: #fff; --sch-head: var(--sand); }
+body.dark-mode .schw, body.dark-mode .schd { --sch-line: rgba(200,147,90,0.13); --sch-panel: #231c16; --sch-head: #2a2018; }
+.schw { background: var(--sch-panel); border: 1px solid var(--clay-pale); border-radius: 12px; overflow: hidden; }
+.schw-days { display: grid; grid-template-columns: 58px repeat(7, 1fr); background: var(--sch-head); border-bottom: 1px solid var(--sch-line); }
+.schw-days div { padding: 9px 10px; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); }
+.schw-days div b { display: block; font-size: 1.2rem; font-weight: 400; letter-spacing: 0; color: var(--text-dark); text-transform: none; }
+.schw-days .tod, .schw-days .tod b { color: var(--clay); }
+.schw-grid, .schd-grid { display: grid; position: relative; }
+.schw-grid { grid-template-columns: 58px repeat(7, 1fr); }
+.schd-grid { grid-template-columns: 52px 1fr; }
+.sch-hrs div { font-size: 0.72rem; color: var(--text-light); text-align: right; padding-right: 8px; transform: translateY(-7px); }
+.sch-hrs div:first-child { transform: translateY(2px); }
+.sch-col { position: relative; border-left: 1px solid var(--sch-line); }
+.sch-col.tod { background-color: rgba(184,114,42,0.05); }
+.sch-ev { position: absolute; border-radius: 6px; padding: 4px 7px; font-size: 0.78rem; line-height: 1.25; overflow: hidden; cursor: pointer; color: #f3e6d8; box-sizing: border-box; text-align: left; font-family: inherit; border: 0; }
+.sch-ev b { display: block; font-weight: 500; font-size: 0.86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sch-ev small { display: block; font-size: 0.74rem; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sch-ev.cls { background: #6b1f2a; border-left: 3px solid #d46a7c; }
+.sch-ev.mv { background: #4a3570; border-left: 3px solid #9b7fd1; }
+.sch-ev.tr { background: #2f5a34; border-left: 3px solid #7fbf6a; cursor: default; }
+.sch-ev.bl { background: repeating-linear-gradient(135deg, rgba(184,114,42,0.18) 0 6px, rgba(184,114,42,0.07) 6px 12px); border: 1px solid rgba(184,114,42,0.4); color: var(--clay); cursor: default; }
+.sch-ev.sk { background: transparent; border: 1px dashed rgba(184,114,42,0.5); color: var(--text-light); }
+.sch-ev.sk b { text-decoration: line-through; }
+.sch-ev.past { opacity: 0.55; }
+.sch-ev:focus-visible { outline: 2px solid var(--clay); outline-offset: 1px; }
+.sch-now { position: absolute; left: 0; right: 0; height: 2px; background: #e0664f; z-index: 2; pointer-events: none; }
+.sch-now:before { content: ""; position: absolute; left: -5px; top: -4px; width: 10px; height: 10px; border-radius: 50%; background: #e0664f; }
+.sch-cal-note { font-size: 0.8rem; color: var(--text-light); margin-top: 10px; }
+.schd { display: none; }
+.schd-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 12px; }
+.schd-strip button { font: inherit; border: 0; background: transparent; border-radius: 10px; padding: 7px 0 8px; color: var(--text-light); font-size: 0.72rem; letter-spacing: 0.05em; cursor: pointer; }
+.schd-strip button b { display: block; font-size: 1.05rem; font-weight: 400; color: var(--text-dark); letter-spacing: 0; }
+.schd-strip button.tod b { color: var(--clay); }
+.schd-strip button.sel { background: rgba(184,114,42,0.16); outline: 1px solid rgba(184,114,42,0.45); }
+.schd-dots { display: flex; justify-content: center; gap: 3px; height: 5px; margin-top: 4px; }
+.schd-dots i { width: 5px; height: 5px; border-radius: 50%; background: #d46a7c; }
+.schd-title { font-weight: 500; margin: 0 0 10px; color: var(--text-dark); }
+.schd-title small { font-weight: 400; color: var(--text-light); margin-left: 6px; }
+.schd-box { background: var(--sch-panel); border: 1px solid var(--clay-pale); border-radius: 12px; overflow: hidden; touch-action: pan-y; }
+.schd-empty { background: var(--sch-panel); border: 1px dashed var(--clay-pale); border-radius: 12px; padding: 22px 16px; text-align: center; color: var(--text-light); font-size: 0.92rem; }
+.sch-pop { display: none; position: fixed; z-index: 3000; width: 270px; background: #fff; border: 1px solid var(--clay-pale); border-radius: 10px; padding: 14px 16px; box-shadow: 0 12px 30px rgba(0,0,0,0.18); }
+body.dark-mode .sch-pop { background: #2a2018; border-color: rgba(200,147,90,0.4); box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
+.sch-pop.open { display: block; }
+.sch-pop h4 { margin: 0; font-weight: 500; font-size: 1.05rem; color: var(--text-dark); }
+.sch-pop p { margin: 4px 0 12px; color: var(--text-light); font-size: 0.88rem; line-height: 1.5; }
+.sch-pop-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.sch-pop-shade { display: none; }
+@media (max-width: 900px) {
+  .sch-lbl-wk { display: none; } .sch-lbl-day { display: inline; }
+  .sch-bar { gap: 10px; }
+  .sch-bar.cal .sch-legend { display: none; }
+  .sch-nav { width: 100%; justify-content: space-between; }
+  .schw { display: none; } .schd { display: block; }
+  .sch-cal-note { display: none; }
+  .sch-pop { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: auto; border-radius: 16px 16px 0 0; padding: 12px 18px calc(22px + env(safe-area-inset-bottom, 0px)); }
+  .sch-pop:before { content: ""; display: block; width: 40px; height: 4px; border-radius: 2px; background: rgba(184,114,42,0.4); margin: 0 auto 12px; }
+  .sch-pop-row { display: grid; grid-template-columns: 1fr 1fr; }
+  .sch-pop-row .btn-dash { justify-content: center; padding: 12px; }
+  .sch-pop-row .sch-pop-wide { grid-column: 1 / 3; }
+  .sch-pop-shade.open { display: block; position: fixed; inset: 0; z-index: 2999; background: rgba(0,0,0,0.5); }
+}
 .sch-time { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
 .sch-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .sch-chip { height: 38px; min-width: 52px; padding: 0 0.8rem; border-radius: 10px; border: 1px solid var(--clay-pale); background: transparent; color: var(--text-dark); font-family: inherit; font-size: 0.9rem; cursor: pointer; }
@@ -13161,7 +13261,7 @@ const SCH_TZS = [
   ['Australia/Sydney', 'Sydney']
 ];
 const SCH_TZ_SHORT = { 'Asia/Kolkata': 'IST', 'America/New_York': 'ET', 'America/Chicago': 'CT', 'America/Denver': 'MT', 'America/Los_Angeles': 'PT' };
-let _sch = { slots: [], exceptions: [], students: [], upcoming: [] };
+let _sch = { slots: [], exceptions: [], students: [], upcoming: [], cal: [], trials: [], gigs: [], workshops: [] };
 
 // ── time helpers (same maths as the server's reminder worker) ──
 function schTzOffsetMin(d, tz) {
@@ -13192,15 +13292,17 @@ function schStudentName(id) { const s = _sch.students.find(x => x.id === id); re
 // Concrete classes for the next `days` days (IST), skips and moves applied.
 function schPlan(days) {
   const today = schIst(new Date()).ymd;
-  const last = schAddDays(today, days - 1);
+  return schPlanRange(today, schAddDays(today, days - 1));
+}
+// Same, for any IST date range (the Week / Day view uses it).
+function schPlanRange(today, last) {
   const exKey = {};
   _sch.exceptions.forEach(e => { exKey[e.student_id + '|' + String(e.original_date).slice(0, 10)] = e; });
   const out = [];
   _sch.slots.filter(r => r.active).forEach(r => {
     const tz = r.student_tz || 'Asia/Kolkata';
     const local = r.local_time != null && r.local_weekday != null && tz !== 'Asia/Kolkata';
-    for (let i = -1; i <= days; i++) {
-      const D = schAddDays(today, i);
+    for (let D = schAddDays(today, -1); D <= schAddDays(last, 1); D = schAddDays(D, 1)) {
       let utc;
       if (local) {
         if (schWeekday(D) !== Number(r.local_weekday)) continue;
@@ -13953,14 +14055,24 @@ async function loadSchedule() {
   if (!up || !wk) return;
   try {
     const today = schIst(new Date()).ymd;
-    const [slots, exc, stus] = await Promise.all([
+    // Trials, gigs and workshops only feed the Week / Day view; if one of
+    // them fails to load, the schedule still shows.
+    const soft = q => q.catch(e => { console.warn('schedule extra read failed:', e.message); return { data: [] }; });
+    const from = schAddDays(today, -7), to = schAddDays(today, 42);
+    const [slots, exc, stus, trs, gigs, wss] = await Promise.all([
       sbGetAll('class_schedule', 'order=weekday.asc,time_ist.asc'),
       sbGetAll('class_exceptions', 'or=(original_date.gte.' + schAddDays(today, -7) + ',new_date.gte.' + today + ')&order=original_date.asc'),
-      sbGetAll('students', 'order=full_name.asc')
+      sbGetAll('students', 'order=full_name.asc'),
+      soft(sbGetAll('trials', 'start_at=gte.' + from + 'T00:00:00%2B05:30&start_at=lte.' + to + 'T23:59:59%2B05:30')),
+      soft(sbGetAll('gigs', 'event_date=gte.' + from + '&event_date=lte.' + to)),
+      soft(sbGetAll('workshops', 'date=gte.' + from + '&date=lte.' + to))
     ]);
     _sch.slots = slots.data || [];
     _sch.exceptions = exc.data || [];
     _sch.students = (stus.data || []).filter(s => !s.archived);
+    _sch.trials = (trs.data || []).filter(t => t.start_at && !/^(cancelled|dropped)$/.test(String(t.status || '')) && !t.archived);
+    _sch.gigs = (gigs.data || []).filter(g => !g.archived && g.status !== 'cancelled');
+    _sch.workshops = (wss.data || []).filter(w => !w.archived && !w.cancelled);
     schRender();
   } catch (e) {
     const msg = '<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text-light);">Could not load the schedule (' + zEsc(e.message) + '). If this says 401/403, run the schedule SQL in Supabase first.</td></tr>';
@@ -14047,6 +14159,7 @@ function schRender() {
   const active = _sch.slots.filter(r => r.active).length;
   const cnt = document.getElementById('schCount');
   if (cnt) cnt.textContent = active + ' active weekly slot' + (active === 1 ? '' : 's') + ' · ' + plan.filter(o => o.state === 'scheduled' || o.state === 'moved-in').length + ' classes in the next 14 days';
+  schApplyView();
 }
 
 // ── form pages (same component as Add Trial / Add Student) ──
@@ -14175,9 +14288,10 @@ async function schPostException(row) {
   if (!res.ok) throw new Error(res.error || ('status ' + res.status));
 }
 
-async function schSkip(i) {
+async function schSkip(i, src) {
   if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
-  const o = _sch.upcoming[i]; if (!o) return;
+  schPopClose();
+  const o = (src === 'cal' ? _sch.cal : _sch.upcoming)[i]; if (!o) return;
   const name = schStudentName(o.slot.student_id);
   if (!(await customConfirm('Skip this class?', name + ', ' + schDayLabel(o.ymd) + ' at ' + schTime12(o.hhmm) + ' IST. No WhatsApp reminder will go for it. Cancel that day in the calendar too if the student uses it.', 'Skip class', 'x'))) return;
   try {
@@ -14187,9 +14301,10 @@ async function schSkip(i) {
   } catch (e) { showToast('Could not skip: ' + e.message, 'error'); }
 }
 
-function schOpenMove(i) {
+function schOpenMove(i, src) {
   if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
-  const o = _sch.upcoming[i]; if (!o) return;
+  schPopClose();
+  const o = (src === 'cal' ? _sch.cal : _sch.upcoming)[i]; if (!o) return;
   const g = (label, inner, hint) => '<div class="form-group"><label class="form-label">' + label + '</label>' + inner + (hint ? '<span class="inv-date-hint">' + hint + '</span>' : '') + '</div>';
   schOpenForm('move', 'Move class',
     '<div class="sch-note">' + zEsc(schStudentName(o.slot.student_id)) + ', normally ' + schDayLabel(o.ymd) + ' at ' + schTime12(o.hhmm) + ' IST</div>'
@@ -14197,7 +14312,7 @@ function schOpenMove(i) {
     + g('New time (IST)', schTimeField('schMoveTime', o.hhmm)) + '</div>'
     + '<div class="sch-note" id="schMoveLocal"></div>'
     + '<div class="sch-note">The reminder goes about an hour before the new time, with the same Zoom link. Update the calendar event too if the student uses it.</div>');
-  document.getElementById('sch-move-save').onclick = () => schSaveMove(i);
+  document.getElementById('sch-move-save').onclick = () => schSaveMove(i, src);
   const upd = () => {
     const d = document.getElementById('schMoveDate').value, t = schTimeValue('schMoveTime');
     const tz = o.slot.student_tz;
@@ -14207,8 +14322,8 @@ function schOpenMove(i) {
   schOnTimeChange('schMoveTime', upd); upd();
 }
 
-async function schSaveMove(i) {
-  const o = _sch.upcoming[i]; if (!o) return;
+async function schSaveMove(i, src) {
+  const o = (src === 'cal' ? _sch.cal : _sch.upcoming)[i]; if (!o) return;
   const d = document.getElementById('schMoveDate').value, t = schTimeValue('schMoveTime');
   if (!d || !t) { showToast('Pick the new date and time', 'error'); return; }
   if (new Date(d + 'T' + t + ':00+05:30') < new Date()) { showToast('The new time is already in the past', 'error'); return; }
@@ -14222,12 +14337,246 @@ async function schSaveMove(i) {
 
 async function schUndo(id) {
   if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
+  schPopClose();
   if (!(await customConfirm('Undo this change?', 'The class goes back to its normal slot and the reminder will go as usual.', 'Undo', 'undo'))) return;
   const res = await safeFetch(SUPABASE_URL + '/rest/v1/class_exceptions?id=eq.' + encodeURIComponent(id), { method: 'DELETE', headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' } });
   if (!res.ok) { showToast('Could not undo: ' + (res.error || res.status), 'error'); return; }
   showToast('Back to the normal slot', 'success');
   loadSchedule();
 }
+
+// ── WEEK VIEW (desktop) / DAY VIEW (phone) ──
+// Same data as the list: classes from schPlanRange (skips and moves applied),
+// plus booked trials and the time workshops and gigs block (2 h before to
+// 1 h after, like the trial page). Everything is placed in IST.
+const SCH_HOUR_PX = 48, SCH_DAY_HOUR_PX = 52;
+let _schView = 'list', _schWeekStart = null, _schDaySel = null;
+try { if (localStorage.getItem('sch_view') === 'cal') _schView = 'cal'; } catch (e) {}
+
+function schMonday(ymd) { const w = schWeekday(ymd); return schAddDays(ymd, w === 0 ? -6 : 1 - w); }
+function schShortDate(ymd) { return new Date(ymd + 'T00:00:00Z').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' }); }
+function schMinOfDay(d) { const t = schIst(d).hhmm.split(':').map(Number); return t[0] * 60 + t[1]; }
+function schClockMin(txt) {
+  const m = String(txt || '').match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
+  if (!m) return null;
+  let h = Number(m[1]); const mi = Number(m[2] || 0); const mer = (m[3] || '').toUpperCase();
+  if (h > 23 || mi > 59) return null;
+  if (mer === 'PM' && h < 12) h += 12;
+  if (mer === 'AM' && h === 12) h = 0;
+  return h * 60 + mi;
+}
+function schDurMin(txt) { const t = String(txt || '').toLowerCase(); const n = parseFloat(t); if (!n) return 0; return /h/.test(t) ? Math.round(n * 60) : /m/.test(t) ? Math.round(n) : Math.round(n * 60); }
+// Same rule as the server: 2 h before the start to 1 h after the end, whole day without a time.
+function schEventBlock(ymd, timeTxt, defaultLen) {
+  const parts = String(timeTxt || '').split(/\s*(?:-|–|to)\s*/i);
+  const st = schClockMin(parts[0]);
+  if (st == null) return { s: 0, e: 1440, allDay: true };
+  let start = st, end = parts[1] ? schClockMin(parts[1]) : null;
+  if (end != null && !/AM|PM/i.test(parts[0]) && /PM/i.test(parts[1]) && start < 720 && start + 720 < end + 60) start += 720;
+  if (end == null || end <= start) end = start + defaultLen;
+  return { s: Math.max(0, start - 120), e: Math.min(1440, end + 60), allDay: false };
+}
+
+function schSetView(v) {
+  _schView = v === 'cal' ? 'cal' : 'list';
+  try { localStorage.setItem('sch_view', _schView); } catch (e) {}
+  schApplyView();
+}
+function schApplyView() {
+  const cal = _schView === 'cal';
+  const lw = document.getElementById('schListWrap'), cw = document.getElementById('schCalWrap');
+  if (!lw || !cw) return;
+  lw.style.display = cal ? 'none' : '';
+  cw.style.display = cal ? '' : 'none';
+  document.getElementById('schSegList').classList.toggle('on', !cal);
+  document.getElementById('schSegCal').classList.toggle('on', cal);
+  document.querySelector('.sch-bar').classList.toggle('cal', cal);
+  if (cal) schCalRender();
+}
+function schCalShift(n) {
+  const today = schIst(new Date()).ymd;
+  const min = schMonday(today), max = schAddDays(min, 28);
+  const next = schAddDays(_schWeekStart || min, 7 * n);
+  if (next < min || next > max) { showToast('The calendar shows this week and the next 4', 'info'); return; }
+  _schWeekStart = next;
+  const keepWd = _schDaySel ? (schWeekday(_schDaySel) + 6) % 7 : 0;
+  _schDaySel = schAddDays(next, keepWd);
+  if (_schDaySel < today && next === min) _schDaySel = today;
+  schCalRender();
+}
+function schCalToday() { _schWeekStart = null; _schDaySel = null; schCalRender(); }
+function schDayPick(ymd) { _schDaySel = ymd; schCalRender(); }
+
+// Everything that happens on one IST day, as blocks with start/end minutes.
+function schDayItems(ymd, plan) {
+  const items = [];
+  const now = new Date();
+  plan.forEach((o, i) => {
+    if (o.ymd !== ymd) return;
+    const s = schMinOfDay(o.utc);
+    const dur = Number(o.slot && o.slot.duration_min) || 60;
+    const name = schStudentName(o.slot.student_id);
+    const loc = schLocalLabel(o.utc, o.slot.student_tz);
+    const past = o.utc.getTime() + dur * 60000 < now.getTime();
+    let k = 'cls', sub = schTime12(o.hhmm) + (loc ? ' · ' + loc : '');
+    if (o.state === 'skip') { k = 'sk'; sub = schTime12(o.hhmm) + ' · skipped'; }
+    else if (o.state === 'move') { k = 'sk'; sub = schTime12(o.hhmm) + ' · moved to ' + schDayLabel(String(o.ex.new_date).slice(0, 10)) + ' ' + schTime12(o.ex.new_time_ist); }
+    else if (o.state === 'moved-in') { k = 'mv'; sub = schTime12(o.hhmm) + ' · ' + (o.ex && o.ex.makeup ? 'make-up' : 'moved'); }
+    items.push({ s, e: Math.min(1440, s + dur), k, title: name, sub, idx: i, past, counts: k === 'cls' || k === 'mv' });
+  });
+  _sch.trials.forEach(t => {
+    const d = new Date(t.start_at); if (isNaN(d) || schIst(d).ymd !== ymd) return;
+    const s = schMinOfDay(d), dur = Number(t.duration_min) || 45;
+    items.push({ s, e: Math.min(1440, s + dur), k: 'tr', title: 'Trial: ' + (t.full_name || t.name || 'new student'), sub: schTime12(schIst(d).hhmm) + ' · free trial', past: d.getTime() + dur * 60000 < now.getTime(), counts: true });
+  });
+  _sch.workshops.forEach(w => {
+    if (String(w.date).slice(0, 10) !== ymd) return;
+    const b = schEventBlock(ymd, w.workshop_time, 120);
+    items.push({ s: b.s, e: b.e, k: 'bl', title: w.title || 'Workshop', sub: (w.workshop_time ? w.workshop_time + ' · ' : '') + (w.venue || '') + (b.allDay ? ' · no time set, whole day blocked' : '') });
+  });
+  _sch.gigs.forEach(g => {
+    if (String(g.event_date).slice(0, 10) !== ymd) return;
+    const b = schEventBlock(ymd, g.event_time, schDurMin(g.duration) || 120);
+    items.push({ s: b.s, e: b.e, k: 'bl', title: g.title || g.client_name || 'Performance', sub: (g.event_time ? g.event_time + ' · ' : '') + (g.venue || '') + (b.allDay ? ' · no time set, whole day blocked' : '') });
+  });
+  // Side-by-side lanes where blocks overlap (a class inside a workshop block shows the clash).
+  items.sort((a, b) => a.s - b.s || b.e - a.e);
+  let group = [], groupEnd = -1;
+  const flush = () => { const lanes = []; group.forEach(it => { let l = lanes.findIndex(end => end <= it.s); if (l < 0) { l = lanes.length; lanes.push(0); } lanes[l] = it.e; it.lane = l; }); group.forEach(it => { it.lanes = lanes.length; }); group = []; };
+  items.forEach(it => { if (it.s >= groupEnd) { flush(); groupEnd = -1; } group.push(it); groupEnd = Math.max(groupEnd, it.e); });
+  flush();
+  return items;
+}
+
+function schEvHtml(it, startHour, px) {
+  const top = (it.s / 60 - startHour) * px + 2;
+  const h = Math.max(22, (it.e - it.s) / 60 * px - 4);
+  const w = 100 / (it.lanes || 1);
+  const style = 'top:' + top + 'px;height:' + h + 'px;left:calc(' + (w * (it.lane || 0)) + '% + 4px);width:calc(' + w + '% - 8px);';
+  const click = it.idx != null ? ' onclick="schPopOpen(' + it.idx + ',this)"' : '';
+  const tag = it.idx != null ? 'button type="button"' : 'div';
+  return '<' + tag + ' class="sch-ev ' + it.k + (it.past ? ' past' : '') + '" style="' + style + '"' + click + ' title="' + zEsc(it.title + ' · ' + it.sub) + '">'
+    + '<b>' + zEsc(it.title) + '</b>' + (h >= 36 ? '<small>' + zEsc(it.sub) + '</small>' : '') + '</' + (it.idx != null ? 'button' : 'div') + '>';
+}
+function schHourLabel(hr) { return hr === 0 || hr === 24 ? '12 AM' : hr === 12 ? '12 PM' : hr > 12 ? (hr - 12) + ' PM' : hr + ' AM'; }
+function schHoursRange(all) {
+  let a = 7, b = 24;
+  all.forEach(it => { if (it.k === 'bl' && it.s === 0 && it.e === 1440) return; a = Math.min(a, Math.floor(it.s / 60)); });
+  return [Math.max(0, a), b];
+}
+
+function schCalRender() {
+  const today = schIst(new Date()).ymd;
+  if (!_schWeekStart) _schWeekStart = schMonday(today);
+  if (!_schDaySel) _schDaySel = today;
+  const ws = _schWeekStart, we = schAddDays(ws, 6);
+  if (_schDaySel < ws || _schDaySel > we) _schDaySel = ws < today && today <= we ? today : ws;
+  const plan = schPlanRange(ws, we);
+  _sch.cal = plan;
+  const days = [0, 1, 2, 3, 4, 5, 6].map(i => schAddDays(ws, i));
+  const byDay = {}; days.forEach(d => { byDay[d] = schDayItems(d, plan); });
+  const all = days.reduce((a, d) => a.concat(byDay[d]), []);
+  const [h0, h1] = schHoursRange(all);
+  document.getElementById('schWeekLabel').textContent = schShortDate(ws).split(' ')[0] + ' – ' + schShortDate(we);
+  const nowMin = schMinOfDay(new Date());
+  const hrs = '<div class="sch-hrs">' + Array.from({ length: h1 - h0 }, (_, i) => '<div style="height:' + SCH_HOUR_PX + 'px">' + schHourLabel(h0 + i) + '</div>').join('') + '</div>';
+  const grid = 'background:repeating-linear-gradient(to bottom,transparent 0,transparent ' + (SCH_HOUR_PX - 1) + 'px,var(--sch-line) ' + (SCH_HOUR_PX - 1) + 'px,var(--sch-line) ' + SCH_HOUR_PX + 'px);height:' + ((h1 - h0) * SCH_HOUR_PX) + 'px;';
+  const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  document.getElementById('schWeek').innerHTML =
+    '<div class="schw-days"><div></div>' + days.map(d => '<div class="' + (d === today ? 'tod' : '') + '">' + WD[schWeekday(d)] + '<b>' + Number(d.slice(8)) + '</b></div>').join('') + '</div>'
+    + '<div class="schw-grid">' + hrs + days.map(d => '<div class="sch-col' + (d === today ? ' tod' : '') + '" style="' + grid + '">'
+      + byDay[d].map(it => schEvHtml(it, h0, SCH_HOUR_PX)).join('')
+      + (d === today && nowMin >= h0 * 60 ? '<div class="sch-now" style="top:' + ((nowMin / 60 - h0) * SCH_HOUR_PX) + 'px"></div>' : '')
+      + '</div>').join('') + '</div>';
+
+  // Phone: one day at a time. The grid starts an hour before the day's first
+  // booking (or at "now" today), so the classes are on screen without scrolling.
+  const sel = _schDaySel, its = byDay[sel] || [];
+  const n = its.filter(it => it.counts && it.k !== 'tr').length, nt = its.filter(it => it.k === 'tr').length, ns = its.filter(it => it.k === 'sk').length;
+  const summary = [n ? n + ' class' + (n === 1 ? '' : 'es') : '', nt ? nt + ' trial' + (nt === 1 ? '' : 's') : '', ns ? ns + ' skipped' : ''].filter(Boolean).join(', ') || 'Nothing booked';
+  let body;
+  if (!its.length) {
+    body = '<div class="schd-empty">Nothing booked this day. The whole day is free.</div>';
+  } else {
+    const timed = its.filter(it => !(it.s === 0 && it.e === 1440));
+    let d0 = timed.length ? Math.floor(Math.min.apply(null, timed.map(it => it.s)) / 60) - 1 : 7;
+    if (sel === today) d0 = Math.min(d0, Math.floor(nowMin / 60));
+    d0 = Math.max(0, Math.min(d0, 22));
+    const d1 = 24;
+    const dayGrid = 'background:repeating-linear-gradient(to bottom,transparent 0,transparent ' + (SCH_DAY_HOUR_PX - 1) + 'px,var(--sch-line) ' + (SCH_DAY_HOUR_PX - 1) + 'px,var(--sch-line) ' + SCH_DAY_HOUR_PX + 'px);height:' + ((d1 - d0) * SCH_DAY_HOUR_PX) + 'px;';
+    const vis = its.map(it => Object.assign({}, it, { s: Math.max(it.s, d0 * 60) })).filter(it => it.e > d0 * 60);
+    body = '<div class="schd-box" id="schDayBox"><div class="schd-grid">'
+      + '<div class="sch-hrs">' + Array.from({ length: d1 - d0 }, (_, i) => '<div style="height:' + SCH_DAY_HOUR_PX + 'px">' + schHourLabel(d0 + i) + '</div>').join('') + '</div>'
+      + '<div class="sch-col" style="' + dayGrid + '">' + vis.map(it => schEvHtml(it, d0, SCH_DAY_HOUR_PX)).join('')
+      + (sel === today && nowMin >= d0 * 60 ? '<div class="sch-now" style="top:' + ((nowMin / 60 - d0) * SCH_DAY_HOUR_PX) + 'px"></div>' : '')
+      + '</div></div></div>';
+  }
+  document.getElementById('schDay').innerHTML =
+    '<div class="schd-strip">' + days.map(d => {
+      const c = Math.min(4, (byDay[d] || []).filter(it => it.counts).length);
+      return '<button type="button" class="' + (d === today ? 'tod ' : '') + (d === sel ? 'sel' : '') + '" onclick="schDayPick(\'' + d + '\')">' + WD[schWeekday(d)].toUpperCase() + '<b>' + Number(d.slice(8)) + '</b><span class="schd-dots">' + '<i></i>'.repeat(c) + '</span></button>';
+    }).join('') + '</div>'
+    + '<div class="schd-title">' + new Date(sel + 'T00:00:00Z').toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short', timeZone: 'UTC' })
+    + '<small>' + summary + '</small></div>' + body;
+  // Swipe left / right on the day for the next / previous day.
+  const sw = document.getElementById('schDay');
+  if (sw && !sw._swipe) {
+    sw._swipe = true;
+    let x0 = null, y0 = null;
+    sw.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    sw.addEventListener('touchend', e => {
+      if (x0 == null) return;
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      const next = schAddDays(_schDaySel, dx < 0 ? 1 : -1);
+      if (next < _schWeekStart || next > schAddDays(_schWeekStart, 6)) { schCalShift(dx < 0 ? 1 : -1); return; }
+      schDayPick(next);
+    }, { passive: true });
+  }
+}
+
+// Popover on desktop, bottom sheet on phones.
+function schPopOpen(i, el) {
+  const o = _sch.cal[i]; if (!o) return;
+  const admin = isAdmin();
+  const name = schStudentName(o.slot.student_id);
+  const loc = schLocalLabel(o.utc, o.slot.student_tz);
+  const dur = Number(o.slot && o.slot.duration_min) || 60;
+  const past = o.utc.getTime() + dur * 60000 < Date.now();
+  const remind = new Date(o.utc.getTime() - 60 * 60000);
+  let info = schDayLabel(o.ymd) + ' · ' + schTime12(o.hhmm) + ' IST' + (loc ? '<br>Their time: ' + zEsc(loc) : '');
+  if (o.state === 'skip') info += '<br>Skipped' + (o.ex && Number(o.ex.student_changes) > 0 ? ' by the student' : '') + '. No reminder goes.';
+  else if (o.state === 'move') info += '<br>Moved to ' + schDayLabel(String(o.ex.new_date).slice(0, 10)) + ', ' + schTime12(o.ex.new_time_ist) + ' IST';
+  else if (o.state === 'moved-in') info += '<br>' + (o.ex && o.ex.makeup ? 'Make-up class' : 'Moved here') + (o.ex && Number(o.ex.student_changes) > 0 ? ' by the student' : '');
+  else if (!past) info += '<br>WhatsApp reminder at ' + schTime12(schIst(remind).hhmm);
+  const zoom = o.slot && o.slot.zoom_link;
+  let btns = '';
+  if (admin && !past) {
+    btns = o.ex
+      ? '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schUndo(' + o.ex.id + ')">Undo</button>'
+      : '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schOpenMove(' + i + ',\'cal\')">Move</button><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schSkip(' + i + ',\'cal\')">Skip</button>';
+  }
+  if (zoom && o.state !== 'skip' && o.state !== 'move' && !past) btns += '<a class="btn-dash btn-dash-primary btn-dash-sm sch-pop-wide" href="' + zEsc(zoom) + '" target="_blank" rel="noopener">Join Zoom</a>';
+  const pop = document.getElementById('schPop');
+  pop.innerHTML = '<h4>' + zEsc(name) + '</h4><p>' + info + '</p>' + (btns ? '<div class="sch-pop-row">' + btns + '</div>' : '');
+  pop.classList.add('open');
+  document.getElementById('schPopShade').classList.add('open');
+  if (window.matchMedia('(min-width: 901px)').matches && el) {
+    const r = el.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
+    let left = r.right + 8; if (left + pw > window.innerWidth - 12) left = r.left - pw - 8;
+    let top = Math.min(Math.max(12, r.top), window.innerHeight - ph - 12);
+    pop.style.left = Math.max(12, left) + 'px'; pop.style.top = top + 'px';
+  } else { pop.style.left = ''; pop.style.top = ''; }
+  setTimeout(() => document.addEventListener('mousedown', schPopOutside), 0);
+}
+function schPopOutside(e) { const pop = document.getElementById('schPop'); if (pop && !pop.contains(e.target) && !e.target.closest('.sch-ev')) schPopClose(); }
+function schPopClose() {
+  const pop = document.getElementById('schPop'); if (pop) pop.classList.remove('open');
+  const sh = document.getElementById('schPopShade'); if (sh) sh.classList.remove('open');
+  document.removeEventListener('mousedown', schPopOutside);
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') schPopClose(); });
+window.addEventListener('scroll', () => { if (window.matchMedia('(min-width: 901px)').matches) schPopClose(); }, true);
 
 // Next real moment of a weekday + time in a timezone, returned as IST weekday + time.
 function schLocalToIst(localWeekday, hhmm, tz) {
