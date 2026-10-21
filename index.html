@@ -821,47 +821,9 @@ function toggleClass(el) {
       + '<div><p class="w-title">' + esc(title) + '</p><div class="w-meta"><span>' + esc(meta) + '</span></div>' + counts + '</div>'
       + action + '</div>';
   }
-  // Nothing to list (none planned, or the list could not load): the home page
-  // hides the whole section; the workshops page offers "Notify me", which
-  // saves to the dashboard's Waitlist.
-  function empty() {
-    if (box.getAttribute('data-empty') === 'hide') { var sec = box.closest('section'); if (sec) sec.style.display = 'none'; return; }
-    box.innerHTML = '<div class="w-notify" id="wNotify">'
-      + '<div class="w-notify-text"><p class="w-notify-title">New dates coming soon</p>'
-      + '<p class="w-notify-sub">Leave your details and Arpit will message you as soon as the next workshop opens for booking.</p></div>'
-      + '<form class="w-notify-form" id="wNotifyForm" novalidate>'
-      + '<div class="w-nf"><label for="wnName">Name</label><input class="w-in" id="wnName" autocomplete="name" placeholder="Your name"/></div>'
-      + '<div class="w-nf"><label for="wnPhone">WhatsApp number</label><input class="w-in" id="wnPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+91 98765 43210"/></div>'
-      + '<div class="w-nf"><label for="wnEmail">Email <span>(optional)</span></label><input class="w-in" id="wnEmail" type="email" autocomplete="email" placeholder="you@example.com"/></div>'
-      + '<p class="w-err" id="wnErr" role="alert"></p>'
-      + '<button type="submit" class="btn-primary w-notify-btn" id="wnBtn">Notify me</button>'
-      + '</form></div>';
-    var form = document.getElementById('wNotifyForm');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var name = document.getElementById('wnName').value.trim();
-      var phone = document.getElementById('wnPhone').value.trim();
-      var email = document.getElementById('wnEmail').value.trim();
-      var err = document.getElementById('wnErr'), btn = document.getElementById('wnBtn');
-      var digits = phone.replace(/\D/g, '');
-      var msg = !name ? 'Please enter your name.'
-        : digits.length < 10 ? 'Please enter a WhatsApp number with at least 10 digits.'
-        : (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) ? 'That email doesn\'t look right.' : '';
-      if (msg) { err.textContent = msg; err.classList.add('show'); return; }
-      err.classList.remove('show');
-      if (digits.length === 10) phone = '+91' + digits; else if (phone.charAt(0) !== '+') phone = '+' + digits;
-      btn.disabled = true; btn.textContent = 'Saving…';
-      fetch(API_BASE + '/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, phone: phone, email: email || null }) })
-        .then(function (r) { if (!r.ok) throw new Error(r.status); })
-        .then(function () {
-          document.getElementById('wNotify').innerHTML = '<div class="w-notify-done"><span class="w-tick" aria-hidden="true"></span><div><p class="w-notify-title">You\'re on the list</p><p class="w-notify-sub">Thanks, ' + esc(name.split(' ')[0]) + '. Arpit will message you when the next workshop opens.</p></div></div>';
-        })
-        .catch(function () {
-          btn.disabled = false; btn.textContent = 'Notify me';
-          err.textContent = 'Something went wrong. Please try again, or message Arpit on WhatsApp.'; err.classList.add('show');
-        });
-    });
-  }
+  // Nothing to list (none planned, or the list could not load): hide the
+  // whole section. The workshops page shows "Notify me" instead.
+  function empty() { var sec = box.closest('section'); if (sec) sec.style.display = 'none'; }
 
   fetch(API_BASE + '/api/workshops/upcoming')
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
