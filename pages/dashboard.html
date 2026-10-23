@@ -2547,6 +2547,93 @@ body:not(.dark-mode) .us-box, body:not(.dark-mode) .us-keep { background: #fff; 
 .ms-tx small { display: block; font-size: 13.5px; color: #8a7a69; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ms-tx .search-highlight { background: none !important; color: #c8935a !important; font-weight: 600; }
 
+/* ── v133 TOASTS: light frosted glass, icon, readable on any screen ── */
+.toast { box-sizing: border-box !important; display: flex !important; align-items: flex-start; gap: 11px; text-align: left !important; width: max-content; min-width: 0 !important; max-width: min(420px, calc(100vw - 24px)) !important; padding: 12px 16px 12px 12px !important; border-radius: 16px !important; font-size: 15px !important; font-weight: 500 !important; line-height: 1.35 !important; pointer-events: auto !important; cursor: pointer; border: 0 !important; -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); box-shadow: 0 12px 30px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.35) !important; top: 12px; transform: translateX(-50%) translateY(-140%); visibility: hidden; transition: transform .32s cubic-bezier(0.34, 1.4, 0.64, 1), opacity .2s ease, visibility 0s linear .32s !important; }
+.toast.show { visibility: visible; transform: translateX(-50%) translateY(0); transition: transform .32s cubic-bezier(0.34, 1.4, 0.64, 1), opacity .2s ease, visibility 0s !important; }
+html.studio-app .toast { top: calc(8px + env(safe-area-inset-top, 0px)) !important; }
+.toast .toast-ic { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: 14px; color: #fff; margin-top: -1px; }
+.toast .toast-tx { min-width: 0; }
+.toast .toast-tx b { display: block; font-weight: 500; }
+.toast .toast-tx small { display: block; font-weight: 400; font-size: 13.5px; opacity: .82; margin-top: 2px; }
+.toast .toast-x { margin-left: 4px; opacity: .45; font-size: 20px; line-height: 20px; }
+.toast.info, .toast:not(.success):not(.error):not(.warning) { background: rgba(243,231,216,0.82) !important; color: #24160b !important; }
+.toast.info .toast-ic { background: #8a5a2b; }
+.toast.success { background: rgba(223,243,226,0.82) !important; color: #0f3518 !important; }
+.toast.success .toast-ic { background: #2f8a46; }
+.toast.error { background: rgba(253,224,218,0.85) !important; color: #561409 !important; }
+.toast.error .toast-ic { background: #c4402a; }
+.toast.warning { background: rgba(252,236,201,0.85) !important; color: #4a2f04 !important; }
+.toast.warning .toast-ic { background: #c98a17; }
+@media (min-width: 901px) { .toast { top: 18px; } }
+
+/* ── v133 MORE PAGE (phones): opened by the More tab, tab bar stays ── */
+.more-page { display: none; }
+@media (max-width: 900px) {
+  body.menu-is-open .app-tabs { display: flex !important; visibility: visible !important; z-index: 10002; }
+  body.menu-is-open .mobile-topbar { visibility: hidden !important; }
+  .mobile-menu-overlay .mob-nav { display: none !important; }
+  .mobile-menu-overlay .more-page { display: block; width: 100%; padding: calc(10px + env(safe-area-inset-top, 0px)) 0 calc(96px + env(safe-area-inset-bottom, 0px)); color: #efe2d3; }
+}
+.mp-big { font-size: 32px; font-weight: 600; padding: 8px 20px 12px; letter-spacing: -0.01em; }
+.mp-grp { margin: 0 14px 20px; background: #1f1812; border-radius: 14px; overflow: hidden; }
+.mp-lbl { font-size: 12.5px; letter-spacing: 0.07em; text-transform: uppercase; color: #8a7a69; padding: 0 30px 7px; font-weight: 500; }
+.mp-it { display: flex; align-items: center; gap: 13px; width: 100%; min-height: 50px; padding: 0 14px; border: 0; background: none; color: #efe2d3; font-family: var(--font-body); font-size: 16.5px; text-align: left; position: relative; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mp-it + .mp-it::before { content: ""; position: absolute; left: 57px; right: 0; top: 0; border-top: 1px solid rgba(200,147,90,0.12); }
+.mp-it:active { background: rgba(200,147,90,0.1); }
+.mp-ic { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; flex-shrink: 0; }
+.mp-ic svg { width: 17px; height: 17px; }
+.mp-nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mp-bd { min-width: 22px; height: 22px; border-radius: 11px; background: #c8935a; color: #1a0e06; font-size: 12.5px; font-weight: 600; display: inline-grid; place-items: center; padding: 0 6px; }
+.mp-ch { color: #5d4e40; flex-shrink: 0; }
+.mp-me { display: flex; align-items: center; gap: 13px; width: calc(100% - 28px); margin: 0 14px 20px; padding: 13px 14px; background: #1f1812; border: 0; border-radius: 14px; color: #efe2d3; font-family: var(--font-body); text-align: left; cursor: pointer; }
+.mp-logo { width: 46px; height: 46px; border-radius: 12px; background: #2a2018; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 10px; flex-shrink: 0; }
+.mp-logo i { border-radius: 3px; background: #c8935a; } .mp-logo i:nth-child(2), .mp-logo i:nth-child(3) { background: #6e5136; }
+.mp-me b { display: block; font-size: 17px; font-weight: 600; } .mp-me small { display: block; color: #8a7a69; font-size: 13.5px; margin-top: 1px; }
+.mp-out { display: block; width: calc(100% - 28px); margin: 4px 14px 8px; min-height: 50px; border: 0; border-radius: 14px; background: #1f1812; color: #ef8a73; font-family: var(--font-body); font-size: 16.5px; cursor: pointer; }
+.mp-ver { text-align: center; color: #6b5a4a; font-size: 13px; padding: 8px 0 4px; }
+
+/* ── v134: full-screen chat on phones, date labels fade when not scrolling ── */
+.wa-day { transition: opacity .25s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+.wa-msgs:not(.scrolling) .wa-day.stuck { opacity: 0; pointer-events: none; }
+@media (max-width: 900px) {
+  body.wa-chat-open .mobile-topbar { visibility: hidden !important; }
+  body.dark-mode #section-whatsapp.wa-open .wa-thread .wa-th { background: #1a1208 !important; }
+  #section-whatsapp.wa-open .wa-thread .wa-th { padding-top: calc(8px + env(safe-area-inset-top, 0px)) !important; min-height: 64px; }
+}
+
+/* ── v135: This week tiles + detail sheet ── */
+.td-stat.tw-tap { position: relative; display: block; width: 100%; text-align: left; background: none; border: 0; border-radius: 0; font-family: var(--font-body); color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background .15s; }
+.td-stat.tw-tap + .td-stat.tw-tap { border-left: 1px solid var(--clay-pale); }
+.td-stat.tw-tap:hover, .td-stat.tw-tap:active { background: rgba(200,147,90,0.1); }
+.td-stat .tw-ch { position: absolute; right: 10px; top: 16px; color: var(--text-light); opacity: .6; }
+.tw-root { position: fixed; inset: 0; z-index: 10050; }
+.tw-shade { position: absolute; inset: 0; background: rgba(0,0,0,0.55); opacity: 0; transition: opacity .2s; }
+.tw-sheet { position: absolute; left: 0; right: 0; bottom: 0; max-height: 82vh; overflow-y: auto; background: #231b14; color: #efe2d3; border-radius: 20px 20px 0 0; padding: 8px 0 calc(18px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -10px 30px rgba(0,0,0,.5); transform: translateY(100%); transition: transform .25s cubic-bezier(.2,.8,.2,1); overscroll-behavior: contain; }
+body:not(.dark-mode) .tw-sheet { background: #fffaf3; color: #2a1a0e; }
+.tw-root.open .tw-shade { opacity: 1; } .tw-root.open .tw-sheet { transform: none; }
+@media (min-width: 901px) { .tw-sheet { left: 50%; right: auto; bottom: auto; top: 50%; width: 460px; border-radius: 18px; transform: translate(-50%, -46%); opacity: 0; transition: transform .2s, opacity .2s; padding-bottom: 18px; } .tw-root.open .tw-sheet { transform: translate(-50%, -50%); opacity: 1; } .tw-grab { display: none; } }
+.tw-grab { width: 38px; height: 5px; border-radius: 3px; background: #5d4e40; margin: 0 auto 10px; }
+.tw-h { display: flex; justify-content: space-between; align-items: center; padding: 4px 20px 2px; }
+.tw-h h4 { margin: 0; font-size: 20px; font-weight: 600; } .tw-h span { color: #8a7a69; font-size: 14px; }
+.tw-seg { display: flex; margin: 10px 18px 6px; background: rgba(0,0,0,0.25); border-radius: 11px; padding: 3px; }
+.tw-seg button { flex: 1; min-height: 36px; border: 0; background: none; border-radius: 9px; color: #bfae9b; font-family: var(--font-body); font-size: 14.5px; cursor: pointer; }
+.tw-seg button.on { background: #3a2c20; color: #efe2d3; }
+.tw-sum { margin: 8px 20px 2px; font-size: 14px; color: #bfae9b; line-height: 1.5; } .tw-sum b { color: #c8935a; font-weight: 500; }
+.tw-dl { font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: #8a7a69; padding: 14px 20px 4px; }
+.tw-it, .tw-btn, .tw-btn2, .tw-sheet * { box-sizing: border-box; }
+.tw-it { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 18px 8px 20px; background: none; border: 0; color: inherit; font-family: var(--font-body); text-align: left; cursor: pointer; }
+button.tw-it:active { background: rgba(200,147,90,0.08); }
+.tw-av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 600; color: #fff; flex-shrink: 0; font-size: 16px; }
+.tw-tx { flex: 1; min-width: 0; } .tw-tx b { display: block; font-weight: 500; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .tw-tx small { display: block; color: #8a7a69; font-size: 13.5px; margin-top: 1px; }
+.tw-pill { font-size: 12.5px; border-radius: 10px; padding: 3px 9px; white-space: nowrap; flex-shrink: 0; }
+.tw-pill.ok { background: rgba(120,190,130,.16); color: #9fd7a8; } .tw-pill.pd { background: rgba(224,170,80,.16); color: #e8bf72; } .tw-pill.zm { background: rgba(127,176,230,.15); color: #9cc3ee; } .tw-pill.hd { background: rgba(191,174,155,.14); color: #bfae9b; } .tw-pill.er { background: rgba(224,102,79,.16); color: #ee9a86; }
+.tw-rch { color: #5d4e40; flex-shrink: 0; }
+.tw-empty { text-align: center; padding: 22px 28px 6px; color: #bfae9b; font-size: 15px; line-height: 1.5; } .tw-empty b { display: block; color: #efe2d3; font-size: 16.5px; font-weight: 500; margin-bottom: 4px; }
+.tw-load { padding: 26px; text-align: center; color: #8a7a69; }
+.tw-btn, .tw-btn2 { display: block; width: calc(100% - 36px); margin: 14px 18px 0; min-height: 48px; border-radius: 24px; font-family: var(--font-body); font-size: 16px; cursor: pointer; }
+.tw-btn { background: #c8935a; color: #1a0e06; border: 0; font-weight: 600; }
+.tw-btn2 { background: none; border: 1px solid rgba(200,147,90,0.4); color: #c8935a; margin-top: 10px; }
+
 /* ── TODAY ── only what needs doing today. Each block hides when it has nothing to say. */
 .td-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
 .td-col { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
@@ -3312,7 +3399,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v132</span>
+        <span style="color:var(--clay);font-weight:500;">v135</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3384,7 +3471,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v132</span>
+        <span style="color:var(--clay);font-weight:500;">v135</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -6272,8 +6359,62 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     el.classList.remove('spin'); el.style.opacity = 0; el.style.transform = 'translateY(-40px)'; busy = false;
   });
 })();
+
+// ── v133: More page (phones). Built from the menu links so icons, roles and handlers stay the same. ──
+const MP_GROUPS = [
+  [null, [['overview', 'Overview', '#e0b07c'], ['insights', 'Insights', '#8fbbe9']]],
+  ['Workshops', [['workshops', 'Workshops', '#c9b5ef'], ['participants', 'Participants', '#c9b5ef'], ['waitlist', 'Waitlist', '#c9b5ef'], ['gigs', 'Performances', '#e8b27a']]],
+  ['Students & money', [['fee-payments', 'Fee Tracker', '#a6d39a'], ['payments', 'Payments', '#a6d39a'], ['unassigned-payments', 'Unassigned payments', '#ee9a86'], ['invoices', 'Invoices', '#a6d39a'], ['leads', 'Leads', '#8fbbe9']]],
+  ['Studio', [['notifications', 'Notifications', '#e0b07c'], ['settings', 'Settings', '#bfae9b'], ['bin', 'Bin', '#bfae9b']]]
+];
+let _mpCounts = {};
+function mpLink(sec) { return document.querySelector('.mob-nav a[onclick*="showSection(\'' + sec + '\'"]'); }
+function mpGo(sec) { const l = mpLink(sec); showSection(sec, l); if (document.getElementById('mobileMenuOverlay').classList.contains('open')) toggleMobileMenu(); }
+function mpHex(h, a) { const n = parseInt(h.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
+function mpRender() {
+  const ov = document.getElementById('mobileMenuOverlay'); if (!ov) return;
+  let el = document.getElementById('morePage');
+  if (!el) { el = document.createElement('div'); el.className = 'more-page'; el.id = 'morePage'; ov.appendChild(el); }
+  const chev = '<svg class="mp-ch" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  const role = (document.getElementById('mobileRoleBadge') || {}).textContent || '';
+  let h = '<div class="mp-big">More</div>' +
+    '<button type="button" class="mp-me" onclick="mpGo(\'settings\')"><span class="mp-logo"><i></i><i></i><i></i><i></i></span><span style="flex:1;min-width:0"><b>Arpit\'s Studio</b><small>' + zEsc((role.trim() || 'Admin')) + ' · arpitpandey.com</small></span>' + chev + '</button>';
+  MP_GROUPS.forEach(([label, items]) => {
+    const rows = items.map(([sec, name, col]) => {
+      const l = mpLink(sec); if (!l || l.style.display === 'none') return '';
+      const svg = l.querySelector('svg'); const icon = svg ? svg.outerHTML : '';
+      const n = _mpCounts[sec];
+      const right = n ? '<span class="mp-bd">' + (n > 99 ? '99+' : n) + '</span>' : '';
+      return '<button type="button" class="mp-it" onclick="mpGo(\'' + sec + '\')"><span class="mp-ic" style="background:' + mpHex(col, 0.16) + ';color:' + col + '">' + icon + '</span><span class="mp-nm">' + name + '</span>' + right + chev + '</button>';
+    }).join('');
+    if (!rows) return;
+    h += (label ? '<div class="mp-lbl">' + zEsc(label) + '</div>' : '') + '<div class="mp-grp">' + rows + '</div>';
+  });
+  const ver = document.querySelector('#mobileBuildStamp span');
+  h += '<button type="button" class="mp-out" onclick="toggleMobileMenu();logout()">Log out</button><div class="mp-ver">Arpit\'s Studio · ' + zEsc(ver ? ver.textContent.trim() : '') + '</div>';
+  el.innerHTML = h;
+}
+async function mpCounts() {
+  const num = id => { const e = document.getElementById(id); if (!e || e.style.display === 'none') return 0; const m = (e.textContent || '').match(/\d+/); return m ? +m[0] : 0; };
+  _mpCounts['unassigned-payments'] = num('mobileUnassignedBadge');
+  _mpCounts.notifications = num('mobileNotifCount');
+  try { const r = await sbGetAll('fee_requests', 'select=id&status=eq.pending'); _mpCounts['fee-payments'] = (r.data || []).length; } catch (e) {}
+  if (document.getElementById('mobileMenuOverlay').classList.contains('open')) mpRender();
+}
+(function mpHook() {
+  const orig = toggleMobileMenu;
+  toggleMobileMenu = function () {
+    const ov = document.getElementById('mobileMenuOverlay');
+    const opening = ov && !ov.classList.contains('open');
+    if (opening && window.matchMedia('(max-width: 900px)').matches) { mpRender(); mpCounts(); ov.scrollTop = 0; }
+    orig.apply(this, arguments);
+    if (typeof appTabsSync === 'function') appTabsSync(opening ? 'more' : (sessionStorage.getItem('dash_section') || 'today'));
+  };
+})();
 function appTab(name) {
-  if (name === 'more') { if (typeof toggleMobileMenu === 'function') toggleMobileMenu(); return; }
+  const _ov = document.getElementById('mobileMenuOverlay'), _open = _ov && _ov.classList.contains('open');
+  if (name === 'more') { if (_open) { _ov.scrollTo({ top: 0, behavior: 'smooth' }); return; } if (typeof toggleMobileMenu === 'function') toggleMobileMenu(); return; }
+  if (_open) toggleMobileMenu();
   const link = document.querySelector('.dash-nav a[onclick*="\'' + name + '\'"]');
   showSection(name, link);
   const main = document.getElementById('dashMain'); if (main) main.scrollTop = 0;
@@ -10199,29 +10340,41 @@ function showToast(msg, type) {
   const t = document.getElementById('toast');
   if (!t) return;
   clearTimeout(t._timer);
-  // Kill transition and remove .show so element snaps to hidden position
+  const kind = ['success', 'error', 'warning'].includes(type) ? type : 'info';
+  const ICON = { success: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>', error: '!', warning: '!', info: 'i' };
+  const text = String(msg == null ? '' : msg).trim();
+  const esc = v => v.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  // "Title: details" becomes a bold title with a smaller line under it.
+  let title = text, sub = '';
+  const nl = text.indexOf('\n'), co = text.indexOf(': ');
+  if (nl > 0) { title = text.slice(0, nl); sub = text.slice(nl + 1); }
+  else if (co > 2 && co < 40 && text.length > 44) { title = text.slice(0, co); sub = text.slice(co + 2); }
   t.style.transition = 'none';
   t.classList.remove('show');
-  t.className = 'toast' + (type ? ' ' + type : '');
-  t.textContent = msg;
-  t.style.transform = 'translateX(-50%) translateY(-80px)';
-  t.style.opacity = '0';
-  // Force reflow — browser registers the hidden state
-  void t.offsetHeight;
-  // Clear inline overrides and re-enable transition, then animate in
-  t.style.transition = '';
+  t.className = 'toast ' + kind;
+  t.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+  t.innerHTML = '<i class="toast-ic">' + ICON[kind] + '</i><div class="toast-tx"><b>' + esc(title) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</div>' + (kind === 'error' ? '<span class="toast-x" aria-hidden="true">&times;</span>' : '');
   t.style.transform = '';
   t.style.opacity = '';
+  void t.offsetHeight;
+  t.style.transition = '';
   t.classList.add('show');
-  t._timer = setTimeout(() => {
-    t.style.transition = 'none';
-    t.classList.remove('show');
-    t.style.transform = 'translateX(-50%) translateY(-80px)';
-    t.style.opacity = '0';
-    void t.offsetHeight;
-    t.style.transition = '';
-  }, 2000);
+  const ms = kind === 'error' ? 5000 : kind === 'warning' ? 4000 : 2500;
+  t._timer = setTimeout(toastHide, ms + Math.min(2000, Math.max(0, text.length - 60) * 25));
 }
+function toastHide() {
+  const t = document.getElementById('toast'); if (!t) return;
+  clearTimeout(t._timer);
+  t.style.transform = ''; t.classList.remove('show');
+}
+(function toastGestures() {
+  const t = document.getElementById('toast'); if (!t) return;
+  let y0 = null;
+  t.addEventListener('click', toastHide);
+  t.addEventListener('touchstart', e => { y0 = e.touches[0].clientY; t.style.transition = 'none'; }, { passive: true });
+  t.addEventListener('touchmove', e => { if (y0 == null) return; const dy = Math.min(0, e.touches[0].clientY - y0); t.style.transform = 'translateX(-50%) translateY(' + dy + 'px)'; }, { passive: true });
+  t.addEventListener('touchend', e => { if (y0 == null) return; const dy = e.changedTouches[0].clientY - y0; y0 = null; t.style.transition = ''; if (dy < -24) toastHide(); else t.style.transform = ''; });
+})();
 
 
 
@@ -14162,7 +14315,8 @@ async function waOpen(phone) {
   const sec = document.getElementById('section-whatsapp');
   // On phones the chat covers the page right under the top bar.
   const tb = document.querySelector('.mobile-topbar');
-  sec.style.setProperty('--wa-top', (tb && tb.offsetHeight ? Math.round(tb.getBoundingClientRect().bottom) : 68) + 'px');
+  // v134: on phones the chat is full screen, its own header replaces the app bar.
+  sec.style.setProperty('--wa-top', window.matchMedia('(max-width: 900px)').matches ? '0px' : ((tb && tb.offsetHeight ? Math.round(tb.getBoundingClientRect().bottom) : 68) + 'px'));
   sec.classList.add('wa-open');
   document.body.classList.add('wa-chat-open');
   if (window.matchMedia('(max-width: 900px)').matches) lockScroll();
@@ -14282,6 +14436,18 @@ function waRenderThread(keepScroll) {
   if (srWasOpen && document.getElementById('waSrBtn')) waSrToggle();
   waCompactSync();
   waSafeFix();
+  waDayStuck(document.getElementById('waMsgs'), false);
+}
+// v134: a date label stuck to the top shows only while scrolling (like WhatsApp), so it never sits on a message.
+function waDayStuck(m, scrolling) {
+  if (!m) return;
+  const top = m.getBoundingClientRect().top;
+  m.querySelectorAll('.wa-day').forEach(p => {
+    const g = p.parentElement;
+    const stuck = g && g.getBoundingClientRect().top < top - 2;
+    p.classList.toggle('stuck', !!stuck);
+  });
+  if (scrolling) { m.classList.add('scrolling'); clearTimeout(m._dayT); m._dayT = setTimeout(() => m.classList.remove('scrolling'), 1100); }
 }
 // Phones: while typing or with the + grid open, the draft card shrinks so the chat stays visible.
 function waCompactSync() {
@@ -14513,6 +14679,7 @@ document.addEventListener('scroll', e => {
   if (!e.target || e.target.id !== 'waMsgs') return;
   const m = e.target, d = document.getElementById('waDown');
   if (d) d.style.display = (m.clientHeight > 160 && m.scrollHeight - m.scrollTop - m.clientHeight > 300) ? 'flex' : 'none';
+  waDayStuck(m, true);
 }, true);
 
 // ── AGENT DRAFTS ──
@@ -14952,6 +15119,103 @@ function waBadgeStart() {
 const TD_CHEV = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 const TD_CAM = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>';
 let _tdTimer = null;
+
+// ── v135: This week tiles open a sheet with the people behind each number ──
+const TW_CHEV = '<svg class="tw-ch" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+const TW_TRIAL_URL = 'https://arpitpandey.com/pages/trial';
+let _twWeekStart = null, _twToday = null, _tw = { kind: null, week: 0 };
+function twClose() { const r = document.getElementById('twRoot'); if (r) { r.classList.remove('open'); setTimeout(() => r.remove(), 220); } unlockScroll(); }
+function twOpen(kind) {
+  if (!_twWeekStart) return;
+  _tw = { kind, week: 0 };
+  let r = document.getElementById('twRoot'); if (r) r.remove();
+  r = document.createElement('div'); r.id = 'twRoot'; r.className = 'tw-root';
+  r.innerHTML = '<div class="tw-shade" onclick="twClose()"></div><div class="tw-sheet" role="dialog" aria-modal="true"><div class="tw-grab"></div><div id="twBody"></div></div>';
+  document.body.appendChild(r);
+  lockScroll();
+  requestAnimationFrame(() => r.classList.add('open'));
+  // drag the sheet down to close
+  const sh = r.querySelector('.tw-sheet'); let y0 = null, dy = 0;
+  sh.addEventListener('touchstart', e => { if (sh.scrollTop > 0) return; y0 = e.touches[0].clientY; dy = 0; sh.style.transition = 'none'; }, { passive: true });
+  sh.addEventListener('touchmove', e => { if (y0 == null) return; dy = Math.max(0, e.touches[0].clientY - y0); sh.style.transform = 'translateY(' + dy + 'px)'; }, { passive: true });
+  sh.addEventListener('touchend', () => { if (y0 == null) return; y0 = null; sh.style.transition = ''; if (dy > 90) twClose(); else sh.style.transform = ''; });
+  twRender();
+}
+function twWeek(n) { _tw.week = n; twRender(); }
+function twRange() {
+  const a = _tw.week ? schAddDays(_twWeekStart, -7) : _twWeekStart;
+  const b = _tw.week ? _twWeekStart : schAddDays(_twToday, 1);
+  return [a, b];
+}
+function twGoStudent(id) { twClose(); setTimeout(() => goToSearchResult('classes', id), 150); }
+async function twShareTrial() {
+  try { if (navigator.share) { await navigator.share({ title: 'Book a free handpan trial', url: TW_TRIAL_URL }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(TW_TRIAL_URL); showToast('Trial link copied', 'success'); } catch (e) { showToast(TW_TRIAL_URL, 'info'); }
+}
+async function twRender() {
+  const body = document.getElementById('twBody'); if (!body) return;
+  const kind = _tw.kind, [a, b] = twRange();
+  const title = { trials: 'Trials booked', students: 'New students', classes: 'Classes taught' }[kind];
+  const seg = '<div class="tw-seg"><button type="button" class="' + (_tw.week === 0 ? 'on' : '') + '" onclick="twWeek(0)">This week</button><button type="button" class="' + (_tw.week === 1 ? 'on' : '') + '" onclick="twWeek(1)">Last week</button></div>';
+  const head = n => '<div class="tw-h"><h4>' + title + '</h4><span>' + (n == null ? '' : n) + '</span></div>' + seg;
+  body.innerHTML = head(null) + '<div class="tw-load">Loading…</div>';
+  const istStart = d => new Date(d + 'T00:00:00+05:30').toISOString();
+  const av = (name, key) => '<span class="tw-av" style="background:' + (typeof waAvColor === 'function' ? waAvColor(String(key || name)) : '#6b4a2e') + '">' + zEsc(String(name || '?').trim().charAt(0).toUpperCase()) + '</span>';
+  const CH = '<svg class="tw-rch" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  const stuById = id => (_sch.students || []).find(x => x.id === id);
+  let html = '';
+  try {
+    if (kind === 'students') {
+      const list = (_sch.students || []).filter(x => !x.archived && x.join_date && x.id !== 'S-DEMO' && String(x.join_date).slice(0, 10) >= a && String(x.join_date).slice(0, 10) < b)
+        .sort((x, y) => String(y.join_date).localeCompare(String(x.join_date)));
+      let paid = new Set(), pend = new Set();
+      if (list.length) {
+        const ids = list.map(x => encodeURIComponent(x.id)).join(',');
+        const [fp, fr] = await Promise.all([
+          sbGetAll('fee_payments', 'select=student_id&paid=eq.true&student_id=in.(' + ids + ')').then(r => r.data || []).catch(() => []),
+          sbGetAll('fee_requests', 'select=student_id&status=eq.pending&student_id=in.(' + ids + ')').then(r => r.data || []).catch(() => [])
+        ]);
+        paid = new Set(fp.map(x => x.student_id)); pend = new Set(fr.map(x => x.student_id));
+      }
+      html = head(list.length) + (list.length ? list.map(x => {
+        const slot = (_sch.slots || []).find(sl => sl.student_id === x.id && sl.active !== false);
+        const sub = 'Joined ' + schDayLabel(String(x.join_date).slice(0, 10)) + (slot ? ' · ' + SCH_DAYS[slot.weekday].slice(0, 3) + ' ' + schTime12(slot.time_ist) : '');
+        const pill = paid.has(x.id) ? '<span class="tw-pill ok">Paid</span>' : pend.has(x.id) ? '<span class="tw-pill pd">Link sent</span>' : '<span class="tw-pill hd">No fee yet</span>';
+        return '<button type="button" class="tw-it" onclick="twGoStudent(\'' + zEsc(x.id) + '\')">' + av(x.full_name, x.phone || x.id) + '<span class="tw-tx"><b>' + zEsc(x.full_name || x.id) + '</b><small>' + zEsc(sub) + '</small></span>' + pill + CH + '</button>';
+      }).join('') : '<div class="tw-empty"><b>No new students ' + (_tw.week ? 'last week' : 'this week') + '</b></div>')
+        + '<button type="button" class="tw-btn2" onclick="twClose();tdGo(\'classes\')">See all students</button>';
+    } else if (kind === 'classes') {
+      const rows = ((await sbGetAll('class_log', 'class_date=gte.' + a + '&class_date=lt.' + b + '&order=class_date.asc,created_at.asc')).data || []);
+      const per = {};
+      rows.forEach(r => { const n = (stuById(r.student_id) || {}).full_name || r.student_id; const f = String(n).split(' ')[0]; per[f] = (per[f] || 0) + 1; });
+      const sum = Object.entries(per).sort((x, y) => y[1] - x[1]).map(([n, c]) => '<b>' + zEsc(n) + ' ' + c + '</b>').join(' · ');
+      let last = '';
+      html = head(rows.length) + (rows.length ? '<div class="tw-sum">' + sum + '</div>' + rows.map(r => {
+        const st = stuById(r.student_id) || {}; const name = st.full_name || r.student_id;
+        const d = String(r.class_date).slice(0, 10);
+        const day = d !== last ? '<div class="tw-dl">' + zEsc(schDayLabel(d)) + '</div>' : ''; last = d;
+        const zoom = r.source === 'zoom' || /Auto from Zoom/i.test(r.note || '');
+        const mins = (String(r.note || '').match(/(\d+)\s*min/) || [])[1];
+        const sub = [r.is_free ? 'Free' : '', mins ? mins + ' min' : '', !zoom && r.note ? String(r.note).slice(0, 40) : ''].filter(Boolean).join(' · ');
+        return day + '<button type="button" class="tw-it" onclick="twGoStudent(\'' + zEsc(r.student_id) + '\')">' + av(name, st.phone || r.student_id) + '<span class="tw-tx"><b>' + zEsc(name) + '</b>' + (sub ? '<small>' + zEsc(sub) + '</small>' : '') + '</span>' + (zoom ? '<span class="tw-pill zm">Zoom</span>' : '<span class="tw-pill hd">Added by you</span>') + '</button>';
+      }).join('') : '<div class="tw-empty"><b>No classes logged ' + (_tw.week ? 'last week' : 'this week') + '</b></div>');
+    } else {
+      const rows = ((await sbGetAll('trials', 'created_at=gte.' + istStart(a) + '&created_at=lt.' + istStart(b) + '&order=created_at.desc')).data || []);
+      const ST = { booked: ['Booked', 'pd'], pending: ['Booked', 'pd'], attended: ['Attended', 'ok'], converted: ['Joined', 'ok'], no_show: ['No-show', 'er'], noshow: ['No-show', 'er'], dropped: ['Dropped', 'hd'], cancelled: ['Cancelled', 'hd'] };
+      html = head(rows.length) + (rows.length ? rows.map(t => {
+        const when = t.start_at ? new Date(t.start_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : (t.trial_date ? schDayLabel(String(t.trial_date).slice(0, 10)) : '');
+        const st = ST[String(t.student_id ? 'converted' : t.status || '').toLowerCase()] || [t.status || '', 'hd'];
+        return '<div class="tw-it">' + av(t.full_name, t.phone || t.id) + '<span class="tw-tx"><b>' + zEsc(t.full_name || 'Trial') + '</b><small>' + zEsc(when) + '</small></span>' + (st[0] ? '<span class="tw-pill ' + st[1] + '">' + zEsc(st[0]) + '</span>' : '') + '</div>';
+      }).join('') : '<div class="tw-empty"><b>No trials ' + (_tw.week ? 'last week' : 'this week') + '</b>Share your booking page so new people can pick a free trial time.</div>')
+        + '<button type="button" class="tw-btn" onclick="twShareTrial()">Share trial link</button>'
+        + ((typeof isAdmin !== 'function' || isAdmin()) ? '<button type="button" class="tw-btn2" onclick="twClose();tdGo(\'schedule\');setTimeout(function(){if(typeof schOpenTrialSettings===\'function\')schOpenTrialSettings()},500)">Trial booking settings</button>' : '');
+    }
+  } catch (e) {
+    html = head(null) + '<div class="tw-empty"><b>Could not load</b>' + zEsc(e.message || 'Check your connection') + '</div>';
+  }
+  if (_tw.kind === kind) body.innerHTML = html;
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('twRoot')) twClose(); });
 function tdGo(section) { const a = document.querySelector('.dash-nav a[onclick*="\'' + section + '\'"]'); showSection(section, a); }
 async function loadToday(silent) {
   const wrap = document.getElementById('tdWrap'); if (!wrap) return;
@@ -15064,9 +15328,10 @@ async function loadToday(silent) {
     + (acts.length ? acts.map(a => '<button type="button" class="td-act" onclick="tdGo(\'' + a[2] + '\')"><span class="td-ico ' + a[3] + '">' + ICO[a[3]] + '</span><span class="td-act-t">' + a[0] + ' ' + a[1] + (a[4] ? '<small>' + zEsc(a[4]) + '</small>' : '') + '</span>' + TD_CHEV + '</button>').join('')
       : '<div class="td-clear"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Nothing waiting on you.</div>') + '</div>';
   const newStu = stus.filter(s => !s.archived && s.join_date && String(s.join_date).slice(0, 10) >= weekStart && s.id !== 'S-DEMO').length;
-  const stat = (n, l) => '<div class="td-stat"><b>' + (n == null ? '—' : n) + '</b><span>' + l + '</span></div>';
+  _twWeekStart = weekStart; _twToday = today;
+  const stat = (n, l, k) => '<button type="button" class="td-stat tw-tap" onclick="twOpen(\'' + k + '\')"><b>' + (n == null ? '—' : n) + '</b><span>' + l + '</span>' + TW_CHEV + '</button>';
   const weekCard = '<div class="td-card td-o-week"><div class="td-head"><h3>This week</h3><span>since Monday</span></div><div class="td-stats">'
-    + stat(wkTrials ? wkTrials.length : null, 'Trials booked') + stat(newStu, 'New students') + stat(wkClasses ? wkClasses.length : null, 'Classes taught') + '</div></div>';
+    + stat(wkTrials ? wkTrials.length : null, 'Trials booked', 'trials') + stat(newStu, 'New students', 'students') + stat(wkClasses ? wkClasses.length : null, 'Classes taught', 'classes') + '</div></div>';
   wrap.innerHTML = '<div class="td-col">' + nextCard + todayCard + tomCard + '</div><div class="td-col">' + needCard + weekCard + '</div>';
   clearInterval(_tdTimer);
   _tdTimer = setInterval(() => { if (document.getElementById('section-today')?.classList.contains('active') && !document.hidden) loadToday(true); }, 60000);
