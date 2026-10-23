@@ -1387,6 +1387,26 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   .dash-main { height: calc(100vh - 68px); overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: env(safe-area-inset-bottom, 0px); scroll-padding-bottom: 2rem; overscroll-behavior-y: contain; will-change: scroll-position; }
   .dash-sidebar-toggle { display: none !important; }
 }
+/* ── PHONE NOTIFICATIONS card (Notifications page) ── */
+.push-card { display: block; background: #1f1813; border: 1px solid rgba(200,147,90,0.22); border-radius: 14px; padding: 16px 18px; margin: 0 0 1.25rem; color: #e8d5c0; }
+.push-card:empty { display: none; }
+.push-h { display: flex; align-items: center; gap: 12px; }
+.push-h svg { flex-shrink: 0; color: #c8935a; }
+.push-h > div { flex: 1; min-width: 0; }
+.push-h b { font-weight: 500; font-size: 16px; display: block; }
+.push-h small { display: block; color: #9a7d63; font-size: 13.5px; margin-top: 2px; line-height: 1.4; }
+.push-h .btn-dash { margin-left: auto; white-space: nowrap; }
+.push-opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 4px 18px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(200,147,90,0.15); }
+.push-opt { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; font-size: 14.5px; cursor: pointer; }
+.push-opt small { display: block; color: #9a7d63; font-size: 12.5px; }
+.push-sw { position: relative; width: 42px; height: 24px; border-radius: 12px; background: rgba(200,147,90,0.22); flex-shrink: 0; transition: background .2s; }
+.push-sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #e8d5c0; transition: transform .2s; }
+.push-sw.on { background: #c8935a; }
+.push-sw.on::after { transform: translateX(18px); background: #1a0e06; }
+.push-foot { display: flex; gap: 14px; margin-top: 10px; font-size: 13.5px; }
+.push-foot button { background: none; border: 0; color: #c8935a; cursor: pointer; font-family: var(--font-body); font-size: 13.5px; padding: 4px 0; }
+@media (max-width: 600px) { .push-h { flex-wrap: wrap; } .push-h .btn-dash { margin-left: 0; width: 100%; justify-content: center; } }
+
 /* ── STUDIO APP: bottom tabs (phones and iPad portrait) ── */
 .app-tabs { display: none; }
 @media (max-width: 900px) {
@@ -1411,6 +1431,9 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   }
   .dash-main { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important; scroll-padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); }
   body.wa-chat-open .app-tabs, body.menu-is-open .app-tabs { display: none; }
+  /* More (bottom bar) opens the full menu, so the top bar drops its ≡ button.
+     It comes back only as the ✕ that closes the open menu. */
+  .mobile-topbar:not(.menu-open) #mobileMenuBtn { display: none !important; }
 }
 /* Inside the installed app the page runs under the status bar, so the top
    bar grows by the notch height. In a normal browser these insets are 0. */
@@ -1428,6 +1451,10 @@ html.studio-app .mobile-topbar { padding-top: calc(14px + env(safe-area-inset-to
   }
 }
 html.studio-app .login-screen { padding-top: env(safe-area-inset-top, 0px); }
+/* Full-screen forms (Add student, Add payment…) also start under the notch. */
+html.studio-app .form-page-header { padding-top: calc(0.75rem + env(safe-area-inset-top, 0px)) !important; }
+html.studio-app .form-page-body { padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px)) !important; }
+html.studio-app .mobile-picker-sheet-body { padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px)); }
 
 /* Mobile Safari/Chrome: dynamic viewport units track the real visible area
    as the browser address bar collapses/expands, so nothing hides behind it. */
@@ -2989,7 +3016,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v126</span>
+        <span style="color:var(--clay);font-weight:500;">v127</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3061,7 +3088,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v126</span>
+        <span style="color:var(--clay);font-weight:500;">v127</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3882,6 +3909,7 @@ table#paymentsTable { min-width: 700px; }
           </div>
         </div>
       </div>
+      <div class="push-card admin-only" id="pushCard"></div>
       <div id="notifTabsWrap" style="display:none;">
         <div class="notif-tabs">
           <button class="notif-tab active" id="notifTabAll" onclick="setNotifTab('all')">All</button>
@@ -6131,7 +6159,7 @@ function loadSection(name) {
   else if (name === 'invoices') loadInvoices();
   else if (name === 'insights') loadInsights();
   else if (name === 'bin') { loadBin(); }
-  else if (name === 'notifications') { loadNotifications(); }
+  else if (name === 'notifications') { loadNotifications(); if (typeof pushRender === 'function') pushRender(); }
   else if (name === 'settings') { loadSettings(); checkAllConnectors(true); }
 }
 
@@ -15000,6 +15028,116 @@ if ('serviceWorker' in navigator) {
   // A tapped notification asks the open app to show something.
   navigator.serviceWorker.addEventListener('message', ev => { if (ev.data && ev.data.type === 'open') studioOpenUrl(ev.data.url); });
 }
+// ── PHONE NOTIFICATIONS ──
+// Shown at the top of the Notifications page. On iPhone, notifications work
+// only inside the installed app (iOS 16.4+), so in Safari we say how to install.
+const PUSH_KINDS = [
+  ['wa', 'WhatsApp messages', 'Someone writes to the studio number'],
+  ['draft', 'Draft replies', 'The agent wrote a reply for you to send'],
+  ['payment', 'Payments', 'Money in, or a payment that failed'],
+  ['trial', 'Trial bookings', 'Someone booked a free trial'],
+  ['alert', 'Other alerts', 'Zoom, class changes from My bookings'],
+  ['quiet', 'Quiet at night', 'No pings 11 PM – 7 AM']
+];
+const _push = { prefs: null, endpoint: null, busy: false };
+// navigator.serviceWorker.ready never settles if the worker failed to install,
+// so give it a few seconds.
+function pushReg() { return Promise.race([navigator.serviceWorker.ready, new Promise((_, no) => setTimeout(() => no(new Error('The app is still starting. Try again in a moment.')), 6000))]); }
+function pushSupported() { return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
+function pushIsIos() { return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+function pushB64ToBytes(b64) {
+  const pad = '='.repeat((4 - b64.length % 4) % 4);
+  const raw = atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
+  return Uint8Array.from(raw, c => c.charCodeAt(0));
+}
+function pushLabel() {
+  const ua = navigator.userAgent;
+  const dev = /iPad/.test(ua) ? 'iPad' : /iPhone/.test(ua) ? 'iPhone' : /Android/.test(ua) ? 'Android' : /Mac/.test(ua) ? 'Mac' : 'Computer';
+  return dev + (window.STUDIO_APP ? ' · Studio app' : ' · browser');
+}
+const PUSH_BELL = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
+async function pushRender() {
+  const box = document.getElementById('pushCard');
+  if (!box || (typeof isAdmin === 'function' && !isAdmin())) return;
+  const head = (title, sub, btn) => '<div class="push-h">' + PUSH_BELL + '<div><b>' + title + '</b><small>' + sub + '</small></div>' + (btn || '') + '</div>';
+  if (pushIsIos() && !window.STUDIO_APP) {
+    box.innerHTML = head('Phone notifications', 'On iPhone they work in the Studio app. In Safari tap Share, then Add to Home Screen, and open Studio from there.');
+    return;
+  }
+  if (!pushSupported()) { box.innerHTML = head('Phone notifications', 'This browser can\'t show notifications.'); return; }
+  let sub = null;
+  try { const reg = await pushReg(); sub = await reg.pushManager.getSubscription(); } catch (e) {}
+  if (Notification.permission === 'denied') {
+    box.innerHTML = head('Notifications are blocked', pushIsIos() ? 'Turn them on in iPhone Settings → Notifications → Studio.' : 'Allow notifications for arpitpandey.com in your browser settings.');
+    return;
+  }
+  if (!sub) {
+    box.innerHTML = head('Phone notifications are off', 'Get a ping on this device for WhatsApp messages, payments and new trials.', '<button type="button" class="btn-dash btn-dash-primary" id="pushOnBtn" onclick="pushTurnOn()">Turn on</button>');
+    return;
+  }
+  _push.endpoint = sub.endpoint;
+  if (!_push.prefs) {
+    try {
+      const r = await invApi('/api/push/prefs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: sub.endpoint }) });
+      _push.prefs = (await r.json()).prefs;
+    } catch (e) {
+      // Subscribed in the browser but the server doesn't know it: save it again.
+      if (/not_subscribed/.test(e.message)) { await pushSave(sub); }
+    }
+  }
+  const p = _push.prefs || {};
+  box.innerHTML = head('Notifications are on for this ' + (pushIsIos() ? (/iPad/.test(navigator.userAgent) ? 'iPad' : 'iPhone') : 'device'), 'Choose what pings you here. Everything still shows on this page.') +
+    '<div class="push-opts">' + PUSH_KINDS.map(([k, t, d]) =>
+      '<div class="push-opt" role="switch" aria-checked="' + (p[k] ? 'true' : 'false') + '" tabindex="0" onclick="pushToggle(\'' + k + '\')"><span>' + t + '<small>' + d + '</small></span><span class="push-sw' + (p[k] ? ' on' : '') + '"></span></div>').join('') + '</div>' +
+    '<div class="push-foot"><button type="button" onclick="pushTest()">Send a test</button><button type="button" onclick="pushTurnOff()">Turn off on this device</button></div>';
+}
+async function pushSave(sub) {
+  const r = await invApi('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: sub.toJSON(), label: pushLabel() }) });
+  _push.prefs = (await r.json()).prefs;
+}
+async function pushTurnOn() {
+  if (_push.busy) return; _push.busy = true;
+  const btn = document.getElementById('pushOnBtn'); if (btn) { btn.disabled = true; btn.textContent = 'Turning on…'; }
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { showToast('Notifications were not allowed', 'error'); return; }
+    const kr = await invApi('/api/push/key');
+    const { publicKey } = await kr.json();
+    const reg = await pushReg();
+    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: pushB64ToBytes(publicKey) });
+    await pushSave(sub);
+    showToast('Notifications are on', 'success');
+  } catch (e) {
+    showToast('Could not turn on: ' + e.message, 'error');
+  } finally { _push.busy = false; pushRender(); }
+}
+async function pushToggle(k) {
+  if (!_push.prefs || !_push.endpoint) return;
+  const prev = _push.prefs[k];
+  _push.prefs[k] = !prev; pushRender();
+  try {
+    const r = await invApi('/api/push/prefs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: _push.endpoint, prefs: { [k]: !prev } }) });
+    _push.prefs = (await r.json()).prefs;
+  } catch (e) { _push.prefs[k] = prev; showToast('Not saved: ' + e.message, 'error'); pushRender(); }
+}
+async function pushTest() {
+  try { const r = await invApi('/api/push/test', { method: 'POST' }); const j = await r.json(); showToast(j.sent ? 'Test sent to ' + j.sent + ' device' + (j.sent === 1 ? '' : 's') : 'No device got it. Check the switches above.', j.sent ? 'success' : 'warning'); }
+  catch (e) { showToast('Test failed: ' + e.message, 'error'); }
+}
+async function pushTurnOff() {
+  try {
+    const reg = await pushReg();
+    const sub = await reg.pushManager.getSubscription();
+    if (sub) {
+      await invApi('/api/push/unsubscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: sub.endpoint }) }).catch(() => {});
+      await sub.unsubscribe();
+    }
+    _push.prefs = null; _push.endpoint = null;
+    showToast('Notifications are off on this device', 'success');
+  } catch (e) { showToast('Could not turn off: ' + e.message, 'error'); }
+  pushRender();
+}
+
 // '/pages/dashboard#wa=919xxxxxxxxx' opens that chat; '#sec=fee-payments' a section.
 function studioOpenUrl(url) {
   try {
