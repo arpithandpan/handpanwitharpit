@@ -11,7 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-title" content="Studio"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="theme-color" content="#3d2b1f"/>
+<meta name="theme-color" content="#1a1208"/>
 <script>
 // ── STUDIO APP: STAY SIGNED IN ──
 // On iPhone the home-screen app forgets sessionStorage whenever it is closed,
@@ -1451,6 +1451,23 @@ html.studio-app .mobile-topbar { padding-top: calc(14px + env(safe-area-inset-to
   }
 }
 html.studio-app .login-screen { padding-top: env(safe-area-inset-top, 0px); }
+/* One colour behind the status bar, the top bar, the tabs and the home bar.
+   Some iOS versions don't let a home-screen app draw under the status bar
+   (WebKit bug 301994) and fill that strip with the page background, so the
+   page background is set to the bars' colour and the strips blend in. When
+   iOS draws edge to edge, the bars' safe-area padding gives the same look. */
+html.studio-app, html.studio-app body { background: #1a1208 !important; }
+html.studio-app .mobile-topbar, html.studio-app .mobile-topbar.menu-open { background: #1a1208 !important; border-bottom: 1px solid rgba(200,147,90,0.12) !important; }
+
+/* ── PHONE: compact page headers ──
+   Static descriptions are hidden on phones; live lines (date, counts) stay. */
+@media (max-width: 900px) {
+  .dash-section-subtitle:not([id]) { display: none !important; }
+  .dash-section { padding-top: 1rem !important; }
+  .dash-section-header { margin-bottom: 1rem !important; padding-bottom: 0.75rem !important; gap: 0.6rem !important; }
+  .dash-section-subtitle[id] { font-size: 1rem !important; margin-top: 0.1rem !important; }
+  .dash-section-count { margin-top: 0.1rem !important; }
+}
 /* Full-screen forms (Add student, Add payment…) also start under the notch. */
 html.studio-app .form-page-header { padding-top: calc(0.75rem + env(safe-area-inset-top, 0px)) !important; }
 html.studio-app .form-page-body { padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px)) !important; }
@@ -3016,7 +3033,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v127</span>
+        <span style="color:var(--clay);font-weight:500;">v128</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3088,7 +3105,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v127</span>
+        <span style="color:var(--clay);font-weight:500;">v128</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3740,7 +3757,7 @@ table#paymentsTable { min-width: 700px; }
     <section class="dash-section" id="section-whatsapp">
       <div class="dash-section-header">
         <div>
-          <div class="dash-section-title">WhatsApp</div>
+          <div class="dash-section-title">Inbox</div>
           <div class="dash-section-subtitle">Conversations on the studio number +91 93801 40907. Messages show up here from the day this went live.</div>
           <div class="dash-section-count" id="waCount"></div>
         </div>
@@ -13856,7 +13873,7 @@ function waAiCardHtml(conv) {
     (d.needs_arpit && d.note ? '<div class="wa-ai-note">Needs you: ' + zEsc(d.note) + '</div>' : d.note ? '<div class="wa-ai-note" style="color:var(--text-light);font-weight:400;">' + zEsc(d.note) + '</div>' : '') +
     '<div class="wa-ai-body">' + zEsc(d.body || '') + '</div>' +
     '<div class="wa-ai-row">' +
-      '<button type="button" class="btn-dash btn-dash-primary" onclick="waAiSend(' + d.id + ')"' + (busy ? ' disabled' : '') + '>' + (busy ? 'Sending…' : 'Send') + '</button>' +
+      '<button type="button" class="btn-dash btn-dash-primary" onclick="waAiSend(' + d.id + ')"' + (busy ? ' disabled' : '') + '>' + (busy ? (_wa.aiBusyMode === 'redo' ? 'Writing…' : 'Sending…') : 'Send') + '</button>' +
       '<button type="button" class="btn-dash btn-dash-outline" onclick="waAiEdit(' + d.id + ')"' + (busy ? ' disabled' : '') + '>Edit</button>' +
       '<button type="button" class="wa-ai-icon" onclick="waAiRedo(\'' + conv.phone + '\')" aria-label="Write a new draft" data-tip="New draft"' + (busy ? ' disabled' : '') + '><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>' +
       '<button type="button" class="wa-ai-icon" onclick="waAiDismiss(' + d.id + ')" aria-label="Throw this draft away" data-tip="Throw away"' + (busy ? ' disabled' : '') + '><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
@@ -13865,7 +13882,7 @@ function waAiCardHtml(conv) {
 function waAiFind(id) { return Object.values(_wa.ai).find(d => d.id === id) || null; }
 async function waAiSend(id) {
   const d = waAiFind(id); if (!d || _wa.aiBusy) return;
-  _wa.aiBusy = id; waRenderThread(true);
+  _wa.aiBusy = id; _wa.aiBusyMode = 'send'; waRenderThread(true);
   try {
     const r = await invApi('/api/agent/drafts/' + id + '/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: d.body }) });
     const j = await r.json();
@@ -13895,7 +13912,7 @@ async function waAiDismiss(id) {
 }
 async function waAiRedo(phone) {
   const d = _wa.ai[phone];
-  _wa.aiBusy = d ? d.id : 'x'; if (_wa.sel) waRenderThread(true);
+  _wa.aiBusy = d ? d.id : 'x'; _wa.aiBusyMode = 'redo'; if (_wa.sel) waRenderThread(true);
   try {
     const r = await invApi('/api/agent/redraft', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone }) });
     const j = await r.json();
