@@ -3472,7 +3472,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v139</span>
+        <span style="color:var(--clay);font-weight:500;">v140</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3544,7 +3544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v139</span>
+        <span style="color:var(--clay);font-weight:500;">v140</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -15361,12 +15361,27 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.g
 // ── v139: weekly class requests (self-enrolment) in Today → Needs you ──
 let _enr = [];
 function enrAgo(iso) { const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 60 ? m + ' min' : m < 1440 ? Math.round(m / 60) + ' h' : Math.round(m / 1440) + ' d'; }
+// v140: Today re-renders every minute. Paint the last known requests straight
+// away so the row never blinks out while the fresh list loads.
 async function enrRender(baseCount) {
   if (typeof isAdmin === 'function' && !isAdmin()) return;
-  try { const r = await invApi('/api/admin/enrol'); _enr = (await r.json()).requests || []; } catch (e) { _enr = []; }
+  if (Array.isArray(_enr) && _enr.length) enrPaint(baseCount);
+  try { const r = await invApi('/api/admin/enrol'); _enr = (await r.json()).requests || []; } catch (e) { return; }
+  enrPaint(baseCount);
+}
+function enrPaint(baseCount) {
   const card = document.querySelector('#tdWrap .td-o-need'); if (!card) return;
-  card.querySelectorAll('.enr-row').forEach(e => e.remove());
-  if (!_enr.length) return;
+  const had = card.querySelectorAll('.enr-row');
+  had.forEach(e => e.remove());
+  if (!_enr.length) {
+    // The last request just went away: put the count back the way Today drew it.
+    if (had.length) {
+      const sp = card.querySelector('.td-head span');
+      if (baseCount) { if (sp) sp.textContent = baseCount; }
+      else { if (sp) sp.remove(); card.insertAdjacentHTML('beforeend', '<div class="td-clear">Nothing waiting on you.</div>'); }
+    }
+    return;
+  }
   const clear = card.querySelector('.td-clear'); if (clear) clear.remove();
   const head = card.querySelector('.td-head');
   let cnt = head.querySelector('span'); if (!cnt) { cnt = document.createElement('span'); head.appendChild(cnt); }
