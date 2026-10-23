@@ -2433,6 +2433,8 @@ body:not(.dark-mode) .wa-quote { background: rgba(184,114,42,0.08); }
 .wa-att:active i { transform: scale(0.92); }
 /* long-press menu */
 .wa-menu-shade { position: fixed; inset: 0; z-index: 2500; background: rgba(0,0,0,0.45); }
+/* v138: the finger is still down when the menu opens, so iOS must not start selecting its text */
+.wa-menu, .wa-menu *, .wa-menu-shade { -webkit-user-select: none !important; user-select: none !important; -webkit-touch-callout: none !important; }
 .wa-menu { position: fixed; z-index: 2501; width: 260px; background: #2a1f17; border: 1px solid rgba(200,147,90,0.3); border-radius: 16px; box-shadow: 0 16px 40px rgba(0,0,0,.55); overflow: hidden; color: #f0e2d2; }
 body:not(.dark-mode) .wa-menu { background: #fff; color: #2a1a0e; }
 .wa-menu-rx { display: flex; justify-content: space-around; padding: 8px 4px; border-bottom: 1px solid rgba(200,147,90,0.2); }
@@ -3453,7 +3455,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v137</span>
+        <span style="color:var(--clay);font-weight:500;">v138</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3525,7 +3527,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v137</span>
+        <span style="color:var(--clay);font-weight:500;">v138</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -14663,6 +14665,8 @@ async function waReact(waId, emoji) {
     waRenderThread(true);
   } catch (e) { showToast(/window_closed/.test(e.message) ? 'The 24-hour window is closed, so reactions can\'t be sent.' : 'Not sent: ' + e.message, 'error'); }
 }
+document.addEventListener('contextmenu', e => { if (document.querySelector('.wa-menu') || (e.target.closest && e.target.closest('.wa-msgs'))) { if (window.matchMedia('(hover: none)').matches) e.preventDefault(); } }, true);
+document.addEventListener('selectstart', e => { if (e.target.closest && e.target.closest('.wa-menu, .wa-msgs') && window.matchMedia('(hover: none)').matches) e.preventDefault(); }, true);
 function waMenuClose() { document.querySelectorAll('.wa-menu, .wa-menu-shade').forEach(e => e.remove()); document.querySelectorAll('.wa-b.pressed').forEach(e => e.classList.remove('pressed')); }
 function waMenuOpen(bubble) {
   waMenuClose();
