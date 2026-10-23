@@ -80,6 +80,21 @@
 .en-sheet h3 { margin: 0 0 0.4rem; color: var(--maroon); font-size: 1.2rem; font-weight: 600; }
 .en-sheet p { margin: 0 0 1.1rem; line-height: 1.5; font-size: 0.95rem; }
 .en-sheet .btn-primary, .en-sheet .btn-outline { display: flex; width: 100%; justify-content: center; text-align: center; margin-top: 0.6rem; }
+/* direct booking: About you */
+.en-f { margin-bottom: 1.1rem; }
+.en-f > label, .en-f > .en-q { display: block; font-weight: 600; color: var(--maroon); font-size: 0.95rem; margin-bottom: 0.45rem; }
+.en-in { width: 100%; box-sizing: border-box; height: 52px; border: 1px solid var(--rule); border-radius: 12px; background: #fff; padding: 0 1rem; font-family: var(--font-body); font-size: 1rem; color: var(--text-dark, #2a1a1a); }
+.en-in:focus { outline: none; border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(80,0,24,0.12); }
+.en-ph { display: flex; gap: 0.5rem; }
+.en-ph .en-in:first-child { width: 92px; flex-shrink: 0; text-align: center; }
+.en-opts { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 0.5rem; }
+.en-opt { font-family: var(--font-body); border: 1px solid var(--rule); background: transparent; color: var(--maroon); border-radius: 12px; padding: 0.85rem 0.3rem; font-size: 0.98rem; cursor: pointer; }
+.en-opt.on { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.en-nudge { background: #FCF0D4; color: #4A2F04; border-radius: 12px; padding: 0.9rem 1rem; font-size: 0.95rem; line-height: 1.5; margin: 0.4rem 0 0; }
+.en-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.en-bar { display: flex; gap: 6px; margin: 0 0 1.4rem; }
+.en-bar i { flex: 1; height: 4px; border-radius: 2px; background: rgba(80,0,24,0.12); }
+.en-bar i.on { background: var(--maroon); }
 @media (max-width: 600px) {
   .en-card { padding: 1.4rem 1.1rem 1.6rem; }
   .en-days { gap: 0.3rem; }
@@ -88,7 +103,6 @@
 }
 </style>
 </head>
-<body>
 <body>
 <nav>
   <a href="/" class="nav-logo"><img src="/images/handpan-logo.svg" alt="Handpan with Arpit" width="44" height="44" style="display:block;"></a>
@@ -169,7 +183,9 @@
 (function () {
   const API = 'https://handpan-webhook-server-production.up.railway.app';
   const $ = id => document.getElementById(id);
-  const token = (location.pathname.match(/\/enroll\/([a-f0-9]{24,64})/) || [])[1] || (location.hash.match(/[a-f0-9]{24,64}/) || [])[0] || '';
+  let token = (location.pathname.match(/\/enroll\/([a-f0-9]{24,64})/) || [])[1] || (location.hash.match(/[a-f0-9]{24,64}/) || [])[0] || '';
+  // /enroll/new (or /enroll with nothing after it): straight from the website, no invite.
+  const isNew = !token && /\/enroll(\/new)?\/?$|\/pages\/enroll(\.html)?$/.test(location.pathname);
   const card = $('enCard');
   const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const DOWL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -185,7 +201,59 @@
   }
   function msg(text) { card.innerHTML = '<div class="en-done"><h2>Something’s not right</h2><p>' + esc(text) + '</p></div>'; }
 
+  // ── About you (direct booking) ──
+  const DIAL_BY_TZ = [[/^Asia\/(Kolkata|Calcutta)$/, '91'], [/^America\/(Toronto|Vancouver|Edmonton|Winnipeg|Halifax|Regina|St_Johns)$/, '1'], [/^America\//, '1'], [/^Europe\/London$/, '44'], [/^Europe\/(Berlin|Vienna|Zurich)$/, '49'], [/^Europe\/Paris$/, '33'], [/^Europe\/(Amsterdam)$/, '31'], [/^Australia\//, '61'], [/^Asia\/Dubai$/, '971'], [/^Asia\/Singapore$/, '65']];
+  const guessDial = () => { const t = myTz || ''; const m = DIAL_BY_TZ.find(x => x[0].test(t)); return m ? m[1] : ''; };
+  let me = { name: '', email: '', dial: guessDial(), phone: '', hasHandpan: '', experience: '', anyway: false };
+  function renderAbout() {
+    $('enTitle').textContent = 'Start weekly classes';
+    $('enSub').textContent = 'Tell me a little about you, then pick your weekly time and plan. No payment yet.';
+    const opt = (k, v, label) => '<button type="button" class="en-opt' + (me[k] === v ? ' on' : '') + '" data-k="' + k + '" data-v="' + v + '">' + label + '</button>';
+    const beginner = me.hasHandpan === 'not_yet' && me.experience === 'never';
+    let h = '<div class="en-bar"><i class="on"></i><i></i></div>' +
+      '<div class="en-f"><label for="enName">Name</label><input class="en-in" id="enName" autocomplete="name" value="' + esc(me.name) + '"></div>' +
+      '<div class="en-f"><label for="enPhone">WhatsApp number</label><div class="en-ph"><input class="en-in" id="enDial" inputmode="tel" aria-label="Country code" value="' + (me.dial ? '+' + esc(me.dial) : '') + '" placeholder="+91"><input class="en-in" id="enPhone" inputmode="tel" autocomplete="tel-national" value="' + esc(me.phone) + '" placeholder="98450 12345"></div></div>' +
+      '<div class="en-f"><label for="enEmail">Email</label><input class="en-in" id="enEmail" type="email" autocomplete="email" value="' + esc(me.email) + '"></div>' +
+      '<div class="en-f"><span class="en-q">Do you have a handpan?</span><div class="en-opts">' + opt('hasHandpan', 'yes', 'Yes') + opt('hasHandpan', 'not_yet', 'Not yet') + '</div></div>' +
+      '<div class="en-f"><span class="en-q">Played before?</span><div class="en-opts">' + opt('experience', 'never', 'Never') + opt('experience', 'little', 'A little') + opt('experience', 'lot', 'A lot') + '</div></div>' +
+      '<input class="en-hp" id="enHp" tabindex="-1" autocomplete="off" aria-hidden="true">';
+    if (beginner && !me.anyway) {
+      h += '<p class="en-nudge">New to the handpan? A free 45 minute trial is the best start. We’ll find out together what to get and where to begin.</p>' +
+        '<a class="btn-primary en-go" href="/pages/trial" style="display:flex;align-items:center;justify-content:center;">Book a free trial instead</a>' +
+        '<p class="en-fine"><button type="button" class="en-link" id="enAnyway">Continue to weekly classes anyway</button></p>';
+    } else {
+      h += '<button type="button" class="btn-primary en-go" id="enNext">Next: pick a time</button>';
+    }
+    h += '<div class="en-alert" id="enAlert"></div>';
+    card.innerHTML = h;
+    const keep = () => { me.name = $('enName').value; me.email = $('enEmail').value; me.dial = $('enDial').value.replace(/\D/g, ''); me.phone = $('enPhone').value; };
+    card.querySelectorAll('.en-opt').forEach(b => b.onclick = () => { keep(); me[b.dataset.k] = b.dataset.v; renderAbout(); });
+    const any = $('enAnyway'); if (any) any.onclick = () => { keep(); me.anyway = true; renderAbout(); };
+    const nx = $('enNext'); if (nx) nx.onclick = () => { keep(); startNew(); };
+  }
+  async function startNew() {
+    const a = $('enAlert'), go = $('enNext');
+    const err = t => { a.textContent = t; a.classList.add('show'); };
+    a.classList.remove('show');
+    if (me.name.trim().length < 2) return err('Please enter your name.');
+    if (me.phone.replace(/\D/g, '').length < 6) return err('Please enter your WhatsApp number.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(me.email.trim())) return err('Please enter a valid email.');
+    if (!me.hasHandpan || !me.experience) return err('Please answer both questions.');
+    if (busy) return; busy = true; go.setAttribute('aria-busy', 'true'); go.textContent = 'One moment…';
+    try {
+      const r = await fetch(API + '/api/enrol/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: me.name.trim(), email: me.email.trim(), dial: me.dial, phone: me.phone, hasHandpan: me.hasHandpan, experience: me.experience, tz: myTz, website: $('enHp').value }) });
+      const j = await r.json();
+      busy = false;
+      if (!j.ok) { go.removeAttribute('aria-busy'); go.textContent = 'Next: pick a time'; return err(j.error || 'Could not continue. Please try again.'); }
+      token = j.token;
+      try { history.replaceState(null, '', '/enroll/' + token); } catch (e) {}
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      load();
+    } catch (e) { busy = false; go.removeAttribute('aria-busy'); go.textContent = 'Try again'; err('Could not connect. Check your internet and try again.'); }
+  }
+
   async function load() {
+    if (!token && isNew) return renderAbout();
     if (!token) return msg('This link is missing its code. Message Arpit on WhatsApp and he will send it again.');
     try {
       const r = await fetch(API + '/api/enrol/' + token, { cache: 'no-store' });
