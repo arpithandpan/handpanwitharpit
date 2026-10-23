@@ -2735,6 +2735,12 @@ body.dark-mode .enr-pill { color: #9cc3ee; }
 .enr-a2 { background: transparent; color: var(--clay); border: 1px solid rgba(200,147,90,0.5); }
 .enr-a3 { background: transparent; color: #c4553f; border: 0; }
 body.dark-mode .enr-a3 { color: #ee9a86; }
+.enr-chips { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.55rem; }
+.enr-chips span { font-size: 0.78rem; border-radius: 9px; padding: 2px 9px; background: rgba(191,174,155,0.16); color: var(--text-light); }
+.enr-chips span.g { background: rgba(120,190,130,0.16); color: #3f8a50; }
+.enr-chips span.w { background: rgba(224,170,80,0.18); color: #9a6410; }
+body.dark-mode .enr-chips span.g { color: #9fd7a8; }
+body.dark-mode .enr-chips span.w { color: #e8bf72; }
 @media (max-width: 900px) { .enr-row { padding-left: 1rem; padding-right: 1rem; } }
 
 /* ── TODAY ── only what needs doing today. Each block hides when it has nothing to say. */
@@ -3503,7 +3509,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v142</span>
+        <span style="color:var(--clay);font-weight:500;">v143</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3575,7 +3581,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v142</span>
+        <span style="color:var(--clay);font-weight:500;">v143</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -15390,21 +15396,21 @@ async function twRender() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('twRoot')) twClose(); });
 
 // ── v139: weekly class requests (self-enrolment) in Today → Needs you ──
-let _enr = [];
+let _enr = [], _enrF = [];
 function enrAgo(iso) { const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 60 ? m + ' min' : m < 1440 ? Math.round(m / 60) + ' h' : Math.round(m / 1440) + ' d'; }
 // v140: Today re-renders every minute. Paint the last known requests straight
 // away so the row never blinks out while the fresh list loads.
 async function enrRender(baseCount) {
   if (typeof isAdmin === 'function' && !isAdmin()) return;
-  if (Array.isArray(_enr) && _enr.length) enrPaint(baseCount);
-  try { const r = await invApi('/api/admin/enrol'); _enr = (await r.json()).requests || []; } catch (e) { return; }
+  if (_enr.length || _enrF.length) enrPaint(baseCount);
+  try { const j = await (await invApi('/api/admin/enrol')).json(); _enr = j.requests || []; _enrF = j.followups || []; } catch (e) { return; }
   enrPaint(baseCount);
 }
 function enrPaint(baseCount) {
   const card = document.querySelector('#tdWrap .td-o-need'); if (!card) return;
   const had = card.querySelectorAll('.enr-row');
   had.forEach(e => e.remove());
-  if (!_enr.length) {
+  if (!_enr.length && !_enrF.length) {
     // The last request just went away: put the count back the way Today drew it.
     if (had.length) {
       const sp = card.querySelector('.td-head span');
@@ -15416,14 +15422,28 @@ function enrPaint(baseCount) {
   const clear = card.querySelector('.td-clear'); if (clear) clear.remove();
   const head = card.querySelector('.td-head');
   let cnt = head.querySelector('span'); if (!cnt) { cnt = document.createElement('span'); head.appendChild(cnt); }
-  cnt.textContent = (baseCount || 0) + _enr.length;
-  const html = _enr.map(q => {
+  cnt.textContent = (baseCount || 0) + _enr.length + _enrF.length;
+  // v143: after a trial, "send the weekly link?" (24 h, then it goes away by itself)
+  const fHtml = _enrF.map(f => {
+    const first = String(f.name || '').split(' ')[0];
+    const st = f.startAt ? new Date(f.startAt) : null;
+    const when = st ? (schIst(st).ymd === schIst(new Date()).ymd ? 'Today ' : schDayLabel(schIst(st).ymd) + ' ') + schTime12(schIst(st).hhmm) : '';
+    const bits = [when, f.minutes ? 'stayed ' + f.minutes + ' min' : '', f.hasHandpan === 'yes' ? 'has a handpan' : f.hasHandpan ? 'no handpan yet' : ''].filter(Boolean).join(' · ');
+    const id = String(f.trialId).replace(/[^A-Za-z0-9_-]/g, '');
+    return '<div class="enr-row"><b>' + zEsc(first) + '’s trial is done</b><small>' + zEsc(bits) + '</small>'
+      + '<div class="enr-acts"><button type="button" class="enr-a1" onclick="enrSendLink(\'' + id + '\')">Send weekly link</button><button type="button" class="enr-a2" onclick="enrNotNow(\'' + id + '\')">Not now</button></div></div>';
+  }).join('');
+  const EXP = { never: 'Never played', a_little: 'Played a little', a_lot: 'Played a lot' };
+  const chips = q => q.source !== 'site' ? '' : '<div class="enr-chips">'
+    + (q.hasHandpan ? '<span class="' + (q.hasHandpan === 'yes' ? 'g' : 'w') + '">' + (q.hasHandpan === 'yes' ? 'Has a handpan' : 'No handpan yet') + '</span>' : '')
+    + (q.experience ? '<span class="' + (q.experience === 'never' ? 'w' : 'g') + '">' + EXP[q.experience] + '</span>' : '') + '<span>No trial</span></div>';
+  const html = fHtml + _enr.map(q => {
     const first = String(q.name || '').split(' ')[0];
     const plan = (q.plan === 'quarterly' ? 'Quarterly' : 'Monthly') + ' · ' + q.classes + ' classes · ' + zEsc(q.amount) + (q.trialId ? ' · after trial' : '');
-    const when = zEsc(q.slotIst) + (q.slotLocal ? ' · ' + zEsc(q.slotLocal) : '');
+    const when = zEsc(q.slotIst) + (q.slotLocal ? ' · ' + zEsc(q.slotLocal) : '') + (q.source === 'site' ? ' · from the website' : '');
     if (q.status === 'requested') {
       const late = q.requestedAt && Date.now() - new Date(q.requestedAt).getTime() > 86400000;
-      return '<div class="enr-row"><b>' + zEsc(first) + ' wants weekly classes</b><small>' + when + '</small><small>' + plan + '</small>' +
+      return '<div class="enr-row"><b>' + zEsc(first) + ' wants weekly classes</b><small>' + when + '</small><small>' + plan + '</small>' + chips(q) +
         '<span class="enr-pill' + (late ? ' late' : '') + '">Waiting ' + enrAgo(q.requestedAt) + '</span>' +
         '<div class="enr-acts"><button type="button" class="enr-a1" onclick="enrApprove(' + q.id + ')">Approve</button><button type="button" class="enr-a2" onclick="enrOffer(' + q.id + ')">Other time</button><button type="button" class="enr-a3" onclick="enrDecline(' + q.id + ')">Decline</button></div></div>';
     }
@@ -15432,6 +15452,16 @@ function enrPaint(baseCount) {
     return '<button type="button" class="enr-row enr-tap" onclick="tdGo(\'fee-payments\')"><b>' + zEsc(first) + ': approved, waiting for payment</b><small>' + when + ' · ' + plan + '</small><small>' + zEsc(q.feeRequestId || '') + (left != null ? ' · held ' + left + ' h more' : '') + '</small></button>';
   }).join('');
   head.insertAdjacentHTML('afterend', html);
+}
+async function enrSendLink(trialId) {
+  await enrInviteTrial(trialId);
+  _enrF = _enrF.filter(f => String(f.trialId) !== String(trialId));
+  loadToday(true);
+}
+async function enrNotNow(trialId) {
+  _enrF = _enrF.filter(f => String(f.trialId) !== String(trialId));
+  loadToday(true);
+  try { await invApi('/api/admin/enrol/followup/' + encodeURIComponent(trialId) + '/dismiss', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }); } catch (e) {}
 }
 async function enrApprove(id) {
   const q = _enr.find(x => x.id === id); if (!q) return;
