@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Arpit Pandey"/>
+<meta property="og:title" content="Your weekly handpan class · Arpit Pandey"/>
+<meta property="og:description" content="Pick your weekly class time with Arpit."/>
+<meta property="og:url" content="https://arpitpandey.com/pages/enroll"/>
+<meta property="og:image" content="https://arpitpandey.com/images/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<title>Weekly Classes | Arpit Pandey</title>
+<meta name="robots" content="noindex"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/style.css"/>
+<style>
+.en-wrap { max-width: 720px; margin: 0 auto; }
+.en-card { background: var(--card); border-radius: var(--card-radius); padding: 2rem 2rem 2.2rem; }
+.en-step + .en-step { padding-top: 1.6rem; margin-top: 1.6rem; border-top: 1px solid rgba(80,0,24,0.14); }
+.en-label { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.en-label strong { color: var(--maroon); font-weight: 600; font-size: 1.02rem; }
+.en-label span { font-size: 0.85rem; color: var(--text-mid); }
+.en-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.5rem; margin-bottom: 1rem; }
+.en-day, .en-time, .en-plan { font-family: var(--font-body); border: 1px solid var(--rule); background: transparent; color: var(--maroon); border-radius: 12px; cursor: pointer; transition: background .15s, border-color .15s; -webkit-tap-highlight-color: transparent; }
+.en-day { padding: 0.75rem 0.1rem; font-size: 0.92rem; font-weight: 500; }
+.en-day:disabled { color: rgba(80,0,24,0.28); border-color: rgba(80,0,24,0.1); cursor: default; }
+.en-day.on, .en-time.on { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.en-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 0.6rem; }
+.en-time { padding: 0.85rem 0.5rem; font-size: 0.98rem; }
+.en-empty { font-size: 0.95rem; color: var(--text-mid); padding: 0.4rem 0; }
+.en-plans { display: grid; gap: 0.6rem; }
+.en-plan { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.95rem 1.1rem; text-align: left; }
+.en-plan b { display: block; font-weight: 600; font-size: 1rem; }
+.en-plan small { display: block; color: var(--text-mid); font-size: 0.86rem; margin-top: 2px; }
+.en-plan .amt { font-weight: 600; font-size: 1.05rem; white-space: nowrap; }
+.en-plan .amt s { display: block; font-weight: 400; font-size: 0.8rem; color: var(--text-mid); text-align: right; }
+.en-plan.on { border: 2px solid var(--maroon); background: #fff; padding: calc(0.95rem - 1px) calc(1.1rem - 1px); }
+.en-tag { display: inline-block; margin-left: 0.4rem; font-size: 0.72rem; font-weight: 600; background: #E6F0DF; color: #2C5A1E; border-radius: 8px; padding: 2px 7px; vertical-align: 2px; }
+.en-go { width: 100%; margin-top: 1.6rem; height: 56px; font-size: 1.05rem; }
+.en-go:disabled { opacity: 0.45; cursor: default; }
+.en-go[aria-busy="true"] { opacity: 0.7; pointer-events: none; }
+.en-fine { text-align: center; font-size: 0.86rem; color: var(--text-mid); margin: 0.9rem 0 0; line-height: 1.5; text-wrap: balance; }
+.en-alert { display: none; margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 12px; background: #FBEAEA; color: #8C1D18; font-size: 0.95rem; }
+.en-alert.show { display: block; }
+.en-done { text-align: center; padding: 0.6rem 0 0.2rem; }
+.en-tick { width: 58px; height: 58px; border-radius: 50%; background: var(--maroon); color: var(--ivory); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.en-done h2 { color: var(--maroon); font-size: 1.6rem; font-weight: 600; margin: 0 0 0.4rem; text-wrap: balance; }
+.en-done > p { margin: 0 auto 1.3rem; max-width: 460px; line-height: 1.55; text-wrap: balance; }
+.en-sum { background: var(--ivory); border-radius: 14px; padding: 0.4rem 1.1rem; text-align: left; margin: 0 0 1.2rem; }
+.en-kv { display: flex; justify-content: space-between; gap: 1rem; padding: 0.7rem 0; border-top: 1px solid rgba(80,0,24,0.12); font-size: 0.97rem; }
+.en-kv:first-child { border-top: none; }
+.en-kv span { color: var(--text-mid); }
+.en-kv b { color: var(--maroon); font-weight: 600; text-align: right; }
+.en-steps { text-align: left; margin: 0 auto 1.3rem; padding-left: 1.3rem; max-width: 420px; line-height: 1.7; font-size: 0.95rem; }
+.en-timer { background: #FCF0D4; color: #4A2F04; border-radius: 12px; padding: 0.8rem 1rem; font-size: 0.95rem; margin: 0 0 1.2rem; }
+.en-btns { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+.en-btns a, .en-btns button { min-width: 200px; justify-content: center; }
+.en-link { background: none; border: 0; color: var(--maroon); text-decoration: underline; font-family: var(--font-body); font-size: 0.95rem; cursor: pointer; margin-top: 1rem; }
+.en-skel { height: 44px; border-radius: 12px; background: linear-gradient(90deg, #f1e9df 0%, #f8f2ea 50%, #f1e9df 100%); background-size: 200% 100%; animation: ensk 1.2s infinite; margin-bottom: 0.6rem; }
+@keyframes ensk { to { background-position: -200% 0; } }
+.en-help { margin-top: 2rem; background: var(--card); border-radius: var(--card-radius); padding: 1.3rem 1.6rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.en-help p { margin: 0; color: var(--maroon); font-weight: 500; }
+.en-seg { display: flex; background: #EFE6DA; border-radius: 14px; padding: 4px; margin: 0 0 0.4rem; }
+.en-seg button { flex: 1; border: 0; background: transparent; border-radius: 11px; padding: 0.6rem 0.3rem; font-family: var(--font-body); color: var(--text-mid); cursor: pointer; line-height: 1.3; }
+.en-seg button b { display: block; font-weight: 600; font-size: 1rem; }
+.en-seg button span { font-size: 0.88rem; }
+.en-seg button em { font-style: normal; color: #2C5A1E; font-weight: 600; }
+.en-seg button.on { background: #fff; color: var(--maroon); box-shadow: 0 1px 4px rgba(80,0,24,0.12); }
+.en-seg button[aria-busy="true"] { opacity: 0.6; }
+.en-paycard { background: var(--ivory); border-radius: 14px; padding: 1rem 1.1rem 1.1rem; text-align: left; margin: 0 0 1rem; }
+.en-paycard .en-sum { padding: 0; margin: 0.4rem 0 0; background: none; }
+.en-paycard .btn-primary { display: flex; width: 100%; justify-content: center; text-align: center; margin-top: 0.9rem; }
+.en-plab { font-size: 0.9rem; font-weight: 600; color: var(--maroon); margin: 0 0 0.5rem; }
+.en-flash { background: #E8F1E3; color: #2C5A1E; border-radius: 12px; padding: 0.7rem 1rem; font-size: 0.93rem; margin: 0 0 1rem; text-align: left; }
+.en-note { background: #FCF0D4; color: #4A2F04; border-radius: 12px; padding: 0.8rem 1rem; font-size: 0.93rem; margin: 0 0 1.2rem; line-height: 1.45; }
+.en-shade { position: fixed; inset: 0; background: rgba(40,10,15,0.45); z-index: 9998; }
+.en-sheet { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: min(520px, 100%); background: var(--card); border-radius: 20px 20px 0 0; padding: 1.4rem 1.3rem calc(1.4rem + env(safe-area-inset-bottom, 0px)); z-index: 9999; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); }
+.en-sheet h3 { margin: 0 0 0.4rem; color: var(--maroon); font-size: 1.2rem; font-weight: 600; }
+.en-sheet p { margin: 0 0 1.1rem; line-height: 1.5; font-size: 0.95rem; }
+.en-sheet .btn-primary, .en-sheet .btn-outline { display: flex; width: 100%; justify-content: center; text-align: center; margin-top: 0.6rem; }
+@media (max-width: 600px) {
+  .en-card { padding: 1.4rem 1.1rem 1.6rem; }
+  .en-days { gap: 0.3rem; }
+  .en-day { padding: 0.7rem 0; font-size: 0.82rem; border-radius: 10px; }
+  .en-btns a, .en-btns button { width: 100%; }
+}
+</style>
+</head>
+<body>
+<body>
+<nav>
+  <a href="/" class="nav-logo"><img src="/images/handpan-logo.svg" alt="Handpan with Arpit" width="44" height="44" style="display:block;"></a>
+  <button class="nav-hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li><li><a href="/pages/about">About</a></li>
+    <li><a href="/pages/music">Music</a></li><li><a href="/pages/workshops">Workshops</a></li>
+    <li><a href="/pages/classes" >Classes</a></li><li><a href="/pages/contact">Contact</a></li>
+    <li class="nav-account-li"><a class="nav-account" href="/pages/my"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Log in</span></a></li>
+  </ul>
+</nav>
+<div class="mobile-menu"><div class="mobile-menu-inner">
+  <a href="/">Home</a><a href="/pages/about">About</a><a href="/pages/music">Music</a>
+  <a href="/pages/workshops">Workshops</a><a href="/pages/classes">Classes</a><a href="/pages/contact">Contact</a>
+  <a class="mm-account" href="/pages/my"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Log in</span></a>
+</div></div>
+<section class="page-hero">
+  <p class="page-hero-eyebrow">Weekly classes</p>
+  <h1 class="page-hero-title" id="enTitle">Your weekly handpan class</h1>
+  <p class="page-hero-sub" id="enSub">Pick a time that works for you every week, and a plan. No payment yet.</p>
+</section>
+<div class="page-hero-rule" aria-hidden="true"></div>
+
+<section class="section" style="padding-top:0;">
+  <div class="en-wrap">
+    <div class="en-card" id="enCard">
+      <div class="en-skel"></div><div class="en-skel"></div><div class="en-skel" style="width:60%"></div>
+    </div>
+    <div class="en-help">
+      <p>Questions? Message me.</p>
+      <a class="btn-primary" id="enWa" href="https://wa.me/919380140907" target="_blank" rel="noopener">WhatsApp Arpit</a>
+    </div>
+  </div>
+</section>
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <span class="footer-brand-name">Arpit <em>Pandey</em></span>
+      <span class="footer-brand-tag">Handpan artist · Bengaluru, India</span>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="/pages/about">About</a></li>
+        <li><a href="/pages/music">Music</a></li>
+        <li><a href="/pages/workshops">Workshops</a></li>
+        <li><a href="/pages/classes">Classes</a></li>
+        <li><a href="/pages/contact">Contact</a></li>
+        <li><a href="/pages/dashboard" target="_blank" style="display:inline-flex;align-items:center;gap:5px;">Dashboard <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></svg></a></li>
+        <li><a href="/privacy.html">Privacy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Learn</h4>
+      <ul>
+        <li><a href="/pages/trial">Free trial</a></li>
+        <li><a href="/pages/classes">Online classes</a></li>
+        <li><a href="/pages/workshops">Live workshops</a></li>
+        <li><a href="/pages/my">My bookings</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.instagram.com/pandeyarpit" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank" rel="noopener">Spotify</a></li>
+        <li><a href="mailto:arpithandpan@gmail.com">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Arpit Pandey</p>
+  </div>
+</footer>
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  const API = 'https://handpan-webhook-server-production.up.railway.app';
+  const $ = id => document.getElementById(id);
+  const token = (location.pathname.match(/\/enroll\/([a-f0-9]{24,64})/) || [])[1] || (location.hash.match(/[a-f0-9]{24,64}/) || [])[0] || '';
+  const card = $('enCard');
+  const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const DOWL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let data = null, day = null, start = null, plan = 'quarterly', changing = false, busy = false, flash = '', released = false;
+  const myTz = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) { return ''; } })();
+
+  function tz() { return data && data.tz ? data.tz : (myTz || 'Asia/Kolkata'); }
+  function parts(iso) {
+    const f = new Intl.DateTimeFormat('en-US', { timeZone: tz(), weekday: 'short', hour: 'numeric', minute: '2-digit', hour12: true });
+    const p = {}; f.formatToParts(new Date(iso)).forEach(x => { p[x.type] = x.value; });
+    return { dow: DOW.indexOf(p.weekday), time: p.hour + ':' + p.minute + ' ' + p.dayPeriod };
+  }
+  function msg(text) { card.innerHTML = '<div class="en-done"><h2>Something’s not right</h2><p>' + esc(text) + '</p></div>'; }
+
+  async function load() {
+    if (!token) return msg('This link is missing its code. Message Arpit on WhatsApp and he will send it again.');
+    try {
+      const r = await fetch(API + '/api/enrol/' + token, { cache: 'no-store' });
+      const j = await r.json();
+      if (!j.ok) return msg(j.error || 'This link is not valid any more.');
+      data = j; render();
+    } catch (e) { msg('Could not load. Check your connection and try again.'); }
+  }
+
+  function render() {
+    if (data.whatsapp) $('enWa').href = 'https://wa.me/' + data.whatsapp;
+    const st = data.status;
+    if (data.name) $('enTitle').textContent = (st === 'invited' || changing) ? 'Hi ' + data.name + ', let’s find your weekly time' : 'Your weekly class, ' + data.name;
+    if ((st === 'invited' || changing) && data.slots) return renderPick();
+    if (st === 'requested') return renderRequested();
+    if (st === 'offered') return renderOffered();
+    if (st === 'approved') return renderApproved();
+    if (st === 'paid') return renderPaid();
+    if (st === 'expired') return done('This request has ended', 'The time I held has been released. Message me on WhatsApp and we’ll find a time together.', '', 'info');
+    if (st === 'declined') return done('Thank you for asking', 'I’m not able to take this on right now. Nothing has been charged. You’re welcome to message me anytime.', '', 'info');
+    renderPick();
+  }
+  const ICON = { tick: '<path d="M5 12l5 5l10 -10"/>', clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>', info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>' };
+  function done(h, p, extra, icon) {
+    $('enSub').textContent = '';
+    card.innerHTML = '<div class="en-done"><div class="en-tick"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + ICON[icon || 'tick'] + '</svg></div><h2>' + esc(h) + '</h2><p>' + esc(p) + '</p>' + (extra || '') + '</div>';
+  }
+  function summary(rows) { return '<div class="en-sum">' + rows.map(r => '<div class="en-kv"><span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b></div>').join('') + '</div>'; }
+
+  function renderPick() {
+    $('enSub').textContent = 'Pick a time that works for you every week, and a plan. No payment yet.';
+    const slots = data.slots || [];
+    const byDay = {}; slots.forEach(s => { const p = parts(s); (byDay[p.dow] = byDay[p.dow] || []).push({ iso: s, time: p.time }); });
+    const order = [1, 2, 3, 4, 5, 6, 0];
+    if (day == null || !byDay[day]) day = order.find(d => byDay[d]) ?? null;
+    if (start && !slots.includes(start)) start = null;
+    const tzLabel = data.tzName === 'IST' ? 'Times in IST' : 'Times in ' + data.tzName;
+    let h = (released ? '<div class="en-note">Your old time is released. Pick a new one and Arpit will confirm it.</div>' : '') + '<div class="en-step"><div class="en-label"><strong>1. Day and time</strong><span>' + esc(tzLabel) + '</span></div>';
+    if (!slots.length) h += '<div class="en-empty">No weekly times are free right now. Message me on WhatsApp and we’ll sort it out.</div>';
+    else {
+      h += '<div class="en-days">' + order.map(d => '<button type="button" class="en-day' + (d === day ? ' on' : '') + '" data-d="' + d + '"' + (byDay[d] ? '' : ' disabled') + '>' + DOW[d] + '</button>').join('') + '</div>';
+      h += '<div class="en-times">' + (byDay[day] || []).map(s => '<button type="button" class="en-time' + (s.iso === start ? ' on' : '') + '" data-s="' + s.iso + '">' + esc(s.time) + '</button>').join('') + '</div>';
+    }
+    h += '</div><div class="en-step"><div class="en-label"><strong>2. Plan</strong><span>' + (data.classMin || 60) + ' min classes on Zoom</span></div><div class="en-plans">' +
+      data.plans.map(p => '<button type="button" class="en-plan' + (p.key === plan ? ' on' : '') + '" data-p="' + p.key + '"><span><b>' + esc(p.label) + (p.discount ? '<span class="en-tag">' + p.discount + '% off</span>' : '') + '</b><small>' + p.classes + ' classes</small></span><span class="amt">' + (p.list ? '<s>' + esc(p.list) + '</s>' : '') + esc(p.text) + '</span></button>').join('') + '</div></div>';
+    const sel = start ? parts(start) : null;
+    h += '<button type="button" class="btn-primary en-go" id="enGo"' + (start ? '' : ' disabled') + '>' + (sel ? 'Request ' + DOWL[sel.dow] + 's at ' + esc(sel.time) : 'Pick a time') + '</button>';
+    h += '<div class="en-alert" id="enAlert"></div>';
+    h += '<p class="en-fine">Arpit confirms within a day, then you get the payment link. Your first class is the next ' + (sel ? DOWL[sel.dow] : 'one') + ' after you pay.</p>';
+    if (changing) h += '<p class="en-fine"><button type="button" class="en-link" id="enKeep">Keep my current request</button></p>';
+    card.innerHTML = h;
+    card.querySelectorAll('.en-day').forEach(b => b.onclick = () => { day = Number(b.dataset.d); renderPick(); });
+    card.querySelectorAll('.en-time').forEach(b => b.onclick = () => { start = b.dataset.s; renderPick(); });
+    card.querySelectorAll('.en-plan').forEach(b => b.onclick = () => { plan = b.dataset.p; renderPick(); });
+    const keep = $('enKeep'); if (keep) keep.onclick = () => { changing = false; render(); };
+    $('enGo').onclick = send;
+  }
+
+  async function send() {
+    if (!start || busy) return;
+    busy = true; const go = $('enGo'); go.setAttribute('aria-busy', 'true'); go.textContent = 'Sending…';
+    try {
+      const r = await fetch(API + '/api/enrol/' + token + '/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ start, plan, tz: myTz }) });
+      const j = await r.json();
+      if (!j.ok) {
+        const a = $('enAlert'); a.textContent = j.error || 'Could not send. Please try again.'; a.classList.add('show');
+        go.removeAttribute('aria-busy'); go.textContent = 'Try again';
+        if (j.code === 'slot_taken') { start = null; setTimeout(load, 1200); }
+        busy = false; return;
+      }
+      data = j; changing = false; released = false; busy = false; render(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) { busy = false; go.removeAttribute('aria-busy'); go.textContent = 'Try again'; }
+  }
+
+  function renderRequested() {
+    const q = data.request || {};
+    done('Request sent', q.slot + ' is held for you while Arpit confirms.',
+      summary([['Time', q.slot], ['Plan', q.planText], ['Amount', q.amount], ['First class', q.first ? q.first + ' (if confirmed soon)' : 'After you pay']]) +
+      '<ol class="en-steps"><li>Arpit confirms (WhatsApp and email)</li><li>You pay with the link within 3 days</li><li>You get your Zoom link and a calendar invite</li></ol>' +
+      '<div class="en-btns"><button type="button" class="btn-outline" id="enChange">Change time or plan</button></div>');
+    $('enChange').onclick = () => { changing = true; plan = q.planText && /Monthly/.test(q.planText) ? 'monthly' : 'quarterly'; start = null; renderPick(); };
+  }
+  function renderOffered() {
+    const q = data.request || {};
+    done('Arpit suggested another time', 'Your first pick didn’t work on his side, but ' + q.slot + ' does.' + (data.offerNote ? ' ' + data.offerNote : ''),
+      summary([['Time', q.slot], ['Plan', q.planText], ['Amount', q.amount]]) +
+      '<div class="en-btns"><button type="button" class="btn-primary" id="enAccept">Yes, that works</button><button type="button" class="btn-outline" id="enChange">Pick another time</button></div><div class="en-alert" id="enAlert"></div>', 'clock');
+    $('enAccept').onclick = async () => {
+      const b = $('enAccept'); b.setAttribute('aria-busy', 'true'); b.textContent = 'Confirming…';
+      try {
+        const r = await fetch(API + '/api/enrol/' + token + '/accept', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+        const j = await r.json();
+        if (!j.ok) { const a = $('enAlert'); a.textContent = j.error || 'Could not confirm.'; a.classList.add('show'); b.removeAttribute('aria-busy'); b.textContent = 'Try again'; return; }
+        data = j; render();
+      } catch (e) { b.removeAttribute('aria-busy'); b.textContent = 'Try again'; }
+    };
+    $('enChange').onclick = () => { changing = true; start = null; renderPick(); };
+  }
+  function renderApproved() {
+    const q = data.request || {};
+    const cur = data.plans.find(p => p.key === (q.plan || plan)) || data.plans[0];
+    const seg = '<div class="en-seg" role="radiogroup" aria-label="Plan">' + data.plans.map(p => '<button type="button" role="radio" aria-checked="' + (p.key === cur.key) + '" class="' + (p.key === cur.key ? 'on' : '') + '" data-p="' + p.key + '"><b>' + esc(p.label) + '</b><span>' + esc(p.text) + (p.discount ? ' · <em>' + p.discount + '% off</em>' : '') + '</span></button>').join('') + '</div>';
+    done('Confirmed 🎶', 'Arpit confirmed ' + q.slot + '. Pay to lock it in.',
+      (flash ? '<div class="en-flash">✓ ' + esc(flash) + '</div>' : '') +
+      '<div class="en-paycard"><div class="en-plab">Plan</div>' + seg + summary([['Classes', String(cur.classes)], ['First class', q.first || 'Next week']]) +
+      '<a class="btn-primary" href="' + esc(data.payUrl) + '">Pay ' + esc(cur.text) + '</a></div>' +
+      (data.payBy ? '<div class="en-timer">Your time is held until ' + esc(data.payBy) + '.</div>' : '') +
+      '<div class="en-alert" id="enAlert"></div>' +
+      '<p class="en-fine">After paying you’ll get your Zoom link, an invoice and a calendar invite.</p>' +
+      '<p class="en-fine"><button type="button" class="en-link" id="enDiff">Need a different time?</button></p>');
+    flash = '';
+    card.querySelectorAll('.en-seg button').forEach(b => b.onclick = async () => {
+      if (b.classList.contains('on') || busy) return;
+      busy = true; b.setAttribute('aria-busy', 'true');
+      try {
+        const r = await fetch(API + '/api/enrol/' + token + '/plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan: b.dataset.p }) });
+        const j = await r.json();
+        busy = false;
+        if (!j.ok) { const a = $('enAlert'); a.textContent = j.error || 'Could not change the plan.'; a.classList.add('show'); b.removeAttribute('aria-busy'); return; }
+        const np = j.plans.find(p => p.key === (j.request && j.request.plan));
+        flash = 'Switched to ' + (j.switched || (np && np.label)) + '. Your payment link now asks for ' + (np ? np.text : '') + '.';
+        data = j; render();
+      } catch (e) { busy = false; b.removeAttribute('aria-busy'); }
+    });
+    $('enDiff').onclick = () => sheet(q.slot);
+  }
+  function sheet(slot) {
+    const day = String(slot || '').split(' at ')[0] || 'this time';
+    const w = document.createElement('div');
+    w.innerHTML = '<div class="en-shade"></div><div class="en-sheet" role="dialog" aria-modal="true"><h3>Pick a different time?</h3><p>' + esc(slot) + ' will be released, and your new time goes to Arpit to confirm again. You pay after he confirms.</p><button type="button" class="btn-primary" id="enRel">Choose a new time</button><button type="button" class="btn-outline" id="enKeepT">Keep ' + esc(day) + '</button></div>';
+    document.body.appendChild(w);
+    const close = () => w.remove();
+    w.querySelector('.en-shade').onclick = close; $('enKeepT').onclick = close;
+    $('enRel').onclick = async () => {
+      const b = $('enRel'); b.setAttribute('aria-busy', 'true'); b.textContent = 'One moment…';
+      try {
+        const r = await fetch(API + '/api/enrol/' + token + '/release', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+        const j = await r.json();
+        close();
+        if (!j.ok) { const a = $('enAlert'); if (a) { a.textContent = j.error || 'Could not do that.'; a.classList.add('show'); } return; }
+        data = j; released = true; start = null; plan = (j.request && j.request.plan) || plan; render(); window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (e) { b.removeAttribute('aria-busy'); b.textContent = 'Try again'; }
+    };
+  }
+  function renderPaid() {
+    const q = data.request || {};
+    done('You’re in!', 'Your class is ' + q.slot + '. First class: ' + (q.first || 'next week') + '.',
+      '<p class="en-fine" style="margin-bottom:1.2rem">Your Zoom link and calendar invite are in your email. To move or skip a class, use My bookings.</p><div class="en-btns"><a class="btn-primary" href="/pages/my">My bookings</a></div>');
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>

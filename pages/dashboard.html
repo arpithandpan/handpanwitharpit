@@ -2689,6 +2689,23 @@ html.studio-app .tw-bar { padding-top: calc(6px + env(safe-area-inset-top, 0px))
   .mp-search { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 46px; margin: 0 0 16px; padding: 0 16px; border: 0; border-radius: 23px; background: #2a2018; color: #8a7a69; font-family: var(--font-body); font-size: 16px; cursor: pointer; text-align: left; }
 }
 
+/* ── v139: weekly class requests in Needs you ── */
+.enr-row { display: block; width: 100%; text-align: left; padding: 0.95rem 1.25rem 1.05rem; border: 0; border-top: 1px solid var(--clay-pale); background: rgba(200,147,90,0.06); font-family: var(--font-body); color: var(--text-dark); }
+.enr-row b { display: block; font-size: 1rem; font-weight: 600; color: var(--bark); }
+body.dark-mode .enr-row b { color: #efe2d3; }
+.enr-row small { display: block; font-size: 0.85rem; color: var(--text-light); margin-top: 2px; }
+.enr-tap { cursor: pointer; }
+.enr-pill { display: inline-block; margin-top: 0.55rem; font-size: 0.78rem; border-radius: 9px; padding: 2px 9px; background: rgba(127,176,230,.15); color: #6f9fd4; }
+body.dark-mode .enr-pill { color: #9cc3ee; }
+.enr-pill.late { background: rgba(224,102,79,.16); color: #c4553f; }
+.enr-acts { display: flex; gap: 0.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
+.enr-acts button { min-height: 40px; padding: 0 1.1rem; border-radius: 20px; font-family: var(--font-body); font-size: 0.92rem; font-weight: 600; cursor: pointer; }
+.enr-a1 { background: #c8935a; color: #1a0e06; border: 0; }
+.enr-a2 { background: transparent; color: var(--clay); border: 1px solid rgba(200,147,90,0.5); }
+.enr-a3 { background: transparent; color: #c4553f; border: 0; }
+body.dark-mode .enr-a3 { color: #ee9a86; }
+@media (max-width: 900px) { .enr-row { padding-left: 1rem; padding-right: 1rem; } }
+
 /* ── TODAY ── only what needs doing today. Each block hides when it has nothing to say. */
 .td-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
 .td-col { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
@@ -3455,7 +3472,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v138</span>
+        <span style="color:var(--clay);font-weight:500;">v139</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3527,7 +3544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v138</span>
+        <span style="color:var(--clay);font-weight:500;">v139</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -7800,11 +7817,11 @@ function trialActionsHtml(t, mobile) {
   }
   if (t.status === 'no_show' || t.status === 'cancelled') t = Object.assign({}, t, { status: t.status === 'no_show' ? 'pending' : 'dropped' });
   if (mobile) {
-    if (t.status === 'pending') return editBtnM + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="dropTrial(\'' + t.id + '\',\'' + nm + '\')">Dropped</button><button class="btn-dash btn-dash-primary btn-dash-sm" onclick="convertTrial(\'' + t.id + '\')">Convert</button>';
+    if (t.status === 'pending') return editBtnM + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="dropTrial(\'' + t.id + '\',\'' + nm + '\')">Dropped</button><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="convertTrial(\'' + t.id + '\')">Convert</button><button class="btn-dash btn-dash-primary btn-dash-sm" onclick="enrInviteTrial(\'' + t.id + '\')">Weekly link</button>';
     if (t.status === 'dropped') return editBtnM + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="reopenTrial(\'' + t.id + '\')">Reopen</button><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="deleteTrial(\'' + t.id + '\',\'' + nm + '\')">Delete</button>';
     return editBtnM + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="deleteTrial(\'' + t.id + '\',\'' + nm + '\')">Delete</button>';
   }
-  if (t.status === 'pending') return '<span class="action-wrap">' + editBtn + '<button class="icon-action-btn" data-tip="Convert to student" onclick="convertTrial(\'' + t.id + '\')">' + CHECK + '</button><button class="icon-action-btn danger" data-tip="Mark dropped" onclick="dropTrial(\'' + t.id + '\',\'' + nm + '\')">' + X_SVG + '</button></span>';
+  if (t.status === 'pending') return '<span class="action-wrap">' + editBtn + '<button class="icon-action-btn" data-tip="Send weekly classes link" onclick="enrInviteTrial(\'' + t.id + '\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="19"/><line x1="9.5" y1="16.5" x2="14.5" y2="16.5"/></svg></button><button class="icon-action-btn" data-tip="Convert to student" onclick="convertTrial(\'' + t.id + '\')">' + CHECK + '</button><button class="icon-action-btn danger" data-tip="Mark dropped" onclick="dropTrial(\'' + t.id + '\',\'' + nm + '\')">' + X_SVG + '</button></span>';
   if (t.status === 'dropped') return '<span class="action-wrap">' + editBtn + '<button class="icon-action-btn" data-tip="Back to pending" onclick="reopenTrial(\'' + t.id + '\')">' + UNDO + '</button><button class="icon-action-btn danger" data-tip="Delete entry" onclick="deleteTrial(\'' + t.id + '\',\'' + nm + '\')">' + TRASH + '</button></span>';
   return '<span class="action-wrap">' + editBtn + '<button class="icon-action-btn danger" data-tip="Delete entry" onclick="deleteTrial(\'' + t.id + '\',\'' + nm + '\')">' + TRASH + '</button></span>';
 }
@@ -7845,7 +7862,7 @@ async function loadTrials() {
       <div class="m-card-row"><span class="m-card-label">Trial date</span><span class="m-card-val">${fmtDate(t.trial_date)}${t.start_at ? ', ' + trialTimeIst(t) + ' IST' : ''}${zoomBadge(t)}</span></div>
       ${trialContact(t) ? `<div class="m-card-row"><span class="m-card-label">Contact</span><span class="m-card-val">${zEsc(trialContact(t))}</span></div>` : ''}
       ${t.notes ? `<div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;display:inline-block;vertical-align:bottom;text-align:right;">${zEsc(t.notes)}</span></div>` : ''}
-      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;">${trialActionsHtml(t, true)}</div>
+      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;flex-wrap:wrap;">${trialActionsHtml(t, true)}</div>
     </div>`).join('') || '<div class="mobile-cards-empty">No pending trials.</div>';
   } catch (e) { console.warn('loadTrials skipped:', e.message); panel.style.display = 'none'; }
 }
@@ -14136,6 +14153,14 @@ body.dark-mode .sch-pop { background: #2a2018; border-color: rgba(200,147,90,0.4
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;" id="sch-wasr-body"></div></div>
 </div>
+<div class="form-page" id="form-schOffer">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="schCloseForm('offer')">&larr; Back</button>
+    <div class="form-page-title" id="sch-offer-title">Offer another time</div>
+    <button class="btn-dash-save" id="sch-offer-save">Send</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;" id="sch-offer-body"></div></div>
+</div>
 <div class="form-page" id="form-schMove">
   <div class="form-page-header">
     <button class="form-page-back" onclick="schCloseForm('move')">&larr; Back</button>
@@ -15332,6 +15357,84 @@ async function twRender() {
   if (_tw.kind === kind) body.innerHTML = html;
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('twRoot')) twClose(); });
+
+// ── v139: weekly class requests (self-enrolment) in Today → Needs you ──
+let _enr = [];
+function enrAgo(iso) { const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 60 ? m + ' min' : m < 1440 ? Math.round(m / 60) + ' h' : Math.round(m / 1440) + ' d'; }
+async function enrRender(baseCount) {
+  if (typeof isAdmin === 'function' && !isAdmin()) return;
+  try { const r = await invApi('/api/admin/enrol'); _enr = (await r.json()).requests || []; } catch (e) { _enr = []; }
+  const card = document.querySelector('#tdWrap .td-o-need'); if (!card) return;
+  card.querySelectorAll('.enr-row').forEach(e => e.remove());
+  if (!_enr.length) return;
+  const clear = card.querySelector('.td-clear'); if (clear) clear.remove();
+  const head = card.querySelector('.td-head');
+  let cnt = head.querySelector('span'); if (!cnt) { cnt = document.createElement('span'); head.appendChild(cnt); }
+  cnt.textContent = (baseCount || 0) + _enr.length;
+  const html = _enr.map(q => {
+    const first = String(q.name || '').split(' ')[0];
+    const plan = (q.plan === 'quarterly' ? 'Quarterly' : 'Monthly') + ' · ' + q.classes + ' classes · ' + zEsc(q.amount) + (q.trialId ? ' · after trial' : '');
+    const when = zEsc(q.slotIst) + (q.slotLocal ? ' · ' + zEsc(q.slotLocal) : '');
+    if (q.status === 'requested') {
+      const late = q.requestedAt && Date.now() - new Date(q.requestedAt).getTime() > 86400000;
+      return '<div class="enr-row"><b>' + zEsc(first) + ' wants weekly classes</b><small>' + when + '</small><small>' + plan + '</small>' +
+        '<span class="enr-pill' + (late ? ' late' : '') + '">Waiting ' + enrAgo(q.requestedAt) + '</span>' +
+        '<div class="enr-acts"><button type="button" class="enr-a1" onclick="enrApprove(' + q.id + ')">Approve</button><button type="button" class="enr-a2" onclick="enrOffer(' + q.id + ')">Other time</button><button type="button" class="enr-a3" onclick="enrDecline(' + q.id + ')">Decline</button></div></div>';
+    }
+    if (q.status === 'offered') return '<div class="enr-row"><b>' + zEsc(first) + ': you offered another time</b><small>' + when + '</small><small>Waiting for ' + zEsc(first) + ' to accept · ' + enrAgo(q.requestedAt) + '</small></div>';
+    const left = q.payBy ? Math.max(0, Math.round((new Date(q.payBy).getTime() - Date.now()) / 3600000)) : null;
+    return '<button type="button" class="enr-row enr-tap" onclick="tdGo(\'fee-payments\')"><b>' + zEsc(first) + ': approved, waiting for payment</b><small>' + when + ' · ' + plan + '</small><small>' + zEsc(q.feeRequestId || '') + (left != null ? ' · held ' + left + ' h more' : '') + '</small></button>';
+  }).join('');
+  head.insertAdjacentHTML('afterend', html);
+}
+async function enrApprove(id) {
+  const q = _enr.find(x => x.id === id); if (!q) return;
+  if (!(await customConfirm('Approve ' + q.name + '?', q.slotIst + ' weekly, ' + (q.plan === 'quarterly' ? 'quarterly' : 'monthly') + ' (' + q.amount + '). A fee link goes to them by WhatsApp and email, and the time stays held for 3 days.', 'Approve', 'star'))) return;
+  try {
+    const r = await invApi('/api/admin/enrol/' + id + '/approve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || 'failed');
+    showToast('Approved. Fee link ' + j.feeRequestId + ' is on its way', 'success');
+  } catch (e) { showToast('Not approved: ' + e.message, 'error'); }
+  loadToday(true);
+}
+async function enrDecline(id) {
+  const q = _enr.find(x => x.id === id); if (!q) return;
+  if (!(await customConfirm('Decline ' + q.name + '’s request?', 'They get a polite email saying you can’t take it on right now. Nothing is charged and the time is freed.', 'Decline', 'x'))) return;
+  try { await invApi('/api/admin/enrol/' + id + '/decline', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }); showToast('Declined', 'success'); }
+  catch (e) { showToast('Not declined: ' + e.message, 'error'); }
+  loadToday(true);
+}
+function enrOffer(id) {
+  const q = _enr.find(x => x.id === id); if (!q) return;
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const m = String(q.slotIst || '').match(/^(\w{3})/); const cur = m ? days.findIndex(d => d.startsWith(m[1])) : 1;
+  const body = '<p style="margin:0 0 1.2rem;color:var(--text-light);line-height:1.5;">' + zEsc(q.name) + ' asked for <b>' + zEsc(q.slotIst) + '</b>' + (q.slotLocal ? ' (' + zEsc(q.slotLocal) + ')' : '') + '. Pick a time that works for you. They get an email and can accept it in one tap.</p>' +
+    '<div class="form-group"><label class="form-label">Day (IST)</label><select class="form-input" id="enrOfDay">' + days.map((d, i) => '<option value="' + i + '"' + (i === cur ? ' selected' : '') + '>' + d + '</option>').join('') + '</select></div>' +
+    '<div class="form-group"><label class="form-label">Time (IST)</label>' + schTimeField('enrOfTime', '19:00') + '</div>' +
+    '<div class="form-group"><label class="form-label">Note to them (optional)</label><input class="form-input" id="enrOfNote" maxlength="200" placeholder="e.g. Thursdays suit me better."/></div>';
+  schOpenForm('offer', 'Offer another time', body);
+  const btn = document.getElementById('sch-offer-save');
+  btn.onclick = async () => {
+    btn.disabled = true;
+    try {
+      const r = await invApi('/api/admin/enrol/' + id + '/offer', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ weekday: Number(document.getElementById('enrOfDay').value), time: schTimeValue('enrOfTime'), note: document.getElementById('enrOfNote').value }) });
+      const j = await r.json(); if (!j.ok) throw new Error(j.error || 'failed');
+      schCloseForm('offer'); showToast('Sent: ' + j.slot, 'success'); loadToday(true);
+    } catch (e) { showToast('Not sent: ' + e.message, 'error'); }
+    btn.disabled = false;
+  };
+}
+// Trials: send the personal weekly-classes link.
+async function enrInviteTrial(trialId) {
+  try {
+    const r = await invApi('/api/admin/enrol/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ trialId }) });
+    const j = await r.json(); if (!j.ok) throw new Error(j.error || 'failed');
+    if (j.whatsapp === 'sent') { showToast('Weekly classes link sent on WhatsApp', 'success'); return; }
+    try { await navigator.clipboard.writeText(j.link); showToast('Link copied. Send it to them yourself (WhatsApp template ' + (j.whatsapp || 'off') + ')', 'info'); }
+    catch (e) { showToast('Their link: ' + j.link, 'info'); }
+  } catch (e) { showToast('No link: ' + e.message, 'error'); }
+}
 function tdGo(section) { const a = document.querySelector('.dash-nav a[onclick*="\'' + section + '\'"]'); showSection(section, a); }
 async function loadToday(silent) {
   const wrap = document.getElementById('tdWrap'); if (!wrap) return;
@@ -15449,6 +15552,7 @@ async function loadToday(silent) {
   const weekCard = '<div class="td-card td-o-week"><div class="td-head"><h3>This week</h3><span>since Monday</span></div><div class="td-stats">'
     + stat(wkTrials ? wkTrials.length : null, 'Trials booked', 'trials') + stat(newStu, 'New students', 'students') + stat(wkClasses ? wkClasses.length : null, 'Classes taught', 'classes') + '</div></div>';
   wrap.innerHTML = '<div class="td-col">' + nextCard + todayCard + tomCard + '</div><div class="td-col">' + needCard + weekCard + '</div>';
+  if (typeof enrRender === 'function') enrRender(acts.length);
   clearInterval(_tdTimer);
   _tdTimer = setInterval(() => { if (document.getElementById('section-today')?.classList.contains('active') && !document.hidden) loadToday(true); }, 60000);
 }
