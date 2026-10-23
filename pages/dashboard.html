@@ -2003,6 +2003,21 @@ body.dark-mode #section-whatsapp { --wa-card: #231c16; --wa-thread: #19140f; --w
 .wa-tag.trial { background: rgba(122,74,126,0.14); color: #7a4a7e; }
 body.dark-mode .wa-tag.trial { color: #d3a6d6; }
 .wa-tag.unknown { background: transparent; border: 1px dashed var(--wa-line); }
+.wa-tag.ai { background: rgba(122,74,126,0.14); color: #7a4a7e; font-weight: 500; }
+body.dark-mode .wa-tag.ai { color: #d3a6d6; }
+/* Agent draft card, between the chat and the reply box */
+.wa-ai { border-top: 1px solid var(--wa-line); background: var(--wa-card); padding: 12px 16px 4px; flex-shrink: 0; }
+.wa-ai-in { border: 1px solid rgba(122,74,126,0.35); background: rgba(122,74,126,0.07); border-radius: 12px; padding: 10px 12px 12px; }
+.wa-ai-h { display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #7a4a7e; }
+body.dark-mode .wa-ai-h { color: #d3a6d6; }
+.wa-ai-h span { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--text-light); font-size: 12px; }
+.wa-ai-note { margin-top: 6px; font-size: 13px; color: var(--clay); font-weight: 500; line-height: 1.4; }
+.wa-ai-body { margin: 6px 0 10px; font-size: 15px; line-height: 1.45; color: var(--text-dark); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 180px; overflow-y: auto; }
+.wa-ai-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: stretch; }
+.wa-ai-row .btn-dash { padding: 8px 14px; font-size: 14px; }
+.wa-ai-icon { width: 42px; min-height: 38px; border-radius: 10px; border: 1px solid var(--wa-line); background: transparent; color: var(--text-mid); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.wa-ai-icon:hover { background: var(--wa-sel); }
+.wa-ai-icon:disabled, .wa-ai-row .btn-dash:disabled { opacity: 0.5; cursor: default; }
 .wa-unread { min-width: 20px; height: 20px; border-radius: 10px; background: var(--moss); color: #fff; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; margin-left: auto; box-sizing: border-box; }
 .wa-empty { padding: 2.5rem 1.5rem; text-align: center; color: var(--text-light); font-size: 15px; line-height: 1.6; }
 .wa-thread { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--wa-card); }
@@ -2893,7 +2908,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v123</span>
+        <span style="color:var(--clay);font-weight:500;">v124</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2965,7 +2980,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v123</span>
+        <span style="color:var(--clay);font-weight:500;">v124</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4970,7 +4985,9 @@ const SUPABASE_URL = 'https://sabdevsguuobgqjputtv.supabase.co';
     return _fetch(input, init);
   };
 })();
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhYmRldnNndXVvYmdxanB1dHR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyODIyMTcsImV4cCI6MjA5NDg1ODIxN30.fQBjimq7wvOA53oy3b_uKo1Ezh0oQOzHca7UhyxhxGQ';
+// Publishable key (safe in the page). Sent only as the apikey header; the
+// Authorization header carries the signed-in user's token, never this key.
+const SUPABASE_KEY = 'sb_publishable_xRwX_jpWmLtNjuQJRyQfGQ_defolODk';
 const VIEWER_EMAIL = 'arpitbam@gmail.com';
 // Railway server: renders invoice PDFs and sends them. Same server as book.html and pay.html.
 const API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
@@ -5023,7 +5040,6 @@ const BIN_TABLES = [
 const SB_HEADERS = {
   'Content-Type': 'application/json',
   'apikey': SUPABASE_KEY,
-  'Authorization': 'Bearer ' + SUPABASE_KEY,
   'Prefer': 'return=representation'
 };
 
@@ -5141,7 +5157,7 @@ document.addEventListener('visibilitychange', function () {
       const isSupabaseRest = url.indexOf(SUPABASE_URL + '/rest/v1/') === 0;
       const isAuthCall = url.indexOf(SUPABASE_URL + '/auth/v1/') === 0;
       if (isSupabaseRest && !isAuthCall && (res.status === 401 || res.status === 403)) {
-        const usingUserToken = (SB_HEADERS['Authorization'] || '') !== ('Bearer ' + SUPABASE_KEY);
+        const usingUserToken = !!SB_HEADERS['Authorization'];
         if (usingUserToken && sessionStorage.getItem('dash_auth') === '1') {
           handleSessionExpiry();
         }
@@ -13379,10 +13395,11 @@ function schPlanRange(today, last) {
 // Rows come from wa_messages, written by the server for every message in
 // and out of +91 93801 40907. Contacts are matched to students and trials
 // by the last 10 digits of the phone number.
-const _wa = { rows: [], students: [], trials: [], filter: 'all', q: '', sel: null, timer: null, loading: false, tpl: null, sending: false, drafts: {} };
+const _wa = { rows: [], students: [], trials: [], filter: 'all', q: '', sel: null, timer: null, loading: false, tpl: null, sending: false, drafts: {}, ai: {}, aiStatus: null, aiBusy: null, aiEditing: {} };
 const WA_WINDOW_MS = 24 * 60 * 60 * 1000;
 const WA_TPL_LABEL = {
-  class_reminder_v2: 'Class reminder', class_reminder: 'Class reminder',
+  class_reminder_v3: 'Class reminder', class_reminder_v2: 'Class reminder', class_reminder: 'Class reminder',
+  fee_receipt: 'Fee receipt', class_changed: 'Class changed', my_classes_link: 'My bookings link', workshop_confirmation_v2: 'Workshop confirmation',
   fee_link: 'Fee link', payment_reminder: 'Payment reminder',
   trial_confirmation: 'Trial confirmation', trial_reminder: 'Trial reminder',
   arpit_replied: 'Arpit replied',
@@ -13493,6 +13510,7 @@ async function loadWhatsApp(silent) {
     ]);
     _wa.rows = msgs.data || [];
     _wa.students = stus.data || [];
+    await waLoadAi();
     if (!_wa.tpl) waLoadTplStatus();
     _wa.trials = trs.data || [];
     waRenderList();
@@ -13517,12 +13535,14 @@ function waSearch(v) { _wa.q = String(v || '').trim().toLowerCase(); waRenderLis
 function waRenderList() {
   const convs = waConversations();
   const totalUnread = convs.reduce((n, c) => n + (c.unread ? 1 : 0), 0);
-  const counts = { all: convs.length, unread: totalUnread, student: convs.filter(c => c.who.kind === 'student').length, trial: convs.filter(c => c.who.kind === 'trial').length, unknown: convs.filter(c => c.who.kind === 'unknown').length };
-  const tabs = [['all', 'All'], ['unread', 'Unread'], ['student', 'Students'], ['trial', 'Trials'], ['unknown', 'Others']];
+  const draftCount = convs.filter(c => _wa.ai[c.phone]).length;
+  const counts = { all: convs.length, unread: totalUnread, drafts: draftCount, student: convs.filter(c => c.who.kind === 'student').length, trial: convs.filter(c => c.who.kind === 'trial').length, unknown: convs.filter(c => c.who.kind === 'unknown').length };
+  const tabs = [['all', 'All'], ['unread', 'Unread']].concat(draftCount || _wa.filter === 'drafts' ? [['drafts', '✦ Drafts']] : []).concat([['student', 'Students'], ['trial', 'Trials'], ['unknown', 'Others']]);
   document.getElementById('waTabs').innerHTML = tabs.map(([k, l]) =>
     '<button type="button" class="wa-tab' + (_wa.filter === k ? ' on' : '') + '" onclick="waSetFilter(\'' + k + '\')">' + l + (k !== 'all' && counts[k] ? ' · ' + counts[k] : '') + '</button>').join('');
   let list = convs;
   if (_wa.filter === 'unread') list = list.filter(c => c.unread);
+  else if (_wa.filter === 'drafts') list = list.filter(c => _wa.ai[c.phone]);
   else if (_wa.filter !== 'all') list = list.filter(c => c.who.kind === _wa.filter);
   if (_wa.q) {
     const qd = waDigits(_wa.q);
@@ -13543,6 +13563,7 @@ function waRenderList() {
       '<span class="wa-rmain"><span class="wa-rtop"><span class="wa-nm">' + zEsc(c.who.name) + '</span><span class="wa-tm">' + waDayLabel(c.last.created_at, true) + '</span></span>' +
       '<span class="wa-pv" style="display:block;">' + zEsc(waPreview(c.last, c.rows)) + '</span>' +
       '<span class="wa-tagrow"><span class="wa-tag' + (c.who.kind === 'trial' ? ' trial' : c.who.kind === 'unknown' ? ' unknown' : '') + '">' + zEsc(c.who.tag) + '</span>' +
+      (_wa.ai[c.phone] ? '<span class="wa-tag ai">✦ Draft' + (_wa.ai[c.phone].needs_arpit ? ' · needs you' : '') + '</span>' : '') +
       (c.unread ? '<span class="wa-unread">' + c.unread + '</span>' : '') + '</span></span></button>';
   }).join('');
 }
@@ -13655,7 +13676,7 @@ function waRenderThread(keepScroll) {
     '<div class="wa-th"><button type="button" class="wa-back" onclick="waClose()" aria-label="Back to conversations">' + WA_ICON.back + '</button>' +
       '<span class="wa-av" style="background:' + waAvColor(conv.phone) + ';width:40px;height:40px;">' + zEsc(initial) + '</span>' +
       '<div class="wa-th-info"><div class="wa-nm">' + zEsc(w.name) + '</div><div class="wa-meta">' + zEsc(meta) + '</div></div></div>' +
-    '<div class="wa-msgs" id="waMsgs">' + html + '</div>' + waComposerHtml(conv);
+    '<div class="wa-msgs" id="waMsgs">' + html + '</div>' + waAiCardHtml(conv) + waComposerHtml(conv);
   const msgs = document.getElementById('waMsgs');
   if (keepScroll && !atBottom) msgs.scrollTop = prevTop; else msgs.scrollTop = msgs.scrollHeight;
   const inp = document.getElementById('waInput');
@@ -13666,6 +13687,85 @@ function waRenderThread(keepScroll) {
   }
   waHydrateMedia();
   if (srWasOpen && document.getElementById('waSrBtn')) waSrToggle();
+}
+
+// ── AGENT DRAFTS ──
+// The server drafts a reply for each new message (agent-service.js). It
+// shows above the reply box: Send as is, Edit (moves it into the box), redo,
+// or throw away. Nothing goes out without Arpit pressing Send.
+async function waLoadAi() {
+  try {
+    const r = await invApi('/api/agent/drafts');
+    const j = await r.json();
+    const map = {};
+    for (const d of (j.drafts || [])) if (!map[d.phone]) map[d.phone] = d;   // newest first
+    _wa.ai = map;
+    _wa.aiStatus = j.status || null;
+  } catch (e) { /* agent not deployed yet, or offline: just no drafts */ }
+}
+const WA_AI_CAT = { trial: 'Trial', fees: 'Fees', payment: 'Payment', schedule: 'Schedule', reschedule: 'Reschedule', zoom_link: 'Zoom link', workshop: 'Workshop', performance: 'Performance', teaching: 'Teaching', handpan_buying: 'Buying a handpan', greeting: 'Greeting', complaint: 'Complaint', other: 'Other' };
+function waAiCardHtml(conv) {
+  const d = _wa.ai[conv.phone];
+  if (_wa.aiEditing[conv.phone] && !(_wa.drafts[conv.phone] || '').trim()) delete _wa.aiEditing[conv.phone];   // box emptied: show the draft again
+  if (!d || !waWindow(conv).open || _wa.aiEditing[conv.phone]) return '';
+  const busy = _wa.aiBusy === d.id;
+  const meta = [WA_AI_CAT[d.category] || '', d.confidence === 'low' ? 'not sure' : ''].filter(Boolean).join(' · ');
+  return '<div class="wa-ai"><div class="wa-ai-in">' +
+    '<div class="wa-ai-h"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z"/></svg>Draft reply<span>' + zEsc(meta) + '</span></div>' +
+    (d.needs_arpit && d.note ? '<div class="wa-ai-note">Needs you: ' + zEsc(d.note) + '</div>' : d.note ? '<div class="wa-ai-note" style="color:var(--text-light);font-weight:400;">' + zEsc(d.note) + '</div>' : '') +
+    '<div class="wa-ai-body">' + zEsc(d.body || '') + '</div>' +
+    '<div class="wa-ai-row">' +
+      '<button type="button" class="btn-dash btn-dash-primary" onclick="waAiSend(' + d.id + ')"' + (busy ? ' disabled' : '') + '>' + (busy ? 'Sending…' : 'Send') + '</button>' +
+      '<button type="button" class="btn-dash btn-dash-outline" onclick="waAiEdit(' + d.id + ')"' + (busy ? ' disabled' : '') + '>Edit</button>' +
+      '<button type="button" class="wa-ai-icon" onclick="waAiRedo(\'' + conv.phone + '\')" aria-label="Write a new draft" data-tip="New draft"' + (busy ? ' disabled' : '') + '><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>' +
+      '<button type="button" class="wa-ai-icon" onclick="waAiDismiss(' + d.id + ')" aria-label="Throw this draft away" data-tip="Throw away"' + (busy ? ' disabled' : '') + '><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+    '</div></div></div>';
+}
+function waAiFind(id) { return Object.values(_wa.ai).find(d => d.id === id) || null; }
+async function waAiSend(id) {
+  const d = waAiFind(id); if (!d || _wa.aiBusy) return;
+  _wa.aiBusy = id; waRenderThread(true);
+  try {
+    const r = await invApi('/api/agent/drafts/' + id + '/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: d.body }) });
+    const j = await r.json();
+    if (j.row) _wa.rows.unshift(Object.assign({ id: 'local-' + Date.now() }, j.row));
+    delete _wa.ai[d.phone];
+  } catch (e) {
+    if (/window_closed/.test(e.message)) showToast('The 24-hour window just closed. Use the template or your own WhatsApp.', 'error');
+    else showToast('Not sent: ' + e.message, 'error');
+  } finally {
+    _wa.aiBusy = null;
+    waRenderList(); if (_wa.sel) waRenderThread(false);
+  }
+}
+function waAiEdit(id) {
+  const d = waAiFind(id); if (!d) return;
+  _wa.drafts[d.phone] = d.body || '';
+  _wa.aiEditing[d.phone] = d.id;
+  waRenderThread(false);
+  const inp = document.getElementById('waInput');
+  if (inp) { inp.focus(); try { inp.setSelectionRange(inp.value.length, inp.value.length); } catch (e) {} }
+}
+async function waAiDismiss(id) {
+  const d = waAiFind(id); if (!d) return;
+  delete _wa.ai[d.phone];
+  waRenderList(); if (_wa.sel) waRenderThread(true);
+  try { await invApi('/api/agent/drafts/' + id + '/dismiss', { method: 'POST' }); } catch (e) { showToast('Could not throw it away: ' + e.message, 'error'); }
+}
+async function waAiRedo(phone) {
+  const d = _wa.ai[phone];
+  _wa.aiBusy = d ? d.id : 'x'; if (_wa.sel) waRenderThread(true);
+  try {
+    const r = await invApi('/api/agent/redraft', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone }) });
+    const j = await r.json();
+    if (j.draft && j.draft.status === 'pending') _wa.ai[phone] = j.draft;
+    else { delete _wa.ai[phone]; showToast('No reply needed for this one, says the agent.', 'success'); }
+  } catch (e) {
+    showToast('Could not redo: ' + e.message, 'error');
+  } finally {
+    _wa.aiBusy = null;
+    waRenderList(); if (_wa.sel) waRenderThread(true);
+  }
 }
 
 // ── REPLY BOX ──
@@ -13937,7 +14037,9 @@ async function waSendReply() {
   const btn = document.getElementById('waSendBtn');
   if (btn) { btn.disabled = true; const sp = btn.querySelector('span'); if (sp) sp.textContent = 'Sending…'; }
   try {
-    const r = await invApi('/api/wa/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, text }) });
+    const r = await invApi('/api/wa/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, text, draftId: _wa.aiEditing[phone] || null }) });
+    if (_wa.ai[phone]) delete _wa.ai[phone];
+    delete _wa.aiEditing[phone];
     const j = await r.json();
     _wa.rows.unshift(Object.assign({ id: 'local-' + Date.now() }, j.row));
     _wa.drafts[phone] = '';
