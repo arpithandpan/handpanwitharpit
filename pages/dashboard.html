@@ -2,8 +2,47 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"/>
 <title>Dashboard | Handpan with Arpit</title>
+<!-- Studio app: install from Safari with Share → Add to Home Screen -->
+<link rel="manifest" href="/pages/studio-manifest.json"/>
+<link rel="apple-touch-icon" href="/pages/studio-apple-touch.png"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Studio"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#3d2b1f"/>
+<script>
+// ── STUDIO APP: STAY SIGNED IN ──
+// On iPhone the home-screen app forgets sessionStorage whenever it is closed,
+// so inside the installed app (only there) the sign-in is also kept in
+// localStorage on this device and put back before anything else runs.
+// Signing out or a dead session clears both.
+(function () {
+  var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  window.STUDIO_APP = !!standalone;
+  if (standalone) document.documentElement.classList.add('studio-app');
+  if (!standalone) return;
+  var KEYS = ['dash_auth', 'dash_role', 'dash_token', 'dash_refresh', 'dash_section'];
+  try {
+    if (!sessionStorage.getItem('dash_auth') && localStorage.getItem('studio_dash_auth') === '1') {
+      KEYS.forEach(function (k) { var v = localStorage.getItem('studio_' + k); if (v != null) sessionStorage.setItem(k, v); });
+    }
+  } catch (e) {}
+  function sync() {
+    try {
+      KEYS.forEach(function (k) {
+        var v = sessionStorage.getItem(k);
+        if (v == null) localStorage.removeItem('studio_' + k); else localStorage.setItem('studio_' + k, v);
+      });
+    } catch (e) {}
+  }
+  window.studioSyncSession = sync;
+  setInterval(sync, 15000);
+  document.addEventListener('visibilitychange', sync);
+  window.addEventListener('pagehide', sync);
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -1348,6 +1387,48 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
   .dash-main { height: calc(100vh - 68px); overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: env(safe-area-inset-bottom, 0px); scroll-padding-bottom: 2rem; overscroll-behavior-y: contain; will-change: scroll-position; }
   .dash-sidebar-toggle { display: none !important; }
 }
+/* ── STUDIO APP: bottom tabs (phones and iPad portrait) ── */
+.app-tabs { display: none; }
+@media (max-width: 900px) {
+  .app-tabs {
+    display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 9990;
+    background: #1a1208; border-top: 1px solid rgba(200,147,90,0.18);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+    justify-content: space-around;
+  }
+  .app-tab {
+    flex: 1; max-width: 96px; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: none; border: 0; padding: 6px 0 4px; cursor: pointer; position: relative;
+    color: rgba(232,213,192,0.55); font-family: var(--font-body); font-size: 11.5px; letter-spacing: 0.01em;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .app-tab svg { width: 23px; height: 23px; }
+  .app-tab.on { color: #d9a066; }
+  .app-tab-badge {
+    position: absolute; top: 1px; left: calc(50% + 6px); min-width: 17px; height: 17px; border-radius: 9px;
+    background: #d64a3a; color: #fff; font-size: 10.5px; font-weight: 600; line-height: 17px; padding: 0 4px;
+    box-sizing: border-box; display: none;
+  }
+  .dash-main { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important; scroll-padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); }
+  body.wa-chat-open .app-tabs, body.menu-is-open .app-tabs { display: none; }
+}
+/* Inside the installed app the page runs under the status bar, so the top
+   bar grows by the notch height. In a normal browser these insets are 0. */
+html.studio-app .mobile-topbar { padding-top: calc(14px + env(safe-area-inset-top, 0px)); }
+@media (max-width: 900px) {
+  html.studio-app .dash-root { padding-top: calc(68px + env(safe-area-inset-top, 0px)); }
+  html.studio-app .dash-main { height: calc(100vh - 68px - env(safe-area-inset-top, 0px)); }
+  html.studio-app .mob-nav { padding-top: calc(68px + env(safe-area-inset-top, 0px)) !important; }
+  html.studio-app .toast { top: calc(1.25rem + env(safe-area-inset-top, 0px)); }
+  html.studio-app .mobile-search-fullscreen { padding-top: env(safe-area-inset-top, 0px); }
+}
+@supports (height: 100dvh) {
+  @media (max-width: 900px) {
+    html.studio-app .dash-main { height: calc(100dvh - 68px - env(safe-area-inset-top, 0px)); }
+  }
+}
+html.studio-app .login-screen { padding-top: env(safe-area-inset-top, 0px); }
+
 /* Mobile Safari/Chrome: dynamic viewport units track the real visible area
    as the browser address bar collapses/expands, so nothing hides behind it. */
 @supports (height: 100dvh) {
@@ -2908,7 +2989,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v124</span>
+        <span style="color:var(--clay);font-weight:500;">v125</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2980,7 +3061,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v124</span>
+        <span style="color:var(--clay);font-weight:500;">v125</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -2988,6 +3069,13 @@ table#paymentsTable { min-width: 700px; }
   </aside>
 
   <!-- Main -->
+  <nav class="app-tabs" id="appTabs" aria-label="Main">
+    <button type="button" class="app-tab on" data-sec="today" onclick="appTab('today')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Today</button>
+    <button type="button" class="app-tab admin-only" data-sec="schedule" onclick="appTab('schedule')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Schedule</button>
+    <button type="button" class="app-tab admin-only" data-sec="whatsapp" onclick="appTab('whatsapp')"><span class="app-tab-badge" id="appTabWaBadge"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/></svg>Inbox</button>
+    <button type="button" class="app-tab" data-sec="classes" onclick="appTab('classes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Students</button>
+    <button type="button" class="app-tab" data-sec="more" onclick="appTab('more')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>More</button>
+  </nav>
   <main class="dash-main" id="dashMain">
 
     <!-- ── SEARCH ── -->
@@ -5456,8 +5544,15 @@ document.addEventListener('keydown', function(e) {
   if (!loginScreen || loginScreen.style.display === 'none') return;
   if (e.key === 'Enter') authLogin();
 });
-if (sessionStorage.getItem('dash_auth') === '1') {
+if (sessionStorage.getItem('dash_auth') === '1') (async () => {
   currentRole = sessionStorage.getItem('dash_role') || 'admin';
+  // The installed app may reopen hours later with a lapsed access token:
+  // swap it for a fresh one first, so the first loads don't bounce to login.
+  const _exp = jwtExpMs(sessionStorage.getItem('dash_token'));
+  if (_exp && _exp - Date.now() < 60 * 1000 && sessionStorage.getItem('dash_refresh')) {
+    await refreshSession();
+    if (sessionStorage.getItem('dash_auth') !== '1') return;   // refresh token was dead: login screen shown
+  }
   const _savedToken = sessionStorage.getItem('dash_token');
   if (_savedToken) SB_HEADERS['Authorization'] = 'Bearer ' + _savedToken;
   startSessionWatch();
@@ -5470,7 +5565,8 @@ if (sessionStorage.getItem('dash_auth') === '1') {
     setTimeout(autoBackfillPhones, 6000);
   }
   applyRole();
-}
+  appTabsSync(sessionStorage.getItem('dash_section') || 'today');
+})();
 
 
 // ── CUSTOM CHECKBOX HELPER ──
@@ -5765,8 +5861,23 @@ function showSection(name, el) {
   if (el) el.classList.add('active');
   document.getElementById('dashSidebar').classList.remove('open');
   sessionStorage.setItem('dash_section', name);
+  appTabsSync(name);
   loadSection(name);
   return false;
+}
+
+// ── STUDIO APP TABS ──
+// Today · Schedule · Inbox · Students on the bar; everything else is in More
+// (the existing full menu).
+function appTabsSync(name) {
+  const key = ['today', 'schedule', 'whatsapp', 'classes'].includes(name) ? name : 'more';
+  document.querySelectorAll('#appTabs .app-tab').forEach(b => b.classList.toggle('on', b.dataset.sec === key));
+}
+function appTab(name) {
+  if (name === 'more') { if (typeof toggleMobileMenu === 'function') toggleMobileMenu(); return; }
+  const link = document.querySelector('.dash-nav a[onclick*="\'' + name + '\'"]');
+  showSection(name, link);
+  const main = document.getElementById('dashMain'); if (main) main.scrollTop = 0;
 }
 function toggleSidebar() { document.getElementById('dashSidebar').classList.toggle('open'); }
 
@@ -13575,6 +13686,7 @@ async function waOpen(phone) {
   const tb = document.querySelector('.mobile-topbar');
   sec.style.setProperty('--wa-top', (tb && tb.offsetHeight ? Math.round(tb.getBoundingClientRect().bottom) : 68) + 'px');
   sec.classList.add('wa-open');
+  document.body.classList.add('wa-chat-open');
   if (window.matchMedia('(max-width: 900px)').matches) lockScroll();
   waRenderList();
   waRenderThread(false);
@@ -13598,6 +13710,7 @@ async function waOpen(phone) {
 function waClose() {
   _wa.sel = null;
   document.getElementById('section-whatsapp').classList.remove('wa-open');
+  document.body.classList.remove('wa-chat-open');
   unlockScroll();
   waRenderList();
   waRenderThread(false);
@@ -14072,6 +14185,10 @@ async function waReopen() {
 
 // Sidebar badge: conversations with unread messages. Checked once a minute.
 function waSetBadge(n) {
+  const tb = document.getElementById('appTabWaBadge');
+  if (tb) { tb.textContent = n > 9 ? '9+' : String(n); tb.style.display = n > 0 ? 'block' : 'none'; }
+  // Number on the home-screen icon (installed app, once notifications are allowed).
+  try { if (navigator.setAppBadge) { n > 0 ? navigator.setAppBadge(n) : navigator.clearAppBadge(); } } catch (e) {}
   ['sidebarWaBadge', 'mobileWaBadge'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -14873,6 +14990,27 @@ async function schDeleteSlot(id) {
   showToast('Slot deleted', 'success');
   loadSchedule();
 }
+</script>
+<script>
+// ── STUDIO APP: service worker (install + notifications) ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/pages/dashboard-sw.js', { scope: '/pages/dashboard' }).catch(e => console.warn('SW register failed', e));
+  });
+  // A tapped notification asks the open app to show something.
+  navigator.serviceWorker.addEventListener('message', ev => { if (ev.data && ev.data.type === 'open') studioOpenUrl(ev.data.url); });
+}
+// '/pages/dashboard#wa=919xxxxxxxxx' opens that chat; '#sec=fee-payments' a section.
+function studioOpenUrl(url) {
+  try {
+    const h = new URL(url, location.href).hash || '';
+    const m = h.match(/^#wa=(\d+)/), s = h.match(/^#sec=([a-z-]+)/);
+    if (sessionStorage.getItem('dash_auth') !== '1') return;
+    if (m) { appTab('whatsapp'); setTimeout(() => { if (typeof waOpen === 'function') waOpen(m[1]); }, 600); }
+    else if (s && document.getElementById('section-' + s[1])) appTab(s[1]);
+  } catch (e) {}
+}
+window.addEventListener('load', () => { if (/^#(wa|sec)=/.test(location.hash)) setTimeout(() => { studioOpenUrl(location.href); history.replaceState(null, '', location.pathname); }, 1200); });
 </script>
 </body>
 </html>
