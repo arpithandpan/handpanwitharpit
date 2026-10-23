@@ -1859,7 +1859,7 @@ body.dark-mode .btn-checkin { border-color: rgba(200,147,90,0.3); color: #9a7d63
 body.dark-mode .btn-checkin.checked { background: rgba(138,170,110,0.12); border-color: #8aaa6e; color: #8aaa6e; }
 body.dark-mode #archiveConfirmModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.65); }
 body.dark-mode #customConfirmModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.65); }
-body.dark-mode #unsavedModal > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.65); }
+body.dark-mode #unsavedModal:not(.us-sheet) > div { background: #3d2c1e; border: 1px solid rgba(200,147,90,0.65); }
 /* ── DARK MODE: comprehensive button + UI fixes ── */
 body.dark-mode .btn-dash-primary { background: #c8935a; color: #1a1410; border: none; }
 body.dark-mode .btn-dash-primary:hover { background: #dba870; color: #1a1410; }
@@ -2440,6 +2440,41 @@ body:not(.dark-mode) .wa-menu { background: #fff; color: #2a1a0e; }
 .wa-menu-rx button.on { background: rgba(200,147,90,0.25); }
 .wa-menu-it { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 48px; padding: 0 16px; border: 0; border-top: 1px solid rgba(200,147,90,0.15); background: none; color: inherit; font-family: var(--font-body); font-size: 16px; cursor: pointer; text-align: left; }
 .wa-menu-it:first-of-type { border-top: 0; }
+.wa-dgrp { display: flex; flex-direction: column; gap: 10px; }
+/* composer like WhatsApp: filled pill, no outline, emoji inside (desktop) */
+.wa-compose:not(.closed) { border-top: 0 !important; background: var(--wa-thread) !important; }
+.wa-hint { display: none !important; }
+.wa-ibox { position: relative; flex: 1; min-width: 0; display: flex; align-items: flex-end; background: var(--wa-in); border-radius: 22px; }
+body:not(.dark-mode) .wa-ibox { background: #fff; }
+.wa-ibox .wa-input { flex: 1; border: 0 !important; background: transparent !important; box-shadow: none !important; }
+.wa-ibox .wa-input:focus { border: 0 !important; }
+.wa-emo-btn { width: 44px; height: 44px; flex-shrink: 0; border: 0; background: none; color: var(--text-mid); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 50%; }
+.wa-emo-btn:hover { color: var(--clay); }
+.wa-cbtn { border: 0 !important; background: var(--wa-in) !important; }
+body:not(.dark-mode) .wa-cbtn { background: #fff !important; }
+.wa-cbtn.on { background: rgba(200,147,90,0.25) !important; }
+.wa-emo { position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 20; width: 300px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; padding: 8px; background: #2a1f17; border: 1px solid rgba(200,147,90,0.3); border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,.45); }
+body:not(.dark-mode) .wa-emo { background: #fff; }
+.wa-emo button { height: 44px; border: 0; background: none; font-size: 24px; cursor: pointer; border-radius: 10px; }
+.wa-emo button:hover { background: rgba(200,147,90,0.18); }
+@media (hover: none), (max-width: 900px) { .wa-emo-btn { display: none; } }
+.wa-thread-wrap { overflow: hidden; }
+/* no text selection or iOS callout while long-pressing in a chat */
+.wa-thread .wa-msgs, .wa-thread .wa-msgs *, .wa-thread .wa-th, .wa-thread .wa-foot, .wa-thread .wa-ai { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.wa-thread textarea, .wa-thread input { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+@media (min-width: 901px) { .wa-thread .wa-msgs .wa-b { -webkit-user-select: text; user-select: text; } }
+@media (max-width: 900px) {
+  .wa-thread-wrap { min-height: 110px; }
+  .wa-thread.kb .wa-ai { padding: 8px 10px 2px; }
+  .wa-thread.kb .wa-ai-in { padding: 8px 10px 10px; }
+  .wa-thread.kb .wa-ai-note { display: none; }
+  .wa-thread.kb .wa-ai-body { max-height: 4.4em; margin: 4px 0 8px; }
+  .wa-thread.kb .wa-ai-row .btn-dash, .wa-thread.kb .wa-ai-icon { min-height: 40px !important; }
+  #section-whatsapp .wa-thread .wa-compose { padding-bottom: calc(10px + var(--wa-sb, env(safe-area-inset-bottom, 0px))) !important; }
+  #section-whatsapp .wa-thread .wa-foot { padding-bottom: calc(12px + var(--wa-sb, env(safe-area-inset-bottom, 0px))) !important; }
+  .wa-attach { gap: 12px 6px; padding: 12px 4px 4px; }
+  .wa-att i { width: 54px; height: 54px; }
+}
 @media (max-width: 900px) {
   #section-whatsapp { padding-left: 0 !important; padding-right: 0 !important; }
   #section-whatsapp .dash-section-header { padding-left: 1.25rem; padding-right: 1.25rem; }
@@ -2451,6 +2486,38 @@ body:not(.dark-mode) .wa-menu { background: #fff; color: #2a1a0e; }
   .wa-th { padding: 8px 10px !important; }
   .wa-compose { padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px)) !important; }
 }
+
+/* ── v131 FORM PAGES: one slim app bar (‹  Title  Save), tighter fields, iOS-style discard sheet ── */
+.form-page .form-page-header { display: grid !important; grid-template-columns: minmax(76px, 1fr) minmax(0, auto) minmax(76px, 1fr); align-items: center; gap: 4px !important; flex-wrap: nowrap !important; min-height: 52px; padding: 4px 10px !important; background: #1a1208 !important; border-bottom: 1px solid transparent !important; transition: border-color .2s; }
+html.studio-app .form-page .form-page-header { padding-top: calc(4px + env(safe-area-inset-top, 0px)) !important; }
+.form-page .form-page-header.scrolled { border-bottom-color: rgba(200,147,90,0.18) !important; }
+.form-page .form-page-back { justify-self: start; order: 0 !important; display: inline-flex; align-items: center; gap: 2px; border: 0 !important; background: none !important; color: #c8935a !important; min-height: 44px !important; min-width: 44px; padding: 0 8px 0 2px !important; font-size: 16px !important; font-weight: 500 !important; letter-spacing: 0 !important; border-radius: 22px !important; }
+.form-page .form-page-back:hover { background: rgba(200,147,90,0.1) !important; }
+.form-page .form-page-back svg { flex-shrink: 0; }
+.form-page .form-page-title { order: 0 !important; width: auto !important; padding: 0 !important; margin: 0 !important; text-align: center !important; font-size: 17px !important; font-weight: 600 !important; color: #efe2d3 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.form-page .form-page-header > :last-child:not(.form-page-title) { justify-self: end; order: 0 !important; min-height: 36px !important; height: 36px; padding: 0 16px !important; border-radius: 18px !important; font-size: 15px !important; font-weight: 600 !important; letter-spacing: 0 !important; background: #c8935a !important; color: #1a0e06 !important; border: 0 !important; box-shadow: none !important; transition: background .2s, color .2s; }
+.form-page .form-page-header > :last-child.fp-dim { background: rgba(200,147,90,0.16) !important; color: rgba(200,147,90,0.6) !important; }
+.form-page .form-group { margin-bottom: 18px !important; }
+.form-page .form-row { gap: 0 16px !important; }
+.form-page .form-label { margin-bottom: 6px !important; font-size: 14px !important; letter-spacing: 0 !important; }
+body.dark-mode .form-page .form-label { color: #bfae9b !important; }
+.form-page .form-page-body { padding-top: 18px !important; }
+@media (max-width: 900px) {
+  .form-page .form-page-back span { display: none; }
+  .form-page .form-page-back { padding: 0 !important; justify-content: center; }
+  .form-page .form-page-body { padding: 14px 16px 3rem !important; }
+}
+#unsavedModal.us-sheet { position: fixed; inset: 0; z-index: 40000; background: rgba(0,0,0,0.62); align-items: center; justify-content: center; padding: 16px; }
+.us-in { width: 100%; max-width: 340px; }
+.us-box { background: #2a1f17; border-radius: 16px; overflow: hidden; text-align: center; margin-bottom: 8px; }
+.us-box p { margin: 0; padding: 15px 16px 13px; color: #bfae9b; font-size: 14px; border-bottom: 1px solid rgba(200,147,90,0.15); }
+.us-box button, .us-keep { display: block; width: 100%; min-height: 54px; border: 0; background: none; font-family: var(--font-body); font-size: 17px; cursor: pointer; }
+.us-box button { color: #ef8a73; font-weight: 500; }
+.us-keep { background: #2a1f17; border-radius: 16px; color: #c8935a; font-weight: 600; }
+body:not(.dark-mode) .us-box, body:not(.dark-mode) .us-keep { background: #fff; }
+@media (max-width: 900px) { #unsavedModal.us-sheet { align-items: flex-end; padding: 8px 8px calc(10px + env(safe-area-inset-bottom, 0px)); } .us-in { max-width: none; } }
+@keyframes usUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+#unsavedModal.us-sheet .us-in { animation: usUp .22s ease; }
 
 /* ── TODAY ── only what needs doing today. Each block hides when it has nothing to say. */
 .td-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
@@ -3215,7 +3282,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v130</span>
+        <span style="color:var(--clay);font-weight:500;">v131</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3287,7 +3354,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v130</span>
+        <span style="color:var(--clay);font-weight:500;">v131</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4881,8 +4948,8 @@ table#paymentsTable { min-width: 700px; }
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Student ID&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" id="stu-name" maxlength="80" placeholder="Name"/></div>
+      <div class="form-group"><label class="form-label">Student ID&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><input type="text" class="form-input" id="stu-id" placeholder="e.g. S-001"/></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Phone / Landline&nbsp;<span style="color:#e8856a;font-size:0.85em;white-space:nowrap;">*</span></label><div class="phone-wrap" id="stu-phone-wrap"><button type="button" class="phone-flag-btn" id="stu-phone-cc-btn" onclick="openCCPicker('stu-phone-cc-btn','stu-phone-cc','stu-phone-prefix')" title="Select country">🇮🇳</button><input type="hidden" id="stu-phone-cc" value="+91"/><input type="text" class="phone-prefix-input form-input" id="stu-phone-prefix" value="+91" placeholder="+91" oninput="this.value=this.value.replace(/[^+0-9]/g,'')"/><input type="tel" class="form-input phone-input-right" id="stu-phone" placeholder="Phone number"/></div></div>
@@ -5142,23 +5209,7 @@ table#paymentsTable { min-width: 700px; }
 </div>
 
 <!-- ── UNSaveD CHANGES MODAL ── -->
-<div id="unsavedModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:40000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
-  <div style="background:#3d2c1e;border:1px solid rgba(200,147,90,0.65);border-radius:12px;width:100%;max-width:320px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
-    <div style="padding:1.5rem 1.5rem 1rem;">
-      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
-        <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,147,90,0.18);border:1.5px solid rgba(200,147,90,0.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8935a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        </div>
-        <div style="font-size:1.15rem;font-weight:600;color:#e8d5c0;">Unsaved changes</div>
-      </div>
-      <p style="font-size:1rem;color:rgba(200,147,90,0.7);line-height:1.6;margin:0 0 1.25rem;">You've started filling this form. If you go back now your changes will be lost.</p>
-    </div>
-    <div style="display:flex;border-top:1px solid rgba(193,127,90,0.2);">
-      <button onclick="unsavedKeepEditing()" style="flex:1;padding:1rem;background:transparent;border:none;border-right:1px solid rgba(193,127,90,0.2);font-size:1rem;color:#c8935a;font-weight:600;cursor:pointer;font-family:var(--font-body);">Keep editing</button>
-      <button onclick="unsavedDiscard()" style="flex:1;padding:1rem;background:transparent;border:none;font-size:1rem;color:#e87a6a;cursor:pointer;font-family:var(--font-body);">Discard & go back</button>
-    </div>
-  </div>
-</div>
+<div id="unsavedModal" class="us-sheet" style="display:none;" onclick="if(event.target===this)unsavedKeepEditing()"><div class="us-in"><div class="us-box"><p>You have unsaved changes.</p><button type="button" onclick="unsavedDiscard()">Discard changes</button></div><button type="button" class="us-keep" onclick="unsavedKeepEditing()">Keep editing</button></div></div>
 <div id="archiveConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:40000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
   <div style="background:#3d2c1e;border:1px solid rgba(200,147,90,0.65);border-radius:12px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
     <div style="padding:1.5rem 1.5rem 1rem;">
@@ -6323,6 +6374,50 @@ function closeFormPage(name) {
   document.getElementById('form-' + name).classList.remove('open');
   unlockScroll();
 }
+
+// ── v131: form page bar ──
+(function fpInit() {
+  const CHEV = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+  function setup() {
+    document.querySelectorAll('.form-page-back').forEach(b => { if (!b.dataset.fp) { b.dataset.fp = '1'; b.innerHTML = CHEV + '<span>Back</span>'; b.setAttribute('aria-label', 'Back'); } });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup); else setup();
+  window.fpSetup = setup;
+})();
+function fpOpen() { return Array.from(document.querySelectorAll('.form-page.open')).pop() || null; }
+function fpCheck(page) {
+  if (!page) return;
+  const btn = page.querySelector('.form-page-header > :last-child:not(.form-page-title)'); if (!btn) return;
+  let need = 0, empty = 0;
+  page.querySelectorAll('.form-page-body .form-group').forEach(g => {
+    const lab = g.querySelector('.form-label'); if (!lab || !/\*/.test(lab.textContent) || g.offsetParent === null) return;
+    const fs = g.querySelectorAll('input:not([type=hidden]):not([type=file]):not([type=checkbox]):not([type=radio]), select, textarea'); const f = fs[fs.length - 1]; if (!f) return;
+    need++; if (!String(f.value || '').trim()) empty++;
+  });
+  btn.classList.toggle('fp-dim', need > 0 && empty > 0);
+}
+document.addEventListener('input', e => { const p = e.target.closest && e.target.closest('.form-page'); if (p) fpCheck(p); }, true);
+document.addEventListener('change', e => { const p = e.target.closest && e.target.closest('.form-page'); if (p) fpCheck(p); }, true);
+document.addEventListener('scroll', e => {
+  const t = e.target; if (!t.classList || !t.classList.contains('form-page-scroll')) return;
+  const h = t.parentElement && t.parentElement.querySelector('.form-page-header'); if (h) h.classList.toggle('scrolled', t.scrollTop > 4);
+}, true);
+// When a form page opens: fresh bar state, Save dim check (after the form fills itself).
+new MutationObserver(ms => ms.forEach(m => {
+  const el = m.target; if (!el.classList || !el.classList.contains('form-page') || !el.classList.contains('open')) return;
+  if (window.fpSetup) fpSetup();
+  const h = el.querySelector('.form-page-header'); if (h) h.classList.remove('scrolled');
+  setTimeout(() => fpCheck(el), 80); setTimeout(() => fpCheck(el), 600);
+})).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ['class'] });
+// Keyboard: Esc goes back, Cmd/Ctrl+S saves.
+document.addEventListener('keydown', e => {
+  const page = fpOpen(); if (!page) return;
+  const us = document.getElementById('unsavedModal');
+  if (us && us.style.display !== 'none') { if (e.key === 'Escape') { e.preventDefault(); unsavedKeepEditing(); } return; }
+  if (document.querySelector('.modal-overlay.open, .date-picker-cal.open, .mobile-picker-sheet.open, .wa-sr-pop, .sch-pop')) return;
+  if (e.key === 'Escape') { const b = page.querySelector('.form-page-back'); if (b) { e.preventDefault(); b.click(); } }
+  else if ((e.metaKey || e.ctrlKey) && (e.key === 's' || e.key === 'S')) { const b = page.querySelector('.form-page-header > :last-child:not(.form-page-title)'); if (b && !b.disabled) { e.preventDefault(); b.click(); } }
+});
 function openModal(name) { openFormPage(name); }
 function closeModal(name) { closeFormPage(name); }
 
@@ -14105,10 +14200,11 @@ function waRenderThread(keepScroll) {
   for (const r of conv.rows) {
     if (r.type === 'reaction' && !orphanReacts.includes(r)) continue;
     const day = waIstParts(r.created_at);
-    if (day !== lastDay) { html += '<div class="wa-day">' + waDayLabel(r.created_at, false) + '</div>'; lastDay = day; }
+    if (day !== lastDay) { html += (lastDay ? '</div>' : '') + '<div class="wa-dgrp"><div class="wa-day">' + waDayLabel(r.created_at, false) + '</div>'; lastDay = day; }
     if (r.type === 'reaction') { html += '<div class="wa-sysline">' + zEsc(r.emoji) + ' reacted to an earlier message · ' + waTime(r.created_at) + '</div>'; continue; }
     html += waBubble(r, r.wa_id ? reacts[r.wa_id] : '');
   }
+  if (lastDay) html += '</div>';
   const w = conv.who;
   const initial = (w.kind === 'unknown' && !/[a-z]/i.test(w.name)) ? '+' : w.name.trim().charAt(0).toUpperCase();
   const meta = [waPrettyPhone(conv.phone)].concat(w.kind === 'unknown' ? [] : [w.tag]).join(' · ');
@@ -14127,6 +14223,29 @@ function waRenderThread(keepScroll) {
   }
   waHydrateMedia();
   if (srWasOpen && document.getElementById('waSrBtn')) waSrToggle();
+  waCompactSync();
+  waSafeFix();
+}
+// Phones: while typing or with the + grid open, the draft card shrinks so the chat stays visible.
+function waCompactSync() {
+  const t = document.getElementById('waThread'); if (!t) return;
+  const i = document.getElementById('waInput');
+  t.classList.toggle('kb', !!_wa.attach || (!!i && document.activeElement === i));
+}
+document.addEventListener('focusin', e => { if (e.target && e.target.id === 'waInput') waCompactSync(); });
+document.addEventListener('focusout', e => { if (e.target && e.target.id === 'waInput') setTimeout(waCompactSync, 50); });
+// Some iOS versions stop fixed panels above the home bar already, so the composer's own
+// safe-area padding doubles the gap. Measure and only pad what is really needed.
+function waSafeFix() {
+  const t = document.getElementById('waThread'); if (!t || !window.matchMedia('(max-width: 900px)').matches) return;
+  let pr = document.getElementById('waSafeProbe');
+  if (!pr) { pr = document.createElement('div'); pr.id = 'waSafeProbe'; pr.style.cssText = 'position:fixed;left:0;bottom:0;width:1px;height:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none;'; document.body.appendChild(pr); }
+  const inset = pr.offsetHeight || 0;
+  const full = Math.max(window.screen && window.screen.height || 0, window.innerHeight);
+  const rb = t.getBoundingClientRect().bottom;
+  const standalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+  const gap = standalone && full > rb ? full - rb : 0;
+  t.style.setProperty('--wa-sb', Math.max(0, inset - gap) + 'px');
 }
 
 // ── v130: chat row swipe, reply, reactions, long-press menu, attach grid ──
@@ -14274,7 +14393,7 @@ function waMenuOpen(bubble) {
   });
 })();
 
-function waToggleAttach() { _wa.attach = !_wa.attach; waRenderThread(true); if (_wa.attach) { const i = document.getElementById('waInput'); if (i) i.blur(); } }
+function waToggleAttach() { _wa.attach = !_wa.attach; if (_wa.attach) { const i = document.getElementById('waInput'); if (i) i.blur(); } waRenderThread(true); if (_wa.attach) setTimeout(waScrollDown, 60); }
 function waPick(kind) {
   _wa.attach = false;
   const inp = document.getElementById('waFilePick'); if (!inp) return;
@@ -14285,6 +14404,26 @@ function waPick(kind) {
   inp.click();
   setTimeout(() => waRenderThread(true), 300);
 }
+const WA_EMO = ['🙂','😊','😄','😂','🙏','👍','👏','🙌','❤️','🎶','🎵','✨','🔥','😮','🤔','😅','👋','✅','📅','⏰','💪','🌸','☀️','🌙'];
+function waEmoClose() { const p = document.querySelector('.wa-emo'); if (p) p.remove(); }
+function waEmoToggle(ev) {
+  if (ev) ev.stopPropagation();
+  if (document.querySelector('.wa-emo')) return waEmoClose();
+  const box = document.querySelector('.wa-ibox'); if (!box) return;
+  const pop = document.createElement('div'); pop.className = 'wa-emo';
+  pop.innerHTML = WA_EMO.map(e => '<button type="button">' + e + '</button>').join('');
+  pop.addEventListener('mousedown', e => e.preventDefault());
+  pop.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const i = document.getElementById('waInput'); if (!i) return;
+    const a = i.selectionStart ?? i.value.length, z = i.selectionEnd ?? a;
+    i.value = i.value.slice(0, a) + b.textContent + i.value.slice(z);
+    i.focus(); const c = a + b.textContent.length; try { i.setSelectionRange(c, c); } catch (er) {}
+    waInputChanged(i);
+  });
+  box.appendChild(pop);
+}
+document.addEventListener('click', e => { if (!e.target.closest || !e.target.closest('.wa-emo')) waEmoClose(); });
 function waInsert(text) {
   _wa.attach = false;
   const phone = _wa.sel; if (!phone) return;
@@ -14316,7 +14455,7 @@ function waScrollDown() { const m = document.getElementById('waMsgs'); if (m) m.
 document.addEventListener('scroll', e => {
   if (!e.target || e.target.id !== 'waMsgs') return;
   const m = e.target, d = document.getElementById('waDown');
-  if (d) d.style.display = m.scrollHeight - m.scrollTop - m.clientHeight > 300 ? 'flex' : 'none';
+  if (d) d.style.display = (m.clientHeight > 160 && m.scrollHeight - m.scrollTop - m.clientHeight > 300) ? 'flex' : 'none';
 }, true);
 
 // ── AGENT DRAFTS ──
@@ -14438,11 +14577,10 @@ function waComposerHtml(conv) {
       '<div class="wa-crow">' +
         '<button type="button" class="wa-cbtn' + (_wa.attach ? ' on' : '') + '" id="waAttachBtn" onclick="waToggleAttach()" aria-label="' + (_wa.attach ? 'Show keyboard' : 'Attach or insert') + '">' + (_wa.attach ? ICO('<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>') : ICO('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>', 24)) + '</button>' +
         '<input type="file" id="waFilePick" hidden onchange="waPickFile(this)">' +
-        '<textarea class="wa-input" id="waInput" data-phone="' + conv.phone + '" rows="1" placeholder="' + (_wa.file && _wa.file.phone === conv.phone ? 'Add a caption…' : 'Message') + '" maxlength="4000" oninput="waInputChanged(this)" onkeydown="waKey(event)" onfocus="if(_wa.attach){_wa.attach=false;var g=document.querySelector(\'.wa-attach\');if(g)g.remove();var b=document.getElementById(\'waAttachBtn\');if(b)b.classList.remove(\'on\');}"></textarea>' +
+        '<div class="wa-ibox"><textarea class="wa-input" id="waInput" data-phone="' + conv.phone + '" rows="1" placeholder="' + (_wa.file && _wa.file.phone === conv.phone ? 'Add a caption…' : 'Message') + '" maxlength="4000" oninput="waInputChanged(this)" onkeydown="waKey(event)" onfocus="if(_wa.attach){_wa.attach=false;var g=document.querySelector(\'.wa-attach\');if(g)g.remove();var b=document.getElementById(\'waAttachBtn\');if(b)b.classList.remove(\'on\');}"></textarea><button type="button" class="wa-emo-btn" id="waEmoBtn" onclick="waEmoToggle(event)" aria-label="Emoji"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button></div>' +
         '<button type="button" class="wa-cbtn" id="waCamBtn" onclick="waPick(\'camera\')" aria-label="Camera">' + ICO('<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>', 21) + '</button>' +
         '<button type="button" class="wa-send" id="waSendBtn" onclick="waSendReply()"' + (_wa.sending ? ' disabled' : '') + ' aria-label="Send"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg><span>' + (_wa.sending ? 'Sending…' : 'Send') + '</span></button>' +
-      '</div>' + grid +
-      '<div class="wa-hint">Goes from the studio number into this same chat. Enter sends, Shift+Enter adds a new line. Right-click a message to react or reply.</div></div>';
+      '</div>' + grid + '</div>';
   }
   const lock = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
   const head = w.never ? 'They haven\'t messaged the studio number yet' : 'Chat closed ' + waDur(w.closedFor) + ' ago';
