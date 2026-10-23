@@ -2689,6 +2689,37 @@ html.studio-app .tw-bar { padding-top: calc(6px + env(safe-area-inset-top, 0px))
   .mp-search { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 46px; margin: 0 0 16px; padding: 0 16px; border: 0; border-radius: 23px; background: #2a2018; color: #8a7a69; font-family: var(--font-body); font-size: 16px; cursor: pointer; text-align: left; }
 }
 
+/* ── v140: Today card follows Zoom (waiting / live / done) ── */
+.td-next .td-next-l { display: flex; align-items: center; gap: 8px; }
+.td-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: #3f9a57; animation: tdPulse 1.8s ease-out infinite; }
+.td-dot.am { background: #c98a1c; animation-name: tdPulseAm; }
+@keyframes tdPulse { 0% { box-shadow: 0 0 0 0 rgba(63,154,87,0.55); } 70% { box-shadow: 0 0 0 8px rgba(63,154,87,0); } 100% { box-shadow: 0 0 0 0 rgba(63,154,87,0); } }
+@keyframes tdPulseAm { 0% { box-shadow: 0 0 0 0 rgba(201,138,28,0.6); } 70% { box-shadow: 0 0 0 8px rgba(201,138,28,0); } 100% { box-shadow: 0 0 0 0 rgba(201,138,28,0); } }
+@media (prefers-reduced-motion: reduce) { .td-dot { animation: none; } }
+.td-next.wt { border-color: rgba(201,138,28,0.7); box-shadow: 0 0 0 2px rgba(201,138,28,0.3); background: linear-gradient(90deg, rgba(201,138,28,0.2), rgba(201,138,28,0.04) 70%), var(--sand); }
+.td-next.wt .td-next-l { color: #9a6410; }
+.td-next.lv { border-color: rgba(63,154,87,0.5); background: linear-gradient(90deg, rgba(63,154,87,0.16), rgba(63,154,87,0.03) 70%), var(--sand); }
+.td-next.lv .td-next-l { color: #2f7a45; }
+.td-next.dn { border-color: var(--clay-pale); background: var(--sand); }
+.td-next.dn .td-next-l { color: var(--text-light); }
+body.dark-mode .td-next.wt { background: linear-gradient(90deg, rgba(150,100,20,0.42), rgba(150,100,20,0.08) 70%), #231c16; border-color: rgba(232,180,90,0.7); box-shadow: 0 0 0 2px rgba(232,180,90,0.35); }
+body.dark-mode .td-next.wt .td-next-l { color: #f0c674; }
+body.dark-mode .td-next.lv { background: linear-gradient(90deg, rgba(40,110,60,0.45), rgba(40,110,60,0.08) 70%), #1c201a; border-color: rgba(110,190,130,0.55); }
+body.dark-mode .td-next.lv .td-next-l { color: #93d6a2; }
+body.dark-mode .td-next.dn { background: #1f1812; border-color: rgba(200,147,90,0.16); }
+body.dark-mode .td-dot { background: #5fd07a; }
+body.dark-mode .td-dot.am { background: #f0b44c; }
+.td-next-zoom.back { background: transparent; border: 1px solid rgba(63,154,87,0.5); color: #2f7a45; height: 42px; }
+body.dark-mode .td-next-zoom.back { border-color: rgba(110,190,130,0.45); color: #a9dcb4; }
+.td-next.lv .td-next-in b { font-variant-numeric: tabular-nums; }
+.td-tag.lv { color: #2f7a45; background: rgba(63,154,87,0.14); }
+.td-tag.wt { color: #9a6410; background: rgba(201,138,28,0.15); }
+body.dark-mode .td-tag.lv { color: #a9dcb4; background: rgba(95,208,122,0.14); }
+body.dark-mode .td-tag.wt { color: #f0c674; background: rgba(240,180,76,0.14); }
+.td-head span.lv { color: #2f7a45; display: inline-flex; align-items: center; gap: 6px; }
+body.dark-mode .td-head span.lv { color: #93d6a2; }
+.td-head span.lv i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
 /* ── v139: weekly class requests in Needs you ── */
 .enr-row { display: block; width: 100%; text-align: left; padding: 0.95rem 1.25rem 1.05rem; border: 0; border-top: 1px solid var(--clay-pale); background: rgba(200,147,90,0.06); font-family: var(--font-body); color: var(--text-dark); }
 .enr-row b { display: block; font-size: 1rem; font-weight: 600; color: var(--bark); }
@@ -3472,7 +3503,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v140</span>
+        <span style="color:var(--clay);font-weight:500;">v141</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3544,7 +3575,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v140</span>
+        <span style="color:var(--clay);font-weight:500;">v141</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -15451,6 +15482,48 @@ async function enrInviteTrial(trialId) {
   } catch (e) { showToast('No link: ' + e.message, 'error'); }
 }
 function tdGo(section) { const a = document.querySelector('.dash-nav a[onclick*="\'' + section + '\'"]'); showSection(section, a); }
+// ── v140: live Zoom state for Today (server keeps it from Zoom's join/leave events) ──
+let _zLive = {}, _zLiveSig = '', _zLiveTimer = null;
+function zMeetingId(link) { const m = String(link || '').match(/\/j\/(\d{9,12})/); return m ? m[1] : ''; }
+// What the room looks like for one class: null when Zoom has told us nothing.
+function zState(it, nowMs) {
+  const m = _zLive[zMeetingId(it.link)];
+  if (!m || it.off) return null;
+  // Only trust a meeting that belongs to this slot (started within 3 h of it).
+  const st = m.startedAt ? new Date(m.startedAt).getTime() : 0;
+  if (st && Math.abs(st - it.t) > 3 * 3600e3) return null;
+  if (m.endedAt) {
+    const end = new Date(m.endedAt).getTime();
+    if (!m.bothSince) return null;
+    const mins = Math.max(1, Math.round((end - new Date(m.bothSince).getTime()) / 60000));
+    return { st: 'done', mins, ago: nowMs - end };
+  }
+  const ppl = m.people || [];
+  if (m.hostIn && ppl.length) return { st: 'live', mins: Math.max(0, Math.floor((nowMs - new Date(m.bothSince || ppl[0].since).getTime()) / 60000)), since: m.bothSince };
+  if (ppl.length) return { st: 'wait', who: ppl[0].name, mins: Math.max(0, Math.round((nowMs - new Date(ppl[0].since).getTime()) / 60000)) };
+  if (m.hostIn) return { st: 'host' };
+  return null;
+}
+async function zLivePoll() {
+  if (typeof isAdmin === 'function' && !isAdmin()) return;
+  if (document.hidden || !document.getElementById('section-today')?.classList.contains('active')) return;
+  try {
+    const r = await invApi('/api/admin/zoom/live');
+    if (!r.ok) return;
+    const j = await r.json();
+    const map = {}; (j.meetings || []).forEach(m => { map[m.meetingId] = m; });
+    const sig = JSON.stringify(j.meetings || []);
+    _zLive = map;
+    if (sig !== _zLiveSig) { _zLiveSig = sig; loadToday(true); }
+  } catch (e) {}
+}
+// Poll only around class time: 15 min before a class until 30 min after it.
+function zLiveArm(items) {
+  const nowMs = Date.now();
+  const near = items.some(it => !it.off && it.link && nowMs >= it.t - 15 * 60000 && nowMs <= it.t + (it.len + 30) * 60000);
+  if (near && !_zLiveTimer) { _zLiveTimer = setInterval(zLivePoll, 20000); zLivePoll(); }
+  if (!near && _zLiveTimer) { clearInterval(_zLiveTimer); _zLiveTimer = null; }
+}
 async function loadToday(silent) {
   const wrap = document.getElementById('tdWrap'); if (!wrap) return;
   const now = new Date();
@@ -15495,13 +15568,15 @@ async function loadToday(silent) {
     return items.sort((a, b) => a.t - b.t);
   };
   const rowHtml = (it, isToday) => {
-    const done = isToday && !it.off && nowMs > it.t + it.len * 60000;
-    const live = isToday && !it.off && nowMs >= it.t - 10 * 60000 && nowMs <= it.t + it.len * 60000;
-    const sub = [it.note, it.sub].filter(Boolean).join(' · ');
+    const zs = isToday ? zState(it, nowMs) : null;
+    const done = isToday && !it.off && ((zs && zs.st === 'done') || (!zs && nowMs > it.t + it.len * 60000));
+    const live = isToday && !it.off && !done && ((zs && zs.st !== 'done') || (nowMs >= it.t - 10 * 60000 && nowMs <= it.t + it.len * 60000));
+    const zsub = zs ? (zs.st === 'live' ? zs.mins + ' min so far' : zs.st === 'wait' ? 'In the meeting, waiting' : zs.st === 'done' ? zs.mins + ' min' : '') : '';
+    const sub = [zsub || it.note, it.sub].filter(Boolean).join(' · ');
     const join = (isToday && !it.off && !done && it.link)
       ? '<a class="td-join' + (live ? '' : ' ghost') + '" href="' + zEsc(it.link) + '" target="_blank" rel="noopener" aria-label="Join Zoom">' + TD_CAM + '<span>Join</span></a>' : '';
     return '<div class="td-row' + (it.off ? ' off' : done ? ' done' : '') + '"><div class="td-time">' + schTime12(it.hhmm) + '</div>'
-      + '<div class="td-main"><div class="td-name">' + zEsc(it.name) + (live ? '<span class="td-now">Now</span>' : '') + '</div>' + (sub ? '<div class="td-sub">' + zEsc(sub) + '</div>' : '') + '</div>' + join + (done ? '<span class="td-tag">Done</span>' : '') + '</div>';
+      + '<div class="td-main"><div class="td-name">' + zEsc(it.name) + (live && !zs ? '<span class="td-now">Now</span>' : '') + '</div>' + (sub ? '<div class="td-sub">' + zEsc(sub) + '</div>' : '') + '</div>' + (zs && zs.st === 'live' ? '<span class="td-tag lv">Live</span>' : zs && zs.st === 'wait' ? '<span class="td-tag wt">Waiting</span>' : join) + (done ? '<span class="td-tag">Done</span>' : '') + '</div>';
   };
   const dur = m => m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '');
   const ago = iso => { const m = Math.max(1, Math.round((nowMs - new Date(iso).getTime()) / 60000)); return m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' day' + (Math.round(m / 1440) === 1 ? '' : 's') + ' ago'; };
@@ -15519,14 +15594,33 @@ async function loadToday(silent) {
     return '<div class="td-tl"><div class="td-bar">' + blocks + (nowMin >= h0 * 60 ? '<div class="td-nowline" style="left:' + pos(nowMin) + '%"></div>' : '') + '</div><div class="td-ticks">' + ticks.join('') + '</div></div>';
   };
   const todayItems = rowsFor(today), tomItems = rowsFor(tomorrow);
-  const left = todayItems.filter(it => !it.off && nowMs <= it.t + it.len * 60000).length;
-  const todayCard = '<div class="td-card td-o-today"><div class="td-head"><h3>Classes today</h3><span>' + (todayItems.length ? (left ? left + ' to go' : 'All done') : '') + '</span></div>'
+  const zsOf = it => zState(it, nowMs);
+  const liveN = todayItems.filter(it => { const z = zsOf(it); return z && z.st === 'live'; }).length;
+  const left = todayItems.filter(it => { const z = zsOf(it); return !it.off && !(z && z.st === 'done') && nowMs <= it.t + it.len * 60000; }).length;
+  const headR = liveN ? '<span class="lv"><i></i>' + liveN + ' live</span>' : '<span>' + (todayItems.length ? (left ? left + ' to go' : 'All done') : '') + '</span>';
+  const todayCard = '<div class="td-card td-o-today"><div class="td-head"><h3>Classes today</h3>' + headR + '</div>'
     + timeline(todayItems)
     + (todayItems.length ? todayItems.map(it => rowHtml(it, true)).join('') : '<div class="td-empty">No classes or trials today.</div>') + '</div>';
   // Next up: the next class or trial today, or tomorrow's first one.
-  const nxt = todayItems.concat(tomItems).find(it => !it.off && nowMs <= it.t + it.len * 60000);
+  // A class Zoom says is running (or just ended) wins over the clock.
+  const zItem = todayItems.find(it => { const z = zsOf(it); return z && z.st !== 'done'; })
+    || todayItems.find(it => { const z = zsOf(it); return z && z.st === 'done' && z.ago < 15 * 60000; });
+  const nxt = zItem || todayItems.concat(tomItems).find(it => !it.off && nowMs <= it.t + it.len * 60000 && !(zsOf(it) && zsOf(it).st === 'done'));
   let nextCard = '';
-  if (nxt) {
+  const nz = nxt && zItem === nxt ? zsOf(nxt) : null;
+  if (nz && nz.st !== 'host') {
+    const first = String(nxt.name || '').split(' ')[0];
+    const cam = TD_CAM;
+    if (nz.st === 'wait') nextCard = '<div class="td-card td-next td-o-next wt"><div class="td-next-main"><div class="td-next-l"><i class="td-dot am"></i>' + zEsc(first) + ' is waiting</div>'
+      + '<div class="td-next-n">' + zEsc(nxt.name) + '</div><div class="td-next-w">Joined ' + (nz.mins < 1 ? 'just now' : nz.mins + ' min ago') + ' · ' + (nxt.kind === 'tr' ? 'trial' : 'class') + ' at ' + schTime12(nxt.hhmm) + '</div></div>'
+      + (nxt.link ? '<a class="td-next-zoom" href="' + zEsc(nxt.link) + '" target="_blank" rel="noopener">' + cam + 'Join Zoom</a>' : '') + '</div>';
+    else if (nz.st === 'live') nextCard = '<div class="td-card td-next td-o-next lv"><div class="td-next-main"><div class="td-next-l"><i class="td-dot"></i>Live</div>'
+      + '<div class="td-next-n">' + zEsc(nxt.name) + '</div><div class="td-next-w">Started ' + schTime12(schIst(new Date(nz.since)).hhmm) + '</div></div>'
+      + '<div class="td-next-in"><b>' + dur(nz.mins) + '</b></div>'
+      + (nxt.link ? '<a class="td-next-zoom back" href="' + zEsc(nxt.link) + '" target="_blank" rel="noopener">Back to Zoom</a>' : '') + '</div>';
+    else nextCard = '<div class="td-card td-next td-o-next dn"><div class="td-next-main"><div class="td-next-l">' + (nxt.kind === 'tr' ? 'Trial done' : 'Class done') + '</div>'
+      + '<div class="td-next-n">' + zEsc(nxt.name) + '</div><div class="td-next-w">' + dur(nz.mins) + ' on Zoom</div></div></div>';
+  } else if (nxt) {
     const isTom = schIst(new Date(nxt.t)).ymd !== today;
     const live = nowMs >= nxt.t, mins = Math.max(0, Math.round((nxt.t - nowMs) / 60000));
     const remindAt = nxt.t - 60 * 60000;
@@ -15568,6 +15662,7 @@ async function loadToday(silent) {
     + stat(wkTrials ? wkTrials.length : null, 'Trials booked', 'trials') + stat(newStu, 'New students', 'students') + stat(wkClasses ? wkClasses.length : null, 'Classes taught', 'classes') + '</div></div>';
   wrap.innerHTML = '<div class="td-col">' + nextCard + todayCard + tomCard + '</div><div class="td-col">' + needCard + weekCard + '</div>';
   if (typeof enrRender === 'function') enrRender(acts.length);
+  zLiveArm(todayItems);
   clearInterval(_tdTimer);
   _tdTimer = setInterval(() => { if (document.getElementById('section-today')?.classList.contains('active') && !document.hidden) loadToday(true); }, 60000);
 }
