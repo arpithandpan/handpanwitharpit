@@ -2569,10 +2569,7 @@ html.studio-app .toast { top: calc(8px + env(safe-area-inset-top, 0px)) !importa
 /* ── v133 MORE PAGE (phones): opened by the More tab, tab bar stays ── */
 .more-page { display: none; }
 @media (max-width: 900px) {
-  body.menu-is-open .app-tabs { display: flex !important; visibility: visible !important; z-index: 10002; }
-  body.menu-is-open .mobile-topbar { visibility: hidden !important; }
-  .mobile-menu-overlay .mob-nav { display: none !important; }
-  .mobile-menu-overlay .more-page { display: block; width: 100%; padding: calc(10px + env(safe-area-inset-top, 0px)) 0 calc(96px + env(safe-area-inset-bottom, 0px)); color: #efe2d3; }
+
 }
 .mp-big { font-size: 32px; font-weight: 600; padding: 8px 20px 12px; letter-spacing: -0.01em; }
 .mp-grp { margin: 0 14px 20px; background: #1f1812; border-radius: 14px; overflow: hidden; }
@@ -2633,6 +2630,62 @@ button.tw-it:active { background: rgba(200,147,90,0.08); }
 .tw-btn, .tw-btn2 { display: block; width: calc(100% - 36px); margin: 14px 18px 0; min-height: 48px; border-radius: 24px; font-family: var(--font-body); font-size: 16px; cursor: pointer; }
 .tw-btn { background: #c8935a; color: #1a0e06; border: 0; font-weight: 600; }
 .tw-btn2 { background: none; border: 1px solid rgba(200,147,90,0.4); color: #c8935a; margin-top: 10px; }
+
+/* ── v136: This week opens as an inner page (‹ back), fixed header + week switch ── */
+.tw-page { position: fixed; inset: 0; z-index: 10020; background: #0f0c09; color: #efe2d3; display: flex; flex-direction: column; transform: translateX(100%); transition: transform .28s cubic-bezier(.2,.8,.2,1); box-shadow: -10px 0 30px rgba(0,0,0,.4); }
+body:not(.dark-mode) .tw-page { background: var(--cream); color: var(--text-dark); }
+.tw-page.open { transform: none; }
+.tw-bar { flex-shrink: 0; display: grid; grid-template-columns: minmax(88px, 1fr) minmax(0, auto) minmax(88px, 1fr); align-items: center; min-height: 60px; padding: 6px 16px 6px 8px; background: #1a1208; }
+html.studio-app .tw-bar { padding-top: calc(6px + env(safe-area-inset-top, 0px)); }
+.tw-back { justify-self: start; display: inline-flex; align-items: center; gap: 2px; min-height: 48px; min-width: 48px; padding: 0 10px 0 4px; border: 0; background: none; color: #c8935a; font-family: var(--font-body); font-size: 17px; font-weight: 500; cursor: pointer; border-radius: 24px; }
+.tw-back:hover { background: rgba(200,147,90,0.1); }
+.tw-title { text-align: center; font-size: 18px; font-weight: 600; color: #efe2d3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tw-segwrap { flex-shrink: 0; background: #1a1208; padding: 2px 16px 12px; border-bottom: 1px solid rgba(200,147,90,0.12); }
+.tw-segwrap .tw-seg { margin: 0 auto; max-width: 560px; }
+.tw-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.tw-inner { max-width: 640px; margin: 0 auto; padding: 4px 0 calc(28px + env(safe-area-inset-bottom, 0px)); }
+.tw-count { padding: 14px 20px 2px; color: #8a7a69; font-size: 14px; } .tw-count b { color: #efe2d3; font-weight: 600; }
+@media (max-width: 900px) { .tw-back span { display: none; } .tw-back { padding: 0; justify-content: center; } }
+
+/* ── v136: More is a normal tab page now, so the tab bar sits exactly where it does on every other tab ── */
+#section-more .mp-me, #section-more .mp-grp, #section-more .mp-out { margin-left: 0; margin-right: 0; width: 100%; }
+#section-more .mp-lbl { padding-left: 16px; }
+#section-more .more-page { display: block; padding: 4px 0 8px; color: #efe2d3; }
+@media (min-width: 901px) { #section-more .more-page { max-width: 560px; } }
+
+/* ── v137: phones have no global top bar; per-page buttons by the big title; slim bar only after scrolling ── */
+.app-bar-back, .pg-back, .pg-acts { display: none; }
+@media (max-width: 900px) {
+  .dash-root { padding-top: 0 !important; }
+  html.studio-app .dash-root { padding-top: env(safe-area-inset-top, 0px) !important; }
+  .dash-main { height: 100vh !important; }
+  html.studio-app .dash-main { height: calc(100vh - env(safe-area-inset-top, 0px)) !important; }
+  @supports (height: 100dvh) {
+    .dash-main { height: 100dvh !important; }
+    html.studio-app .dash-main { height: calc(100dvh - env(safe-area-inset-top, 0px)) !important; }
+  }
+  .dash-main { padding-top: 6px !important; }
+  /* the bar: hidden at the top of a page, slides in once the big title scrolls away */
+  .mobile-topbar { transform: translateY(-100%); opacity: 0; pointer-events: none; transition: transform .2s ease, opacity .2s ease; }
+  .mobile-topbar.scrolled { transform: none; opacity: 1; pointer-events: auto; }
+  .mobile-topbar .topbar-logo, .mobile-topbar #mobileMenuBtn { display: none !important; }
+  .mobile-topbar:not(.pg-search) #mobileSearchBtn { display: none !important; }
+  .mobile-topbar .app-bar-title { left: 96px !important; right: 96px !important; }
+  .mobile-topbar.pg-sub .app-bar-back { display: inline-flex; align-items: center; gap: 0; position: absolute; left: 4px; bottom: 6px; height: 44px; padding: 0 8px 0 2px; border: 0; background: none; color: #c8935a; font-family: var(--font-body); font-size: 16px; cursor: pointer; max-width: 96px; overflow: hidden; white-space: nowrap; }
+  .mobile-topbar > div:last-child { margin-left: auto; }
+  .ptr { top: 10px !important; }
+  html.studio-app .ptr { top: calc(10px + env(safe-area-inset-top, 0px)) !important; }
+  /* big title row: buttons on the right, back link above */
+  .dash-section-header { position: relative; }
+  .dash-section-header.pg-has-acts > div:first-child { padding-right: 100px; box-sizing: border-box; }
+  .dash-section-header > .pg-acts { display: flex !important; flex-wrap: nowrap !important; width: auto !important; gap: 8px; position: absolute; right: 0; top: 0; }
+  .dash-section-header.pg-has-back > .pg-acts { top: 44px; }
+  .pg-ib { width: 42px; height: 42px; border-radius: 50%; border: 0; background: #231b14; color: #c8935a; display: grid; place-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .pg-ib.add { background: rgba(200,147,90,0.2); color: #e8b27a; }
+  .pg-ib:active { transform: scale(0.92); }
+  .pg-back { display: flex; width: max-content; align-items: center; gap: 0; margin: 0 0 4px -8px; min-height: 40px; padding: 0 10px 0 2px; border: 0; background: none; color: #c8935a; font-family: var(--font-body); font-size: 16px; cursor: pointer; border-radius: 20px; }
+  .mp-search { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 46px; margin: 0 0 16px; padding: 0 16px; border: 0; border-radius: 23px; background: #2a2018; color: #8a7a69; font-family: var(--font-body); font-size: 16px; cursor: pointer; text-align: left; }
+}
 
 /* ── TODAY ── only what needs doing today. Each block hides when it has nothing to say. */
 .td-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
@@ -3237,6 +3290,7 @@ table#paymentsTable { min-width: 700px; }
     </svg>
     <span style="font-size:18px;font-weight:500;color:#e8d5c0;">Arpit's Studio</span>
   </div>
+  <button type="button" class="app-bar-back" id="appBackBtn" onclick="pgBack()" aria-label="Back"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><span id="appBackLbl">More</span></button>
   <div class="app-bar-title" id="appBarTitle" aria-hidden="true"></div>
   <div style="display:flex;align-items:center;gap:8px;">
     <button id="appAddBtn" class="app-bar-btn" type="button" aria-label="Add" onclick="appAdd()" style="display:none;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
@@ -3399,7 +3453,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v135</span>
+        <span style="color:var(--clay);font-weight:500;">v137</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3471,7 +3525,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v135</span>
+        <span style="color:var(--clay);font-weight:500;">v137</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3509,6 +3563,10 @@ table#paymentsTable { min-width: 700px; }
     </section>
 
     <!-- ── OVERVIEW ── -->
+    <section class="dash-section" id="section-more">
+      <div class="dash-section-header"><div><div class="dash-section-title">More</div></div></div>
+      <div class="more-page" id="morePage"></div>
+    </section>
     <section class="dash-section active" id="section-today">
       <div class="dash-section-header">
         <div>
@@ -6254,6 +6312,8 @@ async function api(endpoint, method = 'GET', body = null) {
 
 // ── NAVIGATION ──
 function showSection(name, el) {
+  if (name === 'more' && !window.matchMedia('(max-width: 900px)').matches) name = 'today';
+  { const cur = sessionStorage.getItem('dash_section'); if (cur && cur !== name && !(typeof _pgBacking !== 'undefined' && _pgBacking)) _pgPrev = cur; }
   if (name !== 'whatsapp' && typeof waClose === 'function' && document.getElementById('section-whatsapp')?.classList.contains('wa-open')) waClose();
   document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.dash-nav a').forEach(a => a.classList.remove('active'));
@@ -6281,6 +6341,7 @@ function appBarSync(name) {
   const t = sec && sec.querySelector('.dash-section-title');
   const title = document.getElementById('appBarTitle'); if (title) title.textContent = t ? t.textContent.trim() : '';
   bar.classList.remove('scrolled');
+  if (typeof pgHeadSync === 'function') pgHeadSync(name);
   const add = document.getElementById('appAddBtn');
   if (add) {
     const admin = typeof isAdmin !== 'function' || isAdmin();
@@ -6325,8 +6386,9 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     const bar = document.getElementById('mobileTopbar'); if (!bar) return;
     const name = sessionStorage.getItem('dash_section') || 'today';
     const t = document.querySelector('#section-' + name + ' .dash-section-title');
-    const barBottom = bar.getBoundingClientRect().bottom;
-    bar.classList.toggle('scrolled', !!t && t.getBoundingClientRect().bottom < barBottom + 4);
+    const top = window.matchMedia('(max-width: 900px)').matches ? m.getBoundingClientRect().top : bar.getBoundingClientRect().bottom;
+    bar.classList.toggle('scrolled', !!t && t.getBoundingClientRect().bottom < top + 4);
+    if (m.scrollTop > 2) { const p = document.querySelector('.ptr'); if (p && !p.classList.contains('spin')) { p.style.opacity = 0; p.style.transform = 'translateY(-40px)'; } }
   }, true);
   // Pull to refresh (touch, phone layout only).
   let startY = null, pulling = false, dist = 0, busy = false, ind = null;
@@ -6348,6 +6410,10 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     const el = indicator(); el.style.transition = 'none'; el.style.opacity = Math.min(1, dist / TRIGGER);
     el.style.transform = 'translateY(' + (dist - 30) + 'px) rotate(' + (dist * 4) + 'deg)';
   }, { passive: true });
+  document.addEventListener('touchcancel', () => {
+    if (startY == null) return; startY = null; pulling = false;
+    const el = indicator(); el.style.transition = 'transform .2s, opacity .2s'; el.style.opacity = 0; el.style.transform = 'translateY(-40px)';
+  }, { passive: true });
   document.addEventListener('touchend', async () => {
     if (startY == null) return; startY = null;
     const el = indicator(); el.style.transition = 'transform .2s, opacity .2s';
@@ -6360,6 +6426,54 @@ function qaClose() { document.body.classList.remove('qa-open'); }
   });
 })();
 
+
+// ── v137: no global top bar on phones. Each page gets its own buttons next to the big title;
+// a slim bar with the page name (and ‹ back on pages that aren't tabs) appears after scrolling. ──
+const PG_TABS = ['today', 'schedule', 'whatsapp', 'classes', 'more'];
+let _pgPrev = null, _pgBacking = false;
+const PG_ICO = {
+  search: '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>',
+  add: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  back: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
+};
+function pgTitle(name) { const t = document.querySelector('#section-' + name + ' .dash-section-title'); return t ? t.textContent.trim() : ''; }
+function pgBackTarget(name) { return (_pgPrev && _pgPrev !== name && document.getElementById('section-' + _pgPrev)) ? _pgPrev : 'more'; }
+function pgBack() {
+  const name = sessionStorage.getItem('dash_section') || 'today';
+  const to = pgBackTarget(name);
+  _pgBacking = true;
+  try { if (PG_TABS.includes(to) && typeof appTab === 'function') appTab(to); else showSection(to, document.querySelector('.dash-nav a[onclick*="\'' + to + '\'"]')); } finally { _pgBacking = false; }
+  _pgPrev = PG_TABS.includes(to) ? null : 'more';
+}
+function pgHeadSync(name) {
+  const phone = window.matchMedia('(max-width: 900px)').matches;
+  const bar = document.getElementById('mobileTopbar');
+  const sec = document.getElementById('section-' + name);
+  const isTab = PG_TABS.includes(name);
+  const admin = typeof isAdmin !== 'function' || isAdmin();
+  const hasAdd = admin && (name === 'today' || !!(sec && sec.querySelector('.dash-section-header .btn-dash-primary')));
+  if (bar) {
+    bar.classList.toggle('pg-sub', !isTab);
+    bar.classList.toggle('pg-search', name === 'today');
+    const lbl = document.getElementById('appBackLbl'); if (lbl) lbl.textContent = pgTitle(pgBackTarget(name)) || 'More';
+  }
+  document.querySelectorAll('.pg-acts, .pg-back').forEach(e => e.remove());
+  if (!phone || !sec) return;
+  const head = sec.querySelector('.dash-section-header'); if (!head) return;
+  const tdiv = head.querySelector(':scope > div') || head;
+  head.classList.remove('pg-has-acts', 'pg-has-back');
+  if (!isTab) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'pg-back'; b.onclick = pgBack;
+    b.innerHTML = PG_ICO.back + '<span>' + zEsc(pgTitle(pgBackTarget(name)) || 'More') + '</span>';
+    tdiv.insertBefore(b, tdiv.firstChild); head.classList.add('pg-has-back');
+  }
+  let acts = '';
+  if (name === 'today') acts += '<button type="button" class="pg-ib" onclick="openMobileSearch()" aria-label="Search">' + PG_ICO.search + '</button>';
+  if (hasAdd) acts += '<button type="button" class="pg-ib add" onclick="appAdd()" aria-label="Add">' + PG_ICO.add + '</button>';
+  if (acts) { const d = document.createElement('div'); d.className = 'pg-acts'; d.innerHTML = acts; head.insertBefore(d, tdiv === head ? head.firstChild : tdiv.nextSibling); head.classList.add('pg-has-acts'); }
+}
+window.addEventListener('resize', () => { if (typeof pgHeadSync === 'function') pgHeadSync(sessionStorage.getItem('dash_section') || 'today'); });
+
 // ── v133: More page (phones). Built from the menu links so icons, roles and handlers stay the same. ──
 const MP_GROUPS = [
   [null, [['overview', 'Overview', '#e0b07c'], ['insights', 'Insights', '#8fbbe9']]],
@@ -6369,15 +6483,13 @@ const MP_GROUPS = [
 ];
 let _mpCounts = {};
 function mpLink(sec) { return document.querySelector('.mob-nav a[onclick*="showSection(\'' + sec + '\'"]'); }
-function mpGo(sec) { const l = mpLink(sec); showSection(sec, l); if (document.getElementById('mobileMenuOverlay').classList.contains('open')) toggleMobileMenu(); }
+function mpGo(sec) { const l = document.querySelector('.dash-nav a[onclick*="\'' + sec + '\'"]'); showSection(sec, l); const m = document.getElementById('dashMain'); if (m) m.scrollTop = 0; window.scrollTo(0, 0); }
 function mpHex(h, a) { const n = parseInt(h.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
 function mpRender() {
-  const ov = document.getElementById('mobileMenuOverlay'); if (!ov) return;
-  let el = document.getElementById('morePage');
-  if (!el) { el = document.createElement('div'); el.className = 'more-page'; el.id = 'morePage'; ov.appendChild(el); }
+  const el = document.getElementById('morePage'); if (!el) return;
   const chev = '<svg class="mp-ch" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
   const role = (document.getElementById('mobileRoleBadge') || {}).textContent || '';
-  let h = '<div class="mp-big">More</div>' +
+  let h = '<button type="button" class="mp-search" onclick="openMobileSearch()"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>Search everything</button>' +
     '<button type="button" class="mp-me" onclick="mpGo(\'settings\')"><span class="mp-logo"><i></i><i></i><i></i><i></i></span><span style="flex:1;min-width:0"><b>Arpit\'s Studio</b><small>' + zEsc((role.trim() || 'Admin')) + ' · arpitpandey.com</small></span>' + chev + '</button>';
   MP_GROUPS.forEach(([label, items]) => {
     const rows = items.map(([sec, name, col]) => {
@@ -6391,7 +6503,7 @@ function mpRender() {
     h += (label ? '<div class="mp-lbl">' + zEsc(label) + '</div>' : '') + '<div class="mp-grp">' + rows + '</div>';
   });
   const ver = document.querySelector('#mobileBuildStamp span');
-  h += '<button type="button" class="mp-out" onclick="toggleMobileMenu();logout()">Log out</button><div class="mp-ver">Arpit\'s Studio · ' + zEsc(ver ? ver.textContent.trim() : '') + '</div>';
+  h += '<button type="button" class="mp-out" onclick="logout()">Log out</button><div class="mp-ver">Arpit\'s Studio · ' + zEsc(ver ? ver.textContent.trim() : '') + '</div>';
   el.innerHTML = h;
 }
 async function mpCounts() {
@@ -6399,22 +6511,12 @@ async function mpCounts() {
   _mpCounts['unassigned-payments'] = num('mobileUnassignedBadge');
   _mpCounts.notifications = num('mobileNotifCount');
   try { const r = await sbGetAll('fee_requests', 'select=id&status=eq.pending'); _mpCounts['fee-payments'] = (r.data || []).length; } catch (e) {}
-  if (document.getElementById('mobileMenuOverlay').classList.contains('open')) mpRender();
+  if (document.getElementById('section-more')?.classList.contains('active')) mpRender();
 }
-(function mpHook() {
-  const orig = toggleMobileMenu;
-  toggleMobileMenu = function () {
-    const ov = document.getElementById('mobileMenuOverlay');
-    const opening = ov && !ov.classList.contains('open');
-    if (opening && window.matchMedia('(max-width: 900px)').matches) { mpRender(); mpCounts(); ov.scrollTop = 0; }
-    orig.apply(this, arguments);
-    if (typeof appTabsSync === 'function') appTabsSync(opening ? 'more' : (sessionStorage.getItem('dash_section') || 'today'));
-  };
-})();
+
 function appTab(name) {
-  const _ov = document.getElementById('mobileMenuOverlay'), _open = _ov && _ov.classList.contains('open');
-  if (name === 'more') { if (_open) { _ov.scrollTo({ top: 0, behavior: 'smooth' }); return; } if (typeof toggleMobileMenu === 'function') toggleMobileMenu(); return; }
-  if (_open) toggleMobileMenu();
+  const _ov = document.getElementById('mobileMenuOverlay');
+  if (_ov && _ov.classList.contains('open')) toggleMobileMenu();
   const link = document.querySelector('.dash-nav a[onclick*="\'' + name + '\'"]');
   showSection(name, link);
   const main = document.getElementById('dashMain'); if (main) main.scrollTop = 0;
@@ -6695,6 +6797,7 @@ async function syncAll() {
   }
 }
 function loadSection(name) {
+  if (name === 'more') { if (typeof mpRender === 'function') { mpRender(); mpCounts(); } return; }
   if (name === 'overview') loadOverview();
   else if (name === 'today') { if (typeof loadToday === 'function') loadToday(); }
   else if (name === 'search') { loadSearchSection(); }
@@ -15124,21 +15227,27 @@ let _tdTimer = null;
 const TW_CHEV = '<svg class="tw-ch" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 const TW_TRIAL_URL = 'https://arpitpandey.com/pages/trial';
 let _twWeekStart = null, _twToday = null, _tw = { kind: null, week: 0 };
-function twClose() { const r = document.getElementById('twRoot'); if (r) { r.classList.remove('open'); setTimeout(() => r.remove(), 220); } unlockScroll(); }
+function twClose() {
+  const r = document.getElementById('twRoot'); if (!r) return;
+  r.classList.remove('open'); r.style.transform = '';
+  setTimeout(() => { r.remove(); unlockScroll(); }, 260);
+}
 function twOpen(kind) {
   if (!_twWeekStart) return;
   _tw = { kind, week: 0 };
   let r = document.getElementById('twRoot'); if (r) r.remove();
-  r = document.createElement('div'); r.id = 'twRoot'; r.className = 'tw-root';
-  r.innerHTML = '<div class="tw-shade" onclick="twClose()"></div><div class="tw-sheet" role="dialog" aria-modal="true"><div class="tw-grab"></div><div id="twBody"></div></div>';
+  const title = { trials: 'Trials booked', students: 'New students', classes: 'Classes taught' }[kind];
+  r = document.createElement('div'); r.id = 'twRoot'; r.className = 'tw-page'; r.setAttribute('role', 'dialog'); r.setAttribute('aria-label', title);
+  r.innerHTML = '<div class="tw-bar"><button type="button" class="tw-back" onclick="twClose()" aria-label="Back"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><span>Today</span></button><div class="tw-title">' + title + '</div><span></span></div>'
+    + '<div class="tw-segwrap"><div class="tw-seg" id="twSeg"></div></div><div class="tw-scroll"><div class="tw-inner" id="twBody"></div></div>';
   document.body.appendChild(r);
   lockScroll();
-  requestAnimationFrame(() => r.classList.add('open'));
-  // drag the sheet down to close
-  const sh = r.querySelector('.tw-sheet'); let y0 = null, dy = 0;
-  sh.addEventListener('touchstart', e => { if (sh.scrollTop > 0) return; y0 = e.touches[0].clientY; dy = 0; sh.style.transition = 'none'; }, { passive: true });
-  sh.addEventListener('touchmove', e => { if (y0 == null) return; dy = Math.max(0, e.touches[0].clientY - y0); sh.style.transform = 'translateY(' + dy + 'px)'; }, { passive: true });
-  sh.addEventListener('touchend', () => { if (y0 == null) return; y0 = null; sh.style.transition = ''; if (dy > 90) twClose(); else sh.style.transform = ''; });
+  requestAnimationFrame(() => requestAnimationFrame(() => r.classList.add('open')));
+  // swipe from the left edge to go back, like iOS
+  let x0 = null, dx = 0;
+  r.addEventListener('touchstart', e => { const t = e.touches[0]; if (t.clientX > 28) return; x0 = t.clientX; dx = 0; r.style.transition = 'none'; }, { passive: true });
+  r.addEventListener('touchmove', e => { if (x0 == null) return; dx = Math.max(0, e.touches[0].clientX - x0); r.style.transform = 'translateX(' + dx + 'px)'; }, { passive: true });
+  r.addEventListener('touchend', () => { if (x0 == null) return; x0 = null; r.style.transition = ''; if (dx > 90) twClose(); else r.style.transform = ''; });
   twRender();
 }
 function twWeek(n) { _tw.week = n; twRender(); }
@@ -15156,8 +15265,11 @@ async function twRender() {
   const body = document.getElementById('twBody'); if (!body) return;
   const kind = _tw.kind, [a, b] = twRange();
   const title = { trials: 'Trials booked', students: 'New students', classes: 'Classes taught' }[kind];
-  const seg = '<div class="tw-seg"><button type="button" class="' + (_tw.week === 0 ? 'on' : '') + '" onclick="twWeek(0)">This week</button><button type="button" class="' + (_tw.week === 1 ? 'on' : '') + '" onclick="twWeek(1)">Last week</button></div>';
-  const head = n => '<div class="tw-h"><h4>' + title + '</h4><span>' + (n == null ? '' : n) + '</span></div>' + seg;
+  const segEl = document.getElementById('twSeg');
+  if (segEl) segEl.innerHTML = '<button type="button" class="' + (_tw.week === 0 ? 'on' : '') + '" onclick="twWeek(0)">This week</button><button type="button" class="' + (_tw.week === 1 ? 'on' : '') + '" onclick="twWeek(1)">Last week</button>';
+  const unit = { trials: ['trial', 'trials'], students: ['new student', 'new students'], classes: ['class', 'classes'] }[kind];
+  const range = (_tw.week ? 'Mon ' + schShortDate(a) + ' – Sun ' + schShortDate(schAddDays(a, 6)) : 'Since Mon ' + schShortDate(a));
+  const head = n => '<div class="tw-count">' + (n == null ? '' : '<b>' + n + '</b> ' + (n === 1 ? unit[0] : unit[1]) + ' · ') + range + '</div>';
   body.innerHTML = head(null) + '<div class="tw-load">Loading…</div>';
   const istStart = d => new Date(d + 'T00:00:00+05:30').toISOString();
   const av = (name, key) => '<span class="tw-av" style="background:' + (typeof waAvColor === 'function' ? waAvColor(String(key || name)) : '#6b4a2e') + '">' + zEsc(String(name || '?').trim().charAt(0).toUpperCase()) + '</span>';
