@@ -22,6 +22,23 @@
   var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
   window.STUDIO_APP = !!standalone;
   if (standalone) document.documentElement.classList.add('studio-app');
+  // v163: some iPhones give the installed app a view that is shorter than the screen by the
+  // status bar height, which leaves an empty strip under the bottom tabs. Measure the gap
+  // and push the tabs (and the page) down by exactly that much.
+  if (standalone) {
+    var vpFix = function () {
+      var land = window.matchMedia && window.matchMedia('(orientation: landscape)').matches;
+      var sh = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
+      var gap = Math.round(sh - window.innerHeight);
+      var g = (gap > 8 && gap < 90) ? gap : 0;
+      document.documentElement.style.setProperty('--vpfix', g + 'px');
+      window._vp = { screen: sh, view: window.innerHeight, fix: g };
+    };
+    vpFix();
+    window.addEventListener('resize', vpFix);
+    window.addEventListener('orientationchange', function () { setTimeout(vpFix, 300); });
+    window.addEventListener('pageshow', vpFix);
+  }
   if (!standalone) return;
   var KEYS = ['dash_auth', 'dash_role', 'dash_token', 'dash_refresh', 'dash_section'];
   try {
@@ -3249,8 +3266,13 @@ body .upd-bar .x { background: transparent; color: var(--bg); opacity: 0.7; padd
   /* v162: no height:100% here. In the installed iPhone app that made the screen short by the
      status bar height, so the bottom tabs floated above an empty strip. */
   html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; overscroll-behavior: none; }
+  /* v163: known iPhone app fix. With a see-through status bar the page needs to be at least
+     screen + status bar tall, otherwise iOS shortens the view and the tabs float up. */
+  html.studio-app { min-height: calc(100% + env(safe-area-inset-top, 0px)); }
+  html.studio-app .app-tabs { bottom: calc(-1 * var(--vpfix, 0px)) !important; }
+  html.studio-app body .dash-root { height: calc(100vh + var(--vpfix, 0px)); }
   body .dash-root { min-height: 0 !important; height: 100vh; box-sizing: border-box; overflow: hidden; }
-  @supports (height: 100dvh) { body .dash-root { height: 100dvh; } }
+  @supports (height: 100dvh) { body .dash-root { height: 100dvh; } html.studio-app body .dash-root { height: calc(100dvh + var(--vpfix, 0px)); } }
   body .dash-main { overscroll-behavior-y: contain; }
 }
 /* v162: Insights charts as ranked horizontal bars (no sideways scroll on phones) */
@@ -3972,7 +3994,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v162</span>
+        <span style="color:var(--clay);font-weight:500;">v163</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4045,7 +4067,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v162</span>
+        <span style="color:var(--clay);font-weight:500;">v163</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -7045,6 +7067,7 @@ function mpRender() {
   const stTxt = B.state === 'ok' ? '<span class="av-ok">✓ Up to date</span>' : B.state === 'old' ? '<span class="av-old">New version ready</span>' : B.state === 'checking' ? '<span>Checking…</span>' : '<span>Can\'t check right now</span>';
   h += '<div class="mp-lbl">App</div><div class="mp-grp av-card"><div class="av-row"><span class="mp-nm">Version</span><span class="av-v">' + zEsc(vtxt) + (B.built ? ' · ' + zEsc(B.built) : '') + '</span></div>'
     + '<div class="av-row"><span class="mp-nm">Status</span>' + stTxt + '</div>'
+    + (window._vp ? '<div class="av-row"><span class="mp-nm">Screen fit</span><span class="av-v">' + window._vp.screen + ' / ' + window._vp.view + (window._vp.fix ? ' · fixed ' + window._vp.fix : ' · ok') + '</span></div>' : '')
     + '<div class="av-btns"><button type="button" class="btn-dash ' + (B.state === 'old' ? 'btn-dash-primary' : 'btn-dash-outline') + '" onclick="appUpdate()">' + (B.state === 'old' ? 'Update now' : 'Reload app') + '</button>'
     + (B.state === 'old' ? '' : '<button type="button" class="btn-dash btn-dash-ghost" onclick="appCheckUpdate(true)">Check for update</button>') + '</div></div>';
   h += '<button type="button" class="mp-out" onclick="logout()">Log out</button>';
