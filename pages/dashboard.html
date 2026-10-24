@@ -3246,11 +3246,32 @@ body .upd-bar .x { background: transparent; color: var(--bg); opacity: 0.7; padd
 /* v161: on phones only the page area scrolls. The document itself used to be taller than the
    screen by the notch height, so it scrolled a little, hid the top of the page and snapped back. */
 @media (max-width: 900px) {
-  html, body { height: 100%; margin: 0 !important; padding: 0 !important; overflow: hidden !important; overscroll-behavior: none; }
+  /* v162: no height:100% here. In the installed iPhone app that made the screen short by the
+     status bar height, so the bottom tabs floated above an empty strip. */
+  html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; overscroll-behavior: none; }
   body .dash-root { min-height: 0 !important; height: 100vh; box-sizing: border-box; overflow: hidden; }
   @supports (height: 100dvh) { body .dash-root { height: 100dvh; } }
   body .dash-main { overscroll-behavior-y: contain; }
 }
+/* v162: Insights charts as ranked horizontal bars (no sideways scroll on phones) */
+body .chart-bars.hb { display: flex; flex-direction: column; align-items: stretch !important; gap: 14px; height: auto; overflow: visible; }
+body .hb-row { min-width: 0; }
+body .hb-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; font-size: 14.5px; }
+body .hb-l { color: var(--tx); font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body .hb-l small { color: var(--tx3); font-weight: 400; font-size: 13px; margin-left: 4px; }
+body .hb-v { color: var(--tx); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+body .hb-track { height: 8px; border-radius: 4px; background: var(--s3); overflow: hidden; }
+body .hb-fill { height: 100%; border-radius: 4px; background: var(--acc); }
+body .hb-fill.ok { background: var(--ok); }
+body .hb-empty { color: var(--tx3); font-size: 14px; }
+body .chart-box { min-width: 0; overflow: hidden; }
+/* v162: phone field. Flag, code and number are three matching boxes with a small gap. */
+body .phone-wrap { gap: 8px; align-items: stretch; }
+body .phone-wrap > .phone-flag-btn, body.dark-mode .phone-wrap > .phone-flag-btn { flex: 0 0 56px; min-height: 48px; border: 1px solid var(--line-2) !important; border-radius: 12px !important; background: var(--s1) !important; font-size: 22px; line-height: 1; }
+body .phone-wrap > .phone-flag-btn:hover, body .phone-wrap > .phone-flag-btn.open { border-color: var(--acc) !important; background: var(--s2) !important; }
+body .phone-wrap > .phone-prefix-input, body.dark-mode .phone-wrap > .phone-prefix-input { flex: 0 0 72px; border: 1px solid var(--line-2) !important; border-radius: 12px !important; background: var(--s1) !important; color: var(--tx) !important; }
+body .phone-wrap > .phone-prefix-input:focus { border-color: var(--acc) !important; }
+body .phone-wrap > .phone-input-right { border-radius: 12px !important; }
 /* hidden bars stay fully hidden (the offline bar's edge showed under the status bar as a white pill) */
 body .net-bar { visibility: hidden; transform: translate(-50%, calc(-100% - 40px - env(safe-area-inset-top, 0px))); transition: transform 0.2s ease, visibility 0.2s; }
 body .net-bar.show { visibility: visible; transform: translate(-50%, 0); }
@@ -3951,7 +3972,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v161</span>
+        <span style="color:var(--clay);font-weight:500;">v162</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4024,7 +4045,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v161</span>
+        <span style="color:var(--clay);font-weight:500;">v162</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -6007,7 +6028,7 @@ table#paymentsTable { min-width: 700px; }
 </div>
 
 <!-- ── CHECK-IN MODE ── -->
-<div id="toast"></div>
+<div id="toast" class="toast info" role="status" aria-live="polite"></div>
 <div class="checkin-screen" id="checkinScreen">
   <div class="checkin-header">
     <div class="checkin-header-row2">
@@ -9618,11 +9639,16 @@ async function loadInsights() {
     document.getElementById('ins-class-rev').textContent = fmt(pays.filter(p=>p.type==='income'&&(p.category==='class'||p.category==='classes')).reduce((s,p)=>s+Number(p.amount),0));
     const hotLeads = lds.filter(l=>l.status==='Hot').length;
     document.getElementById('ins-lead-conv').textContent = lds.length ? hotLeads+' / '+lds.length : '—';
-    const max = Math.max(...ws.map(w=>Number(w.total_revenue||0)));
-    document.getElementById('chartWorkshops').innerHTML = ws.map(w=>`<div class="chart-bar-wrap"><div class="chart-bar-val">${fmt(w.total_revenue)}</div><div class="chart-bar" style="height:${max?Math.round(Number(w.total_revenue)/max*100):0}%"></div><div class="chart-bar-label">${w.id}</div></div>`).join('');
+    // v162: ranked horizontal bars. They stack down the page, so nothing scrolls sideways on a phone.
+    const escapeHtml = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const hb = (rows, cls) => { const mx = Math.max(0, ...rows.map(r => r.v)); if (!rows.length) return '<div class="hb-empty">Nothing yet</div>';
+      return rows.map(r => `<div class="hb-row"><div class="hb-top"><span class="hb-l">${escapeHtml(r.l)}${r.s ? ' <small>' + escapeHtml(r.s) + '</small>' : ''}</span><span class="hb-v">${fmt(r.v)}</span></div><div class="hb-track"><div class="hb-fill ${cls}" style="width:${mx ? Math.max(r.v > 0 ? 2 : 0, Math.round(r.v / mx * 100)) : 0}%"></div></div></div>`).join(''); };
+    const fd = d => { if (!d) return ''; const x = new Date(String(d).slice(0, 10) + 'T00:00:00'); return isNaN(x) ? '' : x.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); };
+    const wsRows = ws.map(w => ({ l: w.id, s: fd(w.date), v: Number(w.total_revenue || 0) })).sort((a, b) => b.v - a.v);
+    const cw = document.getElementById('chartWorkshops'); cw.classList.add('hb'); cw.innerHTML = hb(wsRows, 'acc');
     const cats = {}; pays.filter(p=>p.type==='income').forEach(p=>{const c=p.category==='classes'?'class':(p.category||'other');cats[c]=(cats[c]||0)+Number(p.amount);});
-    const entries = Object.entries(cats).sort((a,b)=>b[1]-a[1]); const maxC = Math.max(...entries.map(e=>e[1]));
-    document.getElementById('chartCategories').innerHTML = entries.map(([cat,val])=>`<div class="chart-bar-wrap"><div class="chart-bar-val">${fmt(val)}</div><div class="chart-bar" style="height:${maxC?Math.round(val/maxC*100):0}%;background:var(--moss)"></div><div class="chart-bar-label">${cat}</div></div>`).join('');
+    const catRows = Object.entries(cats).map(([c, v]) => ({ l: c.charAt(0).toUpperCase() + c.slice(1), v })).sort((a, b) => b.v - a.v);
+    const cc = document.getElementById('chartCategories'); cc.classList.add('hb'); cc.innerHTML = hb(catRows, 'ok');
   } catch(e) { showToast("Couldn't load insights. Check your connection and try again.", 'error'); } finally { hideLoader(); }
 }
 
@@ -10992,7 +11018,7 @@ function showToast(msg, type) {
   const nl = text.indexOf('\n'), co = text.indexOf(': ');
   if (nl > 0) { title = text.slice(0, nl); sub = text.slice(nl + 1); }
   else if (co > 2 && co < 40 && text.length > 44) { title = text.slice(0, co); sub = text.slice(co + 2); }
-  t.style.transition = 'none';
+  t.style.setProperty('transition', 'none', 'important');
   t.classList.remove('show');
   t.className = 'toast ' + kind;
   t.setAttribute('role', kind === 'error' ? 'alert' : 'status');
@@ -11000,7 +11026,8 @@ function showToast(msg, type) {
   t.style.transform = '';
   t.style.opacity = '';
   void t.offsetHeight;
-  t.style.transition = '';
+  t.style.removeProperty('transition');
+  void t.offsetHeight;
   t.classList.add('show');
   const ms = kind === 'error' ? 5000 : kind === 'warning' ? 4000 : 2500;
   t._timer = setTimeout(toastHide, ms + Math.min(2000, Math.max(0, text.length - 60) * 25));
