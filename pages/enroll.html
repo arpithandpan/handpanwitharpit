@@ -16,6 +16,291 @@
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/style.css"/>
 <style>
+/* ── shared booking look: copied from trial.html so every booking page matches ── */
+.tb-wrap, .en-wrap { max-width: 760px; margin: 0 auto; }
+.tb-card { background: var(--card); border-radius: var(--card-radius); padding: 2rem 2rem 2.2rem; }
+.tb-intro { color: var(--maroon); font-size: 0.98rem; margin: 0 0 1.5rem; line-height: 1.55; }
+/* Headings and short paragraphs: spread words evenly so no line ends with a lone word. */
+.tb-fine, .tb-nohp h3, .tb-nohp p, .tb-contact h3, .page-hero-title, .page-hero-sub, .tb-done h2 { text-wrap: balance; }
+.tb-dow { font-size: 0.74rem; color: var(--text-mid); text-align: center; padding-bottom: 0.15rem; }
+.tb-day.blank { visibility: hidden; }
+.tb-month { color: var(--maroon); font-weight: 600; font-size: 0.92rem; margin: 0 0 0.5rem; }
+.tb-days + .tb-month { margin-top: 1.2rem; }
+.tb-day .d1 { display: block; font-size: 0.66rem; line-height: 1; margin-bottom: 1px; text-transform: uppercase; letter-spacing: 0.04em; }
+.tb-nohp { background: var(--ivory); border-radius: 14px; padding: 1.5rem 1.5rem 1.4rem !important; border-top: none !important; }
+.tb-nohp h3 { color: var(--maroon); font-size: 1.1rem; font-weight: 600; margin: 0 0 0.4rem; }
+.tb-nohp p { margin: 0 0 1.4rem; font-size: 0.97rem; }
+.tb-nohp-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.tb-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.6rem; }
+.tb-chip { font-size: 0.86rem; line-height: 1.3; padding: 0.4rem 0.85rem; border-radius: 40px; border: 1px solid var(--rule); color: var(--maroon); }
+.tb-chip.solid { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.tb-step { padding-top: 1.75rem; margin-top: 1.75rem; border-top: 1px solid var(--rule); }
+#tbForm > .tb-step:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+.tb-label { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.05rem; }
+.tb-label strong { color: var(--maroon); font-weight: 600; font-size: 1.02rem; }
+.tb-label span { font-size: 0.85rem; color: var(--text-mid); }
+.tb-weeknav { display: flex; align-items: center; gap: 0.4rem; }
+.tb-arrow { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--rule); background: transparent; color: var(--maroon); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.tb-arrow:disabled { opacity: 0.35; cursor: default; }
+.tb-weeklabel { font-size: 0.85rem; color: var(--text-mid); min-width: 92px; text-align: center; }
+.tb-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.55rem; }
+.tb-day, .tb-time, .tb-opt { font-family: var(--font-body); border: 1px solid var(--rule); background: transparent; color: var(--maroon); border-radius: 12px; cursor: pointer; transition: background .15s, border-color .15s; }
+.tb-day { padding: 0.75rem 0.2rem; text-align: center; line-height: 1.25; }
+.tb-day .d1 { display: block; font-size: 0.78rem; }
+.tb-day .d2 { display: block; font-size: 1.05rem; font-weight: 600; }
+.tb-day:disabled { color: rgba(80,0,24,0.3); border-color: rgba(80,0,24,0.12); cursor: default; }
+.tb-day.on, .tb-time.on, .tb-opt.on { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.tb-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.65rem; }
+.tb-time { padding: 0.85rem 0.6rem; font-size: 0.98rem; line-height: 1.3; }
+.tb-empty { font-size: 0.95rem; color: var(--text-mid); padding: 0.6rem 0; }
+.tb-fields { display: grid; gap: 1.1rem; }
+.tb-field label { display: block; font-size: 0.85rem; color: var(--maroon); margin-bottom: 0.3rem; font-weight: 500; }
+.tb-input { width: 100%; height: 48px; padding: 0 0.95rem; font-family: var(--font-body); font-size: 1rem; color: var(--maroon); background: #fff; border: 1px solid var(--rule); border-radius: 12px; outline: none; -webkit-appearance: none; appearance: none; }
+.tb-input:focus { border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(80,0,24,0.10); }
+.tb-input.err, .tb-cc.err { border-color: #B3261E; }
+.tb-err { font-size: 0.82rem; color: #B3261E; margin-top: 0.3rem; display: none; }
+.tb-err.show { display: block; }
+.tb-phone { display: flex; gap: 0.5rem; position: relative; }
+.tb-cc { flex: 0 0 auto; height: 48px; padding: 0 0.7rem; display: inline-flex; align-items: center; gap: 0.35rem; font-family: var(--font-body); font-size: 1rem; color: var(--maroon); background: #fff; border: 1px solid var(--rule); border-radius: 12px; cursor: pointer; }
+.tb-cc svg { flex-shrink: 0; }
+.tb-pop { position: absolute; top: 54px; left: 0; z-index: 30; width: min(340px, 100%); background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: 0 12px 32px rgba(58,0,17,0.14); padding: 0.5rem; display: none; }
+.tb-pop.open { display: block; }
+.tb-pop input { height: 42px; margin-bottom: 0.4rem; }
+.tb-list { max-height: 260px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.tb-list button { width: 100%; display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.6rem; border: none; background: transparent; font-family: var(--font-body); font-size: 0.95rem; color: var(--text-dark); text-align: left; border-radius: 8px; cursor: pointer; }
+.tb-list button:hover, .tb-list button.hl { background: var(--ivory); }
+.tb-list .dial { margin-left: auto; color: var(--text-mid); font-size: 0.88rem; }
+.tb-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
+.tb-opt { padding: 0.95rem 0.6rem; font-size: 0.97rem; white-space: nowrap; }
+.tb-summary { margin-top: 1.75rem; background: var(--ivory); border-radius: 14px; padding: 0.9rem; color: var(--maroon); display: flex; gap: 0.9rem; align-items: center; }
+.tb-tile { width: 56px; flex-shrink: 0; border-radius: 10px; overflow: hidden; text-align: center; background: var(--card); border: 1px solid rgba(80,0,24,0.18); }
+.tb-tile .m { background: var(--maroon); color: var(--ivory); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; padding: 0.2rem 0; text-transform: uppercase; line-height: 1.3; }
+.tb-tile .d { color: var(--maroon); font-size: 1.4rem; font-weight: 600; line-height: 1; padding: 0.4rem 0 0.45rem; }
+.tb-sum-text { min-width: 0; flex: 1; }
+.tb-sum-l1 { color: var(--maroon); font-weight: 600; font-size: 1rem; line-height: 1.35; margin: 0; }
+.tb-sum-l2 { color: var(--text-mid); font-size: 0.85rem; line-height: 1.4; margin: 0.15rem 0 0; }
+.tb-sum-l2 .sep { margin: 0 0.1rem; }
+.wk-short { display: none; }
+.tb-sum-change { flex-shrink: 0; align-self: center; display: inline-flex; align-items: center; gap: 0.35rem; background: var(--card); border: 1px solid var(--rule); border-radius: 40px; color: var(--maroon); font-family: var(--font-body); font-size: 0.88rem; cursor: pointer; padding: 0.45rem 0.8rem; }
+.tb-book { width: 100%; margin-top: 1.5rem; height: 56px; font-size: 1.05rem; }
+.tb-book[aria-busy="true"] { opacity: 0.7; pointer-events: none; }
+.tb-fine { text-align: center; font-size: 0.85rem; color: var(--text-mid); margin-top: 0.9rem; }
+.tb-alert { display: none; margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 12px; background: #FBEAEA; color: #8C1D18; font-size: 0.95rem; }
+.tb-alert.show { display: block; }
+.tb-alert a { color: inherit; }
+.tb-done { text-align: center; padding: 1rem 0 0.5rem; }
+.tb-done .tick { width: 58px; height: 58px; border-radius: 50%; background: var(--maroon); color: var(--ivory); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.tb-done h2 { color: var(--maroon); font-size: 1.6rem; font-weight: 600; margin-bottom: 0.5rem; }
+.tb-done .when { color: var(--maroon); margin-bottom: 1.4rem; }
+.tb-done .when .w1 { display: block; font-size: 1.15rem; font-weight: 600; }
+.tb-done .when .w2 { display: block; font-size: 0.98rem; color: var(--text-mid); margin-top: 0.15rem; }
+.tb-done .btns { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.tb-contact { margin-top: 2.5rem; background: var(--card); border-radius: var(--card-radius); padding: 1.4rem 1.6rem 0.9rem; }
+.tb-contact h3 { color: var(--maroon); font-size: 1.05rem; font-weight: 600; margin: 0 0 0.4rem; }
+.tb-crow { display: flex; align-items: center; gap: 0.6rem; min-height: 52px; text-decoration: none; border-top: 1px solid rgba(80,0,24,0.12); font-size: 1rem; }
+.tb-crow:first-of-type { border-top: none; }
+.tb-crow .lbl { color: var(--text-mid); min-width: 92px; }
+.tb-crow .val { color: var(--maroon); font-weight: 500; min-width: 0; }
+@media (hover: hover) and (pointer: fine) { .tb-crow:hover .val { text-decoration: underline; } }
+.tb-loading { display: none; position: fixed; inset: 0; background: rgba(80,0,24,0.55); z-index: 9999; align-items: center; justify-content: center; padding: 18px; }
+.tb-loading.show { display: flex; }
+.tb-loading-card { background: var(--cream); border-radius: 14px; padding: 2.25rem 2rem; width: 280px; max-width: 100%; text-align: center; }
+.tb-loading-card .t1 { font-size: 18px; font-weight: 500; color: var(--text-dark); margin-top: 1.1rem; }
+.tb-loading-card .t2 { font-size: 14px; color: var(--text-mid); margin-top: 0.5rem; line-height: 1.5; }
+.handpan-spinner { width: 56px; height: 56px; margin: 0 auto; animation: tbspin 1.9s linear infinite; }
+@keyframes tbspin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.tb-help { margin-top: 2.5rem; background: var(--card); border-radius: var(--card-radius); padding: 1.4rem 1.6rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.tb-help p { margin: 0; color: var(--maroon); font-weight: 500; }
+.tb-wa { display: inline-flex; align-items: center; gap: 0.5rem; }
+.tb-skel { height: 44px; border-radius: 12px; background: linear-gradient(90deg, #f1e9df 0%, #f8f2ea 50%, #f1e9df 100%); background-size: 200% 100%; animation: sk 1.2s infinite; }
+@keyframes sk { to { background-position: -200% 0; } }
+@media (max-width: 600px) {
+  .tb-card { padding: 1.4rem 1.1rem 1.6rem; }
+  .tb-days { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.4rem; }
+  .tb-day { padding: 0.65rem 0; border-radius: 10px; }
+  .tb-day .d2 { font-size: 0.95rem; }
+  .tb-nohp-btns a { width: 100%; text-align: center; justify-content: center; }
+  .tb-intro .i1, .tb-intro .i2 { display: block; }
+  .tb-intro .sep { display: none; }
+  .tb-summary { gap: 0.7rem; padding: 0.65rem; }
+  .tb-tile { width: 50px; }
+  .tb-sum-l1 { font-size: 0.95rem; }
+  .tb-sum-change { width: 36px; height: 36px; padding: 0; justify-content: center; }
+  .tb-sum-change .txt { display: none; }
+  .tb-nohp { padding: 1.1rem 1rem 1rem !important; }
+  .tb-nohp-btns a { padding: 0.9rem 1rem; white-space: normal; font-size: 0.95rem; line-height: 1.3; }
+  .tb-contact { padding: 1.2rem 1.1rem 0.7rem; }
+  .tb-crow { font-size: 0.95rem; }
+  .tb-crow .lbl { min-width: 78px; }
+  .tb-times { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.55rem; }
+  .tb-time { font-size: 0.92rem; padding: 0.8rem 0.3rem; }
+  .tb-opts { gap: 0.4rem; }
+  .tb-opt { font-size: 0.92rem; padding: 0.9rem 0.3rem; }
+  .tb-help { padding: 1.2rem; }
+  .tb-help .btn-primary { width: 100%; text-align: center; justify-content: center; }
+}
+@media (max-width: 380px) {
+  .wk-long { display: none; }
+  .wk-short { display: inline; }
+  .tb-crow { flex-direction: column; align-items: flex-start; justify-content: center; gap: 0; padding: 0.45rem 0; }
+  .tb-crow .lbl { font-size: 0.8rem; min-width: 0; }
+}
+
+/* ── Workshop booking page (book.html) look ──
+   Same tokens, fields, toggles, errors, CTA and contact block as the
+   workshop booking page, so both booking flows feel like one product. */
+.tb-wrap, .en-wrap { --bk-fill:#F5EEE5; --bk-border:#D9C8C6; --bk-dark:#5A4645; --bk-mid:#6B5150; --bk-light:#8E7A79; --bk-pale:#EDE1DC; --bk-sand-deep:#EDE3D9; --bk-stone:#BFA9A8; --bk-err:#8A2614; --bk-err-bg:#F4D8CE; }
+.tb-card { background: #FFFDFA; border-radius: 18px; padding: 1.5rem; }
+.tb-intro { font-size: 16.5px; color: var(--bk-mid); line-height: 1.7; }
+.tb-step { border-top-color: var(--bk-pale); }
+.tb-label strong { font-size: 22px; font-weight: 600; color: var(--bk-dark); letter-spacing: -0.005em; }
+.tb-label span { font-size: 14.5px; color: var(--bk-light); }
+.tb-dow { font-size: 13px; color: var(--bk-light); }
+.tb-month { font-size: 15px; font-weight: 500; color: var(--bk-dark); }
+.tb-empty { font-size: 15px; color: var(--bk-light); }
+.tb-day, .tb-time, .tb-opt { border: 1px solid var(--bk-border); background: var(--bk-fill); color: var(--bk-dark); border-radius: 10px; font-weight: 500; transition: all .15s; }
+@media (hover: hover) { .tb-day:not(:disabled):not(.on):hover, .tb-time:not(.on):hover, .tb-opt:not(.on):hover { background: var(--bk-sand-deep); } }
+.tb-day.on, .tb-time.on, .tb-opt.on { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.tb-day { min-height: 48px; padding: 0.6rem 0.2rem; }
+.tb-day .d2 { font-size: 17px; font-weight: 500; }
+.tb-day:disabled { background: transparent; color: var(--bk-stone); border-color: var(--bk-pale); }
+.tb-time { min-height: 48px; padding: 0.7rem 0.5rem; font-size: 16.5px; }
+.tb-time small { font-weight: 400; }
+.tb-opt { min-height: 48px; padding: 0.7rem 1rem; font-size: 17.5px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.tb-opt .check-icon { display: none; width: 18px; height: 18px; flex-shrink: 0; }
+.tb-opt.on .check-icon { display: block; }
+.tb-fields { gap: 1.5rem; }
+.tb-field label { font-size: 15px; font-weight: 500; color: var(--bk-mid); margin-bottom: 0.4rem; }
+.tb-input { height: 48px; padding: 0 18px; border-radius: 10px; border: 1px solid var(--bk-border); background: var(--bk-fill); color: var(--bk-dark); font-size: 16px; transition: border-color .15s; }
+.tb-input::placeholder { color: #8A7560; }
+.tb-input:focus { border-color: var(--maroon); box-shadow: none; }
+.tb-input.err, .tb-cc.err { border-color: var(--bk-err); }
+.tb-hint { font-size: 14.5px; color: var(--bk-light); margin-top: 0.45rem; line-height: 1.5; }
+.tb-err { font-size: 14px; color: var(--bk-err); font-weight: 500; line-height: 1.45; background: var(--bk-err-bg); border-radius: 8px; padding: 10px 12px; margin-top: 0.5rem; }
+.tb-err.show, .tb-alert.show { display: flex; align-items: flex-start; }
+.tb-err::before, .tb-alert::before { content: ''; flex-shrink: 0; width: 16px; height: 16px; margin-right: 8px; margin-top: 2px; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A2614' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 8v4'/><path d='M12 16h.01'/></svg>") center/contain no-repeat; }
+.tb-alert { font-size: 14px; color: var(--bk-err); font-weight: 500; line-height: 1.45; background: var(--bk-err-bg); border-radius: 8px; padding: 10px 12px; margin-top: 1rem; }
+.tb-cc { white-space: nowrap; height: 48px; padding: 0 10px 0 12px; border-radius: 10px; border: 1px solid var(--bk-border); background: var(--bk-fill); color: var(--bk-dark); font-size: 16px; gap: 6px; }
+.tb-cc[aria-expanded="true"] svg { transform: rotate(180deg); }
+.tb-cc svg { transition: transform .15s; }
+.tb-pop { top: 56px; border: 1px solid var(--bk-stone); border-radius: 10px; background: #FFFDFA; box-shadow: 0 6px 20px rgba(80,0,24,0.14); padding: 0.75rem; }
+.tb-pop input { height: 48px; border-color: var(--bk-stone); background: var(--bk-fill); margin-bottom: 0.5rem; padding: 0 14px; }
+.tb-list button { min-height: 48px; padding: 0.7rem 0.6rem; font-size: 17px; color: var(--bk-dark); border-radius: 4px; }
+.tb-list button:hover, .tb-list button.hl { background: var(--bk-fill); }
+.tb-list .dial { color: var(--bk-light); font-size: 16px; }
+.tb-summary { background: var(--bk-fill); border-radius: 12px; }
+.tb-tile { border-color: var(--bk-border); }
+.tb-sum-l1 { color: var(--bk-dark); font-weight: 600; }
+.tb-sum-l2 { color: var(--bk-light); font-size: 14.5px; }
+.tb-sum-change { border-color: var(--bk-border); background: #FFFDFA; color: var(--maroon); }
+.tb-book { height: 56px; border: none; border-radius: 40px; background: var(--maroon); color: var(--ivory); font-family: inherit; font-size: var(--t-body); font-weight: 600; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 1.5rem; transition: background .2s, transform .08s; transform: none; }
+.tb-book svg { width: 20px; height: 20px; }
+.tb-book:active { transform: scale(0.99); }
+@media (hover: hover) and (pointer: fine) { .tb-book:hover { background: var(--maroon-deep); transform: none; } }
+.tb-fine { font-size: 15px; color: var(--bk-light); margin-top: 0.85rem; }
+.tb-nohp { background: var(--bk-fill); border-radius: 12px; padding: 28px 26px !important; text-align: center; }
+.tb-nohp h3 { font-size: 1.4rem; font-weight: 600; color: var(--maroon); margin: 0 0 6px; }
+.tb-nohp p { font-size: 15px; color: var(--bk-mid); line-height: 1.6; }
+.tb-nohp-btns { flex-direction: column; gap: 10px; }
+.tb-nohp-btns a { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center; white-space: normal; line-height: 1.3; letter-spacing: 0; }
+.tb-nohp-btns .btn-primary { min-height: 48px; padding: 0.7rem 1.5rem; border-radius: 40px; font-size: 15px; font-weight: 500; }
+.tb-nohp-btns .btn-outline { min-height: 46px; padding: 0.65rem 1.5rem; border: 1px solid var(--maroon); border-radius: 40px; background: transparent; color: var(--bk-dark); font-size: 14.5px; font-weight: 500; }
+@media (hover: hover) and (pointer: fine) { .tb-nohp-btns .btn-outline:hover { background: var(--bk-sand-deep); color: var(--bk-dark); } }
+.tb-nohp .tb-fine { text-align: center !important; margin-top: 0.4rem; }
+.tb-done { gap: 1.25rem; }
+.tb-done .tick { width: 56px; height: 56px; }
+.tb-done h2 { font-size: 24px; font-weight: 600; color: var(--maroon); }
+.tb-done .when .w1 { color: var(--bk-dark); font-size: 17px; }
+.tb-done .when .w2 { color: var(--bk-mid); font-size: 15px; }
+.tb-done .btns { flex-direction: column; align-items: stretch; max-width: 360px; margin-left: auto; margin-right: auto; gap: 10px; }
+.tb-done .btns .btn-primary { min-height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 40px; font-size: 15px; font-weight: 500; padding: 0 1.5rem; }
+.tb-done .btns .btn-outline { min-height: 46px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--maroon); border-radius: 40px; color: var(--bk-dark); font-size: 14.5px; font-weight: 500; padding: 0 1.5rem; background: transparent; }
+@media (hover: hover) and (pointer: fine) { .tb-done .btns .btn-outline:hover { background: var(--bk-sand-deep); color: var(--bk-dark); } }
+.tb-contact { background: #FFFDFA; border-radius: 18px; padding: 1.5rem 1.5rem 1rem; }
+.tb-contact h3 { font-size: 19px; font-weight: 500; color: var(--bk-dark); margin-bottom: 0.6rem; }
+.tb-crow { border-top: none; min-height: 48px; padding: 0.5rem 0; font-size: 17px; gap: 8px; }
+.tb-crow .lbl { color: var(--bk-light); min-width: 84px; }
+.tb-crow .val { color: var(--maroon); font-weight: 500; }
+@media (min-width: 768px) { .tb-card { padding: 2rem; } .tb-contact { padding: 1.75rem 2rem 1.25rem; } }
+@media (max-width: 600px) {
+  .tb-card { padding: 1.5rem 1.25rem; }
+  .tb-opt { font-size: 16px; padding: 0.7rem 0.4rem; }
+  .tb-time { font-size: 15.5px; padding: 0.7rem 0.25rem; }
+  .tb-time > :first-child, .tb-time { white-space: nowrap; }
+  .tb-time small { white-space: normal; }
+  .tb-day .d2 { font-size: 16px; }
+  .tb-nohp { padding: 22px 18px !important; }
+  .tb-contact { padding: 1.25rem 1.25rem 0.75rem; }
+  .tb-crow { font-size: 16px; }
+}
+@media (max-width: 380px) {
+  .tb-crow { padding: 0.45rem 0; }
+  .tb-crow .lbl { font-size: 13px; }
+  .tb-opt { font-size: 15px; }
+}
+.tb-tgroup + .tb-tgroup { margin-top: 1.4rem; padding-top: 1.4rem; border-top: 1px dashed var(--bk-border); }
+.tb-tgroup-h { display: flex; align-items: center; gap: 8px; font-size: 15.5px; font-weight: 500; color: var(--bk-dark); margin-bottom: 0.75rem; }
+.tb-tgroup-h svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--maroon); }
+.tb-tgroup-h small { font-size: 14px; font-weight: 400; color: var(--bk-light); }
+@media (max-width: 380px) {
+  .tb-opt { white-space: normal; line-height: 1.25; padding: 0.6rem 0.35rem; gap: 4px; }
+  .tb-opt .check-icon { width: 16px; height: 16px; }
+  .tb-input { padding: 0 12px; }
+}
+/* No double-tap zoom on phones (pinch zoom still works), same as book.html */
+html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
+.tb-pop input { font-size: 16px; }
+/* Booked slots and fully booked days - real bookings only, shown greyed */
+.tb-day { position: relative; }
+.tb-day.fullday { background: transparent; border-style: dashed; color: var(--bk-stone); padding-top: 0.35rem; padding-bottom: 0.3rem; }
+.tb-day.fullday.on { background: var(--maroon); border-style: solid; color: var(--ivory); }
+.tb-day .ftag { display: block; font-size: 9.5px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1; margin-top: 3px; }
+.tb-day.fullday .ftag { color: var(--clay-light, #B98D9A); }
+.tb-day.fullday.on .ftag { color: var(--ivory); opacity: 0.85; }
+/* Months: each one its own block, so October and November never run together. */
+.tb-wrap .tb-month { font-size: 16px; font-weight: 600; color: var(--maroon); margin: 0 0 0.75rem; }
+.tb-wrap .tb-days + .tb-month { margin-top: 1.6rem; padding-top: 1.5rem; border-top: 1px solid var(--bk-pale); }
+/* While times load: the calendar is already there (dates need no server), the boxes pulse. */
+.tb-day.sk { cursor: default; border-color: transparent; color: var(--bk-stone); background: linear-gradient(90deg, #F1E9DF 0%, #F8F2EA 50%, #F1E9DF 100%); background-size: 200% 100%; animation: sk 1.2s infinite; display: flex; align-items: center; justify-content: center; }
+.tb-tsk { height: 48px; border-radius: 10px; background: linear-gradient(90deg, #F1E9DF 0%, #F8F2EA 50%, #F1E9DF 100%); background-size: 200% 100%; animation: sk 1.2s infinite; }
+.tb-tsk + .tb-tsk { margin-top: 0.55rem; }
+.tb-loadfail { grid-column: 1 / -1; text-align: center; padding: 1.4rem 1rem; border: 1px dashed var(--bk-border); border-radius: 12px; color: var(--bk-mid); font-size: 15px; line-height: 1.6; }
+.tb-loadfail strong { display: block; color: var(--bk-dark); font-weight: 600; margin-bottom: 0.2rem; }
+.tb-retry { margin: 0.9rem auto 0.6rem; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1.4rem; border-radius: 40px; border: 1.5px solid var(--maroon); background: transparent; color: var(--maroon); font-family: var(--font-body); font-weight: 600; font-size: 15px; cursor: pointer; }
+.tb-retry:hover { background: var(--maroon); color: var(--ivory); }
+.tb-loadfail .alt { display: block; font-size: 14px; }
+.tb-loadfail .alt a { color: var(--maroon); }
+.tb-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .tb-day.sk, .tb-tsk { animation: none; } }
+.tb-time.bkd { background: transparent; border-style: dashed; color: #8E7A79; cursor: default; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0.45rem 0.3rem; }
+.tb-time.bkd small { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; color: #8E7A79; }
+.tb-fullbox { background: var(--bk-fill); border-radius: 12px; padding: 26px 24px !important; border-top: none !important; margin-top: 1.75rem !important; text-align: center; }
+#tbForm > #tbYes .tb-fullbox { margin-top: 1.25rem !important; }
+.tb-fullbox h3 { font-size: 1.35rem; font-weight: 600; color: var(--maroon); margin: 0 0 6px; }
+.tb-fullbox p { font-size: 15px; color: var(--bk-mid); line-height: 1.6; max-width: 46ch; margin: 0 auto; }
+.tb-fullbox .btn-primary { margin-top: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0.7rem 1.6rem; border-radius: 40px; font-size: 15px; font-weight: 500; letter-spacing: 0; }
+@media (max-width: 600px) { .tb-fullbox { padding: 22px 16px !important; } .tb-fullbox .btn-primary { width: 100%; } }
+.tb-time.bkd .strk { text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: #A08C8B; }
+.tb-bkd-note { font-size: 14px; color: var(--bk-light); margin: -0.4rem 0 1rem; }
+.tb-alt { font-size: 14.5px; color: var(--bk-light); text-align: center; margin: 2px 0 8px; line-height: 1.6; }
+.tb-alt a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); white-space: nowrap; }
+.tb-alt a:hover { border-bottom-color: var(--maroon); }
+.tb-alt .dot { margin: 0 8px; color: var(--bk-stone); }
+.tb-nohp-btns .tb-alt a { display: inline; width: auto; min-height: 0; padding: 0; border: 0; border-radius: 0; border-bottom: 1px solid rgba(80,0,24,.25); background: none; font-size: 14.5px; line-height: 1.6; color: var(--maroon); font-weight: 500; letter-spacing: 0; }
+.tb-nohp-btns .tb-alt a:hover { border-bottom-color: var(--maroon); }
+.tb-nohp-btns .tb-alt a { white-space: nowrap; }
+.tb-alt-br { display: none; }
+@media (max-width: 600px) { .tb-alt-br { display: inline; } }
+.tb-nohp-btns .tb-alt { white-space: normal; min-width: 0; max-width: 100%; }
+@media (max-width: 380px) { .tb-alt .dot { display: none; } .tb-nohp-btns .tb-alt a { display: table; margin: 2px auto 0; } }
+.tb-nohp-btns .tb-alt { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 6px 0 10px; }
+.tb-alt-h { font-size: 14px; color: var(--bk-light); text-align: center; text-wrap: balance; }
+.tb-alt-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.tb-nohp-btns .tb-alt a.tb-chip { display: inline-flex; align-items: center; gap: 7px; width: auto; min-height: 38px; padding: 0 14px; border: 1px solid var(--bk-border); border-radius: 20px; background: #FFFDFA; color: var(--maroon); font-size: 14px; font-weight: 500; line-height: 1; white-space: nowrap; letter-spacing: 0; }
+.tb-nohp-btns .tb-alt a.tb-chip svg { flex-shrink: 0; color: var(--maroon); }
+@media (hover: hover) { .tb-nohp-btns .tb-alt a.tb-chip:hover { border-color: var(--maroon); } }
+@media (max-width: 380px) { .tb-nohp-btns .tb-alt a.tb-chip { font-size: 13.5px; padding: 0 12px; } }
+
 .en-wrap { max-width: 720px; margin: 0 auto; }
 .en-card { background: var(--card); border-radius: var(--card-radius); padding: 2rem 2rem 2.2rem; }
 .en-step + .en-step { padding-top: 1.6rem; margin-top: 1.6rem; border-top: 1px solid rgba(80,0,24,0.14); }
@@ -80,26 +365,67 @@
 .en-sheet h3 { margin: 0 0 0.4rem; color: var(--maroon); font-size: 1.2rem; font-weight: 600; }
 .en-sheet p { margin: 0 0 1.1rem; line-height: 1.5; font-size: 0.95rem; }
 .en-sheet .btn-primary, .en-sheet .btn-outline { display: flex; width: 100%; justify-content: center; text-align: center; margin-top: 0.6rem; }
-/* direct booking: About you */
-.en-f { margin-bottom: 1.1rem; }
-.en-f > label, .en-f > .en-q { display: block; font-weight: 600; color: var(--maroon); font-size: 0.95rem; margin-bottom: 0.45rem; }
-.en-in { width: 100%; box-sizing: border-box; height: 52px; border: 1px solid var(--rule); border-radius: 12px; background: #fff; padding: 0 1rem; font-family: var(--font-body); font-size: 1rem; color: var(--text-dark, #2a1a1a); }
-.en-in:focus { outline: none; border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(80,0,24,0.12); }
-.en-ph { display: flex; gap: 0.5rem; }
-.en-ph .en-in:first-child { width: 92px; flex-shrink: 0; text-align: center; }
-.en-opts { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 0.5rem; }
-.en-opt { font-family: var(--font-body); border: 1px solid var(--rule); background: transparent; color: var(--maroon); border-radius: 12px; padding: 0.85rem 0.3rem; font-size: 0.98rem; cursor: pointer; }
-.en-opt.on { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
-.en-nudge { background: #FCF0D4; color: #4A2F04; border-radius: 12px; padding: 0.9rem 1rem; font-size: 0.95rem; line-height: 1.5; margin: 0.4rem 0 0; }
-.en-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.en-bar { display: flex; gap: 6px; margin: 0 0 1.4rem; }
-.en-bar i { flex: 1; height: 4px; border-radius: 2px; background: rgba(80,0,24,0.12); }
-.en-bar i.on { background: var(--maroon); }
 @media (max-width: 600px) {
   .en-card { padding: 1.4rem 1.1rem 1.6rem; }
   .en-days { gap: 0.3rem; }
   .en-day { padding: 0.7rem 0; font-size: 0.82rem; border-radius: 10px; }
   .en-btns a, .en-btns button { width: 100%; }
+}
+
+/* ── v2: same look as the trial and workshop booking pages ── */
+.en-wrap { max-width: 760px; --bk-fill:#F5EEE5; --bk-border:#D9C8C6; --bk-dark:#5A4645; --bk-mid:#6B5150; --bk-light:#8E7A79; --bk-pale:#EDE1DC; --bk-sand-deep:#EDE3D9; --bk-stone:#BFA9A8; --bk-err:#8A2614; --bk-err-bg:#F4D8CE; }
+.en-card { background: #FFFDFA; border-radius: 18px; padding: 1.5rem; }
+@media (min-width: 768px) { .en-card { padding: 2rem; } }
+.en-step + .en-step { padding-top: 1.75rem; margin-top: 1.75rem; border-top: 1px solid var(--bk-pale); }
+.en-label { margin-bottom: 1.05rem; }
+.en-label strong { font-size: 22px; font-weight: 600; color: var(--bk-dark); letter-spacing: -0.005em; }
+.en-label span { font-size: 14.5px; color: var(--bk-light); }
+.en-day, .en-time, .en-plan { border: 1px solid var(--bk-border); background: var(--bk-fill); color: var(--bk-dark); border-radius: 10px; font-weight: 500; transition: all .15s; }
+@media (hover: hover) { .en-day:not(:disabled):not(.on):hover, .en-time:not(.on):hover, .en-plan:not(.on):hover { background: var(--bk-sand-deep); } }
+.en-day.on, .en-time.on { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.en-day { min-height: 48px; font-size: 16px; }
+.en-day:disabled { background: transparent; color: var(--bk-stone); border-color: var(--bk-pale); }
+.en-time { min-height: 48px; font-size: 16.5px; padding: 0.7rem 0.5rem; }
+.en-empty { font-size: 15px; color: var(--bk-light); }
+.en-plan { padding: 0.9rem 1.1rem; }
+.en-plan b { font-size: 17px; font-weight: 600; }
+.en-plan small { color: var(--bk-light); font-size: 14.5px; }
+.en-plan .amt { font-size: 17px; }
+.en-plan .amt s { color: var(--bk-light); }
+.en-plan.on { background: var(--maroon); color: var(--ivory); border: 1px solid var(--maroon); padding: 0.9rem 1.1rem; }
+.en-plan.on small, .en-plan.on .amt s { color: rgba(245,238,229,0.75); }
+.en-go { height: 56px; border: none; border-radius: 40px; background: var(--maroon); color: var(--ivory); font-family: inherit; font-size: var(--t-body); font-weight: 600; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 1.5rem; margin-top: 1.75rem; cursor: pointer; transition: background .2s, transform .08s; }
+.en-go svg { width: 20px; height: 20px; }
+.en-go:active { transform: scale(0.99); }
+@media (hover: hover) and (pointer: fine) { .en-go:not(:disabled):hover { background: var(--maroon-deep); } }
+.en-fine { font-size: 15px; color: var(--bk-light); margin-top: 0.85rem; }
+.en-alert { font-size: 14px; color: var(--bk-err); font-weight: 500; line-height: 1.45; background: var(--bk-err-bg); border-radius: 8px; padding: 10px 12px; margin-top: 1rem; }
+.en-alert.show { display: flex; align-items: flex-start; }
+.en-alert::before { content: ''; flex-shrink: 0; width: 16px; height: 16px; margin-right: 8px; margin-top: 2px; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A2614' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 8v4'/><path d='M12 16h.01'/></svg>") center/contain no-repeat; }
+.en-done h2 { font-size: 24px; color: var(--maroon); }
+.en-done > p { color: var(--bk-mid); font-size: 16px; }
+.en-sum { background: var(--bk-fill); border-radius: 12px; }
+.en-kv { border-top-color: var(--bk-pale); }
+.en-kv span { color: var(--bk-light); }
+.en-kv b { color: var(--bk-dark); }
+.en-steps { color: var(--bk-mid); }
+.en-btns { flex-direction: column; align-items: stretch; max-width: 360px; margin: 0 auto; gap: 10px; }
+.en-btns a, .en-btns button { min-width: 0; width: 100%; }
+.en-btns .btn-primary { min-height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 40px; font-size: 15px; font-weight: 500; padding: 0 1.5rem; }
+.en-btns .btn-outline { min-height: 46px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--maroon); border-radius: 40px; color: var(--bk-dark); font-size: 14.5px; font-weight: 500; padding: 0 1.5rem; background: transparent; }
+@media (hover: hover) and (pointer: fine) { .en-btns .btn-outline:hover { background: var(--bk-sand-deep); color: var(--bk-dark); } }
+.en-paycard { background: var(--bk-fill); border-radius: 12px; }
+.en-paycard .btn-primary { min-height: 52px; border-radius: 40px; font-weight: 600; }
+.en-seg { background: var(--bk-pale); }
+.en-link { color: var(--maroon); font-size: 15px; }
+.en-nudge { background: var(--bk-fill); color: var(--bk-mid); border-radius: 12px; padding: 1rem 1.1rem; font-size: 15px; line-height: 1.6; margin: 1.5rem 0 0; }
+.en-nudge b { display: block; color: var(--maroon); font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.en-wrap .tb-contact { margin-top: 1.5rem; }
+.tb-opts.en-opts3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 600px) {
+  .en-card { padding: 1.5rem 1.25rem; }
+  .en-time { font-size: 15.5px; }
+  .en-label strong { font-size: 20px; }
 }
 </style>
 </head>
@@ -131,9 +457,11 @@
     <div class="en-card" id="enCard">
       <div class="en-skel"></div><div class="en-skel"></div><div class="en-skel" style="width:60%"></div>
     </div>
-    <div class="en-help">
-      <p>Questions? Message me.</p>
-      <a class="btn-primary" id="enWa" href="https://wa.me/919380140907" target="_blank" rel="noopener">WhatsApp Arpit</a>
+    <div class="tb-contact">
+      <h3>Got questions? Talk to Arpit</h3>
+      <a href="https://wa.me/919019576583" target="_blank" rel="noopener" class="tb-crow" id="enWa"><span class="lbl">WhatsApp</span><span class="val">+91 90195 76583</span></a>
+      <a href="mailto:arpithandpan@gmail.com?subject=Weekly%20handpan%20classes" class="tb-crow"><span class="lbl">Email</span><span class="val">arpithandpan@<wbr>gmail.com</span></a>
+      <a href="https://www.instagram.com/pandeyarpit" target="_blank" rel="noopener" class="tb-crow"><span class="lbl">Instagram</span><span class="val">@pandeyarpit</span></a>
     </div>
   </div>
 </section>
@@ -190,7 +518,8 @@
   const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const DOWL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  let data = null, day = null, start = null, plan = 'quarterly', changing = false, busy = false, flash = '', released = false;
+  let fromAbout = false, data = null, day = null, start = null, plan = 'quarterly', changing = false, busy = false, flash = '', released = false;
+  const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></svg>';
   const myTz = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) { return ''; } })();
 
   function tz() { return data && data.tz ? data.tz : (myTz || 'Asia/Kolkata'); }
@@ -199,57 +528,129 @@
     const p = {}; f.formatToParts(new Date(iso)).forEach(x => { p[x.type] = x.value; });
     return { dow: DOW.indexOf(p.weekday), time: p.hour + ':' + p.minute + ' ' + p.dayPeriod };
   }
+  // A server error page is not JSON: say so plainly instead of blaming the person's internet.
+  async function jget(r) { try { return await r.json(); } catch (e) { return { ok: false, error: 'Something went wrong on our side. Please try again in a minute, or message Arpit on WhatsApp.' }; } }
   function msg(text) { card.innerHTML = '<div class="en-done"><h2>Something’s not right</h2><p>' + esc(text) + '</p></div>'; }
 
-  // ── About you (direct booking) ──
-  const DIAL_BY_TZ = [[/^Asia\/(Kolkata|Calcutta)$/, '91'], [/^America\/(Toronto|Vancouver|Edmonton|Winnipeg|Halifax|Regina|St_Johns)$/, '1'], [/^America\//, '1'], [/^Europe\/London$/, '44'], [/^Europe\/(Berlin|Vienna|Zurich)$/, '49'], [/^Europe\/Paris$/, '33'], [/^Europe\/(Amsterdam)$/, '31'], [/^Australia\//, '61'], [/^Asia\/Dubai$/, '971'], [/^Asia\/Singapore$/, '65']];
-  const guessDial = () => { const t = myTz || ''; const m = DIAL_BY_TZ.find(x => x[0].test(t)); return m ? m[1] : ''; };
-  let me = { name: '', email: '', dial: guessDial(), phone: '', hasHandpan: '', experience: '', anyway: false };
+  // ── About you (direct booking): same fields, country picker and errors as the trial page ──
+  const COUNTRIES = [
+    ['IN','India','91'],['US','United States','1'],['GB','United Kingdom','44'],['CA','Canada','1'],['AU','Australia','61'],
+    ['DE','Germany','49'],['FR','France','33'],['NL','Netherlands','31'],['ES','Spain','34'],['IT','Italy','39'],['PT','Portugal','351'],
+    ['IE','Ireland','353'],['BE','Belgium','32'],['CH','Switzerland','41'],['AT','Austria','43'],['SE','Sweden','46'],['NO','Norway','47'],
+    ['DK','Denmark','45'],['FI','Finland','358'],['PL','Poland','48'],['CZ','Czechia','420'],['HU','Hungary','36'],['GR','Greece','30'],
+    ['RO','Romania','40'],['BG','Bulgaria','359'],['HR','Croatia','385'],['SI','Slovenia','386'],['SK','Slovakia','421'],['EE','Estonia','372'],
+    ['LV','Latvia','371'],['LT','Lithuania','370'],['LU','Luxembourg','352'],['IS','Iceland','354'],['MT','Malta','356'],['CY','Cyprus','357'],
+    ['UA','Ukraine','380'],['TR','Turkey','90'],['IL','Israel','972'],['AE','United Arab Emirates','971'],['SA','Saudi Arabia','966'],
+    ['QA','Qatar','974'],['KW','Kuwait','965'],['BH','Bahrain','973'],['OM','Oman','968'],['JO','Jordan','962'],['EG','Egypt','20'],
+    ['ZA','South Africa','27'],['NG','Nigeria','234'],['KE','Kenya','254'],['MA','Morocco','212'],
+    ['JP','Japan','81'],['KR','South Korea','82'],['CN','China','86'],['HK','Hong Kong','852'],['TW','Taiwan','886'],['SG','Singapore','65'],
+    ['MY','Malaysia','60'],['TH','Thailand','66'],['VN','Vietnam','84'],['ID','Indonesia','62'],['PH','Philippines','63'],
+    ['LK','Sri Lanka','94'],['NP','Nepal','977'],['BD','Bangladesh','880'],['PK','Pakistan','92'],['MV','Maldives','960'],
+    ['NZ','New Zealand','64'],['MX','Mexico','52'],['BR','Brazil','55'],['AR','Argentina','54'],['CL','Chile','56'],['CO','Colombia','57'],
+    ['PE','Peru','51'],['CR','Costa Rica','506'],['UY','Uruguay','598'],['RU','Russia','7'],['KZ','Kazakhstan','7'],['GE','Georgia','995'],['AM','Armenia','374']
+  ];
+  const TZ_COUNTRY = { 'Asia/Kolkata':'IN','Asia/Calcutta':'IN','Europe/London':'GB','Europe/Dublin':'IE','Europe/Berlin':'DE','Europe/Paris':'FR','Europe/Amsterdam':'NL','Europe/Madrid':'ES','Europe/Rome':'IT','Europe/Lisbon':'PT',
+    'Europe/Brussels':'BE','Europe/Zurich':'CH','Europe/Vienna':'AT','Europe/Stockholm':'SE','Europe/Oslo':'NO','Europe/Copenhagen':'DK','Europe/Helsinki':'FI','Europe/Warsaw':'PL','Europe/Prague':'CZ','Europe/Budapest':'HU',
+    'Europe/Athens':'GR','Europe/Bucharest':'RO','Europe/Sofia':'BG','Europe/Zagreb':'HR','Europe/Kiev':'UA','Europe/Kyiv':'UA','Europe/Istanbul':'TR','Asia/Jerusalem':'IL','Asia/Dubai':'AE','Asia/Riyadh':'SA','Asia/Qatar':'QA',
+    'Asia/Tokyo':'JP','Asia/Seoul':'KR','Asia/Shanghai':'CN','Asia/Hong_Kong':'HK','Asia/Taipei':'TW','Asia/Singapore':'SG','Asia/Kuala_Lumpur':'MY','Asia/Bangkok':'TH','Asia/Ho_Chi_Minh':'VN','Asia/Jakarta':'ID','Asia/Manila':'PH',
+    'Asia/Colombo':'LK','Asia/Kathmandu':'NP','Asia/Katmandu':'NP','Asia/Dhaka':'BD','Asia/Karachi':'PK','Australia/Sydney':'AU','Australia/Melbourne':'AU','Australia/Brisbane':'AU','Australia/Perth':'AU','Australia/Adelaide':'AU',
+    'Pacific/Auckland':'NZ','America/Toronto':'CA','America/Vancouver':'CA','America/Edmonton':'CA','America/Winnipeg':'CA','America/Halifax':'CA','America/Mexico_City':'MX','America/Sao_Paulo':'BR','America/Argentina/Buenos_Aires':'AR',
+    'America/Santiago':'CL','America/Bogota':'CO','America/Lima':'PE','Africa/Johannesburg':'ZA','Africa/Lagos':'NG','Africa/Nairobi':'KE','Africa/Cairo':'EG','Europe/Moscow':'RU' };
+  const flag = iso => iso.replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt(0)));
+  function guessCountry() {
+    const t = myTz || '';
+    if (TZ_COUNTRY[t]) return TZ_COUNTRY[t];
+    if (/^America\//.test(t) || /^US\//.test(t) || t === 'Pacific/Honolulu') return 'US';
+    if (/^Europe\//.test(t)) return 'DE';
+    const m = (navigator.language || '').match(/-([A-Z]{2})$/i);
+    if (m && COUNTRIES.some(c => c[0] === m[1].toUpperCase())) return m[1].toUpperCase();
+    return 'IN';
+  }
+  let cc = COUNTRIES.find(c => c[0] === guessCountry()) || COUNTRIES[0];
+  let me = { name: '', email: '', phone: '', hasHandpan: '', experience: '', anyway: false };
+  const CHECK = '<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg>';
+
   function renderAbout() {
     $('enTitle').textContent = 'Start weekly classes';
     $('enSub').textContent = 'Tell me a little about you, then pick your weekly time and plan. No payment yet.';
-    const opt = (k, v, label) => '<button type="button" class="en-opt' + (me[k] === v ? ' on' : '') + '" data-k="' + k + '" data-v="' + v + '">' + label + '</button>';
+    const opt = (k, v, label) => '<button type="button" class="tb-opt' + (me[k] === v ? ' on' : '') + '" data-k="' + k + '" data-v="' + v + '" aria-pressed="' + (me[k] === v) + '">' + CHECK + label + '</button>';
     const beginner = me.hasHandpan === 'not_yet' && me.experience === 'never';
-    let h = '<div class="en-bar"><i class="on"></i><i></i></div>' +
-      '<div class="en-f"><label for="enName">Name</label><input class="en-in" id="enName" autocomplete="name" value="' + esc(me.name) + '"></div>' +
-      '<div class="en-f"><label for="enPhone">WhatsApp number</label><div class="en-ph"><input class="en-in" id="enDial" inputmode="tel" aria-label="Country code" value="' + (me.dial ? '+' + esc(me.dial) : '') + '" placeholder="+91"><input class="en-in" id="enPhone" inputmode="tel" autocomplete="tel-national" value="' + esc(me.phone) + '" placeholder="98450 12345"></div></div>' +
-      '<div class="en-f"><label for="enEmail">Email</label><input class="en-in" id="enEmail" type="email" autocomplete="email" value="' + esc(me.email) + '"></div>' +
-      '<div class="en-f"><span class="en-q">Do you have a handpan?</span><div class="en-opts">' + opt('hasHandpan', 'yes', 'Yes') + opt('hasHandpan', 'not_yet', 'Not yet') + '</div></div>' +
-      '<div class="en-f"><span class="en-q">Played before?</span><div class="en-opts">' + opt('experience', 'never', 'Never') + opt('experience', 'little', 'A little') + opt('experience', 'lot', 'A lot') + '</div></div>' +
-      '<input class="en-hp" id="enHp" tabindex="-1" autocomplete="off" aria-hidden="true">';
+    let h = '<p class="tb-intro">Step 1 of 2 · No payment yet</p>' +
+      '<div class="en-step"><div class="en-label"><strong>1. About you</strong></div><div class="tb-fields">' +
+        '<div class="tb-field"><label for="enName">Your name</label><input class="tb-input" id="enName" autocomplete="name" placeholder="Full name" maxlength="80" value="' + esc(me.name) + '"><div class="tb-err" id="err-name"></div></div>' +
+        '<div class="tb-field"><label for="enEmail">Email</label><input class="tb-input" id="enEmail" type="email" inputmode="email" autocomplete="email" placeholder="Email" maxlength="120" value="' + esc(me.email) + '"><div class="tb-err" id="err-email"></div></div>' +
+        '<div class="tb-field"><label for="enPhone">WhatsApp number</label><div class="tb-phone">' +
+          '<button type="button" class="tb-cc" id="enCc" aria-haspopup="listbox" aria-expanded="false"><span>' + flag(cc[0]) + '</span><span>+' + cc[2] + '</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>' +
+          '<input class="tb-input" id="enPhone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Number" maxlength="20" value="' + esc(me.phone) + '">' +
+          '<div class="tb-pop" id="enPop" role="dialog" aria-label="Choose country"><input class="tb-input" id="enCcSearch" placeholder="Search country" autocomplete="off"><div class="tb-list" id="enCcList" role="listbox"></div></div>' +
+        '</div><p class="tb-hint">Arpit confirms your time and sends the payment link here.</p><div class="tb-err" id="err-phone"></div></div>' +
+        '<input type="text" id="enHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">' +
+      '</div></div>' +
+      '<div class="en-step"><div class="en-label"><strong>2. Do you have a handpan?</strong></div><div class="tb-opts">' + opt('hasHandpan', 'yes', 'Yes, I have one') + opt('hasHandpan', 'not_yet', 'Not yet') + '</div><div class="tb-err" id="err-hasHandpan"></div></div>' +
+      '<div class="en-step"><div class="en-label"><strong>3. Played before?</strong></div><div class="tb-opts en-opts3">' + opt('experience', 'never', 'Never') + opt('experience', 'little', 'A little') + opt('experience', 'lot', 'A lot') + '</div><div class="tb-err" id="err-experience"></div></div>';
     if (beginner && !me.anyway) {
-      h += '<p class="en-nudge">New to the handpan? A free 45 minute trial is the best start. We’ll find out together what to get and where to begin.</p>' +
-        '<a class="btn-primary en-go" href="/pages/trial" style="display:flex;align-items:center;justify-content:center;">Book a free trial instead</a>' +
-        '<p class="en-fine"><button type="button" class="en-link" id="enAnyway">Continue to weekly classes anyway</button></p>';
+      h += '<div class="en-nudge"><b>New to the handpan?</b>A free 45 minute trial is the best start. We’ll find out together what to get and where to begin.</div>' +
+        '<a class="en-go" href="/pages/trial" style="text-decoration:none;">Book a free trial instead' + ARROW + '</a>' +
+        '<p class="en-fine" style="text-align:center"><button type="button" class="en-link" id="enAnyway">Continue to weekly classes anyway</button></p>';
     } else {
-      h += '<button type="button" class="btn-primary en-go" id="enNext">Next: pick a time</button>';
+      h += '<button type="button" class="en-go" id="enNext"><span class="lbl">Next: pick a time</span>' + ARROW + '</button><div class="en-alert" id="enAlert"></div>' +
+        '<p class="en-fine" style="text-align:center">You choose a time and plan next. Arpit confirms before you pay.</p>';
     }
-    h += '<div class="en-alert" id="enAlert"></div>';
     card.innerHTML = h;
-    const keep = () => { me.name = $('enName').value; me.email = $('enEmail').value; me.dial = $('enDial').value.replace(/\D/g, ''); me.phone = $('enPhone').value; };
-    card.querySelectorAll('.en-opt').forEach(b => b.onclick = () => { keep(); me[b.dataset.k] = b.dataset.v; renderAbout(); });
+    const keep = () => { me.name = $('enName').value; me.email = $('enEmail').value; me.phone = $('enPhone').value; };
+    card.querySelectorAll('.tb-opt').forEach(b => b.onclick = () => { keep(); me[b.dataset.k] = b.dataset.v; renderAbout(); });
     const any = $('enAnyway'); if (any) any.onclick = () => { keep(); me.anyway = true; renderAbout(); };
     const nx = $('enNext'); if (nx) nx.onclick = () => { keep(); startNew(); };
+    [['enName', 'name'], ['enEmail', 'email'], ['enPhone', 'phone']].forEach(([id, f]) => $(id).addEventListener('input', () => setErr(f, '')));
+    // country picker, same behaviour as the trial page
+    const openCc = open => {
+      $('enPop').classList.toggle('open', open); $('enCc').setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) { $('enCcSearch').value = ''; ccList(''); setTimeout(() => $('enCcSearch').focus(), 30); }
+    };
+    const ccList = q => {
+      q = (q || '').trim().toLowerCase();
+      const list = COUNTRIES.filter(c => !q || c[1].toLowerCase().includes(q) || c[2].startsWith(q.replace('+', '')));
+      $('enCcList').innerHTML = list.map(c => '<button type="button" role="option" data-iso="' + c[0] + '"' + (c === cc ? ' class="hl"' : '') + '><span>' + flag(c[0]) + '</span><span>' + c[1] + '</span><span class="dial">+' + c[2] + '</span></button>').join('') || '<div class="tb-empty" style="padding:0.6rem;">No match</div>';
+    };
+    $('enCc').onclick = e => { e.stopPropagation(); openCc(!$('enPop').classList.contains('open')); };
+    $('enCcSearch').oninput = e => ccList(e.target.value);
+    $('enCcSearch').onkeydown = e => { if (e.key === 'Escape') openCc(false); if (e.key === 'Enter') { e.preventDefault(); const f = $('enCcList').querySelector('button'); if (f) f.click(); } };
+    $('enCcList').addEventListener('click', e => {
+      const b = e.target.closest('button[data-iso]'); if (!b) return;
+      keep(); cc = COUNTRIES.find(c => c[0] === b.dataset.iso) || cc; renderAbout(); $('enPhone').focus();
+    });
+  }
+  document.addEventListener('click', e => { const pop = $('enPop'); if (pop && !e.target.closest('.tb-phone')) { pop.classList.remove('open'); const b = $('enCc'); if (b) b.setAttribute('aria-expanded', 'false'); } });
+  document.addEventListener('keydown', e => { const pop = $('enPop'); if (e.key === 'Escape' && pop && pop.classList.contains('open')) { pop.classList.remove('open'); $('enCc').focus(); } });
+  function setErr(f, text) {
+    const el = $('err-' + f); if (!el) return;
+    el.textContent = text; el.classList.toggle('show', !!text);
+    const input = { name: 'enName', email: 'enEmail', phone: 'enPhone' }[f];
+    if (input && $(input)) $(input).classList.toggle('err', !!text);
+    if (f === 'phone' && $('enCc')) $('enCc').classList.toggle('err', !!text);
   }
   async function startNew() {
     const a = $('enAlert'), go = $('enNext');
-    const err = t => { a.textContent = t; a.classList.add('show'); };
     a.classList.remove('show');
-    if (me.name.trim().length < 2) return err('Please enter your name.');
-    if (me.phone.replace(/\D/g, '').length < 6) return err('Please enter your WhatsApp number.');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(me.email.trim())) return err('Please enter a valid email.');
-    if (!me.hasHandpan || !me.experience) return err('Please answer both questions.');
-    if (busy) return; busy = true; go.setAttribute('aria-busy', 'true'); go.textContent = 'One moment…';
+    const phone = me.phone.replace(/\D/g, '');
+    let bad = false;
+    if (me.name.trim().length < 2) { setErr('name', 'Enter your name'); bad = true; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(me.email.trim())) { setErr('email', 'Enter a valid email'); bad = true; }
+    if (phone.replace(/^0+/, '').length < 6) { setErr('phone', 'Enter your WhatsApp number'); bad = true; }
+    if (!me.hasHandpan) { setErr('hasHandpan', 'Choose one'); bad = true; }
+    if (!me.experience) { setErr('experience', 'Choose one'); bad = true; }
+    if (bad) { const first = card.querySelector('.tb-err.show'); if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    if (busy) return; busy = true; go.setAttribute('aria-busy', 'true'); go.querySelector('.lbl').textContent = 'One moment…';
+    const fail = t => { busy = false; go.removeAttribute('aria-busy'); go.querySelector('.lbl').textContent = 'Next: pick a time'; a.textContent = t; a.classList.add('show'); };
     try {
-      const r = await fetch(API + '/api/enrol/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: me.name.trim(), email: me.email.trim(), dial: me.dial, phone: me.phone, hasHandpan: me.hasHandpan, experience: me.experience, tz: myTz, website: $('enHp').value }) });
-      const j = await r.json();
-      busy = false;
-      if (!j.ok) { go.removeAttribute('aria-busy'); go.textContent = 'Next: pick a time'; return err(j.error || 'Could not continue. Please try again.'); }
-      token = j.token;
+      const r = await fetch(API + '/api/enrol/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: me.name.trim(), email: me.email.trim(), dial: cc[2], phone: phone.replace(/^0+/, ''), country: cc[1], hasHandpan: me.hasHandpan, experience: me.experience, tz: myTz, website: $('enHp').value }) });
+      const j = await jget(r);
+      if (!j.ok) return fail(j.error || 'Could not continue. Please try again.');
+      busy = false; token = j.token; fromAbout = true;
       try { history.replaceState(null, '', '/enroll/' + token); } catch (e) {}
       window.scrollTo({ top: 0, behavior: 'smooth' });
       load();
-    } catch (e) { busy = false; go.removeAttribute('aria-busy'); go.textContent = 'Try again'; err('Could not connect. Check your internet and try again.'); }
+    } catch (e) { fail('Could not connect. Check your internet and try again.'); }
   }
 
   async function load() {
@@ -257,14 +658,14 @@
     if (!token) return msg('This link is missing its code. Message Arpit on WhatsApp and he will send it again.');
     try {
       const r = await fetch(API + '/api/enrol/' + token, { cache: 'no-store' });
-      const j = await r.json();
+      const j = await jget(r);
       if (!j.ok) return msg(j.error || 'This link is not valid any more.');
       data = j; render();
     } catch (e) { msg('Could not load. Check your connection and try again.'); }
   }
 
   function render() {
-    if (data.whatsapp) $('enWa').href = 'https://wa.me/' + data.whatsapp;
+    /* contact rows stay fixed, same as the trial page */
     const st = data.status;
     if (data.name) $('enTitle').textContent = (st === 'invited' || changing) ? 'Hi ' + data.name + ', let’s find your weekly time' : 'Your weekly class, ' + data.name;
     if ((st === 'invited' || changing) && data.slots) return renderPick();
@@ -291,7 +692,7 @@
     if (day == null || !byDay[day]) day = order.find(d => byDay[d]) ?? null;
     if (start && !slots.includes(start)) start = null;
     const tzLabel = data.tzName === 'IST' ? 'Times in IST' : 'Times in ' + data.tzName;
-    let h = (released ? '<div class="en-note">Your old time is released. Pick a new one and Arpit will confirm it.</div>' : '') + '<div class="en-step"><div class="en-label"><strong>1. Day and time</strong><span>' + esc(tzLabel) + '</span></div>';
+    let h = (fromAbout && data.status === 'invited' ? '<p class="tb-intro">Step 2 of 2 · No payment yet</p>' : '') + (released ? '<div class="en-note">Your old time is released. Pick a new one and Arpit will confirm it.</div>' : '') + '<div class="en-step"><div class="en-label"><strong>1. Day and time</strong><span>' + esc(tzLabel) + '</span></div>';
     if (!slots.length) h += '<div class="en-empty">No weekly times are free right now. Message me on WhatsApp and we’ll sort it out.</div>';
     else {
       h += '<div class="en-days">' + order.map(d => '<button type="button" class="en-day' + (d === day ? ' on' : '') + '" data-d="' + d + '"' + (byDay[d] ? '' : ' disabled') + '>' + DOW[d] + '</button>').join('') + '</div>';
@@ -300,7 +701,7 @@
     h += '</div><div class="en-step"><div class="en-label"><strong>2. Plan</strong><span>' + (data.classMin || 60) + ' min classes on Zoom</span></div><div class="en-plans">' +
       data.plans.map(p => '<button type="button" class="en-plan' + (p.key === plan ? ' on' : '') + '" data-p="' + p.key + '"><span><b>' + esc(p.label) + (p.discount ? '<span class="en-tag">' + p.discount + '% off</span>' : '') + '</b><small>' + p.classes + ' classes</small></span><span class="amt">' + (p.list ? '<s>' + esc(p.list) + '</s>' : '') + esc(p.text) + '</span></button>').join('') + '</div></div>';
     const sel = start ? parts(start) : null;
-    h += '<button type="button" class="btn-primary en-go" id="enGo"' + (start ? '' : ' disabled') + '>' + (sel ? 'Request ' + DOWL[sel.dow] + 's at ' + esc(sel.time) : 'Pick a time') + '</button>';
+    h += '<button type="button" class="btn-primary en-go" id="enGo"' + (start ? '' : ' disabled') + '>' + (sel ? 'Request ' + DOWL[sel.dow] + 's at ' + esc(sel.time) : 'Pick a time') + (sel ? ARROW : '') + '</button>';
     h += '<div class="en-alert" id="enAlert"></div>';
     h += '<p class="en-fine">Arpit confirms within a day, then you get the payment link. Your first class is the next ' + (sel ? DOWL[sel.dow] : 'one') + ' after you pay.</p>';
     if (changing) h += '<p class="en-fine"><button type="button" class="en-link" id="enKeep">Keep my current request</button></p>';
@@ -317,7 +718,7 @@
     busy = true; const go = $('enGo'); go.setAttribute('aria-busy', 'true'); go.textContent = 'Sending…';
     try {
       const r = await fetch(API + '/api/enrol/' + token + '/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ start, plan, tz: myTz }) });
-      const j = await r.json();
+      const j = await jget(r);
       if (!j.ok) {
         const a = $('enAlert'); a.textContent = j.error || 'Could not send. Please try again.'; a.classList.add('show');
         go.removeAttribute('aria-busy'); go.textContent = 'Try again';
@@ -345,7 +746,7 @@
       const b = $('enAccept'); b.setAttribute('aria-busy', 'true'); b.textContent = 'Confirming…';
       try {
         const r = await fetch(API + '/api/enrol/' + token + '/accept', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
-        const j = await r.json();
+        const j = await jget(r);
         if (!j.ok) { const a = $('enAlert'); a.textContent = j.error || 'Could not confirm.'; a.classList.add('show'); b.removeAttribute('aria-busy'); b.textContent = 'Try again'; return; }
         data = j; render();
       } catch (e) { b.removeAttribute('aria-busy'); b.textContent = 'Try again'; }
@@ -370,7 +771,7 @@
       busy = true; b.setAttribute('aria-busy', 'true');
       try {
         const r = await fetch(API + '/api/enrol/' + token + '/plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan: b.dataset.p }) });
-        const j = await r.json();
+        const j = await jget(r);
         busy = false;
         if (!j.ok) { const a = $('enAlert'); a.textContent = j.error || 'Could not change the plan.'; a.classList.add('show'); b.removeAttribute('aria-busy'); return; }
         const np = j.plans.find(p => p.key === (j.request && j.request.plan));
@@ -391,7 +792,7 @@
       const b = $('enRel'); b.setAttribute('aria-busy', 'true'); b.textContent = 'One moment…';
       try {
         const r = await fetch(API + '/api/enrol/' + token + '/release', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
-        const j = await r.json();
+        const j = await jget(r);
         close();
         if (!j.ok) { const a = $('enAlert'); if (a) { a.textContent = j.error || 'Could not do that.'; a.classList.add('show'); } return; }
         data = j; released = true; start = null; plan = (j.request && j.request.plan) || plan; render(); window.scrollTo({ top: 0, behavior: 'smooth' });
