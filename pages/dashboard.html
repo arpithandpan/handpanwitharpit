@@ -3509,7 +3509,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v144</span>
+        <span style="color:var(--clay);font-weight:500;">v145</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3581,7 +3581,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v144</span>
+        <span style="color:var(--clay);font-weight:500;">v145</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4277,8 +4277,10 @@ table#paymentsTable { min-width: 700px; }
           <button type="button" class="sch-ic" onclick="schCalShift(1)" aria-label="Next week">&#8250;</button>
           <button type="button" class="sch-today" onclick="schCalToday()">Today</button>
         </div>
+        <button type="button" class="sch-blk admin-only" onclick="schOpenBlock()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>Block time</button>
         <div class="sch-legend" id="schLegend"><span><i class="lg-cls"></i>Class</span><span><i class="lg-mv"></i>Moved / make-up</span><span><i class="lg-tr"></i>Trial</span><span><i class="lg-bl"></i>Workshop / gig (blocked)</span><span><i class="lg-sk"></i>Skipped</span></div>
       </div>
+      <div id="schBlocks"></div>
       <div id="schCalWrap" style="margin:0 0 2rem;">
         <div class="schw" id="schWeek"></div>
         <div class="schd" id="schDay"></div>
@@ -14110,6 +14112,18 @@ body.dark-mode .schw, body.dark-mode .schd { --sch-line: rgba(200,147,90,0.13); 
 .sch-ev.cls { background: #6b1f2a; border-left: 3px solid #d46a7c; }
 .sch-ev.mv { background: #4a3570; border-left: 3px solid #9b7fd1; }
 .sch-ev.tr { background: #2f5a34; border-left: 3px solid #7fbf6a; cursor: default; }
+.sch-blk { font: inherit; height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid rgba(196,85,63,0.5); background: transparent; color: #c4553f; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.9rem; }
+body.dark-mode .sch-blk { color: #ee9a86; border-color: rgba(238,154,134,0.45); }
+.sch-blkrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; margin: 0 0 8px; border-radius: 12px; border: 1px dashed rgba(196,85,63,0.5); background: repeating-linear-gradient(135deg, rgba(196,85,63,0.07) 0 8px, transparent 8px 16px); }
+.sch-blkrow b { display: block; color: #c4553f; font-weight: 600; } body.dark-mode .sch-blkrow b { color: #ee9a86; }
+.sch-blkrow small { color: var(--text-light); font-size: 0.85rem; }
+.sch-blkrow button { font: inherit; font-size: 0.85rem; background: none; border: 1px solid rgba(184,114,42,0.45); color: var(--clay); border-radius: 16px; padding: 5px 12px; cursor: pointer; flex-shrink: 0; }
+.sch-ev.ab { background: repeating-linear-gradient(135deg, rgba(196,85,63,0.16) 0 6px, rgba(196,85,63,0.05) 6px 12px); border: 1px dashed rgba(196,85,63,0.55); color: #c4553f; }
+body.dark-mode .sch-ev.ab { color: #ee9a86; }
+.blk-aff { border-radius: 12px; background: rgba(196,85,63,0.07); border: 1px solid rgba(196,85,63,0.25); padding: 12px 14px; margin-top: 1rem; }
+.blk-aff h5 { margin: 0 0 8px; font-size: 0.95rem; font-weight: 600; color: #c4553f; } body.dark-mode .blk-aff h5 { color: #ee9a86; }
+.blk-aff div { display: flex; justify-content: space-between; gap: 10px; font-size: 0.9rem; padding: 3px 0; color: var(--text-mid); }
+.blk-aff div span:last-child { color: var(--text-light); text-align: right; }
 .sch-ev.bl { background: repeating-linear-gradient(135deg, rgba(184,114,42,0.18) 0 6px, rgba(184,114,42,0.07) 6px 12px); border: 1px solid rgba(184,114,42,0.4); color: var(--clay); cursor: default; }
 .sch-ev.sk { background: transparent; border: 1px dashed rgba(184,114,42,0.5); color: var(--text-light); }
 .sch-ev.sk b { text-decoration: line-through; }
@@ -14197,6 +14211,14 @@ body.dark-mode .sch-pop { background: #2a2018; border-color: rgba(200,147,90,0.4
     <button class="btn-dash-save" id="sch-offer-save">Send</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;" id="sch-offer-body"></div></div>
+</div>
+<div class="form-page" id="form-schBlock">
+  <div class="form-page-header">
+    <button class="form-page-back" onclick="schCloseBlock()">&larr; Back</button>
+    <div class="form-page-title" id="sch-block-title">Block time</div>
+    <button class="btn-dash-save" id="sch-block-save">Block</button>
+  </div>
+  <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;" id="sch-block-body"></div></div>
 </div>
 <div class="form-page" id="form-schMove">
   <div class="form-page-header">
@@ -15735,6 +15757,7 @@ async function loadSchedule() {
       soft(sbGetAll('gigs', 'event_date=gte.' + from + '&event_date=lte.' + to)),
       soft(sbGetAll('workshops', 'date=gte.' + from + '&date=lte.' + to))
     ]);
+    try { _sch.blocks = isAdmin() ? ((await (await invApi('/api/admin/blocks')).json()).blocks || []) : []; } catch (e) { _sch.blocks = []; }
     _sch.slots = slots.data || [];
     _sch.exceptions = exc.data || [];
     _sch.students = (stus.data || []).filter(s => !s.archived);
@@ -15761,7 +15784,7 @@ function schRender() {
   };
   // Changes the student made on their My classes page say so.
   const byStu = o => o.ex && Number(o.ex.student_changes) > 0 ? ' · by student' : '';
-  const badge = o => o.state === 'skip' ? '<span class="badge badge-gray">Skipped' + byStu(o) + '</span>'
+  const badge = o => o.state === 'skip' ? '<span class="badge badge-gray">Skipped' + (o.ex && o.ex.block_id ? ' · you’re away' : byStu(o)) + '</span>'
     : o.state === 'move' ? '<span class="badge badge-gray">Moved to ' + schDayLabel(String(o.ex.new_date).slice(0, 10)) + ' ' + schTime12(o.ex.new_time_ist) + byStu(o) + '</span>'
     : o.state === 'moved-in' ? '<span class="badge badge-clay">' + (o.ex && o.ex.makeup ? 'Make-up' : 'Rescheduled') + byStu(o) + '</span>'
     : '<span class="badge badge-green">Scheduled</span>';
@@ -15827,7 +15850,91 @@ function schRender() {
   const active = _sch.slots.filter(r => r.active).length;
   const cnt = document.getElementById('schCount');
   if (cnt) cnt.textContent = active + ' active weekly slot' + (active === 1 ? '' : 's') + ' · ' + plan.filter(o => o.state === 'scheduled' || o.state === 'moved-in').length + ' classes in the next 14 days';
+  const bw = document.getElementById('schBlocks');
+  if (bw) bw.innerHTML = (_sch.blocks || []).filter(b => new Date(b.end_at).getTime() > Date.now()).map(b => {
+    const s0 = new Date(b.start_at), e0 = new Date(b.end_at);
+    const d1 = schIst(s0).ymd, d2 = schIst(new Date(e0.getTime() - 1)).ymd;
+    const when = b.all_day ? (d1 === d2 ? schDayLabel(d1) : schDayLabel(d1) + ' – ' + schDayLabel(d2)) + ' · whole day' : schDayLabel(d1) + ' · ' + schTime12(schIst(s0).hhmm) + ' – ' + schTime12(schIst(e0).hhmm);
+    const a = b.affected || {}; const n = (a.classes || []).length, t = (a.trials || []).length;
+    return '<div class="sch-blkrow"><div><b>You’re away · ' + zEsc(when) + '</b><small>' + (b.note ? zEsc(b.note) + ' · ' : '') + n + ' class' + (n === 1 ? '' : 'es') + ' cancelled' + (t ? ', ' + t + ' trial' + (t === 1 ? '' : 's') : '') + '</small></div>' + (isAdmin() ? '<button type="button" onclick="schUnblock(' + b.id + ')">Unblock</button>' : '') + '</div>';
+  }).join('');
   schApplyView();
+}
+
+// ── v145: BLOCK TIME (leave, illness, travel) ──
+let _blkTimer = null, _blkSig = '', _blkPrev = null;
+function schOpenBlock() {
+  if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
+  const today = schIst(new Date()).ymd;
+  const g = (label, inner, hint) => '<div class="form-group"><label class="form-label">' + label + '</label>' + inner + (hint ? '<span class="inv-date-hint">' + hint + '</span>' : '') + '</div>';
+  schOpenForm('block', 'Block time',
+    '<div class="sch-note">For leave, illness or travel. Classes in this time are cancelled and not counted, students get a make-up link, and trials are cancelled with a “pick a new time” email. Nobody can book this time.</div>'
+    + g('What to block', '<select class="form-input" id="blkMode" data-label="What to block"><option value="day">Whole day(s)</option><option value="hours">Part of a day</option></select>')
+    + '<div class="form-row">' + g('From', '<input type="date" class="form-input" id="blkFrom" value="' + today + '" min="' + today + '">') + '<div id="blkToWrap" style="flex:1">' + g('To (optional)', '<input type="date" class="form-input" id="blkTo" min="' + today + '">', 'Leave empty for one day.') + '</div></div>'
+    + '<div class="form-row" id="blkHours" style="display:none;">' + g('From time', schTimeField('blkS', '18:00')) + g('Until', schTimeField('blkE', '22:00')) + '</div>'
+    + g('Note for you', '<input class="form-input" id="blkNote" maxlength="200" placeholder="e.g. Gig in Goa">', 'Students don’t see this.')
+    + '<div id="blkAff"></div>');
+  const save = document.getElementById('sch-block-save');
+  save.textContent = 'Block'; save.onclick = schSaveBlock;
+  _blkSig = ''; _blkPrev = null;
+  clearInterval(_blkTimer); _blkTimer = setInterval(schBlockWatch, 500);
+  schBlockWatch();
+}
+function schCloseBlock() { clearInterval(_blkTimer); _blkTimer = null; schCloseForm('block'); }
+function schBlockBody() {
+  const mode = document.getElementById('blkMode').value;
+  const from = document.getElementById('blkFrom').value, to = document.getElementById('blkTo').value;
+  const b = { mode, from, to: mode === 'hours' ? from : (to || from), note: document.getElementById('blkNote').value.trim() };
+  if (mode === 'hours') { b.start = schTimeValue('blkS'); b.end = schTimeValue('blkE'); }
+  return b;
+}
+async function schBlockWatch() {
+  if (!document.getElementById('blkMode')) { clearInterval(_blkTimer); return; }
+  const hours = document.getElementById('blkMode').value === 'hours';
+  document.getElementById('blkHours').style.display = hours ? '' : 'none';
+  document.getElementById('blkToWrap').style.display = hours ? 'none' : '';
+  const b = schBlockBody(); const sig = JSON.stringify([b.mode, b.from, b.to, b.start, b.end]);
+  if (sig === _blkSig) return; _blkSig = sig;
+  const box = document.getElementById('blkAff');
+  if (!b.from) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="blk-aff"><h5>Checking who is affected…</h5></div>';
+  try {
+    const j = await (await invApi('/api/admin/blocks/preview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) })).json();
+    if (_blkSig !== sig) return;
+    if (!j.ok) { _blkPrev = null; box.innerHTML = '<div class="blk-aff"><h5>' + zEsc(j.error || 'Could not check') + '</h5></div>'; return; }
+    _blkPrev = j;
+    const n = j.classes.length + j.trials.length;
+    box.innerHTML = '<div class="blk-aff"><h5>' + (n ? n + ' booking' + (n === 1 ? '' : 's') + ' affected' : 'Nothing booked in this time') + '</h5>'
+      + j.classes.map(c => '<div><span>' + zEsc(c.when.replace(/ IST$/, '')) + ' · ' + zEsc(c.name) + '</span><span>class, not counted</span></div>').join('')
+      + j.trials.map(t => '<div><span>' + zEsc(t.when.replace(/ IST$/, '')) + ' · ' + zEsc(t.name) + '</span><span>trial, asked to rebook</span></div>').join('') + '</div>';
+  } catch (e) { box.innerHTML = '<div class="blk-aff"><h5>Could not check: ' + zEsc(e.message) + '</h5></div>'; }
+}
+async function schSaveBlock() {
+  const b = schBlockBody();
+  if (!b.from) { showToast('Pick a date', 'error'); return; }
+  if (!_blkPrev) { showToast('Wait for the check to finish', 'error'); return; }
+  const n = _blkPrev.classes.length + _blkPrev.trials.length;
+  if (n && !(await customConfirm('Block and tell ' + n + ' ' + (n === 1 ? 'person' : 'people') + '?', 'They get an email now' + (_blkPrev.classes.length ? ', and students a link to book a make-up' : '') + '. You can unblock later and they’ll be told the class is back on.', 'Block', 'x'))) return;
+  const btn = document.getElementById('sch-block-save'); btn.disabled = true; btn.textContent = 'Blocking…';
+  try {
+    const j = await (await invApi('/api/admin/blocks', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) })).json();
+    if (!j.ok) throw new Error(j.error || 'failed');
+    schCloseBlock();
+    showToast(n ? 'Blocked. ' + j.classes + ' class' + (j.classes === 1 ? '' : 'es') + ' cancelled' + (j.trials ? ', ' + j.trials + ' trial' + (j.trials === 1 ? '' : 's') : '') + ', everyone told.' : 'Blocked. Nobody can book this time.', 'success');
+    loadSchedule();
+  } catch (e) { showToast('Not blocked: ' + e.message, 'error'); }
+  finally { btn.disabled = false; }
+}
+async function schUnblock(id) {
+  const b = (_sch.blocks || []).find(x => x.id === id); if (!b) return;
+  const n = ((b.affected || {}).classes || []).length;
+  if (!(await customConfirm('Unblock this time?', n ? 'Classes that weren’t made up yet come back, and those students get an email that the class is back on. Cancelled trials stay cancelled.' : 'The time becomes bookable again.', 'Unblock', 'undo'))) return;
+  try {
+    const j = await (await invApi('/api/admin/blocks/' + id, { method: 'DELETE' })).json();
+    if (!j.ok) throw new Error(j.error || 'failed');
+    showToast(j.restored ? 'Unblocked. ' + j.restored + ' student' + (j.restored === 1 ? '' : 's') + ' told.' : 'Unblocked.', 'success');
+    loadSchedule();
+  } catch (e) { showToast('Not unblocked: ' + e.message, 'error'); }
 }
 
 // ── form pages (same component as Add Trial / Add Student) ──
@@ -16088,7 +16195,7 @@ function schDayItems(ymd, plan) {
     const loc = schLocalLabel(o.utc, o.slot.student_tz);
     const past = o.utc.getTime() + dur * 60000 < now.getTime();
     let k = 'cls', sub = schTime12(o.hhmm) + (loc ? ' · ' + loc : '');
-    if (o.state === 'skip') { k = 'sk'; sub = schTime12(o.hhmm) + ' · skipped'; }
+    if (o.state === 'skip') { k = 'sk'; sub = schTime12(o.hhmm) + (o.ex && o.ex.block_id ? ' · you’re away' : ' · skipped'); }
     else if (o.state === 'move') { k = 'sk'; sub = schTime12(o.hhmm) + ' · moved to ' + schDayLabel(String(o.ex.new_date).slice(0, 10)) + ' ' + schTime12(o.ex.new_time_ist); }
     else if (o.state === 'moved-in') { k = 'mv'; sub = schTime12(o.hhmm) + ' · ' + (o.ex && o.ex.makeup ? 'make-up' : 'moved'); }
     items.push({ s, e: Math.min(1440, s + dur), k, title: name, sub, idx: i, past, counts: k === 'cls' || k === 'mv' });
@@ -16108,6 +16215,13 @@ function schDayItems(ymd, plan) {
     const b = schEventBlock(ymd, g.event_time, schDurMin(g.duration) || 120);
     items.push({ s: b.s, e: b.e, k: 'bl', title: g.title || g.client_name || 'Performance', sub: (g.event_time ? g.event_time + ' · ' : '') + (g.venue || '') + (b.allDay ? ' · no time set, whole day blocked' : '') });
   });
+  (_sch.blocks || []).forEach(b => {
+    const s0 = new Date(b.start_at), e0 = new Date(b.end_at);
+    const dS = schIst(s0).ymd, dE = schIst(new Date(e0.getTime() - 1)).ymd;
+    if (ymd < dS || ymd > dE) return;
+    const s = ymd === dS ? schMinOfDay(s0) : 0, e = ymd === schIst(e0).ymd ? schMinOfDay(e0) : 1440;
+    items.push({ s, e: Math.max(s + 30, e || 1440), k: 'ab', title: 'You’re away', sub: (b.note || (b.all_day ? 'Whole day' : schTime12(schIst(s0).hhmm) + ' – ' + schTime12(schIst(e0).hhmm))), bid: b.id });
+  });
   // Side-by-side lanes where blocks overlap (a class inside a workshop block shows the clash).
   items.sort((a, b) => a.s - b.s || b.e - a.e);
   let group = [], groupEnd = -1;
@@ -16122,15 +16236,15 @@ function schEvHtml(it, startHour, px) {
   const h = Math.max(22, (it.e - it.s) / 60 * px - 4);
   const w = 100 / (it.lanes || 1);
   const style = 'top:' + top + 'px;height:' + h + 'px;left:calc(' + (w * (it.lane || 0)) + '% + 4px);width:calc(' + w + '% - 8px);';
-  const click = it.idx != null ? ' onclick="schPopOpen(' + it.idx + ',this)"' : '';
-  const tag = it.idx != null ? 'button type="button"' : 'div';
+  const click = it.idx != null ? ' onclick="schPopOpen(' + it.idx + ',this)"' : it.bid ? ' onclick="schUnblock(' + it.bid + ')"' : '';
+  const tag = it.idx != null || it.bid ? 'button type="button"' : 'div';
   return '<' + tag + ' class="sch-ev ' + it.k + (it.past ? ' past' : '') + '" style="' + style + '"' + click + ' title="' + zEsc(it.title + ' · ' + it.sub) + '">'
-    + '<b>' + zEsc(it.title) + '</b>' + (h >= 36 ? '<small>' + zEsc(it.sub) + '</small>' : '') + '</' + (it.idx != null ? 'button' : 'div') + '>';
+    + '<b>' + zEsc(it.title) + '</b>' + (h >= 36 ? '<small>' + zEsc(it.sub) + '</small>' : '') + '</' + (it.idx != null || it.bid ? 'button' : 'div') + '>';
 }
 function schHourLabel(hr) { return hr === 0 || hr === 24 ? '12 AM' : hr === 12 ? '12 PM' : hr > 12 ? (hr - 12) + ' PM' : hr + ' AM'; }
 function schHoursRange(all) {
   let a = 7, b = 24;
-  all.forEach(it => { if (it.k === 'bl' && it.s === 0 && it.e === 1440) return; a = Math.min(a, Math.floor(it.s / 60)); });
+  all.forEach(it => { if ((it.k === 'bl' || it.k === 'ab') && it.s === 0 && it.e === 1440) return; a = Math.min(a, Math.floor(it.s / 60)); });
   return [Math.max(0, a), b];
 }
 
