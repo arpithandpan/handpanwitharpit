@@ -57,18 +57,31 @@ html { background: #0b1220; }
   // status bar height, which leaves an empty strip under the bottom tabs. Measure the gap
   // and push the tabs (and the page) down by exactly that much.
   if (standalone) {
+    // v165: measure where the bottom tabs really end and close any gap to the screen edge.
+    // Earlier this used window.innerHeight, which iOS can report short for a moment at
+    // launch and then correct, so the tabs got pushed too far down. Now it looks at the
+    // tabs themselves every time, so it can only ever move them to the true bottom.
     var vpFix = function () {
+      var root = document.documentElement;
       var land = window.matchMedia && window.matchMedia('(orientation: landscape)').matches;
       var sh = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
-      var gap = Math.round(sh - window.innerHeight);
+      var nav = document.getElementById('appTabs');
+      if (!nav || getComputedStyle(nav).display === 'none') { root.style.setProperty('--vpfix', '0px'); window._vp = { screen: sh, view: window.innerHeight, fix: 0 }; return; }
+      root.style.setProperty('--vpfix', '0px');
+      var bottom = nav.getBoundingClientRect().bottom;
+      var gap = Math.round(sh - bottom);
       var g = (gap > 8 && gap < 90) ? gap : 0;
-      document.documentElement.style.setProperty('--vpfix', g + 'px');
-      window._vp = { screen: sh, view: window.innerHeight, fix: g };
+      root.style.setProperty('--vpfix', g + 'px');
+      window._vp = { screen: sh, view: Math.round(bottom), fix: g };
     };
-    vpFix();
+    window.vpFix = vpFix;
     window.addEventListener('resize', vpFix);
     window.addEventListener('orientationchange', function () { setTimeout(vpFix, 300); });
     window.addEventListener('pageshow', vpFix);
+    window.addEventListener('load', vpFix);
+    document.addEventListener('DOMContentLoaded', vpFix);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) setTimeout(vpFix, 150); });
+    [300, 1000, 2500, 5000].forEach(function (ms) { setTimeout(vpFix, ms); });
   }
   if (!standalone) return;
   var KEYS = ['dash_auth', 'dash_role', 'dash_token', 'dash_refresh', 'dash_section'];
@@ -4125,7 +4138,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v165</span>
+        <span style="color:var(--clay);font-weight:500;">v166</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4198,7 +4211,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v165</span>
+        <span style="color:var(--clay);font-weight:500;">v166</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -6503,6 +6516,7 @@ function showDashboard() {
   if (window.innerWidth <= 900) {
     document.getElementById('mobileTopbar').style.display = 'flex';
   }
+  if (typeof window.vpFix === 'function') { requestAnimationFrame(window.vpFix); setTimeout(window.vpFix, 400); }
 }
 
 function toggleAuthPass() {
