@@ -442,6 +442,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 .en-back { margin: -0.6rem 0 1.2rem; }
 .en-back .en-link { margin: 0; text-decoration: none; font-weight: 500; }
 @media (hover: hover) { .en-back .en-link:hover { text-decoration: underline; } }
+.en-kv span { white-space: nowrap; }
 .tb-opts.en-opts3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 600px) {
   .en-card { padding: 1.5rem 1.25rem; }
@@ -710,7 +711,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
   function render() {
     /* contact rows stay fixed, same as the trial page */
     const st = data.status;
-    if (data.name) $('enTitle').textContent = (st === 'invited' || changing) ? 'Hi ' + data.name + ', let’s find your weekly time' : 'Your weekly class, ' + data.name;
+    if (data.name) $('enTitle').textContent = (st === 'invited' || changing) ? 'Hi ' + data.name + ', let’s find your weekly time' : (st === 'declined' || st === 'expired') ? 'Thanks for asking, ' + data.name : 'Your weekly class, ' + data.name;
     if ((st === 'invited' || changing) && data.slots) return renderPick();
     if (st === 'requested') { renderRequested(); return withStepper('confirm'); }
     if (st === 'offered') { renderOffered(); return withStepper('confirm'); }
