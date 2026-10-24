@@ -1428,6 +1428,7 @@ body.dark-mode .ag-ta { background: #1a1410; }
 .ag-ta:focus { outline: none; border-color: var(--clay); }
 .ag-btns { display: flex; gap: 10px; align-items: center; padding: 0 16px 14px; font-size: 13px; color: var(--text-light); }
 .ag-bub { margin: 0 16px 12px; border-radius: 12px; padding: 10px 12px; font-size: 14.5px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid rgba(110,170,120,0.35); background: rgba(110,170,120,0.08); color: var(--text-dark); }
+.ag-bub.amb { border-color: rgba(220,160,60,0.4); background: rgba(220,160,60,0.07); }
 .ag-bub small { display: block; font-size: 12px; color: var(--text-light); margin-bottom: 3px; }
 .ag-pill { display: inline-block; font-size: 12px; border-radius: 9px; padding: 2px 9px; margin-top: 7px; }
 .ag-pill.g { background: rgba(95,180,110,0.16); color: #3f8a4f; }
@@ -3556,7 +3557,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v148</span>
+        <span style="color:var(--clay);font-weight:500;">v149</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3629,7 +3630,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v148</span>
+        <span style="color:var(--clay);font-weight:500;">v149</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -16729,6 +16730,9 @@ function agRender() {
     let wo = '';
     [1, 2, 3, 5, 10, 15, 30].forEach(m => { wo += '<option value="' + m + '"' + (m === s.wait_min ? ' selected' : '') + '>' + m + ' min</option>'; });
     h += '<div class="ag-row"><div>Wait before sending<small>Time for you to stop it. The chat shows a Keep as draft button.</small></div><select onchange="agSave({wait_min:+this.value})">' + wo + '</select></div>';
+    let po = '';
+    [[0, 'Off'], [15, '15 min'], [30, '30 min'], [60, '1 hour'], [120, '2 hours']].forEach(([m, t]) => { po += '<option value="' + m + '"' + (m === (s.pause_min == null ? 60 : s.pause_min) ? ' selected' : '') + '>' + t + '</option>'; });
+    h += '<div class="ag-row"><div>After you reply yourself<small>That chat gets drafts only for this long, so the agent doesn\'t jump into your conversation.</small></div><select onchange="agSave({pause_min:+this.value})">' + po + '</select></div>';
     h += '<div class="ag-note" style="padding-top:10px">' + (_ag.d.now_auto ? 'Right now auto-send is <b>active</b> (' + ({ always: 'always', weekend: 'weekend', night: 'late night', inclass: 'you\'re in a class', blocked: 'blocked time' })[_ag.d.now_auto] + ').' : 'Right now replies stay as drafts. Outside the times above, nothing changes.') + '</div>';
   }
   h += '</div>';
@@ -16748,7 +16752,7 @@ function agRender() {
   if (_ag.test) {
     const t = _ag.test;
     h += t.error ? '<div class="ag-note" style="color:var(--wa-red,#a3341f)">' + zEsc(t.error) + '</div>'
-      : '<div class="ag-bub"><small>Agent would reply</small>' + (t.needs_reply && t.reply ? zEsc(t.reply) : '<i>No reply needed</i>') +
+      : '<div class="ag-bub' + (t.safe ? '' : ' amb') + '"><small>Agent would reply</small>' + (t.needs_reply && t.reply ? zEsc(t.reply) : '<i>No reply needed</i>') +
         (t.note ? '<small style="margin-top:6px">Note for you: ' + zEsc(t.note) + '</small>' : '') +
         '<br><span class="ag-pill ' + (t.safe ? 'g">Safe · can send by itself' : 'a">Needs you · stays a draft') + '</span></div>';
   }
