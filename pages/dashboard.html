@@ -3437,6 +3437,7 @@ body .hl-it { display: flex; align-items: center; gap: 9px; font-weight: 600; fo
 body .hl-issue p { margin: 6px 0 4px; color: var(--tx2); font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
 body .hl-issue small { color: var(--tx3); font-size: 12.5px; }
 body .hl-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; } body .hl-acts .btn-dash { min-height: 40px; }
+body .hl-fx { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; background: var(--ok-soft); color: var(--ok); }
 body .hl-n { font-weight: 600; color: var(--tx); font-variant-numeric: tabular-nums; }
 body .hl-foot { color: var(--tx3); font-size: 13px; line-height: 1.45; margin: 16px 4px 8px; }
 body .hl-navdot { width: 8px; height: 8px; border-radius: 50%; margin-left: auto; display: none; }
@@ -4165,7 +4166,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v168</span>
+        <span style="color:var(--clay);font-weight:500;">v169</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4239,7 +4240,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v168</span>
+        <span style="color:var(--clay);font-weight:500;">v169</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17418,6 +17419,9 @@ function hlRender(checking) {
         + '<div class="hl-acts">' + btn + (a.ignore ? '<button type="button" class="btn-dash btn-dash-ghost" onclick="hlSnooze(\'' + zEsc(i.key) + '\',87600)">' + zEsc(a.ignore) + '</button>' : '<button type="button" class="btn-dash btn-dash-ghost" onclick="hlSnooze(\'' + zEsc(i.key) + '\',24)">Hide for a day</button>') + '</div></div>';
     }).join('');
   }
+  if (d.fixes && d.fixes.length) {
+    h += '<div class="ag-lbl">Fixed by itself</div><div class="ag-card">' + d.fixes.slice(0, 6).map(f => '<div class="ag-row"><span class="hl-fx"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div style="flex:1;min-width:0">' + zEsc(f.title) + '<small>' + zEsc(f.detail || '') + (f.detail ? ' · ' : '') + hlAgo(f.at) + '</small></div></div>').join('') + '</div>';
+  }
   const pill = st => '<span class="hl-pill ' + st + '">' + (st === 'ok' ? 'OK' : st === 'warn' ? 'Check' : 'Down') + '</span>';
   if (d.services && d.services.length) {
     h += '<div class="ag-lbl">Services</div><div class="ag-card">' + d.services.map(s => '<div class="ag-row"><i class="hl-d ' + s.status + '"></i><div style="flex:1;min-width:0">' + zEsc(s.label) + '<small>' + zEsc(s.detail || '') + '</small></div>' + pill(s.status) + '</div>').join('') + '</div>';
@@ -17432,7 +17436,7 @@ function hlRender(checking) {
   if (d.errors && d.errors.length) {
     h += '<div class="ag-lbl">Errors in the last hour</div><div class="ag-card">' + d.errors.slice(0, 6).map(e => '<div class="ag-row"><div style="flex:1;min-width:0">' + zEsc(String(e.message).slice(0, 140)) + '<small>' + zEsc(e.source + (e.location ? ' · ' + e.location : '')) + ' · ' + e.count + '× · ' + hlAgo(e.last_at) + '</small></div></div>').join('') + '</div>';
   }
-  h += '<div class="hl-foot">Something urgent sends a push, an email and a WhatsApp straight away. Everything else comes in the 8:30 AM morning check.</div>';
+  h += '<div class="hl-foot">Safe problems are fixed by themselves and listed here. Something urgent sends a push, an email and a WhatsApp straight away. Everything else comes in the 8:30 AM morning check.</div>';
   el.innerHTML = h;
 }
 // Errors on this page are sent to the server's error log (a few per visit, no personal data).
