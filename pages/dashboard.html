@@ -1398,6 +1398,7 @@ body.dark-mode .connector-btn:hover { border-color: #c8935a; color: #c8935a; }
 /* ── PHONE NOTIFICATIONS card (Notifications page) ── */
 .push-card { display: block; background: #1f1813; border: 1px solid rgba(200,147,90,0.22); border-radius: 14px; padding: 16px 18px; margin: 0 0 1.25rem; color: #e8d5c0; }
 .push-card:empty { display: none; }
+
 /* v148: WhatsApp agent settings */
 #agPage { max-width: 640px; }
 .ag-card { background: #fff; border: 1px solid rgba(184,114,42,0.18); border-radius: 14px; margin-bottom: 14px; overflow: hidden; }
@@ -2876,6 +2877,24 @@ body.dark-mode .td-act-c { color: #1a0e06; }
   .td-join { width: 40px; padding: 0; justify-content: center; }
 }
 </style>
+<style>
+/* v150: iPad portrait (740–900px, incl. iPad mini). Same app shell as the phone (tab bar), but
+   two columns on Today, cards in a 2-column grid, and the Inbox as a split view.
+   Kept last in <head> so it wins over the phone rules. */
+@media (min-width: 740px) and (max-width: 900px) {
+  body #tdWrap.td-wrap { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1rem; }
+  body #tdWrap.td-wrap .td-col { display: flex; }
+  body .mobile-cards { flex-direction: row !important; flex-wrap: wrap !important; align-items: flex-start; gap: 14px !important; }
+  body .mobile-cards > * { width: calc(50% - 7px) !important; max-width: calc(50% - 7px) !important; }
+  body #section-whatsapp .wa-box { display: grid !important; grid-template-columns: 300px minmax(0, 1fr) !important; height: calc(100dvh - 205px - env(safe-area-inset-bottom, 0px)) !important; min-height: 460px; border: 1px solid var(--wa-line) !important; border-radius: 14px !important; background: var(--wa-card) !important; margin: 0 1rem; }
+  body #section-whatsapp .wa-list { border-right: 1px solid var(--wa-line) !important; overflow: hidden; }
+  body #section-whatsapp .wa-rows { overflow-y: auto !important; flex: 1; min-height: 0; }
+  body #section-whatsapp .wa-thread, body #section-whatsapp.wa-open .wa-thread { display: flex !important; position: static !important; z-index: auto !important; border-radius: 0 !important; min-height: 0; }
+  body #section-whatsapp .wa-back { display: none !important; }
+  body #section-whatsapp.wa-open .wa-thread .wa-th { padding-top: 8px !important; min-height: 0; }
+  body #section-whatsapp .wa-b { max-width: 78% !important; }
+}
+</style>
 </head>
 <body>
 
@@ -3557,7 +3576,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v149</span>
+        <span style="color:var(--clay);font-weight:500;">v150</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3630,7 +3649,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v149</span>
+        <span style="color:var(--clay);font-weight:500;">v150</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -10515,7 +10534,7 @@ function _preventScroll(e) {
 // unlockScroll on close without unlocking the page from under the popup
 // that is still open underneath.
 function _anyOverlayOpen() {
-  if (document.querySelector('#section-whatsapp.wa-open, .form-page.open, .modal-overlay.open, .mobile-menu-overlay.open, .filter-sheet.open, .mobile-picker-sheet.open, .m-dots-popover.open, .checkin-screen.open, .mobile-search-fullscreen.open, .loading-overlay.active')) return true;
+  if (document.querySelector('body.wa-chat-open #section-whatsapp.wa-open, .form-page.open, .modal-overlay.open, .mobile-menu-overlay.open, .filter-sheet.open, .mobile-picker-sheet.open, .m-dots-popover.open, .checkin-screen.open, .mobile-search-fullscreen.open, .loading-overlay.active')) return true;
   return ['unsavedModal','archiveConfirmModal','customConfirmModal','cancelWsModal','deleteForeverModal','modal-obsCheckin'].some(id => {
     const el = document.getElementById(id);
     return el && el.style.display && el.style.display !== 'none';
@@ -14566,6 +14585,8 @@ function waRenderList() {
   }).join('');
 }
 
+// v150: iPad portrait shows list + chat side by side, like the desktop.
+function waSplit() { return window.matchMedia('(min-width: 740px) and (max-width: 900px)').matches; }
 async function waOpen(phone) {
   _wa.sel = phone;
   const sec = document.getElementById('section-whatsapp');
@@ -14574,8 +14595,10 @@ async function waOpen(phone) {
   // v134: on phones the chat is full screen, its own header replaces the app bar.
   sec.style.setProperty('--wa-top', window.matchMedia('(max-width: 900px)').matches ? '0px' : ((tb && tb.offsetHeight ? Math.round(tb.getBoundingClientRect().bottom) : 68) + 'px'));
   sec.classList.add('wa-open');
-  document.body.classList.add('wa-chat-open');
-  if (window.matchMedia('(max-width: 900px)').matches) lockScroll();
+  if (!waSplit()) {
+    document.body.classList.add('wa-chat-open');
+    if (window.matchMedia('(max-width: 900px)').matches) lockScroll();
+  }
   waRenderList();
   waRenderThread(false);
   // Mark this person's incoming messages as read.
@@ -14598,8 +14621,7 @@ async function waOpen(phone) {
 function waClose() {
   _wa.sel = null;
   document.getElementById('section-whatsapp').classList.remove('wa-open');
-  document.body.classList.remove('wa-chat-open');
-  unlockScroll();
+  if (document.body.classList.contains('wa-chat-open')) { document.body.classList.remove('wa-chat-open'); unlockScroll(); }
   waRenderList();
   waRenderThread(false);
 }
@@ -14725,7 +14747,7 @@ document.addEventListener('focusout', e => { if (e.target && e.target.id === 'wa
 // Some iOS versions stop fixed panels above the home bar already, so the composer's own
 // safe-area padding doubles the gap. Measure and only pad what is really needed.
 function waSafeFix() {
-  const t = document.getElementById('waThread'); if (!t || !window.matchMedia('(max-width: 900px)').matches) return;
+  const t = document.getElementById('waThread'); if (!t || !window.matchMedia('(max-width: 900px)').matches || waSplit()) return;
   let pr = document.getElementById('waSafeProbe');
   if (!pr) { pr = document.createElement('div'); pr.id = 'waSafeProbe'; pr.style.cssText = 'position:fixed;left:0;bottom:0;width:1px;height:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none;'; document.body.appendChild(pr); }
   const inset = pr.offsetHeight || 0;
