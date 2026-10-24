@@ -4165,7 +4165,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v167</span>
+        <span style="color:var(--clay);font-weight:500;">v168</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4239,7 +4239,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v167</span>
+        <span style="color:var(--clay);font-weight:500;">v168</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17394,7 +17394,7 @@ async function hlLoad(run) {
   finally { _hl.busy = false; if (run) hlRender(); }
 }
 async function hlSnooze(key, hours) {
-  try { await invApi('/api/health/snooze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key, hours }) }); showToast(hours >= 24 ? 'Hidden until tomorrow' : 'Hidden for now', 'success'); hlLoad(); }
+  try { await invApi('/api/health/snooze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key, hours }) }); showToast(hours > 1000 ? 'Got it. It won\'t come up again.' : hours >= 24 ? 'Hidden until tomorrow' : 'Hidden for now', 'success'); hlLoad(); }
   catch (e) { showToast('Could not save: ' + e.message, 'error'); }
 }
 function hlGo(sec, url) { if (url) { window.open(url, '_blank', 'noopener'); return; } if (sec) { if (['today', 'schedule', 'whatsapp', 'classes', 'more'].includes(sec)) appTab(sec); else showSection(sec, document.querySelector('.dash-nav a[onclick*="\'' + sec + '\'"]')); } }
@@ -17415,7 +17415,7 @@ function hlRender(checking) {
       const a = i.action || {};
       const btn = a.label ? '<button type="button" class="btn-dash btn-dash-primary" onclick="hlGo(' + (a.sec ? '\'' + zEsc(a.sec) + '\'' : 'null') + ',' + (a.url ? '\'' + zEsc(a.url) + '\'' : 'null') + ')">' + zEsc(a.label) + '</button>' : '';
       return '<div class="hl-issue ' + i.level + '"><div class="hl-it"><i class="hl-d ' + i.level + '"></i>' + zEsc(i.title) + '</div><p>' + zEsc(i.detail) + '</p><small>Since ' + hlAgo(i.since) + '</small>'
-        + '<div class="hl-acts">' + btn + '<button type="button" class="btn-dash btn-dash-ghost" onclick="hlSnooze(\'' + zEsc(i.key) + '\',24)">Hide for a day</button></div></div>';
+        + '<div class="hl-acts">' + btn + (a.ignore ? '<button type="button" class="btn-dash btn-dash-ghost" onclick="hlSnooze(\'' + zEsc(i.key) + '\',87600)">' + zEsc(a.ignore) + '</button>' : '<button type="button" class="btn-dash btn-dash-ghost" onclick="hlSnooze(\'' + zEsc(i.key) + '\',24)">Hide for a day</button>') + '</div></div>';
     }).join('');
   }
   const pill = st => '<span class="hl-pill ' + st + '">' + (st === 'ok' ? 'OK' : st === 'warn' ? 'Check' : 'Down') + '</span>';
