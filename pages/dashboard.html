@@ -3222,6 +3222,39 @@ body .insight-tile { padding: 16px !important; border-radius: 16px !important; }
 body .insight-tile-val, body .insight-tile-value { font-size: 22px !important; font-weight: 700 !important; letter-spacing: -0.01em; line-height: 1.2; overflow-wrap: anywhere; }
 body .insight-tile-sub { font-size: 13.5px !important; color: var(--tx2) !important; line-height: 1.35; }
 body .insight-tile-label { font-size: 13px !important; font-weight: 500; }
+/* v160: trial card actions, mobile cards without the table frame */
+body .tr-acts { display: flex; gap: 8px; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+body .tr-acts .tr-main { flex: 1; justify-content: center; min-height: 44px; text-decoration: none; }
+body .tr-acts .tr-dots { width: 44px; min-height: 44px; padding: 0 !important; flex-shrink: 0; justify-content: center; }
+@media (max-width: 900px) {
+  body .dash-table-wrap:has(> .mobile-cards), body.dark-mode .dash-table-wrap:has(> .mobile-cards) { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; overflow: visible !important; border-radius: 0 !important; }
+  body .mobile-cards { gap: 12px !important; }
+  body .mobile-cards > .m-card { margin: 0 !important; }
+}
+/* v160: app version + update on More, and the "new version" bar */
+body .av-card { padding: 4px 0 14px; }
+body .av-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px; border-bottom: 1px solid var(--line); font-size: 16px; color: var(--tx); }
+body .av-row .av-v { color: var(--tx2); font-variant-numeric: tabular-nums; font-size: 15px; }
+body .av-ok { color: var(--ok); font-weight: 600; font-size: 15px; } body .av-old { color: var(--warn); font-weight: 600; font-size: 15px; }
+body .av-row span:last-child:not(.av-ok):not(.av-old):not(.av-v) { color: var(--tx2); font-size: 15px; }
+body .av-btns { display: flex; gap: 8px; padding: 14px 16px 0; } body .av-btns .btn-dash { flex: 1; justify-content: center; min-height: 44px; }
+body .upd-bar { white-space: nowrap; position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, calc(100% + 140px)); visibility: hidden; z-index: 9995; display: flex; align-items: center; gap: 12px; background: var(--tx); color: var(--bg); padding: 8px 8px 8px 16px; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); font-size: 14.5px; font-weight: 500; transition: transform 0.22s ease, visibility 0.22s; max-width: calc(100vw - 32px); }
+body .upd-bar.show { transform: translate(-50%, 0); visibility: visible; }
+body .upd-bar button { font: inherit; font-weight: 600; border: 0; border-radius: 10px; background: var(--acc); color: #fff; min-height: 40px; padding: 0 14px; cursor: pointer; }
+body .upd-bar .x { background: transparent; color: var(--bg); opacity: 0.7; padding: 0 8px; }
+@media (min-width: 901px) { body .upd-bar { bottom: 24px; } }
+/* v161: on phones only the page area scrolls. The document itself used to be taller than the
+   screen by the notch height, so it scrolled a little, hid the top of the page and snapped back. */
+@media (max-width: 900px) {
+  html, body { height: 100%; margin: 0 !important; padding: 0 !important; overflow: hidden !important; overscroll-behavior: none; }
+  body .dash-root { min-height: 0 !important; height: 100vh; box-sizing: border-box; overflow: hidden; }
+  @supports (height: 100dvh) { body .dash-root { height: 100dvh; } }
+  body .dash-main { overscroll-behavior-y: contain; }
+}
+/* hidden bars stay fully hidden (the offline bar's edge showed under the status bar as a white pill) */
+body .net-bar { visibility: hidden; transform: translate(-50%, calc(-100% - 40px - env(safe-area-inset-top, 0px))); transition: transform 0.2s ease, visibility 0.2s; }
+body .net-bar.show { visibility: visible; transform: translate(-50%, 0); }
+body .ptr { opacity: 0; }
 /* ── Motion: short and quiet. Off with Reduce Motion. ── */
 body .dash-section.active { animation: v155in 0.18s ease-out; }
 @keyframes v155in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
@@ -3918,7 +3951,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v159</span>
+        <span style="color:var(--clay);font-weight:500;">v161</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3991,7 +4024,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v159</span>
+        <span style="color:var(--clay);font-weight:500;">v161</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -6870,7 +6903,7 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     if (m.scrollTop > 2) { const p = document.querySelector('.ptr'); if (p && !p.classList.contains('spin')) { p.style.opacity = 0; p.style.transform = 'translateY(-40px)'; } }
   }, true);
   // Pull to refresh (touch, phone layout only).
-  let startY = null, pulling = false, dist = 0, busy = false, ind = null;
+  let startY = null, startX = 0, axis = null, pulling = false, dist = 0, busy = false, ind = null;
   const MAX = 90, TRIGGER = 64;
   function indicator() {
     if (!ind) { ind = document.createElement('div'); ind.className = 'ptr'; ind.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>'; document.body.appendChild(ind); }
@@ -6879,11 +6912,16 @@ function qaClose() { document.body.classList.remove('qa-open'); }
   function blocked() { return window.innerWidth > 900 || document.body.classList.contains('menu-is-open') || document.body.classList.contains('wa-chat-open') || document.body.classList.contains('qa-open') || (typeof _scrollLocked !== 'undefined' && _scrollLocked); }
   document.addEventListener('touchstart', e => {
     const m = main(); if (busy || !m || blocked() || !m.contains(e.target) || m.scrollTop > 0) { startY = null; return; }
-    startY = e.touches[0].clientY; pulling = false; dist = 0;
+    startY = e.touches[0].clientY; startX = e.touches[0].clientX; axis = null; pulling = false; dist = 0;
+    // v161: swipes that start inside a sideways-scrolling strip never pull to refresh
+    let n = e.target; while (n && n !== m) { if (n.scrollWidth > n.clientWidth + 2 && /(auto|scroll)/.test(getComputedStyle(n).overflowX)) { startY = null; return; } n = n.parentElement; }
   }, { passive: true });
   document.addEventListener('touchmove', e => {
     if (startY == null) return;
-    const dy = e.touches[0].clientY - startY;
+    const dy = e.touches[0].clientY - startY, dx = e.touches[0].clientX - startX;
+    // v161: decide the direction once, after 10px. A sideways swipe never refreshes.
+    if (!axis) { if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return; axis = Math.abs(dy) > Math.abs(dx) * 1.5 ? 'y' : 'x'; }
+    if (axis === 'x') { if (pulling) { pulling = false; indicator().style.opacity = 0; } startY = null; return; }
     const m = main(); if (dy <= 0 || (m && m.scrollTop > 0)) { if (pulling) { pulling = false; indicator().style.opacity = 0; } return; }
     pulling = true; dist = Math.min(MAX, dy * 0.5);
     const el = indicator(); el.style.transition = 'none'; el.style.opacity = Math.min(1, dist / TRIGGER);
@@ -6982,7 +7020,13 @@ function mpRender() {
     h += (label ? '<div class="mp-lbl">' + zEsc(label) + '</div>' : '') + '<div class="mp-grp">' + rows + '</div>';
   });
   const ver = document.querySelector('#mobileBuildStamp span');
-  h += '<button type="button" class="mp-out" onclick="logout()">Log out</button><div class="mp-ver">Arpit\'s Studio · ' + zEsc(ver ? ver.textContent.trim() : '') + '</div>';
+  const B = window._build || {}, vtxt = ver ? ver.textContent.trim() : '';
+  const stTxt = B.state === 'ok' ? '<span class="av-ok">✓ Up to date</span>' : B.state === 'old' ? '<span class="av-old">New version ready</span>' : B.state === 'checking' ? '<span>Checking…</span>' : '<span>Can\'t check right now</span>';
+  h += '<div class="mp-lbl">App</div><div class="mp-grp av-card"><div class="av-row"><span class="mp-nm">Version</span><span class="av-v">' + zEsc(vtxt) + (B.built ? ' · ' + zEsc(B.built) : '') + '</span></div>'
+    + '<div class="av-row"><span class="mp-nm">Status</span>' + stTxt + '</div>'
+    + '<div class="av-btns"><button type="button" class="btn-dash ' + (B.state === 'old' ? 'btn-dash-primary' : 'btn-dash-outline') + '" onclick="appUpdate()">' + (B.state === 'old' ? 'Update now' : 'Reload app') + '</button>'
+    + (B.state === 'old' ? '' : '<button type="button" class="btn-dash btn-dash-ghost" onclick="appCheckUpdate(true)">Check for update</button>') + '</div></div>';
+  h += '<button type="button" class="mp-out" onclick="logout()">Log out</button>';
   el.innerHTML = h;
 }
 async function mpCounts() {
@@ -8262,7 +8306,7 @@ function trialStatusBadge(t) {
   if (t.status === 'converted') return '<span class="badge badge-green"' + (t.student_id ? ' data-tip="Now student ' + zEsc(t.student_id) + '"' : '') + '>Converted' + (t.student_id ? ' · ' + zEsc(t.student_id) : '') + '</span>';
   if (t.status === 'dropped') return '<span class="badge badge-gray">Dropped</span>';
   const days = trialDaysAgo(t.trial_date);
-  return '<span class="badge badge-clay">Pending</span>' + (days >= 5 ? ' <span class="badge badge-red" data-tip="Trial was ' + days + ' days ago. Time for a follow-up message.">Follow up</span>' : '');
+  return days >= 5 ? '<span class="badge badge-red" data-tip="Trial was ' + days + ' days ago. Time for a follow-up message.">Follow up</span>' : '<span class="badge badge-clay">Pending</span>';
 }
 function trialActionsHtml(t, mobile) {
   const CHECK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>';
@@ -8277,14 +8321,17 @@ function trialActionsHtml(t, mobile) {
     const zoomBtn = t.join_url ? (mobile
       ? '<a class="btn-dash btn-dash-outline btn-dash-sm" href="' + zEsc(t.join_url) + '" target="_blank" rel="noopener">Zoom</a>'
       : '<a class="icon-action-btn" data-tip="Open Zoom" href="' + zEsc(t.join_url) + '" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></a>') : '';
-    if (mobile) return editBtnM + zoomBtn + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="cancelTrialBooking(\'' + t.id + '\',\'' + nm + '\')">Cancel</button>';
+    if (mobile) return (t.join_url ? '<a class="btn-dash btn-dash-primary tr-main" href="' + zEsc(t.join_url) + '" target="_blank" rel="noopener">Open Zoom</a>' : '<button class="btn-dash btn-dash-outline tr-main" onclick="editTrial(\'' + t.id + '\')">Edit</button>')
+      + '<button class="btn-dash btn-dash-outline tr-dots" aria-label="More actions" onclick="openMDotsSheet(\'' + t.id + '\',\'' + nm + '\',\'trial:booked\',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>';
     return '<span class="action-wrap">' + editBtn + zoomBtn + '<button class="icon-action-btn danger" data-tip="Cancel booking" onclick="cancelTrialBooking(\'' + t.id + '\',\'' + nm + '\')">' + X_SVG + '</button></span>';
   }
   if (t.status === 'no_show' || t.status === 'cancelled') t = Object.assign({}, t, { status: t.status === 'no_show' ? 'pending' : 'dropped' });
   if (mobile) {
-    if (t.status === 'pending') return editBtnM + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="dropTrial(\'' + t.id + '\',\'' + nm + '\')">Dropped</button><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="convertTrial(\'' + t.id + '\')">Convert</button><button class="btn-dash btn-dash-primary btn-dash-sm" onclick="enrInviteTrial(\'' + t.id + '\')">Weekly link</button>';
-    if (t.status === 'dropped') return editBtnM + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="reopenTrial(\'' + t.id + '\')">Reopen</button><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="deleteTrial(\'' + t.id + '\',\'' + nm + '\')">Delete</button>';
-    return editBtnM + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="deleteTrial(\'' + t.id + '\',\'' + nm + '\')">Delete</button>';
+    // v160: one main action + ⋯ for the rest (fewer buttons, no accidental "Dropped").
+    const dots = st => '<button class="btn-dash btn-dash-outline tr-dots" aria-label="More actions" onclick="openMDotsSheet(\'' + t.id + '\',\'' + nm + '\',\'trial:' + st + '\',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>';
+    if (t.status === 'pending') return '<button class="btn-dash btn-dash-primary tr-main" onclick="enrInviteTrial(\'' + t.id + '\')">Send weekly link</button>' + dots('pending');
+    if (t.status === 'dropped') return '<button class="btn-dash btn-dash-outline tr-main" onclick="reopenTrial(\'' + t.id + '\')">Reopen</button>' + dots('dropped');
+    return '<button class="btn-dash btn-dash-outline tr-main" onclick="editTrial(\'' + t.id + '\')">Edit</button>' + dots('other');
   }
   if (t.status === 'pending') return '<span class="action-wrap">' + editBtn + '<button class="icon-action-btn" data-tip="Send weekly classes link" onclick="enrInviteTrial(\'' + t.id + '\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="19"/><line x1="9.5" y1="16.5" x2="14.5" y2="16.5"/></svg></button><button class="icon-action-btn" data-tip="Convert to student" onclick="convertTrial(\'' + t.id + '\')">' + CHECK + '</button><button class="icon-action-btn danger" data-tip="Mark dropped" onclick="dropTrial(\'' + t.id + '\',\'' + nm + '\')">' + X_SVG + '</button></span>';
   if (t.status === 'dropped') return '<span class="action-wrap">' + editBtn + '<button class="icon-action-btn" data-tip="Back to pending" onclick="reopenTrial(\'' + t.id + '\')">' + UNDO + '</button><button class="icon-action-btn danger" data-tip="Delete entry" onclick="deleteTrial(\'' + t.id + '\',\'' + nm + '\')">' + TRASH + '</button></span>';
@@ -8327,7 +8374,7 @@ async function loadTrials() {
       <div class="m-card-row"><span class="m-card-label">Trial date</span><span class="m-card-val">${fmtDate(t.trial_date || (t.start_at ? new Date(new Date(t.start_at).getTime() + 330 * 60000).toISOString().slice(0, 10) : ''))}${t.start_at ? ', ' + trialTimeIst(t) + ' IST' : ''}${zoomBadge(t)}</span></div>
       ${trialContact(t) ? `<div class="m-card-row"><span class="m-card-label">Contact</span><span class="m-card-val">${zEsc(trialContact(t))}</span></div>` : ''}
       ${t.notes ? `<div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;display:inline-block;vertical-align:bottom;text-align:right;">${zEsc(t.notes)}</span></div>` : ''}
-      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;flex-wrap:wrap;">${trialActionsHtml(t, true)}</div>
+      <div class="tr-acts">${trialActionsHtml(t, true)}</div>
     </div>`).join('') || '<div class="mobile-cards-empty">No pending trials.</div>';
   } catch (e) { console.warn('loadTrials skipped:', e.message); panel.style.display = 'none'; }
 }
@@ -12417,6 +12464,17 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
         : `<button class="m-dots-item danger" onclick="closeMDotsSheet();cancelWorkshop('${id}')">${CANCEL_SVG} Cancel workshop</button>`;
       html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('workshops','${id}','Workshop ${id}')">${TRASH_SVG} Delete</button>`;
     }
+  } else if (String(type).startsWith('trial:')) {
+    const st = type.slice(6);
+    html += `<button class="m-dots-item" onclick="closeMDotsSheet();editTrial('${id}')">${EDIT_SVG} Edit trial</button>`;
+    if (st === 'pending') {
+      html += `<button class="m-dots-item" onclick="closeMDotsSheet();convertTrial('${id}')">${MY_SVG} Convert to student</button>`;
+      html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();dropTrial('${id}','${name}')">${CANCEL_SVG} Mark as dropped</button>`;
+    } else if (st === 'booked') {
+      html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();cancelTrialBooking('${id}','${name}')">${CANCEL_SVG} Cancel booking</button>`;
+    } else {
+      html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();deleteTrial('${id}','${name}')">${TRASH_SVG} Delete</button>`;
+    }
   } else if (type === 'participant') {
     html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('participants','${id}')">${EDIT_SVG} Edit</button>`;
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('participants','${id}','${name}')">${TRASH_SVG} Delete</button>`;
@@ -12453,6 +12511,14 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
           else actions.push({ label: `${CANCEL_SVG} Cancel workshop`, danger: true, fn: () => cancelWorkshop(id) });
           actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('workshops', id, 'Workshop ' + id) });
         }
+      } else if (String(type).startsWith('trial:')) {
+        const st = type.slice(6);
+        actions.push({ label: `${EDIT_SVG} Edit trial`, danger: false, fn: () => editTrial(id) });
+        if (st === 'pending') {
+          actions.push({ label: `${MY_SVG} Convert to student`, danger: false, fn: () => convertTrial(id) });
+          actions.push({ label: `${CANCEL_SVG} Mark as dropped`, danger: true, fn: () => dropTrial(id, name) });
+        } else if (st === 'booked') actions.push({ label: `${CANCEL_SVG} Cancel booking`, danger: true, fn: () => cancelTrialBooking(id, name) });
+        else actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => deleteTrial(id, name) });
       } else if (type === 'participant') {
         actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('participants', id) });
         actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('participants', id, name) });
@@ -12588,6 +12654,7 @@ async function initBuildStamp() {
   });
 
   paint(built, '', 'Commit this page was built from');
+  window._build = { built, latest: null, state: 'checking', at: Date.now() };
   if (!/^https?:$/.test(window.location.protocol)) return;
 
   try {
@@ -12598,12 +12665,14 @@ async function initBuildStamp() {
     const data = await res.json();
     const latest = (data.sha || '').slice(0, built.length);
     if (!latest) return;
+    window._build = { built, latest, state: latest === built ? 'ok' : 'old', at: Date.now() };
     if (latest === built) {
-      paint(built + ' \u00b7 Up to date', '#a8c47f', 'This page matches the newest commit on main.');
+      paint(built + ' \u00b7 Up to date', 'var(--ok)', 'This page matches the newest commit on main.');
     } else {
-      paint(built + ' \u00b7 Outdated', '#93b2ff',
+      paint(built + ' \u00b7 Outdated', 'var(--warn)',
         'Newer commit on main: ' + latest + '. Redeploy or hard refresh.');
     }
+    if (typeof appUpdSync === 'function') appUpdSync();
   } catch (e) {
     console.warn('build stamp: could not reach GitHub', e);
   }
@@ -17304,6 +17373,41 @@ async function agTest() {
     wrapped._guarded = true; window[name] = wrapped;
   });
 })();
+</script>
+<script>
+// v160: know when a newer version is live, and update in one tap (no need to kill the app).
+let _updDismissed = null;
+async function appCheckUpdate(manual) {
+  const B = window._build || {}; if (!B.built || !/^https?:$/.test(location.protocol)) { if (manual) showToast('Can\'t check from here', 'error'); return; }
+  if (manual) { B.state = 'checking'; if (typeof mpRender === 'function' && document.getElementById('section-more')?.classList.contains('active')) mpRender(); }
+  try {
+    const r = await fetch('https://api.github.com/repos/arpithandpan/handpanwitharpit/commits/main', { headers: { 'Accept': 'application/vnd.github+json' }, cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const latest = ((await r.json()).sha || '').slice(0, B.built.length);
+    B.latest = latest; B.state = latest && latest !== B.built ? 'old' : 'ok'; B.at = Date.now();
+    if (manual) showToast(B.state === 'old' ? 'A new version is ready' : 'You\'re on the latest version', 'success');
+  } catch (e) { B.state = 'unknown'; if (manual) showToast('Could not check: ' + e.message, 'error'); }
+  appUpdSync();
+}
+async function appUpdate() {
+  showToast('Updating…', 'success');
+  try { const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration(); if (reg) await reg.update(); } catch (e) {}
+  const u = new URL(location.href); u.searchParams.set('u', Date.now()); location.replace(u.pathname + u.search + location.hash);
+}
+function appUpdSync() {
+  const B = window._build || {};
+  if (typeof mpRender === 'function' && document.getElementById('section-more')?.classList.contains('active')) mpRender();
+  let bar = document.getElementById('updBar');
+  if (B.state === 'old' && _updDismissed !== B.latest) {
+    if (!bar) { bar = document.createElement('div'); bar.id = 'updBar'; bar.className = 'upd-bar'; bar.setAttribute('role', 'status');
+      bar.innerHTML = '<span>New version ready</span><button type="button" onclick="appUpdate()">Update</button><button type="button" class="x" aria-label="Later" onclick="_updDismissed=(window._build||{}).latest;document.getElementById(\'updBar\').classList.remove(\'show\')">✕</button>';
+      document.body.appendChild(bar); }
+    requestAnimationFrame(() => bar.classList.add('show'));
+  } else if (bar) bar.classList.remove('show');
+}
+// Clean the ?u= marker after an update, and re-check when the app comes back to the front.
+try { const u = new URL(location.href); if (u.searchParams.has('u')) { u.searchParams.delete('u'); history.replaceState(null, '', u.pathname + u.search + location.hash); } } catch (e) {}
+document.addEventListener('visibilitychange', () => { const B = window._build || {}; if (!document.hidden && B.built && Date.now() - (B.at || 0) > 120000) appCheckUpdate(false); });
 </script>
 </body>
 </html>
