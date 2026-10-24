@@ -22,9 +22,12 @@
 <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pages/studio-splash-1290x2796.png?v=1"/>
 <link rel="apple-touch-startup-image" media="screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pages/studio-splash-1206x2622.png?v=1"/>
 <link rel="apple-touch-startup-image" media="screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pages/studio-splash-1320x2868.png?v=1"/>
+<script>try{if(localStorage.getItem('themePalette')==='mono')document.documentElement.classList.add('mono');}catch(e){}</script>
 <style id="splashCss">
 /* v165: splash. Same picture as the iPhone launch image, then the logo starts turning and blinking until the app is ready. */
-html { background: #0b1220; }
+html { background: #0b1220; } html.mono { background: #0a0a0a; }
+html.mono #appSplash { background: radial-gradient(circle calc(55 * var(--u)) at 50% 46%, rgba(255,255,255,.06), transparent), #0a0a0a !important; }
+html.mono .as-mark rect, html.mono .td-mark rect { stroke: #ededed; fill: #ededed; }
 #appSplash { position: fixed; inset: 0; z-index: 200000; --u: min(1vw, 4.4px); background: radial-gradient(circle calc(55 * var(--u)) at 50% 46%, rgba(29,50,112,.235), rgba(29,50,112,.14) 25%, rgba(29,50,112,.068) 50%, rgba(29,50,112,.02) 75%, transparent), #0b1220; transition: opacity .28s ease; }
 #appSplash.out { opacity: 0; pointer-events: none; }
 #appSplash .as-mark { position: absolute; left: 50%; top: calc(46vh - 4 * var(--u)); width: calc(20 * var(--u)); height: calc(20 * var(--u)); transform: translate(-50%, -50%); overflow: visible; }
@@ -3443,6 +3446,108 @@ body .hl-foot { color: var(--tx3); font-size: 13px; line-height: 1.45; margin: 1
 body .hl-navdot { width: 8px; height: 8px; border-radius: 50%; margin-left: auto; display: none; }
 body .hl-navdot.warn { display: inline-block; background: var(--warn); } body .hl-navdot.bad { display: inline-block; background: var(--bad); }
 body #hlPage { max-width: 760px; }
+/* v169: long text never squeezes. Short values sit on the right as before; a value
+   that would wrap moves under its label at full width (marked .mc-stack by mcFit). */
+body .m-card-row { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+body .m-card-row > .m-card-label { flex-shrink: 0; }
+body .m-card-row.mc-stack { display: block !important; }
+body .m-card-row.mc-stack > .m-card-label { display: block; font-size: 12.5px !important; letter-spacing: 0.02em; margin-bottom: 3px; color: var(--tx3) !important; }
+body .m-card-row.mc-stack > .m-card-val { display: block !important; max-width: none !important; width: auto !important; text-align: left !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.4; justify-content: flex-start !important; }
+body .m-card-row.mc-stack > .m-card-val.mc-clamp { display: -webkit-box !important; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden !important; }
+body .m-card-val.mc-mail { display: flex !important; align-items: center; gap: 8px; min-width: 0; white-space: nowrap !important; overflow-wrap: normal !important; word-break: normal !important; }
+body .m-card-val.mc-mail .mc-mt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body .mc-copy { flex-shrink: 0; font: inherit; font-size: 12.5px; font-weight: 500; color: var(--tx2); background: transparent; border: 1px solid var(--line-2); border-radius: 8px; padding: 2px 9px; min-height: 26px; cursor: pointer; }
+body .mc-copy:active { background: var(--s2); }
+body .m-card-row.mc-stack > .m-card-val.mc-mail { display: flex !important; }
+body .m-card-row.mc-stack > .m-card-val.mc-mail .mc-mt { flex: 0 1 auto; }
+/* Times never break: "10:30 PM" always on one line */
+body .td-time { width: auto !important; min-width: 74px; white-space: nowrap; }
+body .td-next-then { margin-top: 6px; font-size: 14px; color: var(--tx3); }
+/* Invoice status: words first, switch at the right edge, one line */
+body .m-card-row.inv-st-row > .m-card-val.inv-st { display: flex !important; align-items: center; justify-content: flex-end; gap: 10px; max-width: none !important; flex: 1; white-space: nowrap; }
+body .inv-st-t { color: var(--tx3); font-weight: 500; } body .inv-st-t.on { color: var(--ok); font-weight: 600; }
+body .inv-st-d { color: var(--tx3); font-size: 13px; }
+body .inv-st .inv-switch { width: 44px; height: 26px; }
+/* Anything else long inside a card wraps instead of pushing the card wider */
+body .m-card, body .td-card, body .ag-card, body .mp-grp, body .hl-issue, body .settings-card { min-width: 0; overflow-wrap: anywhere; }
+body .m-card-title { min-width: 0; overflow-wrap: anywhere; }
+/* v170: card action buttons wrap onto a second line instead of squeezing */
+body .m-card > div[style*="border-top"] { flex-wrap: wrap; gap: 8px; }
+body .m-card > div[style*="border-top"] > .btn-dash, body .m-card > div[style*="border-top"] > button { margin-left: 0 !important; white-space: nowrap; }
+/* v170: desktop tables never squeeze a column down to "…". Names, notes and venues
+   wrap onto a second line; phone numbers and dates stay on one line, fully shown. */
+@media (min-width: 901px) {
+  body .dash-table-wrap table td.td-truncate { max-width: 260px !important; min-width: 120px; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; line-height: 1.35; }
+  body .dash-table-wrap table td.td-phone { white-space: nowrap !important; min-width: 0; max-width: none !important; overflow-wrap: normal; }
+  body .dash-table-wrap table td.td-email { min-width: 160px; max-width: 240px !important; overflow-wrap: anywhere; }
+  body .dash-table-wrap table td.td-name { min-width: 130px; }
+  body .dash-table-wrap table td.td-desc, body .dash-table-wrap table td.td-notes, body .dash-table-wrap table td.td-venue { min-width: 160px; }
+  body .dash-table-wrap table td.td-truncate > * { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; max-width: none !important; }
+}
+/* ════ v171: MONO theme (Settings → Appearance → Style). Neutral greys, white as the
+   accent, soft lime chips, borderless rounded cards, pill buttons. Blue stays the default. ════ */
+html.mono body {
+  --bg: #fafafa; --s1: #ffffff; --s2: #f2f2f2; --s3: #e8e8e8; --line: #ebebeb; --line-2: #dcdcdc;
+  --tx: #0a0a0a; --tx2: #4a4a4a; --tx3: #6b6b6b;
+  --acc: #0a0a0a; --acc-h: #262626; --acc-tx: #0a0a0a; --acc-soft: #f0f0f0; --on-acc: #ffffff;
+  --ok: #3f6212; --ok-soft: #e6f6c4; --lime: #d4f08c; --lime-tx: #1a2400;
+  --out: #0a0a0a; --out-tx: #ffffff; --out-meta: #a3a3a3; --in: #ffffff; --tick: #a3e635;
+  --focus: 0 0 0 3px rgba(10,10,10,0.18); --shadow: none; --overlay: rgba(0,0,0,0.45);
+ --cream: var(--bg); --sand: var(--s1); --bark: var(--tx); --stone: var(--tx3); --text-dark: var(--tx); --text-mid: var(--tx2); --text-light: var(--tx3); --clay: var(--acc-tx); --clay-light: var(--acc-tx); --clay-pale: var(--line); --moss: var(--ok);
+}
+html.mono body.dark-mode {
+  --bg: #0a0a0a; --s1: #161616; --s2: #1f1f1f; --s3: #2a2a2a; --line: #242424; --line-2: #313131;
+  --tx: #ededed; --tx2: #a3a3a3; --tx3: #8c8c8c;
+  --acc: #ededed; --acc-h: #ffffff; --acc-tx: #ededed; --acc-soft: rgba(255,255,255,0.08); --on-acc: #0a0a0a;
+  --ok: #c5e67c; --ok-soft: rgba(212,240,140,0.14); --lime: #d4f08c; --lime-tx: #1a2400;
+  --out: #ededed; --out-tx: #0a0a0a; --out-meta: #5a5a5a; --in: #1f1f1f; --tick: #3f6212;
+  --focus: 0 0 0 3px rgba(255,255,255,0.3); --shadow: none; --overlay: rgba(0,0,0,0.7);
+ --cream: var(--bg); --sand: var(--s1); --bark: var(--tx); --stone: var(--tx3); --text-dark: var(--tx); --text-mid: var(--tx2); --text-light: var(--tx3); --clay: var(--acc-tx); --clay-light: var(--acc-tx); --clay-pale: var(--line); --moss: var(--ok);
+}
+html.mono, html.mono body { background: var(--bg, #0a0a0a); }
+/* cards: no borders, bigger corners */
+html.mono body .m-card, html.mono body .td-card, html.mono body .ag-card, html.mono body .mp-grp, html.mono body .settings-card, html.mono body .stat-card,
+html.mono body .dash-table-wrap, html.mono body .chart-box, html.mono body .insight-tile, html.mono body .push-card, html.mono body .hl-issue, html.mono body .hl-hero, html.mono body .overview-card {
+  border-color: transparent !important; border-radius: 22px !important; box-shadow: none !important; }
+html.mono body .td-row, html.mono body .td-act, html.mono body .ag-row, html.mono body .mp-it { border-color: var(--line) !important; }
+/* buttons: pills */
+html.mono body .btn-dash, html.mono body .td-next-zoom, html.mono body .td-join, html.mono body .pg-ib, html.mono body .app-bar-btn, html.mono body .hl-run, html.mono body .upd-bar button { border-radius: 999px !important; }
+html.mono body .btn-dash-primary, html.mono body .td-next-zoom, html.mono body .pg-ib.add, html.mono body .td-join:not(.ghost) { background: var(--acc) !important; color: var(--on-acc) !important; border-color: var(--acc) !important; }
+html.mono body .btn-dash-outline, html.mono body .btn-dash-ghost { background: var(--s2) !important; border-color: transparent !important; color: var(--tx) !important; }
+/* type: tight headings */
+html.mono body .dash-section-title, html.mono body #tdTitle, html.mono body .td-head h3, html.mono body .td-next-n, html.mono body .stat-value, html.mono body .m-card-title, html.mono body .hl-hero b, html.mono body .settings-card-title, html.mono body .app-bar-title {
+  letter-spacing: -0.035em !important; font-weight: 600 !important; }
+html.mono body .dash-section-title { font-size: 34px !important; }
+@media (max-width: 900px) { html.mono body #tdTitle { font-size: 34px !important; } }
+/* chips: soft lime for the good ones, quiet grey for the rest */
+html.mono body .badge-green, html.mono body .td-chip.ok i, html.mono body .inv-auto-badge { background: var(--lime) !important; color: var(--lime-tx) !important; border-color: transparent !important; }
+html.mono body .badge, html.mono body .pill, html.mono body .wa-tag, html.mono body .td-tag { border-radius: 999px !important; }
+html.mono body .badge-clay, html.mono body .badge-gray, html.mono body .badge-blue { background: var(--s2) !important; color: var(--tx2) !important; }
+html.mono body .td-chip { background: var(--s1) !important; border-color: transparent !important; }
+/* tabs and highlights */
+html.mono body .app-tabs { background: color-mix(in srgb, var(--bg) 92%, transparent) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+html.mono body .app-tab.on, html.mono body .app-tab.on svg { color: var(--tx) !important; }
+html.mono body .mp-ic { background: var(--s2) !important; color: var(--tx2) !important; }
+html.mono body .dash-nav a.active, html.mono body .dash-nav li a.active { background: var(--s2) !important; color: var(--tx) !important; }
+html.mono body .td-av { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--line-2) !important; }
+html.mono body #section-today .dash-section-header::before { filter: grayscale(1) brightness(1.5); }
+html.mono body #section-today .dash-section-header::after { background: radial-gradient(closest-side at 78% 50%, rgba(255,255,255,0.05), transparent) !important; }
+html.mono body:not(.dark-mode) #section-today .dash-section-header::after { background: radial-gradient(closest-side at 78% 50%, rgba(0,0,0,0.03), transparent) !important; }
+html.mono body .mp-logo i { background: var(--tx) !important; border-color: var(--tx) !important; } html.mono body .mp-logo i:nth-child(3n+1) { background: transparent !important; border: 1.5px solid var(--tx) !important; }
+html.mono body .mp-logo { background: var(--s2) !important; }
+html.mono [style*="91,140,255"], html.mono [style*="#7aa2ff"] { color: var(--tx2) !important; border-color: var(--line-2) !important; background-color: var(--s2) !important; }
+html.mono svg[style*="#7aa2ff"], html.mono [style*="#7aa2ff"] svg { background-color: transparent !important; }
+html.mono [stroke="#7aa2ff"] { stroke: currentColor; } html.mono [fill="#7aa2ff"] { fill: currentColor; }
+html.mono .topbar-logo svg, html.mono .td-brand svg, html.mono .dash-logo svg, html.mono .mp-logo { color: var(--tx); }
+html.mono body .wa-b.out .wa-tick.read { color: var(--tick) !important; }
+html.mono body .wa-ck, html.mono body .wa-ck.read { color: var(--ok) !important; }
+/* Today: one plain sentence instead of chips */
+body .td-sum { display: none; }
+html.mono body .td-sum { display: block; color: var(--tx2); font-size: 16px; line-height: 1.5; letter-spacing: -0.01em; margin: 14px 0 0; max-width: 560px; }
+html.mono body .td-sum b { color: var(--tx); font-weight: 500; }
+html.mono body .td-greet.chips { display: none !important; }
+/* Settings style picker */
+.thm-pick.two { grid-template-columns: repeat(2, 1fr); }
 /* hidden bars stay fully hidden (the offline bar's edge showed under the status bar as a white pill) */
 body .net-bar { visibility: hidden; transform: translate(-50%, calc(-100% - 40px - env(safe-area-inset-top, 0px))); transition: transform 0.2s ease, visibility 0.2s; }
 body .net-bar.show { visibility: visible; transform: translate(-50%, 0); }
@@ -4166,7 +4271,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v169</span>
+        <span style="color:var(--clay);font-weight:500;">v171</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4240,7 +4345,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v169</span>
+        <span style="color:var(--clay);font-weight:500;">v171</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5168,6 +5273,12 @@ table#paymentsTable { min-width: 700px; }
             <button type="button" data-t="dark" onclick="setTheme('dark')"><i style="background:#0b1220"></i>Dark</button>
             <button type="button" data-t="light" onclick="setTheme('light')"><i style="background:#f5f7fb"></i>Light</button>
             <button type="button" data-t="system" onclick="setTheme('system')"><i style="background:linear-gradient(90deg,#0b1220 50%,#f5f7fb 50%)"></i>Match phone</button>
+          </div>
+          <div style="font-size:0.95rem;font-weight:500;color:var(--tx);margin-top:18px;">Style</div>
+          <div style="font-size:0.85rem;color:var(--tx2);margin-top:2px;">Blue is the original look. Mono is black, white and grey with soft green chips.</div>
+          <div class="thm-pick two">
+            <button type="button" data-pal="blue" onclick="setPalette('blue')"><i style="background:linear-gradient(135deg,#0b1220 55%,#2f5fe0 55%)"></i>Blue</button>
+            <button type="button" data-pal="mono" onclick="setPalette('mono')"><i style="background:linear-gradient(135deg,#0a0a0a 55%,#ededed 55%);"></i>Mono</button>
           </div>
         </div>
       </div>
@@ -9040,7 +9151,7 @@ async function loadFeeRequests() {
       <td>${r.id}</td><td style="font-weight:500;">${nameOf(r)}</td><td>${r.classes}</td>
       <td>${frFmt(r.amount, r.currency)} <span style="color:var(--text-light);font-size:0.85em;">${r.currency}</span>${r.note ? ` <span style="color:var(--text-light);font-size:0.85em;">· ${r.note}</span>` : ''}</td>
       <td>${when(r)}</td>
-      <td class="ws-action-sticky"><span class="action-wrap"><button class="icon-action-btn" data-tip="Copy link" onclick="copyFeeRequestLink('${feeRequestLink(r.id)}')">${COPY_SVG}</button><button class="icon-action-btn danger" data-tip="Cancel" onclick="cancelFeeRequest('${r.id}')">${X_SVG}</button></span></td>
+      <td class="ws-action-sticky"><span class="action-wrap"><button class="icon-action-btn" data-tip="Copy link" onclick="copyFeeRequestLink('${feeRequestLink(r.id)}')">${COPY_SVG}</button><button class="icon-action-btn danger" data-tip="Cancel this fee link" aria-label="Cancel this fee link" onclick="cancelFeeRequest('${r.id}')">${X_SVG}</button></span></td>
     </tr>`).join('');
     document.getElementById('feeRequestsCards').innerHTML = reqs.map(r => `<div class="m-card"><div class="m-card-title">${nameOf(r)} <span class="badge badge-clay" style="float:right">${r.id}</span></div>
       <div class="m-card-row"><span class="m-card-label">Classes</span><span class="m-card-val">${r.classes}</span></div>
@@ -9049,7 +9160,7 @@ async function loadFeeRequests() {
       <div class="m-card-row"><span class="m-card-label">Created</span><span class="m-card-val">${when(r)}</span></div>
       <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;">
         <button class="btn-dash btn-dash-primary btn-dash-sm" onclick="copyFeeRequestLink('${feeRequestLink(r.id)}')">Copy link</button>
-        <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="cancelFeeRequest('${r.id}')">Cancel</button>
+        <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="cancelFeeRequest('${r.id}')">Cancel link</button>
       </div></div>`).join('');
   } catch (e) { console.warn('loadFeeRequests error:', e.message); panel.style.display = 'none'; }
 }
@@ -9224,6 +9335,8 @@ async function toggleContacted(id, currentState, name) {
 }
 
 // ── INVOICES ──
+// v169: short date for tight spots, the year only when it is not this year.
+function invShortDate(d) { if (!d) return ''; const x = new Date(String(d).length <= 10 ? d + 'T00:00:00' : d); if (isNaN(x)) return ''; const o = { day: 'numeric', month: 'short' }; if (x.getFullYear() !== new Date().getFullYear()) o.year = 'numeric'; return x.toLocaleDateString('en-GB', o); }
 function invFmtNo(n) { return 'INV-' + String(n == null ? 0 : n).padStart(3, '0'); }
 function invSourceLabel(t) {
   if (t === 'fee_payments') return 'Fee payment';
@@ -9369,7 +9482,7 @@ function invRenderInvoices() {
     }
 
     const cards = document.getElementById('invoicesCards');
-    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card${inv.cancelled?' inv-card-cancelled':''}" id="icard-${inv.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;"><label class="cb-box"><input type="checkbox" class="row-select-cb row-cb" data-table="invoices" data-id="${inv.id}" data-name="${(inv.billed_name||inv.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('icard-'+inv.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span>${inv.auto_generated?'<span class="inv-auto-badge">Auto</span>':''}</div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmtCur(inv.total_amount, inv.currency)}</span></div><div class="m-card-row"><span class="m-card-label">Status</span><span class="m-card-val" style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">${inv.cancelled?`<span class="inv-cancelled-badge">Cancelled</span>${inv.cancelled_at?` <span style="color:var(--text-light);font-size:0.72rem;">on ${fmtDate(inv.cancelled_at)}</span>`:''}`:`<label class="inv-switch"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label><span style="color:${inv.sent?'#7da55e':'var(--text-light)'};font-weight:${inv.sent?'600':'400'};">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${fmtDate(inv.sent_at)}`:''}</span>`}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${inv.cancelled?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invReinstate('${inv.id}')">Reinstate</button>`:''}${(!inv.cancelled && isAdmin())?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invCancelAsk('${inv.id}','${invFmtNo(inv.invoice_number)}')">Cancel</button>`:''}${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || ('<div class="mobile-cards-empty">' + (invAllCache.length > 0 ? '<div class="empty-state"><div class="empty-state-title">No invoices match these filters</div><div class="empty-state-text">Try a different date range or status, or clear the filters.</div></div>' : EMPTY_STATES.invoices) + '</div>');
+    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card${inv.cancelled?' inv-card-cancelled':''}" id="icard-${inv.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;"><label class="cb-box"><input type="checkbox" class="row-select-cb row-cb" data-table="invoices" data-id="${inv.id}" data-name="${(inv.billed_name||inv.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('icard-'+inv.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span>${inv.auto_generated?'<span class="inv-auto-badge">Auto</span>':''}</div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmtCur(inv.total_amount, inv.currency)}</span></div><div class="m-card-row inv-st-row"><span class="m-card-label">Status</span><span class="m-card-val inv-st">${inv.cancelled?`${inv.cancelled_at?`<span class="inv-st-d">${invShortDate(inv.cancelled_at)}</span>`:''}<span class="inv-cancelled-badge">Cancelled</span>`:`<span class="inv-st-t${inv.sent?' on':''}">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${invShortDate(inv.sent_at)}`:''}</span><label class="inv-switch" aria-label="Mark as sent"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label>`}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${inv.cancelled?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invReinstate('${inv.id}')">Reinstate</button>`:''}${(!inv.cancelled && isAdmin())?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invCancelAsk('${inv.id}','${invFmtNo(inv.invoice_number)}')">Cancel invoice</button>`:''}${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || ('<div class="mobile-cards-empty">' + (invAllCache.length > 0 ? '<div class="empty-state"><div class="empty-state-title">No invoices match these filters</div><div class="empty-state-text">Try a different date range or status, or clear the filters.</div></div>' : EMPTY_STATES.invoices) + '</div>');
 }
 // ── INVOICES: EDITOR + GENERATION ──
 const INV_BIZ = {
@@ -10435,8 +10548,54 @@ function applyTheme() {
   const p = themePref();
   const dark = p === 'dark' || (p === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
   document.body.classList.toggle('dark-mode', dark);
-  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', dark ? '#0b1220' : '#f5f7fb');
-  document.querySelectorAll('.thm-pick button').forEach(b => b.classList.toggle('on', b.dataset.t === p));
+  const mono = themePalette() === 'mono';
+  document.documentElement.classList.toggle('mono', mono);
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', mono ? (dark ? '#0a0a0a' : '#fafafa') : (dark ? '#0b1220' : '#f5f7fb'));
+  document.querySelectorAll('.thm-pick button[data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === p));
+  document.querySelectorAll('.thm-pick button[data-pal]').forEach(b => b.classList.toggle('on', b.dataset.pal === (mono ? 'mono' : 'blue')));
+  monoSheet(mono, dark);
+}
+function themePalette() { try { return localStorage.getItem('themePalette') === 'mono' ? 'mono' : 'blue'; } catch (e) { return 'blue'; } }
+function setPalette(v) { try { localStorage.setItem('themePalette', v === 'mono' ? 'mono' : 'blue'); } catch (e) {} applyTheme(); }
+// Mono: the file still has a few hundred hand-written blue tints. Instead of editing each one,
+// this reads the loaded styles once and adds a grey version of every rule that uses blue.
+let _monoEl = null, _monoKey = '';
+function monoSheet(on, dark) {
+  const key = on ? (dark ? 'd' : 'l') : '';
+  if (key === _monoKey) return; _monoKey = key;
+  if (!on) { if (_monoEl) _monoEl.textContent = ''; return; }
+  if (!_monoEl) { _monoEl = document.createElement('style'); _monoEl.id = 'monoSheet'; document.head.appendChild(_monoEl); }
+  const BLUE = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)/g;
+  const isBlue = (r, g, b) => b > 120 && b - r > 45 && b - g > 25;
+  const swap = v => v.replace(BLUE, (m0, r, g, b, a) => {
+    r = +r; g = +g; b = +b; if (!isBlue(r, g, b)) return m0;
+    const al = a == null ? 1 : +a;
+    if (al >= 0.95) return dark ? 'rgb(237, 237, 237)' : 'rgb(10, 10, 10)';
+    return dark ? 'rgba(255, 255, 255, ' + Math.min(0.5, al * 0.7).toFixed(3) + ')' : 'rgba(0, 0, 0, ' + Math.min(0.4, al * 0.45).toFixed(3) + ')';
+  });
+  const out = [];
+  const pre = sel => sel.split(/,(?![^(]*\))/).map(x => { x = x.trim(); if (!x) return ''; if (/^(html|:root)/.test(x)) return x.replace(/^html/, 'html.mono'); return 'html.mono ' + x; }).filter(Boolean).join(', ');
+  const walk = (rules, wrapOpen, wrapClose) => {
+    for (const r of rules) {
+      if (r.type === 4 && r.cssRules) { walk(r.cssRules, (wrapOpen || '') + '@media ' + r.media.mediaText + ' {', (wrapClose || '') + '}'); continue; }
+      if (r.type === 12 && r.cssRules) { walk(r.cssRules, (wrapOpen || '') + '@supports ' + r.conditionText + ' {', (wrapClose || '') + '}'); continue; }
+      if (r.type !== 1 || !r.style) continue;
+      if (/monoSheet|html\.mono/.test(r.selectorText)) continue;
+      let decl = '';
+      for (let i = 0; i < r.style.length; i++) {
+        const prop = r.style[i]; if (prop.startsWith('--')) continue;
+        const v = r.style.getPropertyValue(prop); if (!v || v.indexOf('rgb') < 0) continue;
+        const nv = swap(v); if (nv !== v) decl += prop + ':' + nv + (r.style.getPropertyPriority(prop) ? ' !important' : '') + ';';
+      }
+      // white text on the accent: the accent is white in Mono dark, so the text follows the accent's pair
+      const bgv = (r.style.getPropertyValue('background') || '') + (r.style.getPropertyValue('background-color') || '');
+      const col = r.style.getPropertyValue('color');
+      if (/var\(--acc(-h)?\)|var\(--grad\)/.test(bgv) && /^(#fff(fff)?|white|rgb\(255, 255, 255\))$/i.test(String(col).trim())) decl += 'color:var(--on-acc) !important;';
+      if (decl) out.push((wrapOpen || '') + pre(r.selectorText) + '{' + decl + '}' + (wrapClose || ''));
+    }
+  };
+  for (const sh of document.styleSheets) { if (sh.ownerNode === _monoEl) continue; try { walk(sh.cssRules); } catch (e) {} }
+  _monoEl.textContent = out.join('\n');
 }
 function setTheme(p) { try { localStorage.setItem('themePref', p); localStorage.setItem('darkMode', p === 'light' ? '0' : '1'); } catch (e) {} applyTheme(); }
 applyTheme();
@@ -11164,8 +11323,12 @@ let _scrollLockY = 0;
 let _scrollLocked = false;
 function _preventScroll(e) {
   // Allow scroll inside mobile menu overlay, filter sheets, picker sheets, modals
-  const allowed = e.target.closest('.wa-msgs, #mobileMenuOverlay, .filter-sheet, .mobile-picker-sheet, .modal-body, .modal, .form-page-scroll, .checkin-body, .m-dots-popover, .mobile-search-fullscreen, textarea');
+  const allowed = e.target.closest('.wa-msgs, #mobileMenuOverlay, .filter-sheet, .mobile-picker-sheet, .modal-body, .modal, .form-page-scroll, .checkin-body, .m-dots-popover, .mobile-search-fullscreen, textarea, .cc-picker, .notif-dots-menu');
   if (allowed) return;
+  // v169: any list that can scroll by itself (a dropdown, a picker) always scrolls.
+  for (let n = e.target; n && n !== document.body; n = n.parentElement) {
+    if (n.scrollHeight > n.clientHeight + 1 && /(auto|scroll)/.test(getComputedStyle(n).overflowY)) return;
+  }
   e.preventDefault();
 }
 // True while ANY overlay/popup/sheet is still open. unlockScroll checks the
@@ -11262,7 +11425,7 @@ function toastHide() {
 // ── PREVENT FORM PAGE DRAG ──
 document.addEventListener('touchmove', function(e) {
   const formPage = e.target.closest('.form-page');
-  const scrollArea = e.target.closest('.form-page-scroll');
+  const scrollArea = e.target.closest('.form-page-scroll, .cc-picker, .mobile-picker-sheet');
   if (formPage && !scrollArea) {
     e.preventDefault();
   }
@@ -11312,7 +11475,18 @@ function renderNotificationsFromCache() {
 
 function toggleNotifMenu(btn) {
   const menu = document.getElementById('notifDotsMenu');
-  if (menu) menu.classList.toggle('open');
+  if (!menu) return;
+  menu.classList.toggle('open');
+  if (menu.classList.contains('open') && btn) popClamp(menu, btn);
+}
+// v169: a small menu opens under its button and always stays fully on screen.
+function popClamp(menu, btn) {
+  const r = btn.getBoundingClientRect(), vw = window.innerWidth, vh = window.innerHeight;
+  menu.style.position = 'fixed'; menu.style.right = 'auto'; menu.style.bottom = 'auto';
+  const w = Math.min(menu.offsetWidth || 240, vw - 24), h = menu.offsetHeight || 200;
+  let left = r.right - w; if (left < 12) left = Math.min(r.left, vw - w - 12); left = Math.max(12, Math.min(left, vw - w - 12));
+  let top = r.bottom + 8; if (top + h > vh - 12 && r.top - 8 - h > 12) top = r.top - 8 - h;
+  menu.style.left = left + 'px'; menu.style.top = top + 'px'; menu.style.maxWidth = (vw - 24) + 'px';
 }
 
 function closeNotifMenu() {
@@ -16460,7 +16634,11 @@ async function loadToday(silent) {
       + (nxt.sub && nxt.kind === 'cls' ? ' · ' + nxt.sub : '')
       + (nxt.kind === 'cls' && !isTom && !live ? (nowMs >= remindAt ? ' · reminder sent' : ' · reminder at ' + schTime12(schIst(new Date(remindAt)).hhmm)) : '');
     nextCard = '<div class="td-card td-next td-o-next' + (!live && mins <= 10 ? ' soon' : '') + '"><div class="td-next-main"><div class="td-next-l">' + (live ? 'On now' : 'Next up') + '</div>'
-      + '<div class="td-next-n">' + zEsc(nxt.name) + '</div><div class="td-next-w">' + zEsc(info) + '</div></div>'
+      + '<div class="td-next-n">' + zEsc(nxt.name) + '</div><div class="td-next-w">' + zEsc(info) + '</div>'
+      + (() => { const day = schIst(new Date(nxt.t)).ymd; const rest = (day === today ? todayItems : tomItems).filter(it => it !== nxt && !it.off && it.t > nxt.t);
+          if (!rest.length) return ''; const r0 = rest[0];
+          return '<div class="td-next-then">Then ' + zEsc(String(r0.name || '').split(' ')[0]) + ' at ' + schTime12(r0.hhmm) + (rest.length > 1 ? ' · ' + (rest.length - 1) + ' more' : '') + '</div>'; })()
+      + '</div>'
       + (live ? '' : '<div class="td-next-in"><b>' + (isTom && mins >= 600 ? schTime12(nxt.hhmm) : dur(mins)) + '</b><small>' + (isTom && mins >= 600 ? 'tomorrow' : 'to go') + '</small></div>')
       + (nxt.link && !isTom ? '<a class="td-next-zoom" href="' + zEsc(nxt.link) + '" target="_blank" rel="noopener">' + TD_CAM + 'Join Zoom</a>' : '') + '</div>';
   }
@@ -16511,6 +16689,18 @@ async function loadToday(silent) {
     if (unreadPeople) chips.push(chip('acc', '<b>' + unreadPeople + '</b> waiting for reply'));
     if (feeOld && feeOld.length) chips.push(chip('warn', '<b>' + feeOld.length + '</b> fee link' + (feeOld.length === 1 ? '' : 's') + ' unpaid'));
     const g = document.getElementById('tdGreet'); if (g) { g.classList.add('chips'); g.innerHTML = chips.join(''); }
+    // Mono shows one plain sentence instead of chips.
+    try {
+      let sm = document.getElementById('tdSum'); if (!sm && g) { sm = document.createElement('p'); sm.id = 'tdSum'; sm.className = 'td-sum'; g.parentNode.insertBefore(sm, g.nextSibling); }
+      if (sm) {
+        const bits = [];
+        if (live.length) bits.push((nCl ? '<b>' + nCl + ' class' + (nCl === 1 ? '' : 'es') + '</b>' : '') + (nCl && nTr ? ' and ' : '') + (nTr ? '<b>' + nTr + ' trial' + (nTr === 1 ? '' : 's') + '</b>' : '') + ' today' + (nextToday ? ', next at ' + schTime12(nextToday.hhmm) + '.' : ', all done.'));
+        else { const t0 = tomItems.find(it => !it.off); bits.push('No classes today.' + (t0 ? ' <b>' + zEsc(String(t0.name || '').split(' ')[0]) + '</b> is next, tomorrow at ' + schTime12(t0.hhmm) + '.' : '')); }
+        if (unreadPeople) bits.push('<b>' + unreadPeople + (unreadPeople === 1 ? ' person is' : ' people are') + '</b> waiting for a reply.');
+        if (feeOld && feeOld.length) bits.push('<b>' + feeOld.length + ' fee link' + (feeOld.length === 1 ? '' : 's') + '</b> ' + (feeOld.length === 1 ? 'is' : 'are') + ' still unpaid.');
+        sm.innerHTML = bits.join(' ');
+      }
+    } catch (e) {}
     if (typeof appBarSync === 'function' && sessionStorage.getItem('dash_section') !== 'whatsapp') { const at = document.getElementById('appBarTitle'); if (at && document.getElementById('section-today')?.classList.contains('active')) at.textContent = 'Today'; }
   } catch (e) {}
   if (typeof enrRender === 'function') enrRender(acts.length);
@@ -17453,6 +17643,56 @@ function hlRender(checking) {
   }
   window.addEventListener('error', e => report(e.message, (e.filename || '').split('/').pop() + ':' + e.lineno));
   window.addEventListener('unhandledrejection', e => report('Unhandled: ' + (e.reason && e.reason.message || e.reason), ''));
+})();
+
+// ── v169: LONG TEXT FITTER (phones). One rule for every card list. ──
+// A value that would wrap next to its label moves under it (.mc-stack).
+// Emails stay on one line with a Copy button. Runs whenever cards are drawn.
+(function () {
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  function fitRow(row) {
+    const val = row.querySelector(':scope > .m-card-val'), lab = row.querySelector(':scope > .m-card-label');
+    if (!val || !lab || row.classList.contains('inv-st-row')) return;
+    const txt = (val.textContent || '').trim();
+    if (!val.dataset.mcMail && EMAIL.test(txt) && !val.querySelector('a,button,input')) {
+      val.dataset.mcMail = '1'; val.classList.add('mc-mail');
+      val.innerHTML = '<span class="mc-mt" title="' + txt.replace(/"/g, '&quot;') + '">' + val.innerHTML + '</span><button type="button" class="mc-copy" aria-label="Copy email">Copy</button>';
+      val.querySelector('.mc-copy').addEventListener('click', ev => { ev.stopPropagation(); try { navigator.clipboard.writeText(txt).then(() => showToast('Email copied', 'success'), () => {}); } catch (e) {} });
+      return fitRow(row);
+    }
+    if (val.dataset.mcMail) {
+      // An email that doesn't fit beside its label goes under it at full width.
+      row.classList.remove('mc-stack');
+      const mt = val.querySelector('.mc-mt');
+      if (mt && mt.scrollWidth > mt.clientWidth + 1) row.classList.add('mc-stack');
+      return;
+    }
+    if (val.querySelector('input,select,.inv-switch')) return;
+    row.classList.remove('mc-stack'); val.classList.remove('mc-clamp');
+    const cs = getComputedStyle(val), lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.35;
+    const wraps = val.getBoundingClientRect().height > lh * 1.6;
+    const cut = val.scrollWidth > val.clientWidth + 1;
+    const tight = lab.getBoundingClientRect().width + val.getBoundingClientRect().width + 14 > row.clientWidth + 1;
+    if (wraps || cut || tight) { row.classList.add('mc-stack'); if (/description|note|address|message/i.test(lab.textContent || '')) val.classList.add('mc-clamp'); }
+  }
+  let pending = false;
+  function fitAll() {
+    pending = false;
+    if (!window.matchMedia('(max-width: 900px)').matches) { document.querySelectorAll('.m-card-row.mc-stack').forEach(r => r.classList.remove('mc-stack')); return; }
+    document.querySelectorAll('.dash-section.active .m-card-row, .form-page .m-card-row').forEach(r => { if (r.offsetParent) fitRow(r); });
+  }
+  window.mcFit = () => { if (!pending) { pending = true; requestAnimationFrame(fitAll); } };
+  const mo = new MutationObserver(muts => { for (const m of muts) if (m.addedNodes.length) { window.mcFit(); return; } });
+  const start = () => { mo.observe(document.body, { childList: true, subtree: true }); window.mcFit(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  window.addEventListener('resize', () => window.mcFit());
+  document.addEventListener('click', () => setTimeout(window.mcFit, 60), true);
+  const secObs = new MutationObserver(() => window.mcFit());
+  const watchSecs = () => document.querySelectorAll('.dash-section').forEach(sec => secObs.observe(sec, { attributes: true, attributeFilter: ['class'] }));
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watchSecs); else watchSecs();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => window.mcFit());
+  // small menus close when the page scrolls, so they never float away from their button
+  document.addEventListener('scroll', () => { if (typeof closeNotifMenu === 'function') closeNotifMenu(); }, true);
 })();
 function studioOpenUrl(url) {
   try {
