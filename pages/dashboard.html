@@ -3179,6 +3179,49 @@ body .dp-day.today { color: var(--acc-tx) !important; }
 body .dp-day.selected, body .dp-day.today.selected { background: var(--acc) !important; color: #fff !important; opacity: 1; }
 body .date-picker-cal { background: var(--s1) !important; border: 1px solid var(--line) !important; color: var(--tx); }
 body .date-picker-btn { background: var(--s1) !important; border: 1px solid var(--line-2) !important; color: var(--tx) !important; }
+body .net-bar { position: fixed; left: 50%; top: calc(10px + env(safe-area-inset-top, 0px)); transform: translate(-50%, -140%); z-index: 99998; background: var(--tx); color: var(--bg); font-size: 14px; font-weight: 500; padding: 9px 16px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.3); transition: transform 0.2s ease; max-width: calc(100vw - 32px); text-align: center; }
+body .net-bar.show { transform: translate(-50%, 0); }
+/* v159: confirm dialogs (Bin, generic confirm) on tokens */
+body #archiveConfirmModal, body #customConfirmModal { background: var(--overlay) !important; backdrop-filter: none !important; }
+body #archiveConfirmModal > div, body #customConfirmModal > div { background: var(--s1) !important; border: 1px solid var(--line) !important; border-radius: 16px !important; box-shadow: 0 20px 50px rgba(0,0,0,0.35) !important; max-width: 360px !important; }
+body #archiveConfirmModal p, body #customConfirmModal p, body #customConfirmDesc, body #archiveConfirmDesc { color: var(--tx2) !important; }
+body #archiveConfirmModal > div > div:last-child, body #customConfirmModal > div > div:last-child { border-top: 1px solid var(--line) !important; gap: 8px; padding: 12px; }
+body #archiveConfirmModal > div > div:last-child button, body #customConfirmModal > div > div:last-child button { border: 0 !important; border-radius: 12px; min-height: 44px; padding: 0 12px !important; font-weight: 600; background: var(--s2) !important; color: var(--tx) !important; }
+body #archiveConfirmBtn, body #customConfirmOkBtn { background: var(--acc) !important; color: #fff !important; }
+body #archiveConfirmModal > div > div:first-child > div:first-child > div:first-child, body #customConfirmIcon { background: var(--acc-soft) !important; border: 0 !important; color: var(--acc-tx); }
+body #archiveConfirmModal svg, body #customConfirmIcon svg { stroke: currentColor !important; }
+body [role="button"]:focus-visible, body [tabindex]:focus-visible, body .app-tab:focus-visible, body .wa-row:focus-visible, body .td-act:focus-visible, body .mp-it:focus-visible, body .dash-nav a:focus-visible, body select:focus-visible, body .form-select-btn:focus-visible, body .date-picker-btn:focus-visible { outline: 2px solid var(--acc-tx) !important; outline-offset: 2px; }
+/* v159: touch targets and small-screen fixes from the audit */
+@media (pointer: coarse) {
+  body .pg-ib { width: 44px !important; height: 44px !important; }
+  body .sch-blk, body .sch-today, body .sch-ic, body #schSegCal, body #schSegList, body .wa-tab { min-height: 40px !important; }
+  body .sch-ic { min-width: 40px !important; }
+  body .ag-seg button { min-height: 40px; }
+}
+body .wa-ai-auto button { min-height: 32px; padding: 4px 8px !important; margin-right: -8px; }
+body .settings-profile-email, body .settings-profile-name { overflow-wrap: anywhere; }
+@media (max-width: 380px) {
+  body .dash-section-title { font-size: 26px !important; line-height: 1.15 !important; }
+  body #tdTitle { font-size: 24px !important; }
+  body .sch-nav #schWeekLabel { min-width: 0 !important; font-size: 14px; }
+  body .sch-nav { gap: 6px !important; }
+}
+body .m-card-row span:last-child, body .m-card-value { overflow-wrap: anywhere; }
+@media (min-width: 901px) and (max-width: 1360px) {
+  body #overviewStats, body #allStatsWrap .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 1rem !important; }
+}
+@media (min-width: 901px) { body .stats-grid > .stat-card { min-width: 0; } body .stat-value { overflow-wrap: anywhere; } }
+body .skip-link { position: fixed; left: 12px; top: -60px; z-index: 100000; background: var(--acc); color: #fff; padding: 10px 14px; border-radius: 10px; font-weight: 600; text-decoration: none; }
+body .skip-link:focus { top: 12px; }
+body #dashMain:focus { outline: none; }
+body .sch-ev.mv { background: rgba(139,92,246,0.16) !important; border-left: 3px solid #8b5cf6 !important; color: var(--tx) !important; }
+body .sch-ev.tr { background: var(--ok-soft) !important; border-left: 3px solid var(--ok) !important; color: var(--tx) !important; }
+body .sch-ev.cls { color: var(--tx) !important; }
+body .sch-ev small { opacity: 1 !important; color: var(--tx2); }
+body .insight-tile { padding: 16px !important; border-radius: 16px !important; }
+body .insight-tile-val, body .insight-tile-value { font-size: 22px !important; font-weight: 700 !important; letter-spacing: -0.01em; line-height: 1.2; overflow-wrap: anywhere; }
+body .insight-tile-sub { font-size: 13.5px !important; color: var(--tx2) !important; line-height: 1.35; }
+body .insight-tile-label { font-size: 13px !important; font-weight: 500; }
 /* ── Motion: short and quiet. Off with Reduce Motion. ── */
 body .dash-section.active { animation: v155in 0.18s ease-out; }
 @keyframes v155in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
@@ -3195,6 +3238,7 @@ body .push-sw, body .push-sw::after { transition: transform 0.2s ease, backgroun
 </style>
 </head>
 <body>
+<a href="#dashMain" class="skip-link" onclick="event.preventDefault();var m=document.getElementById('dashMain');if(m)m.focus();">Skip to content</a>
 
 <!-- ── LOGIN SCREEN ── -->
 <div class="login-screen" id="loginScreen">
@@ -3874,7 +3918,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v158</span>
+        <span style="color:var(--clay);font-weight:500;">v159</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3947,7 +3991,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v158</span>
+        <span style="color:var(--clay);font-weight:500;">v159</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3962,7 +4006,7 @@ table#paymentsTable { min-width: 700px; }
     <button type="button" class="app-tab" data-sec="classes" onclick="appTab('classes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Students</button>
     <button type="button" class="app-tab" data-sec="more" onclick="appTab('more')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>More</button>
   </div>
-  <main class="dash-main" id="dashMain">
+  <main class="dash-main" id="dashMain" tabindex="-1">
 
     <!-- ── SEARCH ── -->
     <section class="dash-section" id="section-search">
@@ -4019,7 +4063,7 @@ table#paymentsTable { min-width: 700px; }
         <div class="stat-card"><div class="stat-label">Total Participants</div><div class="stat-value" id="stat-participants">—</div><div class="stat-sub">Across all workshops</div></div>
         <div class="stat-card"><div class="stat-label">Active Students</div><div class="stat-value clay" id="stat-students">—</div><div class="stat-sub">Online classes</div></div>
         <div class="stat-card"><div class="stat-label">Open Leads</div><div class="stat-value" id="stat-leads">—</div><div class="stat-sub">Handpan buyers</div></div>
-        <div class="stat-card"><div class="stat-label">Avg Margin</div><div class="stat-value green" id="stat-margin">—</div><div class="stat-sub">Per workshop</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Margin</div><div class="stat-value green" id="stat-margin">—</div><div class="stat-sub">Completed workshops</div></div>
       </div>
       </div>
       <div class="overview-row">
@@ -4232,9 +4276,9 @@ table#paymentsTable { min-width: 700px; }
         </div>
       </div>
       <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
-        <div class="stat-card"><div class="stat-label">Active Students</div><div class="stat-value clay" id="classActiveStudents">—</div></div>
-        <div class="stat-card"><div class="stat-label">Total Classes Revenue</div><div class="stat-value green" id="classTotalRevenue">—</div></div>
-        <div class="stat-card"><div class="stat-label">Students on Break</div><div class="stat-value" id="classOnBreak">—</div></div>
+        <div class="stat-card"><div class="stat-label">Active Students</div><div class="stat-value clay" id="classActiveStudents">—</div><div class="stat-sub">Right now</div></div>
+        <div class="stat-card"><div class="stat-label">Class fees received</div><div class="stat-value green" id="classTotalRevenue">—</div><div class="stat-sub">All time, in ₹ after conversion</div></div>
+        <div class="stat-card"><div class="stat-label">Students on Break</div><div class="stat-value" id="classOnBreak">—</div><div class="stat-sub">Right now</div></div>
       </div>
       <div id="zoomReviewPanel" style="display:none;margin-bottom:2rem;"><style>@media (min-width:901px){#zoomReviewPanel .dash-table-wrap{overflow:visible;}#zoomReviewTable .form-select-wrap{min-width:190px;}}</style>
         <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.6rem;">
@@ -4421,9 +4465,9 @@ table#paymentsTable { min-width: 700px; }
         <input type="text" class="section-search-input" id="search-payments" placeholder="Search by description, amount..." autocomplete="off" oninput="applyFilters('payments')"/>
       </div>
       <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
-        <div class="stat-card"><div class="stat-label">Total Income</div><div class="stat-value clay" id="payTotalIncome">—</div></div>
-        <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" id="payTotalExpenses">—</div></div>
-        <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="payNetProfit">—</div></div>
+        <div class="stat-card"><div class="stat-label">Total Income</div><div class="stat-value clay" id="payTotalIncome">—</div><div class="stat-sub">All time</div></div>
+        <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" id="payTotalExpenses">—</div><div class="stat-sub">All time</div></div>
+        <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value green" id="payNetProfit">—</div><div class="stat-sub">Income minus expenses</div></div>
       </div>
       <div class="filter-bar" id="filter-bar-payments">
         <button class="mobile-filter-btn" id="mobile-filter-btn-payments" onclick="openFilterSheet('payments')">
@@ -7603,7 +7647,7 @@ async function loadOverview() {
 
       // Revenue by source
       const wsInc = sum(inc.filter(p => p.category === 'workshop'));
-      const classInc = sum(inc.filter(p => p.category === 'class' || p.category === 'classes'));
+      const classInc = sum(inc.filter(p => /^(online )?class(es)?$/i.test(String(p.category || '').trim())));
       const commInc = sum(inc.filter(p => p.category === 'commission'));
       const saleInc = sum(inc.filter(p => p.category === 'sale'));
       const gigInc  = sum(inc.filter(p => p.category === 'gig'));
@@ -7647,9 +7691,9 @@ async function loadOverview() {
         const net = income - expense;
         const scale = Math.max(wsProfit, classProfit, othersProfit, sharedCost, 1);
         profitEl.innerHTML =
-            sdRow('Workshops', 'after its own costs', wsProfit, wsProfit/scale*100, '#7aa2ff')
-          + sdRow('Classes', 'no direct costs', classProfit, classProfit/scale*100, '#8aaa6e')
-          + sdRow('Others', 'commission, sales, gigs', othersProfit, othersProfit/scale*100, '#8597b3')
+            sdRow('Workshops', 'after its own costs', wsProfit, wsProfit/scale*100, 'var(--acc-tx)')
+          + sdRow('Classes', 'no direct costs', classProfit, classProfit/scale*100, 'var(--ok)')
+          + sdRow('Others', 'commission, sales, gigs', othersProfit, othersProfit/scale*100, 'var(--tx3)')
           + (Math.round(sharedCost) !== 0 ? sdDeduct('Shared costs', 'shared, not per stream', sharedCost, sharedCost/scale*100) : '')
           + sdFoot('Net profit', net, 'green');
       }
@@ -7676,7 +7720,10 @@ async function loadOverview() {
     document.getElementById('stat-participants').textContent = parts.length;
     document.getElementById('stat-students').textContent = stus.filter(s => s.status === 'Active').length;
     document.getElementById('stat-leads').textContent = lds.filter(l => l.status === 'Hot' || l.status === 'Warm').length;
-    const avgMargin = ws.length ? ws.reduce((s, w) => s + Number(w.margin || 0), 0) / ws.length : 0;
+    // v159: only workshops that already happened (not cancelled, not upcoming) have a real margin.
+    const _t0 = new Date(); _t0.setHours(0,0,0,0);
+    const doneWs = ws.filter(w => !w.cancelled && !w.archived && w.date && new Date(w.date + 'T00:00:00') < _t0);
+    const avgMargin = doneWs.length ? doneWs.reduce((s, w) => s + Number(w.margin || 0), 0) / doneWs.length : 0;
     document.getElementById('stat-margin').textContent = fmtPct(avgMargin);
     document.getElementById('overviewWorkshops').innerHTML = ws.slice(0,5).map(w => `<tr><td><span style="font-weight:500;">${w.id}</span></td><td>${fmtDate(w.date)}</td><td>${w.total_pax||0}</td><td>${fmt(w.total_revenue)}</td><td style="color:var(--moss)">${fmt(w.net_profit)}</td></tr>`).join('') || `<tr><td colspan='5'>${EMPTY_STATES.workshops}</td></tr>`;
     document.getElementById('overviewPayments').innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<tr><td>${fmtDate(p.date)}</td><td class="td-truncate td-name" data-tip="${p.payer_name||''}">${p.payer_name||'—'}</td><td style="color:var(--moss)">${fmt(p.amount)}</td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td></tr>`).join('') || `<tr><td colspan='4'>${EMPTY_STATES.payments}</td></tr>`;
@@ -7963,6 +8010,7 @@ async function applyStudentTotals(stus) {
     stus.forEach(s => {
       const r = roll[s.id] || { classes: 0, byCur: {} };
       s.total_classes = r.classes;
+      s._inr = r.inr || 0;   // v159: settled rupees, safe to add up across students
       const stuCur = (s.currency || 'INR').toUpperCase();
       // total_paid stays as a number for sorting (primary currency only)
       s.total_paid = r.byCur[stuCur] || 0;
@@ -8269,14 +8317,14 @@ async function loadTrials() {
     const shown = _trialsShowHistory ? pending.concat(decided) : pending;
     const zoomBadge = t => t.source === 'zoom' ? ' <span class="badge badge-clay" style="margin-left:6px;font-size:0.72em;" data-tip="Came in from the Zoom review list">Zoom</span>' : (t.source === 'booking' ? ' <span class="badge badge-clay" style="margin-left:6px;font-size:0.72em;" data-tip="Booked on the trial page">Web</span>' : '');
     document.getElementById('trialsTable').innerHTML = shown.map(t => `<tr>
-      <td>${fmtDate(t.trial_date)}${t.start_at ? '<div style="font-size:0.8rem;color:var(--text-light);">' + trialTimeIst(t) + ' IST</div>' : ''}${zoomBadge(t)}</td>
+      <td>${fmtDate(t.trial_date || (t.start_at ? new Date(new Date(t.start_at).getTime() + 330 * 60000).toISOString().slice(0, 10) : ''))}${t.start_at ? '<div style="font-size:0.8rem;color:var(--text-light);">' + trialTimeIst(t) + ' IST</div>' : ''}${zoomBadge(t)}</td>
       <td class="td-truncate td-name"${(t.full_name || '').length > 22 ? ' data-tip="' + zEsc(t.full_name) + '"' : ''}><span style="font-weight:500;">${zEsc(t.full_name || '—')}</span>${t.notes ? '<div style="font-size:0.8rem;color:var(--text-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">' + zEsc(t.notes) + '</div>' : ''}</td>
       <td class="td-truncate"${trialContact(t).length > 24 ? ' data-tip="' + zEsc(trialContact(t)) + '"' : ''}>${zEsc(trialContact(t) || '—')}</td>
       <td>${trialStatusBadge(t)}</td>
       <td class="ws-action-sticky">${trialActionsHtml(t, false)}</td>
     </tr>`).join('') || `<tr><td colspan="5" style="text-align:center;padding:1.5rem 1rem;color:var(--text-light);">${rows.length ? 'No pending trials. Everyone has been converted or marked dropped.' : 'No trials yet. Add one below, or save a Zoom attendee as a trial from the review list.'}</td></tr>`;
     document.getElementById('trialsCards').innerHTML = shown.map(t => `<div class="m-card"><div class="m-card-title" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;"><span>${zEsc(t.full_name || '—')}</span><span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">${trialStatusBadge(t)}</span></div>
-      <div class="m-card-row"><span class="m-card-label">Trial date</span><span class="m-card-val">${fmtDate(t.trial_date)}${t.start_at ? ', ' + trialTimeIst(t) + ' IST' : ''}${zoomBadge(t)}</span></div>
+      <div class="m-card-row"><span class="m-card-label">Trial date</span><span class="m-card-val">${fmtDate(t.trial_date || (t.start_at ? new Date(new Date(t.start_at).getTime() + 330 * 60000).toISOString().slice(0, 10) : ''))}${t.start_at ? ', ' + trialTimeIst(t) + ' IST' : ''}${zoomBadge(t)}</span></div>
       ${trialContact(t) ? `<div class="m-card-row"><span class="m-card-label">Contact</span><span class="m-card-val">${zEsc(trialContact(t))}</span></div>` : ''}
       ${t.notes ? `<div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;display:inline-block;vertical-align:bottom;text-align:right;">${zEsc(t.notes)}</span></div>` : ''}
       <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;flex-wrap:wrap;">${trialActionsHtml(t, true)}</div>
@@ -8451,7 +8499,8 @@ async function loadStudents() {
     const stuCountEl = document.getElementById('studentsCount');
     if (stuCountEl) stuCountEl.textContent = stus.length + ' student' + (stus.length !== 1 ? 's' : '') + ' total';
     document.getElementById('classActiveStudents').textContent = stus.filter(s=>s.status==='Active').length;
-    document.getElementById('classTotalRevenue').textContent = fmt(stus.reduce((s,st)=>s+Number(st.total_paid||0),0));
+    // v159: add settled rupees only. total_paid is in each student's own currency, so summing it mixed $ and ₹.
+    document.getElementById('classTotalRevenue').textContent = fmt(Math.round(stus.reduce((s,st)=>s+Number(st._inr||0),0)));
     document.getElementById('classOnBreak').textContent = stus.filter(s=>s.status==='On Break').length;
     const adminS = isAdmin();
     const PENCIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
@@ -8472,7 +8521,7 @@ async function loadStudents() {
   const _e_studentsTable = document.getElementById('studentsEmptyState');
   if (_e_studentsTable) { _e_studentsTable.innerHTML = EMPTY_STATES.students; _e_studentsTable.style.display = _hd_studentsTable ? 'none' : ''; }
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name}${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);font-weight:400;">' + s.country + '</span>' : ''} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Level</span><span class="m-card-val">${s.level||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Rate</span><span class="m-card-val">${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Remaining</span><span class="m-card-val">${remainingBadge(s)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">${s.email||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${s.description||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="margin-right:auto;" onclick="openClassLog('${s.id}')">+1 Class</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${s.id}','${s.full_name}','student',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name}${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);font-weight:400;">' + s.country + '</span>' : ''} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Level</span><span class="m-card-val">${s.level||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Rate</span><span class="m-card-val">${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Remaining</span><span class="m-card-val">${remainingBadge(s)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">${s.email||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${s.description||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="margin-right:auto;" onclick="openClassLog('${s.id}')">+1 Class</button><button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${s.id}','${s.full_name}','student',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
   } catch(e) { console.warn('loadStudents error:', e.message); } finally { hideLoader(); }
 }
 function normMonth(m) {
@@ -8744,7 +8793,7 @@ async function loadFeePayments() {
     setSearchFilterVisibility('fee-payments', fps.length > 0);
     loadFeeRequests();
     const fpCards = document.getElementById('feePaymentsCards');
-    if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${normMonth(f.month)}" data-mode="${f.payment_mode||''}"><div class="m-card-title">${feeStudentDisplay(f)} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${fmtFeeMonth(f.month)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmtMoney(f.amount, f.currency)}</span></div>${f.settled_inr ? '<div class="m-card-row"><span class="m-card-label">Settled INR</span><span class="m-card-val" style="color:var(--text-light);">' + fmt(f.settled_inr) + '</span></div>' : ''}<div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${f.description||'—'}</span></div><div style="padding-top:1rem;margin-top:0.75rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;justify-content:flex-end;align-items:center;">${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${f.id}','${(f.student_name||f.id).replace(/'/g,"\\'")}','fee_payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.fee_payments + '</div>';
+    if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${normMonth(f.month)}" data-mode="${f.payment_mode||''}"><div class="m-card-title">${feeStudentDisplay(f)} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${fmtFeeMonth(f.month)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmtMoney(f.amount, f.currency)}</span></div>${f.settled_inr ? '<div class="m-card-row"><span class="m-card-label">Settled INR</span><span class="m-card-val" style="color:var(--text-light);">' + fmt(f.settled_inr) + '</span></div>' : ''}<div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${f.description||'—'}</span></div><div style="padding-top:1rem;margin-top:0.75rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;justify-content:flex-end;align-items:center;">${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${f.id}','${(f.student_name||f.id).replace(/'/g,"\\'")}','fee_payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.fee_payments + '</div>';
   } catch(e) { showToast('Error loading fee payments', 'error'); } finally { hideLoader(); }
 }
 
@@ -8782,7 +8831,7 @@ async function loadPayments() {
   setSearchFilterVisibility('payments', _hasData_payments);
   const _es_payments = document.getElementById('paymentsEmptyState');
   if (_es_payments) { _es_payments.innerHTML = EMPTY_STATES.payments; _es_payments.style.display = _hasData_payments ? 'none' : ''; }    const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => { const isGenExpC = p.is_general_expense; const dataTypeC = isGenExpC ? 'general_expense' : (p.type||''); const typeBadgeC = isGenExpC ? `<span class="badge badge-clay" style="float:right;margin-top:-2px">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span>`; return `<div class="m-card ${p.archived?'archived-row':''}" data-type="${dataTypeC}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'var(--bad)'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}${typeBadgeC}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${p.id}','${p.payer_name||p.description||p.id}','payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`; }).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.payments + '</div>';
+    if (payCards) payCards.innerHTML = pays.map(p => { const isGenExpC = p.is_general_expense; const dataTypeC = isGenExpC ? 'general_expense' : (p.type||''); const typeBadgeC = isGenExpC ? `<span class="badge badge-clay" style="float:right;margin-top:-2px">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span>`; return `<div class="m-card ${p.archived?'archived-row':''}" data-type="${dataTypeC}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'var(--bad)'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}${typeBadgeC}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${p.id}','${p.payer_name||p.description||p.id}','payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`; }).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.payments + '</div>';
   } catch(e) { showToast('Error loading payments', 'error'); } finally { hideLoader(); }
 }
 
@@ -8850,7 +8899,7 @@ async function loadLeads() {
   const _e_leadsTable = document.getElementById('leadsEmptyState');
   if (_e_leadsTable) { _e_leadsTable.innerHTML = EMPTY_STATES.leads; _e_leadsTable.style.display = _hd_leadsTable ? 'none' : ''; }
     if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" id="lcard-${l.id}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!l.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="leads" data-id="${l.id}" data-name="${(l.full_name||l.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('lcard-'+l.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${l.full_name}</span> ${l.referred_friend?'<span class="badge badge-green" style="flex-shrink:0;">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${l.description||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">${(()=>{const hasPendingRefC=!l.referral_received&&(l.referral_amount||0)>0;const markBtn=hasPendingRefC?`<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))
-}',${l.referral_amount||0})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mark received</button>`:'<span></span>';return l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button><span></span>`:markBtn+`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`;})()}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
+}',${l.referral_amount||0})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mark received</button>`:'<span></span>';return l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button><span></span>`:markBtn+`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`;})()}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
 
@@ -8881,7 +8930,7 @@ async function loadWaitlist() {
     if (_e_waitlistTable) { _e_waitlistTable.innerHTML = EMPTY_STATES.workshop_waitlist; _e_waitlistTable.style.display = _hd_waitlistTable ? 'none' : ''; }
 
     const waitlistCards = document.getElementById('waitlistCards');
-    if (waitlistCards) waitlistCards.innerHTML = waitlist.map(w => `<div class="m-card ${w.archived?'archived-row':''}" id="wcard-${w.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!w.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="workshop_waitlist" data-id="${w.id}" data-name="${(w.full_name||w.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('wcard-'+w.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${w.full_name}</span> <span class="badge badge-clay" style="flex-shrink:0;">${w.source||'Other'}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${w.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Preferred Month</span><span class="m-card-val">${fmtMonth(w.preferred_month)}</span></div><div class="m-card-row"><span class="m-card-label">Date Added</span><span class="m-card-val">${fmtDate(w.date_added)}</span></div><div class="m-card-row"><span class="m-card-label">Contacted</span><span class="m-card-val"><label class="checkin-toggle" data-tip="${w.contacted?'Contacted':'Not contacted'}" onclick="toggleContacted('${w.id}',${!!w.contacted},'${(w.full_name||'').replace(/'/g,String.fromCharCode(92,39))}');event.preventDefault();"><input type="checkbox" ${w.contacted?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshop_waitlist','${w.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${w.id}','${(w.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','waitlist',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.workshop_waitlist + '</div>';
+    if (waitlistCards) waitlistCards.innerHTML = waitlist.map(w => `<div class="m-card ${w.archived?'archived-row':''}" id="wcard-${w.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!w.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="workshop_waitlist" data-id="${w.id}" data-name="${(w.full_name||w.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('wcard-'+w.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${w.full_name}</span> <span class="badge badge-clay" style="flex-shrink:0;">${w.source||'Other'}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${w.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Preferred Month</span><span class="m-card-val">${fmtMonth(w.preferred_month)}</span></div><div class="m-card-row"><span class="m-card-label">Date Added</span><span class="m-card-val">${fmtDate(w.date_added)}</span></div><div class="m-card-row"><span class="m-card-label">Contacted</span><span class="m-card-val"><label class="checkin-toggle" data-tip="${w.contacted?'Contacted':'Not contacted'}" onclick="toggleContacted('${w.id}',${!!w.contacted},'${(w.full_name||'').replace(/'/g,String.fromCharCode(92,39))}');event.preventDefault();"><input type="checkbox" ${w.contacted?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshop_waitlist','${w.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${w.id}','${(w.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','waitlist',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.workshop_waitlist + '</div>';
   } catch(e) { console.error('loadWaitlist error:', e); showToast('Error loading waitlist', 'error'); } finally { hideLoader(); }
 }
 
@@ -17149,6 +17198,112 @@ async function agTest() {
   } catch (e) { _ag.test = { error: 'Could not test: ' + e.message }; }
   finally { _ag.testing = false; agRender(); }
 }
+</script>
+<script>
+// v159: tell Arpit when the phone is offline, so old data isn't mistaken for fresh.
+(function () {
+  const bar = document.createElement('div'); bar.className = 'net-bar'; bar.setAttribute('role', 'status'); bar.setAttribute('aria-live', 'polite');
+  document.body.appendChild(bar);
+  let hideT = null;
+  function sync(first) {
+    clearTimeout(hideT);
+    if (!navigator.onLine) { bar.textContent = 'Offline · showing what was loaded last. Changes won\'t save until you\'re back online.'; bar.classList.add('show'); }
+    else if (!first) { bar.textContent = 'Back online'; bar.classList.add('show'); hideT = setTimeout(() => bar.classList.remove('show'), 2500); if (typeof loadSection === 'function') try { loadSection(sessionStorage.getItem('dash_section') || 'today'); } catch (e) {} }
+  }
+  window.addEventListener('online', () => sync(false)); window.addEventListener('offline', () => sync(false)); sync(true);
+})();
+</script>
+<script>
+// v159: dialogs behave like dialogs: focus goes in, Escape cancels, focus returns to what opened it.
+(function () {
+  const D = [['archiveConfirmModal', 'closeArchiveConfirm'], ['customConfirmModal', 'customConfirmCancel']];
+  D.forEach(([id, cancelFn]) => {
+    const m = document.getElementById(id); if (!m) return;
+    m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+    const t = m.querySelector('[id$="Title"]'); if (t) m.setAttribute('aria-labelledby', t.id);
+    let opener = null;
+    new MutationObserver(() => {
+      const open = m.style.display && m.style.display !== 'none';
+      if (open && !m._open) {
+        m._open = true; opener = document.activeElement;
+        setTimeout(() => { const inp = m.querySelector('input:not([type=hidden])'); const vis = inp && inp.offsetParent; const btns = m.querySelectorAll('button'); (vis ? inp : btns[btns.length - 1] || btns[0]).focus(); }, 30);
+      } else if (!open && m._open) {
+        m._open = false; if (opener && document.contains(opener)) try { opener.focus({ preventScroll: true }); } catch (e) {}
+      }
+    }).observe(m, { attributes: true, attributeFilter: ['style'] });
+    m.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.preventDefault(); if (typeof window[cancelFn] === 'function') window[cancelFn](); }
+      if (e.key === 'Tab') { const f = [...m.querySelectorAll('button, input:not([type=hidden])')].filter(x => x.offsetParent); if (!f.length) return; const a = f[0], z = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); } }
+    });
+    m.addEventListener('click', e => { if (e.target === m && typeof window[cancelFn] === 'function') window[cancelFn](); });
+  });
+})();
+</script>
+<script>
+// v159: anything clickable that isn't a real button/link becomes keyboard-reachable
+// (Tab to it, Enter or Space to use it), and icon-only buttons get a spoken name.
+(function () {
+  const SEM = { BUTTON: 1, A: 1, INPUT: 1, SELECT: 1, TEXTAREA: 1, LABEL: 1, SUMMARY: 1, OPTION: 1 };
+  function upgrade(root) {
+    (root || document).querySelectorAll('[onclick]:not([data-kb])').forEach(el => {
+      el.setAttribute('data-kb', '1');
+      if (SEM[el.tagName] || el.getAttribute('role')) return;
+      if (el.classList.contains('modal-overlay') || /Modal$/.test(el.id || '') || el.classList.contains('mobile-picker-backdrop')) return;
+      el.setAttribute('role', 'button'); if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    });
+    (root || document).querySelectorAll('.checkin-toggle input:not([aria-label])').forEach(inp => {
+      const row = inp.closest('div'); const lab = row && row.querySelector('.checkin-label');
+      if (inp.parentElement && !inp.parentElement.getAttribute('aria-label')) inp.parentElement.setAttribute('aria-label', lab ? 'Checked in' : 'Toggle');
+      inp.setAttribute('aria-label', lab ? 'Checked in' : (inp.id === 'cl-free' ? 'Free class' : inp.id === 'wl-contacted' ? 'Contacted' : 'Toggle'));
+    });
+    (root || document).querySelectorAll('button:not([aria-label]):not([data-nm]), a[href]:not([aria-label]):not([data-nm])').forEach(el => {
+      el.setAttribute('data-nm', '1');
+      if ((el.textContent || '').trim()) return;
+      const n = el.getAttribute('data-tip') || el.getAttribute('title');
+      if (n) el.setAttribute('aria-label', n);
+    });
+  }
+  document.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.getAttribute && e.target.getAttribute('role') === 'button' && !SEM[e.target.tagName]) { e.preventDefault(); e.target.click(); }
+  });
+  let t = null;
+  new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => upgrade(), 120); }).observe(document.body, { childList: true, subtree: true });
+  upgrade();
+})();
+</script>
+<script>
+// v159: closed sheets, bars and form pages are taken out of the Tab order (inert),
+// so keyboard focus never lands on something you can't see.
+(function () {
+  const SEL = ['#bulkBar', '#filterSheet', '.mobile-picker-sheet', '.form-page', '.mobile-search-fullscreen', '.m-dots-popover', '#mobileMenuOverlay', '.qa-sheet'];
+  function shown(el) { const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden') return false; const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth && parseFloat(cs.opacity) > 0.05; }
+  function sync() { document.querySelectorAll(SEL.join(',')).forEach(el => { const v = el.id === 'bulkBar' ? el.classList.contains('visible') : shown(el); if (v && el.inert) el.inert = false; else if (!v && !el.inert) el.inert = true; }); }
+  let t = null; const kick = () => { clearTimeout(t); t = setTimeout(sync, 60); };
+  new MutationObserver(kick).observe(document.body, { attributes: true, attributeFilter: ['class', 'style'], subtree: true });
+  document.addEventListener('transitionend', kick, true);
+  sync();
+})();
+</script>
+<script>
+// v159: a save can only run once at a time. A double tap on Save used to send two
+// requests, which for payments could create two rows. The button shows Saving… meanwhile.
+(function () {
+  ['saveAssignPaymentPage','saveClassLog','saveEdit','saveFeePayment','saveFeeRequest','saveGig','saveLead','saveParticipant','savePayment','saveStudent','saveTrial','saveWaitlist','saveWorkshop','schSaveSlot','schSaveBlock','schSaveMove','schSaveTrial'].forEach(name => {
+    const orig = window[name]; if (typeof orig !== 'function' || orig._guarded) return;
+    let busy = false;
+    const wrapped = async function () {
+      if (busy) return;
+      busy = true;
+      const btns = [...document.querySelectorAll('[onclick^="' + name + '("]')];
+      const prev = btns.map(b => [b, b.textContent, b.disabled]);
+      btns.forEach(b => { b.disabled = true; b.setAttribute('aria-busy', 'true'); if ((b.textContent || '').trim().length < 20) b.textContent = 'Saving…'; });
+      try { return await orig.apply(this, arguments); }
+      finally { busy = false; prev.forEach(([b, t, d]) => { b.disabled = d; b.removeAttribute('aria-busy'); if (b.textContent === 'Saving…') b.textContent = t; }); }
+    };
+    wrapped._guarded = true; window[name] = wrapped;
+  });
+})();
 </script>
 </body>
 </html>
