@@ -4,7 +4,7 @@
 // for My bookings and Log out. Nothing here talks to the
 // server. The page my.html saves the login, this only reads it.
 window.hpAcct = (function () {
-  const WA = 'https://wa.me/919019576583';
+  const WA = 'https://wa.me/919380140907';
   const I = {
     cal: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
     doc: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>',
