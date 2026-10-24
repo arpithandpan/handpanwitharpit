@@ -3419,6 +3419,29 @@ body .upd-t { font-size: 18px; font-weight: 600; color: var(--tx); }
 body .upd-s { font-size: 14.5px; line-height: 1.45; color: var(--tx2); margin-top: 6px; }
 body .upd-acts { display: flex; gap: 8px; margin-top: 18px; } body .upd-acts .btn-dash { flex: 1; justify-content: center; min-height: 44px; }
 @media (prefers-reduced-motion: reduce) { body .upd-spin { animation: updspin 1.6s linear infinite !important; } }
+/* v166: system health page */
+body .hl-hero { display: flex; align-items: center; gap: 14px; background: var(--s1); border: 1px solid var(--line); border-radius: 18px; padding: 16px; margin-bottom: 6px; }
+body .hl-hero b { display: block; font-size: 17px; color: var(--tx); } body .hl-hero span:not(.hl-hic) { color: var(--tx2); font-size: 13.5px; }
+body .hl-hero > div { flex: 1; min-width: 0; }
+body .hl-hic { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; }
+body .hl-hero.ok .hl-hic { background: var(--ok-soft); color: var(--ok); } body .hl-hero.warn .hl-hic { background: var(--warn-soft); color: var(--warn); } body .hl-hero.bad .hl-hic { background: var(--bad-soft); color: var(--bad); }
+body .hl-run { flex-shrink: 0; min-height: 40px; }
+@media (max-width: 600px) { body .hl-hero { flex-wrap: wrap; } body .hl-run { width: 100%; justify-content: center; border: 1px solid var(--line) !important; } }
+body .hl-d { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: var(--ok); display: inline-block; }
+body .hl-d.warn { background: var(--warn); } body .hl-d.bad { background: var(--bad); }
+body .hl-pill { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 10px; white-space: nowrap; background: var(--ok-soft); color: var(--ok); }
+body .hl-pill.warn { background: var(--warn-soft); color: var(--warn); } body .hl-pill.bad { background: var(--bad-soft); color: var(--bad); }
+body .hl-issue { background: var(--s1); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; }
+body .hl-issue.bad { border-color: color-mix(in srgb, var(--bad) 45%, var(--line)); }
+body .hl-it { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 15.5px; color: var(--tx); }
+body .hl-issue p { margin: 6px 0 4px; color: var(--tx2); font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+body .hl-issue small { color: var(--tx3); font-size: 12.5px; }
+body .hl-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; } body .hl-acts .btn-dash { min-height: 40px; }
+body .hl-n { font-weight: 600; color: var(--tx); font-variant-numeric: tabular-nums; }
+body .hl-foot { color: var(--tx3); font-size: 13px; line-height: 1.45; margin: 16px 4px 8px; }
+body .hl-navdot { width: 8px; height: 8px; border-radius: 50%; margin-left: auto; display: none; }
+body .hl-navdot.warn { display: inline-block; background: var(--warn); } body .hl-navdot.bad { display: inline-block; background: var(--bad); }
+body #hlPage { max-width: 760px; }
 /* hidden bars stay fully hidden (the offline bar's edge showed under the status bar as a white pill) */
 body .net-bar { visibility: hidden; transform: translate(-50%, calc(-100% - 40px - env(safe-area-inset-top, 0px))); transition: transform 0.2s ease, visibility 0.2s; }
 body .net-bar.show { visibility: visible; transform: translate(-50%, 0); }
@@ -4110,6 +4133,10 @@ table#paymentsTable { min-width: 700px; }
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z"/></svg>
       WhatsApp agent
     </a>
+    <a href="#" class="admin-only" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:var(--tx);text-decoration:none;letter-spacing:0;" onclick="showSection('health',this);toggleMobileMenu()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+      System health
+    </a>
     <a href="#" style="display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.5rem;font-size:1.1rem;color:var(--tx);text-decoration:none;letter-spacing:0;" onclick="showSection('notifications',this);toggleMobileMenu()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       <span style="letter-spacing:0;">Notifications<span id="mobileNotifCount" style="font-size:0.9em;"></span></span>
@@ -4138,7 +4165,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v166</span>
+        <span style="color:var(--clay);font-weight:500;">v167</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4196,6 +4223,7 @@ table#paymentsTable { min-width: 700px; }
       <li><a href="#" onclick="showSection('waitlist',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Waitlist</a></li>
       <li><a href="#" onclick="showSection('insights',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Insights</a></li>
       <li class="admin-only"><a href="#" onclick="showSection('agent',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z"/></svg></span><span style="letter-spacing:0;">WhatsApp agent</span></a></li>
+      <li class="admin-only"><a href="#" onclick="showSection('health',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span><span style="letter-spacing:0;">System health</span><span class="hl-navdot" id="hlNavDot"></span></a></li>
       <li><a href="#" onclick="showSection('notifications',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span style="letter-spacing:0;">Notifications<span id="sidebarNotifCount" style="font-size:0.9em;"></span></span></a></li>
       <li><a href="#" onclick="showSection('bin',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span><span style="letter-spacing:0;">Bin<span id="sidebarBinCount" style="font-size:0.9em;"></span></span></a></li>
       <li class="admin-only"><a href="#" onclick="showSection('settings',this)"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Settings</a></li>
@@ -4211,7 +4239,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v166</span>
+        <span style="color:var(--clay);font-weight:500;">v167</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5017,6 +5045,15 @@ table#paymentsTable { min-width: 700px; }
 
 
     <!-- ── NOTIFICATIONS ── -->
+    <section class="dash-section admin-only" id="section-health">
+      <div class="dash-section-header" style="border-bottom:none;">
+        <div>
+          <div class="dash-section-title">System health</div>
+          <div class="dash-section-subtitle" id="hlSub">Checked every 5 minutes</div>
+        </div>
+      </div>
+      <div id="hlPage"><div class="ag-empty">Loading…</div></div>
+    </section>
     <section class="dash-section admin-only" id="section-agent">
       <div class="dash-section-header" style="border-bottom:none;">
         <div>
@@ -7187,7 +7224,7 @@ const MP_GROUPS = [
   [null, [['overview', 'Overview', '#93b2ff'], ['insights', 'Insights', '#8fbbe9']]],
   ['Workshops', [['workshops', 'Workshops', '#c9b5ef'], ['participants', 'Participants', '#c9b5ef'], ['waitlist', 'Waitlist', '#c9b5ef'], ['gigs', 'Performances', '#93b2ff']]],
   ['Students & money', [['fee-payments', 'Fee Tracker', '#a6d39a'], ['payments', 'Payments', '#a6d39a'], ['unassigned-payments', 'Unassigned payments', '#ee9a86'], ['invoices', 'Invoices', '#a6d39a'], ['leads', 'Leads', '#8fbbe9']]],
-  ['Studio', [['agent', 'WhatsApp agent', '#c9b5ef'], ['notifications', 'Notifications', '#93b2ff'], ['settings', 'Settings', '#9aabc4'], ['bin', 'Bin', '#9aabc4']]]
+  ['Studio', [['health', 'System health', '#a6d39a'], ['agent', 'WhatsApp agent', '#c9b5ef'], ['notifications', 'Notifications', '#93b2ff'], ['settings', 'Settings', '#9aabc4'], ['bin', 'Bin', '#9aabc4']]]
 ];
 let _mpCounts = {};
 function mpLink(sec) { return document.querySelector('.mob-nav a[onclick*="showSection(\'' + sec + '\'"]'); }
@@ -7226,6 +7263,7 @@ async function mpCounts() {
   _mpCounts['unassigned-payments'] = num('mobileUnassignedBadge');
   _mpCounts.notifications = num('mobileNotifCount');
   try { const r = await sbGetAll('fee_requests', 'select=id&status=eq.pending'); _mpCounts['fee-payments'] = (r.data || []).length; } catch (e) {}
+  try { if (typeof isAdmin !== 'function' || isAdmin()) { const r = await invApi('/api/health/status'); _hl.d = await r.json(); _mpCounts.health = hlActive().length; hlDot(); } } catch (e) {}
   if (document.getElementById('section-more')?.classList.contains('active')) mpRender();
 }
 
@@ -7534,6 +7572,7 @@ function loadSection(name) {
   else if (name === 'insights') loadInsights();
   else if (name === 'bin') { loadBin(); }
   else if (name === 'agent') { if (typeof agLoad === 'function') agLoad(); }
+  else if (name === 'health') { if (typeof hlLoad === 'function') hlLoad(); }
   else if (name === 'notifications') { loadNotifications(); if (typeof pushRender === 'function') pushRender(); }
   else if (name === 'settings') { loadSettings(); checkAllConnectors(true); }
 }
@@ -17340,6 +17379,77 @@ async function pushTurnOff() {
 }
 
 // '/pages/dashboard#wa=919xxxxxxxxx' opens that chat; '#sec=fee-payments' a section.
+
+// ── v166: SYSTEM HEALTH (More → System health). Data comes from the server's health watch. ──
+const _hl = { d: null, busy: false };
+function hlActive() { const d = _hl.d; if (!d || !d.issues) return []; const now = Date.now(); return d.issues.filter(i => !(i.snoozedUntil && new Date(i.snoozedUntil).getTime() > now)); }
+function hlAgo(iso) { if (!iso) return 'never'; const m = Math.round((Date.now() - new Date(iso).getTime()) / 60000); if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; const h = Math.round(m / 60); return h < 48 ? h + ' h ago' : Math.round(h / 24) + ' days ago'; }
+function hlEvery(ms) { const m = Math.round(ms / 60000); return m < 60 ? 'every ' + m + ' min' : 'every ' + Math.round(m / 60) + ' h'; }
+function hlDot() { const d = document.getElementById('hlNavDot'); if (!d) return; const a = hlActive(); d.className = 'hl-navdot' + (a.some(i => i.level === 'bad') ? ' bad' : a.length ? ' warn' : ''); }
+async function hlLoad(run) {
+  const el = document.getElementById('hlPage'); if (!el || _hl.busy) return;
+  _hl.busy = true; if (run) hlRender(true);
+  try { const r = await invApi('/api/health/' + (run ? 'run' : 'status'), run ? { method: 'POST' } : undefined); _hl.d = await r.json(); hlRender(); hlDot(); _mpCounts.health = hlActive().length; }
+  catch (e) { if (!_hl.d) el.innerHTML = '<div class="ag-empty">Could not reach the server: ' + zEsc(e.message) + '<br><br>If this keeps happening, the server itself may be down. Check Railway.</div>'; else showToast('Could not check: ' + e.message, 'error'); }
+  finally { _hl.busy = false; if (run) hlRender(); }
+}
+async function hlSnooze(key, hours) {
+  try { await invApi('/api/health/snooze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key, hours }) }); showToast(hours >= 24 ? 'Hidden until tomorrow' : 'Hidden for now', 'success'); hlLoad(); }
+  catch (e) { showToast('Could not save: ' + e.message, 'error'); }
+}
+function hlGo(sec, url) { if (url) { window.open(url, '_blank', 'noopener'); return; } if (sec) { if (['today', 'schedule', 'whatsapp', 'classes', 'more'].includes(sec)) appTab(sec); else showSection(sec, document.querySelector('.dash-nav a[onclick*="\'' + sec + '\'"]')); } }
+function hlRender(checking) {
+  const el = document.getElementById('hlPage'); const d = _hl.d; if (!el) return;
+  if (!d) { el.innerHTML = '<div class="ag-empty">Loading…</div>'; return; }
+  const sub = document.getElementById('hlSub'); if (sub) sub.textContent = checking ? 'Checking now…' : 'Checked ' + hlAgo(d.checkedAt) + ' · every 5 minutes';
+  const act = hlActive(), bad = act.filter(i => i.level === 'bad');
+  const ico = { ok: '<path d="M20 6 9 17l-5-5"/>', warn: '<path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="10"/>', bad: '<path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="10"/>' };
+  const lvl = bad.length ? 'bad' : act.length ? 'warn' : 'ok';
+  let h = '<div class="hl-hero ' + lvl + '"><span class="hl-hic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + ico[lvl] + '</svg></span><div><b>'
+    + (lvl === 'ok' ? 'Everything is running fine' : act.length + (act.length === 1 ? ' thing needs you' : ' things need you')) + '</b><span>'
+    + (lvl === 'ok' ? 'Services, automatic jobs and data all checked' : bad.length ? bad.length + ' urgent · you were alerted' : 'Nothing urgent') + '</span></div>'
+    + '<button type="button" class="btn-dash btn-dash-ghost hl-run" onclick="hlLoad(true)"' + (checking ? ' disabled' : '') + '>' + (checking ? 'Checking…' : 'Check now') + '</button></div>';
+  if (act.length) {
+    h += '<div class="ag-lbl">Needs you</div>';
+    h += act.map(i => {
+      const a = i.action || {};
+      const btn = a.label ? '<button type="button" class="btn-dash btn-dash-primary" onclick="hlGo(' + (a.sec ? '\'' + zEsc(a.sec) + '\'' : 'null') + ',' + (a.url ? '\'' + zEsc(a.url) + '\'' : 'null') + ')">' + zEsc(a.label) + '</button>' : '';
+      return '<div class="hl-issue ' + i.level + '"><div class="hl-it"><i class="hl-d ' + i.level + '"></i>' + zEsc(i.title) + '</div><p>' + zEsc(i.detail) + '</p><small>Since ' + hlAgo(i.since) + '</small>'
+        + '<div class="hl-acts">' + btn + '<button type="button" class="btn-dash btn-dash-ghost" onclick="hlSnooze(\'' + zEsc(i.key) + '\',24)">Hide for a day</button></div></div>';
+    }).join('');
+  }
+  const pill = st => '<span class="hl-pill ' + st + '">' + (st === 'ok' ? 'OK' : st === 'warn' ? 'Check' : 'Down') + '</span>';
+  if (d.services && d.services.length) {
+    h += '<div class="ag-lbl">Services</div><div class="ag-card">' + d.services.map(s => '<div class="ag-row"><i class="hl-d ' + s.status + '"></i><div style="flex:1;min-width:0">' + zEsc(s.label) + '<small>' + zEsc(s.detail || '') + '</small></div>' + pill(s.status) + '</div>').join('') + '</div>';
+  }
+  if (d.jobs && d.jobs.length) {
+    const jobs = d.jobs.slice().sort((a, b) => (a.status === 'ok') - (b.status === 'ok') || a.label.localeCompare(b.label));
+    h += '<div class="ag-lbl">Automatic jobs</div><div class="ag-card">' + jobs.map(j => '<div class="ag-row"><i class="hl-d ' + j.status + '"></i><div style="flex:1;min-width:0">' + zEsc(j.label) + '<small>' + (j.lastStart ? 'Last ran ' + hlAgo(j.lastStart) : 'Waiting for its first run') + ' · ' + hlEvery(j.every) + (j.streak ? ' · failed ' + j.streak + '× in a row' : '') + '</small></div>' + pill(j.status) + '</div>').join('') + '</div>';
+  }
+  if (d.asked && d.asked.length) {
+    h += '<div class="ag-lbl">Questions the agent passed to you · 7 days</div><div class="ag-card">' + d.asked.slice(0, 6).map(a => '<div class="ag-row"><div style="flex:1;min-width:0;text-transform:capitalize">' + zEsc(String(a.category).replace(/_/g, ' ')) + '</div><span class="hl-n">' + a.count + '</span></div>').join('') + '</div>';
+  }
+  if (d.errors && d.errors.length) {
+    h += '<div class="ag-lbl">Errors in the last hour</div><div class="ag-card">' + d.errors.slice(0, 6).map(e => '<div class="ag-row"><div style="flex:1;min-width:0">' + zEsc(String(e.message).slice(0, 140)) + '<small>' + zEsc(e.source + (e.location ? ' · ' + e.location : '')) + ' · ' + e.count + '× · ' + hlAgo(e.last_at) + '</small></div></div>').join('') + '</div>';
+  }
+  h += '<div class="hl-foot">Something urgent sends a push, an email and a WhatsApp straight away. Everything else comes in the 8:30 AM morning check.</div>';
+  el.innerHTML = h;
+}
+// Errors on this page are sent to the server's error log (a few per visit, no personal data).
+(function () {
+  const seen = new Set(); let n = 0;
+  function report(msg, at) {
+    try {
+      msg = String(msg || '').slice(0, 300); if (!msg || seen.has(msg) || n >= 5) return; seen.add(msg); n++;
+      if (/ResizeObserver loop|Script error\.?$/i.test(msg)) return;
+      const body = JSON.stringify({ page: 'dashboard', message: msg, at: String(at || '').slice(0, 150) });
+      const url = (typeof RAILWAY_URL !== 'undefined' ? RAILWAY_URL : API_BASE) + '/api/health/client-error';
+      if (navigator.sendBeacon) navigator.sendBeacon(url, body); else fetch(url, { method: 'POST', body, keepalive: true }).catch(() => {});
+    } catch (e) {}
+  }
+  window.addEventListener('error', e => report(e.message, (e.filename || '').split('/').pop() + ':' + e.lineno));
+  window.addEventListener('unhandledrejection', e => report('Unhandled: ' + (e.reason && e.reason.message || e.reason), ''));
+})();
 function studioOpenUrl(url) {
   try {
     const h = new URL(url, location.href).hash || '';
