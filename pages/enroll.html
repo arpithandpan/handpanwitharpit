@@ -421,6 +421,27 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 .en-nudge { background: var(--bk-fill); color: var(--bk-mid); border-radius: 12px; padding: 1rem 1.1rem; font-size: 15px; line-height: 1.6; margin: 1.5rem 0 0; }
 .en-nudge b { display: block; color: var(--maroon); font-size: 17px; font-weight: 600; margin-bottom: 4px; }
 .en-wrap .tb-contact { margin-top: 1.5rem; }
+
+/* ── stepper: the whole journey on every screen ── */
+.en-stepper { display: flex; margin: 0 0 1.9rem; padding: 0; list-style: none; }
+.en-st { flex: 1; position: relative; text-align: center; min-width: 0; }
+.en-st::before { content: ''; position: absolute; top: 14px; left: calc(-50% + 18px); right: calc(50% + 18px); height: 2px; border-radius: 2px; background: var(--bk-border); }
+.en-st:first-child::before { display: none; }
+.en-st.done::before, .en-st.cur::before { background: var(--maroon); }
+.en-dot { width: 30px; height: 30px; border-radius: 50%; margin: 0 auto; display: grid; place-items: center; background: #FFFDFA; border: 2px solid var(--bk-border); box-sizing: border-box; position: relative; z-index: 1; transition: all .2s; }
+.en-st.done .en-dot { background: var(--maroon); border-color: var(--maroon); color: var(--ivory); }
+.en-st.done .en-dot svg { width: 15px; height: 15px; }
+.en-st.cur .en-dot { background: var(--maroon); border-color: var(--maroon); box-shadow: 0 0 0 5px rgba(80,0,24,0.12); }
+.en-st.cur .en-dot::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #FFFDFA; }
+.en-st.wait .en-dot::after { display: none; }
+.en-st.wait .en-dot svg { width: 16px; height: 16px; color: var(--ivory); }
+.en-st b { display: block; margin-top: 0.55rem; font-size: 14px; font-weight: 500; color: var(--bk-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.en-st.done b { color: var(--bk-dark); }
+.en-st.cur b { color: var(--maroon); font-weight: 600; }
+@media (max-width: 380px) { .en-st b { font-size: 12.5px; } }
+.en-back { margin: -0.6rem 0 1.2rem; }
+.en-back .en-link { margin: 0; text-decoration: none; font-weight: 500; }
+@media (hover: hover) { .en-back .en-link:hover { text-decoration: underline; } }
 .tb-opts.en-opts3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 600px) {
   .en-card { padding: 1.5rem 1.25rem; }
@@ -575,8 +596,8 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     $('enSub').textContent = 'Tell me a little about you, then pick your weekly time and plan. No payment yet.';
     const opt = (k, v, label) => '<button type="button" class="tb-opt' + (me[k] === v ? ' on' : '') + '" data-k="' + k + '" data-v="' + v + '" aria-pressed="' + (me[k] === v) + '">' + CHECK + label + '</button>';
     const beginner = me.hasHandpan === 'not_yet' && me.experience === 'never';
-    let h = '<p class="tb-intro">Step 1 of 2 · No payment yet</p>' +
-      '<div class="en-step"><div class="en-label"><strong>1. About you</strong></div><div class="tb-fields">' +
+    let h = stepper('you') +
+      '<div class="en-step"><div class="en-label"><strong>About you</strong></div><div class="tb-fields">' +
         '<div class="tb-field"><label for="enName">Your name</label><input class="tb-input" id="enName" autocomplete="name" placeholder="Full name" maxlength="80" value="' + esc(me.name) + '"><div class="tb-err" id="err-name"></div></div>' +
         '<div class="tb-field"><label for="enEmail">Email</label><input class="tb-input" id="enEmail" type="email" inputmode="email" autocomplete="email" placeholder="Email" maxlength="120" value="' + esc(me.email) + '"><div class="tb-err" id="err-email"></div></div>' +
         '<div class="tb-field"><label for="enPhone">WhatsApp number</label><div class="tb-phone">' +
@@ -586,15 +607,15 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
         '</div><p class="tb-hint">Arpit confirms your time and sends the payment link here.</p><div class="tb-err" id="err-phone"></div></div>' +
         '<input type="text" id="enHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">' +
       '</div></div>' +
-      '<div class="en-step"><div class="en-label"><strong>2. Do you have a handpan?</strong></div><div class="tb-opts">' + opt('hasHandpan', 'yes', 'Yes, I have one') + opt('hasHandpan', 'not_yet', 'Not yet') + '</div><div class="tb-err" id="err-hasHandpan"></div></div>' +
-      '<div class="en-step"><div class="en-label"><strong>3. Played before?</strong></div><div class="tb-opts en-opts3">' + opt('experience', 'never', 'Never') + opt('experience', 'little', 'A little') + opt('experience', 'lot', 'A lot') + '</div><div class="tb-err" id="err-experience"></div></div>';
+      '<div class="en-step"><div class="en-label"><strong>Do you have a handpan?</strong></div><div class="tb-opts">' + opt('hasHandpan', 'yes', 'Yes, I have one') + opt('hasHandpan', 'not_yet', 'Not yet') + '</div><div class="tb-err" id="err-hasHandpan"></div></div>' +
+      '<div class="en-step"><div class="en-label"><strong>Played before?</strong></div><div class="tb-opts en-opts3">' + opt('experience', 'never', 'Never') + opt('experience', 'little', 'A little') + opt('experience', 'lot', 'A lot') + '</div><div class="tb-err" id="err-experience"></div></div>';
     if (beginner && !me.anyway) {
       h += '<div class="en-nudge"><b>New to the handpan?</b>A free 45 minute trial is the best start. We’ll find out together what to get and where to begin.</div>' +
         '<a class="en-go" href="/pages/trial" style="text-decoration:none;">Book a free trial instead' + ARROW + '</a>' +
         '<p class="en-fine" style="text-align:center"><button type="button" class="en-link" id="enAnyway">Continue to weekly classes anyway</button></p>';
     } else {
       h += '<button type="button" class="en-go" id="enNext"><span class="lbl">Next: pick a time</span>' + ARROW + '</button><div class="en-alert" id="enAlert"></div>' +
-        '<p class="en-fine" style="text-align:center">You choose a time and plan next. Arpit confirms before you pay.</p>';
+        '<p class="en-fine" style="text-align:center">No payment yet. You pick a time next, and Arpit confirms before you pay.</p>';
     }
     card.innerHTML = h;
     const keep = () => { me.name = $('enName').value; me.email = $('enEmail').value; me.phone = $('enPhone').value; };
@@ -647,11 +668,33 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
       const j = await jget(r);
       if (!j.ok) return fail(j.error || 'Could not continue. Please try again.');
       busy = false; token = j.token; fromAbout = true;
+      try { localStorage.setItem('en_direct_' + token, '1'); } catch (e) {}
       try { history.replaceState(null, '', '/enroll/' + token); } catch (e) {}
       window.scrollTo({ top: 0, behavior: 'smooth' });
       load();
     } catch (e) { fail('Could not connect. Check your internet and try again.'); }
   }
+
+
+  // ── Stepper ──
+  // Website people: You → Time → Confirm → Pay. Invite links (after a trial): Time → Confirm → Pay.
+  function isDirect() {
+    if (fromAbout || (!token && isNew)) return true;
+    try { return !!token && localStorage.getItem('en_direct_' + token) === '1'; } catch (e) { return false; }
+  }
+  const TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg>';
+  const CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>';
+  function stepper(key) {
+    const steps = (isDirect() ? [['you', 'You']] : []).concat([['time', 'Time'], ['confirm', 'Confirm'], ['pay', 'Pay']]);
+    const at = key === 'done' ? steps.length : steps.findIndex(x => x[0] === key);
+    const waiting = key === 'confirm';
+    return '<ol class="en-stepper" aria-label="Steps">' + steps.map((x, i) => {
+      const cls = i < at ? 'done' : i === at ? 'cur' + (waiting ? ' wait' : '') : '';
+      const inner = i < at ? TICK : (i === at && waiting ? CLOCK : '');
+      return '<li class="en-st ' + cls + '"' + (i === at ? ' aria-current="step"' : '') + '><span class="en-dot">' + inner + '</span><b>' + x[1] + '</b></li>';
+    }).join('') + '</ol>';
+  }
+  function withStepper(key) { card.insertAdjacentHTML('afterbegin', stepper(key)); }
 
   async function load() {
     if (!token && isNew) return renderAbout();
@@ -669,10 +712,10 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     const st = data.status;
     if (data.name) $('enTitle').textContent = (st === 'invited' || changing) ? 'Hi ' + data.name + ', let’s find your weekly time' : 'Your weekly class, ' + data.name;
     if ((st === 'invited' || changing) && data.slots) return renderPick();
-    if (st === 'requested') return renderRequested();
-    if (st === 'offered') return renderOffered();
-    if (st === 'approved') return renderApproved();
-    if (st === 'paid') return renderPaid();
+    if (st === 'requested') { renderRequested(); return withStepper('confirm'); }
+    if (st === 'offered') { renderOffered(); return withStepper('confirm'); }
+    if (st === 'approved') { renderApproved(); return withStepper('pay'); }
+    if (st === 'paid') { renderPaid(); return withStepper('done'); }
     if (st === 'expired') return done('This request has ended', 'The time I held has been released. Message me on WhatsApp and we’ll find a time together.', '', 'info');
     if (st === 'declined') return done('Thank you for asking', 'I’m not able to take this on right now. Nothing has been charged. You’re welcome to message me anytime.', '', 'info');
     renderPick();
@@ -692,20 +735,22 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     if (day == null || !byDay[day]) day = order.find(d => byDay[d]) ?? null;
     if (start && !slots.includes(start)) start = null;
     const tzLabel = data.tzName === 'IST' ? 'Times in IST' : 'Times in ' + data.tzName;
-    let h = (fromAbout && data.status === 'invited' ? '<p class="tb-intro">Step 2 of 2 · No payment yet</p>' : '') + (released ? '<div class="en-note">Your old time is released. Pick a new one and Arpit will confirm it.</div>' : '') + '<div class="en-step"><div class="en-label"><strong>1. Day and time</strong><span>' + esc(tzLabel) + '</span></div>';
+    const canEdit = isDirect() && data.status === 'invited' && !changing;
+    let h = (canEdit ? '<p class="en-back"><button type="button" class="en-link" id="enEdit">‹ Edit my details</button></p>' : '') + (released ? '<div class="en-note">Your old time is released. Pick a new one and Arpit will confirm it.</div>' : '') + '<div class="en-step"><div class="en-label"><strong>Day and time</strong><span>' + esc(tzLabel) + '</span></div>';
     if (!slots.length) h += '<div class="en-empty">No weekly times are free right now. Message me on WhatsApp and we’ll sort it out.</div>';
     else {
       h += '<div class="en-days">' + order.map(d => '<button type="button" class="en-day' + (d === day ? ' on' : '') + '" data-d="' + d + '"' + (byDay[d] ? '' : ' disabled') + '>' + DOW[d] + '</button>').join('') + '</div>';
       h += '<div class="en-times">' + (byDay[day] || []).map(s => '<button type="button" class="en-time' + (s.iso === start ? ' on' : '') + '" data-s="' + s.iso + '">' + esc(s.time) + '</button>').join('') + '</div>';
     }
-    h += '</div><div class="en-step"><div class="en-label"><strong>2. Plan</strong><span>' + (data.classMin || 60) + ' min classes on Zoom</span></div><div class="en-plans">' +
+    h += '</div><div class="en-step"><div class="en-label"><strong>Plan</strong><span>' + (data.classMin || 60) + ' min classes on Zoom</span></div><div class="en-plans">' +
       data.plans.map(p => '<button type="button" class="en-plan' + (p.key === plan ? ' on' : '') + '" data-p="' + p.key + '"><span><b>' + esc(p.label) + (p.discount ? '<span class="en-tag">' + p.discount + '% off</span>' : '') + '</b><small>' + p.classes + ' classes</small></span><span class="amt">' + (p.list ? '<s>' + esc(p.list) + '</s>' : '') + esc(p.text) + '</span></button>').join('') + '</div></div>';
     const sel = start ? parts(start) : null;
     h += '<button type="button" class="btn-primary en-go" id="enGo"' + (start ? '' : ' disabled') + '>' + (sel ? 'Request ' + DOWL[sel.dow] + 's at ' + esc(sel.time) : 'Pick a time') + (sel ? ARROW : '') + '</button>';
     h += '<div class="en-alert" id="enAlert"></div>';
     h += '<p class="en-fine">Arpit confirms within a day, then you get the payment link. Your first class is the next ' + (sel ? DOWL[sel.dow] : 'one') + ' after you pay.</p>';
     if (changing) h += '<p class="en-fine"><button type="button" class="en-link" id="enKeep">Keep my current request</button></p>';
-    card.innerHTML = h;
+    card.innerHTML = h; withStepper('time');
+    const ed = $('enEdit'); if (ed) ed.onclick = () => { if (!me.name) me.name = data.fullName || data.name || ''; fromAbout = true; renderAbout(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
     card.querySelectorAll('.en-day').forEach(b => b.onclick = () => { day = Number(b.dataset.d); renderPick(); });
     card.querySelectorAll('.en-time').forEach(b => b.onclick = () => { start = b.dataset.s; renderPick(); });
     card.querySelectorAll('.en-plan').forEach(b => b.onclick = () => { plan = b.dataset.p; renderPick(); });
@@ -733,7 +778,6 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     const q = data.request || {};
     done('Request sent', q.slot + ' is held for you while Arpit confirms.',
       summary([['Time', q.slot], ['Plan', q.planText], ['Amount', q.amount], ['First class', q.first ? q.first + ' (if confirmed soon)' : 'After you pay']]) +
-      '<ol class="en-steps"><li>Arpit confirms (WhatsApp and email)</li><li>You pay with the link within 3 days</li><li>You get your Zoom link and a calendar invite</li></ol>' +
       '<div class="en-btns"><button type="button" class="btn-outline" id="enChange">Change time or plan</button></div>');
     $('enChange').onclick = () => { changing = true; plan = q.planText && /Monthly/.test(q.planText) ? 'monthly' : 'quarterly'; start = null; renderPick(); };
   }
