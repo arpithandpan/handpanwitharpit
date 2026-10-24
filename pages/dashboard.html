@@ -3509,7 +3509,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v146</span>
+        <span style="color:var(--clay);font-weight:500;">v147</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3581,7 +3581,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v146</span>
+        <span style="color:var(--clay);font-weight:500;">v147</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -14558,9 +14558,17 @@ function waBubble(r, reaction) {
   if (rt) inner += waQuoteHtml(rt);
   if (out) {
     if (r.template) inner += '<div class="wa-kind">' + zEsc((WA_TPL_LABEL[r.template] || r.template.replace(/_/g, ' ')) + ' · ' + (r.template === (_wa.tpl && _wa.tpl.name) ? 'sent by you' : 'auto')) + '</div>';
+    // v147: a template with a PDF on top (the fee receipt) shows the file.
+    const tdoc = r.params && !Array.isArray(r.params) && r.params.doc;
+    if (tdoc || r.template === 'fee_receipt') {
+      const nm = (tdoc && tdoc.name) || 'Invoice.pdf', iid = tdoc && tdoc.invoiceId;
+      inner += iid ? '<button type="button" class="wa-doc" onclick="openInvoicePreview(\'' + zEsc(String(iid)).replace(/'/g, '') + '\')">' + WA_ICON.doc + '<span class="wa-doc-n">' + zEsc(nm) + '<small>PDF · Tap to open</small></span></button>'
+        : '<div class="wa-doc" style="cursor:default">' + WA_ICON.doc + '<span class="wa-doc-n">' + zEsc(nm) + '<small>Invoice PDF · see Invoices</small></span></div>';
+    }
+    const tvals = Array.isArray(r.params) ? r.params : (r.params && Array.isArray(r.params.values) ? r.params.values : []);
     if (WA_MEDIA[r.type] && r.type !== 'location') inner += waMediaHtml(r);
     else if (r.body) inner += zEsc(r.body);
-    else if (r.template) inner += '<div class="wa-params">' + (Array.isArray(r.params) && r.params.length ? r.params.map(p => zEsc(p)).join('<br>') : 'Template sent') + '</div>';
+    else if (r.template) inner += '<div class="wa-params">' + (tvals.length ? tvals.map(p => zEsc(p)).join('<br>') : 'Template sent') + '</div>';
   } else if (WA_MEDIA[r.type]) {
     if (r.type === 'location') {
       inner += '<div class="wa-media">' + WA_ICON.pin + '<span>Location<small>Open on your phone to see it</small></span></div>';
