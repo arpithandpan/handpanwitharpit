@@ -3509,7 +3509,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v145</span>
+        <span style="color:var(--clay);font-weight:500;">v146</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -3581,7 +3581,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(240,219,200,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(200,147,90,0.8)'" onmouseout="this.style.color='rgba(240,219,200,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(240,219,200,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v145</span>
+        <span style="color:var(--clay);font-weight:500;">v146</span>
         <span style="color:rgba(240,219,200,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -11251,6 +11251,7 @@ function buildEditForm(entity, r) {
     <input type="hidden" id="ef-stu-country" value="${r.country||''}"/>
     ${sel('Level','stu-level',[['Beginner','Beginner'],['Intermediate','Intermediate'],['Advanced','Advanced']],r.level)}
     ${fi('Payer Name','stu-payer','text',r.payer_name||'','maxlength="80"')}
+    <div class="form-group"><label class="form-label">Extra emails</label><input type="text" class="form-input" id="ef-stu-xemails" inputmode="email" value="${String(r.extra_emails||'').replace(/"/g,'&quot;')}" maxlength="300" placeholder="e.g. parent@gmail.com"/><span class="inv-date-hint">Optional. Calendar invites also go here, e.g. a parent or partner. Separate with commas.</span></div>
     <div class="form-group"><label class="form-label">Zoom names</label><input type="text" class="form-input" id="ef-stu-zoom" value="${(Array.isArray(r.zoom_names)?r.zoom_names.join(', '):'').replace(/"/g,'&quot;')}" maxlength="300" placeholder="e.g. Sound BALA, soundbsk@gmail.com"/><span class="inv-date-hint">Names or emails this student shows up with in Zoom, separated by commas.</span></div>
     ${fi('Description','stu-desc','textarea',r.description)}
     ${row(derived('Classes Paid For', r.total_classes||0, 'Counted from fee payments'), derived('Total Paid', r._totalDisplay || fmt(r.total_paid||0), 'Sum of all fee payments'))}
@@ -11354,6 +11355,12 @@ async function saveEdit() {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((g('stu-email')||'').trim())) { markFieldError('stu-email'); showToast('A valid email is required, invoices are sent there', 'error'); return; }
       body = { full_name:g('stu-name'), phone:getPhoneValue('ef-stu-phone','ef-stu-phone-cc')||null, email:(g('stu-email')||'').trim(), status:g('stu-status'), join_date:gd('stu-start'), monthly_fee:gn('stu-fee')||null, fee_basis:g('stu-basis')||'month', currency:(g('stu-currency')||'INR').toUpperCase(), country:(g('stu-country')||'').trim()||null, payer_name:g('stu-payer')||null, level:g('stu-level')||null, description:g('stu-desc')||null };
       if (document.getElementById('ef-stu-zoom')) body.zoom_names = parseZoomNames(g('stu-zoom'));
+      if (document.getElementById('ef-stu-xemails')) {
+        const xs = String(g('stu-xemails') || '').split(/[,;\s]+/).map(x => x.trim().toLowerCase()).filter(Boolean);
+        const bad = xs.find(x => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x));
+        if (bad) { markFieldError('ef-stu-xemails'); showToast('Check the extra email: ' + bad, 'error'); return; }
+        body.extra_emails = xs.length ? xs.join(', ') : null;
+      }
     } else if (_editEntity === 'fee_payments') {
       const _settledEl = document.getElementById('fee-settled-inr');
       body = { month:normMonth(g('fee-month'))||null, classes:gn('fee-classes')||0, amount:gn('fee-amount'), payment_mode:g('fee-mode'), payment_date:gd('fee-date'), paid:g('fee-paid')==='true', description:g('fee-desc')||null, settled_inr: _settledEl ? (parseFloat(_settledEl.value) || null) : null };
