@@ -4365,7 +4365,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v175</span>
+        <span style="color:var(--clay);font-weight:500;">v176</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4439,7 +4439,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v175</span>
+        <span style="color:var(--clay);font-weight:500;">v176</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17677,6 +17677,7 @@ function hlRender(checking) {
   if (d.services && d.services.length) {
     h += '<div class="ag-lbl">Services</div><div class="ag-card">' + d.services.map(s => '<div class="ag-row"><i class="hl-d ' + s.status + '"></i><div style="flex:1;min-width:0">' + zEsc(s.label) + '<small>' + zEsc(s.detail || '') + '</small></div>' + pill(s.status) + '</div>').join('') + '</div>';
   }
+  h += '<div id="calBox"></div>';
   if (d.jobs && d.jobs.length) {
     const jobs = d.jobs.slice().sort((a, b) => (a.status === 'ok') - (b.status === 'ok') || a.label.localeCompare(b.label));
     h += '<div class="ag-lbl">Automatic jobs</div><div class="ag-card">' + jobs.map(j => '<div class="ag-row"><i class="hl-d ' + j.status + '"></i><div style="flex:1;min-width:0">' + zEsc(j.label) + '<small>' + (j.lastStart ? 'Last ran ' + hlAgo(j.lastStart) : 'Waiting for its first run') + ' · ' + hlEvery(j.every) + (j.streak ? ' · failed ' + j.streak + '× in a row' : '') + '</small></div>' + pill(j.status) + '</div>').join('') + '</div>';
@@ -17689,7 +17690,56 @@ function hlRender(checking) {
   }
   h += '<div class="hl-foot">Safe problems are fixed by themselves and listed here. Something urgent sends a push, an email and a WhatsApp straight away. Everything else comes in the 8:30 AM morning check.</div>';
   el.innerHTML = h;
-  rvRender();
+  rvRender(); calRender();
+}
+
+// ── v176: CALENDARS (System health). Students' invites, Arpit's Studio calendar, old entries, Zoom links. ──
+const _cal = { d: null, busy: false, at: 0 };
+async function calLoad(force) {
+  if (_cal.busy || (!force && _cal.d && Date.now() - _cal.at < 60000)) { calRender(); return; }
+  _cal.busy = true;
+  try { const r = await invApi('/api/calendar/overview'); _cal.d = await r.json(); _cal.at = Date.now(); } catch (e) { _cal.err = e.message; }
+  _cal.busy = false; calRender();
+}
+async function calSync() {
+  if (_cal.busy) return; _cal.busy = true; calRender();
+  try { const r = await invApi('/api/studio-calendar/run', { method: 'POST' }); const j = await r.json(); showToast(j.sync && j.sync.ok ? 'Studio calendar is up to date' : (j.sync && j.sync.skipped) ? 'Studio calendar is not set up yet' : 'Sync failed: ' + ((j.sync && j.sync.error) || 'unknown'), j.sync && j.sync.ok ? 'success' : 'warning'); }
+  catch (e) { showToast('Sync failed: ' + e.message, 'error'); }
+  _cal.busy = false; calLoad(true);
+}
+async function calResend(slot, name) {
+  try { const r = await invApi('/api/calendar/resend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slot }) }); const j = await r.json(); showToast(j.sent && j.sent.length ? 'Invite sent again to ' + name : (j.mode === 'off' ? 'Calendar invites are off' : 'Queued, it goes out within 10 minutes'), 'success'); calLoad(true); }
+  catch (e) { showToast('Could not resend: ' + e.message, 'error'); }
+}
+function calRender() {
+  const box = document.getElementById('calBox'); if (!box) return;
+  if (!_cal.d) { box.innerHTML = ''; if (!_cal.busy && !_cal.err) calLoad(); return; }
+  const d = _cal.d, st = d.studio || {}, pill = (k, t) => '<span class="hl-pill ' + k + '">' + t + '</span>';
+  let h = '<div class="ag-lbl">Calendars</div><div class="ag-card">';
+  // Arpit's Studio calendar
+  const sk = !st.enabled ? 'warn' : st.lastError ? 'bad' : 'ok';
+  h += '<div class="ag-row"><i class="hl-d ' + sk + '"></i><div style="flex:1;min-width:0">Your Studio calendar<small>'
+    + (!st.enabled ? 'Not set up yet' : st.lastError ? zEsc(String(st.lastError).slice(0, 120)) : 'Synced ' + hlAgo(st.lastSync) + (st.counts ? ' · ' + st.counts.events + ' events' : ''))
+    + '</small></div><button type="button" class="btn-dash btn-dash-ghost" style="min-height:36px;padding:0 14px" onclick="calSync()"' + (_cal.busy ? ' disabled' : '') + '>' + (_cal.busy ? 'Syncing…' : 'Sync now') + '</button></div>';
+  // Zoom links
+  const zp = st.zoom || [];
+  h += '<div class="ag-row"><i class="hl-d ' + (zp.length ? 'bad' : 'ok') + '"></i><div style="flex:1;min-width:0">Zoom links<small>'
+    + (zp.length ? zp.map(z => zEsc(z.student + ': ' + z.problem)).join('<br>') : st.zoomAt ? 'Every student has their permanent link · checked ' + hlAgo(st.zoomAt) : 'Not checked yet') + '</small></div>' + pill(zp.length ? 'bad' : 'ok', zp.length ? 'Fix' : 'OK') + '</div>';
+  // Old entries in Arpit's personal calendars
+  const stray = (st.stray || []).filter(x => !x.error), serr = (st.stray || []).filter(x => x.error);
+  h += '<div class="ag-row"><i class="hl-d ' + (stray.length || serr.length ? 'warn' : 'ok') + '"></i><div style="flex:1;min-width:0">Old class entries<small>'
+    + (!(st.watching || []).length ? 'Not watching your calendars yet'
+      : stray.length ? stray.map(x => zEsc(x.title) + (x.next ? ' · next ' + zEsc(new Date(x.next).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })) : '') + (x.studentGuests ? ' · a student sees it too' : '')).join('<br>') + '<br>Delete in Google Calendar: open it, then This and following events.'
+      : serr.length ? 'Could not read: ' + zEsc(serr.map(x => x.calendar).join(', ')) : 'None found · checked ' + hlAgo(st.strayAt))
+    + '</small></div>' + pill(stray.length || serr.length ? 'warn' : 'ok', stray.length ? stray.length + ' left' : serr.length ? 'Check' : 'OK') + '</div>';
+  h += '</div>';
+  // Students' calendar invites
+  const inv = (d.invites || []).filter(i => i.active);
+  h += '<div class="ag-lbl">Students\' calendar invites · ' + zEsc(d.invitesMode === 'on' ? 'on' : d.invitesMode === 'test' ? 'test, to you only' : 'off') + '</div><div class="ag-card">'
+    + (inv.length ? inv.map(i => '<div class="ag-row"><i class="hl-d ok"></i><div style="flex:1;min-width:0">' + zEsc(i.student) + '<small>' + zEsc(i.to || '') + ' · sent ' + hlAgo(i.sent) + (i.updates ? ' · updated ' + i.updates + '×' : '') + '</small></div>'
+      + '<button type="button" class="btn-dash btn-dash-ghost" style="min-height:36px;padding:0 14px" onclick="calResend(\'' + zEsc(String(i.slot)) + '\',\'' + zEsc(String(i.student)).replace(/'/g, '') + '\')">Resend</button></div>').join('')
+      : '<div class="ag-row"><div style="flex:1">No invites sent yet</div></div>') + '</div>';
+  box.innerHTML = h;
 }
 
 // ── v172: WEEKLY AI REVIEW (top of System health) ──
