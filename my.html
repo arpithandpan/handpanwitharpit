@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex"/>
+<meta name="referrer" content="no-referrer"/>
+<title>My bookings | Arpit Pandey</title>
+<link rel="icon" href="../favicon.ico"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<style>
+[hidden] { display: none !important; }
+/* This page is the login page: the "Log in" button shows as the current
+   page (filled), like the underline on other pages. Tapping it just scrolls
+   to the form. When logged in, main.js hides it and shows the initial. */
+.nav-links a.nav-account:not([hidden]), .mobile-menu-inner a.mm-account:not([hidden]) { background: var(--maroon); color: var(--ivory) !important; border-color: var(--maroon); }
+.mc-wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 1.25rem; }
+/* A working page, not a marketing page: a small greeting instead of the big hero. */
+.mc-section { padding-top: calc(var(--nav-h) + 2.75rem) !important; min-height: 60vh; }
+.mc-head { padding: 0 0.25rem 0.25rem; }
+.mc-hi { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; color: var(--maroon); font-size: clamp(2rem, 1.6rem + 1.4vw, 2.6rem); line-height: 1.05; margin: 0 0 0.35rem; }
+.mc-tz { font-size: 0.95rem; color: var(--text-mid); margin: 0; }
+.lk-card .lk-title { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; color: var(--maroon); font-size: clamp(2.1rem, 1.7rem + 1.4vw, 2.6rem); line-height: 1; margin: 0 0 0.6rem; }
+@media (max-width: 1080px) { .mc-section { padding-top: calc(var(--nav-h) + 1.75rem) !important; } }
+.mc-narrow { max-width: 520px; }
+.mc-card { background: var(--card); border-radius: var(--card-radius); padding: 1.75rem 2rem; }
+.mc-k { font-size: 0.85rem; color: var(--text-mid); margin: 0 0 0.35rem; }
+.mc-when { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; color: var(--maroon); font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.5rem); line-height: 1.05; margin: 0 0 0.35rem; }
+.mc-sub { font-size: 0.97rem; color: var(--text-dark); margin: 0 0 1.4rem; }
+.mc-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+.mc-btn { font-family: var(--font-body); font-size: 0.98rem; font-weight: 500; border-radius: 40px; padding: 0 1.4rem; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; border: 1px solid var(--maroon); text-decoration: none; transition: background .15s, color .15s, border-color .15s; -webkit-tap-highlight-color: transparent; }
+.mc-btn.solid { background: var(--maroon); color: var(--ivory); }
+.mc-btn.line { background: transparent; color: var(--maroon); border-color: var(--rule); }
+@media (hover: hover) { .mc-btn.solid:hover { background: var(--maroon-deep); } .mc-btn.line:hover { border-color: var(--maroon); } }
+.mc-btn.busy { pointer-events: none; opacity: 0.6; }
+.mc-spacer { flex: 1; }
+.mc-locked { font-size: 0.92rem; color: var(--text-mid); margin: 0; line-height: 1.55; }
+.mc-locked a, .mc-inline { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
+.mc-bal { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.mc-bal h3 { color: var(--maroon); font-size: 1.1rem; font-weight: 600; margin: 0 0 0.25rem; }
+.mc-bal p { margin: 0; font-size: 0.95rem; color: var(--text-dark); }
+.mc-h { color: var(--maroon); font-size: 1.05rem; font-weight: 600; margin: 0 0 0.6rem; }
+.mc-list { list-style: none; margin: 0; padding: 0; }
+.mc-item { display: flex; align-items: center; gap: 1rem; padding: 0.95rem 0; border-top: 1px solid rgba(80,0,24,0.12); }
+.mc-item:first-child { border-top: none; }
+.mc-item.later { opacity: 0.55; }
+.mc-date { width: 52px; flex-shrink: 0; text-align: center; color: var(--maroon); line-height: 1.1; }
+.mc-date b { display: block; font-size: 1.35rem; font-weight: 600; }
+.mc-date span { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.mc-info { flex: 1; min-width: 0; }
+.mc-info strong { display: block; color: var(--maroon); font-weight: 500; font-size: 0.98rem; }
+.mc-info small { font-size: 0.85rem; color: var(--text-mid); }
+.mc-tag { display: inline-block; font-size: 0.74rem; font-weight: 500; padding: 2px 8px; border-radius: 20px; background: var(--ivory); color: var(--maroon); margin-left: 6px; vertical-align: 1px; white-space: nowrap; }
+.mc-more { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--rule); background: transparent; color: var(--maroon); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+@media (hover: hover) { .mc-more:hover { border-color: var(--maroon); } }
+.mc-group { font-size: 0.82rem; color: var(--text-mid); margin: 0.9rem 0 0; padding-top: 0.9rem; border-top: 1px solid rgba(80,0,24,0.12); }
+.mc-makeup { display: flex; align-items: center; gap: 1rem; background: var(--ivory); border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 0.4rem; }
+.mc-makeup p { margin: 0; flex: 1; font-size: 0.95rem; color: var(--maroon); }
+.mc-makeup .mc-btn { min-height: 40px; padding: 0 1.1rem; font-size: 0.92rem; }
+.mc-empty { font-size: 0.95rem; color: var(--text-mid); margin: 0; }
+.mc-link { display: flex; align-items: center; gap: 0.85rem; padding: 1rem 0; border: 0; border-top: 1px solid rgba(80,0,24,0.12); color: var(--maroon); text-decoration: none; font-weight: 500; font-size: 0.98rem; background: none; width: 100%; font-family: var(--font-body); cursor: pointer; text-align: left; }
+.mc-link:first-child { border-top: none; padding-top: 0.2rem; }
+/* workshops */
+.ws-facts { list-style: none; margin: 0 0 1.4rem; padding: 0; display: grid; gap: 0.75rem; }
+.ws-facts li { display: flex; gap: 0.7rem; align-items: flex-start; color: var(--text-dark); font-size: 0.95rem; line-height: 1.45; }
+.ws-facts li > svg { flex-shrink: 0; color: var(--maroon); margin-top: 1px; width: 18px; height: 18px; }
+.ws-facts li > span { min-width: 0; }
+.ws-facts a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); margin-left: 0.4rem; }
+.ws-facts small { display: block; font-size: 0.85rem; color: var(--text-mid); margin-top: 2px; }
+.ws-policy { border-top: 1px solid rgba(80,0,24,0.12); padding-top: 1.2rem; }
+.ws-policy .mc-h { font-size: 0.98rem; margin-bottom: 0.4rem; }
+.ws-policy p:not(.mc-h) { font-size: 0.92rem; color: var(--text-mid); line-height: 1.55; margin: 0 0 0.5rem; }
+.ws-policy .mc-btn { margin-top: 0.6rem; }
+.mc-info small a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
+.mc-sec { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mid); margin: 0.8rem 0 -0.3rem 0.2rem; }
+.mc-help-h { font-size: 0.85rem; color: var(--text-mid); margin: 1.1rem 0 0.1rem; padding-top: 1rem; border-top: 1px solid rgba(80,0,24,0.12); }
+.mc-help-h:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.mc-help-h + .mc-link { border-top: 0; padding-top: 0.5rem; }
+.mc-cal { font-size: 0.88rem; color: var(--text-mid); margin: 1rem 0 0; line-height: 1.5; }
+.mc-cal button.mc-inline:disabled { opacity: .55; cursor: default; }
+button.mc-inline { background: none; border: 0; border-bottom: 1px solid rgba(80,0,24,.25); padding: 0; font: inherit; font-weight: 500; color: var(--maroon); cursor: pointer; }
+a.mc-opt { text-decoration: none; }
+.mc-link:last-child { padding-bottom: 0.2rem; }
+.mc-link .end { margin-left: auto; color: var(--text-mid); transition: transform .2s; }
+.mc-link[aria-expanded="true"] .end { transform: rotate(180deg); }
+.mc-pay { padding: 0 0 0.6rem 2.1rem; }
+.mc-pay div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.92rem; padding: 0.45rem 0; color: var(--text-dark); }
+.mc-pay a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
+/* skeleton */
+.mc-sk { background: var(--card); border-radius: var(--card-radius); height: 210px; position: relative; overflow: hidden; }
+.mc-sk.s2 { height: 300px; }
+.mc-sk::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(80,0,24,0.04), transparent); animation: mcShimmer 1.4s infinite; }
+@keyframes mcShimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+/* link form */
+.lk-card h3 { color: var(--maroon); font-size: 1.15rem; font-weight: 600; margin: 0 0 0.35rem; }
+.lk-card p { font-size: 0.97rem; color: var(--text-dark); margin: 0 0 1.4rem; line-height: 1.55; }
+.lk-card label { display: block; font-size: 0.85rem; color: var(--maroon); font-weight: 500; margin-bottom: 0.35rem; }
+.lk-input { width: 100%; height: 50px; padding: 0 1rem; font-family: var(--font-body); font-size: 1rem; color: var(--maroon); background: #fff; border: 1px solid var(--rule); border-radius: 12px; outline: none; -webkit-appearance: none; appearance: none; box-sizing: border-box; }
+.lk-input:focus { border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(80,0,24,0.10); }
+.lk-input.err { border-color: #B3261E; }
+.lk-card .lk-err { font-size: 0.84rem; color: #B3261E; margin: 0.4rem 0 0 !important; }
+.lk-card .mc-btn.solid.wide { width: 100%; margin-top: 1rem; min-height: 50px; }
+.lk-card .lk-help { font-size: 0.88rem; color: var(--text-mid); text-align: center; margin: 1.2rem 0 0; }
+.lk-card .lk-help a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
+.otp-sent { display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: var(--ivory); border-radius: 12px; padding: 0.75rem 1rem; margin: 0 0 1.4rem; font-size: 0.93rem; color: var(--maroon); }
+.otp-sent span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.otp-sent button { background: none; border: 0; padding: 0; font: inherit; font-weight: 500; color: var(--maroon); border-bottom: 1px solid rgba(80,0,24,.3); cursor: pointer; flex-shrink: 0; }
+.otp-wrap { position: relative; }
+.otp-boxes { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.5rem; }
+.otp-boxes span { height: 58px; border: 1px solid var(--rule); border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 600; color: var(--maroon); transition: border-color .15s, box-shadow .15s; }
+.otp-boxes span.cur { border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(80,0,24,0.10); }
+.otp-boxes.err span { border-color: #B3261E; box-shadow: none; }
+.otp-boxes.busy span { opacity: 0.55; }
+.otp-boxes.ok span { border-color: #2E7D4F; box-shadow: none; }
+.lk-card .otp-checking { font-size: 0.86rem; color: var(--text-mid); margin: 0.4rem 0 0; }
+.lk-card .otp-note { text-align: center; font-size: 0.86rem; margin: 0.5rem 0 0; color: var(--text-mid); }
+.lk-card .otp-note.err { color: #B3261E; }
+.otp-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0; font-size: 16px; color: transparent; background: transparent; caret-color: transparent; cursor: text; }
+.lk-card .otp-resend { text-align: center; font-size: 0.9rem; color: var(--text-mid); margin: 1.2rem 0 0; }
+.otp-resend button { background: none; border: 0; padding: 0; font: inherit; font-weight: 500; color: var(--maroon); border-bottom: 1px solid rgba(80,0,24,.3); cursor: pointer; }
+@media (max-width: 360px) { .otp-boxes { gap: 0.35rem; } .otp-boxes span { height: 52px; } }
+.lk-ic { width: 56px; height: 56px; border-radius: 50%; background: var(--ivory); color: var(--maroon); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.lk-done p { margin-bottom: 1.2rem; }
+.lk-again { background: none; border: 0; font-family: var(--font-body); font-size: 0.92rem; color: var(--maroon); font-weight: 500; cursor: pointer; border-bottom: 1px solid rgba(80,0,24,.25); padding: 0; }
+.lk-note { background: var(--ivory); border-radius: 12px; padding: 0.85rem 1rem; font-size: 0.92rem !important; color: var(--maroon) !important; }
+/* sheets */
+.mc-scrim { position: fixed; inset: 0; background: rgba(40,10,15,0.45); z-index: 200; opacity: 0; transition: opacity .2s; }
+.mc-scrim.open { opacity: 1; }
+.mc-sheet { position: fixed; z-index: 201; background: var(--card); padding: 1.6rem 1.5rem 1.5rem; box-sizing: border-box; }
+@media (max-width: 640px) {
+  .mc-sheet { left: 0; right: 0; bottom: 0; border-radius: 22px 22px 0 0; max-height: 88vh; overflow: auto; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .25s ease; }
+  .mc-sheet.open { transform: none; }
+  .mc-sheet::before { content: ""; display: block; width: 40px; height: 4px; border-radius: 2px; background: rgba(80,0,24,0.2); margin: -0.6rem auto 1.1rem; }
+}
+@media (min-width: 641px) {
+  .mc-sheet { top: 50%; left: 50%; transform: translate(-50%,-48%); width: 520px; max-height: 86vh; overflow: auto; border-radius: 22px; padding: 2rem; opacity: 0; transition: opacity .2s, transform .2s; }
+  .mc-sheet.open { opacity: 1; transform: translate(-50%,-50%); }
+}
+.mc-sheet h3 { color: var(--maroon); font-size: 1.2rem; font-weight: 600; margin: 0 0 0.3rem; }
+.mc-sheet .lead { font-size: 0.95rem; color: var(--text-dark); margin: 0 0 1.3rem; line-height: 1.55; }
+.mc-sheet .lbl { font-size: 0.85rem; color: var(--text-mid); margin: 0 0 0.6rem; }
+.mc-days { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 0.5rem; margin-bottom: 1.3rem; }
+.mc-day, .mc-time { font-family: var(--font-body); border: 1px solid var(--rule); background: transparent; color: var(--maroon); border-radius: 12px; cursor: pointer; }
+.mc-day { padding: 0.65rem 0.2rem; text-align: center; line-height: 1.25; }
+.mc-day .d1 { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.mc-day .d2 { display: block; font-size: 1.05rem; font-weight: 600; }
+.mc-times { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0.55rem; margin-bottom: 1.4rem; }
+.mc-time { padding: 0.8rem 0.4rem; font-size: 0.95rem; }
+.mc-day.on, .mc-time.on { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.mc-sheet .acts { display: flex; gap: 0.7rem; }
+.mc-sheet .acts .mc-btn { flex: 1; padding: 0 1rem; }
+.mc-sheet .fine { font-size: 0.84rem; color: var(--text-mid); margin: 1rem 0 0; text-align: center; }
+.mc-sheet .msg { font-size: 0.9rem; color: #B3261E; margin: 0 0 1rem; }
+.mc-sheet .none { font-size: 0.95rem; color: var(--text-mid); margin: 0 0 1.4rem; line-height: 1.55; }
+.mc-opt { display: flex; align-items: center; gap: 0.9rem; width: 100%; padding: 1rem 0; border: 0; border-top: 1px solid rgba(80,0,24,0.12); background: none; font-family: var(--font-body); text-align: left; cursor: pointer; color: var(--maroon); }
+.mc-opt.first { border-top: 0; }
+.mc-opt strong { display: block; font-weight: 500; font-size: 1rem; }
+.mc-opt small { display: block; font-size: 0.86rem; color: var(--text-mid); }
+.mc-opt .ic { width: 40px; height: 40px; border-radius: 50%; background: var(--ivory); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mc-toast { position: fixed; left: 50%; top: calc(var(--nav-h, 72px) + 14px); transform: translate(-50%, -12px); width: max-content; max-width: calc(100% - 32px); box-sizing: border-box; background: #CFE5C4; color: #1E3816; border-left: 4px solid #2F6522; border-radius: 10px; padding: 0.85rem 1.2rem 0.85rem 1rem; font-size: 0.95rem; line-height: 1.45; z-index: 300; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; display: flex; align-items: center; gap: 0.75rem; box-shadow: 0 8px 24px rgba(30,56,22,0.20); }
+.mc-toast.show { opacity: 1; transform: translate(-50%, 0); }
+.mc-toast .ic { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: #2F6522 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/13px no-repeat; }
+.mc-toast .tx { flex: 1; min-width: 0; }
+@media (max-width: 600px) { .mc-toast { width: calc(100% - 32px); } }
+@media (max-width: 600px) {
+  .mc-card { padding: 1.4rem 1.25rem; }
+  .mc-row .mc-btn.solid { flex: 1 1 100%; }
+  .mc-row .mc-btn.line { flex: 1; }
+  .mc-spacer { display: none; }
+  .mc-makeup { flex-wrap: wrap; }
+  .mc-days { grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+@media (max-width: 360px) { .mc-times { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+
+/* ── Brand alignment: same components as the Trial page (tb-*) ── */
+:root { --bk-fill:#F5EEE5; --bk-border:#D9C8C6; --bk-dark:#5A4645; --bk-mid:#6B5150; --bk-light:#8E7A79; --bk-pale:#EDE1DC; --bk-sand-deep:#EDE3D9; --bk-stone:#BFA9A8; --bk-err:#8A2614; --bk-err-bg:#F4D8CE; }
+/* Buttons: primary = Trial "Book" (bold), secondary = Trial "Try again" */
+.mc-btn { font-weight: 600; letter-spacing: 0.02em; }
+.mc-btn.solid { border-color: var(--maroon); }
+.mc-btn.line { border: 1.5px solid var(--maroon); font-weight: 600; min-height: 44px; }
+@media (hover: hover) { .mc-btn.line:hover { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); } }
+.lk-card .mc-btn.solid.wide, #mcPage > .mc-card:first-of-type .mc-row .mc-btn.solid { min-height: 56px; font-size: var(--t-body); }
+.mc-makeup .mc-btn { font-size: 15px; }
+.mc-more { border: 1px solid var(--bk-border); }
+@media (hover: hover) { .mc-more:hover { background: var(--bk-sand-deep); border-color: var(--bk-border); } }
+/* Inputs + code boxes = Trial form fields */
+.lk-card label { font-size: 15px; font-weight: 500; color: var(--bk-mid); margin-bottom: 0.4rem; }
+.lk-input { height: 48px; padding: 0 18px; border-radius: 10px; border: 1px solid var(--bk-border); background: var(--bk-fill); color: var(--bk-dark); }
+.lk-input::placeholder { color: #8A7560; }
+.lk-input:focus { border-color: var(--maroon); box-shadow: none; }
+.lk-input.err { border-color: var(--bk-err); }
+.otp-boxes span { height: 56px; border-radius: 10px; border: 1px solid var(--bk-border); background: var(--bk-fill); color: var(--bk-dark); }
+.otp-boxes span.cur { border-color: var(--maroon); box-shadow: none; }
+.otp-boxes.err span { border-color: var(--bk-err); }
+/* Errors = Trial error box */
+.lk-card .lk-err { font-size: 14px; color: var(--bk-err); font-weight: 500; line-height: 1.45; background: var(--bk-err-bg); border-radius: 8px; padding: 10px 12px; margin: 0.6rem 0 0 !important; }
+.lk-card .otp-note.err, .mc-sheet .msg { color: var(--bk-err); }
+.mc-btn.wait, .mc-btn.wait:hover { background: var(--bk-pale) !important; color: var(--bk-mid) !important; border-color: var(--bk-pale) !important; cursor: default; }
+.nudge { animation: mcNudge .35s ease; }
+@keyframes mcNudge { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+@media (prefers-reduced-motion: reduce) { .nudge { animation: none; } }
+.lk-note { background: var(--bk-fill); }
+.otp-sent { background: var(--bk-fill); border-radius: 10px; }
+/* Day + time pickers = Trial calendar */
+.mc-day, .mc-time { border: 1px solid var(--bk-border); background: var(--bk-fill); color: var(--bk-dark); border-radius: 10px; font-weight: 500; transition: all .15s; min-height: 48px; }
+@media (hover: hover) { .mc-day:not(.on):hover, .mc-time:not(.on):hover { background: var(--bk-sand-deep); } }
+.mc-day.on, .mc-time.on { background: var(--maroon); color: var(--ivory); border-color: var(--maroon); }
+.mc-day .d2 { font-size: 17px; font-weight: 500; }
+.mc-time { font-size: 16.5px; }
+/* Quiet surfaces use the same ivory fill */
+.mc-makeup { background: var(--bk-fill); border-radius: 12px; }
+.mc-opt .ic { background: var(--bk-fill); }
+.mc-tag { background: var(--bk-fill); }
+/* Account menu = Trial dropdown (country picker) */
+.acct-menu { border-radius: 10px; border: 1px solid var(--bk-stone); box-shadow: 0 6px 20px rgba(80,0,24,0.14); }
+.nav-links .acct-menu a, .acct-menu button { border-radius: 6px; font-size: 16px; color: var(--maroon); }
+@media (hover: hover) { .nav-links .acct-menu a:hover, .acct-menu button:hover { background: var(--bk-fill); } }
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-logo"><img src="../images/handpan-logo.svg" alt="Handpan with Arpit" width="44" height="44" style="display:block;">
+  </a>
+  <button class="nav-hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li><li><a href="about.html">About</a></li>
+    <li><a href="music.html">Music</a></li><li><a href="workshops.html">Workshops</a></li>
+    <li><a href="classes.html">Classes</a></li><li><a href="contact.html">Contact</a></li>
+    <li class="nav-account-li"><a class="nav-account" href="my.html" aria-current="page"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Log in</span></a></li>
+  </ul>
+</nav>
+<div class="mobile-menu">
+<div class="mobile-menu-inner">
+  <a href="../index.html">Home</a><a href="about.html">About</a><a href="music.html">Music</a>
+  <a href="workshops.html">Workshops</a><a href="classes.html">Classes</a><a href="contact.html">Contact</a>
+  <a class="mm-account" href="my.html" aria-current="page"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Log in</span></a>
+</div>
+</div>
+
+
+<section class="section mc-section">
+  <!-- loading -->
+  <div class="mc-wrap" id="mcLoading" hidden><div class="mc-sk"></div><div class="mc-sk s2"></div></div>
+
+  <!-- ask for link -->
+  <div class="mc-wrap mc-narrow" id="mcAsk" hidden>
+    <div class="mc-card lk-card">
+      <div id="lkForm">
+        <p class="lk-note" id="lkExpired" hidden>That login link isn't working any more. Get a fresh one below.</p>
+        <h1 class="lk-title">Log in</h1>
+        <p>No password needed. We'll send a 6-digit code to the email on your booking.</p>
+        <label for="lkInput">Phone number or email</label>
+        <input class="lk-input" id="lkInput" placeholder="Phone or email" autocomplete="email" maxlength="120"/>
+        <p class="lk-err" id="lkErr" hidden></p>
+        <button class="mc-btn solid wide" id="lkSend" type="button">Send code</button>
+        <p class="lk-help">New here? <a href="trial">Book a free trial</a></p>
+      </div>
+      <div id="lkCode" hidden>
+        <h3>Enter your code</h3>
+        <p id="lkCodeP">We sent a 6-digit code to your email. It works for 10 minutes.</p>
+        <div class="otp-sent"><span id="lkSentTo"></span><button type="button" id="lkChange">Change</button></div>
+        <div class="otp-wrap">
+          <div class="otp-boxes" id="otpBoxes" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <input class="otp-input" id="otpInput" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" aria-label="6-digit code"/>
+        </div>
+        <p class="lk-err" id="otpErr" hidden></p>
+        <p class="otp-checking" id="otpChecking" hidden>Checking your code…</p>
+        <button class="mc-btn solid wide" id="otpGo" type="button">Log in</button>
+        <p class="otp-resend" id="otpResend"></p>
+        <p class="otp-note" id="otpNote" hidden></p>
+        <p class="lk-help">Code not coming? <a class="mcWa" href="https://wa.me/919380140907" target="_blank" rel="noopener">WhatsApp</a> or <a href="mailto:arpithandpan@gmail.com?subject=Login%20code%20not%20coming">email</a> Arpit</p>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- the page -->
+  <div class="mc-wrap" id="mcPage" hidden></div>
+</section>
+
+<div class="mc-toast" id="mcToast" role="status" aria-live="polite"></div>
+
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <span class="footer-brand-name">Arpit <em>Pandey</em></span>
+      <span class="footer-brand-tag">Handpan artist · Bengaluru, India</span>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="music.html">Music</a></li>
+        <li><a href="workshops.html">Workshops</a></li>
+        <li><a href="classes.html">Classes</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="dashboard.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;">Dashboard <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></svg></a></li>
+        <li><a href="../privacy.html">Privacy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Learn</h4>
+      <ul>
+        <li><a href="trial.html">Free trial</a></li>
+        <li><a href="classes.html">Online classes</a></li>
+        <li><a href="workshops.html">Live workshops</a></li>
+        <li><a href="my.html">My bookings</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.instagram.com/pandeyarpit" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank" rel="noopener">Spotify</a></li>
+        <li><a href="mailto:arpithandpan@gmail.com">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Arpit Pandey</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+<script>
+(function () {
+  const API = 'https://handpan-webhook-server-production.up.railway.app';
+  const $ = id => document.getElementById(id);
+  const KEY = 'hp_my_token', NAME_KEY = 'hp_my_name', ROLE_KEY = 'hp_my_role';
+  const ICON_MORE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
+  const ICON_ZOOM = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="M15.5 10.5l6-3.5v10l-6-3.5"/></svg>';
+  const ICON_PIN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>';
+  const ICON_PPL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/></svg>';
+  const ICON_PAN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="12" rx="9" ry="6"/><circle cx="12" cy="11" r="2"/></svg>';
+  const ICON_DOC = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>';
+  const ICON_WA = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg>';
+  const ICON_DOWN = '<svg class="end" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  const ICON_MAIL = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>';
+  const ICON_RIGHT = '<svg class="end" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  const ICON_CAL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+  const ICON_OUT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>';
+  const ICON_X = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>';
+
+  let token = '', data = null;
+
+  function store(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function show(id) { ['mcLoading', 'mcAsk', 'mcPage'].forEach(x => { $(x).hidden = x !== id; }); }
+
+  let toastT = null;
+  function toast(msg) {
+    const t = $('mcToast');
+    t.innerHTML = '<span class="ic" aria-hidden="true"></span><span class="tx"></span>';
+    t.querySelector('.tx').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3800);
+  }
+
+  // ── formatting in the student's own zone ──
+  function tz() { return (data && data.classes && data.classes.tz) || Intl.DateTimeFormat().resolvedOptions().timeZone; }
+  function f(iso, opts) { return new Intl.DateTimeFormat('en-GB', { timeZone: tz(), ...opts }).format(new Date(iso)); }
+  function time(iso) { return new Intl.DateTimeFormat('en-US', { timeZone: tz(), hour: 'numeric', minute: '2-digit' }).format(new Date(iso)); }
+  function whenLong(iso) { return f(iso, { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + time(iso); }
+  function localYmd(iso) { return new Intl.DateTimeFormat('en-CA', { timeZone: tz() }).format(new Date(iso)); }
+  function ymdLabel(ymd) { return new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', day: 'numeric', month: 'short' }).format(new Date(ymd + 'T00:00:00Z')); }
+  function monthOf(ymd) { return new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', month: 'long' }).format(new Date(ymd.slice(0, 7) + '-01T00:00:00Z')); }
+  function inDays(iso) {
+    const a = localYmd(new Date().toISOString()), b = localYmd(iso);
+    const n = Math.round((new Date(b + 'T00:00:00Z') - new Date(a + 'T00:00:00Z')) / 86400000);
+    if (n <= 0) return 'today'; if (n === 1) return 'tomorrow'; return 'in ' + n + ' days';
+  }
+  function money(n, cur) {
+    if (cur === 'INR') return '₹' + Number(n).toLocaleString('en-IN');
+    if (cur === 'USD') return '$' + Number(n).toLocaleString('en-US');
+    if (cur === 'CAD') return 'C$' + Number(n).toLocaleString('en-US');
+    return cur + ' ' + n;
+  }
+  const MAIL = 'arpithandpan@gmail.com';
+  function mailLink(subject) { return 'mailto:' + MAIL + '?subject=' + encodeURIComponent(subject || 'My classes') + '&body=' + encodeURIComponent('Hi Arpit,\n\n'); }
+  // One way to reach Arpit everywhere on the page: a small sheet with
+  // WhatsApp and email, so people without WhatsApp are never stuck.
+  function openContact(topic) {
+    const t = topic || 'my classes';
+    const s = openSheet('<h3>Contact Arpit</h3><p class="lead">About ' + esc(t) + '</p>'
+      + '<a class="mc-opt first" href="' + esc(waLink('Hi Arpit, about ' + t)) + '" target="_blank" rel="noopener"><span class="ic">' + ICON_WA + '</span><span><strong>WhatsApp</strong><small>Usually the quickest</small></span></a>'
+      + '<a class="mc-opt" href="' + esc(mailLink('About ' + t)) + '"><span class="ic">' + ICON_MAIL + '</span><span><strong>Email</strong><small>' + MAIL + '</small></span></a>'
+      + '<div class="acts" style="margin-top:1rem;"><button class="mc-btn line" type="button" id="ctClose">Close</button></div>');
+    s.querySelector('#ctClose').onclick = closeSheet;
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('.js-contact, .js-acct-help');
+    if (!b) return;
+    e.preventDefault();
+    try { if (window.hpAcct) document.querySelectorAll('.acct-menu').forEach(m => { m.hidden = true; }); } catch (x) {}
+    const mm = document.querySelector('.mobile-menu.open');
+    if (mm) { const hb = document.querySelector('.nav-hamburger'); if (hb) hb.click(); }
+    openContact(b.dataset.topic || '');
+  });
+  function waLink(text) { return 'https://wa.me/' + ((data && data.whatsapp) || '919380140907') + (text ? '?text=' + encodeURIComponent(text) : ''); }
+
+  // ── loading the page ──
+  async function start() {
+    const h = (location.hash || '').replace(/^#/, '').trim();
+    token = /^[a-f0-9]{40,64}$/i.test(h) ? h.toLowerCase() : load(KEY);
+    if (!token) { askForm(false); return; }
+    show('mcLoading');
+    await refresh(true);
+  }
+
+  async function refresh(first) {
+    const asked = token;
+    if (!asked) return;
+    try {
+      const r = await fetch(API + '/api/my/' + asked, { cache: 'no-store' });
+      const j = await r.json().catch(() => ({}));
+      // Logged out (or switched person) while this was loading: drop the answer.
+      if (asked !== token) return;
+      if (r.status === 404) { store(KEY, null); store(NAME_KEY, null); store(ROLE_KEY, null); navRefresh(); askForm(true); return; }
+      if (!r.ok || !j.ok) throw new Error(j.error || 'Could not load your page.');
+      data = j;
+      store(KEY, token); store(NAME_KEY, j.name || ''); store(ROLE_KEY, j.role || (j.classes ? 'Student' : '')); navRefresh();
+      if (!location.hash) history.replaceState(null, '', '#' + token);
+      render();
+    } catch (e) {
+      if (asked !== token) return;
+      if (first) {
+        show('mcPage');
+        $('mcPage').innerHTML = '<div class="mc-card"><p class="mc-h">Could not load your page</p><p class="mc-empty" style="margin-bottom:1.2rem;">Please check your internet and try again.</p><button class="mc-btn solid" type="button" id="mcRetry">Try again</button></div>';
+        $('mcRetry').onclick = () => { show('mcLoading'); refresh(true); };
+      } else toast(e.message);
+    }
+  }
+
+  function navRefresh() { try { if (window.hpAcct) window.hpAcct.refresh(); } catch (e) {} }
+
+  // Forget the link on this device only. The link itself keeps working
+  // (Arpit can reset it from the dashboard if it reached the wrong person).
+  function signOut() {
+    token = ''; data = null; timesCache = {}; pendClear();
+    history.replaceState(null, '', location.pathname);
+    scrollTo(0, 0);
+    askForm(false);
+    toast('Logged out on this device');
+  }
+  document.addEventListener('hp:logout', signOut);
+
+  function askForm(expired) {
+    $('lkExpired').hidden = !expired;
+    $('lkForm').hidden = false; $('lkCode').hidden = true;
+    show('mcAsk');
+    resumeCode();
+  }
+
+  // ── render ──
+  function render() {
+    const c = data.classes;
+    show('mcPage');
+    const head = (sub) => '<div class="mc-head"><h1 class="mc-hi" id="mcTitle">Hi ' + esc(data.name) + '</h1><p class="mc-tz" id="mcSub">' + sub + '</p></div>';
+    const w = data.workshops, wl = data.waitlist;
+    if (!c && !w && !wl) {
+      $('mcPage').innerHTML = head('Nothing is booked under your name right now.') + '<div class="mc-card">' + linksHtml([]) + '</div>';
+      bindLinks(); return;
+    }
+    const html = [head(c ? 'Times are in your time zone · ' + esc(c.tzCity) : 'Your bookings with Arpit')];
+    const both = !!(c && (w || wl));
+    if (c) {
+    if (both) html.push('<p class="mc-sec">Classes</p>');
+    const next = c.upcoming.find(u => !u.later) || c.upcoming[0];
+
+    // Next class
+    if (next) {
+      const left = c.changesLeft[next.key.slice(0, 7)] || 0;
+      html.push('<div class="mc-card"><p class="mc-k">Next class · ' + inDays(next.start) + '</p>'
+        + '<p class="mc-when">' + esc(whenLong(next.start)) + '</p>'
+        + '<p class="mc-sub">' + (next.min || 60) + ' min on Zoom' + (next.makeup ? ' · make-up class' : next.moved ? ' · moved' : '') + '</p>'
+        + '<div class="mc-row">'
+        + (c.zoom ? '<a class="mc-btn solid" href="' + esc(c.zoom) + '" target="_blank" rel="noopener">' + ICON_ZOOM + 'Join Zoom</a>' : '')
+        + (next.canChange && left > 0
+          ? '<span class="mc-spacer"></span><button class="mc-btn line" type="button" data-move="' + next.key + '">Move</button><button class="mc-btn line" type="button" data-skip="' + next.key + '">Skip</button>'
+          : '')
+        + '</div>'
+        + (!next.canChange ? '<p class="mc-locked" style="margin-top:1rem;">Less than ' + c.noticeHours + ' hours to go. ' + '<button type="button" class="mc-inline js-contact" data-topic="' + esc('my class on ' + whenLong(next.start)) + '">Contact Arpit</button>' + ' if you can\'t make it.</p>'
+          : left <= 0 ? '<p class="mc-locked" style="margin-top:1rem;">You\'ve used both changes for ' + monthOf(next.key) + '. ' + '<button type="button" class="mc-inline js-contact" data-topic="' + esc('my class on ' + whenLong(next.start)) + '">Contact Arpit</button>' + ' if you need to change it.</p>' : '')
+        + '<p class="mc-cal">Not in your calendar? <button type="button" class="mc-inline" data-cal="1">Email me the invite</button></p>'
+        + '</div>');
+    }
+
+    // Payment due
+    if (c.pay) {
+      const due = c.left <= 0;
+      html.push('<div class="mc-card"><div class="mc-bal"><div>'
+        + '<h3>' + (due ? 'Payment due' : (c.left === 1 ? '1 class left' : c.left + ' classes left')) + '</h3>'
+        + '<p>' + (due ? c.pay.classes + ' classes · ' + money(c.pay.amount, c.pay.currency) : 'Your next payment link is ready.') + '</p>'
+        + '</div><a class="mc-btn solid" href="' + esc(c.pay.url) + '">Pay ' + money(c.pay.amount, c.pay.currency) + '</a></div></div>');
+    }
+
+    // Coming up (skip the next class, it has its own card)
+    const rest = c.upcoming.filter(u => !next || u.key !== next.key);
+    const parts = [];
+    for (const m of c.makeups) {
+      parts.push('<div class="mc-makeup"><p>' + (charges() ? 'Make up your ' + ymdLabel(m.key) + ' class by ' + ymdLabel(m.deadline) : 'Want to take your ' + ymdLabel(m.key) + ' class another day? Any time until ' + ymdLabel(m.deadline)) + '</p><button class="mc-btn solid" type="button" data-makeup="' + m.key + '">Pick a time</button></div>');
+    }
+    const row = u => '<li class="mc-item' + (u.later ? ' later' : '') + '"><div class="mc-date"><b>' + f(u.start, { day: 'numeric' }) + '</b><span>' + new Intl.DateTimeFormat('en-US', { timeZone: tz(), month: 'short' }).format(new Date(u.start)) + '</span></div>'
+      + '<div class="mc-info"><strong>' + f(u.start, { weekday: 'long' }) + ' · ' + time(u.start)
+      + (u.makeup ? ' <span class="mc-tag">Make-up</span>' : u.moved ? ' <span class="mc-tag">Moved</span>' : '') + '</strong><small>' + (u.min || 60) + ' min</small></div>'
+      + (u.later ? '' : '<button class="mc-more" type="button" aria-label="Change this class" data-opts="' + u.key + '">' + ICON_MORE + '</button>') + '</li>';
+    const now = rest.filter(u => !u.later), later = rest.filter(u => u.later);
+    if (now.length) parts.push('<ul class="mc-list">' + now.map(row).join('') + '</ul>');
+    if (later.length) parts.push('<p class="mc-group">After your next payment</p><ul class="mc-list">' + later.map(row).join('') + '</ul>');
+    if (parts.length) html.push('<div class="mc-card"><p class="mc-h">Coming up</p>' + parts.join('') + '</div>');
+    if (!next && !parts.length) html.push('<div class="mc-card"><p class="mc-h">No classes coming up</p><p class="mc-empty">Nothing is scheduled for the next four weeks. Get in touch below to plan your next class.</p></div>');
+
+    }
+    if (w || wl) {
+      if (both) html.push('<p class="mc-sec">Workshops</p>');
+      html.push(workshopsHtml(w, wl));
+    }
+    html.push('<div class="mc-card">' + linksHtml(c ? c.payments : []) + '</div>');
+    $('mcPage').innerHTML = html.join('');
+    bindLinks();
+    if (/[?&]pay=1/.test(location.search) && $('mcPayToggle') && !render._payOpened) {
+      render._payOpened = true; $('mcPayToggle').click();
+      setTimeout(() => $('mcPayToggle').scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+    }
+    $('mcPage').querySelectorAll('[data-move]').forEach(b => b.onclick = () => openMove(b.dataset.move, 'move'));
+    $('mcPage').querySelectorAll('[data-skip]').forEach(b => b.onclick = () => openSkip(b.dataset.skip));
+    $('mcPage').querySelectorAll('[data-cal]').forEach(b => b.onclick = () => sendCalendar(b));
+    $('mcPage').querySelectorAll('[data-makeup]').forEach(b => b.onclick = () => openMove(b.dataset.makeup, 'makeup'));
+    $('mcPage').querySelectorAll('[data-opts]').forEach(b => {
+      b.onclick = () => openOptions(b.dataset.opts);
+      const warm = () => { const u = cls(b.dataset.opts); if (u && u.canChange) preload('move', b.dataset.opts); };
+      b.addEventListener('pointerenter', warm, { once: true }); b.addEventListener('touchstart', warm, { once: true, passive: true }); b.addEventListener('focus', warm, { once: true });
+    });
+    // Give the page a moment to paint, then fetch free times quietly.
+    setTimeout(preloadPage, 300);
+  }
+
+  // ── workshops (read-only: tickets can't be moved or refunded here) ──
+  // Workshops happen in Bengaluru, so dates and times stay in India time.
+  function wsStart(b) {
+    const m = String(b.time || '').match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+    let h = 12, mi = 0;
+    if (m) { h = +m[1]; mi = +m[2]; const mer = (m[3] || '').toUpperCase(); if (mer === 'PM' && h < 12) h += 12; if (mer === 'AM' && h === 12) h = 0; }
+    return b.date + 'T' + String(h).padStart(2, '0') + ':' + String(mi).padStart(2, '0') + ':00+05:30';
+  }
+  function wsDay(b, opts) { return new Intl.DateTimeFormat(opts.month === 'short' ? 'en-US' : 'en-GB', { timeZone: 'Asia/Kolkata', ...opts }).format(new Date(wsStart(b))); }
+  function wsTime(b) { return String(b.time || '').replace(/\s*-\s*/, ' to ').trim(); }
+  function wsPeople(b) {
+    const n = b.people || 1;
+    let t = n === 1 ? '1 person' : n + ' people';
+    if (n > 1 && b.names && b.names.length > 1) t += ' · ' + (b.names.length === 2 ? b.names.join(' and ') : b.names.slice(0, -1).join(', ') + ' and ' + b.names[b.names.length - 1]);
+    if (b.observers) t += ' · ' + b.observers + ' audience pass' + (b.observers > 1 ? 'es' : '');
+    return t;
+  }
+  function wsOwn(b) {
+    const v = String(b.own || '').trim();
+    if (/^yes$/i.test(v)) return 'You\'re bringing your own handpan';
+    if (/^no$/i.test(v)) return 'Arpit brings a handpan for you';
+    const m = v.match(/^(\d+)\s+of\s+(\d+)$/i);
+    if (m) return +m[1] === 0 ? 'Arpit brings handpans for your group' : m[1] + ' of ' + m[2] + ' bringing their own handpan';
+    return '';
+  }
+  // Same invite again by email: the calendar updates the entry it has, nothing doubles.
+  async function sendCalendar(b) {
+    if (b.disabled) return;
+    const was = b.textContent; b.disabled = true; b.textContent = 'Sending…';
+    try {
+      const r = await fetch(API + '/api/my/' + token + '/calendar', { method: 'POST' });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error(j.error || 'Could not send it right now.');
+      b.closest('.mc-cal').textContent = 'Sent to ' + (j.to || []).join(', ') + '. Open the email and add it. If the class is already in your calendar, it just updates.';
+      toast('Calendar invite sent');
+    } catch (e) { b.disabled = false; b.textContent = was; toast(e.message); }
+  }
+  function invLink(id, label) { return '<a href="' + API + '/api/my/' + token + '/invoice/' + encodeURIComponent(id) + '" target="_blank" rel="noopener">' + (label || 'Invoice') + '</a>'; }
+  function workshopsHtml(w, wl) {
+    const out = [];
+    for (const b of (w ? w.upcoming : [])) {
+      const own = wsOwn(b), topic = 'the ' + ymdLabel(b.date) + ' workshop';
+      out.push('<div class="mc-card"><p class="mc-k">Workshop · ' + inDays(wsStart(b)) + '</p>'
+        + '<p class="mc-when">' + esc(wsDay(b, { weekday: 'long' }) + ', ' + wsDay(b, { day: 'numeric', month: 'long' })) + '</p>'
+        + '<p class="mc-sub">' + (b.title ? esc(b.title) + ' · ' : '') + (b.time ? esc(wsTime(b)) : 'Time to be shared') + '</p>'
+        + '<ul class="ws-facts">'
+        + (b.venue ? '<li>' + ICON_PIN + '<span>' + esc(b.venue) + (b.map ? '<a href="' + esc(b.map) + '" target="_blank" rel="noopener">Map</a>' : '') + '</span></li>' : '')
+        + '<li>' + ICON_PPL + '<span>' + esc(wsPeople(b)) + '</span></li>'
+        + (own ? '<li>' + ICON_PAN + '<span>' + esc(own) + '<small>Need to change this? <button type="button" class="mc-inline js-contact" data-topic="' + esc('the handpan for ' + topic) + '">Contact Arpit</button></small></span></li>' : '')
+        + (b.invoice ? '<li>' + ICON_DOC + '<span>Paid' + invLink(b.invoice) + '</span></li>' : '')
+        + '</ul>'
+        + '<div class="ws-policy"><p class="mc-h">Can\'t make it?</p>'
+        + '<p>Tickets are non-refundable. You\'re welcome to send a friend in your place. Just let Arpit know their name beforehand.</p>'
+        + '<p>If Arpit cancels a workshop, you get a full refund.</p>'
+        + '<button type="button" class="mc-btn line js-contact" data-topic="' + esc(topic) + '">Contact Arpit</button></div>'
+        + '</div>');
+    }
+    if (wl) out.push('<div class="mc-card"><p class="mc-h">Waitlist</p><p class="mc-empty">You\'re on the waitlist' + (wl.month ? ' for ' + esc(wl.month) : '') + '. You\'ll hear from Arpit when new dates are out.</p></div>');
+    if (w && w.past.length) {
+      out.push('<div class="mc-card"><p class="mc-h">Past workshops</p><ul class="mc-list">' + w.past.map(b =>
+        '<li class="mc-item"><div class="mc-date"><b>' + wsDay(b, { day: 'numeric' }) + '</b><span>' + wsDay(b, { month: 'short' }) + '</span></div>'
+        + '<div class="mc-info"><strong>' + esc(b.title || String(b.venue || 'Handpan workshop').split(',')[0]) + (b.cancelled ? ' <span class="mc-tag">Cancelled</span>' : '') + '</strong>'
+        + '<small>' + esc(b.cancelled ? 'Cancelled by Arpit · full refund' : (b.people === 1 ? '1 person' : b.people + ' people'))
+        + (b.invoice && !b.cancelled ? ' · ' + invLink(b.invoice) : '') + '</small></div></li>').join('') + '</ul></div>');
+    }
+    return out.join('');
+  }
+
+  function linksHtml(payments) {
+    let h = '';
+    if (payments.length) {
+      h += '<button class="mc-link" type="button" id="mcPayToggle" aria-expanded="false" aria-controls="mcPays">' + ICON_DOC + 'Payments and invoices' + ICON_DOWN + '</button>'
+        + '<div class="mc-pay" id="mcPays" hidden>' + payments.map(p => '<div><span>' + (p.date ? ymdLabel(p.date) + ' · ' : '') + money(p.amount, p.currency) + (p.classes ? ' · ' + p.classes + ' classes' : '') + '</span>'
+          + (p.invoice ? '<a href="' + API + '/api/my/' + token + '/invoice/' + encodeURIComponent(p.invoice) + '" target="_blank" rel="noopener">Invoice</a>' : '') + '</div>').join('') + '</div>';
+    }
+    h += '<p class="mc-help-h">Need help?</p>';
+    h += '<a class="mc-link" href="' + esc(waLink('Hi Arpit')) + '" target="_blank" rel="noopener">' + ICON_WA + 'WhatsApp Arpit' + ICON_RIGHT + '</a>';
+    h += '<a class="mc-link" href="' + esc(mailLink('My classes')) + '">' + ICON_MAIL + 'Email Arpit' + ICON_RIGHT + '</a>';
+    return h;
+  }
+  function bindLinks() {
+    const t = $('mcPayToggle');
+    if (t) t.onclick = () => { const open = t.getAttribute('aria-expanded') === 'true'; t.setAttribute('aria-expanded', String(!open)); $('mcPays').hidden = open; };
+
+  }
+
+  // ── sheets ──
+  let sheetEl = null, scrimEl = null, lastFocus = null;
+  function closeSheet() {
+    if (!sheetEl) return;
+    const s = sheetEl, k = scrimEl; sheetEl = scrimEl = null;
+    s.classList.remove('open'); k.classList.remove('open');
+    setTimeout(() => { s.remove(); k.remove(); }, 260);
+    document.removeEventListener('keydown', onKey);
+    if (lastFocus) try { lastFocus.focus(); } catch (e) {}
+  }
+  function onKey(e) { if (e.key === 'Escape') closeSheet(); }
+  function openSheet(inner) {
+    if (sheetEl) { sheetEl.remove(); scrimEl.remove(); sheetEl = scrimEl = null; }
+    lastFocus = document.activeElement;
+    scrimEl = document.createElement('div'); scrimEl.className = 'mc-scrim'; scrimEl.onclick = closeSheet;
+    sheetEl = document.createElement('div'); sheetEl.className = 'mc-sheet'; sheetEl.setAttribute('role', 'dialog'); sheetEl.setAttribute('aria-modal', 'true');
+    sheetEl.innerHTML = inner;
+    document.body.appendChild(scrimEl); document.body.appendChild(sheetEl);
+    requestAnimationFrame(() => { scrimEl.classList.add('open'); sheetEl.classList.add('open'); });
+    document.addEventListener('keydown', onKey);
+    return sheetEl;
+  }
+  function cls(key) { return data.classes.upcoming.find(u => u.key === key); }
+  function leftFor(key) { return data.classes.changesLeft[key.slice(0, 7)] || 0; }
+  // No monthly limit (maxChanges 0) → no "changes left" line at all.
+  function limited() { return !!(data.classes && data.classes.maxChanges); }
+  function leftLine(key) { if (!limited()) return ''; const n = leftFor(key); return (n === 1 ? '1 change' : n + ' changes') + ' left in ' + monthOf(key); }
+  function fine(t) { return t ? '<p class="fine">' + t + '</p>' : ''; }
+  // Skips aren't counted unless Arpit turns that back on.
+  function charges() { return !!(data.classes && data.classes.chargeSkips); }
+
+  function openOptions(key) {
+    const u = cls(key); if (!u) return;
+    const c = data.classes;
+    let body;
+    if (!u.canChange) {
+      body = '<p class="none">Less than ' + c.noticeHours + ' hours to go, so this class can\'t be changed here. Contact Arpit if you can\'t make it.</p>'
+        + '<div class="acts">' + '<button type="button" class="mc-btn solid js-contact" data-topic="' + esc('my class on ' + whenLong(u.start)) + '">Contact Arpit</button>' + '</div>';
+    } else if (leftFor(key) <= 0) {
+      body = '<p class="none">You\'ve used both changes for ' + monthOf(key) + '. Contact Arpit if you need to change this class.</p>'
+        + '<div class="acts">' + '<button type="button" class="mc-btn solid js-contact" data-topic="' + esc('my class on ' + whenLong(u.start)) + '">Contact Arpit</button>' + '</div>';
+    } else {
+      body = '<p class="lead">What would you like to do?</p>'
+        + '<button class="mc-opt first" type="button" id="opMove"><span class="ic">' + ICON_CAL + '</span><span><strong>Move to another time</strong><small>Pick a new day and time now</small></span></button>'
+        + '<button class="mc-opt" type="button" id="opSkip"><span class="ic">' + ICON_X + '</span><span><strong>Skip this class</strong><small>' + (charges() ? 'Pick a make-up time later this month' : 'Not counted. Take it another day if you like') + '</small></span></button>'
+        + fine(leftLine(key));
+    }
+    const s = openSheet('<h3>' + esc(whenLong(u.start)) + '</h3>' + body);
+    const m = s.querySelector('#opMove'), k = s.querySelector('#opSkip');
+    if (m) m.onclick = () => openMove(key, 'move');
+    if (k) k.onclick = () => openSkip(key);
+  }
+
+  // Free times load in the background while the person reads the page, so
+  // Move / Skip / make-up sheets open already filled. Kept for a minute and
+  // dropped whenever the page data reloads (a change frees or takes a time).
+  let timesCache = {};
+  function getTimes(mode, key) {
+    const k = mode + '|' + key, hit = timesCache[k];
+    if (hit && Date.now() - hit.at < 60000) return hit.p;
+    const asked = token;
+    const p = fetch(API + '/api/my/' + asked + '/times?mode=' + mode + '&key=' + key, { cache: 'no-store' })
+      .then(r => r.json().catch(() => ({})).then(j => {
+        if (!r.ok || !j.ok) throw new Error(j.error || 'Could not load free times.');
+        return j.slots;
+      }));
+    timesCache[k] = { at: Date.now(), p };
+    p.catch(() => { if (timesCache[k] && timesCache[k].p === p) delete timesCache[k]; });
+    return p;
+  }
+  function preload(mode, key) { getTimes(mode, key).catch(() => {}); }
+  function preloadPage() {
+    const c = data && data.classes;
+    if (!c) return;
+    const next = c.upcoming.find(u => !u.later) || c.upcoming[0];
+    if (next && next.canChange && (c.changesLeft[next.key.slice(0, 7)] || 0) > 0) preload('move', next.key);
+    (c.makeups || []).slice(0, 2).forEach(m => preload('makeup', m.key));
+  }
+
+  async function openMove(key, mode) {
+    const u = cls(key);
+    const title = mode === 'makeup' ? 'Book your make-up' : 'Move your class';
+    const lead = mode === 'makeup' ? 'For your ' + ymdLabel(key) + ' class. Any free time until ' + ymdLabel((data.classes.makeups.find(m => m.key === key) || {}).deadline || key) + '.' : (u ? whenLong(u.start) : '');
+    const s = openSheet('<h3>' + title + '</h3><p class="lead">' + esc(lead) + '</p><div id="mvBody"><div class="mc-sk" style="height:180px;border-radius:14px;"></div></div>');
+    let slots = [];
+    try {
+      slots = await getTimes(mode, key);
+    } catch (e) {
+      if (sheetEl !== s) return;
+      s.querySelector('#mvBody').innerHTML = '<p class="msg">' + esc(e.message) + '</p><div class="acts"><button class="mc-btn line" type="button" id="mvClose">Close</button></div>';
+      s.querySelector('#mvClose').onclick = closeSheet; return;
+    }
+    if (sheetEl !== s) return;
+    if (!slots.length) {
+      s.querySelector('#mvBody').innerHTML = '<p class="none">No free times right now. Contact Arpit and he\'ll find one with you.</p><div class="acts"><button class="mc-btn line" type="button" id="mvClose">Close</button>' + '<button type="button" class="mc-btn solid js-contact" data-topic="' + esc('changing my class on ' + (u ? whenLong(u.start) : ymdLabel(key))) + '">Contact Arpit</button>' + '</div>';
+      s.querySelector('#mvClose').onclick = closeSheet; return;
+    }
+    const byDay = {};
+    for (const t of slots) (byDay[localYmd(t)] = byDay[localYmd(t)] || []).push(t);
+    const days = Object.keys(byDay).sort();
+    let day = days[0], pick = null;
+    function paint() {
+      s.querySelector('#mvBody').innerHTML = '<p class="lbl">New day</p><div class="mc-days">'
+        + days.map(d => '<button type="button" class="mc-day' + (d === day ? ' on' : '') + '" data-d="' + d + '"><span class="d1">' + new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'short' }).format(new Date(d + 'T00:00:00Z')) + '</span><span class="d2">' + Number(d.slice(8)) + '</span></button>').join('')
+        + '</div><p class="lbl">New time</p><div class="mc-times">'
+        + byDay[day].map(t => '<button type="button" class="mc-time' + (t === pick ? ' on' : '') + '" data-t="' + t + '">' + time(t) + '</button>').join('')
+        + '</div><p class="msg" id="mvMsg" hidden></p><div class="acts"><button class="mc-btn line" type="button" id="mvCancel">Cancel</button><button class="mc-btn solid" type="button" id="mvGo">' + (mode === 'makeup' ? 'Book make-up' : 'Move class') + '</button></div>'
+        + '<p class="fine">' + (mode === 'makeup' || !limited() ? 'Same Zoom link as always' : leftLine(key) + ' · Same Zoom link') + '</p>';
+      s.querySelectorAll('.mc-day').forEach(b => b.onclick = () => { day = b.dataset.d; pick = null; paint(); });
+      s.querySelectorAll('.mc-time').forEach(b => b.onclick = () => { pick = b.dataset.t; paint(); });
+      s.querySelector('#mvCancel').onclick = closeSheet;
+      s.querySelector('#mvGo').onclick = async (ev) => {
+        if (!pick) { const m = s.querySelector('#mvMsg'); m.textContent = 'Pick a time first.'; m.hidden = false; return; }
+        await doChange(ev.currentTarget, { action: mode, key, start: pick }, mode === 'makeup' ? 'Make-up booked for ' + whenLong(pick) : 'Moved to ' + whenLong(pick));
+      };
+    }
+    paint();
+  }
+
+  function openSkip(key) {
+    const u = cls(key); if (!u) return;
+    const deadline = (() => { const d = new Date(key.slice(0, 7) + '-01T00:00:00Z'); d.setUTCMonth(d.getUTCMonth() + 1); d.setUTCDate(0); return d.toISOString().slice(0, 10); })();
+    const s = openSheet('<h3>Skip ' + esc(f(u.start, { weekday: 'short', day: 'numeric', month: 'short' })) + '?</h3>'
+      + '<p class="lead">' + (charges()
+        ? 'You can pick a make-up time any day until ' + ymdLabel(deadline) + '. A class not made up by then doesn\'t carry over.'
+        : 'This class won\'t be counted. Want to take it another day? Pick a time any day until ' + ymdLabel(deadline) + '.') + '</p>'
+      + '<p class="msg" id="skMsg" hidden></p><div class="acts"><button class="mc-btn line" type="button" id="skNo">Keep class</button><button class="mc-btn solid" type="button" id="skGo">Skip class</button></div>'
+      + fine(leftLine(key)));
+    s.querySelector('#skNo').onclick = closeSheet;
+    s.querySelector('#skGo').onclick = (ev) => doChange(ev.currentTarget, { action: 'skip', key }, (charges() ? 'Class skipped. Book a make-up any time this month.' : 'Class skipped. It won\'t be counted.'));
+  }
+
+  async function doChange(btn, body, okMsg) {
+    btn.classList.add('busy'); btn.textContent = 'Saving…';
+    try {
+      const r = await fetch(API + '/api/my/' + token + '/change', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error(j.error || 'Could not save that change.');
+      // A change frees or takes a time, so forget loaded free times.
+      // Update the page first, so the sheet closes onto the new state.
+      timesCache = {};
+      await refresh(false);
+      closeSheet(); toast(okMsg);
+    } catch (e) {
+      const m = sheetEl && sheetEl.querySelector('.msg');
+      if (m) { m.textContent = e.message; m.hidden = false; }
+      btn.classList.remove('busy'); btn.textContent = 'Try again';
+      if (/taken/i.test(e.message) && body.action !== 'skip') setTimeout(() => openMove(body.key, body.action), 1400);
+    }
+  }
+
+  // ── log in with a code ──
+  let contact = '', resendT = null;
+  // A code that was sent but not entered yet survives a reload or a tap on
+  // "Log in" in the menu, for as long as the code works (10 minutes).
+  const PEND = 'hp_my_pending';
+  function pendGet() { try { const p = JSON.parse(sessionStorage.getItem(PEND) || 'null'); return p && Date.now() - p.at < 10 * 60 * 1000 ? p : null; } catch (e) { return null; } }
+  function pendSet(c, to, wa) { try { sessionStorage.setItem(PEND, JSON.stringify({ contact: c, to: to, wa: !!wa, at: Date.now() })); } catch (e) {} }
+  // Show where the code went: a masked email, plus WhatsApp once that's on.
+  function showSentTo(to, wa, typed) {
+    $('lkSentTo').textContent = 'Sent to ' + (wa ? 'your WhatsApp' + (to ? ' and ' + to : '') : (to || typed));
+    $('lkCodeP').textContent = 'We sent a 6-digit code to your ' + (wa ? (to ? 'WhatsApp and email' : 'WhatsApp') : 'email') + '. It works for 10 minutes.';
+  }
+  function pendClear() { try { sessionStorage.removeItem(PEND); } catch (e) {} }
+  function resumeCode() {
+    const p = pendGet();
+    if (!p) return;
+    contact = p.contact;
+    showSentTo(p.to, p.wa, p.contact);
+    $('otpErr').hidden = true; $('otpNote').hidden = true;
+    showStep(true);
+    countdown(Math.max(0, 30 - Math.floor((Date.now() - p.at) / 1000)));
+    setTimeout(() => { $('otpInput').focus(); paintBoxes(false); }, 50);
+  }
+  function showStep(code) { $('lkForm').hidden = code; $('lkCode').hidden = !code; }
+  function paintBoxes(err) {
+    const v = $('otpInput').value;
+    const boxes = $('otpBoxes').children;
+    for (let i = 0; i < 6; i++) {
+      boxes[i].textContent = v[i] || '';
+      boxes[i].classList.toggle('cur', !err && document.activeElement === $('otpInput') && i === Math.min(v.length, 5));
+    }
+    $('otpBoxes').classList.toggle('err', !!err);
+  }
+  function countdown(sec) {
+    clearInterval(resendT);
+    const el = $('otpResend');
+    const tick = () => {
+      if (sec <= 0) { clearInterval(resendT); el.innerHTML = 'Didn\'t get it? <button type="button" id="otpAgain">Send again</button>'; $('otpAgain').onclick = () => sendCode(true); return; }
+      el.textContent = 'Didn\'t get it? Send again in ' + sec + (sec === 1 ? ' second' : ' seconds');
+      sec--;
+    };
+    tick(); resendT = setInterval(tick, 1000);
+  }
+  // Wrong contact: the same value isn't sent again, and after a few misses
+  // (or the hourly limit) the button waits with a countdown. The server
+  // enforces the same limits, so a refresh doesn't skip the wait.
+  let lastMiss = '', lockT = null;
+  const LOCK = 'hp_my_lock';
+  function norm(v) { return v.includes('@') ? v.trim().toLowerCase() : v.replace(/\D/g, '').slice(-10); }
+  function lockFor(sec) {
+    const until = Date.now() + sec * 1000;
+    try { sessionStorage.setItem(LOCK, String(until)); } catch (e) {}
+    runLock(until);
+  }
+  const LOCK_MSG = 'Too many tries. Please wait a moment.';
+  function runLock(until) {
+    const btn = $('lkSend'), err = $('lkErr');
+    clearInterval(lockT);
+    // After a refresh the earlier error is gone, so say why the button is off.
+    if (err.hidden) { err.textContent = LOCK_MSG; err.hidden = false; }
+    const tick = () => {
+      const left = Math.ceil((until - Date.now()) / 1000);
+      if (left <= 0) {
+        clearInterval(lockT); btn.disabled = false; btn.classList.remove('wait'); btn.textContent = 'Send code';
+        if (err.textContent === LOCK_MSG) err.hidden = true;
+        try { sessionStorage.removeItem(LOCK); } catch (e) {}
+        return;
+      }
+      btn.disabled = true; btn.classList.add('wait');
+      btn.textContent = left >= 90 ? 'Try again in ' + Math.ceil(left / 60) + ' min' : 'Try again in ' + left + (left === 1 ? ' second' : ' seconds');
+    };
+    tick(); lockT = setInterval(tick, 1000);
+  }
+  function nudge(el) { el.classList.remove('nudge'); void el.offsetWidth; el.classList.add('nudge'); }
+  try { const u = Number(sessionStorage.getItem(LOCK) || 0); if (u > Date.now()) runLock(u); } catch (e) {}
+
+  async function sendCode(again) {
+    const inp = $('lkInput'), err = $('lkErr'), btn = $('lkSend');
+    if (!again && btn.disabled) return;
+    const v = again ? contact : inp.value.trim();
+    const ok = v.includes('@') ? /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) : v.replace(/\D/g, '').length >= 7;
+    if (!ok) { inp.classList.add('err'); err.textContent = 'Please enter your phone number or email.'; err.hidden = false; nudge(err); inp.focus(); return; }
+    // Same value that just wasn't found: don't ask the server again.
+    if (!again && lastMiss && norm(v) === lastMiss && !err.hidden) { nudge(err); inp.focus(); return; }
+    inp.classList.remove('err'); err.hidden = true;
+    if (!again) { btn.classList.add('busy'); btn.textContent = 'Checking…'; }
+    let waitSec = 0;
+    try {
+      const r = await fetch(API + '/api/my/request-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact: v }) });
+      const j = await r.json().catch(() => ({}));
+      waitSec = Number(j.waitSec) || 0;
+      if (!r.ok) { if (j.code === 'not_found' || j.code === 'no_channel') lastMiss = norm(v); throw new Error(j.error || 'Could not send right now. Please try again.'); }
+      lastMiss = '';
+      contact = v; pendSet(v, j.sentTo, j.wa);
+      showSentTo(j.sentTo, j.wa, v);
+      $('otpInput').value = ''; $('otpErr').hidden = true; paintBoxes(false);
+      showStep(true);
+      countdown(j.resendIn || 30);
+      setTimeout(() => $('otpInput').focus(), 50);
+      const note = $('otpNote');
+      if (again) { toast('New code sent'); note.textContent = 'Use the newest code. Older ones stop working.'; note.classList.remove('err'); note.hidden = false; }
+      else note.hidden = true;
+    } catch (e) {
+      if (again) { const note = $('otpNote'); note.textContent = e.message; note.classList.add('err'); note.hidden = false; }
+      else { err.textContent = e.message; err.hidden = false; nudge(err); }
+    } finally {
+      btn.classList.remove('busy'); btn.textContent = 'Send code';
+      if (waitSec > 0 && !again) lockFor(waitSec);
+    }
+  }
+
+  let verifying = false;
+  async function verify() {
+    const code = $('otpInput').value.replace(/\D/g, '');
+    const e = $('otpErr');
+    if (code.length !== 6) { e.textContent = 'Please enter all 6 digits.'; e.hidden = false; paintBoxes(true); return; }
+    if (verifying) return;
+    verifying = true;
+    const btn = $('otpGo'); btn.classList.add('busy'); btn.textContent = 'Checking…';
+    $('otpBoxes').classList.add('busy'); $('otpChecking').hidden = false; e.hidden = true;
+    try {
+      const r = await fetch(API + '/api/my/verify-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contact, code }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok || !j.token) throw new Error(j.error || 'That code didn\'t match.');
+      clearInterval(resendT);
+      $('otpBoxes').classList.remove('busy'); $('otpBoxes').classList.add('ok');
+      $('otpChecking').textContent = 'Logged in ✓';
+      await new Promise(x => setTimeout(x, 450));
+      $('otpBoxes').classList.remove('ok'); $('otpChecking').hidden = true; $('otpChecking').textContent = 'Checking your code…';
+      pendClear();
+      history.replaceState(null, '', location.pathname + location.search + '#' + j.token);
+      showStep(false); $('lkInput').value = '';
+      start();
+    } catch (err) {
+      e.textContent = err.message; e.hidden = false; paintBoxes(true);
+      $('otpInput').select();
+    } finally { verifying = false; btn.classList.remove('busy'); btn.textContent = 'Log in'; $('otpBoxes').classList.remove('busy'); if ($('otpChecking').textContent !== 'Logged in ✓') $('otpChecking').hidden = true; }
+  }
+  $('lkSend').onclick = () => sendCode(false);
+  $('lkInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendCode(false); });
+  $('lkInput').addEventListener('input', () => {
+    $('lkInput').classList.remove('err');
+    if ($('lkSend').disabled) { $('lkErr').textContent = LOCK_MSG; return; }
+    $('lkErr').hidden = true;
+  });
+  $('lkChange').onclick = () => { clearInterval(resendT); pendClear(); showStep(false); $('lkInput').focus(); };
+  // "Log in" in the menu while already on this page: stay, don't reload.
+  document.querySelectorAll('a.nav-account, a.mm-account').forEach(a => a.addEventListener('click', (e) => {
+    if (token) return;
+    e.preventDefault();
+    scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => { const t = $('lkCode').hidden ? $('lkInput') : $('otpInput'); try { t.focus({ preventScroll: true }); } catch (x) { t.focus(); } }, 250);
+  }));
+  $('otpInput').addEventListener('input', () => {
+    const inp = $('otpInput');
+    inp.value = inp.value.replace(/\D/g, '').slice(0, 6);
+    $('otpErr').hidden = true; paintBoxes(false);
+    if (inp.value.length === 6) verify();
+  });
+  $('otpInput').addEventListener('focus', () => paintBoxes(false));
+  $('otpInput').addEventListener('blur', () => paintBoxes(!$('otpErr').hidden));
+  $('otpInput').addEventListener('keydown', e => { if (e.key === 'Enter') verify(); });
+  $('otpGo').onclick = verify;
+
+  window.addEventListener('hashchange', start);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && data) refresh(false); });
+  start();
+})();
+</script>
+</body>
+</html>
