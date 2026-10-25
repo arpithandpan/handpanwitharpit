@@ -4390,7 +4390,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v181</span>
+        <span style="color:var(--clay);font-weight:500;">v182</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4464,7 +4464,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v181</span>
+        <span style="color:var(--clay);font-weight:500;">v182</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -8274,7 +8274,7 @@ async function loadOverview() {
     if (owc) owc.innerHTML = ws.slice(0,5).map(w => `<div class="m-card"><div class="m-card-title">${w.id} · ${w.venue||'—'}</div><div style="font-size:0.88rem;color:var(--text-light);margin-bottom:0.5rem;">${fmtDate(w.date)}</div><div class="m-card-row"><span class="m-card-label">Participants</span><span class="m-card-val">${w.total_pax||0}</span></div><div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div><div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:${profitColor(w.net_profit)};font-weight:600">${fmt(w.net_profit)}</span></div></div>`).join('') || '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">🎵</div><div class="empty-state-title" style="font-size:1rem;">No workshops yet</div></div>';
 
     const opc = document.getElementById('overviewPaymentsCards');
-    if (opc) opc.innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<div class="m-card"><div class="m-card-title" style="color:var(--moss)">${fmt(p.amount)}<span class="badge badge-clay" style="float:right">${fmtMode(p.payment_mode)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Name</span><span class="m-card-val">${p.payer_name||'—'}</span></div></div>`).join('') || '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">💳</div><div class="empty-state-title" style="font-size:1rem;">No payments yet</div></div>';
+    if (opc) opc.innerHTML = pays.filter(p=>p.type==='income').slice(-8).reverse().map(p => `<div class="m-card"><div class="m-card-title" style="color:var(--moss)">${fmt(p.amount)}<span class="badge badge-clay mc-end">${fmtMode(p.payment_mode)}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Name</span><span class="m-card-val">${p.payer_name||'—'}</span></div></div>`).join('') || '<div class="empty-state" style="padding:2rem 1rem;"><div style="font-size:1.5rem;margin-bottom:0.4rem;">💳</div><div class="empty-state-title" style="font-size:1rem;">No payments yet</div></div>';
   } catch(e) { showToast('Error loading overview', 'error'); } finally { hideLoader(); }
 }
 
@@ -8339,27 +8339,26 @@ async function loadWorkshops() {
     window._cachedWorkshops = ws;
     const wsCardsEl = document.getElementById('workshopsCards');
     if (wsCardsEl) wsCardsEl.innerHTML = ws.map(w => `
-      <div class="m-card${w.cancelled ? ' ws-card-cancelled' : ''}" id="wscard-${w.id}" style="border-radius:12px;overflow:hidden;padding:0;">
-        <div style="padding:1.25rem 1.5rem 1rem;">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.6rem;">
-            <div>
-              <div style="font-size:11px;font-weight:600;color:var(--clay);letter-spacing:0.02em;text-transform:none;margin-bottom:3px;">${w.id}${w.cancelled ? ' <span class="ws-cancelled-badge">Cancelled</span>' : ''}</div>
-              ${w.booking_open===false ? '<span class="badge badge-gray" style="display:inline-block;margin-bottom:4px;">Coming soon</span>' : ''}<div style="font-size:17px;font-weight:600;color:var(--bark);">${w.title ? zEsc(w.title) : (w.venue||'—')}</div>${w.title ? `<div style="font-size:13px;color:var(--text-light);margin-top:2px;">${zEsc(w.venue||'')}</div>` : ''}
-              <div style="font-size:12px;color:var(--text-light);margin-top:2px;">${fmtDate(w.date)}</div>
-            </div>
-            <span class="badge badge-clay" style="margin-top:2px;">${w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0)} pax</span>
+      <div class="m-card${w.cancelled ? ' ws-card-cancelled' : ''}" id="wscard-${w.id}">
+        <div class="m-card-head">
+          <div class="m-card-head-main">
+            <div class="m-card-kicker">${w.id}${w.cancelled ? ' <span class="ws-cancelled-badge">Cancelled</span>' : ''}</div>
+            <div class="m-card-title">${w.title ? zEsc(w.title) : (w.venue||'—')}</div>
+            ${w.title ? `<div class="m-card-sub">${zEsc(w.venue||'')}</div>` : ''}
+            <div class="m-card-sub">${fmtDate(w.date)}${w.booking_open===false ? ' · Coming soon' : ''}</div>
           </div>
-          <div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div>
-          <div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div>
-          <div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:${profitColor(w.net_profit)};font-weight:600">${fmt(w.net_profit)}</span></div>
-          <div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div>
+          <span class="badge badge-clay">${w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0)} pax</span>
         </div>
-        <div style="padding:0.85rem 1.5rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;align-items:center;justify-content:flex-end;">
+        <div class="m-card-row"><span class="m-card-label">Revenue</span><span class="m-card-val" style="color:var(--clay)">${fmt(w.total_revenue)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Expenses</span><span class="m-card-val">${fmt(w.total_expense)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Net Profit</span><span class="m-card-val" style="color:${profitColor(w.net_profit)};font-weight:600">${fmt(w.net_profit)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Margin</span><span class="m-card-val">${fmtPct(w.margin)}</span></div>
+        <div class="m-card-foot">
           <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openWsPaxPage('${w.id}','${(w.venue||w.id).replace(/['"]/g,'')}','${fmtDate(w.date)}')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             View ${w._actual_pax !== undefined ? w._actual_pax : (w.total_pax||0)} Participants
           </button>
-          <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${w.id}','${(w.venue||w.id).replace(/'/g,"\\'")}','workshop',${admin},this)" aria-label="More actions" style="padding:0.5rem 0.75rem;">
+          <button class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openMDotsSheet('${w.id}','${(w.venue||w.id).replace(/'/g,"\\'")}','workshop',${admin},this)" aria-label="More actions">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
           </button>
         </div>
@@ -8500,28 +8499,23 @@ async function loadParticipants() {
     if (tbl) { const _wrap = tbl.closest('.dash-table-wrap'); if (_wrap) { const _hasRows = tbl.querySelectorAll('tr').length > 0 && !tbl.querySelector('[colspan]'); _wrap.style.display = _hasRows ? '' : 'none'; setSearchFilterVisibility('participants', _hasRows); } } const _es_participantsEmptyState = document.getElementById('participantsEmptyState'); if (_es_participantsEmptyState) { _es_participantsEmptyState.innerHTML = EMPTY_STATES.participants; const _hr = document.getElementById('participantsTable'); _es_participantsEmptyState.style.display = (_hr && _hr.querySelectorAll('tr').length > 0 && !_hr.querySelector('[colspan]')) ? 'none' : ''; }
     const parCards = document.getElementById('participantsCards');
     if (parCards) parCards.innerHTML = parts.map(p => `
-      <div class="m-card" style="margin-bottom:1.25rem;padding:0;" data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-has-guests="${(Number(p.observer_count)>0)?'1':'0'}">
-        <div style="padding:1.1rem 1.4rem 0.75rem;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <div>
-              <div class="m-card-title" style="margin:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span>${p.full_name||'—'}</span>${(Number(p.observer_count)||0) > 0 ? '<span style="background:color-mix(in srgb, var(--ok) 20%, transparent);color:var(--moss);font-size:0.66rem;font-weight:600;padding:2px 8px;border-radius:14px;white-space:nowrap;border:0.5px solid color-mix(in srgb, var(--ok) 45%, transparent);flex-shrink:0;">+'+(Number(p.observer_count)||0)+' audience</span>' : ''}</div>
+      <div class="m-card" data-workshop="${p.workshop_id||''}" data-checkin="${p.checked_in}" data-mode="${p.payment_mode||''}" data-has-guests="${(Number(p.observer_count)>0)?'1':'0'}">
+        <div class="m-card-head">
+            <div class="m-card-head-main">
+              <div class="m-card-title"><span>${p.full_name||'—'}</span>${(Number(p.observer_count)||0) > 0 ? '<span style="background:color-mix(in srgb, var(--ok) 20%, transparent);color:var(--moss);font-size:0.66rem;font-weight:600;padding:2px 8px;border-radius:14px;white-space:nowrap;border:0.5px solid color-mix(in srgb, var(--ok) 45%, transparent);flex-shrink:0;">+'+(Number(p.observer_count)||0)+' audience</span>' : ''}</div>
               ${personCaption(p)}
             </div>
             ${p.payment_mode ? '<span class="badge badge-clay">' + fmtMode(p.payment_mode) + '</span>' : ''}
-          </div>
-          <div class="m-card-row" style="padding:4px 0 0;"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
-          <div class="m-card-row" style="padding:2px 0;"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div>
-          <div class="m-card-row" style="padding:2px 0;"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div>
         </div>
-        ${(p.email || p.bringing_own_handpan) ? `<div style="border-top:1px solid color-mix(in srgb, var(--acc-tx) 10%, transparent);padding:0.85rem 1.4rem;display:flex;flex-direction:column;gap:10px;">
-          ${p.email ? '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><span style="font-size:0.95rem;color:var(--text-light);flex-shrink:0;">Email</span><span style="font-size:0.95rem;color:var(--clay-light);text-align:right;word-break:break-all;">' + p.email + '</span></div>' : ''}
-          ${p.bringing_own_handpan ? '<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:0.95rem;color:var(--text-light);">Bringing handpan</span><span style="font-size:0.95rem;font-weight:600;color:var(--bark);">' + p.bringing_own_handpan + '</span></div>' : ''}
-          
-        </div>` : ''}
+        <div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div>
+        <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.phone||'—'}</span></div>
+        ${p.email ? '<div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val mc-break">' + p.email + '</span></div>' : ''}
+        ${p.bringing_own_handpan ? '<div class="m-card-row"><span class="m-card-label">Bringing handpan</span><span class="m-card-val">' + p.bringing_own_handpan + '</span></div>' : ''}
         ${mobileAudienceStrip(p)}
-        <div style="border-top:1px solid color-mix(in srgb, var(--acc-tx) 10%, transparent);padding:0.9rem 1.4rem;display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:0.75rem;"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
-          ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true,this)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
+        <div class="m-card-foot m-card-foot-split">
+          <div class="m-card-foot-l"><span class="checkin-label" data-checked="${p.checked_in?1:0}">${p.checked_in?'Checked in':'Check-in'}</span><label class="checkin-toggle" onclick="toggleCheckIn('${p.id}',${p.checked_in},'${(p.full_name||p.id).replace(/'/g,'')}');event.preventDefault();"><input type="checkbox" ${p.checked_in?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></div>
+          ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true,this)" aria-label="More actions"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
         </div>
       </div>
     `).join('');   // v180: #participantsEmptyState covers the empty case
@@ -8729,12 +8723,12 @@ async function loadZoomReview(stusIn) {
       <td><select class="form-input" data-label="Student" id="zr-sel-${r.id}">${opts(zoomGuessStudent(r, stus))}</select></td>
       <td class="ws-action-sticky"><span class="action-wrap"><button class="icon-action-btn" data-tip="Log class" onclick="resolveZoomReview('${r.id}','zr-sel-${r.id}',this)">${CHECK}</button><button class="icon-action-btn" data-tip="Save as trial (not a student yet)" onclick="markZoomTrial('${r.id}')">${STAR_SVG}</button><button class="icon-action-btn danger" data-tip="Ignore" onclick="ignoreZoomReview('${r.id}')">${X_SVG}</button></span></td>
     </tr>`).join('');
-    document.getElementById('zoomReviewCards').innerHTML = rows.map(r => `<div class="m-card"><div class="m-card-title">${zEsc(r.zoom_name || r.zoom_email || '—')} <span class="badge badge-clay" style="float:right">${Number(r.minutes) || 0} min</span></div>
+    document.getElementById('zoomReviewCards').innerHTML = rows.map(r => `<div class="m-card"><div class="m-card-title">${zEsc(r.zoom_name || r.zoom_email || '—')} <span class="badge badge-clay mc-end">${Number(r.minutes) || 0} min</span></div>
       <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(r.class_date)}</span></div>
       ${r.zoom_email ? `<div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">${zEsc(r.zoom_email)}</span></div>` : ''}
-      <div class="m-card-row"><span class="m-card-label">Meeting</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;display:inline-block;vertical-align:bottom;text-align:right;">${zEsc(r.topic || '—')}</span></div>
+      <div class="m-card-row"><span class="m-card-label">Meeting</span><span class="m-card-val mc-clip">${zEsc(r.topic || '—')}</span></div>
       <div style="margin-top:0.85rem;"><select class="form-input" data-label="Student" id="zr-msel-${r.id}">${opts(zoomGuessStudent(r, stus))}</select></div>
-      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;">
+      <div class="m-card-foot">
         <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="ignoreZoomReview('${r.id}')">Ignore</button>
         <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="markZoomTrial('${r.id}')">Trial</button>
         <button class="btn-dash btn-dash-primary btn-dash-sm" onclick="resolveZoomReview('${r.id}','zr-msel-${r.id}',this)">Log class</button>
@@ -8867,10 +8861,10 @@ async function loadTrials() {
       <td>${trialStatusBadge(t)}</td>
       <td class="ws-action-sticky">${trialActionsHtml(t, false)}</td>
     </tr>`).join('') || `<tr><td colspan="5" style="text-align:center;padding:1.5rem 1rem;color:var(--text-light);">${rows.length ? 'No pending trials. Everyone has been converted or marked dropped.' : 'No trials yet. Add one below, or save a Zoom attendee as a trial from the review list.'}</td></tr>`;
-    document.getElementById('trialsCards').innerHTML = shown.map(t => `<div class="m-card"><div class="m-card-title" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;"><span>${zEsc(t.full_name || '—')}</span><span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">${trialStatusBadge(t)}</span></div>
+    document.getElementById('trialsCards').innerHTML = shown.map(t => `<div class="m-card"><div class="m-card-title"><span>${zEsc(t.full_name || '—')}</span><span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">${trialStatusBadge(t)}</span></div>
       <div class="m-card-row"><span class="m-card-label">Trial date</span><span class="m-card-val">${fmtDate(t.trial_date || (t.start_at ? schIst(new Date(t.start_at)).ymd : ''))}${t.start_at ? ', ' + trialTimeIst(t) + ' IST' : ''}${zoomBadge(t)}</span></div>
       ${trialContact(t) ? `<div class="m-card-row"><span class="m-card-label">Contact</span><span class="m-card-val">${zEsc(trialContact(t))}</span></div>` : ''}
-      ${t.notes ? `<div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;display:inline-block;vertical-align:bottom;text-align:right;">${zEsc(t.notes)}</span></div>` : ''}
+      ${t.notes ? `<div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val mc-clip">${zEsc(t.notes)}</span></div>` : ''}
       <div class="tr-acts">${trialActionsHtml(t, true)}</div>
     </div>`).join('') || '<div class="mobile-cards-empty">No pending trials.</div>';
   } catch (e) { console.warn('loadTrials skipped:', e.message); panel.style.display = 'none'; }
@@ -9065,7 +9059,7 @@ async function loadStudents() {
   const _e_studentsTable = document.getElementById('studentsEmptyState');
   if (_e_studentsTable) { _e_studentsTable.innerHTML = EMPTY_STATES.students; _e_studentsTable.style.display = _hd_studentsTable ? 'none' : ''; }
     const stuCards = document.getElementById('studentsCards');
-    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name}${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);font-weight:400;">' + s.country + '</span>' : ''} <span class="badge ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}" style="float:right">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Level</span><span class="m-card-val">${s.level||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Rate</span><span class="m-card-val">${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Remaining</span><span class="m-card-val">${remainingBadge(s)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">${s.email||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${s.description||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm" style="margin-right:auto;" onclick="openClassLog('${s.id}')">+1 Class</button><button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${s.id}','${s.full_name}','student',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
+    if (stuCards) stuCards.innerHTML = stus.map(s => `<div class="m-card ${s.archived?'archived-row':''}" data-status="${s.status||''}" data-batch="${s.batch_id||''}"><div class="m-card-title">${s.full_name}${s.country && !/india/i.test(s.country) ? ' <span style="font-size:0.78em;color:var(--text-light);font-weight:400;">' + s.country + '</span>' : ''} <span class="badge mc-end ${s.status==='Active'?'badge-green':s.status==='On Break'?'badge-clay':'badge-gray'}">${s.status}</span></div><div class="m-card-row"><span class="m-card-label">Joined</span><span class="m-card-val">${fmtDate(s.join_date)}</span></div><div class="m-card-row"><span class="m-card-label">Level</span><span class="m-card-val">${s.level||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Rate</span><span class="m-card-val">${s.monthly_fee ? fmtMoney(s.monthly_fee, s.currency, s.fee_basis) : '—'}</span></div><div class="m-card-row"><span class="m-card-label">Total Paid</span><span class="m-card-val" style="color:var(--moss)">${s._totalDisplay || fmt(s.total_paid)}</span></div><div class="m-card-row"><span class="m-card-label">Remaining</span><span class="m-card-val">${remainingBadge(s)}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${s.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Email</span><span class="m-card-val">${s.email||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val mc-clip">${s.description||'—'}</span></div><div class="m-card-foot">${s.archived?`<button class="btn-restore" onclick="restoreRecord('students','${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button class="btn-dash btn-dash-outline btn-dash-sm mc-left" onclick="openClassLog('${s.id}')">+1 Class</button><button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openMDotsSheet('${s.id}','${s.full_name}','student',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.students + '</div>';
   } catch(e) { console.warn('loadStudents error:', e.message); } finally { hideLoader(); }
 }
 function normMonth(m) {
@@ -9307,12 +9301,12 @@ async function loadFeeRequests() {
       <td>${when(r)}</td>
       <td class="ws-action-sticky"><span class="action-wrap"><button class="icon-action-btn" data-tip="Copy link" onclick="copyFeeRequestLink('${feeRequestLink(r.id)}')">${COPY_SVG}</button><button class="icon-action-btn danger" data-tip="Cancel this fee link" aria-label="Cancel this fee link" onclick="cancelFeeRequest('${r.id}')">${X_SVG}</button></span></td>
     </tr>`).join('');
-    document.getElementById('feeRequestsCards').innerHTML = reqs.map(r => `<div class="m-card"><div class="m-card-title">${nameOf(r)} <span class="badge badge-clay" style="float:right">${r.id}</span></div>
+    document.getElementById('feeRequestsCards').innerHTML = reqs.map(r => `<div class="m-card"><div class="m-card-title">${nameOf(r)} <span class="badge badge-clay mc-end">${r.id}</span></div>
       <div class="m-card-row"><span class="m-card-label">Classes</span><span class="m-card-val">${r.classes}</span></div>
       <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val">${frFmt(r.amount, r.currency)} ${r.currency}</span></div>
       ${r.note ? `<div class="m-card-row"><span class="m-card-label">Note</span><span class="m-card-val">${r.note}</span></div>` : ''}
       <div class="m-card-row"><span class="m-card-label">Created</span><span class="m-card-val">${when(r)}</span></div>
-      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;">
+      <div class="m-card-foot">
         <button class="btn-dash btn-dash-primary btn-dash-sm" onclick="copyFeeRequestLink('${feeRequestLink(r.id)}')">Copy link</button>
         <button class="btn-dash btn-dash-outline btn-dash-sm" onclick="cancelFeeRequest('${r.id}')">Cancel link</button>
       </div></div>`).join('');
@@ -9337,7 +9331,7 @@ async function loadFeePayments() {
     setSearchFilterVisibility('fee-payments', fps.length > 0);
     loadFeeRequests();
     const fpCards = document.getElementById('feePaymentsCards');
-    if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${normMonth(f.month)}" data-mode="${f.payment_mode||''}"><div class="m-card-title">${feeStudentDisplay(f)} <span style="float:right">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${fmtFeeMonth(f.month)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmtMoney(f.amount, f.currency)}</span></div>${f.settled_inr ? '<div class="m-card-row"><span class="m-card-label">Settled INR</span><span class="m-card-val" style="color:var(--text-light);">' + fmt(f.settled_inr) + '</span></div>' : ''}<div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%;display:inline-block;vertical-align:bottom;text-align:right;">${f.description||'—'}</span></div><div style="padding-top:1rem;margin-top:0.75rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;justify-content:flex-end;align-items:center;">${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${f.id}','${(f.student_name||f.id).replace(/'/g,"\\'")}','fee_payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.fee_payments + '</div>';
+    if (fpCards) fpCards.innerHTML = fps.map(f => `<div class="m-card" data-student="${f.student_name||''}" data-paid="${f.paid}" data-month="${normMonth(f.month)}" data-mode="${f.payment_mode||''}"><div class="m-card-title">${feeStudentDisplay(f)} <span class="mc-end">${f.paid?'<span class="badge badge-green">Paid</span>':f.amount==0?'<span class="badge badge-gray">Break</span>':'<span class="badge badge-red">Pending</span>'}</span></div><div class="m-card-row"><span class="m-card-label">Month</span><span class="m-card-val">${fmtFeeMonth(f.month)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--moss)">${fmtMoney(f.amount, f.currency)}</span></div>${f.settled_inr ? '<div class="m-card-row"><span class="m-card-label">Settled INR</span><span class="m-card-val" style="color:var(--text-light);">' + fmt(f.settled_inr) + '</span></div>' : ''}<div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(f.payment_date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val mc-clip">${f.description||'—'}</span></div><div class="m-card-foot">${f.archived?`<button class="btn-restore" onclick="restoreRecord('fee_payments','${f.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openMDotsSheet('${f.id}','${(f.student_name||f.id).replace(/'/g,"\\'")}','fee_payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.fee_payments + '</div>';
   } catch(e) { showToast('Error loading fee payments', 'error'); } finally { hideLoader(); }
 }
 
@@ -9375,7 +9369,7 @@ async function loadPayments() {
   setSearchFilterVisibility('payments', _hasData_payments);
   const _es_payments = document.getElementById('paymentsEmptyState');
   if (_es_payments) { _es_payments.innerHTML = EMPTY_STATES.payments; _es_payments.style.display = _hasData_payments ? 'none' : ''; }    const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => { const isGenExpC = p.is_general_expense; const dataTypeC = isGenExpC ? 'general_expense' : (p.type||''); const typeBadgeC = isGenExpC ? `<span class="badge badge-clay" style="float:right;margin-top:-2px">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" style="float:right;margin-top:-2px">${p.type}</span>`; return `<div class="m-card ${p.archived?'archived-row':''}" data-type="${dataTypeC}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'var(--bad)'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}${typeBadgeC}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${p.id}','${p.payer_name||p.description||p.id}','payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`; }).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.payments + '</div>';
+    if (payCards) payCards.innerHTML = pays.map(p => { const isGenExpC = p.is_general_expense; const dataTypeC = isGenExpC ? 'general_expense' : (p.type||''); const typeBadgeC = isGenExpC ? `<span class="badge badge-clay" class="mc-end">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" class="mc-end">${p.type}</span>`; return `<div class="m-card ${p.archived?'archived-row':''}" data-type="${dataTypeC}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--moss)':'var(--bad)'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}${typeBadgeC}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div class="m-card-foot">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openMDotsSheet('${p.id}','${p.payer_name||p.description||p.id}','payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`; }).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.payments + '</div>';
   } catch(e) { showToast('Error loading payments', 'error'); } finally { hideLoader(); }
 }
 
@@ -9442,8 +9436,8 @@ async function loadLeads() {
   setSearchFilterVisibility('leads', _hd_leadsTable);
   const _e_leadsTable = document.getElementById('leadsEmptyState');
   if (_e_leadsTable) { _e_leadsTable.innerHTML = EMPTY_STATES.leads; _e_leadsTable.style.display = _hd_leadsTable ? 'none' : ''; }
-    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" id="lcard-${l.id}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!l.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="leads" data-id="${l.id}" data-name="${(l.full_name||l.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('lcard-'+l.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${l.full_name}</span> ${l.referred_friend?'<span class="badge badge-green" style="flex-shrink:0;">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${l.description||'—'}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">${(()=>{const hasPendingRefC=!l.referral_received&&(l.referral_amount||0)>0;const markBtn=hasPendingRefC?`<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))
-}',${l.referral_amount||0})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mark received</button>`:'<span></span>';return l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button><span></span>`:markBtn+`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`;})()}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
+    if (leadsCards) leadsCards.innerHTML = leads.map(l => `<div class="m-card ${l.archived?'archived-row':''}" id="lcard-${l.id}" data-referred="${l.referred_friend}" data-workshop="${l.workshop_attended||''}"><div class="m-card-title">${!l.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="leads" data-id="${l.id}" data-name="${(l.full_name||l.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('lcard-'+l.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${l.full_name}</span> ${l.referred_friend?'<span class="badge badge-green" style="flex-shrink:0;">Referred</span>':''}</div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${l.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Workshop</span><span class="m-card-val">${l.workshop_attended||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${l.description||'—'}</span></div><div class="m-card-foot m-card-foot-split">${(()=>{const hasPendingRefC=!l.referral_received&&(l.referral_amount||0)>0;const markBtn=hasPendingRefC?`<button class="btn-mark-received" onclick="markReferralReceived('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))
+}',${l.referral_amount||0})"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mark received</button>`:'<span></span>';return l.archived?`<button class="btn-restore" onclick="restoreRecord('leads','${l.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button><span></span>`:markBtn+`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openMDotsSheet('${l.id}','${(l.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','lead',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`;})()}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.leads + '</div>';
   } catch(e) { showToast('Error loading leads', 'error'); } finally { hideLoader(); }
 }
 
@@ -9474,7 +9468,7 @@ async function loadWaitlist() {
     if (_e_waitlistTable) { _e_waitlistTable.innerHTML = EMPTY_STATES.workshop_waitlist; _e_waitlistTable.style.display = _hd_waitlistTable ? 'none' : ''; }
 
     const waitlistCards = document.getElementById('waitlistCards');
-    if (waitlistCards) waitlistCards.innerHTML = waitlist.map(w => `<div class="m-card ${w.archived?'archived-row':''}" id="wcard-${w.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.65rem;">${!w.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="workshop_waitlist" data-id="${w.id}" data-name="${(w.full_name||w.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('wcard-'+w.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${w.full_name}</span> <span class="badge badge-clay" style="flex-shrink:0;">${w.source||'Other'}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${w.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Preferred Month</span><span class="m-card-val">${fmtMonth(w.preferred_month)}</span></div><div class="m-card-row"><span class="m-card-label">Date Added</span><span class="m-card-val">${fmtDate(w.date_added)}</span></div><div class="m-card-row"><span class="m-card-label">Contacted</span><span class="m-card-val"><label class="checkin-toggle" data-tip="${w.contacted?'Contacted':'Not contacted'}" onclick="toggleContacted('${w.id}',${!!w.contacted},'${(w.full_name||'').replace(/'/g,String.fromCharCode(92,39))}');event.preventDefault();"><input type="checkbox" ${w.contacted?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshop_waitlist','${w.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openMDotsSheet('${w.id}','${(w.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','waitlist',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.workshop_waitlist + '</div>';
+    if (waitlistCards) waitlistCards.innerHTML = waitlist.map(w => `<div class="m-card ${w.archived?'archived-row':''}" id="wcard-${w.id}"><div class="m-card-title">${!w.archived ? `<label class="cb-box" style="flex-shrink:0;"><input type="checkbox" class="row-select-cb row-cb" data-table="workshop_waitlist" data-id="${w.id}" data-name="${(w.full_name||w.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('wcard-'+w.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label>` : ''}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${w.full_name}</span> <span class="badge badge-clay" style="flex-shrink:0;">${w.source||'Other'}</span></div><div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${w.phone||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Preferred Month</span><span class="m-card-val">${fmtMonth(w.preferred_month)}</span></div><div class="m-card-row"><span class="m-card-label">Date Added</span><span class="m-card-val">${fmtDate(w.date_added)}</span></div><div class="m-card-row"><span class="m-card-label">Contacted</span><span class="m-card-val"><label class="checkin-toggle" data-tip="${w.contacted?'Contacted':'Not contacted'}" onclick="toggleContacted('${w.id}',${!!w.contacted},'${(w.full_name||'').replace(/'/g,String.fromCharCode(92,39))}');event.preventDefault();"><input type="checkbox" ${w.contacted?'checked':''}><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label></span></div><div class="m-card-foot">${w.archived?`<button class="btn-restore" onclick="restoreRecord('workshop_waitlist','${w.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openMDotsSheet('${w.id}','${(w.full_name||'').replace(/'/g,String.fromCharCode(92,39))}','waitlist',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.workshop_waitlist + '</div>';
   } catch(e) { console.error('loadWaitlist error:', e); showToast('Error loading waitlist', 'error'); } finally { hideLoader(); }
 }
 
@@ -9636,7 +9630,7 @@ function invRenderInvoices() {
     }
 
     const cards = document.getElementById('invoicesCards');
-    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card${inv.cancelled?' inv-card-cancelled':''}" id="icard-${inv.id}"><div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;"><label class="cb-box"><input type="checkbox" class="row-select-cb row-cb" data-table="invoices" data-id="${inv.id}" data-name="${(inv.billed_name||inv.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('icard-'+inv.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span>${inv.auto_generated?'<span class="inv-auto-badge">Auto</span>':''}</div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmtCur(inv.total_amount, inv.currency)}</span></div><div class="m-card-row inv-st-row"><span class="m-card-label">Status</span><span class="m-card-val inv-st">${inv.cancelled?`${inv.cancelled_at?`<span class="inv-st-d">${invShortDate(inv.cancelled_at)}</span>`:''}<span class="inv-cancelled-badge">Cancelled</span>`:`<span class="inv-st-t${inv.sent?' on':''}">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${invShortDate(inv.sent_at)}`:''}</span><label class="inv-switch" aria-label="Mark as sent"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label>`}</span></div><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button>${inv.cancelled?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invReinstate('${inv.id}')">Reinstate</button>`:''}${(!inv.cancelled && isAdmin())?`<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="invCancelAsk('${inv.id}','${invFmtNo(inv.invoice_number)}')">Cancel invoice</button>`:''}${isAdmin()?`<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;margin-left:0.5rem;" onclick="archiveRecord('invoices','${inv.id}','${invFmtNo(inv.invoice_number)}')">Delete</button>`:''}</div></div>`).join('') || ('<div class="mobile-cards-empty">' + (invAllCache.length > 0 ? '<div class="empty-state"><div class="empty-state-title">No invoices match these filters</div><div class="empty-state-text">Try a different date range or status, or clear the filters.</div></div>' : EMPTY_STATES.invoices) + '</div>');
+    if (cards) cards.innerHTML = list.map(inv => `<div class="m-card${inv.cancelled?' inv-card-cancelled':''}" id="icard-${inv.id}"><div class="m-card-title"><label class="cb-box"><input type="checkbox" class="row-select-cb row-cb" data-table="invoices" data-id="${inv.id}" data-name="${(inv.billed_name||inv.id).replace(/"/g,'&quot;')}" onchange="onRowCbChange(this);document.getElementById('icard-'+inv.id)?.classList.toggle('row-selected',this.checked)"><svg class="cb-check" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg></label><span style="color:var(--clay);font-weight:600;">${invFmtNo(inv.invoice_number)}</span>${inv.auto_generated?'<span class="inv-auto-badge">Auto</span>':''}</div><div class="m-card-row"><span class="m-card-label">Billed To</span><span class="m-card-val">${inv.billed_name || '—'}</span></div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(inv.invoice_date)}</span></div><div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">${fmtCur(inv.total_amount, inv.currency)}</span></div><div class="m-card-row inv-st-row"><span class="m-card-label">Status</span><span class="m-card-val inv-st">${inv.cancelled?`${inv.cancelled_at?`<span class="inv-st-d">${invShortDate(inv.cancelled_at)}</span>`:''}<span class="inv-cancelled-badge">Cancelled</span>`:`<span class="inv-st-t${inv.sent?' on':''}">${inv.sent?'Sent':'Not sent'}${inv.sent&&inv.sent_at?` \u00b7 ${invShortDate(inv.sent_at)}`:''}</span><label class="inv-switch" aria-label="Mark as sent"><input type="checkbox" ${inv.sent?'checked':''} onchange="invSetSent('${inv.id}',this.checked)"><span class="sl"></span></label>`}</span></div><div class="m-card-foot"><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openInvoicePreview('${inv.id}')">View</button><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="invEmail('${inv.id}','${inv.billed_email||''}','${invFmtNo(inv.invoice_number)}',${Number(inv.total_amount)||0},'${inv.invoice_date||''}')">Email</button><button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openMDotsSheet('${inv.id}','${invFmtNo(inv.invoice_number)}','invoice',isAdmin(),this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button></div></div>`).join('') || ('<div class="mobile-cards-empty">' + (invAllCache.length > 0 ? '<div class="empty-state"><div class="empty-state-title">No invoices match these filters</div><div class="empty-state-text">Try a different date range or status, or clear the filters.</div></div>' : EMPTY_STATES.invoices) + '</div>');
 }
 // ── INVOICES: EDITOR + GENERATION ──
 const INV_BIZ = {
@@ -11170,7 +11164,7 @@ async function loadGigs() {
       const a = Math.min(Number(g.advance_amount) || 0, f);
       const bal = Math.round((f - a) * 100) / 100;
       return '<div class="m-card">'
-        + '<div class="m-card-title" style="display:flex;align-items:center;gap:0.6rem;justify-content:space-between;"><span style="color:var(--clay);font-weight:600;">' + g.id + '</span>' + gigStatusBadge(g.status) + '</div>'
+        + '<div class="m-card-title"><span style="color:var(--clay);font-weight:600;">' + g.id + '</span>' + gigStatusBadge(g.status) + '</div>'
         + '<div class="m-card-row"><span class="m-card-label">Client</span><span class="m-card-val">' + (g.client_name || '—') + (g.agency ? ' · via ' + g.agency : '') + '</span></div>'
         + (g.title ? '<div class="m-card-row"><span class="m-card-label">Event</span><span class="m-card-val">' + g.title + '</span></div>' : '')
         + (g.venue ? '<div class="m-card-row"><span class="m-card-label">Venue</span><span class="m-card-val">' + g.venue + '</span></div>' : '')
@@ -11178,10 +11172,10 @@ async function loadGigs() {
         + '<div class="m-card-row"><span class="m-card-label">Fee</span><span class="m-card-val" style="color:var(--clay);font-weight:600;">' + fmtCur(f, g.currency) + '</span></div>'
         + '<div class="m-card-row"><span class="m-card-label">Advance</span><span class="m-card-val">' + gigMoneyChip(a, g.advance_paid, g.currency) + '</span></div>'
         + '<div class="m-card-row"><span class="m-card-label">Balance</span><span class="m-card-val">' + gigMoneyChip(bal, g.balance_paid, g.currency) + '</span></div>'
-        + '<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;justify-content:flex-end;flex-wrap:wrap;gap:0.5rem;">'
-        + '<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="copyGigLink(\'' + g.id + '\')">Copy link</button>'
-        + (isAdmin() ? '<button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="openEdit(\'gigs\',\'' + g.id + '\')">Edit</button>'
-        + '<button class="btn-dash btn-dash-danger btn-dash-sm" style="padding:0 0.9rem;min-width:48px;" onclick="archiveRecord(\'gigs\',\'' + g.id + '\',\'' + (g.client_name || g.id).replace(/'/g, '') + '\')">Delete</button>' : '')
+        + '<div class="m-card-foot">'
+        + '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="copyGigLink(\'' + g.id + '\')">Copy link</button>'
+        + (isAdmin() ? '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openEdit(\'gigs\',\'' + g.id + '\')">Edit</button>'
+        + '<button class="btn-dash btn-dash-danger btn-dash-sm" onclick="archiveRecord(\'gigs\',\'' + g.id + '\',\'' + (g.client_name || g.id).replace(/'/g, '') + '\')">Delete</button>' : '')
         + '</div></div>';
     }).join('') || '<div class="mobile-cards-empty"><div class="empty-state"><div style="font-size:2.2rem;margin-bottom:0.5rem;">🎵</div><div class="empty-state-title">No performances yet</div><div class="empty-state-sub">Add your first gig and share its payment link</div></div></div>';
   } catch(e) {
@@ -11269,12 +11263,12 @@ async function loadBin(manual) {
               <div class="m-card-title">${item._name}</div>
               <div class="m-card-row"><span class="m-card-label">Type</span><span class="m-card-val">${label}</span></div>
               <div class="m-card-row"><span class="m-card-label">ID</span><span class="m-card-val">${item.id||'—'}</span></div>
-              <div style="padding-top:1rem;margin-top:0.75rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.75rem;justify-content:flex-end;align-items:center;">
+              <div class="m-card-foot">
                 <button class="btn-restore" onclick="restoreBinItem('${item._table}','${item.id}','${(item._name||'').replace(/'/g,'\\\'')}')">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
                   Restore
                 </button>
-                <button class="btn-dash btn-dash-outline btn-dash-sm" style="padding:0 0.75rem;min-width:48px;" onclick="openBinDotsMenu('${item._table}','${item.id}','${(item._name||'').replace(/'/g,'\\\'') }',this)">
+                <button class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openBinDotsMenu('${item._table}','${item.id}','${(item._name||'').replace(/'/g,'\\\'') }',this)">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                 </button>
               </div>
@@ -13084,6 +13078,11 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
   } else if (type === 'waitlist') {
     html += `<button class="m-dots-item" onclick="closeMDotsSheet();openEdit('workshop_waitlist','${id}')">${EDIT_SVG} Edit</button>`;
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('workshop_waitlist','${id}','${name}')">${TRASH_SVG} Delete</button>`;
+  } else if (type === 'invoice') {
+    const inv = (invAllCache || []).find(i => i.id === id) || {};
+    if (inv.cancelled) html += `<button class="m-dots-item" onclick="closeMDotsSheet();invReinstate('${id}')">${UNDO_SVG} Reinstate</button>`;
+    else if (isAdmin) html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();invCancelAsk('${id}','${name}')">${CANCEL_SVG} Cancel invoice</button>`;
+    if (isAdmin) html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('invoices','${id}','${name}')">${TRASH_SVG} Delete</button>`;
   }
 
   if (isPhoneLayout()) {
@@ -13128,6 +13127,11 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
       } else if (type === 'waitlist') {
         actions.push({ label: `${EDIT_SVG} Edit`, danger: false, fn: () => openEdit('workshop_waitlist', id) });
         actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('workshop_waitlist', id, name) });
+      } else if (type === 'invoice') {
+        const inv = (invAllCache || []).find(i => i.id === id) || {};
+        if (inv.cancelled) actions.push({ label: `${UNDO_SVG} Reinstate`, danger: false, fn: () => invReinstate(id) });
+        else if (isAdmin) actions.push({ label: `${CANCEL_SVG} Cancel invoice`, danger: true, fn: () => invCancelAsk(id, name) });
+        if (isAdmin) actions.push({ label: `${TRASH_SVG} Delete`, danger: true, fn: () => archiveRecord('invoices', id, name) });
       }
       actions.forEach(({ label, danger, fn }) => {
         const btn = document.createElement('button');
@@ -14226,12 +14230,12 @@ async function loadUnassignedPayments() {
 
     const mobileHTML = `<div class="mobile-cards mobile-only">
       ${items.map(p => `<div class="m-card">
-        <div class="m-card-title" style="color:var(--moss)">+${fmt(p.amount)}<span style="float:right;font-size:0.8rem;color:var(--clay);font-weight:400">${p.id}</span></div>
+        <div class="m-card-title" style="color:var(--moss)">+${fmt(p.amount)}<span class="mc-end m-card-sub">${p.id}</span></div>
         <div class="m-card-row"><span class="m-card-label">Name</span><span class="m-card-val">${p.payer_name||'—'}</span></div>
         <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val">${p.payer_phone||'—'}</span></div>
         <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div>
         <div class="m-card-row"><span class="m-card-label">Razorpay ID</span><span class="m-card-val" style="font-size:0.78rem">${p.razorpay_payment_id||'—'}</span></div>
-        ${adminU ? `<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--clay-pale);display:flex;gap:0.5rem;justify-content:flex-end;">
+        ${adminU ? `<div class="m-card-foot">
           <button class="icon-action-btn danger" title="Remove" data-remove-id="${p.id}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
           <button class="btn-dash btn-dash-primary" data-assign-id="${p.id}">Assign</button>
         </div>` : ''}
@@ -14955,12 +14959,12 @@ function mobileAudienceStrip(p) {
   for (let i = 0; i < oc; i++) {
     const isIn = i < checkedIn;
     const lbl = oc === 1 ? 'Audience' : ('Audience ' + (i + 1));
-    rows += '<div style="display:flex;align-items:center;justify-content:space-between;">'
-      + '<span style="font-size:0.98rem;color:var(--moss);font-weight:500;">' + lbl + '</span>'
+    rows += '<div class="m-card-row">'
+      + '<span class="m-card-label" style="color:var(--ok)">' + lbl + '</span>'
       + '<label class="checkin-toggle" onclick="toggleMobileObs(\'' + p.id + '\',' + i + ',' + isIn + ');event.preventDefault();"><input type="checkbox" ' + (isIn ? 'checked' : '') + '><span class="checkin-toggle-track"></span><span class="checkin-toggle-thumb"></span></label>'
       + '</div>';
   }
-  return '<div style="border-top:1px solid color-mix(in srgb, var(--ok) 22%, transparent);background:color-mix(in srgb, var(--ok) 6%, transparent);padding:12px 1.4rem;display:flex;flex-direction:column;gap:11px;">' + rows + '</div>';
+  return '<div class="m-card-band">' + rows + '</div>';
 }
 
 let _obsPopupId = null;
@@ -16977,10 +16981,10 @@ function schRender() {
   document.getElementById('schUpcomingCards').innerHTML = plan.map((o, i) => {
     const off = o.state === 'skip' || o.state === 'move';
     const loc = schLocalLabel(o.utc, o.slot.student_tz);
-    return '<div class="m-card"><div class="m-card-title" style="display:flex;justify-content:space-between;gap:8px;"><span class="' + (off ? 'sch-strike' : '') + '">' + zEsc(schStudentName(o.slot.student_id)) + '</span>' + badge(o) + '</div>'
+    return '<div class="m-card"><div class="m-card-title"><span class="' + (off ? 'sch-strike' : '') + '">' + zEsc(schStudentName(o.slot.student_id)) + '</span>' + badge(o) + '</div>'
       + '<div class="m-card-row"><span class="m-card-label">When</span><span class="m-card-val">' + schDayLabel(o.ymd) + ', ' + schTime12(o.hhmm) + ' ' + stzLabel() + '</span></div>'
       + (loc ? '<div class="m-card-row"><span class="m-card-label">Their time</span><span class="m-card-val">' + zEsc(loc) + '</span></div>' : '')
-      + (admin ? '<div style="margin-top:0.8rem;display:flex;gap:0.5rem;justify-content:flex-end;">' + (o.ex
+      + (admin ? '<div class="m-card-foot">' + (o.ex
         ? '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schUndo(' + o.ex.id + ')">Undo</button>'
         : '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schSkip(' + i + ')">Skip</button><button class="btn-dash btn-dash-primary btn-dash-sm" onclick="schOpenMove(' + i + ')">Move</button>') + '</div>' : '')
       + '</div>';
@@ -17007,10 +17011,10 @@ function schRender() {
   }).join('') || '<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text-light);">No weekly slots yet. Add one.</td></tr>';
   document.getElementById('schWeeklyCards').innerHTML = sorted.map(r => {
     const x = slotRow(r);
-    return '<div class="m-card"' + (r.active ? '' : ' style="opacity:0.55;"') + '><div class="m-card-title" style="display:flex;justify-content:space-between;gap:8px;"><span>' + zEsc(x.s.full_name || r.student_id) + x.extra + '</span>' + (r.active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-gray">Paused</span>') + '</div>'
+    return '<div class="m-card"' + (r.active ? '' : ' style="opacity:0.55;"') + '><div class="m-card-title"><span>' + zEsc(x.s.full_name || r.student_id) + x.extra + '</span>' + (r.active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-gray">Paused</span>') + '</div>'
       + '<div class="m-card-row"><span class="m-card-label">Slot</span><span class="m-card-val">' + SCH_DAYS[r.weekday].slice(0, 3) + ', ' + schTime12(r.time_ist) + ' IST</span></div>'
       + (x.local !== '—' ? '<div class="m-card-row"><span class="m-card-label">Their time</span><span class="m-card-val">' + zEsc(x.local) + '</span></div>' : '')
-      + (admin ? '<div style="margin-top:0.8rem;display:flex;gap:0.5rem;justify-content:flex-end;"><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schDeleteSlot(' + r.id + ')">Delete</button><button class="btn-dash btn-dash-primary btn-dash-sm" onclick="schOpenSlot(' + r.id + ')">Edit</button></div>' : '')
+      + (admin ? '<div class="m-card-foot"><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schDeleteSlot(' + r.id + ')">Delete</button><button class="btn-dash btn-dash-primary btn-dash-sm" onclick="schOpenSlot(' + r.id + ')">Edit</button></div>' : '')
       + '</div>';
   }).join('') || '<div class="mobile-cards-empty">No weekly slots yet.</div>';
 
@@ -18528,7 +18532,7 @@ html body .form-select-btn:focus-visible, html body .date-picker-btn:focus-visib
   html body .wa-thread.kb .wa-ai-row .btn-dash, html body .wa-thread.kb .wa-ai-icon { min-height: 44px !important; }
 }
 /* One shape in every theme: buttons, chips and badges are pills (Mono already was; the others caught up) */
-html body .btn-dash, html body .td-next-zoom, html body .td-join, html body .pg-ib, html body .app-bar-btn, html body .hl-run, html body .upd-bar button, html body .sch-chip, html body .wa-tab, html body .filter-dd-btn, html body .mobile-filter-btn, html body .thm-pick button { border-radius: 999px !important; }
+html body .btn-dash, html body .td-next-zoom, html body .td-join, html body .pg-ib, html body .app-bar-btn, html body .hl-run, html body .upd-bar button, html body .sch-chip, html body .wa-tab, html body .filter-dd-btn, html body .mobile-filter-btn { border-radius: 999px !important; }
 html body .badge, html body .pill, html body .wa-tag, html body .td-tag, html body .inv-no-pill, html body .ms-chip { border-radius: 999px !important; }
 /* UI-15: Notifications actions stay on the title row */
 @media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
@@ -18546,6 +18550,47 @@ html body .badge, html body .pill, html body .wa-tag, html body .td-tag, html bo
   html body .ptr.spin[class] svg { animation: ptrspin 1.6s linear infinite !important; }
   /* the logo mark on the splash keeps its slow drift (12s, as before) */
 }
+</style>
+
+<style id="cards182">
+/* v182: one card anatomy for every list card, in every theme and at every width.
+   head (kicker / title / sub + badge) · rows (label | value) · band · foot (buttons). */
+html body .m-card, html.mono body .m-card { padding: 16px !important; border-radius: 16px !important; margin-bottom: 0 !important; overflow: hidden; }
+html body .mobile-cards { gap: 12px !important; }
+html body .m-card-title { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; min-width: 0;
+  font-size: 17px !important; font-weight: 600; line-height: 1.3; letter-spacing: 0;
+  margin: 0 0 6px !important; padding: 0 0 12px !important; border-bottom: 1px solid var(--line); }
+html body .m-card-title > span:first-child:not(.badge):not(.cb-box) { min-width: 0; overflow-wrap: anywhere; }
+html body .m-card-title .badge, html body .m-card-title .inv-auto-badge { flex-shrink: 0; }
+html body .m-card-title .mc-end, html body .m-card-title > .badge:last-child { margin-left: auto; float: none !important; }
+html body .m-card-title .mc-end .badge { font-size: inherit; }
+html body .m-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin: 0 0 6px; padding: 0 0 12px; border-bottom: 1px solid var(--line); }
+html body .m-card-head-main { min-width: 0; flex: 1; }
+html body .m-card-head > .badge { flex-shrink: 0; margin-top: 2px; }
+html body .m-card-head .m-card-title { display: block; border: 0; margin: 0 !important; padding: 0 !important;
+  overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+html body .m-card-kicker { font-size: 12px !important; font-weight: 600; letter-spacing: 0.04em; color: var(--tx3); margin-bottom: 2px; }
+html body .m-card-kicker .ws-cancelled-badge { margin-left: 6px; }
+html body .m-card-sub { font-size: 13px !important; font-weight: 400; color: var(--tx2); line-height: 1.35; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .m-card .person-caption { font-size: 13px; color: var(--tx2); margin-top: 2px; }
+html body .m-card-row { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 7px 0 !important; min-height: 0; }
+html body .m-card .m-card-label { font-size: 14px !important; letter-spacing: 0; color: var(--tx3) !important; flex-shrink: 0; }
+html body .m-card .m-card-val { font-size: 15.5px !important; font-weight: 500; color: var(--tx); text-align: right; max-width: 62% !important; line-height: 1.35; min-width: 0; }
+html body .m-card .m-card-val.mc-clip { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; vertical-align: bottom; }
+html body .m-card .m-card-val.mc-break { word-break: break-all; overflow-wrap: anywhere; }
+html body .m-card-band { margin: 8px -16px 0; padding: 4px 16px; background: color-mix(in srgb, var(--ok) 7%, transparent); border-top: 1px solid color-mix(in srgb, var(--ok) 22%, transparent); }
+html body .m-card-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+html body .m-card-foot-split { justify-content: space-between; }
+html body .m-card-foot-l { display: flex; align-items: center; gap: 10px; min-width: 0; }
+html body .m-card-foot .mc-left { margin-right: auto; }
+html body .m-card-foot .btn-dash { margin: 0 !important; }
+html body .m-card-foot .mc-ib { padding: 0 12px !important; min-width: 44px; }
+html body .m-card > .ws-pax-section { margin: 12px -16px -16px; }
+html body .ws-pax-header { padding: 12px 16px 8px; }
+html body .m-card.row-selected { border-color: var(--acc) !important; }
+/* theme chips keep a soft corner; they are tiles, not pills */
+html body .thm-pick button { border-radius: 14px !important; }
+html body .thm-pick button i { border-radius: 8px; }
 </style>
 </body>
 </html>
