@@ -4372,7 +4372,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v177</span>
+        <span style="color:var(--clay);font-weight:500;">v178</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4446,7 +4446,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v177</span>
+        <span style="color:var(--clay);font-weight:500;">v178</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -6018,18 +6018,7 @@ table#paymentsTable { min-width: 700px; }
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
     <div class="form-row">
       <div class="form-group"><label class="form-label">Workshop ID&nbsp;<span style="color:var(--bad);font-size:0.85em;white-space:nowrap;">*</span></label>
-        <select class="form-input" id="ws-id">
-          <option value="">None</option>
-          <option>WS-001</option><option>WS-002</option><option>WS-003</option>
-          <option>WS-004</option><option>WS-005</option><option>WS-006</option>
-          <option>WS-007</option><option>WS-008</option><option>WS-009</option>
-          <option>WS-010</option><option>WS-011</option><option>WS-012</option>
-          <option>WS-013</option><option>WS-014</option><option>WS-015</option>
-          <option>WS-016</option><option>WS-017</option><option>WS-018</option>
-          <option>WS-019</option><option>WS-020</option><option>WS-021</option>
-          <option>WS-022</option><option>WS-023</option><option>WS-024</option>
-          <option>WS-025</option>
-        </select></div>
+        <input type="text" class="form-input" id="ws-id" placeholder="e.g. WS-009" autocomplete="off" spellcheck="false"/></div>
       <div class="form-group"><label class="form-label">Date&nbsp;<span style="color:var(--bad);font-size:0.85em;white-space:nowrap;">*</span></label><input type="date" class="form-input" id="ws-date"/></div>
     </div>
     <div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="ws-title" maxlength="80" placeholder="e.g. Breath, Pause, Resonance"/></div>
@@ -7093,13 +7082,18 @@ async function bulkDeleteForever() {
   const n = _bulkSelected.size;
   const ok = await customConfirm('Delete ' + n + ' item' + (n>1?'s':'') + ' forever?', 'This cannot be undone.', 'Delete Forever');
   if (!ok) return;
-  try {
-    for (const [, item] of _bulkSelected) {
-      await fetch(SUPABASE_URL + '/rest/v1/' + item.table + '?id=eq.' + item.id, { method: 'DELETE', headers: SB_HEADERS });
-    }
-    showToast('✓ ' + n + ' item' + (n>1?'s':'') + ' permanently deleted!', 'success');
-    clearBulkSelection(); loadBin();
-  } catch(e) { showToast('Error: ' + e.message, 'error'); }
+  let done = 0, kept = 0, failed = 0;
+  for (const [, item] of _bulkSelected) {
+    if (BIN_KEEP[item.table]) { kept++; continue; }
+    const r = await sbDeleteRow(item.table, item.id);
+    if (r.ok) done++; else failed++;
+  }
+  const parts = [];
+  if (done) parts.push('✓ ' + done + ' deleted permanently');
+  if (kept) parts.push(kept + ' kept (students and invoices stay in the Bin)');
+  if (failed) parts.push(failed + ' couldn\'t be deleted');
+  showToast(parts.join(' · ') || 'Nothing deleted', failed ? 'error' : (done ? 'success' : 'info'));
+  clearBulkSelection(); loadBinCount(); loadBin();
 }
 
 async function bulkArchive() {
@@ -10979,7 +10973,21 @@ async function restoreRecord(entity, id) {
   } catch(e) { showToast('Failed to restore — try again', 'error'); }
 }
 
-async function reloadEntity(entity) {
+// v178: other pages show numbers from the same rows (participant counts on
+// Workshops, paid classes on Students...), so refresh those too, quietly.
+const RELOAD_ALSO = {
+  participants: ['workshops'], workshops: ['participants'],
+  payments: ['students'], fee_payments: ['students'], students: ['fee_payments'],
+  invoices: ['payments']
+};
+async function reloadEntity(entity, _dep) {
+  await reloadOne(entity);
+  if (_dep) return;
+  (RELOAD_ALSO[entity] || []).forEach(e => { reloadOne(e).catch(() => {}); });
+  if (typeof loadOverview === 'function') loadOverview().catch(() => {});
+  if (typeof loadToday === 'function' && document.getElementById('section-today')) loadToday(true).catch(() => {});
+}
+async function reloadOne(entity) {
   if (entity === 'workshops') { await loadWorkshops(); }
   else if (entity === 'participants') { await loadParticipants(); }
   else if (entity === 'students') { await loadStudents(); }
@@ -11249,8 +11257,26 @@ async function restoreBinItem(table, id, name) {
 }
 
 let _deleteForeverPending = null;
+// v178: Supabase answers 200 even when nothing was deleted (row protected or
+// still used elsewhere), so ask for the deleted rows back and count them.
+async function sbDeleteRow(table, id) {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + encodeURIComponent(id), {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': SB_HEADERS['Authorization'], 'Prefer': 'return=representation' }
+    });
+    if (res.status === 409) return { ok: false, why: 'other records still use it' };
+    if (!res.ok) return { ok: false, why: 'the server said no (' + res.status + ')' };
+    const rows = await res.json().catch(() => null);
+    if (Array.isArray(rows) && !rows.length) return { ok: false, why: 'nothing was deleted' };
+    return { ok: true };
+  } catch (e) { return { ok: false, why: 'no connection' }; }
+}
+// Students stay in the Bin: deleting one would free their ID (S-015) for the
+// next new student, and old payments/classes with that ID would show on them.
+const BIN_KEEP = { invoices: 'Invoices stay in the Bin to protect numbering. Restore it instead', students: 'Students stay in the Bin so their ID is never given to someone new. It doesn\'t count anywhere' };
 function promptDeleteForever(table, id, name) {
-  if (table === 'invoices') { showToast('Invoices stay in the Bin to protect numbering — restore it instead', 'info'); return; }
+  if (BIN_KEEP[table]) { showToast(BIN_KEEP[table], 'info'); return; }
   _deleteForeverPending = { table, id, name };
   document.getElementById('deleteForeverTitle').textContent = 'Delete "' + name + '" forever?';
   document.getElementById('deleteForeverDesc').textContent = 'This will permanently remove this record from your system. This cannot be undone.';
@@ -11266,15 +11292,11 @@ async function confirmDeleteForever() {
   if (!_deleteForeverPending) return;
   const { table, id, name } = _deleteForeverPending;
   closeDeleteForever();
-  try {
-    await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
-      method: 'DELETE',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': SB_HEADERS['Authorization'] }
-    });
-    showToast('✓ ' + name + ' deleted permanently', 'success');
-    loadBinCount();
-    loadBin();
-  } catch(e) { showToast('Failed to delete permanently', 'error'); }
+  const r = await sbDeleteRow(table, id);
+  if (r.ok) showToast('✓ ' + name + ' deleted permanently', 'success');
+  else showToast('Couldn\'t delete ' + name + ': ' + r.why + '. It stays in the Bin', 'error');
+  loadBinCount();
+  loadBin();
 }
 
 function openBinDotsMenu(table, id, name, btnEl) {
@@ -15530,8 +15552,8 @@ function waRenderList() {
     const tags = '<span class="wa-tag' + (c.who.kind === 'trial' ? ' trial' : c.who.kind === 'unknown' ? ' unknown' : '') + '">' + zEsc(c.who.tag) + '</span>' +
       (ai ? (ai.needs_arpit ? '<span class="wa-tag need">Needs you</span>' : '<span class="wa-tag ai">✦ Draft ready</span>') : '');
     return '<div class="wa-swipe" data-phone="' + c.phone + '"><div class="wa-swipe-acts">' +
-        '<button type="button" style="background:var(--s2)" onclick="waRowUnread(\'' + c.phone + '\')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3 21l2.2-5.4A8.5 8.5 0 1 1 21 11.5z"/></svg>Unread</button>' +
-        '<button type="button" style="background:var(--acc)" onclick="waRowFee(\'' + c.phone + '\')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Fee link</button></div>' +
+        '<button type="button" style="background:var(--s3);color:var(--tx)" onclick="waRowUnread(\'' + c.phone + '\')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3 21l2.2-5.4A8.5 8.5 0 1 1 21 11.5z"/></svg>Unread</button>' +
+        '<button type="button" style="background:var(--acc);color:var(--on-acc)" onclick="waRowFee(\'' + c.phone + '\')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Fee link</button></div>' +
       '<button type="button" class="wa-row' + (c.phone === _wa.sel ? ' on' : '') + (c.unread ? ' unread' : '') + '" onclick="waRowTap(\'' + c.phone + '\')">' +
       '<span class="wa-av" style="background:' + waAvColor(c.phone) + '">' + zEsc(initial) + '</span>' +
       '<span class="wa-rmain"><span class="wa-rtop"><span class="wa-nm">' + zEsc(c.who.name) + '</span><span class="wa-tm">' + waDayLabel(last.created_at, true) + '</span></span>' +
