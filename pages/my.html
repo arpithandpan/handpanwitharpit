@@ -78,6 +78,8 @@
 .mc-help-h { font-size: 0.85rem; color: var(--text-mid); margin: 1.1rem 0 0.1rem; padding-top: 1rem; border-top: 1px solid rgba(80,0,24,0.12); }
 .mc-help-h:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .mc-help-h + .mc-link { border-top: 0; padding-top: 0.5rem; }
+.mc-cal { font-size: 0.88rem; color: var(--text-mid); margin: 1rem 0 0; line-height: 1.5; }
+.mc-cal button.mc-inline:disabled { opacity: .55; cursor: default; }
 button.mc-inline { background: none; border: 0; border-bottom: 1px solid rgba(80,0,24,.25); padding: 0; font: inherit; font-weight: 500; color: var(--maroon); cursor: pointer; }
 a.mc-opt { text-decoration: none; }
 .mc-link:last-child { padding-bottom: 0.2rem; }
@@ -483,6 +485,7 @@ a.mc-opt { text-decoration: none; }
         + '</div>'
         + (!next.canChange ? '<p class="mc-locked" style="margin-top:1rem;">Less than ' + c.noticeHours + ' hours to go. ' + '<button type="button" class="mc-inline js-contact" data-topic="' + esc('my class on ' + whenLong(next.start)) + '">Contact Arpit</button>' + ' if you can\'t make it.</p>'
           : left <= 0 ? '<p class="mc-locked" style="margin-top:1rem;">You\'ve used both changes for ' + monthOf(next.key) + '. ' + '<button type="button" class="mc-inline js-contact" data-topic="' + esc('my class on ' + whenLong(next.start)) + '">Contact Arpit</button>' + ' if you need to change it.</p>' : '')
+        + '<p class="mc-cal">Not in your calendar? <button type="button" class="mc-inline" data-cal="1">Email me the invite</button></p>'
         + '</div>');
     }
 
@@ -525,6 +528,7 @@ a.mc-opt { text-decoration: none; }
     }
     $('mcPage').querySelectorAll('[data-move]').forEach(b => b.onclick = () => openMove(b.dataset.move, 'move'));
     $('mcPage').querySelectorAll('[data-skip]').forEach(b => b.onclick = () => openSkip(b.dataset.skip));
+    $('mcPage').querySelectorAll('[data-cal]').forEach(b => b.onclick = () => sendCalendar(b));
     $('mcPage').querySelectorAll('[data-makeup]').forEach(b => b.onclick = () => openMove(b.dataset.makeup, 'makeup'));
     $('mcPage').querySelectorAll('[data-opts]').forEach(b => {
       b.onclick = () => openOptions(b.dataset.opts);
@@ -559,6 +563,18 @@ a.mc-opt { text-decoration: none; }
     const m = v.match(/^(\d+)\s+of\s+(\d+)$/i);
     if (m) return +m[1] === 0 ? 'Arpit brings handpans for your group' : m[1] + ' of ' + m[2] + ' bringing their own handpan';
     return '';
+  }
+  // Same invite again by email: the calendar updates the entry it has, nothing doubles.
+  async function sendCalendar(b) {
+    if (b.disabled) return;
+    const was = b.textContent; b.disabled = true; b.textContent = 'Sending…';
+    try {
+      const r = await fetch(API + '/api/my/' + token + '/calendar', { method: 'POST' });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error(j.error || 'Could not send it right now.');
+      b.closest('.mc-cal').textContent = 'Sent to ' + (j.to || []).join(', ') + '. Open the email and add it. If the class is already in your calendar, it just updates.';
+      toast('Calendar invite sent');
+    } catch (e) { b.disabled = false; b.textContent = was; toast(e.message); }
   }
   function invLink(id, label) { return '<a href="' + API + '/api/my/' + token + '/invoice/' + encodeURIComponent(id) + '" target="_blank" rel="noopener">' + (label || 'Invoice') + '</a>'; }
   function workshopsHtml(w, wl) {
