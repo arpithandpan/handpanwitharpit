@@ -302,6 +302,8 @@ body.menu-is-open .dash-root { visibility: hidden !important; }
 }
 /* Table-cell empty state - no min-height needed, smaller padding */
 td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
+/* v180: an empty state that comes after other content (stats, trials) sits right there, not 60vh lower */
+.dash-section .empty-state:not(:first-child), .dash-section :not(:first-child) > .empty-state:only-child, .mobile-cards-empty .empty-state { min-height: 0; padding: 2.5rem 1.5rem; }
 .empty-state-title { font-size: 1.15rem; font-weight: 500; color: var(--bark); }
 .empty-state-sub { font-size: 1rem; color: var(--text-light); max-width: 280px; line-height: 1.5; }
 
@@ -311,7 +313,7 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
 [id$="EmptyState"], #unassignedContainer:has(.empty-state),
 #binContainer:has(.empty-state), #notificationsContainer:has(.empty-state) {
   display: flex; align-items: center; justify-content: center;
-  min-height: 50vh;
+  min-height: 0;   /* v180: the empty state sits where the list would be, never 50vh lower (it ended up under the tab bar) */
 }
 .search-empty-row td, tr:has(.empty-state) td {
   text-align: center !important;
@@ -865,6 +867,8 @@ body { overflow-x: clip; max-width: 100vw; }
 .stat-value {
   font-family: var(--font-body); font-size: 2.1rem; font-weight: 400;
   color: var(--bark); line-height: 1;
+  /* v180: a number is never broken across lines; statFit() shrinks it to fit instead */
+  white-space: nowrap; font-variant-numeric: tabular-nums; min-width: 0; overflow: hidden;
 }
 .stat-value.green { color: var(--moss); }
 .stat-value.clay { color: var(--clay); }
@@ -3129,6 +3133,7 @@ body .btn-dash-sm { min-height: 32px; padding: 0 12px; font-size: 14px; border-r
 @media (pointer: coarse) { body .btn-dash { min-height: 44px; } body .btn-dash-sm { min-height: 40px; } }
 body .btn-dash-primary, body .btn-dash-save, body.dark-mode .btn-dash-primary, body.dark-mode .btn-dash-save, body:not(.dark-mode) .btn-dash-primary { background: var(--acc) !important; color: var(--on-acc) !important; border: 1px solid transparent !important; box-shadow: none !important; }
 body .btn-dash-primary:hover, body .btn-dash-save:hover { background: var(--acc-h) !important; }
+body .btn-dash-primary:focus-visible, body .btn-dash-save:focus-visible, body .form-page .form-page-header > :last-child:focus-visible { box-shadow: var(--focus) !important; }
 body .btn-dash-outline, body.dark-mode .btn-dash-outline { background: var(--s2) !important; color: var(--tx) !important; border: 1px solid var(--line) !important; }
 body .btn-dash-outline:hover { background: var(--s3) !important; }
 body .btn-dash-ghost, body.dark-mode .btn-dash-ghost { background: transparent !important; color: var(--tx2) !important; border: 1px solid transparent !important; }
@@ -3300,7 +3305,8 @@ body .toast { background: var(--tx) !important; color: var(--bg) !important; bor
 .thm-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
 .thm-pick button { font: inherit; font-size: 14px; font-weight: 500; color: var(--tx2); background: var(--s1); border: 1px solid var(--line); border-radius: 12px; padding: 10px; cursor: pointer; min-height: 44px; }
 .thm-pick button i { display: block; height: 40px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--line-2); }
-.thm-pick button.on { border-color: var(--acc); box-shadow: var(--focus); color: var(--tx); font-weight: 600; }
+.thm-pick button.on { border-color: var(--acc); background: var(--acc-soft); color: var(--tx); font-weight: 600; }
+.thm-pick button:focus-visible { box-shadow: var(--focus); outline: none; }
 
 
 /* ── v155 fixes from the contrast scan ── */
@@ -3377,7 +3383,7 @@ body .m-card-row span:last-child, body .m-card-value { overflow-wrap: anywhere; 
 @media (min-width: 901px) and (min-height: 501px) and (max-width: 1360px), (min-width: 901px) and (pointer: fine) and (max-width: 1360px) {
   body #overviewStats, body #allStatsWrap .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 1rem !important; }
 }
-@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { body .stats-grid > .stat-card { min-width: 0; } body .stat-value { overflow-wrap: anywhere; } }
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { body .stats-grid > .stat-card { min-width: 0; } }
 body .skip-link { position: fixed; left: 12px; top: -60px; z-index: 100000; background: var(--acc); color: var(--on-acc); padding: 10px 14px; border-radius: 10px; font-weight: 600; text-decoration: none; }
 body .skip-link:focus { top: 12px; }
 body #dashMain:focus { outline: none; }
@@ -3507,7 +3513,7 @@ body .td-brand { display: none; }
   body .stats-grid:has(> .stat-card) { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; overflow: visible !important; margin: 0 0 16px !important; padding: 0 !important; gap: 10px !important; scroll-snap-type: none !important; }
   body .stats-grid > .stat-card { min-width: 0 !important; max-width: none !important; }
   body .stats-grid > .stat-card .stat-label, body .stats-grid > .stat-card .stat-sub { white-space: normal !important; }
-  body .stats-grid > .stat-card .stat-value { white-space: normal !important; overflow-wrap: anywhere; }
+  body .stats-grid > .stat-card .stat-value { white-space: nowrap !important; }
   body .settings-health-item { min-width: 0; } body .settings-health-val, body .settings-health-label { overflow-wrap: anywhere; }
   /* inbox filter chips wrap onto a second line instead of sliding sideways */
   body .wa-tabs { flex-wrap: wrap !important; overflow: visible !important; row-gap: 8px; }
@@ -4384,7 +4390,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v179</span>
+        <span style="color:var(--clay);font-weight:500;">v180</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4458,7 +4464,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v179</span>
+        <span style="color:var(--clay);font-weight:500;">v180</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -7352,6 +7358,29 @@ function qaOpen() {
   requestAnimationFrame(() => document.body.classList.add('qa-open'));
 }
 function qaClose() { document.body.classList.remove('qa-open'); }
+// v180: icon buttons that only explain themselves on hover get a real name, and a
+// long-press tooltip on touch screens.
+(function tipNames() {
+  const name = () => document.querySelectorAll('button[data-tip]:not([aria-label]), a[data-tip]:not([aria-label]), button[title]:not([aria-label])').forEach(e => {
+    const t = e.getAttribute('data-tip') || e.getAttribute('title'); if (t && !(e.innerText || '').trim()) e.setAttribute('aria-label', t);
+  });
+  const mo = new MutationObserver(() => { clearTimeout(mo._t); mo._t = setTimeout(name, 80); });
+  const start = () => { name(); mo.observe(document.body, { childList: true, subtree: true }); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  if (!window.matchMedia('(hover: none)').matches) return;
+  let tip = null, timer = null;
+  const hide = () => { if (tip) { tip.remove(); tip = null; } clearTimeout(timer); };
+  document.addEventListener('touchstart', e => {
+    const el = e.target.closest && e.target.closest('[data-tip], button[title]'); hide(); if (!el) return;
+    const text = el.getAttribute('data-tip') || el.getAttribute('title'); if (!text) return;
+    timer = setTimeout(() => {
+      const r = el.getBoundingClientRect(); tip = document.createElement('div'); tip.className = 'touch-tip'; tip.textContent = text; document.body.appendChild(tip);
+      const w = tip.offsetWidth; let x = r.left + r.width / 2 - w / 2; x = Math.max(8, Math.min(innerWidth - w - 8, x));
+      tip.style.left = x + 'px'; tip.style.top = (r.top - tip.offsetHeight - 8 < 8 ? r.bottom + 8 : r.top - tip.offsetHeight - 8) + 'px'; tip.classList.add('show');
+    }, 450);
+  }, { passive: true });
+  ['touchend', 'touchcancel', 'touchmove', 'scroll'].forEach(ev => document.addEventListener(ev, hide, { passive: true, capture: true }));
+})();
 (function appShellInit() {
   const main = () => document.getElementById('dashMain');
   // Bar title appears once the large title scrolls under the bar.
@@ -7855,7 +7884,8 @@ async function handleSectionSearch(query) {
 }
 
 // ── FORMAT ──
-const fmt = n => { const v = Number(n || 0); return (v < 0 ? '-₹' : '₹') + Math.abs(v).toLocaleString('en-IN'); };
+const MONEY_OPTS = v => ({ minimumFractionDigits: Math.abs(v) % 1 ? 2 : 0, maximumFractionDigits: 2 });
+const fmt = n => { const v = Number(n || 0); return (v < 0 ? '-₹' : '₹') + Math.abs(v).toLocaleString('en-IN', MONEY_OPTS(v)); };
 // Currency-aware version for rows that store their own currency (invoices).
 // INR looks exactly like fmt(); foreign currency gets its symbol + code,
 // e.g. "$72 USD", so dollar invoices never show up as rupees.
@@ -7865,7 +7895,7 @@ const fmtCur = (n, cur) => {
   if (c === 'INR') return fmt(n);
   const v = Number(n || 0);
   const sym = CUR_SYM[c] || (c + ' ');
-  return (v < 0 ? '-' : '') + sym + Math.abs(v).toLocaleString('en-US') + ' <span style="font-size:0.78em;opacity:0.65;">' + c + '</span>';
+  return (v < 0 ? '-' : '') + sym + Math.abs(v).toLocaleString('en-US', MONEY_OPTS(v)) + ' <span style="font-size:0.78em;opacity:0.65;">' + c + '</span>';
 };
 const MONEY_SYM = { INR: '₹', USD: '$', EUR: '€', GBP: '£', CHF: 'CHF ', AUD: 'A$', CAD: 'C$', SGD: 'S$', AED: 'AED ' };
 const FEE_BASIS_LABEL = { month: '/ mo', session: '/ class', course: '/ course' };
@@ -7874,7 +7904,7 @@ function fmtMoney(n, cur, basis) {
   const v = Number(n || 0);
   const sym = MONEY_SYM[c] || (c + ' ');
   const loc = c === 'INR' ? 'en-IN' : 'en-US';
-  const formatted = (v < 0 ? '-' : '') + sym + Math.abs(v).toLocaleString(loc, { maximumFractionDigits: 2 });
+  const formatted = (v < 0 ? '-' : '') + sym + Math.abs(v).toLocaleString(loc, MONEY_OPTS(v));
   if (basis && FEE_BASIS_LABEL[basis]) return formatted + ' <span style="color:var(--text-light);font-size:0.85em;">' + FEE_BASIS_LABEL[basis] + '</span>';
   return formatted;
 }
@@ -8344,7 +8374,7 @@ async function loadWorkshops() {
           <div id="ws-pax-list-${w.id}"><div class="ws-pax-empty">Loading...</div></div>
         </div>
       </div>
-    `).join('') || EMPTY_STATES.workshops;
+    `).join('');   // v180: the section's own empty state (#workshopsEmptyState) shows instead, so it isn't drawn twice
 
   } catch(e) { showToast('Error loading workshops', 'error'); console.error(e); }
 }
@@ -8477,7 +8507,7 @@ async function loadParticipants() {
               <div class="m-card-title" style="margin:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span>${p.full_name||'—'}</span>${(Number(p.observer_count)||0) > 0 ? '<span style="background:color-mix(in srgb, var(--ok) 20%, transparent);color:var(--moss);font-size:0.66rem;font-weight:600;padding:2px 8px;border-radius:14px;white-space:nowrap;border:0.5px solid color-mix(in srgb, var(--ok) 45%, transparent);flex-shrink:0;">+'+(Number(p.observer_count)||0)+' audience</span>' : ''}</div>
               ${personCaption(p)}
             </div>
-            <span class="badge badge-clay">${fmtMode(p.payment_mode)}</span>
+            ${p.payment_mode ? '<span class="badge badge-clay">' + fmtMode(p.payment_mode) + '</span>' : ''}
           </div>
           <div class="m-card-row" style="padding:4px 0 0;"><span class="m-card-label">Workshop</span><span class="m-card-val">${p.workshop_id||'—'}</span></div>
           <div class="m-card-row" style="padding:2px 0;"><span class="m-card-label">Amount</span><span class="m-card-val" style="color:var(--clay)">${fmt(p.amount_paid)}</span></div>
@@ -8494,7 +8524,7 @@ async function loadParticipants() {
           ${adminP?`<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openMDotsSheet('${p.id}','${(p.full_name||p.id).replace(/'/g,"\\'")}','participant',true,this)" aria-label="More actions" style="padding:0.5rem 0.75rem;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`:''}
         </div>
       </div>
-    `).join('') || EMPTY_STATES.participants;
+    `).join('');   // v180: #participantsEmptyState covers the empty case
 
   } catch(e) { showToast('Error loading participants', 'error'); console.error(e); }
 }
@@ -16775,7 +16805,8 @@ async function loadToday(silent) {
     const isTom = schIst(new Date(nxt.t)).ymd !== today;
     const live = nowMs >= nxt.t, mins = Math.max(0, Math.round((nxt.t - nowMs) / 60000));
     const remindAt = nxt.t - 60 * 60000;
-    const info = (isTom ? 'Tomorrow, ' : '') + schTime12(nxt.hhmm) + ' ' + stzLabel()
+    const bigTime = isTom && mins >= 600;   // the big slot shows the time, so the line under the name doesn't repeat it
+    const info = (bigTime ? 'Tomorrow' : (isTom ? 'Tomorrow, ' : '') + schTime12(nxt.hhmm) + ' ' + stzLabel())
       + (nxt.kind === 'tr' ? ' · free trial' : nxt.note ? ' · ' + nxt.note : '')
       + (nxt.sub && nxt.kind === 'cls' ? ' · ' + nxt.sub : '')
       + (nxt.kind === 'cls' && !isTom && !live ? (nowMs >= remindAt ? ' · reminder sent' : ' · reminder at ' + schTime12(schIst(new Date(remindAt)).hhmm)) : '');
@@ -16785,7 +16816,7 @@ async function loadToday(silent) {
           if (!rest.length) return ''; const r0 = rest[0];
           return '<div class="td-next-then">Then ' + zEsc(String(r0.name || '').split(' ')[0]) + ' at ' + schTime12(r0.hhmm) + (rest.length > 1 ? ' · ' + (rest.length - 1) + ' more' : '') + '</div>'; })()
       + '</div>'
-      + (live ? '' : '<div class="td-next-in"><b>' + (isTom && mins >= 600 ? schTime12(nxt.hhmm) : dur(mins)) + '</b><small>' + (isTom && mins >= 600 ? 'tomorrow' : 'to go') + '</small></div>')
+      + (live ? '' : '<div class="td-next-in"><b>' + (bigTime ? schTime12(nxt.hhmm) : dur(mins)) + '</b><small>' + (bigTime ? stzLabel() : 'to go') + '</small></div>')
       + (nxt.link && !isTom ? '<a class="td-next-zoom" href="' + zEsc(nxt.link) + '" target="_blank" rel="noopener">' + TD_CAM + 'Join Zoom</a>' : '') + '</div>';
   }
   const tomCard = tomItems.length ? '<div class="td-card td-o-tom"><div class="td-head"><h3>Tomorrow</h3><span>' + schDayLabel(tomorrow) + '</span></div>' + tomItems.map(it => rowHtml(it, false)).join('') + '</div>' : '';
@@ -17932,8 +17963,17 @@ function rvRender() {
     if (wraps || cut || tight) { row.classList.add('mc-stack'); if (/description|note|address|message/i.test(lab.textContent || '')) val.classList.add('mc-clamp'); }
   }
   let pending = false;
+  // v180: big amounts shrink (down to 60%) instead of wrapping mid-number.
+  function fitStat(el) {
+    if (!el.offsetParent) return;
+    el.style.removeProperty('font-size');
+    const base = parseFloat(getComputedStyle(el).fontSize); if (!base) return;
+    let fs = base, i = 0;
+    while (el.scrollWidth > el.clientWidth + 1 && fs > base * 0.6 && i++ < 8) { fs -= base * 0.05; el.style.setProperty('font-size', fs.toFixed(2) + 'px', 'important'); }
+  }
   function fitAll() {
     pending = false;
+    document.querySelectorAll('.stat-value').forEach(fitStat);
     if (!window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches) { document.querySelectorAll('.m-card-row.mc-stack').forEach(r => r.classList.remove('mc-stack')); return; }
     document.querySelectorAll('.dash-section.active .m-card-row, .form-page .m-card-row').forEach(r => { if (r.offsetParent) fitRow(r); });
   }
@@ -18394,7 +18434,7 @@ async function stzLoad() {
 }
 /* Tablet / small laptop: icon rail */
 @media (min-width: 901px) and (max-width: 1279px) and (min-height: 501px), (min-width: 901px) and (max-width: 1279px) and (pointer: fine) {
-  html body { --sb: 88px; }
+  html body { --sb: 96px; }
   html body .dash-sidebar { padding: 14px 0 18px; scrollbar-width: none; }
   html body .dash-sidebar::-webkit-scrollbar { display: none; }
   html body .dash-sidebar > div:first-child { justify-content: center; padding: 0 !important; margin-bottom: 10px !important; }
@@ -18407,7 +18447,7 @@ async function stzLoad() {
   html body aside.dash-sidebar .dash-nav li a, html body aside.dash-sidebar .dash-nav li.admin-only a {
     position: relative; flex-direction: column; justify-content: center; gap: 4px;
     margin: 2px 8px; padding: 9px 2px 8px; border-left: 0 !important; border-radius: 12px;
-    font-size: 10.5px !important; line-height: 1.15; letter-spacing: 0 !important; text-align: center;
+    font-size: 11px !important; line-height: 1.15; letter-spacing: 0 !important; text-align: center;
     white-space: normal !important; overflow-wrap: normal; word-break: normal; hyphens: none; min-height: 52px; box-sizing: border-box;
   }
   html body .dash-nav li a .icon { width: auto; height: 20px; display: grid; place-items: center; }
@@ -18464,6 +18504,42 @@ async function stzLoad() {
   html body .form-page-header, html body .form-page-body {
     padding-left: max(16px, env(safe-area-inset-left, 0px)) !important; padding-right: max(16px, env(safe-area-inset-right, 0px)) !important;
   }
+}
+</style>
+<style id="ui180">
+/* ── v180 · UI audit fixes ─────────────────────────────────────────── */
+/* UI-12: every form control shares one height, radius and text size */
+body { --ctl-h: 48px; --ctl-r: 12px; --ctl-fs: 16px; }
+html body .form-input, html body .form-select-btn, html body .date-picker-btn, html body .phone-wrap > .phone-flag-btn, html body .phone-wrap > .phone-prefix-input {
+  min-height: var(--ctl-h) !important; border-radius: var(--ctl-r) !important; font-size: var(--ctl-fs) !important; }
+html body textarea.form-input { min-height: 96px !important; }
+html body .form-select-btn, html body .date-picker-btn { background: var(--s1) !important; border: 1px solid var(--line-2) !important; color: var(--tx) !important; padding: 0 1rem; }
+html body .form-select-btn.open, html body .date-picker-btn.open { border-color: var(--acc) !important; }
+html body .form-select-btn:focus-visible, html body .date-picker-btn:focus-visible { border-color: var(--acc) !important; box-shadow: var(--focus) !important; outline: none; }
+/* UI-08: 44px for everything you tap */
+@media (pointer: coarse) {
+  html body .btn-dash, html body .btn-dash-sm, html body .btn-dash-save, html body .pg-back, html body .wa-tab, html body .sch-blk, html body .sch-today, html body .sch-ic,
+  html body #schSegCal, html body #schSegList, html body .ag-seg button, html body .hl-run, html body .hl-acts .btn-dash, html body .wa-ai-row .btn-dash, html body .wa-ai-row button,
+  html body .wa-ai-icon, html body #auth-pass-eye, html body .thm-pick button, html body .app-bar-btn, html body .notif-dots-btn, html body .mc-copy, html body .filter-dd-btn, html body .mobile-filter-btn, html body .wa-ai-auto button { min-height: 44px !important; }
+  html body .sch-ic, html body #auth-pass-eye, html body .wa-ai-icon, html body .notif-dots-btn { min-width: 44px !important; }
+  html body .form-page .form-page-header > :last-child:not(.form-page-title) { min-height: 44px !important; height: 44px !important; border-radius: 22px !important; }
+  html body .wa-thread.kb .wa-ai-row .btn-dash, html body .wa-thread.kb .wa-ai-icon { min-height: 44px !important; }
+}
+/* UI-15: Notifications actions stay on the title row */
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body #section-notifications .dash-section-header { flex-direction: row; flex-wrap: nowrap; align-items: flex-start; gap: 12px; }
+  html body #notifActions { margin-left: auto; flex-shrink: 0; padding-top: 2px; }
+}
+/* UI-17: long-press tooltip on touch */
+.touch-tip { position: fixed; z-index: 100001; max-width: 240px; padding: 8px 12px; border-radius: 10px; background: var(--tx); color: var(--bg); font-size: 13px; font-weight: 500; line-height: 1.3; opacity: 0; transform: translateY(4px); transition: opacity .12s, transform .12s; pointer-events: none; }
+.touch-tip.show { opacity: 1; transform: none; }
+/* UI-04: reduce motion wins over every component transition, spinners keep turning */
+@media (prefers-reduced-motion: reduce) {
+  html, html body, html body *, html body [class][class], html body [id][id], html body [class][class]::before, html body [class][class]::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  html body .spinner[class] { animation: spin 1.6s linear infinite !important; }
+  html body .upd-spin[class] { animation: updspin 1.6s linear infinite !important; }
+  html body .ptr.spin[class] svg { animation: ptrspin 1.6s linear infinite !important; }
+  /* the logo mark on the splash keeps its slow drift (12s, as before) */
 }
 </style>
 </body>
