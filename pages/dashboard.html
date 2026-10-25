@@ -3559,7 +3559,7 @@ body .rv-h { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-tra
 body .rv-f, body .rv-q { border-top: 1px solid var(--line); padding: 12px 0; }
 body .rv-ft { font-size: 15px; color: var(--tx); line-height: 1.45; }
 body .rv-f small, body .rv-q small { display: block; color: var(--tx3); font-size: 13px; margin-top: 4px; line-height: 1.4; }
-body .rv-in { width: 100%; font-size: 15px !important; line-height: 1.4; resize: vertical; min-height: 64px; padding: 10px 12px !important; }
+body .rv-in { width: 100%; font-size: 15px !important; line-height: 1.4; resize: vertical; min-height: 64px; padding: 10px 12px !important; overflow: hidden; }
 body .rv-qt { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; } body .rv-qt b { color: var(--tx); font-weight: 600; } body .rv-qt span { color: var(--tx3); font-variant-numeric: tabular-nums; }
 body .rv-q p { margin: 4px 0 0 !important; font-size: 14px !important; }
 body .rv-ok { color: var(--ok) !important; font-size: 14px !important; margin: 10px 0 0 !important; }
@@ -4288,7 +4288,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v172</span>
+        <span style="color:var(--clay);font-weight:500;">v173</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4362,7 +4362,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v172</span>
+        <span style="color:var(--clay);font-weight:500;">v173</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17682,7 +17682,7 @@ function rvRender() {
     h += '<div class="rv-h">Teach the agent</div>';
     h += facts.map(f => {
       const blank = /\[[^\]]*\]/.test(f.fact);
-      return '<div class="rv-f">' + (blank ? '<textarea class="form-input rv-in" rows="2" id="rvf-' + f.id + '" aria-label="Fill in the blank">' + zEsc(f.fact) + '</textarea>' : '<div class="rv-ft">' + zEsc(f.fact) + '</div>')
+      return '<div class="rv-f">' + (blank ? '<textarea class="form-input rv-in" rows="3" id="rvf-' + f.id + '" oninput="this.style.height=\'auto\';this.style.height=this.scrollHeight+\'px\'" aria-label="Fill in the blank">' + zEsc(f.fact) + '</textarea>' : '<div class="rv-ft">' + zEsc(f.fact) + '</div>')
         + '<small>' + zEsc(f.why || '') + (blank ? ' · fill in the [blank] first' : '') + '</small>'
         + '<div class="hl-acts"><button type="button" class="btn-dash btn-dash-primary" onclick="rvFact(\'' + f.id + '\',\'add\')">Add to agent</button><button type="button" class="btn-dash btn-dash-ghost" onclick="rvFact(\'' + f.id + '\',\'skip\')">Skip</button></div></div>';
     }).join('');
@@ -17699,6 +17699,7 @@ function rvRender() {
   }
   h += '<div class="hl-acts">' + btn + '</div></div>';
   box.innerHTML = h;
+  box.querySelectorAll('textarea.rv-in').forEach(t => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; });
 }
 // Errors on this page are sent to the server's error log (a few per visit, no personal data).
 (function () {
