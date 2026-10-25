@@ -22,6 +22,18 @@
 <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pages/studio-splash-1290x2796.png?v=2"/>
 <link rel="apple-touch-startup-image" media="screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pages/studio-splash-1206x2622.png?v=2"/>
 <link rel="apple-touch-startup-image" media="screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pages/studio-splash-1320x2868.png?v=2"/>
+<script>
+// v179: one rule for "phone layout": narrow screens, and phones held sideways (short + touch).
+window.PHONE_MQ = '(max-width: 900px), (max-height: 500px) and (pointer: coarse)';
+function isPhoneLayout() { return !!(window.matchMedia && window.matchMedia(window.PHONE_MQ).matches); }
+// Phones: stay upright where the system allows it (Android home-screen app).
+// iPhone ignores this, so a sideways phone simply keeps the phone layout.
+(function () { try {
+  var shortSide = Math.min(screen.width, screen.height);
+  var installed = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  if (shortSide < 600 && installed && screen.orientation && screen.orientation.lock) screen.orientation.lock('portrait').catch(function () {});
+} catch (e) {} })();
+</script>
 <script id="studioThemes">
 // ── v174 · STUDIO THEMES ──────────────────────────────────────────────────────
 // Every colour theme lives here and nowhere else. A theme is a few seed colours;
@@ -365,7 +377,7 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
 .mobile-active-chips {
   display: none;
 }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .filter-bar { margin-bottom: 16px; flex-wrap: wrap; gap: 8px; align-items: center; }
   /* Hide desktop filter buttons on mobile */
   .filter-dd-wrap { display: none !important; }
@@ -623,7 +635,7 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
 .custom-select-option:not(.selected)::before {
   content: ''; display: inline-block; width: 6px; height: 6px; flex-shrink: 0;
 }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .custom-select-wrap { display: none !important; }
 }
 
@@ -757,7 +769,7 @@ html { overflow-x: hidden; max-width: 100vw; }
 body { overflow-x: clip; max-width: 100vw; }
 
 /* ── HIDE MOBILE CARDS ON DESKTOP ── */
-@media (min-width: 901px) {
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
   #workshopsCards, #participantsCards, #studentsCards, #feePaymentsCards, #paymentsCards, #leadsCards, #waitlistCards, #overviewWorkshopsCards, #overviewPaymentsCards, #feeRequestsCards, #zoomReviewCards, #trialsCards, #gigsCards { display: none !important; }
   .mobile-search-fullscreen { display: none !important; }
   .mobile-only { display: none !important; }
@@ -1071,7 +1083,7 @@ tr.inv-row-cancelled .inv-auto-badge{text-decoration:none;}
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .modal-overlay { align-items: flex-end; padding: 0; }
   .modal {
     width: 100%; max-width: 100%; margin: 0;
@@ -1459,7 +1471,7 @@ body.dark-mode .connector-btn:hover { border-color: var(--acc); color: var(--acc
 .overview-row > * { min-width: 0; }
 .overview-card { background: var(--sand); border: 1px solid var(--clay-pale); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); min-width: 0; }
 .overview-card-head { padding: 1rem 1.5rem 0.75rem; font-size: 1.15rem; letter-spacing: 0.01em; text-transform: none; color: var(--bark); font-weight: 600; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   #allStatsWrap { display: flex !important; flex-direction: column; gap: 16px; margin-bottom: 48px !important; }
   #allStatsWrap .stats-grid { margin: 0 !important; }
   .overview-row { gap: 48px; margin-top: 0; margin-left: 0; margin-right: 0; }
@@ -1545,7 +1557,7 @@ body.dark-mode .connector-btn:hover { border-color: var(--acc); color: var(--acc
 }
 .mobile-menu-overlay.open { display: flex; pointer-events: auto; }
 
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .mobile-topbar { display: flex; }
   .dash-root { padding-top: 68px; }
   .dash-main { height: calc(100vh - 68px); overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: env(safe-area-inset-bottom, 0px); scroll-padding-bottom: 2rem; overscroll-behavior-y: contain; will-change: scroll-position; }
@@ -1621,7 +1633,7 @@ body.dark-mode .wa-ai-auto { color: #a9dcb4; }
 
 /* ── STUDIO APP: bottom tabs (phones and iPad portrait) ── */
 .app-tabs { display: none; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .app-tabs {
     display: flex; position: fixed; left: 0; right: 0; bottom: 0; top: auto; height: auto; z-index: 9990;
     background: var(--bg); border-top: 1px solid var(--line);
@@ -1650,7 +1662,7 @@ body.dark-mode .wa-ai-auto { color: #a9dcb4; }
 /* Inside the installed app the page runs under the status bar, so the top
    bar grows by the notch height. In a normal browser these insets are 0. */
 html.studio-app .mobile-topbar { padding-top: calc(14px + env(safe-area-inset-top, 0px)); }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   html.studio-app .dash-root { padding-top: calc(68px + env(safe-area-inset-top, 0px)); }
   html.studio-app .dash-main { height: calc(100vh - 68px - env(safe-area-inset-top, 0px)); }
   html.studio-app .mob-nav { padding-top: calc(68px + env(safe-area-inset-top, 0px)) !important; }
@@ -1658,7 +1670,7 @@ html.studio-app .mobile-topbar { padding-top: calc(14px + env(safe-area-inset-to
   html.studio-app .mobile-search-fullscreen { padding-top: env(safe-area-inset-top, 0px); }
 }
 @supports (height: 100dvh) {
-  @media (max-width: 900px) {
+  @media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
     html.studio-app .dash-main { height: calc(100dvh - 68px - env(safe-area-inset-top, 0px)); }
   }
 }
@@ -1673,7 +1685,7 @@ html.studio-app .mobile-topbar, html.studio-app .mobile-topbar.menu-open { backg
 
 /* ── v129 PHONE SHELL: slim bar, large titles, + button, pull to refresh ── */
 .app-bar-title, .app-bar-btn, .ptr { display: none; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .mobile-topbar { padding: 6px 8px 6px 14px !important; min-height: 56px; box-sizing: border-box; }
   html.studio-app .mobile-topbar { padding-top: calc(6px + env(safe-area-inset-top, 0px)) !important; }
   .topbar-logo svg { width: 26px; height: 26px; }
@@ -1738,7 +1750,7 @@ html.studio-app .mobile-topbar, html.studio-app .mobile-topbar.menu-open { backg
 }
 
 /* ── v129 PHONE: touch targets (≥44px) and minimum text sizes (≥12px) ── */
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .topbar-logo { min-height: 44px; }
   .wa-tab, .inv-fstatus, .notif-tab { min-height: 44px !important; padding-top: 0 !important; padding-bottom: 0 !important; display: inline-flex !important; align-items: center; }
   .wa-tab { font-size: 14px !important; min-width: 44px; justify-content: center; }
@@ -1767,7 +1779,7 @@ html.studio-app .mobile-topbar, html.studio-app .mobile-topbar.menu-open { backg
 
 /* ── PHONE: compact page headers ──
    Static descriptions are hidden on phones; live lines (date, counts) stay. */
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .dash-section-subtitle:not([id]) { display: none !important; }
   .dash-section { padding-top: 1rem !important; }
   .dash-section-header { margin-bottom: 1rem !important; padding-bottom: 0.75rem !important; gap: 0.6rem !important; }
@@ -1782,7 +1794,7 @@ html.studio-app .mobile-picker-sheet-body { padding-bottom: calc(0.5rem + env(sa
 /* Mobile Safari/Chrome: dynamic viewport units track the real visible area
    as the browser address bar collapses/expands, so nothing hides behind it. */
 @supports (height: 100dvh) {
-  @media (max-width: 900px) {
+  @media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
     .dash-main { height: calc(100dvh - 68px); }
     .modal { max-height: 90dvh; }
   }
@@ -1808,7 +1820,7 @@ html.studio-app .mobile-picker-sheet-body { padding-bottom: calc(0.5rem + env(sa
 }
 
 /* Mobile & small tablet (max 900px) */
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .dash-sidebar { transform: translateX(-100%); }
   .dash-sidebar.open { transform: translateX(0); }
   .dash-main { margin-left: 0; }
@@ -1867,7 +1879,7 @@ html.studio-app .mobile-picker-sheet-body { padding-bottom: calc(0.5rem + env(sa
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .modal-overlay { align-items: flex-end; padding: 0; }
   .modal {
     width: 100%; max-width: 100%; margin: 0;
@@ -1891,7 +1903,7 @@ html.studio-app .mobile-picker-sheet-body { padding-bottom: calc(0.5rem + env(sa
 
 
 /* ── MOBILE CARDS (replaces tables on small screens) ── */
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
 }
 .m-card {
   background: white; border: 1px solid var(--clay-pale);
@@ -1918,7 +1930,7 @@ html.studio-app .mobile-picker-sheet-body { padding-bottom: calc(0.5rem + env(sa
 }
 .mobile-section-heading:first-child { margin-top: 0; }
 
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .desktop-table { display: none !important; }
   .dash-table-wrap { background: transparent; border: none; overflow: hidden; }
   .dash-table-header { border-radius: 4px; border: 1px solid var(--clay-pale); margin-bottom: 0.75rem; }
@@ -2161,7 +2173,7 @@ body.dark-mode .archived-row { background: color-mix(in srgb, var(--acc-tx) 4%, 
 
 
 /* ── MOBILE SPECIFIC FIXES ── */
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .dash-section-header { flex-direction: column; align-items: flex-start; margin-bottom: 1.5rem; padding-bottom: 1.25rem; }
   .dash-section-header > div:first-child { width: 100%; }
   .dash-section-header > div:last-child, .dash-section-header > button { width: 100%; display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -2341,7 +2353,7 @@ body.dark-mode .btn-checkin.checked { background: color-mix(in srgb, var(--ok) 1
   display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .checkin-header { padding-top: max(0.75rem, env(safe-area-inset-top)); }
 }
 .checkin-header-left { display: flex; flex-direction: column; gap: 2px; }
@@ -2528,14 +2540,14 @@ body.dark-mode .wa-ai-h { color: #d3a6d6; }
 .wa-lb-top { position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; }
 .wa-lb-btn { height: 40px; min-width: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); color: #fff; font-family: var(--font-body); font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .wa-lb-btn:last-child { font-size: 24px; padding: 0; width: 40px; }
-@media (max-width: 900px) { .wa-img { width: 220px; } .wa-aud { width: 200px; } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { .wa-img { width: 220px; } .wa-aud { width: 200px; } }
 .sr-row { border: 1px solid var(--wa-line, color-mix(in srgb, var(--acc-tx) 20%, transparent)); border-radius: 12px; padding: 12px 12px 6px; margin-bottom: 12px; }
 .sr-row-top { display: flex; gap: 8px; align-items: flex-start; }
 .sr-row-top .form-group { flex: 1; margin-bottom: 8px; }
 .sr-del { width: 40px; height: 40px; flex-shrink: 0; margin-top: 26px; border-radius: 10px; border: 1px solid var(--wa-line, color-mix(in srgb, var(--acc-tx) 20%, transparent)); background: transparent; color: var(--text-mid); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
 .sr-del:hover { color: var(--bad); border-color: var(--bad); }
 .sr-row textarea.form-input { min-height: 84px; resize: vertical; line-height: 1.45; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .wa-sr-back { display: block; position: fixed; inset: 0; background: rgba(20,10,8,0.35); z-index: 450; }
   .wa-sr-pop { position: fixed; left: 0; right: 0; bottom: 0; width: auto; border-radius: 16px 16px 0 0; z-index: 451; padding-bottom: env(safe-area-inset-bottom, 0px); }
   .wa-sr-list { max-height: 60vh; }
@@ -2554,8 +2566,8 @@ body.dark-mode .wa-ai-h { color: #d3a6d6; }
 .wa-placeholder { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text-light); text-align: center; padding: 2rem; font-size: 15px; background: var(--wa-thread); }
 .wa-placeholder svg { color: var(--clay); opacity: 0.7; }
 #sidebarWaBadge, #mobileWaBadge { display: none; background: var(--moss); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 6px; letter-spacing: 0; }
-@media (max-width: 1100px) and (min-width: 901px) { .wa-box { grid-template-columns: 290px minmax(0, 1fr); } }
-@media (max-width: 900px) {
+@media (max-width: 1100px) and (min-width: 901px) and (min-height: 501px), (max-width: 1100px) and (min-width: 901px) and (pointer: fine) { .wa-box { grid-template-columns: 290px minmax(0, 1fr); } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   #section-whatsapp { padding-left: 1rem; padding-right: 1rem; }
   .wa-box { grid-template-columns: minmax(0, 1fr); height: auto; min-height: 0; border-radius: 12px; }
   .wa-list, .wa-rows, .wa-row { min-width: 0; }
@@ -2663,13 +2675,13 @@ body:not(.dark-mode) .wa-cbtn { background: #fff !important; }
 body:not(.dark-mode) .wa-emo { background: #fff; }
 .wa-emo button { height: 44px; border: 0; background: none; font-size: 24px; cursor: pointer; border-radius: 10px; }
 .wa-emo button:hover { background: color-mix(in srgb, var(--acc-tx) 18%, transparent); }
-@media (hover: none), (max-width: 900px) { .wa-emo-btn { display: none; } }
+@media (hover: none), (max-width: 900px), (max-height: 500px) and (pointer: coarse) { .wa-emo-btn { display: none; } }
 .wa-thread-wrap { overflow: hidden; }
 /* no text selection or iOS callout while long-pressing in a chat */
 .wa-thread .wa-msgs, .wa-thread .wa-msgs *, .wa-thread .wa-th, .wa-thread .wa-foot, .wa-thread .wa-ai { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .wa-thread textarea, .wa-thread input { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
-@media (min-width: 901px) { .wa-thread .wa-msgs .wa-b { -webkit-user-select: text; user-select: text; } }
-@media (max-width: 900px) {
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { .wa-thread .wa-msgs .wa-b { -webkit-user-select: text; user-select: text; } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .wa-thread-wrap { min-height: 110px; }
   .wa-thread.kb .wa-ai { padding: 8px 10px 2px; }
   .wa-thread.kb .wa-ai-in { padding: 8px 10px 10px; }
@@ -2681,7 +2693,7 @@ body:not(.dark-mode) .wa-emo { background: #fff; }
   .wa-attach { gap: 12px 6px; padding: 12px 4px 4px; }
   .wa-att i { width: 54px; height: 54px; }
 }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   #section-whatsapp { padding-left: 0 !important; padding-right: 0 !important; }
   #section-whatsapp .dash-section-header { padding-left: 1.25rem; padding-right: 1.25rem; }
   .wa-box { border: 0 !important; border-radius: 0 !important; background: transparent !important; }
@@ -2708,7 +2720,7 @@ html.studio-app .form-page .form-page-header { padding-top: calc(6px + env(safe-
 .form-page .form-label { margin-bottom: 6px !important; font-size: 14px !important; letter-spacing: 0 !important; }
 body.dark-mode .form-page .form-label { color: var(--tx2) !important; }
 .form-page .form-page-body { padding-top: 18px !important; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .form-page .form-page-back span { display: none; }
   .form-page .form-page-back { padding: 0 !important; justify-content: center; }
   .form-page .form-page-body { padding: 14px 16px 3rem !important; }
@@ -2721,7 +2733,7 @@ body.dark-mode .form-page .form-label { color: var(--tx2) !important; }
 .us-box button { color: var(--bad); font-weight: 500; }
 .us-keep { background: var(--s2); border-radius: 16px; color: var(--acc-tx); font-weight: 600; }
 body:not(.dark-mode) .us-box, body:not(.dark-mode) .us-keep { background: #fff; }
-@media (max-width: 900px) { #unsavedModal.us-sheet { align-items: flex-end; padding: 8px 8px calc(10px + env(safe-area-inset-bottom, 0px)); } .us-in { max-width: none; } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { #unsavedModal.us-sheet { align-items: flex-end; padding: 8px 8px calc(10px + env(safe-area-inset-bottom, 0px)); } .us-in { max-width: none; } }
 @keyframes usUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 #unsavedModal.us-sheet .us-in { animation: usUp .22s ease; }
 
@@ -2770,11 +2782,11 @@ html.studio-app .toast { top: calc(8px + env(safe-area-inset-top, 0px)) !importa
 .toast.error .toast-ic { background: var(--bad); }
 .toast.warning { background: rgba(253,239,206,0.94) !important; color: #432c00 !important; }
 .toast.warning .toast-ic { background: var(--warn); }
-@media (min-width: 901px) { .toast { top: 18px; } }
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { .toast { top: 18px; } }
 
 /* ── v133 MORE PAGE (phones): opened by the More tab, tab bar stays ── */
 .more-page { display: none; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
 
 }
 .mp-big { font-size: 32px; font-weight: 600; padding: 8px 20px 12px; letter-spacing: -0.01em; }
@@ -2798,7 +2810,7 @@ html.studio-app .toast { top: calc(8px + env(safe-area-inset-top, 0px)) !importa
 /* ── v134: full-screen chat on phones, date labels fade when not scrolling ── */
 .wa-day { transition: opacity .25s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
 .wa-msgs:not(.scrolling) .wa-day.stuck { opacity: 0; pointer-events: none; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   body.wa-chat-open .mobile-topbar { visibility: hidden !important; }
   body.dark-mode #section-whatsapp.wa-open .wa-thread .wa-th { background: var(--bg) !important; }
   #section-whatsapp.wa-open .wa-thread .wa-th { padding-top: calc(8px + env(safe-area-inset-top, 0px)) !important; min-height: 64px; }
@@ -2814,7 +2826,7 @@ html.studio-app .toast { top: calc(8px + env(safe-area-inset-top, 0px)) !importa
 .tw-sheet { position: absolute; left: 0; right: 0; bottom: 0; max-height: 82vh; overflow-y: auto; background: var(--s1); color: var(--tx); border-radius: 20px 20px 0 0; padding: 8px 0 calc(18px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -10px 30px rgba(0,0,0,.5); transform: translateY(100%); transition: transform .25s cubic-bezier(.2,.8,.2,1); overscroll-behavior: contain; }
 body:not(.dark-mode) .tw-sheet { background: var(--s1); color: var(--tx); }
 .tw-root.open .tw-shade { opacity: 1; } .tw-root.open .tw-sheet { transform: none; }
-@media (min-width: 901px) { .tw-sheet { left: 50%; right: auto; bottom: auto; top: 50%; width: 460px; border-radius: 18px; transform: translate(-50%, -46%); opacity: 0; transition: transform .2s, opacity .2s; padding-bottom: 18px; } .tw-root.open .tw-sheet { transform: translate(-50%, -50%); opacity: 1; } .tw-grab { display: none; } }
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { .tw-sheet { left: 50%; right: auto; bottom: auto; top: 50%; width: 460px; border-radius: 18px; transform: translate(-50%, -46%); opacity: 0; transition: transform .2s, opacity .2s; padding-bottom: 18px; } .tw-root.open .tw-sheet { transform: translate(-50%, -50%); opacity: 1; } .tw-grab { display: none; } }
 .tw-grab { width: 38px; height: 5px; border-radius: 3px; background: var(--line-2); margin: 0 auto 10px; }
 .tw-h { display: flex; justify-content: space-between; align-items: center; padding: 4px 20px 2px; }
 .tw-h h4 { margin: 0; font-size: 20px; font-weight: 600; } .tw-h span { color: var(--tx3); font-size: 14px; }
@@ -2851,17 +2863,17 @@ html.studio-app .tw-bar { padding-top: calc(6px + env(safe-area-inset-top, 0px))
 .tw-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .tw-inner { max-width: 640px; margin: 0 auto; padding: 4px 0 calc(28px + env(safe-area-inset-bottom, 0px)); }
 .tw-count { padding: 14px 20px 2px; color: var(--tx3); font-size: 14px; } .tw-count b { color: var(--tx); font-weight: 600; }
-@media (max-width: 900px) { .tw-back span { display: none; } .tw-back { padding: 0; justify-content: center; } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { .tw-back span { display: none; } .tw-back { padding: 0; justify-content: center; } }
 
 /* ── v136: More is a normal tab page now, so the tab bar sits exactly where it does on every other tab ── */
 #section-more .mp-me, #section-more .mp-grp, #section-more .mp-out { margin-left: 0; margin-right: 0; width: 100%; }
 #section-more .mp-lbl { padding-left: 16px; }
 #section-more .more-page { display: block; padding: 4px 0 8px; color: var(--tx); }
-@media (min-width: 901px) { #section-more .more-page { max-width: 560px; } }
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { #section-more .more-page { max-width: 560px; } }
 
 /* ── v137: phones have no global top bar; per-page buttons by the big title; slim bar only after scrolling ── */
 .app-bar-back, .pg-back, .pg-acts { display: none; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .dash-root { padding-top: 0 !important; }
   html.studio-app .dash-root { padding-top: env(safe-area-inset-top, 0px) !important; }
   .dash-main { height: 100vh !important; }
@@ -2945,7 +2957,7 @@ body.dark-mode .enr-a3 { color: var(--bad); }
 .enr-chips span.w { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
 body.dark-mode .enr-chips span.g { color: #9fd7a8; }
 body.dark-mode .enr-chips span.w { color: var(--warn); }
-@media (max-width: 900px) { .enr-row { padding-left: 1rem; padding-right: 1rem; } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { .enr-row { padding-left: 1rem; padding-right: 1rem; } }
 
 /* ── TODAY ── only what needs doing today. Each block hides when it has nothing to say. */
 .td-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
@@ -3015,7 +3027,7 @@ body.dark-mode .td-ico.zoom { color: var(--bad); }
 .td-act-t small { display: block; font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
 .td-act-c { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--clay); color: #fff; font-size: 0.78rem; font-weight: 600; margin-left: 6px; vertical-align: 1px; box-sizing: border-box; }
 body.dark-mode .td-act-c { color: #ffffff; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .td-wrap { grid-template-columns: 1fr; gap: 1rem; }
   /* Phone order: Next up, Needs you, Today, Tomorrow, This week */
   .td-wrap .td-col { display: contents; }
@@ -3040,7 +3052,7 @@ body.dark-mode .td-act-c { color: #ffffff; }
 /* v150: iPad portrait (740–900px, incl. iPad mini). Same app shell as the phone (tab bar), but
    two columns on Today, cards in a 2-column grid, and the Inbox as a split view.
    Kept last in <head> so it wins over the phone rules. */
-@media (min-width: 740px) and (max-width: 900px) {
+@media (min-width: 740px) and (max-width: 900px), (min-width: 740px) and (max-height: 500px) and (pointer: coarse) {
   body #tdWrap.td-wrap { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1rem; }
   body #tdWrap.td-wrap .td-col { display: flex; }
   body .mobile-cards { flex-direction: row !important; flex-wrap: wrap !important; align-items: flex-start; gap: 14px !important; }
@@ -3100,7 +3112,7 @@ body .dash-nav .nav-section-label, body .dash-nav-label { color: var(--tx3) !imp
 body .mobile-topbar, body.dark-mode .mobile-topbar, html.studio-app .mobile-topbar, html.studio-app .mobile-topbar.menu-open, body .mobile-topbar.menu-open { background: var(--bg) !important; border-bottom: 1px solid var(--line) !important; color: var(--tx); -webkit-backdrop-filter: none; backdrop-filter: none; }
 body .mobile-menu-overlay, body.dark-mode .mobile-menu-overlay { background: var(--bg) !important; }
 body .mobile-menu-overlay a, body .mob-nav a { color: var(--tx) !important; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   body .app-tabs, body.dark-mode .app-tabs { background: var(--s1) !important; border-top: 1px solid var(--line) !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
   body .app-tab, body.dark-mode .app-tab { color: var(--tx3); font-size: 11px; font-weight: 500; }
   body .app-tab.on, body.dark-mode .app-tab.on { color: var(--acc-tx); }
@@ -3223,7 +3235,7 @@ body .td-greet b { color: var(--tx); font-weight: 600; }
 
 /* ── INBOX / CHAT ── */
 body #section-whatsapp, body.dark-mode #section-whatsapp { --wa-card: var(--bg); --wa-thread: var(--bg); --wa-in: var(--in); --wa-out: var(--out); --wa-line: var(--line); --wa-sel: var(--s2); --wa-blue: var(--tick); --wa-red: var(--bad); background: var(--bg) !important; }
-@media (min-width: 901px) { body #section-whatsapp .wa-box { background: var(--s1) !important; border: 1px solid var(--line) !important; } body #section-whatsapp { --wa-card: var(--s1); } body .wa-row, body.dark-mode .wa-row, body .wa-swipe .wa-row { background: var(--s1) !important; } }
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { body #section-whatsapp .wa-box { background: var(--s1) !important; border: 1px solid var(--line) !important; } body #section-whatsapp { --wa-card: var(--s1); } body .wa-row, body.dark-mode .wa-row, body .wa-swipe .wa-row { background: var(--s1) !important; } }
 body .wa-row, body.dark-mode .wa-row, body .wa-swipe .wa-row, body.dark-mode .wa-swipe .wa-row { background: var(--bg) !important; }
 body .wa-row.on, body.dark-mode .wa-row.on { background: var(--s2) !important; }
 body .wa-nm { color: var(--tx) !important; } body .wa-pv { color: var(--tx2) !important; } body .wa-tm { color: var(--tx3) !important; }
@@ -3306,7 +3318,7 @@ body .pg-back { color: var(--acc-tx) !important; }
 
 body .mp-ic { background: var(--acc-soft) !important; color: var(--acc-tx) !important; }
 body .mp-it .mp-bd, body.dark-mode .mp-it .mp-bd { background: var(--acc) !important; color: var(--on-acc) !important; }
-@media (max-width: 900px) { body #tdTitle { font-size: 26px !important; line-height: 1.15; } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { body #tdTitle { font-size: 26px !important; line-height: 1.15; } }
 body .schd-strip button.tod, body .sch-strip button.tod.on { color: var(--acc-tx); }
 body .filter-dd-btn, body .custom-select-btn { background: var(--s1) !important; border: 1px solid var(--line-2) !important; color: var(--tx2) !important; }
 body .filter-dd-btn.active { background: var(--acc-soft) !important; color: var(--acc-tx) !important; border-color: transparent !important; }
@@ -3362,10 +3374,10 @@ body .settings-profile-email, body .settings-profile-name { overflow-wrap: anywh
   body .sch-nav { gap: 6px !important; }
 }
 body .m-card-row span:last-child, body .m-card-value { overflow-wrap: anywhere; }
-@media (min-width: 901px) and (max-width: 1360px) {
+@media (min-width: 901px) and (min-height: 501px) and (max-width: 1360px), (min-width: 901px) and (pointer: fine) and (max-width: 1360px) {
   body #overviewStats, body #allStatsWrap .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 1rem !important; }
 }
-@media (min-width: 901px) { body .stats-grid > .stat-card { min-width: 0; } body .stat-value { overflow-wrap: anywhere; } }
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { body .stats-grid > .stat-card { min-width: 0; } body .stat-value { overflow-wrap: anywhere; } }
 body .skip-link { position: fixed; left: 12px; top: -60px; z-index: 100000; background: var(--acc); color: var(--on-acc); padding: 10px 14px; border-radius: 10px; font-weight: 600; text-decoration: none; }
 body .skip-link:focus { top: 12px; }
 body #dashMain:focus { outline: none; }
@@ -3381,7 +3393,7 @@ body .insight-tile-label { font-size: 13px !important; font-weight: 500; }
 body .tr-acts { display: flex; gap: 8px; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
 body .tr-acts .tr-main { flex: 1; justify-content: center; min-height: 44px; text-decoration: none; }
 body .tr-acts .tr-dots { width: 44px; min-height: 44px; padding: 0 !important; flex-shrink: 0; justify-content: center; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   body .dash-table-wrap:has(> .mobile-cards), body.dark-mode .dash-table-wrap:has(> .mobile-cards) { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; overflow: visible !important; border-radius: 0 !important; }
   body .mobile-cards { gap: 12px !important; }
   body .mobile-cards > .m-card { margin: 0 !important; }
@@ -3397,10 +3409,10 @@ body .upd-bar { white-space: nowrap; position: fixed; left: 50%; bottom: calc(92
 body .upd-bar.show { transform: translate(-50%, 0); visibility: visible; }
 body .upd-bar button { font: inherit; font-weight: 600; border: 0; border-radius: 10px; background: var(--acc); color: var(--on-acc); min-height: 40px; padding: 0 14px; cursor: pointer; }
 body .upd-bar .x { background: transparent; color: var(--bg); opacity: 0.7; padding: 0 8px; }
-@media (min-width: 901px) { body .upd-bar { bottom: 24px; } }
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { body .upd-bar { bottom: 24px; } }
 /* v161: on phones only the page area scrolls. The document itself used to be taller than the
    screen by the notch height, so it scrolled a little, hid the top of the page and snapped back. */
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   /* v162: no height:100% here. In the installed iPhone app that made the screen short by the
      status bar height, so the bottom tabs floated above an empty strip. */
   html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; overscroll-behavior: none; }
@@ -3454,7 +3466,7 @@ body .td-chip.ok i { background: var(--ok); } body .td-chip.acc i { background: 
 body .td-chip b { color: var(--tx); font-weight: 600; }
 /* This week: numbers always start at the top, so 0, 2 and 4 line up */
 body .td-stat.tw-tap { display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   body #section-today .dash-section-header { padding: 90px 0 30px !important; margin-bottom: 4px !important; min-height: 150px; display: flex; align-items: flex-end; }
   body #section-today .dash-section-header > div { width: 100%; }
   body #section-today .dash-section-header > div:first-child { padding-right: 0 !important; }
@@ -3465,7 +3477,7 @@ body .td-stat.tw-tap { display: flex; flex-direction: column; justify-content: f
   body #tdWrap .td-stat { padding: 16px 18px 18px; }
   body #tdWrap .td-stat b { margin-bottom: 4px; }
 }
-@media (min-width: 901px) { body #section-today .dash-section-header { padding-top: 12px; padding-bottom: 28px; } body #section-today .dash-section-header::before { right: 0; width: 240px; height: 240px; } }
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { body #section-today .dash-section-header { padding-top: 12px; padding-bottom: 28px; } body #section-today .dash-section-header::before { right: 0; width: 240px; height: 240px; } }
 /* v164: photo + "Hi Arpit", date small underneath */
 body .td-hrow { display: flex; align-items: center; gap: 14px; }
 body .td-av { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--acc); }
@@ -3473,17 +3485,17 @@ body .td-htx { min-width: 0; }
 body #section-today #tdTitle { margin: 0; line-height: 1.12; }
 body #section-today .td-eyebrow { text-transform: none !important; letter-spacing: 0 !important; font-size: 14.5px !important; font-weight: 500; color: var(--tx2) !important; margin: 4px 0 0 !important; }
 body #section-today .td-eyebrow::before { width: 14px; height: 14px; }
-@media (max-width: 900px) { body #section-today #tdTitle { font-size: 30px !important; } }
-@media (min-width: 901px) { body .td-av { width: 64px; height: 64px; } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { body #section-today #tdTitle { font-size: 30px !important; } }
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { body .td-av { width: 64px; height: 64px; } }
 /* v164: "Arpit's Studio" on the left of the top row, opposite search and + (phones only) */
 body .td-brand { display: none; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   body #section-today .td-brand { display: flex; align-items: center; gap: 10px; position: absolute; left: 0; top: 0; height: 44px; }
   body #section-today .td-brand span { font-size: 17px; font-weight: 600; color: var(--tx); letter-spacing: -0.01em; white-space: nowrap; }
 }
 /* v164: nothing on a phone can be dragged sideways. Pages only scroll up and down,
    and the top/bottom no longer stretch away from the edge when pulled. */
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   html, body { overflow-x: hidden !important; }
   body .dash-main, body #dashMain, body .dash-section, body .dash-root { overflow-x: hidden !important; }
   body #dashMain { overscroll-behavior: none !important; }
@@ -3567,7 +3579,7 @@ body .m-card > div[style*="border-top"] { flex-wrap: wrap; gap: 8px; }
 body .m-card > div[style*="border-top"] > .btn-dash, body .m-card > div[style*="border-top"] > button { margin-left: 0 !important; white-space: nowrap; }
 /* v170: desktop tables never squeeze a column down to "…". Names, notes and venues
    wrap onto a second line; phone numbers and dates stay on one line, fully shown. */
-@media (min-width: 901px) {
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
   body .dash-table-wrap table td.td-truncate { max-width: 260px !important; min-width: 120px; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; line-height: 1.35; }
   body .dash-table-wrap table td.td-phone { white-space: nowrap !important; min-width: 0; max-width: none !important; overflow-wrap: normal; }
   body .dash-table-wrap table td.td-email { min-width: 160px; max-width: 240px !important; overflow-wrap: anywhere; }
@@ -3591,7 +3603,7 @@ html.mono body .btn-dash-outline, html.mono body .btn-dash-ghost { background: v
 html.mono body .dash-section-title, html.mono body #tdTitle, html.mono body .td-head h3, html.mono body .td-next-n, html.mono body .stat-value, html.mono body .m-card-title, html.mono body .hl-hero b, html.mono body .settings-card-title, html.mono body .app-bar-title {
   letter-spacing: -0.035em !important; font-weight: 600 !important; }
 html.mono body .dash-section-title { font-size: 34px !important; }
-@media (max-width: 900px) { html.mono body #tdTitle { font-size: 34px !important; } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { html.mono body #tdTitle { font-size: 34px !important; } }
 /* chips: soft lime for the good ones, quiet grey for the rest */
 html.mono body .badge-green, html.mono body .td-chip.ok i, html.mono body .inv-auto-badge { background: var(--lime) !important; color: var(--lime-tx) !important; border-color: transparent !important; }
 html.mono body .badge, html.mono body .pill, html.mono body .wa-tag, html.mono body .td-tag { border-radius: 999px !important; }
@@ -3658,8 +3670,8 @@ body .dash-section.active { animation: v155in 0.18s ease-out; }
 body .btn-dash, body .td-act, body .td-next-zoom, body .wa-row, body .mp-it, body .wa-ai-icon, body .pg-ib { transition: transform 0.1s ease, background-color 0.15s, border-color 0.15s; }
 body .btn-dash:active, body .td-next-zoom:active, body .wa-ai-icon:active, body .pg-ib:active { transform: scale(0.97); }
 body .td-act:active, body .wa-row:active, body .mp-it:active { background-color: var(--s2) !important; }
-@media (max-width: 900px) { body #section-whatsapp.wa-open .wa-thread { animation: v155slide 0.22s ease-out; } }
-@media (min-width: 740px) and (max-width: 900px) { body #section-whatsapp.wa-open .wa-thread { animation: none; } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { body #section-whatsapp.wa-open .wa-thread { animation: v155slide 0.22s ease-out; } }
+@media (min-width: 740px) and (max-width: 900px), (min-width: 740px) and (max-height: 500px) and (pointer: coarse) { body #section-whatsapp.wa-open .wa-thread { animation: none; } }
 @keyframes v155slide { from { transform: translateX(20%); opacity: 0.5; } to { transform: none; opacity: 1; } }
 body .wa-b.v151new { animation: v155pop 0.2s ease-out; }
 @keyframes v155pop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -4372,7 +4384,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v178</span>
+        <span style="color:var(--clay);font-weight:500;">v179</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4446,7 +4458,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v178</span>
+        <span style="color:var(--clay);font-weight:500;">v179</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4738,7 +4750,7 @@ table#paymentsTable { min-width: 700px; }
         <div class="stat-card"><div class="stat-label">Class fees received</div><div class="stat-value green" id="classTotalRevenue">—</div><div class="stat-sub">All time, in ₹ after conversion</div></div>
         <div class="stat-card"><div class="stat-label">Students on Break</div><div class="stat-value" id="classOnBreak">—</div><div class="stat-sub">Right now</div></div>
       </div>
-      <div id="zoomReviewPanel" style="display:none;margin-bottom:2rem;"><style>@media (min-width:901px){#zoomReviewPanel .dash-table-wrap{overflow:visible;}#zoomReviewTable .form-select-wrap{min-width:190px;}}</style>
+      <div id="zoomReviewPanel" style="display:none;margin-bottom:2rem;"><style>@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {#zoomReviewPanel .dash-table-wrap{overflow:visible;}#zoomReviewTable .form-select-wrap{min-width:190px;}}</style>
         <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.6rem;">
           <div style="font-weight:500;">Zoom: needs review</div>
           <div style="font-size:0.85rem;color:var(--text-light);" id="zoomReviewCount"></div>
@@ -6184,7 +6196,7 @@ table#paymentsTable { min-width: 700px; }
   color:var(--bark);font-family:var(--font-body);font-size:0.9rem;text-align:left;cursor:pointer;}
 .cl-menu button:hover{background:color-mix(in srgb, var(--acc-tx) 10%, transparent);}
 .cl-menu button.danger{color:var(--bad);}
-@media (max-width:900px){
+@media (max-width:900px), (max-height: 500px) and (pointer: coarse) {
   .cl-more-btn{width:44px;height:44px;}
   .cl-menu button{padding:0.85rem 0.75rem;font-size:0.95rem;}
   .fr-chip{height:44px;padding:0 0.95rem;font-size:0.88rem;}
@@ -6766,7 +6778,7 @@ function applyRole() {
 function showDashboard() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('dashRoot').style.display = 'flex';
-  if (window.innerWidth <= 900) {
+  if (isPhoneLayout()) {
     document.getElementById('mobileTopbar').style.display = 'flex';
   }
   if (typeof window.vpFix === 'function') { requestAnimationFrame(window.vpFix); setTimeout(window.vpFix, 400); }
@@ -7273,7 +7285,7 @@ async function api(endpoint, method = 'GET', body = null) {
 
 // ── NAVIGATION ──
 function showSection(name, el) {
-  if (name === 'more' && !window.matchMedia('(max-width: 900px)').matches) name = 'today';
+  if (name === 'more' && !window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches) name = 'today';
   { const cur = sessionStorage.getItem('dash_section'); if (cur && cur !== name && !(typeof _pgBacking !== 'undefined' && _pgBacking)) _pgPrev = cur; }
   if (name !== 'whatsapp' && typeof waClose === 'function' && document.getElementById('section-whatsapp')?.classList.contains('wa-open')) waClose();
   document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
@@ -7302,6 +7314,7 @@ function appBarSync(name) {
   const t = sec && sec.querySelector('.dash-section-title');
   const title = document.getElementById('appBarTitle'); if (title) title.textContent = t ? t.textContent.trim() : '';
   bar.classList.remove('scrolled');
+  document.querySelectorAll('.dash-section-title').forEach(x => { x.style.transform = ''; x.style.opacity = ''; });
   if (typeof pgHeadSync === 'function') pgHeadSync(name);
   const add = document.getElementById('appAddBtn');
   if (add) {
@@ -7347,8 +7360,10 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     const bar = document.getElementById('mobileTopbar'); if (!bar) return;
     const name = sessionStorage.getItem('dash_section') || 'today';
     const t = document.querySelector('#section-' + name + ' .dash-section-title');
-    const top = window.matchMedia('(max-width: 900px)').matches ? m.getBoundingClientRect().top : bar.getBoundingClientRect().bottom;
+    const top = window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches ? m.getBoundingClientRect().top : bar.getBoundingClientRect().bottom;
     bar.classList.toggle('scrolled', !!t && t.getBoundingClientRect().bottom < top + 4);
+    // v179: the large title shrinks smoothly as it slides under the bar.
+    if (t && isPhoneLayout()) { const k = Math.min(1, Math.max(0, m.scrollTop / 64)); t.style.transform = k ? 'scale(' + (1 - 0.38 * k).toFixed(3) + ')' : ''; t.style.opacity = k ? (1 - 0.5 * k).toFixed(2) : ''; }
     if (m.scrollTop > 2) { const p = document.querySelector('.ptr'); if (p && !p.classList.contains('spin')) { p.style.opacity = 0; p.style.transform = 'translateY(-40px)'; } }
   }, true);
   // Pull to refresh (touch, phone layout only).
@@ -7358,7 +7373,7 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     if (!ind) { ind = document.createElement('div'); ind.className = 'ptr'; ind.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>'; document.body.appendChild(ind); }
     return ind;
   }
-  function blocked() { return window.innerWidth > 900 || document.body.classList.contains('menu-is-open') || document.body.classList.contains('wa-chat-open') || document.body.classList.contains('qa-open') || (typeof _scrollLocked !== 'undefined' && _scrollLocked); }
+  function blocked() { return !isPhoneLayout() || document.body.classList.contains('menu-is-open') || document.body.classList.contains('wa-chat-open') || document.body.classList.contains('qa-open') || (typeof _scrollLocked !== 'undefined' && _scrollLocked); }
   document.addEventListener('touchstart', e => {
     const m = main(); if (busy || !m || blocked() || !m.contains(e.target) || m.scrollTop > 0) { startY = null; return; }
     startY = e.touches[0].clientY; startX = e.touches[0].clientX; axis = null; pulling = false; dist = 0;
@@ -7412,7 +7427,7 @@ function pgBack() {
   _pgPrev = PG_TABS.includes(to) ? null : 'more';
 }
 function pgHeadSync(name) {
-  const phone = window.matchMedia('(max-width: 900px)').matches;
+  const phone = window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches;
   const bar = document.getElementById('mobileTopbar');
   const sec = document.getElementById('section-' + name);
   const isTab = PG_TABS.includes(name);
@@ -7715,7 +7730,7 @@ function toggleMobileMenu() {
 window.addEventListener('resize', function() {
   if (sessionStorage.getItem('dash_auth') === '1') {
     const topbar = document.getElementById('mobileTopbar');
-    if (window.innerWidth <= 900) { topbar.style.display = 'flex'; }
+    if (isPhoneLayout()) { topbar.style.display = 'flex'; }
     else {
       topbar.style.display = 'none';
       const srch = document.getElementById('mobileSearchFullscreen');
@@ -8009,7 +8024,7 @@ function makeCurrencySelect(sel) {
   searchInput.onclick = (e) => e.stopPropagation();
 
   function openMenu() {
-    if (window.innerWidth <= 900) { openSheet(); return; }
+    if (isPhoneLayout()) { openSheet(); return; }
     if (typeof closeAllDropdowns === 'function') closeAllDropdowns();
     searchInput.value = '';
     renderList('', desktopRow, list);
@@ -13041,7 +13056,7 @@ function openMDotsSheet(id, name, type, isAdmin, btnEl) {
     html += `<button class="m-dots-item danger" onclick="closeMDotsSheet();archiveRecord('workshop_waitlist','${id}','${name}')">${TRASH_SVG} Delete</button>`;
   }
 
-  if (window.innerWidth <= 900) {
+  if (isPhoneLayout()) {
     openMobilePicker(name, (body) => {
       // Build actions array and create buttons programmatically
       const actions = [];
@@ -13396,7 +13411,7 @@ function makeDatePicker(nativeInput) {
     const sel = parseVal() || today;
     viewYear = sel.getFullYear(); viewMonth = sel.getMonth();
 
-    if (window.innerWidth <= 900) {
+    if (isPhoneLayout()) {
       // Mobile: render calendar inside bottom sheet
       document.querySelectorAll('.date-picker-cal.open').forEach(c => { c.classList.remove('open'); c.previousElementSibling?.classList.remove('open'); });
       btn.classList.add('open');
@@ -13442,7 +13457,7 @@ function makeDatePicker(nativeInput) {
   }
 
   function closeDP() {
-    if (window.innerWidth <= 900) {
+    if (isPhoneLayout()) {
       closeMobilePicker();
     } else {
       cal.classList.remove('open'); btn.classList.remove('open');
@@ -13546,7 +13561,7 @@ function makeFormSelect(nativeSelect) {
   buildMenu();
 
   function openMenu() {
-    if (window.innerWidth <= 900) {
+    if (isPhoneLayout()) {
       // Mobile: bottom sheet
       const label = btn.querySelector('.fs-label')?.textContent || 'Select';
       openMobilePicker(nativeSelect.dataset.label || label, (body) => {
@@ -15187,7 +15202,7 @@ body.dark-mode .sch-pop { background: var(--s2); border-color: color-mix(in srgb
 .sch-pop p { margin: 4px 0 12px; color: var(--text-light); font-size: 0.88rem; line-height: 1.5; }
 .sch-pop-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .sch-pop-shade { display: none; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   .sch-lbl-wk { display: none; } .sch-lbl-day { display: inline; }
   .sch-bar { gap: 10px; }
   .sch-bar.cal .sch-legend { display: none; }
@@ -15563,18 +15578,18 @@ function waRenderList() {
 }
 
 // v150: iPad portrait shows list + chat side by side, like the desktop.
-function waSplit() { return window.matchMedia('(min-width: 740px) and (max-width: 900px)').matches; }
+function waSplit() { return window.matchMedia('(min-width: 740px) and (max-width: 900px), (min-width: 740px) and (max-height: 500px) and (pointer: coarse)').matches; }
 async function waOpen(phone) {
   _wa.sel = phone;
   const sec = document.getElementById('section-whatsapp');
   // On phones the chat covers the page right under the top bar.
   const tb = document.querySelector('.mobile-topbar');
   // v134: on phones the chat is full screen, its own header replaces the app bar.
-  sec.style.setProperty('--wa-top', window.matchMedia('(max-width: 900px)').matches ? '0px' : ((tb && tb.offsetHeight ? Math.round(tb.getBoundingClientRect().bottom) : 68) + 'px'));
+  sec.style.setProperty('--wa-top', window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches ? '0px' : ((tb && tb.offsetHeight ? Math.round(tb.getBoundingClientRect().bottom) : 68) + 'px'));
   sec.classList.add('wa-open');
   if (!waSplit()) {
     document.body.classList.add('wa-chat-open');
-    if (window.matchMedia('(max-width: 900px)').matches) lockScroll();
+    if (window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches) lockScroll();
   }
   waRenderList();
   waRenderThread(false);
@@ -15724,7 +15739,7 @@ document.addEventListener('focusout', e => { if (e.target && e.target.id === 'wa
 // Some iOS versions stop fixed panels above the home bar already, so the composer's own
 // safe-area padding doubles the gap. Measure and only pad what is really needed.
 function waSafeFix() {
-  const t = document.getElementById('waThread'); if (!t || !window.matchMedia('(max-width: 900px)').matches || waSplit()) return;
+  const t = document.getElementById('waThread'); if (!t || !window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches || waSplit()) return;
   let pr = document.getElementById('waSafeProbe');
   if (!pr) { pr = document.createElement('div'); pr.id = 'waSafeProbe'; pr.style.cssText = 'position:fixed;left:0;bottom:0;width:1px;height:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none;'; document.body.appendChild(pr); }
   const inset = pr.offsetHeight || 0;
@@ -16251,7 +16266,7 @@ async function waSrToggle() {
   pop.innerHTML = '<div class="wa-sr-head"><b>Saved replies</b><button type="button" class="wa-sr-manage" onclick="waSrManage()">Manage</button></div><div class="wa-sr-list">' + items + '</div>';
   // On phones the chat sits in its own fixed layer, so the sheet goes on the section itself (which carries the colours) to stay above the backdrop.
   document.body.appendChild(back);
-  (window.matchMedia('(max-width: 900px)').matches ? (document.getElementById('section-whatsapp') || document.body) : comp).appendChild(pop);
+  (window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches ? (document.getElementById('section-whatsapp') || document.body) : comp).appendChild(pop);
   const b = document.getElementById('waSrBtn'); if (b) { b.classList.add('on'); b.setAttribute('aria-expanded', 'true'); }
 }
 function waSrFirst() {
@@ -17467,7 +17482,7 @@ function schPopOpen(i, el) {
   pop.innerHTML = '<h4>' + zEsc(name) + '</h4><p>' + info + '</p>' + (btns ? '<div class="sch-pop-row">' + btns + '</div>' : '');
   pop.classList.add('open');
   document.getElementById('schPopShade').classList.add('open');
-  if (window.matchMedia('(min-width: 901px)').matches && el) {
+  if (window.matchMedia('(min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine)').matches && el) {
     const r = el.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
     let left = r.right + 8; if (left + pw > window.innerWidth - 12) left = r.left - pw - 8;
     let top = Math.min(Math.max(12, r.top), window.innerHeight - ph - 12);
@@ -17482,7 +17497,7 @@ function schPopClose() {
   document.removeEventListener('mousedown', schPopOutside);
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') schPopClose(); });
-window.addEventListener('scroll', () => { if (window.matchMedia('(min-width: 901px)').matches) schPopClose(); }, true);
+window.addEventListener('scroll', () => { if (window.matchMedia('(min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine)').matches) schPopClose(); }, true);
 
 // Next real moment of a weekday + time in a timezone, returned as IST weekday + time.
 function schLocalToIst(localWeekday, hhmm, tz) {
@@ -17919,7 +17934,7 @@ function rvRender() {
   let pending = false;
   function fitAll() {
     pending = false;
-    if (!window.matchMedia('(max-width: 900px)').matches) { document.querySelectorAll('.m-card-row.mc-stack').forEach(r => r.classList.remove('mc-stack')); return; }
+    if (!window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches) { document.querySelectorAll('.m-card-row.mc-stack').forEach(r => r.classList.remove('mc-stack')); return; }
     document.querySelectorAll('.dash-section.active .m-card-row, .form-page .m-card-row').forEach(r => { if (r.offsetParent) fitRow(r); });
   }
   window.mcFit = () => { if (!pending) { pending = true; requestAnimationFrame(fitAll); } };
@@ -18359,5 +18374,97 @@ async function stzLoad() {
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') stzAsk(); });
 })();
 </script>
+
+<style id="lay179">
+/* ── v179 LAYOUT SYSTEM ─────────────────────────────────────────────
+   Three layouts, one rule (PHONE_MQ in the head script):
+   • phone   : width ≤ 900, or any short touch screen (phone held sideways)
+   • tablet  : wide layout 901–1279 → slim icon rail instead of the sidebar
+   • desktop : 1280+ → full sidebar
+   Sidebar width and the content's left margin always come from --sb, so
+   they can never drift apart again (they did: 281px sidebar, 240px margin). */
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
+  html body { --sb: 280px; }
+  html body .dash-sidebar { width: var(--sb) !important; box-sizing: border-box; }
+  html body .dash-main { margin-left: var(--sb) !important; }
+}
+@media (min-width: 1280px) and (max-width: 1439px) and (min-height: 501px), (min-width: 1280px) and (max-width: 1439px) and (pointer: fine) {
+  html body { --sb: 248px; }
+  html body .dash-section { padding-left: 2.5rem; padding-right: 2.5rem; }
+}
+/* Tablet / small laptop: icon rail */
+@media (min-width: 901px) and (max-width: 1279px) and (min-height: 501px), (min-width: 901px) and (max-width: 1279px) and (pointer: fine) {
+  html body { --sb: 88px; }
+  html body .dash-sidebar { padding: 14px 0 18px; scrollbar-width: none; }
+  html body .dash-sidebar::-webkit-scrollbar { display: none; }
+  html body .dash-sidebar > div:first-child { justify-content: center; padding: 0 !important; margin-bottom: 10px !important; }
+  html body .dash-sidebar > div:first-child > div { display: none; }
+  html body .dash-sidebar .dash-sidebar-title { display: none; }
+  html body aside.dash-sidebar .dash-nav { padding: 0 !important; margin: 4px 0 !important; }
+  html body aside.dash-sidebar .dash-nav li { width: 100%; }
+  html body .dash-sidebar .dash-nav-divider { margin: 6px 18px; }
+  html body .dash-sidebar > div:last-child { display: none; }
+  html body aside.dash-sidebar .dash-nav li a, html body aside.dash-sidebar .dash-nav li.admin-only a {
+    position: relative; flex-direction: column; justify-content: center; gap: 4px;
+    margin: 2px 8px; padding: 9px 2px 8px; border-left: 0 !important; border-radius: 12px;
+    font-size: 10.5px !important; line-height: 1.15; letter-spacing: 0 !important; text-align: center;
+    white-space: normal !important; overflow-wrap: normal; word-break: normal; hyphens: none; min-height: 52px; box-sizing: border-box;
+  }
+  html body .dash-nav li a .icon { width: auto; height: 20px; display: grid; place-items: center; }
+  html body .dash-nav li a .icon svg { width: 20px; height: 20px; }
+  html body .dash-nav li a > span:not(.icon) { letter-spacing: 0 !important; }
+  html body #sidebarWaBadge, html body #sidebarUnassignedBadge {
+    position: absolute; top: 4px; left: calc(50% + 6px); margin: 0 !important; min-width: 16px; text-align: center;
+  }
+  html body #sidebarNotifCount, html body #sidebarBinCount { display: none; }
+  html body .hl-navdot { position: absolute; top: 6px; left: calc(50% + 8px); margin: 0 !important; }
+  html body .dash-section { padding: 2rem 1.75rem; }
+  html body .dash-table-wrap table th, html body .dash-table-wrap table td { padding-left: 12px !important; padding-right: 12px !important; }
+  html body aside.dash-sidebar .dash-nav li a * { font-size: inherit !important; }
+  html body aside.dash-sidebar .dash-nav li a > span:not(.icon):not([id]) { white-space: normal !important; max-width: 100%; display: block; }
+  html body aside.dash-sidebar .dash-nav li a { white-space: normal !important; width: auto !important; }
+}
+/* Tablet range: lists show as cards (like iPad portrait), never as a
+   squeezed table. Desktop (1280+) keeps the tables. */
+@media (min-width: 901px) and (max-width: 1279px) and (min-height: 501px), (min-width: 901px) and (max-width: 1279px) and (pointer: fine) {
+  html body .dash-table-wrap:has(> .mobile-cards) > table, html body .dash-table-wrap:has(> .mobile-cards) > .desktop-table { display: none !important; }
+  html body .dash-table-wrap:has(> .mobile-cards) { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; overflow: visible !important; }
+  html body .dash-table-wrap.desktop-only { display: none !important; }
+  html body .mobile-cards.mobile-only, html body .dash-table-wrap > .mobile-cards, html body #workshopsCards, html body #participantsCards, html body #studentsCards, html body #feePaymentsCards, html body #paymentsCards, html body #leadsCards, html body #waitlistCards, html body #feeRequestsCards, html body #zoomReviewCards, html body #trialsCards, html body #gigsCards {
+    display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: flex-start; gap: 14px !important; width: 100% !important; padding: 0 0 2rem !important; box-sizing: border-box;
+  }
+  html body .mobile-cards > * { width: calc(50% - 7px) !important; max-width: calc(50% - 7px) !important; margin: 0 !important; box-sizing: border-box; }
+  html body .m-card { padding: 16px 18px !important; border-radius: 14px !important; }
+  html body .m-card-val { max-width: 60% !important; word-break: break-word; }
+  html body .mobile-section-heading { display: none; }
+}
+@media (min-width: 1100px) and (max-width: 1279px) and (min-height: 501px), (min-width: 1100px) and (max-width: 1279px) and (pointer: fine) {
+  html body .mobile-cards > * { width: calc(33.333% - 10px) !important; max-width: calc(33.333% - 10px) !important; }
+}
+/* Tables in the wide layouts: let the table scroll sideways instead of
+   squeezing a column to nothing. */
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
+  html body .dash-table-wrap table { min-width: 100%; }
+  html body .dash-table-wrap table td.td-truncate { min-width: 110px; }
+  html body .dash-table-wrap table th { white-space: nowrap; }
+}
+/* Phone layout: large titles shrink from their left edge while scrolling. */
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body .dash-section-title { transform-origin: left center; will-change: transform; transition: transform .06s linear, opacity .06s linear; }
+}
+/* Phone held sideways: phone layout, slimmer bars, clear of the notch. */
+@media (max-height: 500px) and (pointer: coarse) {
+  html body .app-tabs { padding: 2px max(8px, env(safe-area-inset-right, 0px)) calc(2px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+  html body .app-tab { flex-direction: row; justify-content: center; gap: 7px; padding: 8px 0; font-size: 13px; max-width: 150px; }
+  html body .app-tab svg { width: 20px; height: 20px; }
+  html body .app-tab-badge { position: static; order: 3; margin-left: -1px; }
+  html body .dash-main { padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important; }
+  html body .mobile-topbar { padding-left: max(16px, env(safe-area-inset-left, 0px)) !important; padding-right: max(16px, env(safe-area-inset-right, 0px)) !important; }
+  html body .dash-main { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+  html body .form-page-header, html body .form-page-body {
+    padding-left: max(16px, env(safe-area-inset-left, 0px)) !important; padding-right: max(16px, env(safe-area-inset-right, 0px)) !important;
+  }
+}
+</style>
 </body>
 </html>
