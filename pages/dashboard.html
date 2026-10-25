@@ -3624,6 +3624,13 @@ body .btn-dash-primary, body .btn-dash-save, body .td-next-zoom, body .td-join:n
 body .wa-b .wa-doc, body.dark-mode .wa-b .wa-doc, body.dark-mode .wa-b.out .wa-doc { color: inherit !important; background: color-mix(in srgb, currentColor 7%, transparent) !important; border: 1px solid color-mix(in srgb, currentColor 13%, transparent) !important; gap: 12px; padding: 10px 12px 10px 10px; }
 body .wa-b .wa-doc .wa-doc-n small { color: inherit !important; opacity: .68; }
 .wa-pdf { flex-shrink: 0; display: block; }
+/* v177: Where you are */
+body .stz-now { font-size: 16px; font-weight: 600; color: var(--tx); }
+body .stz-bar { position: fixed; left: 50%; top: calc(10px + env(safe-area-inset-top, 0px)); transform: translate(-50%, -160%); visibility: hidden; z-index: 9996; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; background: var(--tx); color: var(--bg); padding: 10px 10px 10px 16px; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); font-size: 14.5px; font-weight: 500; transition: transform .25s ease, visibility .25s; width: max-content; max-width: calc(100vw - 32px); }
+body .stz-bar.show { transform: translate(-50%, 0); visibility: visible; }
+body .stz-bar span { flex: 1 1 200px; min-width: 0; }
+body .stz-bar button { font: inherit; font-weight: 600; border: 0; border-radius: 10px; background: var(--acc); color: var(--on-acc); min-height: 40px; padding: 0 14px; cursor: pointer; }
+body .stz-bar button.x { background: transparent; color: var(--bg); opacity: .75; }
 /* v172: weekly AI review card */
 body .rv-card { padding: 16px 18px; }
 body .rv-sum { font-size: 15.5px !important; color: var(--tx) !important; line-height: 1.5; margin: 0 0 14px !important; }
@@ -4365,7 +4372,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v176</span>
+        <span style="color:var(--clay);font-weight:500;">v177</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4439,7 +4446,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v176</span>
+        <span style="color:var(--clay);font-weight:500;">v177</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5146,13 +5153,13 @@ table#paymentsTable { min-width: 700px; }
       <div id="schCalWrap" style="margin:0 0 2rem;">
         <div class="schw" id="schWeek"></div>
         <div class="schd" id="schDay"></div>
-        <div class="sch-cal-note">Times in IST. Click a class to move or skip it. Empty space is free time.</div>
+        <div class="sch-cal-note">Times in <span class="stz-lbl">IST</span>. Click a class to move or skip it. Empty space is free time.</div>
       </div>
       <div id="schListWrap" style="display:none;">
       <div style="font-weight:500;margin-bottom:0.6rem;">Next 14 days</div>
       <div class="dash-table-wrap" style="margin:0 0 2rem;">
         <table class="desktop-table" style="min-width:720px;"><thead><tr>
-          <th>Time (IST)</th><th>Student</th><th>Their time</th><th>Status</th><th class="ws-action-sticky">Action</th>
+          <th>Time (<span class="stz-lbl">IST</span>)</th><th>Student</th><th>Their time</th><th>Status</th><th class="ws-action-sticky">Action</th>
         </tr></thead><tbody id="schUpcomingTable"><tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards mobile-only" id="schUpcomingCards"></div>
       </div>
@@ -5348,6 +5355,23 @@ table#paymentsTable { min-width: 700px; }
             <div class="settings-profile-name">Arpit Pandey</div>
             <div class="settings-profile-email">arpithandpan@gmail.com</div>
           </div>
+        </div>
+      </div>
+
+      <!-- v177: Where you are (Arpit's own clock) -->
+      <div class="settings-card" id="stzCard">
+        <div class="settings-card-header">
+          <span class="settings-card-icon">🌍</span>
+          <div>
+            <div class="settings-card-title">Where you are</div>
+            <div class="settings-card-sub">Your dashboard, trial times, quiet hours and morning check follow this</div>
+          </div>
+        </div>
+        <div style="padding:0.25rem 0;">
+          <div class="stz-now" id="stzNow">India (IST)</div>
+          <div class="form-group" style="margin-top:12px;"><label class="form-label" for="stzSel">Time zone</label><select class="form-input" id="stzSel" onchange="stzPick(this.value)"></select></div>
+          <button type="button" class="btn-dash btn-dash-ghost" id="stzUsePhone" onclick="stzPick(stzDevice())" style="display:none;"></button>
+          <div style="font-size:0.85rem;color:var(--tx2);margin-top:12px;line-height:1.5;">Students' classes, Zoom links and calendars never change, and nobody is told. Indian students' classes stay at the same IST time, you just see them in your own time.</div>
         </div>
       </div>
 
@@ -8725,7 +8749,7 @@ function trialDaysAgo(d) {
 }
 function trialTimeIst(t) {
   if (!t.start_at) return '';
-  return new Date(t.start_at).toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit' });
+  return new Date(t.start_at).toLocaleTimeString('en-US', { timeZone: STZ, hour: 'numeric', minute: '2-digit' });
 }
 function trialContact(t) {
   const parts = [];
@@ -8798,14 +8822,14 @@ async function loadTrials() {
     const shown = _trialsShowHistory ? pending.concat(decided) : pending;
     const zoomBadge = t => t.source === 'zoom' ? ' <span class="badge badge-clay" style="margin-left:6px;font-size:0.72em;" data-tip="Came in from the Zoom review list">Zoom</span>' : (t.source === 'booking' ? ' <span class="badge badge-clay" style="margin-left:6px;font-size:0.72em;" data-tip="Booked on the trial page">Web</span>' : '');
     document.getElementById('trialsTable').innerHTML = shown.map(t => `<tr>
-      <td>${fmtDate(t.trial_date || (t.start_at ? new Date(new Date(t.start_at).getTime() + 330 * 60000).toISOString().slice(0, 10) : ''))}${t.start_at ? '<div style="font-size:0.8rem;color:var(--text-light);">' + trialTimeIst(t) + ' IST</div>' : ''}${zoomBadge(t)}</td>
+      <td>${fmtDate(t.trial_date || (t.start_at ? schIst(new Date(t.start_at)).ymd : ''))}${t.start_at ? '<div style="font-size:0.8rem;color:var(--text-light);">' + trialTimeIst(t) + ' IST</div>' : ''}${zoomBadge(t)}</td>
       <td class="td-truncate td-name"${(t.full_name || '').length > 22 ? ' data-tip="' + zEsc(t.full_name) + '"' : ''}><span style="font-weight:500;">${zEsc(t.full_name || '—')}</span>${t.notes ? '<div style="font-size:0.8rem;color:var(--text-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">' + zEsc(t.notes) + '</div>' : ''}</td>
       <td class="td-truncate"${trialContact(t).length > 24 ? ' data-tip="' + zEsc(trialContact(t)) + '"' : ''}>${zEsc(trialContact(t) || '—')}</td>
       <td>${trialStatusBadge(t)}</td>
       <td class="ws-action-sticky">${trialActionsHtml(t, false)}</td>
     </tr>`).join('') || `<tr><td colspan="5" style="text-align:center;padding:1.5rem 1rem;color:var(--text-light);">${rows.length ? 'No pending trials. Everyone has been converted or marked dropped.' : 'No trials yet. Add one below, or save a Zoom attendee as a trial from the review list.'}</td></tr>`;
     document.getElementById('trialsCards').innerHTML = shown.map(t => `<div class="m-card"><div class="m-card-title" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;"><span>${zEsc(t.full_name || '—')}</span><span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">${trialStatusBadge(t)}</span></div>
-      <div class="m-card-row"><span class="m-card-label">Trial date</span><span class="m-card-val">${fmtDate(t.trial_date || (t.start_at ? new Date(new Date(t.start_at).getTime() + 330 * 60000).toISOString().slice(0, 10) : ''))}${t.start_at ? ', ' + trialTimeIst(t) + ' IST' : ''}${zoomBadge(t)}</span></div>
+      <div class="m-card-row"><span class="m-card-label">Trial date</span><span class="m-card-val">${fmtDate(t.trial_date || (t.start_at ? schIst(new Date(t.start_at)).ymd : ''))}${t.start_at ? ', ' + trialTimeIst(t) + ' IST' : ''}${zoomBadge(t)}</span></div>
       ${trialContact(t) ? `<div class="m-card-row"><span class="m-card-label">Contact</span><span class="m-card-val">${zEsc(trialContact(t))}</span></div>` : ''}
       ${t.notes ? `<div class="m-card-row"><span class="m-card-label">Notes</span><span class="m-card-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;display:inline-block;vertical-align:bottom;text-align:right;">${zEsc(t.notes)}</span></div>` : ''}
       <div class="tr-acts">${trialActionsHtml(t, true)}</div>
@@ -10817,7 +10841,7 @@ async function copyLateLink(id) {
     showToast('Could not save the late link, so it will not work. Try again. (' + e.message + ')', 'error');
     return;
   }
-  const tillTxt = until.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' })
+  const tillTxt = until.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: STZ })
     + (until === start ? ' (workshop start)' : '');
   if (copied) showToast('✓ Late link copied · valid till ' + tillTxt + ' · one booking only', 'success');
   else { copyFallback(url, 'Late link, valid till ' + tillTxt); }
@@ -15240,6 +15264,29 @@ const SCH_TZS = [
 const SCH_TZ_SHORT = { 'Asia/Kolkata': 'IST', 'America/New_York': 'ET', 'America/Chicago': 'CT', 'America/Denver': 'MT', 'America/Los_Angeles': 'PT' };
 let _sch = { slots: [], exceptions: [], students: [], upcoming: [], cal: [], trials: [], gigs: [], workshops: [] };
 
+// ── v177: ARPIT'S OWN CLOCK ("Where you are" in Settings, India by default) ──
+// Only how times are SHOWN to Arpit, the days he picks and his own windows follow it.
+// Student data stays in each student's zone: class_schedule.time_ist and
+// class_exceptions dates are IST keys and are never shifted.
+var STZ = (function () { try { var z = localStorage.getItem('studioTz'); if (z) { new Intl.DateTimeFormat('en-US', { timeZone: z }); return z; } } catch (e) {} return 'Asia/Kolkata'; })();
+function stzLabel(z, d) {
+  z = z || STZ;
+  if (z === 'Asia/Kolkata' || z === 'Asia/Calcutta') return 'IST';
+  for (const loc of ['en-US', 'en-GB']) {
+    try { const n = new Intl.DateTimeFormat(loc, { timeZone: z, timeZoneName: 'short' }).formatToParts(d || new Date()).find(x => x.type === 'timeZoneName'); if (n && !/^(GMT|UTC)/.test(n.value)) return n.value; } catch (e) {}
+  }
+  return String(z).split('/').pop().replace(/_/g, ' ') + ' time';
+}
+function stzPlace(z) { z = z || STZ; return (z === 'Asia/Kolkata' || z === 'Asia/Calcutta') ? 'India' : String(z).split('/').pop().replace(/_/g, ' '); }
+function stzParts(d, z) {
+  const p = {}; new Intl.DateTimeFormat('en-CA', { timeZone: z || STZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(d).forEach(x => { p[x.type] = x.value; });
+  return { ymd: p.year + '-' + p.month + '-' + p.day, hhmm: p.hour + ':' + p.minute };
+}
+// Midnight of a date on Arpit's clock, as ISO (for "today" queries).
+function stzDayStartIso(ymd) { return schZonedToUtc(ymd, '00:00', STZ).toISOString(); }
+// The real IST date + time of a moment (the key students' class data uses).
+function schIstKey(d) { const s = new Date(d.getTime() + 5.5 * 3600 * 1000).toISOString(); return { ymd: s.slice(0, 10), hhmm: s.slice(11, 16) }; }
+
 // ── time helpers (same maths as the server's reminder worker) ──
 function schTzOffsetMin(d, tz) {
   const f = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -15254,14 +15301,16 @@ function schZonedToUtc(ymd, hhmm, tz) {
   if (off2 !== off) t = new Date(guess.getTime() - off2 * 60000);
   return t;
 }
-function schIst(d) { const s = new Date(d.getTime() + 5.5 * 3600 * 1000).toISOString(); return { ymd: s.slice(0, 10), hhmm: s.slice(11, 16) }; }
+// Arpit's wall clock for a moment (what the dashboard shows). IST while he is in India.
+function schIst(d) { return STZ === 'Asia/Kolkata' ? schIstKey(d) : stzParts(d, STZ); }
 function schAddDays(ymd, n) { const d = new Date(ymd + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
 function schWeekday(ymd) { return new Date(ymd + 'T00:00:00Z').getUTCDay(); }
 function schTime12(hhmm) { const [h, m] = String(hhmm).slice(0, 5).split(':').map(Number); return ((h % 12) || 12) + ':' + String(m).padStart(2, '0') + ' ' + (h < 12 ? 'AM' : 'PM'); }
 function schLocalLabel(d, tz) {
-  if (!tz || tz === 'Asia/Kolkata') return '';
+  tz = tz || 'Asia/Kolkata';
+  if (tz === STZ) return '';
   const t = new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: '2-digit', hour12: true }).format(d);
-  return t + ' ' + (SCH_TZ_SHORT[tz] || tz.split('/').pop().replace('_', ' '));
+  return t + ' ' + (SCH_TZ_SHORT[tz] || stzLabel(tz, d));
 }
 function schDayLabel(ymd) { return new Date(ymd + 'T00:00:00Z').toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', timeZone: 'UTC' }); }
 function schStudentName(id) { const s = _sch.students.find(x => x.id === id); return s ? s.full_name : id; }
@@ -15279,7 +15328,7 @@ function schPlanRange(today, last) {
   _sch.slots.filter(r => r.active).forEach(r => {
     const tz = r.student_tz || 'Asia/Kolkata';
     const local = r.local_time != null && r.local_weekday != null && tz !== 'Asia/Kolkata';
-    for (let D = schAddDays(today, -1); D <= schAddDays(last, 1); D = schAddDays(D, 1)) {
+    for (let D = schAddDays(today, -2); D <= schAddDays(last, 2); D = schAddDays(D, 1)) {
       let utc;
       if (local) {
         if (schWeekday(D) !== Number(r.local_weekday)) continue;
@@ -15288,18 +15337,19 @@ function schPlanRange(today, last) {
         if (schWeekday(D) !== Number(r.weekday)) continue;
         utc = new Date(D + 'T' + String(r.time_ist).slice(0, 5) + ':00+05:30');
       }
-      const ist = schIst(utc);
+      const ist = schIst(utc), key = schIstKey(utc).ymd;   // shown on Arpit's clock, keyed by the IST date
       if (ist.ymd < today || ist.ymd > last) continue;
-      const ex = exKey[r.student_id + '|' + ist.ymd];
-      out.push({ slot: r, utc, ymd: ist.ymd, hhmm: ist.hhmm, ex: ex || null, state: ex ? ex.action : 'scheduled' });
+      const ex = exKey[r.student_id + '|' + key];
+      out.push({ slot: r, utc, ymd: ist.ymd, hhmm: ist.hhmm, key, ex: ex || null, state: ex ? ex.action : 'scheduled' });
     }
   });
   _sch.exceptions.filter(e => e.action === 'move' && e.new_date && e.new_time_ist).forEach(e => {
-    const D = String(e.new_date).slice(0, 10);
-    if (D < today || D > last) return;
+    const D0 = String(e.new_date).slice(0, 10);
     const r = _sch.slots.find(s => s.student_id === e.student_id && s.active) || _sch.slots.find(s => s.student_id === e.student_id);
-    const hhmm = String(e.new_time_ist).slice(0, 5);
-    out.push({ slot: r || { student_id: e.student_id, student_tz: 'Asia/Kolkata' }, utc: new Date(D + 'T' + hhmm + ':00+05:30'), ymd: D, hhmm, ex: e, state: 'moved-in' });
+    const utc = new Date(D0 + 'T' + String(e.new_time_ist).slice(0, 5) + ':00+05:30');
+    const shown = schIst(utc);
+    if (shown.ymd < today || shown.ymd > last) return;
+    out.push({ slot: r || { student_id: e.student_id, student_tz: 'Asia/Kolkata' }, utc, ymd: shown.ymd, hhmm: shown.hhmm, key: D0, ex: e, state: 'moved-in' });
   });
   return out.sort((a, b) => a.utc - b.utc);
 }
@@ -15341,10 +15391,10 @@ function waDigits(v) { return String(v || '').replace(/\D/g, ''); }
 function waLast10(v) { const d = waDigits(v); return d.slice(-10); }
 function waIstParts(iso) {
   const d = new Date(iso);
-  const f = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' });
-  return f.format(d).split('/').reverse().join('-');   // yyyy-mm-dd in IST
+  const f = new Intl.DateTimeFormat('en-GB', { timeZone: STZ, year: 'numeric', month: '2-digit', day: '2-digit' });
+  return f.format(d).split('/').reverse().join('-');   // yyyy-mm-dd on Arpit's clock
 }
-function waTime(iso) { return new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date(iso)).replace(/\s?(am|pm)$/i, m => ' ' + m.trim().toUpperCase()); }
+function waTime(iso) { return new Intl.DateTimeFormat('en-IN', { timeZone: STZ, hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date(iso)).replace(/\s?(am|pm)$/i, m => ' ' + m.trim().toUpperCase()); }
 function waDayLabel(iso, short) {
   const day = waIstParts(iso);
   const today = waIstParts(new Date().toISOString());
@@ -15353,8 +15403,8 @@ function waDayLabel(iso, short) {
   if (day === yest) return 'Yesterday';
   const d = new Date(iso);
   const ageDays = (Date.now() - d.getTime()) / 86400000;
-  if (short && ageDays < 6) return new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', weekday: 'short' }).format(d);
-  return new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', weekday: short ? undefined : 'short', day: 'numeric', month: 'short' }).format(d);
+  if (short && ageDays < 6) return new Intl.DateTimeFormat('en-GB', { timeZone: STZ, weekday: 'short' }).format(d);
+  return new Intl.DateTimeFormat('en-GB', { timeZone: STZ, weekday: short ? undefined : 'short', day: 'numeric', month: 'short' }).format(d);
 }
 function waPrettyPhone(d) {
   d = waDigits(d);
@@ -16369,7 +16419,7 @@ async function twRender() {
   const range = (_tw.week ? 'Mon ' + schShortDate(a) + ' – Sun ' + schShortDate(schAddDays(a, 6)) : 'Since Mon ' + schShortDate(a));
   const head = n => '<div class="tw-count">' + (n == null ? '' : '<b>' + n + '</b> ' + (n === 1 ? unit[0] : unit[1]) + ' · ') + range + '</div>';
   body.innerHTML = head(null) + '<div class="tw-load">Loading…</div>';
-  const istStart = d => new Date(d + 'T00:00:00+05:30').toISOString();
+  const istStart = d => stzDayStartIso(d);
   const av = (name, key) => '<span class="tw-av" style="background:' + (typeof waAvColor === 'function' ? waAvColor(String(key || name)) : 'var(--s3)') + '">' + zEsc(String(name || '?').trim().charAt(0).toUpperCase()) + '</span>';
   const CH = '<svg class="tw-rch" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
   const stuById = id => (_sch.students || []).find(x => x.id === id);
@@ -16413,7 +16463,7 @@ async function twRender() {
       const rows = ((await sbGetAll('trials', 'created_at=gte.' + istStart(a) + '&created_at=lt.' + istStart(b) + '&order=created_at.desc')).data || []);
       const ST = { booked: ['Booked', 'pd'], pending: ['Booked', 'pd'], attended: ['Attended', 'ok'], converted: ['Joined', 'ok'], no_show: ['No-show', 'er'], noshow: ['No-show', 'er'], dropped: ['Dropped', 'hd'], cancelled: ['Cancelled', 'hd'] };
       html = head(rows.length) + (rows.length ? rows.map(t => {
-        const when = t.start_at ? new Date(t.start_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : (t.trial_date ? schDayLabel(String(t.trial_date).slice(0, 10)) : '');
+        const when = t.start_at ? new Date(t.start_at).toLocaleString('en-IN', { timeZone: STZ, weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : (t.trial_date ? schDayLabel(String(t.trial_date).slice(0, 10)) : '');
         const st = ST[String(t.student_id ? 'converted' : t.status || '').toLowerCase()] || [t.status || '', 'hd'];
         return '<div class="tw-it">' + av(t.full_name, t.phone || t.id) + '<span class="tw-tx"><b>' + zEsc(t.full_name || 'Trial') + '</b><small>' + zEsc(when) + '</small></span>' + (st[0] ? '<span class="tw-pill ' + st[1] + '">' + zEsc(st[0]) + '</span>' : '') + '</div>';
       }).join('') : '<div class="tw-empty"><b>No trials ' + (_tw.week ? 'last week' : 'this week') + '</b>Share your booking page so new people can pick a free trial time.</div>')
@@ -16592,9 +16642,9 @@ async function loadToday(silent) {
   const wrap = document.getElementById('tdWrap'); if (!wrap) return;
   const now = new Date();
   const today = schIst(now).ymd, tomorrow = schAddDays(today, 1);
-  document.getElementById('tdDate').textContent = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata', weekday: 'short', day: 'numeric', month: 'short' }).replace(/^(\w+) /, '$1, ');
-  const dayStart = d => new Date(d + 'T00:00:00+05:30').toISOString();
-  // Monday of this week (IST)
+  document.getElementById('tdDate').textContent = now.toLocaleDateString('en-GB', { timeZone: STZ, weekday: 'short', day: 'numeric', month: 'short' }).replace(/^(\w+) /, '$1, ');
+  const dayStart = d => stzDayStartIso(d);
+  // Monday of this week (Arpit's clock)
   const wd = (schWeekday(today) + 6) % 7, weekStart = schAddDays(today, -wd);
   const q = (t, p) => sbGetAll(t, p).then(r => r.data || []).catch(() => null);
   const [slots, exc, stus, trials, unread, zoomRev, feeOld, wkTrials, wkClasses] = await Promise.all([
@@ -16626,7 +16676,7 @@ async function loadToday(silent) {
     (trials || []).filter(t => schIst(new Date(t.start_at)).ymd === ymd).forEach(t => {
       const d = new Date(t.start_at);
       let their = '';
-      if (t.tz && t.tz !== 'Asia/Kolkata') { try { their = d.toLocaleTimeString('en-US', { timeZone: t.tz, hour: 'numeric', minute: '2-digit' }) + ' their time'; } catch (e) {} }
+      if (t.tz && t.tz !== STZ) { try { their = d.toLocaleTimeString('en-US', { timeZone: t.tz, hour: 'numeric', minute: '2-digit' }) + ' their time'; } catch (e) {} }
       items.push({ kind: 'tr', t: d.getTime(), hhmm: schIst(d).hhmm, len: 45, name: t.full_name || 'Trial', sub: 'Free trial' + (their ? ' · ' + their : ''), link: t.join_url || '', off: false, note: '' });
     });
     return items.sort((a, b) => a.t - b.t);
@@ -16688,7 +16738,7 @@ async function loadToday(silent) {
     const isTom = schIst(new Date(nxt.t)).ymd !== today;
     const live = nowMs >= nxt.t, mins = Math.max(0, Math.round((nxt.t - nowMs) / 60000));
     const remindAt = nxt.t - 60 * 60000;
-    const info = (isTom ? 'Tomorrow, ' : '') + schTime12(nxt.hhmm) + ' IST'
+    const info = (isTom ? 'Tomorrow, ' : '') + schTime12(nxt.hhmm) + ' ' + stzLabel()
       + (nxt.kind === 'tr' ? ' · free trial' : nxt.note ? ' · ' + nxt.note : '')
       + (nxt.sub && nxt.kind === 'cls' ? ' · ' + nxt.sub : '')
       + (nxt.kind === 'cls' && !isTom && !live ? (nowMs >= remindAt ? ' · reminder sent' : ' · reminder at ' + schTime12(schIst(new Date(remindAt)).hhmm)) : '');
@@ -16847,7 +16897,7 @@ function schRender() {
     const off = o.state === 'skip' || o.state === 'move';
     const loc = schLocalLabel(o.utc, o.slot.student_tz);
     return head + '<tr>'
-      + '<td class="' + (off ? 'sch-strike' : '') + '">' + schTime12(o.hhmm) + ' IST</td>'
+      + '<td class="' + (off ? 'sch-strike' : '') + '">' + schTime12(o.hhmm) + ' ' + stzLabel() + '</td>'
       + '<td class="' + (off ? 'sch-strike' : '') + '" style="font-weight:500;">' + zEsc(schStudentName(o.slot.student_id)) + '</td>'
       + '<td class="sch-muted">' + (loc ? zEsc(loc) : '—') + '</td>'
       + '<td>' + badge(o) + '</td>'
@@ -16858,7 +16908,7 @@ function schRender() {
     const off = o.state === 'skip' || o.state === 'move';
     const loc = schLocalLabel(o.utc, o.slot.student_tz);
     return '<div class="m-card"><div class="m-card-title" style="display:flex;justify-content:space-between;gap:8px;"><span class="' + (off ? 'sch-strike' : '') + '">' + zEsc(schStudentName(o.slot.student_id)) + '</span>' + badge(o) + '</div>'
-      + '<div class="m-card-row"><span class="m-card-label">When</span><span class="m-card-val">' + schDayLabel(o.ymd) + ', ' + schTime12(o.hhmm) + ' IST</span></div>'
+      + '<div class="m-card-row"><span class="m-card-label">When</span><span class="m-card-val">' + schDayLabel(o.ymd) + ', ' + schTime12(o.hhmm) + ' ' + stzLabel() + '</span></div>'
       + (loc ? '<div class="m-card-row"><span class="m-card-label">Their time</span><span class="m-card-val">' + zEsc(loc) + '</span></div>' : '')
       + (admin ? '<div style="margin-top:0.8rem;display:flex;gap:0.5rem;justify-content:flex-end;">' + (o.ex
         ? '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schUndo(' + o.ex.id + ')">Undo</button>'
@@ -16933,6 +16983,7 @@ function schBlockBody() {
   const from = document.getElementById('blkFrom').value, to = document.getElementById('blkTo').value;
   const b = { mode, from, to: mode === 'hours' ? from : (to || from), note: document.getElementById('blkNote').value.trim() };
   if (mode === 'hours') { b.start = schTimeValue('blkS'); b.end = schTimeValue('blkE'); }
+  b.tz = STZ;   // the days and hours are on Arpit's own clock
   return b;
 }
 async function schBlockWatch() {
@@ -16952,8 +17003,8 @@ async function schBlockWatch() {
     _blkPrev = j;
     const n = j.classes.length + j.trials.length;
     box.innerHTML = '<div class="blk-aff"><h5>' + (n ? n + ' booking' + (n === 1 ? '' : 's') + ' affected' : 'Nothing booked in this time') + '</h5>'
-      + j.classes.map(c => '<div><span>' + zEsc(c.when.replace(/ IST$/, '')) + ' · ' + zEsc(c.name) + '</span><span>class, not counted</span></div>').join('')
-      + j.trials.map(t => '<div><span>' + zEsc(t.when.replace(/ IST$/, '')) + ' · ' + zEsc(t.name) + '</span><span>trial, asked to rebook</span></div>').join('') + '</div>';
+      + j.classes.map(c => '<div><span>' + zEsc(c.when.replace(/ ([A-Z]{2,5}|[A-Za-z ]+ time)$/, '')) + ' · ' + zEsc(c.name) + '</span><span>class, not counted</span></div>').join('')
+      + j.trials.map(t => '<div><span>' + zEsc(t.when.replace(/ ([A-Z]{2,5}|[A-Za-z ]+ time)$/, '')) + ' · ' + zEsc(t.name) + '</span><span>trial, asked to rebook</span></div>').join('') + '</div>';
   } catch (e) { box.innerHTML = '<div class="blk-aff"><h5>Could not check: ' + zEsc(e.message) + '</h5></div>'; }
 }
 async function schSaveBlock() {
@@ -17022,7 +17073,7 @@ async function schOpenTrialSettings() {
     + '<div class="sch-section">Bookings</div>'
     + g('Trial bookings', '<select class="form-input" id="tsEnabled" data-label="Trial bookings"><option value="1"' + (t.enabled ? ' selected' : '') + '>Open</option><option value="0"' + (!t.enabled ? ' selected' : '') + '>Paused (page asks people to WhatsApp you)</option></select>')
     + g('Days', '<div class="sch-chips" id="tsDays">' + days.map((d, i) => '<button type="button" class="sch-chip' + (t.weekdays.includes(i) ? ' on' : '') + '" data-d="' + i + '">' + d + '</button>').join('') + '</div>', 'An evening that runs past midnight belongs to the day it starts.')
-    + '<div class="sch-section">Your windows (IST)</div>'
+    + '<div class="sch-section">Your windows (' + stzLabel() + ')</div>'
     + '<div class="form-row">' + g('Morning from', schTimeField('tsW0s', schMinToHhmm(w0[0]))) + g('Morning until', schTimeField('tsW0e', schMinToHhmm(w0[1]))) + '</div>'
     + '<div class="form-row">' + g('Evening from', schTimeField('tsW1s', schMinToHhmm(w1[0]))) + g('Evening until', schTimeField('tsW1e', schMinToHhmm(w1[1])), 'A time earlier than the start means after midnight, e.g. 1:00 AM.') + '</div>'
     + '<div class="sch-section">Lengths and gaps (minutes)</div>'
@@ -17115,9 +17166,9 @@ async function schSkip(i, src) {
   schPopClose();
   const o = (src === 'cal' ? _sch.cal : _sch.upcoming)[i]; if (!o) return;
   const name = schStudentName(o.slot.student_id);
-  if (!(await customConfirm('Skip this class?', name + ', ' + schDayLabel(o.ymd) + ' at ' + schTime12(o.hhmm) + ' IST. No WhatsApp reminder will go for it. Cancel that day in the calendar too if the student uses it.', 'Skip class', 'x'))) return;
+  if (!(await customConfirm('Skip this class?', name + ', ' + schDayLabel(o.ymd) + ' at ' + schTime12(o.hhmm) + ' ' + stzLabel() + '. No WhatsApp reminder will go for it. Cancel that day in the calendar too if the student uses it.', 'Skip class', 'x'))) return;
   try {
-    await schPostException({ student_id: o.slot.student_id, original_date: o.ymd, action: 'skip' });
+    await schPostException({ student_id: o.slot.student_id, original_date: o.key || o.ymd, action: 'skip' });
     showToast('Skipped. No reminder will go for that class.', 'success');
     loadSchedule();
   } catch (e) { showToast('Could not skip: ' + e.message, 'error'); }
@@ -17129,16 +17180,17 @@ function schOpenMove(i, src) {
   const o = (src === 'cal' ? _sch.cal : _sch.upcoming)[i]; if (!o) return;
   const g = (label, inner, hint) => '<div class="form-group"><label class="form-label">' + label + '</label>' + inner + (hint ? '<span class="inv-date-hint">' + hint + '</span>' : '') + '</div>';
   schOpenForm('move', 'Move class',
-    '<div class="sch-note">' + zEsc(schStudentName(o.slot.student_id)) + ', normally ' + schDayLabel(o.ymd) + ' at ' + schTime12(o.hhmm) + ' IST</div>'
+    '<div class="sch-note">' + zEsc(schStudentName(o.slot.student_id)) + ', normally ' + schDayLabel(o.ymd) + ' at ' + schTime12(o.hhmm) + ' ' + stzLabel() + '</div>'
     + '<div class="form-row">' + g('New date', '<input type="date" class="form-input" id="schMoveDate" data-placeholder="Pick a date" value="' + o.ymd + '">')
-    + g('New time (IST)', schTimeField('schMoveTime', o.hhmm)) + '</div>'
+    + g('New time (' + stzLabel() + ')', schTimeField('schMoveTime', o.hhmm)) + '</div>'
     + '<div class="sch-note" id="schMoveLocal"></div>'
     + '<div class="sch-note">The reminder goes about an hour before the new time, with the same Zoom link. Update the calendar event too if the student uses it.</div>');
   document.getElementById('sch-move-save').onclick = () => schSaveMove(i, src);
   const upd = () => {
     const d = document.getElementById('schMoveDate').value, t = schTimeValue('schMoveTime');
     const tz = o.slot.student_tz;
-    document.getElementById('schMoveLocal').textContent = (d && tz && tz !== 'Asia/Kolkata') ? 'For the student that is ' + schLocalLabel(new Date(d + 'T' + t + ':00+05:30'), tz) + '.' : '';
+    const loc = d ? schLocalLabel(schZonedToUtc(d, t, STZ), tz || 'Asia/Kolkata') : '';
+    document.getElementById('schMoveLocal').textContent = loc ? 'For the student that is ' + loc + '.' : '';
   };
   document.getElementById('schMoveDate').addEventListener('change', upd);
   schOnTimeChange('schMoveTime', upd); upd();
@@ -17148,11 +17200,13 @@ async function schSaveMove(i, src) {
   const o = (src === 'cal' ? _sch.cal : _sch.upcoming)[i]; if (!o) return;
   const d = document.getElementById('schMoveDate').value, t = schTimeValue('schMoveTime');
   if (!d || !t) { showToast('Pick the new date and time', 'error'); return; }
-  if (new Date(d + 'T' + t + ':00+05:30') < new Date()) { showToast('The new time is already in the past', 'error'); return; }
+  const when = schZonedToUtc(d, t, STZ);           // picked on Arpit's clock
+  if (when < new Date()) { showToast('The new time is already in the past', 'error'); return; }
+  const ist = schIstKey(when);                       // stored in IST like every class
   try {
-    await schPostException({ student_id: o.slot.student_id, original_date: o.ymd, action: 'move', new_date: d, new_time_ist: t });
+    await schPostException({ student_id: o.slot.student_id, original_date: o.key || o.ymd, action: 'move', new_date: ist.ymd, new_time_ist: ist.hhmm });
     schCloseForm('move');
-    showToast('Moved to ' + schDayLabel(d) + ', ' + schTime12(t) + ' IST', 'success');
+    showToast('Moved to ' + schDayLabel(d) + ', ' + schTime12(t) + ' ' + stzLabel(), 'success');
     loadSchedule();
   } catch (e) { showToast('Could not move: ' + e.message, 'error'); }
 }
@@ -17243,7 +17297,7 @@ function schDayItems(ymd, plan) {
     const past = o.utc.getTime() + dur * 60000 < now.getTime();
     let k = 'cls', sub = schTime12(o.hhmm) + (loc ? ' · ' + loc : '');
     if (o.state === 'skip') { k = 'sk'; sub = schTime12(o.hhmm) + (o.ex && o.ex.block_id ? ' · you’re away' : ' · skipped'); }
-    else if (o.state === 'move') { k = 'sk'; sub = schTime12(o.hhmm) + ' · moved to ' + schDayLabel(String(o.ex.new_date).slice(0, 10)) + ' ' + schTime12(o.ex.new_time_ist); }
+    else if (o.state === 'move') { const mv = schIst(new Date(String(o.ex.new_date).slice(0, 10) + 'T' + String(o.ex.new_time_ist).slice(0, 5) + ':00+05:30')); k = 'sk'; sub = schTime12(o.hhmm) + ' · moved to ' + schDayLabel(mv.ymd) + ' ' + schTime12(mv.hhmm); }
     else if (o.state === 'moved-in') { k = 'mv'; sub = schTime12(o.hhmm) + ' · ' + (o.ex && o.ex.makeup ? 'make-up' : 'moved'); }
     items.push({ s, e: Math.min(1440, s + dur), k, title: name, sub, idx: i, past, counts: k === 'cls' || k === 'mv' });
   });
@@ -17374,9 +17428,9 @@ function schPopOpen(i, el) {
   const dur = Number(o.slot && o.slot.duration_min) || 60;
   const past = o.utc.getTime() + dur * 60000 < Date.now();
   const remind = new Date(o.utc.getTime() - 60 * 60000);
-  let info = schDayLabel(o.ymd) + ' · ' + schTime12(o.hhmm) + ' IST' + (loc ? '<br>Their time: ' + zEsc(loc) : '');
+  let info = schDayLabel(o.ymd) + ' · ' + schTime12(o.hhmm) + ' ' + stzLabel() + (loc ? '<br>Their time: ' + zEsc(loc) : '');
   if (o.state === 'skip') info += '<br>Skipped' + (o.ex && Number(o.ex.student_changes) > 0 ? ' by the student' : '') + '. No reminder goes.';
-  else if (o.state === 'move') info += '<br>Moved to ' + schDayLabel(String(o.ex.new_date).slice(0, 10)) + ', ' + schTime12(o.ex.new_time_ist) + ' IST';
+  else if (o.state === 'move') { const mv = schIst(new Date(String(o.ex.new_date).slice(0, 10) + 'T' + String(o.ex.new_time_ist).slice(0, 5) + ':00+05:30')); info += '<br>Moved to ' + schDayLabel(mv.ymd) + ', ' + schTime12(mv.hhmm) + ' ' + stzLabel(); }
   else if (o.state === 'moved-in') info += '<br>' + (o.ex && o.ex.makeup ? 'Make-up class' : 'Moved here') + (o.ex && Number(o.ex.student_changes) > 0 ? ' by the student' : '');
   else if (!past) info += '<br>WhatsApp reminder at ' + schTime12(schIst(remind).hhmm);
   const zoom = o.slot && o.slot.zoom_link;
@@ -17414,7 +17468,7 @@ function schLocalToIst(localWeekday, hhmm, tz) {
   for (let i = 0; i < 8; i++) {
     const D = schAddDays(todayLocal, i);
     if (schWeekday(D) !== Number(localWeekday)) continue;
-    const ist = schIst(schZonedToUtc(D, hhmm, tz));
+    const ist = schIstKey(schZonedToUtc(D, hhmm, tz));
     return { weekday: schWeekday(ist.ymd), time: ist.hhmm };
   }
   return null;
@@ -17459,8 +17513,9 @@ function schTzChanged() {
 function schLocalHint() {
   const el = document.getElementById('schLocalHint'); if (!el) return;
   const tz = document.getElementById('schTz').value;
-  if (tz === 'Asia/Kolkata') { el.textContent = ''; return; }
+  if (tz === STZ) { el.textContent = ''; return; }
   const ist = schLocalToIst(document.getElementById('schLDay').value, schTimeValue('schLTime'), tz);
+  if (ist && STZ !== 'Asia/Kolkata') { const m = schIst(new Date(schAddDays('2026-01-04', ist.weekday) + 'T' + ist.time + ':00+05:30')); el.textContent = 'For you that is ' + schTime12(m.hhmm) + ' ' + stzLabel() + '.'; return; }
   el.textContent = ist ? 'This week that is ' + SCH_DAYS[ist.weekday] + ', ' + schTime12(ist.time) + ' IST for you.' : '';
 }
 function schFillExtra() {
@@ -17917,7 +17972,7 @@ function agRender() {
     h += AG_WHEN.map(([k, t, d]) => {
       const dim = k !== 'always' && s.when.always;
       let sub = d;
-      if (k === 'night') sub = '<span class="ag-times">' + agTimeSel('agNf', s.night[0]) + ' to ' + agTimeSel('agNt', s.night[1]) + ' IST</span>';
+      if (k === 'night') sub = '<span class="ag-times">' + agTimeSel('agNf', s.night[0]) + ' to ' + agTimeSel('agNt', s.night[1]) + ' ' + stzLabel() + '</span>';
       return '<div class="ag-row tap' + (dim ? ' off' : '') + '" onclick="agWhen(\'' + k + '\')">' + chk(s.when[k]) + '<div>' + t + '<small>' + sub + '</small></div></div>';
     }).join('');
     let wo = '';
@@ -18215,6 +18270,72 @@ function appUpdSync() {
 // Clean the ?u= marker after an update, and re-check when the app comes back to the front.
 try { const u = new URL(location.href); if (u.searchParams.has('u')) { u.searchParams.delete('u'); history.replaceState(null, '', u.pathname + u.search + location.hash); } } catch (e) {}
 document.addEventListener('visibilitychange', () => { const B = window._build || {}; if (!document.hidden && B.built && Date.now() - (B.at || 0) > 120000) appCheckUpdate(false); });
+</script>
+<div class="stz-bar" id="stzBar" role="dialog" aria-live="polite"><span id="stzBarTx"></span><button type="button" id="stzYes">Yes</button><button type="button" class="x" id="stzNo">Not now</button></div>
+<script>
+// ── v177: WHERE YOU ARE. Arpit's own clock for the dashboard (STZ). ──
+// Loaded from the server; if this phone's time zone is different, ask once (one tap).
+// Changing it never touches students' classes and sends nothing to anyone.
+const STZ_LIST = [['Asia/Kolkata', 'India'], ['Asia/Dubai', 'UAE'], ['Asia/Singapore', 'Singapore'], ['Asia/Tokyo', 'Japan'], ['Australia/Sydney', 'Sydney'],
+  ['Europe/London', 'UK'], ['Europe/Lisbon', 'Portugal'], ['Europe/Paris', 'France'], ['Europe/Berlin', 'Germany'], ['Europe/Amsterdam', 'Netherlands'], ['Europe/Zurich', 'Switzerland'],
+  ['America/New_York', 'US East'], ['America/Chicago', 'US Central'], ['America/Denver', 'US Mountain'], ['America/Los_Angeles', 'US West'], ['America/Toronto', 'Toronto']];
+function stzDevice() { try { const z = Intl.DateTimeFormat().resolvedOptions().timeZone; return z === 'Asia/Calcutta' ? 'Asia/Kolkata' : z; } catch (e) { return ''; } }
+function stzOff(z, d) { try { const p = stzParts(d || new Date(), z), u = (d || new Date()); return Math.round((Date.UTC(+p.ymd.slice(0, 4), +p.ymd.slice(5, 7) - 1, +p.ymd.slice(8, 10), +p.hhmm.slice(0, 2), +p.hhmm.slice(3, 5)) - Math.floor(u.getTime() / 60000) * 60000) / 60000); } catch (e) { return null; } }
+function stzRender() {
+  const now = document.getElementById('stzNow'); if (now) now.textContent = stzPlace() + ' (' + stzLabel() + ')';
+  document.querySelectorAll('.stz-lbl').forEach(el => { el.textContent = stzLabel(); });
+  const sel = document.getElementById('stzSel');
+  if (sel) {
+    const list = STZ_LIST.slice(); const dev = stzDevice();
+    [STZ, dev].forEach(z => { if (z && !list.some(x => x[0] === z)) list.push([z, stzPlace(z)]); });
+    sel.innerHTML = list.map(([z, n]) => '<option value="' + z + '"' + (z === STZ ? ' selected' : '') + '>' + n + ' · ' + stzLabel(z) + '</option>').join('');
+    // rebuild the custom dropdown from the fresh options
+    const w = sel.nextElementSibling; if (w && w.classList.contains('form-select-wrap')) w.remove();
+    delete sel.dataset.customized; if (typeof makeFormSelect === 'function') makeFormSelect(sel);
+  }
+  const card = document.getElementById('stzCard'); if (card && typeof isAdmin === 'function') card.style.display = isAdmin() ? '' : 'none';
+  const b = document.getElementById('stzUsePhone'), dev = stzDevice();
+  if (b) { const show = dev && dev !== STZ && stzOff(dev) !== stzOff(STZ); b.style.display = show ? '' : 'none'; b.textContent = 'Use this phone: ' + stzPlace(dev) + ' (' + stzLabel(dev) + ')'; }
+}
+async function stzPick(z, fromBar) {
+  if (!z || z === STZ) { stzRender(); return; }
+  if (!isAdmin()) { showToast('Viewer access only', 'error'); stzRender(); return; }
+  try {
+    const j = await (await invApi('/api/studio-time', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tz: z }) })).json();
+    if (!j.ok) throw new Error(j.error || 'not saved');
+    try { localStorage.setItem('studioTz', j.tz); localStorage.removeItem('stzAsk'); } catch (e) {}
+    showToast('Now on ' + stzPlace(j.tz) + ' time · students\u2019 classes didn\u2019t change', 'success');
+    setTimeout(() => location.reload(), 900);
+  } catch (e) { showToast('Not changed: ' + e.message, 'error'); stzRender(); }
+}
+function stzAsk() {
+  const dev = stzDevice(); if (!dev || dev === STZ || stzOff(dev) === stzOff(STZ)) return;
+  let snooze = {}; try { snooze = JSON.parse(localStorage.getItem('stzAsk') || '{}'); } catch (e) {}
+  if (snooze[dev] && Date.now() < snooze[dev]) return;
+  const bar = document.getElementById('stzBar'); if (!bar) return;
+  document.getElementById('stzBarTx').textContent = 'Looks like you\u2019re in ' + stzPlace(dev) + '. Show your schedule in ' + stzPlace(dev) + ' time?';
+  document.getElementById('stzYes').onclick = () => { bar.classList.remove('show'); stzPick(dev, true); };
+  document.getElementById('stzNo').onclick = () => { bar.classList.remove('show'); snooze[dev] = Date.now() + 24 * 3600 * 1000; try { localStorage.setItem('stzAsk', JSON.stringify(snooze)); } catch (e) {} };
+  bar.classList.add('show');
+}
+async function stzLoad() {
+  if (!sessionStorage.getItem('dash_token') || typeof isAdmin !== 'function' || !isAdmin()) return;
+  try {
+    const j = await (await invApi('/api/studio-time')).json();
+    if (j && j.tz && j.tz !== STZ) {
+      let saved = false; try { localStorage.setItem('studioTz', j.tz); saved = localStorage.getItem('studioTz') === j.tz; } catch (e) {}
+      if (saved) { location.reload(); return; }
+      STZ = j.tz;   // storage blocked: use it for this visit without a reload loop
+    }
+  } catch (e) { /* keep the last known zone */ }
+  stzRender(); stzAsk();
+}
+(function () {
+  let tries = 0;
+  const go = () => { if (sessionStorage.getItem('dash_token') && typeof currentRole !== 'undefined' && currentRole) { stzLoad(); return; } if (++tries < 40) setTimeout(go, 1500); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { stzRender(); go(); }); else { stzRender(); go(); }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') stzAsk(); });
+})();
 </script>
 </body>
 </html>
