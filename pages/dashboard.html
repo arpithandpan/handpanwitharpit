@@ -3548,6 +3548,23 @@ html.mono body .td-sum b { color: var(--tx); font-weight: 500; }
 html.mono body .td-greet.chips { display: none !important; }
 /* Settings style picker */
 .thm-pick.two { grid-template-columns: repeat(2, 1fr); }
+/* v172: weekly AI review card */
+body .rv-card { padding: 16px 18px; }
+body .rv-sum { font-size: 15.5px !important; color: var(--tx) !important; line-height: 1.5; margin: 0 0 14px !important; }
+body .rv-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 6px; }
+body .rv-n { background: var(--s2); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+body .rv-n b { display: block; font-size: 20px; font-weight: 600; color: var(--tx); font-variant-numeric: tabular-nums; }
+body .rv-n span { font-size: 12.5px; color: var(--tx3); }
+body .rv-h { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--tx3); margin: 18px 0 8px; }
+body .rv-f, body .rv-q { border-top: 1px solid var(--line); padding: 12px 0; }
+body .rv-ft { font-size: 15px; color: var(--tx); line-height: 1.45; }
+body .rv-f small, body .rv-q small { display: block; color: var(--tx3); font-size: 13px; margin-top: 4px; line-height: 1.4; }
+body .rv-in { width: 100%; font-size: 15px !important; line-height: 1.4; resize: vertical; min-height: 64px; padding: 10px 12px !important; }
+body .rv-qt { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; } body .rv-qt b { color: var(--tx); font-weight: 600; } body .rv-qt span { color: var(--tx3); font-variant-numeric: tabular-nums; }
+body .rv-q p { margin: 4px 0 0 !important; font-size: 14px !important; }
+body .rv-ok { color: var(--ok) !important; font-size: 14px !important; margin: 10px 0 0 !important; }
+body .rv-tog { font: inherit; font-size: 14px; color: var(--acc-tx); background: none; border: 0; padding: 12px 0 4px; cursor: pointer; }
+@media (max-width: 380px) { body .rv-nums { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 /* hidden bars stay fully hidden (the offline bar's edge showed under the status bar as a white pill) */
 body .net-bar { visibility: hidden; transform: translate(-50%, calc(-100% - 40px - env(safe-area-inset-top, 0px))); transition: transform 0.2s ease, visibility 0.2s; }
 body .net-bar.show { visibility: visible; transform: translate(-50%, 0); }
@@ -4271,7 +4288,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v171</span>
+        <span style="color:var(--clay);font-weight:500;">v172</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4345,7 +4362,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:14px;color:rgba(220,228,245,0.55);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='rgba(91,140,255,0.8)'" onmouseout="this.style.color='rgba(220,228,245,0.55)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:0.8rem;letter-spacing:0.02em;color:rgba(220,228,245,0.8);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--clay);font-weight:500;">v171</span>
+        <span style="color:var(--clay);font-weight:500;">v172</span>
         <span style="color:rgba(220,228,245,0.45);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17580,6 +17597,7 @@ function hlDot() { const d = document.getElementById('hlNavDot'); if (!d) return
 async function hlLoad(run) {
   const el = document.getElementById('hlPage'); if (!el || _hl.busy) return;
   _hl.busy = true; if (run) hlRender(true);
+  if (!run) rvLoad();
   try { const r = await invApi('/api/health/' + (run ? 'run' : 'status'), run ? { method: 'POST' } : undefined); _hl.d = await r.json(); hlRender(); hlDot(); _mpCounts.health = hlActive().length; }
   catch (e) { if (!_hl.d) el.innerHTML = '<div class="ag-empty">Could not reach the server: ' + zEsc(e.message) + '<br><br>If this keeps happening, the server itself may be down. Check Railway.</div>'; else showToast('Could not check: ' + e.message, 'error'); }
   finally { _hl.busy = false; if (run) hlRender(); }
@@ -17600,6 +17618,7 @@ function hlRender(checking) {
     + (lvl === 'ok' ? 'Everything is running fine' : act.length + (act.length === 1 ? ' thing needs you' : ' things need you')) + '</b><span>'
     + (lvl === 'ok' ? 'Services, automatic jobs and data all checked' : bad.length ? bad.length + ' urgent · you were alerted' : 'Nothing urgent') + '</span></div>'
     + '<button type="button" class="btn-dash btn-dash-ghost hl-run" onclick="hlLoad(true)"' + (checking ? ' disabled' : '') + '>' + (checking ? 'Checking…' : 'Check now') + '</button></div>';
+  h += '<div id="rvBox"></div>';
   if (act.length) {
     h += '<div class="ag-lbl">Needs you</div>';
     h += act.map(i => {
@@ -17628,6 +17647,58 @@ function hlRender(checking) {
   }
   h += '<div class="hl-foot">Safe problems are fixed by themselves and listed here. Something urgent sends a push, an email and a WhatsApp straight away. Everything else comes in the 8:30 AM morning check.</div>';
   el.innerHTML = h;
+  rvRender();
+}
+
+// ── v172: WEEKLY AI REVIEW (top of System health) ──
+const _rv = { d: null, busy: false, open: false };
+async function rvLoad() { try { const r = await invApi('/api/review'); _rv.d = await r.json(); rvRender(); } catch (e) {} }
+async function rvRun() {
+  if (_rv.busy) return; _rv.busy = true; rvRender();
+  try { const r = await invApi('/api/review/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ days: 7 }) }); const j = await r.json(); _rv.d = Object.assign({}, _rv.d || {}, { report: j.report }); showToast('Review ready', 'success'); }
+  catch (e) { showToast(e.message, 'error'); }
+  finally { _rv.busy = false; rvRender(); }
+}
+async function rvFact(id, action) {
+  const inp = document.getElementById('rvf-' + id); const text = inp ? inp.value.trim() : undefined;
+  try { const r = await invApi('/api/review/fact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, action, text }) }); const j = await r.json(); _rv.d.report = j.report; rvRender(); showToast(action === 'add' ? 'Added. The agent uses it from the next reply.' : 'Skipped', 'success'); }
+  catch (e) { showToast(e.message, 'error'); }
+}
+function rvRender() {
+  const box = document.getElementById('rvBox'); if (!box) return;
+  const d = _rv.d; if (!d) { box.innerHTML = ''; return; }
+  const R = d.report;
+  const btn = '<button type="button" class="btn-dash btn-dash-ghost hl-run" onclick="rvRun()"' + (_rv.busy || d.running ? ' disabled' : '') + '>' + (_rv.busy || d.running ? 'Reviewing… about 30 s' : (R ? 'Run again' : 'Run review now')) + '</button>';
+  if (!d.key) { box.innerHTML = '<div class="ag-lbl">Weekly review</div><div class="hl-issue"><p>The Claude key is missing on the server, so the review can\'t run.</p></div>'; return; }
+  if (!R) { box.innerHTML = '<div class="ag-lbl">Weekly review</div><div class="hl-issue rv-card"><div class="hl-it">Claude reads the week and tells you what to improve</div><p>New questions students asked, lines to teach the agent, and repeating problems. It runs by itself every Sunday at 9 AM once there is a week of data. You can run it now too.</p><div class="hl-acts">' + btn + '</div></div>'; return; }
+  const W = R.week || {};
+  const when = new Date(R.at).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  const num = (n, l) => '<div class="rv-n"><b>' + (n == null ? '—' : n) + '</b><span>' + l + '</span></div>';
+  let h = '<div class="ag-lbl">Weekly review · ' + zEsc(when) + (R.days && R.days !== 7 ? ' · last ' + R.days + ' days' : '') + '</div><div class="hl-issue rv-card">';
+  h += '<p class="rv-sum">' + zEsc(R.summary || '') + '</p>';
+  h += '<div class="rv-nums">' + num(W.classes, 'classes') + num(W.trials_booked, 'trials') + num(W.new_students, 'new students') + num(W.agent_drafts, 'agent replies') + num(W.agent_passed_to_you, 'passed to you') + num(W.fixed_by_itself, 'fixed itself') + '</div>';
+  const facts = (R.teach_agent || []).filter(f => f.state === 'new');
+  if (facts.length) {
+    h += '<div class="rv-h">Teach the agent</div>';
+    h += facts.map(f => {
+      const blank = /\[[^\]]*\]/.test(f.fact);
+      return '<div class="rv-f">' + (blank ? '<textarea class="form-input rv-in" rows="2" id="rvf-' + f.id + '" aria-label="Fill in the blank">' + zEsc(f.fact) + '</textarea>' : '<div class="rv-ft">' + zEsc(f.fact) + '</div>')
+        + '<small>' + zEsc(f.why || '') + (blank ? ' · fill in the [blank] first' : '') + '</small>'
+        + '<div class="hl-acts"><button type="button" class="btn-dash btn-dash-primary" onclick="rvFact(\'' + f.id + '\',\'add\')">Add to agent</button><button type="button" class="btn-dash btn-dash-ghost" onclick="rvFact(\'' + f.id + '\',\'skip\')">Skip</button></div></div>';
+    }).join('');
+  }
+  const added = (R.teach_agent || []).filter(f => f.state === 'added').length;
+  if (added) h += '<p class="rv-ok">✓ ' + added + ' line' + (added === 1 ? '' : 's') + ' added to the agent</p>';
+  if ((R.new_questions || []).length) {
+    h += '<div class="rv-h">New questions people asked</div>';
+    h += R.new_questions.map(q => '<div class="rv-q"><div class="rv-qt"><b>' + zEsc(q.topic) + '</b><span>' + q.count + '×</span></div>' + ((q.examples || []).length ? '<small>“' + q.examples.map(zEsc).join('” · “') + '”</small>' : '') + '<p>' + zEsc(q.idea || '') + '</p></div>').join('');
+  }
+  if ((R.errors || []).length) {
+    h += '<button type="button" class="rv-tog" onclick="_rv.open=!_rv.open;rvRender()">' + (_rv.open ? 'Hide' : 'Show') + ' ' + R.errors.length + ' repeating problem' + (R.errors.length === 1 ? '' : 's') + (R.errors.some(e => e.serious) ? ' · 1 serious' : '') + '</button>';
+    if (_rv.open) h += R.errors.map(e => '<div class="rv-q"><div class="rv-qt"><b>' + (e.serious ? '🔴 ' : '') + zEsc(e.title) + '</b><span>' + e.count + '×</span></div><p>' + zEsc(e.likely_cause) + '</p><small>Fix: ' + zEsc(e.fix_note) + '</small></div>').join('');
+  }
+  h += '<div class="hl-acts">' + btn + '</div></div>';
+  box.innerHTML = h;
 }
 // Errors on this page are sent to the server's error log (a few per visit, no personal data).
 (function () {
