@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"/>
 <title>Dashboard | Handpan with Arpit</title>
 <!-- Studio app: install from Safari with Share → Add to Home Screen -->
 <link rel="manifest" href="/pages/studio-manifest.json"/>
@@ -11,7 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-title" content="Studio"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="theme-color" content="var(--bg)"/>
+<meta name="theme-color" content="#0b1220"/>
 <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pages/studio-splash-750x1334.png?v=2"/>
 <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pages/studio-splash-828x1792.png?v=2"/>
 <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pages/studio-splash-1125x2436.png?v=2"/>
@@ -75,20 +75,22 @@ window.STUDIO_THEMES = {
   var STATUS = { dark: { ok: '#4ade80', warn: '#fbbf24', bad: '#f87171' }, light: { ok: '#157a3a', warn: '#95590a', bad: '#b91c1c' } };
   function vars(t, mode) {
     var d = mode === 'dark', s = t[mode], a = s.acc, at = s.accTx || a, k = s.neutral ? 0 : 1;
+    var onLight = !s.onAcc || (function (c) { var x = hx(c); return (0.299 * x[0] + 0.587 * x[1] + 0.114 * x[2]) > 140; })(s.onAcc);
+    var accH = onLight ? mix(a, 86, '#000000') : mix(a, 85, '#ffffff');
     var st = {}; ['ok', 'warn', 'bad'].forEach(function (x) { st[x] = ((t.status || {})[mode] || {})[x] || STATUS[mode][x]; });
     var bg = s.bg || (d ? mix(a, 5 * k, '#0b0b0e') : mix(a, 3 * k, '#f7f7f9'));
     var v = d ? {
       '--bg': bg, '--s1': mix(a, 6 * k, s.neutral ? '#161616' : '#16161a'), '--s2': mix(a, 9 * k, s.neutral ? '#1f1f1f' : '#1e1e24'), '--s3': mix(a, 12 * k, s.neutral ? '#2a2a2a' : '#28282f'),
-      '--line': mix(a, 11 * k, s.neutral ? '#242424' : '#25252b'), '--line-2': mix(a, 15 * k, s.neutral ? '#313131' : '#313139'),
+      '--line': mix(a, 11 * k, s.neutral ? '#242424' : '#25252b'), '--line-2': mix(a, 15 * k, s.neutral ? '#444444' : '#42424d'),
       '--tx': s.neutral ? '#ededed' : '#eeeef1', '--tx2': mix(a, 8 * k, s.neutral ? '#a3a3a3' : '#a9a9b1'), '--tx3': mix(a, 8 * k, s.neutral ? '#959595' : '#97979f'),
-      '--acc-h': mix(a, 85, '#ffffff'), '--acc-soft': al(at, s.neutral ? 8 : 15),
+      '--acc-h': accH, '--acc-soft': al(at, s.neutral ? 8 : 15),
       '--out': mix(a, 34, '#17171c'), '--out-tx': '#ffffff', '--out-meta': mix(at, 22, '#e4e4e8'), '--tick': at,
       '--focus': '0 0 0 3px ' + al(at, 45), '--shadow': 'none', '--overlay': 'rgba(0,0,0,0.6)'
     } : {
       '--bg': bg, '--s1': '#ffffff', '--s2': mix(a, 5 * k, s.neutral ? '#f2f2f2' : '#f1f1f4'), '--s3': mix(a, 8 * k, s.neutral ? '#e8e8e8' : '#e7e7eb'),
-      '--line': mix(a, 8 * k, s.neutral ? '#ebebeb' : '#e5e5ea'), '--line-2': mix(a, 12 * k, s.neutral ? '#dcdcdc' : '#d7d7dd'),
+      '--line': mix(a, 8 * k, s.neutral ? '#ebebeb' : '#e5e5ea'), '--line-2': mix(a, 12 * k, s.neutral ? '#c9c9c9' : '#c4c4cd'),
       '--tx': s.neutral ? '#0a0a0a' : '#131316', '--tx2': mix(a, 10 * k, s.neutral ? '#4a4a4a' : '#4a4a52'), '--tx3': mix(a, 8 * k, s.neutral ? '#636363' : '#53535b'),
-      '--acc-h': mix(a, 86, '#000000'), '--acc-soft': mix(a, s.neutral ? 6 : 10, '#ffffff'),
+      '--acc-h': accH, '--acc-soft': mix(a, s.neutral ? 6 : 10, '#ffffff'),
       '--out': mix(a, 13, '#ffffff'), '--out-tx': '#131316', '--out-meta': '#4c4c54', '--tick': at,
       '--focus': '0 0 0 3px ' + al(a, 28), '--shadow': '0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04)', '--overlay': 'rgba(15,15,20,0.4)'
     };
@@ -115,6 +117,7 @@ window.STUDIO_THEMES = {
   window.STUDIO_THEME_SET = function (id, dark) {
     var h = document.documentElement, t = TH[id] || TH.blue;
     h.setAttribute('data-pal', TH[id] ? id : 'blue'); h.classList.toggle('dk', !!dark);
+    var mt = document.querySelector('meta[name="theme-color"]'); if (mt && t.meta) mt.setAttribute('content', t.meta[dark ? 'dark' : 'light']);
     Object.keys(TH).forEach(function (k) { if (TH[k].cls) h.classList.toggle(TH[k].cls, TH[k].cls === t.cls); });
   };
   var p = null; try { p = localStorage.getItem('themePref') || (localStorage.getItem('darkMode') === '0' ? 'light' : null); } catch (e) {}
@@ -203,8 +206,9 @@ body, body.dark-mode {
   --sel-bg: var(--acc-soft); --sel-tx: var(--acc-tx);
   --dis-op: 0.45;
   --s-elev: var(--s1);  /* elevated surface: light = s1 + shadow, dark = s2 */
+  --on-bad: #ffffff; --on-ok: #ffffff; --on-warn: #1a1204;  /* text on a solid status fill */
 }
-body.dark-mode { --s-elev: var(--s2); }
+body.dark-mode { --s-elev: var(--s2); --on-bad: #1c0b0b; --on-ok: #04140b; --on-warn: #1a1204; }
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
   :root { --gutter: 28px; --card-pad: 20px; --ctl-h: 44px; --ctl-h-md: 40px; --ctl-h-sm: 32px; }
 }
@@ -541,18 +545,18 @@ td > .empty-state { min-height: 0; padding: 3rem 1rem; white-space: normal; }
 .filter-sheet-cats {
   width: 110px; flex-shrink: 0;
   border-right: 1px solid var(--line);
-  overflow-y: auto; background: rgba(0,0,0,0.15);
+  overflow-y: auto; background: var(--s2);
 }
 .filter-sheet-cat {
   display: block; width: 100%; padding: 1rem 0.85rem;
   background: none; border: none; text-align: left;
-  font-family: var(--font-body); font-size: var(--fs-ui); color: color-mix(in srgb, var(--acc-tx) 65%, transparent);
+  font-family: var(--font-body); font-size: var(--fs-ui); color: var(--tx2);
   cursor: pointer; border-left: 3px solid transparent;
   touch-action: manipulation; transition: all var(--dur); min-height: 48px;
   position: relative;
 }
 .filter-sheet-cat.active {
-  color: var(--acc-tx); background: color-mix(in srgb, var(--acc-tx) 8%, transparent);
+  color: var(--tx); background: var(--s1);
   border-left-color: var(--acc); font-weight: 600;
 }
 .filter-sheet-cat-dot {
@@ -3125,7 +3129,7 @@ body.dark-mode .td-act-c { color: var(--on-acc); }
 /* v150: iPad portrait (740–900px, incl. iPad mini). Same app shell as the phone (tab bar), but
    two columns on Today, cards in a 2-column grid, and the Inbox as a split view.
    Kept last in <head> so it wins over the phone rules. */
-@media (min-width: 740px) and (max-width: 900px), (min-width: 740px) and (max-height: 500px) and (pointer: coarse) {
+@media (min-width: 740px) and (max-width: 900px) and (min-height: 501px) {
   body #tdWrap.td-wrap { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1rem; }
   body #tdWrap.td-wrap .td-col { display: flex; }
   body .mobile-cards { flex-direction: row !important; flex-wrap: wrap !important; align-items: flex-start; gap: 14px !important; }
@@ -3149,7 +3153,7 @@ body.dark-mode .td-act-c { color: var(--on-acc); }
    tables (small). Inputs 44. Body 16, secondary 14, label 12 caps.
    ════════════════════════════════════════════════════════════════════ */
 body {
-  --bg: #f5f7fb; --s1: #ffffff; --s2: #eef2f8; --s3: #e4e9f2; --line: #e3e8f0; --line-2: #d5dce7;
+  --bg: #f5f7fb; --s1: #ffffff; --s2: #eef2f8; --s3: #e4e9f2; --line: #e3e8f0; --line-2: #c1cad8;
   --tx: #0f172a; --tx2: #475569; --tx3: #5b6b82;
   --acc: #2f5fe0; --acc-h: #2752cc; --acc-tx: #2f5fe0; --acc-soft: #e8eefe; --on-acc: #ffffff;
   --ok: #157a3a; --ok-soft: #e5f5ea; --warn: #95590a; --warn-soft: #fdf3dc; --bad: #b91c1c; --bad-soft: #fde8e8;
@@ -3164,9 +3168,9 @@ body {
   -webkit-font-smoothing: antialiased; color-scheme: light;
 }
 body.dark-mode {
-  --bg: #0b1220; --s1: #121b2c; --s2: #1a2438; --s3: #222e45; --line: #223049; --line-2: #2c3b57;
+  --bg: #0b1220; --s1: #121b2c; --s2: #1a2438; --s3: #222e45; --line: #223049; --line-2: #3b4d6e;
   --tx: #e8edf5; --tx2: #a9b4c6; --tx3: #8592a8;
-  --acc: #2f5fe0; --acc-h: #3b6bf0; --acc-tx: #82a6ff; --acc-soft: rgba(91,140,255,0.14); --on-acc: #ffffff;
+  --acc: #2f5fe0; --acc-h: #2852c1; --acc-tx: #82a6ff; --acc-soft: rgba(91,140,255,0.14); --on-acc: #ffffff;
   --ok: #4ade80; --ok-soft: rgba(74,222,128,0.12); --warn: #fbbf24; --warn-soft: rgba(251,191,36,0.12); --bad: #f87171; --bad-soft: rgba(248,113,113,0.12);
   --out: #1e3a74; --out-tx: #eef3ff; --out-meta: #b3c4ea; --in: #1a2438; --tick: #7cc4ff;
   --focus: 0 0 0 3px rgba(91,140,255,0.45); --shadow: none; --overlay: rgba(0,0,0,0.6);
@@ -3720,7 +3724,7 @@ body .btn-dash, body .td-act, body .td-next-zoom, body .wa-row, body .mp-it, bod
 body .btn-dash:active, body .td-next-zoom:active, body .wa-ai-icon:active, body .pg-ib:active { transform: scale(0.97); }
 body .td-act:active, body .wa-row:active, body .mp-it:active { background-color: var(--s2) !important; }
 @media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { body #section-whatsapp.wa-open .wa-thread { animation: v155slide 0.22s ease-out; } }
-@media (min-width: 740px) and (max-width: 900px), (min-width: 740px) and (max-height: 500px) and (pointer: coarse) { body #section-whatsapp.wa-open .wa-thread { animation: none; } }
+@media (min-width: 740px) and (max-width: 900px) and (min-height: 501px) { body #section-whatsapp.wa-open .wa-thread { animation: none; } }
 @keyframes v155slide { from { transform: translateX(20%); opacity: 0.5; } to { transform: none; opacity: 1; } }
 body .wa-b.v151new { animation: v155pop 0.2s ease-out; }
 @keyframes v155pop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -4284,7 +4288,7 @@ table#paymentsTable { min-width: 700px; }
 </div>
 
 <!-- ··· Mobile Filter Bottom Sheet -->
-<div class="filter-sheet-backdrop" id="filterSheetBackdrop" onclick="closeFilterSheet()"></div>
+<div class="filter-sheet-backdrop" id="filterSheetBackdrop" onclick="closeFilterSheet()" role="button" tabindex="-1" aria-label="Close filters"></div>
 <div class="filter-sheet" id="filterSheet">
   <div class="filter-sheet-header">
     <span class="filter-sheet-title">Filters</span>
@@ -4301,7 +4305,7 @@ table#paymentsTable { min-width: 700px; }
 </div>
 
 <!-- ··· Mobile Picker Sheet (date, select, dots) -->
-<div class="mobile-picker-backdrop" id="mobilePickerBackdrop" onclick="closeMobilePicker()"></div>
+<div class="mobile-picker-backdrop" id="mobilePickerBackdrop" onclick="closeMobilePicker()" role="button" tabindex="-1" aria-label="Close"></div>
 <div class="mobile-picker-sheet" id="mobilePickerSheet">
   <div class="mobile-picker-sheet-header">
     <span class="mobile-picker-sheet-title" id="mobilePickerTitle"></span>
@@ -4433,7 +4437,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v183</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v184</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4507,7 +4511,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v183</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v184</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5624,7 +5628,7 @@ table#paymentsTable { min-width: 700px; }
     <button class="btn-dash-save" onclick="saveAssignPaymentPage()">Assign</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
-    <div id="assign-page-info" style="background:color-mix(in srgb, var(--acc-tx) 10%, transparent);border:1px solid var(--line);border-radius:var(--r-md);padding:1rem;font-size:var(--fs-ui);color:var(--acc-tx);margin-bottom:1.5rem;"></div>
+    <div id="assign-page-info" style="background:var(--acc-soft);border:1px solid var(--line);border-radius:var(--r-md);padding:1rem;font-size:var(--fs-ui);color:var(--tx);margin-bottom:1.5rem;"></div>
     <div class="form-group">
       <label class="form-label">Assign To</label>
       <select class="form-input" id="assign-page-type" onchange="onAssignPageTypeChange()">
@@ -6400,7 +6404,7 @@ table#paymentsTable { min-width: 700px; }
 </div>
 
 <!-- ── UNSaveD CHANGES MODAL ── -->
-<div id="unsavedModal" class="us-sheet" style="display:none;" onclick="if(event.target===this)unsavedKeepEditing()"><div class="us-in"><div class="us-box"><p>You have unsaved changes.</p><button type="button" onclick="unsavedDiscard()">Discard changes</button></div><button type="button" class="us-keep" onclick="unsavedKeepEditing()">Keep editing</button></div></div>
+<div id="unsavedModal" class="us-sheet" style="display:none;" role="presentation" onclick="if(event.target===this)unsavedKeepEditing()"><div class="us-in"><div class="us-box"><p>You have unsaved changes.</p><button type="button" onclick="unsavedDiscard()">Discard changes</button></div><button type="button" class="us-keep" onclick="unsavedKeepEditing()">Keep editing</button></div></div>
 <div id="archiveConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:40000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
   <div style="background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 65%, transparent);border-radius:var(--r-md);width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
     <div style="padding:1.5rem 1.5rem 1rem;">
@@ -7401,6 +7405,17 @@ function qaOpen() {
   requestAnimationFrame(() => document.body.classList.add('qa-open'));
 }
 function qaClose() { document.body.classList.remove('qa-open'); }
+// v184: every .form-label names the control that follows it, including forms built later.
+(function labelLink() {
+  let t = null;
+  function run() { t = null; document.querySelectorAll('label.form-label:not([for])').forEach(l => {
+    const g = l.closest('.form-group, .form-row, .settings-field-group') || l.parentElement; if (!g) return;
+    const c = g.querySelector('input:not([type=hidden]), select, textarea, button.form-select-btn, button.date-picker-btn, button.custom-select-btn');
+    if (!c) return; if (!c.id) c.id = 'fld-' + Math.random().toString(36).slice(2, 8); l.setAttribute('for', c.id); }); }
+  const kick = () => { if (!t) t = setTimeout(run, 60); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  try { new MutationObserver(kick).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+})();
 // v180: icon buttons that only explain themselves on hover get a real name, and a
 // long-press tooltip on touch screens.
 (function tipNames() {
@@ -11311,7 +11326,7 @@ async function loadBin(manual) {
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
                   Restore
                 </button>
-                <button class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openBinDotsMenu('${item._table}','${item.id}','${(item._name||'').replace(/'/g,'\\\'') }',this)">
+                <button class="btn-dash btn-dash-outline btn-dash-sm mc-ib" aria-label="More actions" onclick="openBinDotsMenu('${item._table}','${item.id}','${(item._name||'').replace(/'/g,'\\\'') }',this)">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                 </button>
               </div>
@@ -15657,7 +15672,7 @@ function waRenderList() {
 }
 
 // v150: iPad portrait shows list + chat side by side, like the desktop.
-function waSplit() { return window.matchMedia('(min-width: 740px) and (max-width: 900px), (min-width: 740px) and (max-height: 500px) and (pointer: coarse)').matches; }
+function waSplit() { return window.matchMedia('(min-width: 740px) and (max-width: 900px) and (min-height: 501px)').matches; }
 async function waOpen(phone) {
   _wa.sel = phone;
   const sec = document.getElementById('section-whatsapp');
@@ -18018,7 +18033,8 @@ function rvRender() {
     el.style.removeProperty('font-size');
     const base = parseFloat(getComputedStyle(el).fontSize); if (!base) return;
     let fs = base, i = 0;
-    while (el.scrollWidth > el.clientWidth + 1 && fs > base * 0.6 && i++ < 8) { fs -= base * 0.05; el.style.setProperty('font-size', fs.toFixed(2) + 'px', 'important'); }
+    while (el.scrollWidth > el.clientWidth + 1 && fs > base * 0.5 && i++ < 10) { fs -= base * 0.05; el.style.setProperty('font-size', fs.toFixed(2) + 'px', 'important'); }
+    if (el.scrollWidth > el.clientWidth + 1) el.style.letterSpacing = '-0.03em';
   }
   function fitAll() {
     pending = false;
@@ -18533,15 +18549,40 @@ async function stzLoad() {
   html body .mobile-cards > * { width: calc(33.333% - 10px) !important; max-width: calc(33.333% - 10px) !important; }
 }
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
+  /* desktop inbox: the 520px floor only applies when the window has room for it (150% zoom on a laptop does not) */
+  html body .wa-box { min-height: min(520px, calc(100vh - 230px)); }
   html body .dash-table-wrap table { min-width: 100%; }
   html body .dash-table-wrap table td.td-truncate { min-width: 110px; }
   html body .dash-table-wrap table th { white-space: nowrap; }
 }
 @media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  /* the scroller's height must include its own padding, or the last 62px of every page sit under the tab bar */
+  html body .dash-main { box-sizing: border-box; }
+  /* chat on a short viewport (keyboard open, phone sideways): the draft panel yields, the compose bar never leaves the screen */
+  html body .wa-compose { flex-shrink: 0; }
+  html body .wa-ai { flex: 0 1 auto; min-height: 0; overflow-y: auto; }
   html body .dash-section { padding-left: var(--gutter); padding-right: var(--gutter); }
   html body .dash-section-title { transform-origin: left center; will-change: transform; transition: transform .06s linear, opacity .06s linear; }
   html body #section-notifications .dash-section-header { flex-direction: row; flex-wrap: nowrap; align-items: flex-start; gap: var(--sp-3); }
   html body #notifActions { margin-left: auto; flex-shrink: 0; padding-top: 2px; }
+  html body .app-bar-title { left: 56px; right: 100px; }
+}
+@media (max-height: 600px) and (pointer: coarse) {
+  html body .wa-ai-body { max-height: 3.2em; overflow: auto; }
+  html body .wa-ai-note { display: none; }
+}
+@media (max-width: 360px) {
+  :root { --fs-3xl: 30px; }
+}
+@media (max-width: 340px) {
+  :root { --fs-3xl: 28px; }
+}
+@media (min-width: 740px) and (max-height: 500px) and (pointer: coarse) {
+  /* phone held sideways: two cards across and the Today columns side by side; the inbox stays single-pane */
+  html body #tdWrap.td-wrap { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--sp-4); }
+  html body #tdWrap.td-wrap .td-col { display: flex; }
+  html body .mobile-cards { flex-direction: row !important; flex-wrap: wrap !important; align-items: flex-start; gap: var(--row-gap) !important; }
+  html body .mobile-cards > * { width: calc(50% - 7px) !important; max-width: calc(50% - 7px) !important; }
 }
 @media (max-height: 500px) and (pointer: coarse) {
   html body .app-tabs { padding: 2px max(8px, env(safe-area-inset-right, 0px)) calc(2px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
@@ -18619,14 +18660,14 @@ html body .app-bar-btn { background: var(--s2) !important; border-color: transpa
 }
 
 /* ── 4 · INPUTS ────────────────────────────────────────────────────── */
-html body .form-input, html body .form-select-btn, html body .date-picker-btn, html body .custom-select-btn, html body .native-select, html body .section-search-input, html body .global-search-input, html body .mobile-search-fs-input, html body .wa-search input, html body .phone-wrap > .phone-flag-btn, html body .phone-wrap > .phone-prefix-input, html body .mp-search input, html body .ag-note textarea, html body .ag-try input {
+html body .form-input, html body .form-select-btn, html body .date-picker-btn, html body .custom-select-btn, html body .native-select, html body .section-search-input, html body .global-search-input, html body .mobile-search-fs-input, html body .wa-search input, html body #waSearchinput, html body .phone-wrap > .phone-flag-btn, html body .phone-wrap > .phone-prefix-input, html body .mp-search input, html body .ag-note textarea, html body .ag-ta, html body .ag-try input {
   min-height: var(--ctl-h) !important; border-radius: var(--ctl-r) !important; font-family: var(--font-body); font-size: var(--ctl-fs) !important; line-height: var(--lh-snug);
   background: var(--s1) !important; border: var(--bw) solid var(--line-2) !important; color: var(--tx) !important; box-shadow: none;
   transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);   /* the focus ring is never animated */
 }
 html body .form-input, html body .section-search-input, html body .global-search-input { padding-top: 0; padding-bottom: 0; }
-html body textarea.form-input, html body .ag-note textarea { min-height: 96px !important; padding-top: var(--sp-3); padding-bottom: var(--sp-3); line-height: var(--lh-body); resize: vertical; }
-html body .form-input::placeholder, html body .section-search-input::placeholder, html body .global-search-input::placeholder, html body .mobile-search-fs-input::placeholder, html body .wa-search input::placeholder, html body .wa-input::placeholder { color: var(--tx3) !important; opacity: 1; }
+html body textarea.form-input, html body .ag-note textarea, html body .ag-ta { min-height: 96px !important; padding-top: var(--sp-3); padding-bottom: var(--sp-3); line-height: var(--lh-body); resize: vertical; }
+html body .form-input::placeholder, html body .section-search-input::placeholder, html body .global-search-input::placeholder, html body .mobile-search-fs-input::placeholder, html body .wa-search input::placeholder, html body .wa-input::placeholder, html body .ag-ta::placeholder, html body textarea::placeholder, html body input::placeholder { color: var(--tx3) !important; opacity: 1; }
 html body .form-input:focus, html body .section-search-input:focus, html body .global-search-input:focus, html body .wa-search input:focus, html body .form-select-btn:focus-visible, html body .date-picker-btn:focus-visible, html body .custom-select-btn:focus-visible, html body .mobile-search-fs-input:focus, html body .wa-input:focus {
   border-color: var(--acc) !important; box-shadow: var(--focus) !important; outline: none !important; }
 html body .form-select-btn.open, html body .date-picker-btn.open, html body .custom-select-btn.open { border-color: var(--acc) !important; }
@@ -18635,7 +18676,9 @@ html body .field-error, html body .login-error { color: var(--bad); font-size: v
 html body .form-input:disabled, html body .form-input[readonly] { opacity: var(--dis-op); cursor: not-allowed; }
 html body .form-group { margin-bottom: var(--sp-5); }
 html body .form-row { gap: var(--sp-3); }
-html body .mobile-search-fs-input { border-radius: var(--r-pill) !important; border-color: transparent !important; background: var(--s2) !important; }
+html body .mobile-search-fs-input, html body .mobile-search-fullscreen .mobile-search-fs-input { border-radius: var(--r-pill) !important; border: var(--bw) solid var(--line-2) !important; background: var(--s2) !important; }
+html body .wa-ibox { border: var(--bw) solid var(--line-2); }
+html body .wa-ibox:focus-within { border-color: var(--acc); }
 /* switches */
 html body .push-sw::after, html body .inv-switch .sl:before, html body .checkin-toggle-thumb { background: var(--knob) !important; }
 
@@ -18660,6 +18703,17 @@ html body .ag-seg button, html body .inv-seg button, html body .sch-seg button, 
 html body .ag-seg button.on, html body .inv-seg button.on, html body .sch-seg button.on, html body .tw-seg button.on, html body #schSegCal.on, html body #schSegList.on, html body .sch-seg button.active, html body .inv-seg button.active {
   background: var(--s1) !important; color: var(--tx) !important; box-shadow: var(--sh-1); font-weight: var(--fw-semibold); }
 html.mono body .ag-seg button.on, html.mono body .inv-seg button.on, html.mono body .sch-seg button.on, html.mono body .tw-seg button.on { background: var(--s3) !important; }
+@media (hover: hover) and (pointer: fine) {
+  html body .sch-chip:hover, html body .fr-chip:hover, html body .ms-chip:hover, html body .wa-tab:hover, html body .filter-dd-btn:hover, html body .mobile-filter-btn:hover, html body .notif-tab:hover, html body .inv-fstatus:hover { background: var(--s2) !important; color: var(--tx) !important; border-color: var(--line-2) !important; }
+  html body .sch-chip.on:hover, html body .wa-tab.on:hover, html body .wa-tab.active:hover, html body .mobile-filter-btn.has-active:hover, html body .filter-dd-btn.has-active:hover { background: var(--sel-bg) !important; color: var(--sel-tx) !important; }
+  html body .sch-chip.on:hover { background: var(--acc-h) !important; color: var(--on-acc) !important; }
+  html body .wa-row:hover, html body .mp-it:hover, html body .td-row:hover, html body .search-result-item:hover { background: var(--s2) !important; }
+  html body .hl-run:hover, html body .btn-dash-ghost:hover { background: var(--s3) !important; color: var(--tx) !important; }
+  html body .btn-dash:not(.btn-dash-primary):not(.btn-dash-save):not(.btn-dash-outline):not(.btn-dash-ghost):not(.btn-dash-danger):not(.btn-dash-sync):hover { background: var(--s2) !important; color: var(--tx) !important; }
+  /* soft buttons fill in on hover: the tint alone cannot keep 4.5:1 under coloured text */
+  html body .btn-dash-danger:hover { background: var(--bad) !important; color: var(--on-bad) !important; }
+  html body .btn-dash-sync:hover, html body .btn-mark-received:hover { background: var(--acc) !important; color: var(--on-acc) !important; }
+}
 /* day picker chips in the schedule keep their fixed width */
 html body .sch-chip { min-width: 52px; padding: 0 var(--sp-3); }
 html body .filter-dd-btn, html body .mobile-filter-btn { min-height: var(--ctl-h-md); }
@@ -18677,7 +18731,7 @@ html body .badge-red, html body .inv-cancelled-badge, html body .ws-cancelled-ba
 html body .badge-clay, html body .badge-blue, html body .inv-auto-badge, html body .enr-pill { background: var(--acc-soft) !important; color: var(--acc-tx) !important; }
 html body .badge-gray, html body .badge-stone, html body .wa-tag { background: var(--s2) !important; color: var(--tx2) !important; }
 html body .td-tag.wt { background: var(--warn-soft) !important; color: var(--warn) !important; }
-html body .app-tab-badge, html body .notif-badge, html body #sidebarWaBadge, html body #mobileWaBadge, html body .wa-unread { background: var(--bad) !important; color: var(--on-fill) !important; font-size: var(--fs-2xs); font-weight: var(--fw-bold); border-radius: var(--r-pill); min-width: 18px; height: 18px; padding: 0 5px; display: inline-flex; align-items: center; justify-content: center; }
+html body .app-tab-badge, html body .notif-badge, html body #sidebarWaBadge, html body #mobileWaBadge, html body .wa-unread { background: var(--bad) !important; color: var(--on-bad) !important; font-size: var(--fs-2xs); font-weight: var(--fw-bold); border-radius: var(--r-pill); min-width: 18px; height: 18px; padding: 0 5px; display: inline-flex; align-items: center; justify-content: center; }
 
 /* ── 7 · CARDS ─────────────────────────────────────────────────────── */
 html body .m-card, html body .settings-card, html body .stat-card, html body .overview-card, html body .insight-tile, html body .chart-box, html body .push-card, html body .ag-card, html body .mp-grp, html body .td-card, html body .td-next, html body .checkin-card, html body .dash-table-wrap {
@@ -18723,6 +18777,7 @@ html body .m-card.archived-row { opacity: 0.6; }
 html body .thm-pick button { border-radius: var(--r-lg) !important; border: var(--bw) solid var(--line); background: var(--s1); transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease); }
 html body .thm-pick button i { border-radius: var(--r-sm); }
 html body .thm-pick button.on { border-color: var(--acc); background: var(--sel-bg); color: var(--tx); font-weight: var(--fw-semibold); }
+html body .thm-pick button:hover { background: var(--s2); border-color: var(--line-2); }
 
 /* ── 8 · MENUS, SHEETS, DIALOGS ────────────────────────────────────── */
 /* floating menus and popovers */
