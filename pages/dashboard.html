@@ -4437,7 +4437,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v192</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v193</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4511,7 +4511,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v192</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v193</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -16132,7 +16132,7 @@ document.addEventListener('scroll', e => {
 // ── AGENT DRAFTS ──
 // The server drafts a reply for each new message (agent-service.js). It
 // shows above the reply box: Send as is, Edit (moves it into the box), redo,
-// or throw away. Nothing goes out without Arpit pressing Send.
+// or throw away. In auto mode safe drafts (and short holding replies) go out by themselves.
 async function waLoadAi() {
   try {
     const r = await invApi('/api/agent/drafts');
@@ -16143,7 +16143,7 @@ async function waLoadAi() {
     _wa.aiStatus = j.status || null;
   } catch (e) { /* agent not deployed yet, or offline: just no drafts */ }
 }
-const WA_AI_CAT = { trial: 'Trial', fees: 'Fees', payment: 'Payment', schedule: 'Schedule', reschedule: 'Reschedule', zoom_link: 'Zoom link', workshop: 'Workshop', performance: 'Performance', teaching: 'Teaching', handpan_buying: 'Buying a handpan', greeting: 'Greeting', complaint: 'Complaint', other: 'Other' };
+const WA_AI_CAT = { trial: 'Trial', fees: 'Fees', payment: 'Payment', schedule: 'Schedule', reschedule: 'Reschedule', zoom_link: 'Zoom link', workshop: 'Workshop', performance: 'Performance', teaching: 'Teaching', handpan_buying: 'Buying a handpan', greeting: 'Greeting', general: 'General', complaint: 'Complaint', other: 'Other' };
 function waAiCardHtml(conv) {
   const d = _wa.ai[conv.phone];
   if (_wa.aiEditing[conv.phone] && !(_wa.drafts[conv.phone] || '').trim()) delete _wa.aiEditing[conv.phone];   // box emptied: show the draft again
@@ -18216,7 +18216,8 @@ function agRender() {
     h += t.error ? '<div class="ag-note" style="color:var(--wa-red,var(--bad))">' + zEsc(t.error) + '</div>'
       : '<div class="ag-bub' + (t.safe ? '' : ' amb') + '"><small>Agent would reply</small>' + (t.needs_reply && t.reply ? zEsc(t.reply) : '<i>No reply needed</i>') +
         (t.note ? '<small style="margin-top:6px">Note for you: ' + zEsc(t.note) + '</small>' : '') +
-        '<br><span class="ag-pill ' + (t.safe ? 'g">Safe · can send by itself' : 'a">Needs you · stays a draft') + '</span></div>';
+        (!t.safe && t.holding ? '<small style="margin-top:6px">Goes out right away: ' + zEsc(t.holding) + '</small>' : '') +
+        '<br><span class="ag-pill ' + (t.safe ? 'g">Safe · can send by itself' : (t.holding ? 'a">Needs you · a "let me check" reply goes out by itself' : 'a">Needs you · stays a draft')) + '</span></div>';
   }
   h += '</div>';
   el.innerHTML = h;
