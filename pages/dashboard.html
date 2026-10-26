@@ -4437,7 +4437,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v193</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v194</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4511,7 +4511,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v193</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v194</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -15694,7 +15694,7 @@ async function loadWhatsApp(silent) {
     const sec = document.getElementById('section-whatsapp');
     if (!sec || !sec.classList.contains('active') || document.hidden) return;
     loadWhatsApp(true);
-  }, 20000);
+  }, 10000);   /* v194: 20 → 10 s while the inbox is open */
 }
 
 function waSetFilter(f) { _wa.filter = f; waRenderList(); }
@@ -16562,7 +16562,7 @@ async function waRefreshBadge() {
 function waBadgeStart() {
   waRefreshBadge();
   clearInterval(_waBadgeTimer);
-  _waBadgeTimer = setInterval(() => { if (!document.hidden) waRefreshBadge(); }, 60000);
+  _waBadgeTimer = setInterval(() => { if (!document.hidden) waRefreshBadge(); }, 30000);
 }
 // This script loads after the main one, so on a page refresh loadAll() runs
 // before these functions exist. Start the badge (and the section, if it was
@@ -17775,8 +17775,29 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/pages/dashboard-sw.js', { scope: '/pages/dashboard' }).catch(e => console.warn('SW register failed', e));
   });
   // A tapped notification asks the open app to show something.
-  navigator.serviceWorker.addEventListener('message', ev => { if (ev.data && ev.data.type === 'open') studioOpenUrl(ev.data.url); });
+  navigator.serviceWorker.addEventListener('message', ev => {
+    if (!ev.data) return;
+    if (ev.data.type === 'open') studioOpenUrl(ev.data.url);
+    if (ev.data.type === 'push') studioLive('push');   // v194: a push arrived while the app is open: refresh now
+  });
 }
+// v194: live updates. The app refreshes what you are looking at the moment a push
+// arrives, and again whenever it comes back to the screen (iOS freezes timers in
+// the background, so without this the list stayed old until a manual refresh).
+let _liveAt = 0;
+function studioLive(why) {
+  if (sessionStorage.getItem('dash_auth') !== '1' || document.hidden) return;
+  const now = Date.now(); if (now - _liveAt < 1500) return; _liveAt = now;
+  try { if (typeof waRefreshBadge === 'function') waRefreshBadge(); } catch (e) {}
+  const on = id => { const el = document.getElementById('section-' + id); return el && el.classList.contains('active'); };
+  try { if (on('whatsapp') && typeof loadWhatsApp === 'function') loadWhatsApp(true); } catch (e) {}
+  try { if (on('today') && typeof loadToday === 'function') loadToday(true); } catch (e) {}
+  try { if (on('notifications') && typeof loadNotifications === 'function') loadNotifications(); } catch (e) {}
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') studioLive('resume'); });
+window.addEventListener('pageshow', () => studioLive('resume'));
+window.addEventListener('focus', () => studioLive('resume'));
+window.addEventListener('online', () => studioLive('online'));
 // ── PHONE NOTIFICATIONS ──
 // Shown at the top of the Notifications page. On iPhone, notifications work
 // only inside the installed app (iOS 16.4+), so in Safari we say how to install.
