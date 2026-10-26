@@ -170,7 +170,7 @@ window.STUDIO_THEMES = {
   --ctl-fs: var(--fs-body);
   --tap: 44px;             /* minimum touch target */
   --sat: env(safe-area-inset-top, 0px);     /* v189: status-bar inset as a var, so bar rules can add it and tests can fake it */
-  --bar-h: 76px;           /* v188: compact app bar on phones, NOT counting --sat (title, back, + centred; buttons --bar-btn) */
+  --bar-h: 84px;           /* v198 (was 76): compact app bar on phones, NOT counting --sat (title, back, + centred; buttons --bar-btn) */
   --bar-btn: 48px;         /* round buttons in that bar; 14px air above and below */
   --icon-sm: 16px; --icon-md: 20px; --icon-lg: 24px;
   --avatar: 40px; --stroke: 2px;
@@ -4456,7 +4456,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v197</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v198</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4530,7 +4530,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v197</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v198</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -19133,6 +19133,41 @@ html body .cc-search { background: var(--s1); border: var(--bw) solid var(--line
 html body .cc-search::placeholder { color: var(--tx3); }
 html body .cc-search:focus { border-color: var(--acc-tx); box-shadow: var(--focus-line); outline: none; }
 
+/* ── 16 · v198 · roomy top bars, titles never cut ─────────────────────────
+   Every top bar is --bar-h (84) tall below the status bar, with 48px back and action buttons (18px air above
+   and below). The bar itself carries the status-bar inset as padding and counts it in its min-height
+   (border-box), so no older padding or height rule can squash it. A long title wraps and the bar grows. */
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body .form-page .form-page-header.form-page-header,
+  html body .tw-page .tw-bar.tw-bar {
+    box-sizing: border-box !important; height: auto !important;
+    min-height: calc(var(--bar-h) + var(--sat)) !important;
+    padding-top: var(--sat) !important; padding-bottom: 0 !important;
+  }
+  html:not(.studio-app) body .form-page .form-page-header.form-page-header,
+  html:not(.studio-app) body .tw-page .tw-bar.tw-bar { padding-top: 0 !important; min-height: var(--bar-h) !important; }
+  html body .form-page .form-page-header.form-page-header > :last-child:not(.form-page-title) {
+    height: var(--bar-btn) !important; min-height: var(--bar-btn) !important; padding: 0 var(--sp-5, 20px) !important; }
+  html body .form-page .form-page-header.form-page-header .form-page-back,
+  html body .tw-page .tw-bar .tw-back { min-height: var(--bar-btn) !important; min-width: var(--bar-btn) !important; }
+  /* a title that wraps keeps air above and below inside the bar */
+  html body .form-page .form-page-header.form-page-header .form-page-title,
+  html body .tw-page .tw-bar .tw-title { padding: 10px 0 !important; }
+  /* chat thread header: same bar height, same 48px back */
+  html body #section-whatsapp .wa-th { min-height: var(--bar-h); padding-top: 10px !important; padding-bottom: 10px !important; box-sizing: border-box; }
+  html.studio-app body #section-whatsapp.wa-open .wa-thread .wa-th { padding-top: calc(10px + var(--sat)) !important; min-height: calc(var(--bar-h) + var(--sat)); }
+  html body #section-whatsapp .wa-th .wa-back { height: var(--bar-btn) !important; min-height: var(--bar-btn) !important; min-width: var(--bar-btn) !important; }
+  /* app bar title (shows on scroll): two short lines fit inside 84 */
+  html body .mobile-topbar .app-bar-title { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: break-word; text-align: center; }
+}
+/* titles and headings: never an ellipsis or a line clamp, anywhere. Long ones wrap. */
+html body .app-bar-title, html body .form-page .form-page-title, html body .modal-title, html body .filter-sheet-title,
+html body .mobile-picker-sheet-title, html body .settings-card-title, html body .td-head h3, html body .checkin-header-title,
+html body .login-title, html body .tw-title, html body .dash-section-title, html body .m-card-head .m-card-title,
+html body .wa-th-info .wa-nm, html body .ds-sheet-title, html body .sheet-title {
+  white-space: normal !important; overflow: visible !important; text-overflow: clip !important;
+  -webkit-line-clamp: unset !important; overflow-wrap: break-word; min-width: 0; }
+html body .form-page .form-page-title, html body .m-card-head .m-card-title { display: block !important; }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
