@@ -4426,7 +4426,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v185</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v186</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4500,7 +4500,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v185</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v186</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5313,7 +5313,7 @@ table#paymentsTable { min-width: 700px; }
           <div class="dash-section-subtitle" id="hlSub">Checked every 5 minutes</div>
         </div>
       </div>
-      <div id="hlPage"><div class="ag-empty">Loading…</div></div>
+      <div id="hlPage"><div class="ds-skel" role="status" aria-label="Loading"><i class="t"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i></div><div class="ds-skel"><i class="t"></i><i class="l2"></i><i class="l1"></i></div></div>
     </section>
     <section class="dash-section admin-only" id="section-agent">
       <div class="dash-section-header" style="border-bottom:none;">
@@ -5322,7 +5322,7 @@ table#paymentsTable { min-width: 700px; }
           <div class="dash-section-subtitle">How the agent answers messages on the studio number</div>
         </div>
       </div>
-      <div id="agPage"><div class="ag-empty">Loading…</div></div>
+      <div id="agPage"><div class="ds-skel" role="status" aria-label="Loading"><i class="t"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i></div><div class="ds-skel"><i class="t"></i><i class="l2"></i><i class="l1"></i></div></div>
     </section>
 
     <section class="dash-section" id="section-notifications">
@@ -8426,7 +8426,7 @@ async function loadWorkshops() {
               Add
             </button>
           </div>
-          <div id="ws-pax-list-${w.id}"><div class="ws-pax-empty">Loading...</div></div>
+          <div id="ws-pax-list-${w.id}">${skelHTML(2, 1)}</div>
         </div>
       </div>
     `).join('');   // v180: the section's own empty state (#workshopsEmptyState) shows instead, so it isn't drawn twice
@@ -8452,7 +8452,7 @@ async function toggleWsPax(wsId) {
 async function loadWsPax(wsId) {
   const list = document.getElementById('ws-pax-list-' + wsId);
   if (!list) return;
-  list.innerHTML = '<div class="empty-state" style="padding:2rem 1rem;"><div class="spinner"></div></div>';
+  list.innerHTML = skelHTML(2, 1);
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&workshop_id=eq.' + wsId + '&archived=eq.false&order=created_at.asc', {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': SB_HEADERS['Authorization'] }
@@ -11264,7 +11264,7 @@ async function loadBin(manual) {
   if (manual) _binManualRefresh = true;
   const container = document.getElementById('binContainer');
   if (!container) return;
-  container.innerHTML = '<div class="empty-state"><div class="spinner" style="margin-bottom:1rem;"></div>Loading bin...</div>';
+  container.innerHTML = skelHTML(2, 3);
   try {
     let allItems = [];
     for (const t of BIN_TABLES) {
@@ -11395,6 +11395,14 @@ async function confirmDeleteForever() {
 }
 
 function openBinDotsMenu(table, id, name, btnEl) {
+  const TRASH_SVG0 = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+  if (typeof isPhoneLayout === 'function' && isPhoneLayout() && typeof openMobilePicker === 'function') {
+    openMobilePicker(name, (body) => {
+      const b = document.createElement('button'); b.className = 'm-dots-item danger'; b.innerHTML = TRASH_SVG0 + ' Delete forever';
+      b.onclick = () => { closeMobilePicker(); setTimeout(() => promptDeleteForever(table, id, name), 50); }; body.appendChild(b);
+    });
+    return;
+  }
   const popover = document.getElementById('mDotsSheet');
   const backdrop = document.getElementById('mDotsBackdrop');
   const items = document.getElementById('mDotsItems');
@@ -11567,6 +11575,12 @@ function unlockScroll() {
   const dashMain = document.getElementById('dashMain') || document.querySelector('.dash-main');
   if (dashMain) { dashMain.style.overflow = ''; dashMain.style.touchAction = ''; if (dashMain._scrollTop !== undefined) { dashMain.scrollTop = dashMain._scrollTop; } }
 }
+// v186: one loading look everywhere. Inline loads show a skeleton; the full-screen loader spins the logo once.
+function skelHTML(rows = 3, cards = 1) {
+  let h = '';
+  for (let c = 0; c < cards; c++) { h += '<div class="ds-skel" role="status" aria-label="Loading"><i class="t"></i>'; for (let r = 0; r < rows; r++) h += '<i class="l' + ((r % 3) + 1) + '"></i>'; h += '</div>'; }
+  return h;
+}
 function showLoader(text = 'Loading...') {
   document.getElementById('loadingText').textContent = text;
   document.getElementById('loadingOverlay').classList.add('active');
@@ -11636,7 +11650,7 @@ async function loadNotifications() {
   const actions = document.getElementById('notifActions');
   const emptyState = '<div class="empty-state"><div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>';
   if (actions) actions.style.display = 'none';
-  container.innerHTML = '<div class="empty-state"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>';
+  container.innerHTML = skelHTML(3, 2);
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 6000);
@@ -16547,7 +16561,7 @@ async function twRender() {
   const unit = { trials: ['trial', 'trials'], students: ['new student', 'new students'], classes: ['class', 'classes'] }[kind];
   const range = (_tw.week ? 'Mon ' + schShortDate(a) + ' – Sun ' + schShortDate(schAddDays(a, 6)) : 'Since Mon ' + schShortDate(a));
   const head = n => '<div class="tw-count">' + (n == null ? '' : '<b>' + n + '</b> ' + (n === 1 ? unit[0] : unit[1]) + ' · ') + range + '</div>';
-  body.innerHTML = head(null) + '<div class="tw-load">Loading…</div>';
+  body.innerHTML = head(null) + skelHTML(4, 2);
   const istStart = d => stzDayStartIso(d);
   const av = (name, key) => '<span class="tw-av" style="background:' + (typeof waAvColor === 'function' ? waAvColor(String(key || name)) : 'var(--s3)') + '">' + zEsc(String(name || '?').trim().charAt(0).toUpperCase()) + '</span>';
   const CH = '<svg class="tw-rch" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
@@ -17836,7 +17850,7 @@ async function hlSnooze(key, hours) {
 function hlGo(sec, url) { if (url) { window.open(url, '_blank', 'noopener'); return; } if (sec) { if (['today', 'schedule', 'whatsapp', 'classes', 'more'].includes(sec)) appTab(sec); else showSection(sec, document.querySelector('.dash-nav a[onclick*="\'' + sec + '\'"]')); } }
 function hlRender(checking) {
   const el = document.getElementById('hlPage'); const d = _hl.d; if (!el) return;
-  if (!d) { el.innerHTML = '<div class="ag-empty">Loading…</div>'; return; }
+  if (!d) { el.innerHTML = skelHTML(3, 2); return; }
   const sub = document.getElementById('hlSub'); if (sub) sub.textContent = checking ? 'Checking now…' : 'Checked ' + hlAgo(d.checkedAt) + ' · every 5 minutes';
   const act = hlActive(), bad = act.filter(i => i.level === 'bad');
   const ico = { ok: '<path d="M20 6 9 17l-5-5"/>', warn: '<path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="10"/>', bad: '<path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="10"/>' };
@@ -18923,6 +18937,40 @@ html body .settings-profile-email, html body .mp-me small { min-width: 0; overfl
 }
 /* empty states: one icon style in every theme (was emoji) */
 html body .empty-state-ic { width: 56px; height: 56px; border-radius: 50%; background: var(--s2); color: var(--tx3); display: grid; place-items: center; margin: 0 auto var(--sp-2); }
+
+
+/* ── 14 · v186 · segments, loading, bin sheet ───────────────────────── */
+/* segmented controls: the selected segment is inverted, so it reads in every theme (Mono dark had s3-on-s2) */
+html body .ag-seg, html body .tw-seg { display: flex; width: auto; }
+html body .ag-seg button, html body .inv-seg button, html body .sch-seg button, html body .tw-seg button, html body #schSegCal, html body #schSegList { white-space: nowrap; }
+html body .ag-seg button.on, html body .inv-seg button.on, html body .sch-seg button.on, html body .tw-seg button.on, html body #schSegCal.on, html body #schSegList.on, html body .sch-seg button.active, html body .inv-seg button.active, html.mono body .ag-seg button.on, html.mono body .inv-seg button.on, html.mono body .sch-seg button.on, html.mono body .tw-seg button.on {
+  background: var(--tx) !important; color: var(--bg) !important; box-shadow: none; }
+/* skeleton: a title bar and a few lines that shimmer until the data lands */
+html body .ds-skel { display: grid; gap: var(--sp-3); padding: var(--card-pad); border-radius: var(--card-r); background: var(--s1); border: var(--bw) solid var(--line); margin-bottom: var(--card-gap); }
+html.mono body .ds-skel { border-color: transparent; }
+html body .ds-skel i { display: block; height: 12px; border-radius: var(--r-pill); background: linear-gradient(90deg, var(--s2) 0%, var(--s3) 40%, var(--s2) 80%); background-size: 200% 100%; animation: dsShimmer 1.4s linear infinite; }
+html body .ds-skel i.t { height: 16px; width: 45%; margin-bottom: var(--sp-1); }
+html body .ds-skel i.l1 { width: 92%; } html body .ds-skel i.l2 { width: 70%; } html body .ds-skel i.l3 { width: 55%; }
+@keyframes dsShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+/* card lists and table bodies that have not loaded yet show skeleton cards instead of nothing */
+html body .mobile-cards:empty { min-height: 0; }
+html body .mobile-cards:empty::before, html body .mobile-cards:empty::after, html body td.loading::before {
+  content: ""; display: block; height: 132px; border-radius: var(--card-r); background-color: var(--s1); border: var(--bw) solid var(--line); box-sizing: border-box;
+  background-image: linear-gradient(var(--s3), var(--s3)), linear-gradient(var(--s2), var(--s2)), linear-gradient(var(--s2), var(--s2)), linear-gradient(var(--s2), var(--s2));
+  background-repeat: no-repeat; background-size: 45% 16px, 92% 12px, 70% 12px, 55% 12px; background-position: 16px 18px, 16px 52px, 16px 76px, 16px 100px;
+  animation: dsPulse 1.6s ease-in-out infinite; }
+html body .mobile-cards:empty::after { animation-delay: 0.3s; margin-top: var(--card-gap); }
+html body td.loading { padding: var(--sp-4) !important; }
+html body td.loading .spinner { display: none; }
+html.mono body .mobile-cards:empty::before, html.mono body .mobile-cards:empty::after, html.mono body td.loading::before { border-color: transparent; }
+@keyframes dsPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { html body .mobile-cards:empty::before, html body .mobile-cards:empty::after, html body td.loading::before { animation: none; } }
+
+/* full-screen loader: the logo turns once, then breathes */
+html body .loading-overlay.active .loading-logo { animation: dsLogoTurn 0.9s var(--ease) 1, dsLogoBreathe 1.8s ease-in-out 0.9s infinite; transform-origin: 50% 50%; }
+@keyframes dsLogoTurn { from { transform: rotate(0) scale(0.9); opacity: 0.4; } to { transform: rotate(360deg) scale(1); opacity: 1; } }
+@keyframes dsLogoBreathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { html body .ds-skel i { animation: none; background: var(--s2); } html body .loading-overlay.active .loading-logo { animation: none; } }
 
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
