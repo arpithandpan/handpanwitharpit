@@ -184,8 +184,9 @@ window.STUDIO_THEMES = {
   --z-bar: 200;       /* top bar, tab bar, pull-to-refresh, net/update/tz bars */
   --z-page: 400;      /* form pages, check-in, full-screen search, login */
   --z-overlay: 500;   /* backdrops */
-  --z-sheet: 510;     /* sheets, dialogs, popovers that sit on a backdrop */
-  --z-dropdown: 600;  /* menus, pickers (must clear sheets and pages) */
+  --z-sheet: 510;     /* sheets and popovers that sit on a backdrop */
+  --z-dialog: 550;    /* confirm boxes: above sheets and form pages */
+  --z-dropdown: 600;  /* menus, pickers (must clear sheets, dialogs and pages) */
   --z-loading: 700;   /* blocking loaders */
   --z-toast: 800;     /* toasts, tooltips */
   --z-top: 900;       /* skip link */
@@ -1610,9 +1611,6 @@ body.dark-mode .connector-btn:hover { border-color: var(--acc); color: var(--acc
   text-align: center; white-space: normal; word-wrap: break-word; line-height: 1.4;
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-.toast.success { background: rgba(212,237,187,0.88); color: #27500a; }
-.toast.error { background: rgba(249,201,201,0.88); color: var(--tx); }
-.toast.warning { background: color-mix(in srgb, var(--tx3) 88%, transparent); color: var(--tx); }
 .toast.dark-theme { background: color-mix(in srgb, var(--bg) 95%, transparent); color: var(--acc-tx); border: 1px solid var(--line); }
 .toast.light-theme { background: color-mix(in srgb, var(--tx3) 96%, transparent); color: var(--tx); border: 1px solid color-mix(in srgb, var(--acc-tx) 30%, transparent); }
 
@@ -2851,14 +2849,7 @@ html.studio-app .toast { top: calc(8px + env(safe-area-inset-top, 0px)) !importa
 .toast .toast-tx b { display: block; font-weight: 500; }
 .toast .toast-tx small { display: block; font-weight: 400; font-size: var(--fs-sm); opacity: .82; margin-top: 2px; }
 .toast .toast-x { margin-left: 4px; opacity: .45; font-size: var(--fs-xl); line-height: 20px; }
-.toast.info, .toast:not(.success):not(.error):not(.warning) { background: color-mix(in srgb, var(--tx) 92%, transparent) !important; color: var(--bg) !important; }
-.toast.info .toast-ic { background: var(--tx3); }
-.toast.success { background: rgba(223,243,226,0.82) !important; color: #0f3518 !important; }
-.toast.success .toast-ic { background: #2f8a46; }
-.toast.error { background: rgba(253,224,218,0.94) !important; color: #4d0f0f !important; }
-.toast.error .toast-ic { background: var(--bad); }
-.toast.warning { background: rgba(253,239,206,0.94) !important; color: #432c00 !important; }
-.toast.warning .toast-ic { background: var(--warn); }
+/* v185: toast kinds are told apart by the icon chip; the body is the same inverted surface in every theme (design-system layer §9) */
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { .toast { top: 18px; } }
 
 /* ── v133 MORE PAGE (phones): opened by the More tab, tab bar stays ── */
@@ -3410,7 +3401,7 @@ body #archiveConfirmModal > div > div:last-child button, body #customConfirmModa
 body #archiveConfirmBtn, body #customConfirmOkBtn { background: var(--acc) !important; color: var(--on-acc) !important; }
 body #archiveConfirmModal > div > div:first-child > div:first-child > div:first-child, body #customConfirmIcon { background: var(--acc-soft) !important; border: 0 !important; color: var(--acc-tx); }
 body #archiveConfirmModal svg, body #customConfirmIcon svg { stroke: currentColor !important; }
-body [role="button"]:focus-visible, body [tabindex]:focus-visible, body .app-tab:focus-visible, body .wa-row:focus-visible, body .td-act:focus-visible, body .mp-it:focus-visible, body .dash-nav a:focus-visible, body select:focus-visible, body .form-select-btn:focus-visible, body .date-picker-btn:focus-visible { outline: 2px solid var(--acc-tx) !important; outline-offset: 2px; }
+/* v185: focus rings come from --focus in the design-system layer */
 /* v159: touch targets and small-screen fixes from the audit */
 @media (pointer: coarse) {
   body .pg-ib { width: 44px !important; height: 44px !important; }
@@ -3781,9 +3772,7 @@ body .push-sw, body .push-sw::after { transition: transform var(--dur) ease, bac
       .orb3{animation:floatOrb3 7s ease-in-out infinite; transform-origin:78% 12%}
     
 /* ── WORKSHOPS TABLE STICKY ── */
-table#workshopsTable, .dash-table-wrap table#workshopsTable { min-width: 1200px; }
 #workshopsTable td.td-venue { min-width: 220px; width: 220px; }
-table#participantsTable, .dash-table-wrap table#participantsTable { min-width: 1200px; }
 .ws-action-sticky {
   position: sticky !important;
   right: 0 !important;
@@ -4437,7 +4426,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v184</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v185</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4511,7 +4500,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v184</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v185</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5373,7 +5362,7 @@ table#paymentsTable { min-width: 700px; }
         </div>
       </div>
       <div id="notificationsContainer">
-        <div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🔔</div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>
+        <div class="empty-state"><div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>
       </div>
     </section>
 
@@ -5392,7 +5381,7 @@ table#paymentsTable { min-width: 700px; }
         </div>
       </div>
       <div id="binContainer">
-        <div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🗑️</div><div class="empty-state-title">Bin is empty</div><div class="empty-state-sub">Items you move to bin will appear here</div></div>
+        <div class="empty-state"><div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div><div class="empty-state-title">Bin is empty</div><div class="empty-state-sub">Items you move to bin will appear here</div></div>
       </div>
     </section>
 
@@ -5879,7 +5868,7 @@ table#paymentsTable { min-width: 700px; }
     <!-- Segment toggle -->
     <div style="display:flex;background:color-mix(in srgb, var(--acc-tx) 8%, transparent);border:1px solid var(--line);border-radius:var(--r-pill);padding:4px;margin-bottom:1.5rem;gap:4px;">
       <button id="lead-tab-manual" onclick="setLeadTab('manual')"
-        style="flex:1;border:none;border-radius:var(--r-pill);padding:0.6rem 1rem;font-size:var(--fs-ui);font-weight:500;cursor:pointer;transition:all var(--dur);background: var(--acc);color:var(--bg);">
+        style="flex:1;border:none;border-radius:var(--r-pill);padding:0.6rem 1rem;font-size:var(--fs-ui);font-weight:500;cursor:pointer;transition:all var(--dur);background: var(--acc);color:var(--on-acc);">
         New Participant
       </button>
       <button id="lead-tab-existing" onclick="setLeadTab('existing')"
@@ -5897,7 +5886,7 @@ table#paymentsTable { min-width: 700px; }
             <span id="lead-par-dd-label" style="color:color-mix(in srgb, var(--acc-tx) 50%, transparent);">Choose participant...</span>
             <svg id="lead-par-dd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;transition:transform 0.18s;"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
-          <div id="lead-par-dd-menu" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 30%, transparent);border-radius:var(--r-sm);z-index:999;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+          <div id="lead-par-dd-menu" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 30%, transparent);border-radius:var(--r-sm);z-index:var(--z-dropdown);box-shadow:0 8px 24px rgba(0,0,0,0.4);">
             <div style="padding:0.5rem;display:flex;flex-direction:column;gap:0.4rem;position:relative;">
               <div id="lead-ws-filter" style="position:relative;">
                 <button type="button" id="lead-ws-filter-btn" onclick="event.stopPropagation();toggleLeadWsFilter()"
@@ -5905,7 +5894,7 @@ table#paymentsTable { min-width: 700px; }
                   <span id="lead-ws-filter-label">All workshops</span>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;color: var(--acc-tx);transition:transform 0.18s;" id="lead-ws-filter-chevron"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
-                <div id="lead-ws-filter-menu" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 30%, transparent);border-radius:var(--r-sm);z-index:1001;box-shadow:0 8px 24px rgba(0,0,0,0.4);max-height:200px;overflow-y:auto;padding:0.25rem;"></div>
+                <div id="lead-ws-filter-menu" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 30%, transparent);border-radius:var(--r-sm);z-index:var(--z-dropdown);box-shadow:0 8px 24px rgba(0,0,0,0.4);max-height:200px;overflow-y:auto;padding:0.25rem;"></div>
               </div>
               <div style="position:relative;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:color-mix(in srgb, var(--acc-tx) 50%, transparent);pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -6405,7 +6394,7 @@ table#paymentsTable { min-width: 700px; }
 
 <!-- ── UNSaveD CHANGES MODAL ── -->
 <div id="unsavedModal" class="us-sheet" style="display:none;" role="presentation" onclick="if(event.target===this)unsavedKeepEditing()"><div class="us-in"><div class="us-box"><p>You have unsaved changes.</p><button type="button" onclick="unsavedDiscard()">Discard changes</button></div><button type="button" class="us-keep" onclick="unsavedKeepEditing()">Keep editing</button></div></div>
-<div id="archiveConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:40000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
+<div id="archiveConfirmModal" role="dialog" aria-modal="true" aria-label="Move to bin" style="display:none;position:fixed;inset:0;background:var(--overlay);z-index:var(--z-dialog);backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
   <div style="background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 65%, transparent);border-radius:var(--r-md);width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
     <div style="padding:1.5rem 1.5rem 1rem;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
@@ -6431,7 +6420,7 @@ table#paymentsTable { min-width: 700px; }
 </div>
 
 <!-- ── CANCEL WORKSHOP MODAL ── -->
-<div id="cancelWsModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:40000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
+<div id="cancelWsModal" role="dialog" aria-modal="true" aria-label="Cancel workshop" style="display:none;position:fixed;inset:0;background:var(--overlay);z-index:var(--z-dialog);backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
   <div style="background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 65%, transparent);border-radius:var(--r-md);width:100%;max-width:420px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
     <div style="padding:1.5rem 1.5rem 1rem;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
@@ -6462,7 +6451,7 @@ table#paymentsTable { min-width: 700px; }
 </div>
 
 <!-- ── CUSTOM CONFIRM MODAL ── -->
-<div id="customConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:40000;backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
+<div id="customConfirmModal" style="display:none;position:fixed;inset:0;background:var(--overlay);z-index:var(--z-dialog);backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:1.5rem;">
   <div style="background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 65%, transparent);border-radius:var(--r-md);width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
     <div style="padding:1.5rem 1.5rem 1rem;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
@@ -6483,7 +6472,7 @@ table#paymentsTable { min-width: 700px; }
 </div>
 
 <!-- ── PERMANENT DELETE CONFIRM MODAL ── -->
-<div id="deleteForeverModal" style="display:none;position:fixed;inset:0;background:rgba(10,6,3,0.75);z-index:40000;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(2px);">
+<div id="deleteForeverModal" role="dialog" aria-modal="true" aria-label="Delete forever" style="display:none;position:fixed;inset:0;background:var(--overlay);z-index:var(--z-dialog);align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(2px);">
   <div style="background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 65%, transparent);border-radius:var(--r-md);width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
     <div style="padding:1.5rem 1.5rem 1rem;">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
@@ -6996,6 +6985,7 @@ function customConfirm(title, desc, okLabel = 'Confirm', icon = 'trash') {
     _customConfirmResolve = resolve;
     const iconEl = document.getElementById('customConfirmIcon');
     if (iconEl) iconEl.innerHTML = CONFIRM_ICONS[icon] || CONFIRM_ICONS.trash;
+    document.getElementById('customConfirmModal').classList.toggle('is-danger', icon === 'trash' || icon === 'cancel');
     document.getElementById('customConfirmTitle').textContent = title;
     document.getElementById('customConfirmDesc').textContent = desc;
     document.getElementById('customConfirmOkBtn').textContent = okLabel;
@@ -7185,71 +7175,71 @@ async function bulkArchive() {
 // ── EMPTY STATES ──
 const EMPTY_STATES = {
   invoices: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">\u{1F9FE}</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
     <div class="empty-state-title">No invoices yet</div>
     <div class="empty-state-sub">Generate one from a payment row, or use New Invoice to create a blank one</div>
   </div>`,
   unassigned_payments: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">💸</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div>
     <div class="empty-state-title">No unassigned payments</div>
     <div class="empty-state-sub">Payments received via your general Razorpay link will appear here for you to assign</div>
   </div>`,
   search: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">🔍</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
     <div class="empty-state-title">Start typing to search</div>
     <div class="empty-state-sub">Search across workshops, participants, students, payments, leads and waitlist</div>
   </div>`,
 
   search_noresults: (q) => `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">😕</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
     <div class="empty-state-title">No results for "${q}"</div>
     <div class="empty-state-sub">Try a different name, number or keyword</div>
   </div>`,
 
   workshops: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">🎵</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
     <div class="empty-state-title">No workshops yet</div>
     <div class="empty-state-sub">Add your first workshop to start tracking revenue and participants</div>
   </div>`,
 
   participants: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">👥</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
     <div class="empty-state-title">No participants yet</div>
     <div class="empty-state-sub">Add participants to track attendance and payments for your workshops</div>
   </div>`,
 
   students: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">🎓</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
     <div class="empty-state-title">No students yet</div>
     <div class="empty-state-sub">Enroll your first student to track classes and fee payments</div>
   </div>`,
 
   payments: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">💳</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
     <div class="empty-state-title">No payments yet</div>
     <div class="empty-state-sub">Record income and expenses to track your business finances</div>
   </div>`,
 
   fee_payments: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">📋</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
     <div class="empty-state-title">No fee payments yet</div>
     <div class="empty-state-sub">Track monthly fee payments for your online students here</div>
   </div>`,
 
   leads: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">📍</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
     <div class="empty-state-title">No leads yet</div>
     <div class="empty-state-sub">Track people interested in buying a handpan and follow up with them</div>
   </div>`,
 
   workshop_waitlist: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">🙋</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
     <div class="empty-state-title">No one on the waitlist yet</div>
     <div class="empty-state-sub">People interested in a future workshop will show up here, along with anyone you add manually</div>
   </div>`,
 
   insights: `<div class="empty-state">
-    <div style="font-size:3rem;margin-bottom:0.5rem;">📊</div>
+    <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
     <div class="empty-state-title">Not enough data yet</div>
     <div class="empty-state-sub">Add workshops and payments to see your business insights here</div>
   </div>`,
@@ -7405,6 +7395,14 @@ function qaOpen() {
   requestAnimationFrame(() => document.body.classList.add('qa-open'));
 }
 function qaClose() { document.body.classList.remove('qa-open'); }
+// v185: full-screen form pages and the unsaved box announce as dialogs named by their title.
+(function dialogNames() {
+  function run() {
+    document.querySelectorAll('.form-page').forEach((f, i) => { if (f.getAttribute('role')) return; const t = f.querySelector('.form-page-title'); f.setAttribute('role', 'dialog'); f.setAttribute('aria-modal', 'true'); if (t) { if (!t.id) t.id = 'fpt-' + (f.id || i); f.setAttribute('aria-labelledby', t.id); } });
+    const us = document.querySelector('#unsavedModal .us-box'); if (us && !us.getAttribute('role')) { us.setAttribute('role', 'dialog'); us.setAttribute('aria-modal', 'true'); us.setAttribute('aria-label', 'Unsaved changes'); }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
 // v184: every .form-label names the control that follows it, including forms built later.
 (function labelLink() {
   let t = null;
@@ -9416,7 +9414,7 @@ async function loadPayments() {
     const adminPay = isAdmin();
     const PENCIL = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
     populatePaymentsCategoryDropdown(pays);
-    document.getElementById('paymentsTable').innerHTML = pays.map(p => { const isGenExp = p.is_general_expense; const dataType = isGenExp ? 'general_expense' : (p.type||''); const typeBadge = isGenExp ? `<span class="badge badge-clay">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span>`; return `<tr class="${p.archived?'archived-row':''}" data-type="${dataType}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td class="td-truncate td-desc" data-tip="${p.description||p.payer_name||''}">${p.description||p.payer_name||'—'}</td><td>${typeBadge}</td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--ok)':'var(--bad)'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}</td><td class="ws-action-sticky">${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap">${(p.type==='income' && !p.is_general_expense)?`<button class="icon-action-btn" data-tip="Create invoice" onclick="openInvoiceEditor({source:'payments',id:'${p.id}'})"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"8\" y1=\"13\" x2=\"16\" y2=\"13\"/><line x1=\"8\" y1=\"17\" x2=\"13\" y2=\"17\"/></svg></button>`:''}<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`; }).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
+    document.getElementById('paymentsTable').innerHTML = pays.map(p => { const isGenExp = p.is_general_expense; const dataType = isGenExp ? 'general_expense' : (p.type||''); const typeBadge = isGenExp ? `<span class="badge badge-clay">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}">${p.type}</span>`; return `<tr class="${p.archived?'archived-row':''}" data-type="${dataType}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><td>${fmtDate(p.date)}</td><td class="td-truncate td-desc" data-tip="${p.description||p.payer_name||''}">${p.description||p.payer_name||'—'}</td><td>${typeBadge}</td><td><span class="badge badge-gray">${p.category||'—'}</span></td><td><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></td><td style="font-weight:500;color:${p.type==='income'?'var(--ok)':'var(--bad)'}">${Number(p.amount) < 0 ? '\u2212' : (p.type==='income' ? '+' : '\u2212')}${fmt(Math.abs(Number(p.amount)||0))}</td><td class="ws-action-sticky">${adminPay?(p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<span class="action-wrap">${(p.type==='income' && !p.is_general_expense)?`<button class="icon-action-btn" data-tip="Create invoice" onclick="openInvoiceEditor({source:'payments',id:'${p.id}'})"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"8\" y1=\"13\" x2=\"16\" y2=\"13\"/><line x1=\"8\" y1=\"17\" x2=\"13\" y2=\"17\"/></svg></button>`:''}<button class="icon-action-btn" data-tip="Edit" onclick="openEdit('payments','${p.id}')">${PENCIL}</button><button class="icon-action-btn danger" data-tip="Delete" onclick="archiveRecord('payments','${p.id}','${p.payer_name||p.description||p.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></span>`):'—'}</td></tr>`; }).join('') || `<tr><td colspan="11" style="text-align:center;padding:3rem 1rem;">
       ${EMPTY_STATES.payments}
     </td></tr>`;
 
@@ -9427,7 +9425,7 @@ async function loadPayments() {
   setSearchFilterVisibility('payments', _hasData_payments);
   const _es_payments = document.getElementById('paymentsEmptyState');
   if (_es_payments) { _es_payments.innerHTML = EMPTY_STATES.payments; _es_payments.style.display = _hasData_payments ? 'none' : ''; }    const payCards = document.getElementById('paymentsCards');
-    if (payCards) payCards.innerHTML = pays.map(p => { const isGenExpC = p.is_general_expense; const dataTypeC = isGenExpC ? 'general_expense' : (p.type||''); const typeBadgeC = isGenExpC ? `<span class="badge badge-clay" class="mc-end">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" class="mc-end">${p.type}</span>`; return `<div class="m-card ${p.archived?'archived-row':''}" data-type="${dataTypeC}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--ok)':'var(--bad)'}">${p.type==='income'?'+':'-'}${fmt(p.amount)}${typeBadgeC}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val"><span class="badge badge-clay">${fmtMode(p.payment_mode)}</span></span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div class="m-card-foot">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openMDotsSheet('${p.id}','${p.payer_name||p.description||p.id}','payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`; }).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.payments + '</div>';
+    if (payCards) payCards.innerHTML = pays.map(p => { const isGenExpC = p.is_general_expense; const dataTypeC = isGenExpC ? 'general_expense' : (p.type||''); const typeBadgeC = isGenExpC ? `<span class="badge badge-clay" class="mc-end">General Expense</span>` : `<span class="badge ${p.type==='income'?'badge-green':'badge-red'}" class="mc-end">${p.type}</span>`; return `<div class="m-card ${p.archived?'archived-row':''}" data-type="${dataTypeC}" data-mode="${(p.payment_mode||'').toLowerCase()}" data-category="${p.category||''}" data-date="${p.date||''}"><div class="m-card-title" style="color:${p.type==='income'?'var(--ok)':'var(--bad)'}">${Number(p.amount) < 0 ? '\u2212' : (p.type==='income' ? '+' : '\u2212')}${fmt(Math.abs(Number(p.amount)||0))}${typeBadgeC}</div><div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val">${fmtDate(p.date)}</span></div><div class="m-card-row"><span class="m-card-label">Description</span><span class="m-card-val">${p.description||p.payer_name||'—'}</span></div><div class="m-card-row"><span class="m-card-label">Mode</span><span class="m-card-val">${p.payment_mode ? '<span class="badge badge-clay">' + fmtMode(p.payment_mode) + '</span>' : '—'}</span></div><div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${p.category||'—'}</span></div><div class="m-card-foot">${p.archived?`<button class="btn-restore" onclick="restoreRecord('payments','${p.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Restore</button>`:`<button aria-label="More actions" class="btn-dash btn-dash-outline btn-dash-sm mc-ib" onclick="openMDotsSheet('${p.id}','${p.payer_name||p.description||p.id}','payment',true,this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>`}</div></div>`; }).join('') || '<div class="mobile-cards-empty">' + EMPTY_STATES.payments + '</div>';
   } catch(e) { showToast('Error loading payments', 'error'); } finally { hideLoader(); }
 }
 
@@ -10285,12 +10283,12 @@ function setLeadTab(tab) {
   const existingBtn = document.getElementById('lead-tab-existing');
   const pickerSection = document.getElementById('lead-picker-section');
   if (manualBtn) {
-    manualBtn.style.background = isExisting ? 'transparent' : 'var(--acc-tx)';
-    manualBtn.style.color = isExisting ? 'var(--tx3)' : 'var(--bg)';
+    manualBtn.style.background = isExisting ? 'transparent' : 'var(--acc)';
+    manualBtn.style.color = isExisting ? 'var(--tx2)' : 'var(--on-acc)';
   }
   if (existingBtn) {
-    existingBtn.style.background = isExisting ? 'var(--acc-tx)' : 'transparent';
-    existingBtn.style.color = isExisting ? 'var(--bg)' : 'var(--tx3)';
+    existingBtn.style.background = isExisting ? 'var(--acc)' : 'transparent';
+    existingBtn.style.color = isExisting ? 'var(--on-acc)' : 'var(--tx2)';
   }
   if (pickerSection) pickerSection.style.display = isExisting ? '' : 'none';
   if (isExisting) {
@@ -11277,7 +11275,7 @@ async function loadBin(manual) {
     }
     updateBinCount(allItems.length);
     if (!allItems.length) {
-      container.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🗑️</div><div class="empty-state-title">Bin is empty</div><div class="empty-state-sub">Items you move to bin will appear here</div></div>';
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div><div class="empty-state-title">Bin is empty</div><div class="empty-state-sub">Items you move to bin will appear here</div></div>';
       return;
     }
     const groups = {};
@@ -11336,7 +11334,7 @@ async function loadBin(manual) {
     `).join('');
     if (_binManualRefresh) { showToast('✓ Bin refreshed', 'success'); _binManualRefresh = false; }
   } catch(e) {
-    container.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">⚠️</div><div class="empty-state-title">Could not load bin</div><div class="empty-state-sub">Check your connection and try again</div></div>';
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="empty-state-title">Could not load bin</div><div class="empty-state-sub">Check your connection and try again</div></div>';
     showToast('Error loading bin', 'error');
   }
 }
@@ -11636,7 +11634,7 @@ document.addEventListener('touchmove', function(e) {
 async function loadNotifications() {
   const container = document.getElementById('notificationsContainer');
   const actions = document.getElementById('notifActions');
-  const emptyState = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🔔</div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>';
+  const emptyState = '<div class="empty-state"><div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>';
   if (actions) actions.style.display = 'none';
   container.innerHTML = '<div class="empty-state"><div class="spinner" style="margin-bottom:1rem;"></div>Loading...</div>';
   try {
@@ -11711,7 +11709,7 @@ function renderNotifications(items) {
 
   if (!items.length) {
     const el = document.getElementById('notificationsContainer');
-    el.innerHTML = '<div class="empty-state"><div style="font-size:3rem;margin-bottom:0.5rem;">🔔</div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>';
+    el.innerHTML = '<div class="empty-state"><div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>';
     if (actions) actions.style.display = 'none';
     if (tabsWrap) tabsWrap.style.display = 'none';
     return;
@@ -11969,7 +11967,7 @@ function buildPhoneWrap(inputId, phone, ccId, country) {
     // Several countries share a dial code (+1 is USA and Canada), so the stored
     // country name decides the tie instead of whichever comes first in the list.
     const allCodes = getCountryCodes().sort((a,b) => b[0].length - a[0].length);
-    const matches = allCodes.filter(c => localNum.startsWith(c[0] + ' ') || localNum === c[0]);
+    const matches = allCodes.filter(c => localNum.startsWith(c[0] + ' ') || localNum === c[0] || localNum.startsWith(c[0]));
     if (matches.length) {
       const tied = matches.filter(c => c[0].length === matches[0][0].length);
       const wanted = (country || '').trim().toLowerCase();
@@ -12647,7 +12645,7 @@ function openMobileSearch() {
 function closeMobileSearch() {
   document.getElementById('mobileSearchFullscreen').classList.remove('open');
   unlockScroll();
-  document.getElementById('mobileTopbar').style.display = 'flex';
+  document.getElementById('mobileTopbar').style.display = (typeof isPhoneLayout === 'function' && !isPhoneLayout()) ? 'none' : 'flex';
   const input = document.getElementById('mobileSearchInput');
   if (input) input.value = '';
   _msChip = 'all';
@@ -15115,7 +15113,7 @@ async function doObsPopupToggle(rec, newCount) {
 </script>
 
 <!-- ── OBSERVER CHECK-IN POPUP ── -->
-<div class="modal-overlay" id="modal-obsCheckin" style="background:rgba(10,6,3,0.7);backdrop-filter:blur(2px);z-index:30000;" onclick="if(event.target===this)closeObsPopup()">
+<div class="modal-overlay" id="modal-obsCheckin" style="background:var(--overlay);backdrop-filter:blur(2px);z-index:var(--z-dialog);" onclick="if(event.target===this)closeObsPopup()">
   <div class="modal" style="width:340px;max-width:calc(100vw - 2rem);background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 65%, transparent);border-radius:var(--r-md);box-shadow:0 20px 60px rgba(0,0,0,0.5);overflow:hidden;padding:0;">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;padding:1.5rem 1.5rem 0.4rem;">
       <div>
@@ -15131,7 +15129,7 @@ async function doObsPopupToggle(rec, newCount) {
 </div>
 
 <!-- ── REASSIGN PAYMENT MODAL ── -->
-<div class="modal-overlay" id="modal-reassignPayment" style="background:rgba(10,6,3,0.75);backdrop-filter:blur(2px);z-index:30000;" onclick="if(event.target===this)closeReassignPayment()">
+<div class="modal-overlay" id="modal-reassignPayment" style="background:var(--overlay);backdrop-filter:blur(2px);z-index:var(--z-dialog);" onclick="if(event.target===this)closeReassignPayment()">
   <div class="modal" style="max-width:400px;background:var(--s2);border:1px solid color-mix(in srgb, var(--acc-tx) 65%, transparent);box-shadow:0 20px 60px rgba(0,0,0,0.5);">
     <div class="modal-header">
       <div class="modal-title">Edit Payment Category</div>
@@ -18600,9 +18598,9 @@ html body .dash-section-title { font-size: var(--fs-3xl) !important; font-weight
 html body .dash-section-subtitle { font-size: var(--fs-ui) !important; color: var(--tx2) !important; line-height: var(--lh-snug); }
 html body .app-bar-title, html body .form-page-title, html body .modal-title, html body .filter-sheet-title, html body .mobile-picker-sheet-title, html body .settings-card-title, html body .td-head h3, html body .checkin-header-title, html body .login-title {
   font-size: var(--fs-lg) !important; font-weight: var(--fw-semibold); line-height: var(--lh-tight); color: var(--tx) !important; }
-html body .overview-card-head, html body .mobile-section-heading, html body .ag-lbl, html body .nav-section-label, html body .dash-nav-label, html body .search-group-label, html body .mp-lbl, html body .form-label {
+html body .overview-card-head, html body .mobile-section-heading, html body .ag-lbl, html body .nav-section-label, html body .dash-nav-label, html body .search-group-label, html body .mp-lbl {
   font-size: var(--fs-sm) !important; font-weight: var(--fw-semibold); letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--tx3) !important; }
-html body .form-label { text-transform: none; letter-spacing: 0; font-size: var(--fs-md) !important; color: var(--tx2) !important; margin-bottom: var(--sp-2); }
+html body .form-label { font-size: var(--fs-md) !important; font-weight: var(--fw-medium); color: var(--tx2) !important; margin-bottom: var(--sp-2); }
 html body .empty-state-sub, html body .person-caption, html body .inv-date-hint, html body .form-hint, html body .wa-kind { font-size: var(--fs-sm) !important; color: var(--tx2) !important; line-height: var(--lh-snug); }
 html body .settings-card-sub { font-size: var(--fs-md) !important; color: var(--tx2) !important; line-height: var(--lh-snug); }
 html body .empty-state-title { font-size: var(--fs-lg) !important; font-weight: var(--fw-semibold); color: var(--tx) !important; }
@@ -18645,7 +18643,7 @@ html body .icon-action-btn:active, html body .app-bar-btn:active, html body .pg-
 html body .icon-action-btn.danger { color: var(--bad); }
 html body .icon-action-btn.danger:hover { background: var(--bad-soft); }
 html body .icon-action-btn svg, html body .app-bar-btn svg, html body .pg-ib svg, html body .mc-ib svg { width: var(--icon-md); height: var(--icon-md); }
-html body .app-bar-btn { background: var(--s2) !important; border-color: transparent; }
+html body .app-bar-btn { border-color: transparent; }
 /* table-row icon buttons stay compact on desktop */
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
   html body .dash-table-wrap .icon-action-btn { min-width: var(--ctl-h-sm); min-height: var(--ctl-h-sm); width: var(--ctl-h-sm); height: var(--ctl-h-sm); padding: 0; }
@@ -18671,8 +18669,9 @@ html body .form-input::placeholder, html body .section-search-input::placeholder
 html body .form-input:focus, html body .section-search-input:focus, html body .global-search-input:focus, html body .wa-search input:focus, html body .form-select-btn:focus-visible, html body .date-picker-btn:focus-visible, html body .custom-select-btn:focus-visible, html body .mobile-search-fs-input:focus, html body .wa-input:focus {
   border-color: var(--acc) !important; box-shadow: var(--focus) !important; outline: none !important; }
 html body .form-select-btn.open, html body .date-picker-btn.open, html body .custom-select-btn.open { border-color: var(--acc) !important; }
-html body .form-input.error, html body .form-input[aria-invalid="true"], html body .form-group.error .form-input, html body .field-error ~ .form-input { border-color: var(--bad) !important; }
-html body .field-error, html body .login-error { color: var(--bad); font-size: var(--fs-sm); margin-top: var(--sp-1); }
+html body .form-input.field-error, html body .form-input[aria-invalid="true"] { border-color: var(--bad) !important; background: color-mix(in srgb, var(--bad) 6%, transparent) !important; }
+html body .form-input.field-error:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 28%, transparent) !important; }
+html body .login-error { color: var(--bad); font-size: var(--fs-sm); margin-top: var(--sp-1); }
 html body .form-input:disabled, html body .form-input[readonly] { opacity: var(--dis-op); cursor: not-allowed; }
 html body .form-group { margin-bottom: var(--sp-5); }
 html body .form-row { gap: var(--sp-3); }
@@ -18693,6 +18692,7 @@ html body .sch-chip, html body .fr-chip, html body .ms-chip, html body .td-chip,
 html body .sch-chip.on, html body .fr-chip.on, html body .ms-chip.on, html body .wa-tab.on, html body .wa-tab.active, html body .notif-tab.on, html body .inv-fstatus.on, html body .mobile-filter-btn.has-active, html body .filter-dd-btn.has-active, html body .mobile-active-chip {
   background: var(--sel-bg) !important; color: var(--sel-tx) !important; border-color: transparent !important; }
 html body .sch-chip.on { background: var(--acc) !important; color: var(--on-acc) !important; }
+html body .sch-chip:active, html body .fr-chip:active, html body .ms-chip:active, html body .wa-tab:active, html body .filter-dd-btn:active, html body .mobile-filter-btn:active, html body .thm-pick button:active { transform: scale(0.97); }
 html body .fr-chip-off { opacity: 0.55; }
 /* segmented controls: one track, one thumb */
 html body .ag-seg, html body .inv-seg, html body .sch-seg, html body .tw-seg, html body .thm-seg {
@@ -18729,7 +18729,7 @@ html body .badge { text-transform: uppercase; }
 html body .badge-green, html body .td-tag, html body .hl-pill { background: var(--ok-soft) !important; color: var(--ok) !important; }
 html body .badge-red, html body .inv-cancelled-badge, html body .ws-cancelled-badge { background: var(--bad-soft) !important; color: var(--bad) !important; }
 html body .badge-clay, html body .badge-blue, html body .inv-auto-badge, html body .enr-pill { background: var(--acc-soft) !important; color: var(--acc-tx) !important; }
-html body .badge-gray, html body .badge-stone, html body .wa-tag { background: var(--s2) !important; color: var(--tx2) !important; }
+html body .badge-gray, html body .badge-stone { background: var(--s2) !important; color: var(--tx2) !important; }
 html body .td-tag.wt { background: var(--warn-soft) !important; color: var(--warn) !important; }
 html body .app-tab-badge, html body .notif-badge, html body #sidebarWaBadge, html body #mobileWaBadge, html body .wa-unread { background: var(--bad) !important; color: var(--on-bad) !important; font-size: var(--fs-2xs); font-weight: var(--fw-bold); border-radius: var(--r-pill); min-width: 18px; height: 18px; padding: 0 5px; display: inline-flex; align-items: center; justify-content: center; }
 
@@ -18859,6 +18859,71 @@ html body .m-card, html body .td-row, html body .wa-row, html body .mp-it, html 
   html body .m-card:active, html body .wa-row:active, html body .mp-it:active, html body .td-row:active { background: var(--s2) !important; }
 }
 
+
+/* ── 13 · v185 FINAL AUDIT FIXES (independent review) ────────────────── */
+/* confirm dialogs: one component. Box, buttons, destructive emphasis */
+html body #archiveConfirmModal > div, html body #cancelWsModal > div, html body #customConfirmModal > div, html body #deleteForeverModal > div {
+  background: var(--s1) !important; border: var(--bw) solid var(--line) !important; border-radius: var(--r-xl) !important; box-shadow: var(--sh-3) !important; max-width: 360px !important; }
+html body #archiveConfirmModal > div > div:last-child, html body #cancelWsModal > div > div:last-child, html body #customConfirmModal > div > div:last-child, html body #deleteForeverModal > div > div:last-child {
+  display: flex; gap: var(--sp-2); padding: 0 var(--sp-4) var(--sp-4) !important; border-top: 0 !important; }
+html body #archiveConfirmModal > div > div:last-child > button, html body #cancelWsModal > div > div:last-child > button, html body #customConfirmModal > div > div:last-child > button, html body #deleteForeverModal > div > div:last-child > button {
+  flex: 1; min-height: var(--ctl-h-md); padding: 0 var(--sp-4) !important; border-radius: var(--r-pill) !important; border: var(--bw) solid var(--line) !important;
+  background: var(--s2) !important; color: var(--tx) !important; font-size: var(--fs-ui) !important; font-weight: var(--fw-medium) !important; font-family: var(--font-body);
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
+html body #archiveConfirmModal > div > div:last-child > button:active, html body #customConfirmModal > div > div:last-child > button:active, html body #deleteForeverModal > div > div:last-child > button:active, html body #cancelWsModal > div > div:last-child > button:active { transform: scale(0.97); }
+html body #customConfirmModal #customConfirmOkBtn { background: var(--acc) !important; color: var(--on-acc) !important; border-color: transparent !important; font-weight: var(--fw-semibold) !important; }
+html body #archiveConfirmModal #archiveConfirmBtn, html body #deleteForeverModal #deleteForeverBtn, html body #cancelWsModal #cancelWsBtn, html body #customConfirmModal.is-danger #customConfirmOkBtn { background: var(--bad-soft) !important; color: var(--bad) !important; border-color: transparent !important; font-weight: var(--fw-semibold) !important; }
+@media (hover: hover) and (pointer: fine) {
+  html body #archiveConfirmModal #archiveConfirmBtn:hover, html body #deleteForeverModal #deleteForeverBtn:hover, html body #cancelWsModal #cancelWsBtn:hover, html body #customConfirmModal.is-danger #customConfirmOkBtn:hover { background: var(--bad) !important; color: var(--on-bad) !important; }
+  html body #customConfirmModal:not(.is-danger) #customConfirmOkBtn:hover { background: var(--acc-h) !important; }
+}
+html body #customConfirmModal.is-danger #customConfirmIcon, html body #archiveConfirmModal > div svg, html body #cancelWsModal > div > div:first-child svg { color: var(--bad) !important; }
+html body #customConfirmModal.is-danger #customConfirmIcon { background: var(--bad-soft) !important; border-color: color-mix(in srgb, var(--bad) 40%, transparent) !important; }
+html body #customConfirmModal #customConfirmIcon { background: var(--acc-soft); border-color: color-mix(in srgb, var(--acc-tx) 40%, transparent); color: var(--acc-tx); }
+html body #archiveConfirmModal > div > div:first-child, html body #cancelWsModal > div > div:first-child, html body #customConfirmModal > div > div:first-child, html body #deleteForeverModal > div > div:first-child { color: var(--tx); }
+html body #archiveConfirmModal p, html body #cancelWsModal p, html body #customConfirmDesc, html body #deleteForeverModal p { color: var(--tx2) !important; font-size: var(--fs-ui); line-height: var(--lh-body); }
+/* toasts: inverted surface, kind on the icon chip */
+html body .toast .toast-ic { background: var(--tx3); color: var(--bg); }
+html body .toast.success .toast-ic { background: var(--ok); color: var(--on-ok); }
+html body .toast.error .toast-ic { background: var(--bad); color: var(--on-bad); }
+html body .toast.warning .toast-ic { background: var(--warn); color: var(--on-warn); }
+/* notification text never clips on a long token */
+html body .notif-msg, html body .notif-item > div { min-width: 0; overflow-wrap: anywhere; }
+/* desktop tables: a thin scrollbar says there is more, the pinned Action column is solid */
+html body .dash-table-wrap { scrollbar-width: thin; }
+html body .dash-table-wrap table thead .ws-action-sticky { background: var(--s2) !important; }
+html body .dash-table-wrap table tbody .ws-action-sticky { background: var(--s1) !important; }
+html body .dash-table-wrap .btn-dash, html body .dash-table-wrap .btn-dash-sm { min-height: var(--ctl-h-sm); }
+/* secondary buttons share one height outside tables and cards; -sm only inside them */
+html body .btn-dash-sm:not(.dash-table-wrap *):not(.m-card *):not(.td-card *):not(.ag-card *):not(.mobile-cards *):not(.m-card-foot *):not(.hl-acts *):not(.wa-ai-row *) { min-height: var(--ctl-h-md); font-size: var(--fs-ui); }
+html body .sch-today, html body .sch-blk { min-height: var(--ctl-h-md); height: auto !important; padding: 0 var(--sp-4) !important; border-radius: var(--r-pill) !important; border: var(--bw) solid var(--line) !important; background: var(--s2) !important; color: var(--tx) !important; font-size: var(--fs-md) !important; font-weight: var(--fw-medium); }
+html body .dash-section-title { font-weight: var(--fw-bold) !important; }
+html body .dash-section-count { font-size: var(--fs-ui); opacity: 1; color: var(--tx2); }
+/* Add Lead segment */
+html body #lead-tab-manual, html body #lead-tab-existing { min-height: var(--ctl-h-md); padding: 0 var(--sp-4) !important; font-size: var(--fs-md) !important; font-weight: var(--fw-medium) !important; }
+/* desktop: filter sheet becomes a centred dialog, inbox chips wrap, no phone back button in the thread */
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
+  html body .filter-sheet:not(.open) { display: none !important; }
+  html body .filter-sheet.open { left: 50% !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translate(-50%, -50%) !important; width: min(440px, calc(100vw - 48px)) !important; height: auto !important; max-height: 80vh !important; border-radius: var(--r-xl) !important; border: var(--bw) solid var(--line) !important; }
+  html body .filter-sheet-footer { padding-bottom: var(--sp-3); }
+  html body .wa-tabs { flex-wrap: wrap !important; overflow: visible !important; row-gap: var(--sp-2); }
+  html body #section-whatsapp .wa-back { display: none !important; }
+}
+/* small screens: long values wrap, big tiles step down, the inbox title lines up with the others */
+html body .settings-profile-email, html body .mp-me small { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 360px) { html body .insight-tile-val { font-size: var(--fs-xl) !important; } }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body #section-whatsapp .dash-section-header, html body #section-whatsapp > .dash-section-head { padding-left: var(--gutter); padding-right: var(--gutter); }
+  /* the sidebar is off-screen on phones: keep it out of the Tab order */
+  html body .dash-sidebar:not(.open) { visibility: hidden; }
+  html body .dash-sidebar.open { visibility: visible; }
+  html body .mobile-topbar:not(.scrolled):not(.menu-open) { visibility: hidden; transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease), visibility 0s linear var(--dur); }
+  html body .mobile-topbar.scrolled { visibility: visible; transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease), visibility 0s; }
+  html body .dash-sidebar:not(.open) { transition: transform var(--dur-slow) var(--ease), visibility 0s linear var(--dur-slow); }
+}
+/* empty states: one icon style in every theme (was emoji) */
+html body .empty-state-ic { width: 56px; height: 56px; border-radius: 50%; background: var(--s2); color: var(--tx3); display: grid; place-items: center; margin: 0 auto var(--sp-2); }
+
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -18866,7 +18931,8 @@ html body .modal-overlay, html body .filter-sheet-backdrop, html body .mobile-pi
 html { scroll-behavior: auto; }
 @media (prefers-reduced-motion: reduce) {
   /* tokens are already 0ms; this covers the few fixed durations left in older rules. Spinners keep turning. */
-  html, html body, html body *, html body [class][class], html body [id][id], html body [class][class]::before, html body [class][class]::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  html, html body, html body *:not(#appSplash):not(#appSplash *), html body [class][class]:not(#appSplash *), html body [id][id]:not(#appSplash), html body [class][class]:not(#appSplash *)::before, html body [class][class]:not(#appSplash *)::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  html body #appSplash, html body #appSplash * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   html body .spinner[class], html body .btn-dash.loading::after, html body .btn-dash-save.loading::after { animation: spin 1.6s linear infinite !important; }
   html body .upd-spin[class] { animation: updspin 1.6s linear infinite !important; }
   html body .ptr.spin[class] svg { animation: ptrspin 1.6s linear infinite !important; }
