@@ -163,7 +163,8 @@ window.STUDIO_THEMES = {
   --ctl-h-sm: 36px;        /* small buttons in cards and table rows */
   --ctl-fs: var(--fs-body);
   --tap: 44px;             /* minimum touch target */
-  --bar-h: 76px;           /* v188: compact app bar on phones (title, back, + centred; buttons --bar-btn) */
+  --sat: env(safe-area-inset-top, 0px);     /* v189: status-bar inset as a var, so bar rules can add it and tests can fake it */
+  --bar-h: 76px;           /* v188: compact app bar on phones, NOT counting --sat (title, back, + centred; buttons --bar-btn) */
   --bar-btn: 48px;         /* round buttons in that bar; 14px air above and below */
   --icon-sm: 16px; --icon-md: 20px; --icon-lg: 24px;
   --avatar: 40px; --stroke: 2px;
@@ -4429,7 +4430,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v188</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v189</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4503,7 +4504,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v188</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v189</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -19035,7 +19036,7 @@ html body .sch-nav .sch-today { margin-left: auto; }
   html body .sch-nav { justify-content: flex-start; }
   /* compact app bar: one height, everything centred in it */
   html body .mobile-topbar { min-height: var(--bar-h); padding-top: 0 !important; padding-bottom: 0 !important; }
-  html.studio-app body .mobile-topbar { padding-top: env(safe-area-inset-top, 0px) !important; }
+  html.studio-app body .mobile-topbar { padding-top: var(--sat) !important; min-height: calc(var(--bar-h) + var(--sat)); }   /* v189: the inset sits on top of the bar, not inside it */
   html body .app-bar-title { top: auto; bottom: 0; height: var(--bar-h); line-height: var(--lh-tight); display: flex; align-items: center; justify-content: center; }
   html body .mobile-topbar.pg-sub .app-bar-back { bottom: 0; height: var(--bar-h); }
   html body .mobile-topbar > div:last-child { align-self: center; }
@@ -19045,7 +19046,7 @@ html body .sch-nav .sch-today { margin-left: auto; }
   html body .mobile-topbar.pg-sub .app-bar-back svg { width: 28px; height: 28px; }
   /* pull to refresh: the indicator lives in the gap that opens above the page */
   html body .ptr { top: 0 !important; transform: translateY(-38px); }
-  html.studio-app body .ptr { top: env(safe-area-inset-top, 0px) !important; }
+  html.studio-app body .ptr { top: var(--sat) !important; }
 }
 /* form-page header: the side slots (back, action) take their width first, the title gets the rest and wraps to
    two lines. The old columns gave the title max-content and squeezed the sides to 48px, so a long title
@@ -19054,7 +19055,7 @@ html body .form-page .form-page-header { grid-template-columns: minmax(max-conte
 @media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
   /* same height as the compact app bar, content centred in it */
   html body .form-page .form-page-header { min-height: var(--bar-h); padding-top: 0 !important; padding-bottom: 0 !important; }
-  html.studio-app body .form-page .form-page-header { padding-top: env(safe-area-inset-top, 0px) !important; }
+  html.studio-app body .form-page .form-page-header { padding-top: var(--sat) !important; }   /* content-box: the inset padding adds on top of --bar-h by itself */
 }
 /* class log: student name as the first body line, summary under it */
 html body .cl-who { margin-bottom: var(--sp-6); }
