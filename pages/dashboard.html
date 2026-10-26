@@ -163,6 +163,7 @@ window.STUDIO_THEMES = {
   --ctl-h-sm: 36px;        /* small buttons in cards and table rows */
   --ctl-fs: var(--fs-body);
   --tap: 44px;             /* minimum touch target */
+  --bar-h: 60px;           /* v187: compact app bar on phones (title, back, + all centred in it) */
   --icon-sm: 16px; --icon-md: 20px; --icon-lg: 24px;
   --avatar: 40px; --stroke: 2px;
 
@@ -208,6 +209,7 @@ body, body.dark-mode {
   --dis-op: 0.45;
   --s-elev: var(--s1);  /* elevated surface: light = s1 + shadow, dark = s2 */
   --on-bad: #ffffff; --on-ok: #ffffff; --on-warn: #1a1204;  /* text on a solid status fill */
+  --focus-line: 0 0 0 1px var(--acc-tx);  /* v187: fields show one crisp 2px accent line when focused, no glow */
 }
 body.dark-mode { --s-elev: var(--s2); --on-bad: #1c0b0b; --on-ok: #04140b; --on-warn: #1a1204; }
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
@@ -4426,7 +4428,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v186</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v187</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4500,7 +4502,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v186</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v187</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5604,7 +5606,7 @@ table#paymentsTable { min-width: 700px; }
       </div>
     </div>
     <div id="vpParticipantsList">
-      <div class="empty-state" style="min-height:40vh;"><div class="spinner"></div></div>
+      <div class="ds-skel" role="status" aria-label="Loading"><i class="t"></i><i class="l1"></i><i class="l2"></i></div><div class="ds-skel" aria-hidden="true"><i class="t"></i><i class="l1"></i><i class="l3"></i></div>
     </div>
   </div></div>
 </div>
@@ -6518,7 +6520,7 @@ table#paymentsTable { min-width: 700px; }
   </div>
   <div class="checkin-body">
     <div class="checkin-grid" id="checkinGrid">
-      <div class="empty-state"><div class="spinner"></div></div>
+      <div class="ds-skel" role="status" aria-label="Loading"><i class="t"></i><i class="l1"></i><i class="l2"></i></div><div class="ds-skel" aria-hidden="true"><i class="t"></i><i class="l1"></i><i class="l3"></i></div><div class="ds-skel" aria-hidden="true"><i class="t"></i><i class="l2"></i><i class="l3"></i></div>
     </div>
   </div>
 </div>
@@ -7447,13 +7449,23 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     const t = document.querySelector('#section-' + name + ' .dash-section-title');
     const top = window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches ? m.getBoundingClientRect().top : bar.getBoundingClientRect().bottom;
     bar.classList.toggle('scrolled', !!t && t.getBoundingClientRect().bottom < top + 4);
-    // v179: the large title shrinks smoothly as it slides under the bar.
-    if (t && isPhoneLayout()) { const k = Math.min(1, Math.max(0, m.scrollTop / 64)); t.style.transform = k ? 'scale(' + (1 - 0.38 * k).toFixed(3) + ')' : ''; t.style.opacity = k ? (1 - 0.5 * k).toFixed(2) : ''; }
-    if (m.scrollTop > 2) { const p = document.querySelector('.ptr'); if (p && !p.classList.contains('spin')) { p.style.opacity = 0; p.style.transform = 'translateY(-40px)'; } }
+    // v187: the large title no longer shrinks or fades while scrolling (it stuttered on phones); the bar simply slides in.
+    if (m.scrollTop > 2) { const p = document.querySelector('.ptr'); if (p && !p.classList.contains('spin')) { p.style.opacity = 0; p.style.transform = 'translateY(-38px)'; } }
   }, true);
-  // Pull to refresh (touch, phone layout only).
+  // Pull to refresh (touch, phone layout only). v187: the page itself follows the finger and
+  // springs back, the indicator sits in the gap that opens above it.
   let startY = null, startX = 0, axis = null, pulling = false, dist = 0, busy = false, ind = null;
-  const MAX = 90, TRIGGER = 64;
+  const MAX = 90, TRIGGER = 64, HOLD = 56, IND = 38;
+  function pageTo(y, animate) {
+    const m = main(); if (!m) return;
+    m.style.transition = animate ? 'transform var(--dur-slow) var(--ease)' : 'none';
+    m.style.transform = y ? 'translateY(' + y + 'px)' : '';
+    if (!y && animate) setTimeout(() => { if (!pulling && !busy) m.style.transition = ''; }, 400);
+  }
+  function indTo(y, op, animate) {
+    const el = indicator(); el.style.transition = animate ? 'transform var(--dur-slow) var(--ease), opacity var(--dur) var(--ease)' : 'none';
+    el.style.opacity = op; el.style.transform = 'translateY(' + Math.max(-IND, (y - IND) / 2) + 'px)';
+  }
   function indicator() {
     if (!ind) { ind = document.createElement('div'); ind.className = 'ptr'; ind.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>'; document.body.appendChild(ind); }
     return ind;
@@ -7470,25 +7482,26 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     const dy = e.touches[0].clientY - startY, dx = e.touches[0].clientX - startX;
     // v161: decide the direction once, after 10px. A sideways swipe never refreshes.
     if (!axis) { if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return; axis = Math.abs(dy) > Math.abs(dx) * 1.5 ? 'y' : 'x'; }
-    if (axis === 'x') { if (pulling) { pulling = false; indicator().style.opacity = 0; } startY = null; return; }
-    const m = main(); if (dy <= 0 || (m && m.scrollTop > 0)) { if (pulling) { pulling = false; indicator().style.opacity = 0; } return; }
+    if (axis === 'x') { if (pulling) { pulling = false; indTo(0, 0, true); pageTo(0, true); } startY = null; return; }
+    const m = main(); if (dy <= 0 || (m && m.scrollTop > 0)) { if (pulling) { pulling = false; indTo(0, 0, true); pageTo(0, true); } return; }
     pulling = true; dist = Math.min(MAX, dy * 0.5);
-    const el = indicator(); el.style.transition = 'none'; el.style.opacity = Math.min(1, dist / TRIGGER);
-    el.style.transform = 'translateY(' + (dist - 30) + 'px) rotate(' + (dist * 4) + 'deg)';
+    pageTo(dist, false);
+    indTo(dist, Math.min(1, dist / TRIGGER), false);
+    indicator().firstElementChild.style.transform = 'rotate(' + (dist * 4) + 'deg)';
   }, { passive: true });
   document.addEventListener('touchcancel', () => {
     if (startY == null) return; startY = null; pulling = false;
-    const el = indicator(); el.style.transition = 'transform .2s, opacity .2s'; el.style.opacity = 0; el.style.transform = 'translateY(-40px)';
+    indTo(0, 0, true); pageTo(0, true);
   }, { passive: true });
   document.addEventListener('touchend', async () => {
     if (startY == null) return; startY = null;
-    const el = indicator(); el.style.transition = 'transform .2s, opacity .2s';
-    if (!pulling || dist < TRIGGER) { el.style.opacity = 0; el.style.transform = 'translateY(-40px)'; return; }
-    busy = true; el.classList.add('spin'); el.style.transform = 'translateY(20px)';
+    if (!pulling || dist < TRIGGER) { pulling = false; indTo(0, 0, true); pageTo(0, true); return; }
+    busy = true; pulling = false; const el = indicator(); el.firstElementChild.style.transform = ''; el.classList.add('spin');
+    pageTo(HOLD, true); indTo(HOLD, 1, true);
     const name = sessionStorage.getItem('dash_section') || 'today';
     try { await Promise.all([Promise.resolve(loadSection(name)), new Promise(r => setTimeout(r, 700))]); } catch (e) {}
     try { if (typeof waRefreshBadge === 'function') waRefreshBadge(); } catch (e) {}
-    el.classList.remove('spin'); el.style.opacity = 0; el.style.transform = 'translateY(-40px)'; busy = false;
+    el.classList.remove('spin'); busy = false; indTo(0, 0, true); pageTo(0, true);
   });
 })();
 
@@ -7859,10 +7872,11 @@ function loadAll() {
   if (typeof waBadgeStart === 'function') waBadgeStart();
 }
 async function syncAll() {
-  showLoader('Refreshing data...');
+  const cur = sessionStorage.getItem('dash_section') || 'overview';
+  showLoader();
   Object.keys(_searchFetchedEntities).forEach(k => delete _searchFetchedEntities[k]);
   try {
-    await loadSection('overview');
+    await loadSection(cur);
     showToast('↻ Data refreshed', 'success');
   } catch(e) {
     showToast('Refresh failed — check your connection', 'error');
@@ -8652,7 +8666,7 @@ async function openClassLog(studentId) {
   d.value = localISODate();
   if (d._dpRefresh) d._dpRefresh();
   document.getElementById('cl-note').value = '';
-  document.getElementById('clList').innerHTML = '<div class="empty-state" style="min-height:20vh;"><div class="spinner"></div></div>';
+  document.getElementById('clList').innerHTML = skelHTML(2, 3);
   openFormPage('classLog');
   renderClassLog();
 }
@@ -10182,9 +10196,10 @@ async function loadInsights() {
 
 // ── SYNC ──
 async function syncAll() {
-  showLoader('Refreshing data...');
+  const cur = sessionStorage.getItem('dash_section') || 'overview';
+  showLoader();
   try {
-    await loadSection('overview');
+    await loadSection(cur);
     showToast('✓ Data refreshed', 'success');
   } catch(e) {
     showToast('Refresh failed — check your connection', 'error');
@@ -11576,20 +11591,22 @@ function unlockScroll() {
   if (dashMain) { dashMain.style.overflow = ''; dashMain.style.touchAction = ''; if (dashMain._scrollTop !== undefined) { dashMain.scrollTop = dashMain._scrollTop; } }
 }
 // v186: one loading look everywhere. Inline loads show a skeleton; the full-screen loader spins the logo once.
-function skelHTML(rows = 3, cards = 1) {
+function skelHTML(rows = 3, cards = 1, kind = 'card') {
   let h = '';
-  for (let c = 0; c < cards; c++) { h += '<div class="ds-skel" role="status" aria-label="Loading"><i class="t"></i>'; for (let r = 0; r < rows; r++) h += '<i class="l' + ((r % 3) + 1) + '"></i>'; h += '</div>'; }
+  if (kind === 'row') { for (let c = 0; c < cards; c++) h += '<div class="ds-skel ds-skel-row"' + (c ? ' aria-hidden="true"' : ' role="status" aria-label="Loading"') + '><i class="av"></i><span><i class="t"></i><i class="l' + ((c % 2) + 2) + '"></i></span></div>'; return h; }
+  for (let c = 0; c < cards; c++) { h += '<div class="ds-skel"' + (c ? ' aria-hidden="true"' : ' role="status" aria-label="Loading"') + '><i class="t"></i>'; for (let r = 0; r < rows; r++) h += '<i class="l' + ((r % 3) + 1) + '"></i>'; h += '</div>'; }
   return h;
 }
-function showLoader(text = 'Loading...') {
-  document.getElementById('loadingText').textContent = text;
-  document.getElementById('loadingOverlay').classList.add('active');
-  lockScroll();
+/* v187: one loading treatment everywhere. Refresh puts the current page back into its skeleton
+   state and reloads it; the old full-screen logo overlay is gone. */
+function skelSection(name) {
+  const sec = document.getElementById('section-' + (name || sessionStorage.getItem('dash_section') || 'overview'));
+  if (!sec) return;
+  sec.querySelectorAll('tbody[id]').forEach(tb => { const n = (sec.querySelector('thead tr') || tb.closest('table')?.querySelector('thead tr'))?.children.length || 6; tb.innerHTML = '<tr><td colspan="' + n + '" class="loading"></td></tr>'; });
+  sec.querySelectorAll('.mobile-cards').forEach(mc => { mc.innerHTML = ''; });
 }
-function hideLoader() {
-  document.getElementById('loadingOverlay').classList.remove('active');
-  unlockScroll();
-}
+function showLoader(text) { /* v187: no blocking overlay; pages show skeletons while they load */ skelSection(); }
+function hideLoader() {}
 
 // ── TOAST ──
 function showToast(msg, type) {
@@ -11863,6 +11880,30 @@ function openCCPicker(btnId, ccId, prefixId) {
   closeAllCCPickers();
   const btn = document.getElementById(btnId);
   if (!btn) return;
+  // v187: on a phone the country list is the same bottom sheet every other select uses.
+  if (isPhoneLayout() && typeof openMobilePicker === 'function') {
+    const currentCC = document.getElementById(ccId)?.value || '+91';
+    openMobilePicker('Country code', body => {
+      const wrap = document.createElement('div'); wrap.className = 'cc-sheet-search';
+      const q = document.createElement('input'); q.className = 'form-input'; q.id = 'cc-sheet-q'; q.type = 'search'; q.placeholder = 'Search country'; q.autocomplete = 'off'; q.setAttribute('aria-label', 'Search country');
+      q.oninput = () => filterCCSheet(q.value);
+      wrap.appendChild(q); body.appendChild(wrap);
+      const list = document.createElement('div'); list.className = 'cc-sheet-list'; list.id = 'cc-sheet-list';
+      getCountryCodes().forEach(([dial, flag, name]) => {
+        const row = document.createElement('div');
+        row.className = 'mobile-picker-opt cc-opt' + (dial === currentCC ? ' selected' : '');
+        row.dataset.q = (name + ' ' + dial).toLowerCase();
+        row.innerHTML = '<span class="cc-flag"></span><span class="mobile-picker-opt-text"></span><span class="cc-dial"></span>';
+        row.children[0].textContent = flag; row.children[1].textContent = name; row.children[2].textContent = dial;
+        row.onclick = () => selectCC(dial, flag, name, btnId, ccId, prefixId);
+        list.appendChild(row);
+      });
+      body.appendChild(list);
+      setTimeout(() => { const s = list.querySelector('.selected'); if (s) s.scrollIntoView({ block: 'center' }); }, 60);
+    }, () => { btn.classList.remove('open'); btn.blur(); });
+    _ccPickerBtn = btnId; _ccPickerCcId = ccId; _ccPickerPrefixId = prefixId;
+    return;
+  }
   const rect = btn.getBoundingClientRect();
   let picker = document.getElementById('cc-picker-global');
   if (!picker) {
@@ -11898,6 +11939,11 @@ function openCCPicker(btnId, ccId, prefixId) {
   setTimeout(() => document.addEventListener('click', ccPickerOutside, {once:true, capture:true}), 10);
 }
 
+function filterCCSheet(q) {
+  const lq = (q || '').trim().toLowerCase();
+  document.querySelectorAll('#cc-sheet-list .cc-opt').forEach(r => { r.style.display = !lq || r.dataset.q.includes(lq) ? '' : 'none'; });
+}
+
 function filterCCList(q) {
   const items = document.querySelectorAll('#cc-list .cc-item');
   const lq = q.toLowerCase();
@@ -11915,6 +11961,7 @@ function selectCC(dial, flag, name, btnId, ccId, prefixId) {
   if (ccEl) ccEl.value = dial;
   if (prefEl) prefEl.value = dial;
   closeAllCCPickers();
+  if (document.getElementById('cc-sheet-list') && typeof closeMobilePicker === 'function') closeMobilePicker();
   // Auto-set currency and country on student forms
   if (ccId === 'stu-phone-cc' || ccId === 'ef-stu-phone-cc') {
     const pfx = ccId === 'ef-stu-phone-cc' ? 'ef-' : '';
@@ -13681,7 +13728,7 @@ function makeFormSelect(nativeSelect) {
           };
           body.appendChild(div);
         });
-      });
+      }, () => { btn.classList.remove('open'); btn.blur(); });   /* v187: the field no longer looks focused after the sheet closes */
       btn.classList.add('open');
       return;
     }
@@ -13898,6 +13945,9 @@ function closeMobilePicker() {
   backdrop.classList.remove('open');
   unlockScroll();
   if (_mobilePickerOnClose) { _mobilePickerOnClose(); _mobilePickerOnClose = null; }
+  // v187: whatever opened the sheet drops its open look and focus
+  document.querySelectorAll('.form-select-btn.open, .custom-select-btn.open, .phone-flag-btn.open').forEach(b => b.classList.remove('open'));
+  const a = document.activeElement; if (a && a.matches && a.matches('.form-select-btn, .custom-select-btn, .date-picker-btn, .phone-flag-btn')) a.blur();
 }
 
 // ── DESKTOP FILTER DROPDOWNS ──
@@ -14254,7 +14304,7 @@ async function loadUnassignedPayments() {
   const container = document.getElementById('unassignedContainer');
   if (!container) return;
 
-  container.innerHTML = '<div class="empty-state"><div class="spinner"></div></div>';
+  container.innerHTML = skelHTML(3, 2);
 
   try {
     const url = 'https://sabdevsguuobgqjputtv.supabase.co/rest/v1/unassigned_payments?select=*&status=eq.pending&order=date.desc';
@@ -14705,7 +14755,7 @@ function openWsPaxPage(wsId, venueName, wsDate) {
   if (title) title.textContent = (venueName||wsId) + (wsDate ? ' · ' + wsDate : '');
   if (sub) sub.textContent = 'Loading participants...';
   if (addBtn) { addBtn.onclick = function() { openParticipantForWorkshop(wsId); }; }
-  document.getElementById('vpParticipantsList').innerHTML = '<div class="empty-state" style="min-height:40vh;"><div class="spinner"></div></div>';
+  document.getElementById('vpParticipantsList').innerHTML = skelHTML(3, 2);
   document.getElementById('form-viewParticipants').classList.add('open');
   lockScroll();
   loadVPParticipants(wsId);
@@ -15607,7 +15657,7 @@ async function loadWhatsApp(silent) {
   const box = document.getElementById('waRows');
   if (!box || _wa.loading) return;
   _wa.loading = true;
-  if (!silent && !_wa.rows.length) box.innerHTML = '<div class="wa-empty"><div class="spinner" style="margin:0 auto;"></div></div>';
+  if (!silent && !_wa.rows.length) box.innerHTML = skelHTML(0, 6, 'row');
   try {
     const since = new Date(Date.now() - 180 * 86400000).toISOString();
     const [msgs, stus, trs] = await Promise.all([
@@ -18504,7 +18554,7 @@ async function stzLoad() {
    old drift started.
    Sections: 1 layout · 2 type roles · 3 buttons · 4 inputs · 5 chips, tabs,
    segments · 6 badges · 7 cards · 8 menus, sheets, dialogs · 9 toasts, tips,
-   loading, empty · 10 nav · 11 states · 12 motion
+   loading, empty · 10 nav · 11 states · 13 v185 review · 14 v186 · 15 v187 · 12 motion (last)
    ════════════════════════════════════════════════════════════════════ */
 
 /* ── 1 · LAYOUT (v179 system) ──────────────────────────────────────────
@@ -18574,7 +18624,6 @@ async function stzLoad() {
   html body .wa-compose { flex-shrink: 0; }
   html body .wa-ai { flex: 0 1 auto; min-height: 0; overflow-y: auto; }
   html body .dash-section { padding-left: var(--gutter); padding-right: var(--gutter); }
-  html body .dash-section-title { transform-origin: left center; will-change: transform; transition: transform .06s linear, opacity .06s linear; }
   html body #section-notifications .dash-section-header { flex-direction: row; flex-wrap: nowrap; align-items: flex-start; gap: var(--sp-3); }
   html body #notifActions { margin-left: auto; flex-shrink: 0; padding-top: 2px; }
   html body .app-bar-title { left: 56px; right: 100px; }
@@ -18681,17 +18730,17 @@ html body .form-input, html body .section-search-input, html body .global-search
 html body textarea.form-input, html body .ag-note textarea, html body .ag-ta { min-height: 96px !important; padding-top: var(--sp-3); padding-bottom: var(--sp-3); line-height: var(--lh-body); resize: vertical; }
 html body .form-input::placeholder, html body .section-search-input::placeholder, html body .global-search-input::placeholder, html body .mobile-search-fs-input::placeholder, html body .wa-search input::placeholder, html body .wa-input::placeholder, html body .ag-ta::placeholder, html body textarea::placeholder, html body input::placeholder { color: var(--tx3) !important; opacity: 1; }
 html body .form-input:focus, html body .section-search-input:focus, html body .global-search-input:focus, html body .wa-search input:focus, html body .form-select-btn:focus-visible, html body .date-picker-btn:focus-visible, html body .custom-select-btn:focus-visible, html body .mobile-search-fs-input:focus, html body .wa-input:focus {
-  border-color: var(--acc) !important; box-shadow: var(--focus) !important; outline: none !important; }
-html body .form-select-btn.open, html body .date-picker-btn.open, html body .custom-select-btn.open { border-color: var(--acc) !important; }
+  border-color: var(--acc-tx) !important; box-shadow: var(--focus-line) !important; outline: none !important; }
+html body .form-select-btn.open, html body .date-picker-btn.open, html body .custom-select-btn.open { border-color: var(--acc-tx) !important; box-shadow: var(--focus-line); }
 html body .form-input.field-error, html body .form-input[aria-invalid="true"] { border-color: var(--bad) !important; background: color-mix(in srgb, var(--bad) 6%, transparent) !important; }
-html body .form-input.field-error:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 28%, transparent) !important; }
+html body .form-input.field-error:focus { box-shadow: 0 0 0 1px var(--bad) !important; }
 html body .login-error { color: var(--bad); font-size: var(--fs-sm); margin-top: var(--sp-1); }
 html body .form-input:disabled, html body .form-input[readonly] { opacity: var(--dis-op); cursor: not-allowed; }
 html body .form-group { margin-bottom: var(--sp-5); }
 html body .form-row { gap: var(--sp-3); }
 html body .mobile-search-fs-input, html body .mobile-search-fullscreen .mobile-search-fs-input { border-radius: var(--r-pill) !important; border: var(--bw) solid var(--line-2) !important; background: var(--s2) !important; }
 html body .wa-ibox { border: var(--bw) solid var(--line-2); }
-html body .wa-ibox:focus-within { border-color: var(--acc); }
+html body .wa-ibox:focus-within { border-color: var(--acc-tx); box-shadow: var(--focus-line); }
 /* switches */
 html body .push-sw::after, html body .inv-switch .sl:before, html body .checkin-toggle-thumb { background: var(--knob) !important; }
 
@@ -18966,11 +19015,44 @@ html.mono body .mobile-cards:empty::before, html.mono body .mobile-cards:empty::
 @keyframes dsPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 @media (prefers-reduced-motion: reduce) { html body .mobile-cards:empty::before, html body .mobile-cards:empty::after, html body td.loading::before { animation: none; } }
 
-/* full-screen loader: the logo turns once, then breathes */
-html body .loading-overlay.active .loading-logo { animation: dsLogoTurn 0.9s var(--ease) 1, dsLogoBreathe 1.8s ease-in-out 0.9s infinite; transform-origin: 50% 50%; }
-@keyframes dsLogoTurn { from { transform: rotate(0) scale(0.9); opacity: 0.4; } to { transform: rotate(360deg) scale(1); opacity: 1; } }
-@keyframes dsLogoBreathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
-@media (prefers-reduced-motion: reduce) { html body .ds-skel i { animation: none; background: var(--s2); } html body .loading-overlay.active .loading-logo { animation: none; } }
+@media (prefers-reduced-motion: reduce) { html body .ds-skel i { animation: none; background: var(--s2); } }
+
+/* ── 15 · v187 · refinements (schedule nav, app bar, loading, focus, country sheet, pull) ── */
+/* skeleton row: avatar and two lines, for the inbox list */
+html body .ds-skel-row { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--card-pad); border: 0; border-radius: 0; background: transparent; margin: 0; }
+html body .ds-skel-row i.av { width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; }
+html body .ds-skel-row > span { flex: 1; min-width: 0; display: grid; gap: var(--sp-2); }
+html body .ds-skel-row i.t { width: 40%; margin: 0; } html body .ds-skel-row i.l2 { width: 75%; } html body .ds-skel-row i.l3 { width: 55%; }
+html body .checkin-grid .ds-skel { min-height: 120px; }
+html body .loading-overlay, html body .loading-overlay.active { display: none; }   /* the blocking logo overlay is retired: pages show skeletons */
+/* schedule week nav: arrows hug the date, Today keeps the right edge */
+html body .sch-nav { gap: var(--sp-1) !important; }
+html body .sch-nav #schWeekLabel { min-width: 0; padding: 0 var(--sp-1); white-space: nowrap; }
+html body .sch-nav .sch-today { margin-left: auto; }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body .sch-nav { justify-content: flex-start; }
+  /* compact app bar: one height, everything centred in it */
+  html body .mobile-topbar { min-height: var(--bar-h); padding-top: 0 !important; padding-bottom: 0 !important; }
+  html.studio-app body .mobile-topbar { padding-top: env(safe-area-inset-top, 0px) !important; }
+  html body .app-bar-title { top: auto; bottom: 0; height: var(--bar-h); line-height: var(--lh-tight); display: flex; align-items: center; justify-content: center; }
+  html body .mobile-topbar.pg-sub .app-bar-back { bottom: 0; height: var(--bar-h); }
+  html body .mobile-topbar > div:last-child { align-self: center; }
+  /* pull to refresh: the indicator lives in the gap that opens above the page */
+  html body .ptr { top: 0 !important; transform: translateY(-38px); }
+  html.studio-app body .ptr { top: env(safe-area-inset-top, 0px) !important; }
+}
+/* country code sheet: search stays at the top, rows are the shared picker rows */
+html body .cc-sheet-search { position: sticky; top: 0; z-index: var(--z-raise); padding: var(--sp-2) var(--card-pad) var(--sp-3); background: var(--s1); }
+html body .cc-sheet-list { min-height: 50vh; }
+html body .cc-opt .cc-flag { font-size: var(--fs-xl); line-height: 1; flex-shrink: 0; width: 28px; text-align: center; }
+html body .cc-opt .cc-dial { color: var(--tx3); font-size: var(--fs-md); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+html body .cc-opt.selected { background: var(--sel-bg); color: var(--sel-tx); }
+html body .cc-opt.selected .cc-dial { color: var(--sel-tx); }
+/* desktop country popover: same field look, readable dial codes (was 70% accent) */
+html body .cc-item .cc-dial { color: var(--tx2); }
+html body .cc-search { background: var(--s1); border: var(--bw) solid var(--line-2); color: var(--tx); border-radius: var(--ctl-r); font-size: var(--fs-ui); }
+html body .cc-search::placeholder { color: var(--tx3); }
+html body .cc-search:focus { border-color: var(--acc-tx); box-shadow: var(--focus-line); outline: none; }
 
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
