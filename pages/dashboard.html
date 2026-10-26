@@ -48,10 +48,10 @@ function isPhoneLayout() { return !!(window.matchMedia && window.matchMedia(wind
 window.STUDIO_THEMES = {
   blue: { name: 'Blue', base: true,
     dark:  { acc: '#2f5fe0', accTx: '#82a6ff', bg: '#0b1220' },
-    light: { acc: '#2f5fe0', bg: '#f5f7fb' } },
+    light: { acc: '#2f5fe0' } },
   mono: { name: 'Mono', cls: 'mono',
     dark:  { acc: '#ededed', accTx: '#ededed', onAcc: '#0a0a0a', bg: '#0a0a0a', neutral: true },
-    light: { acc: '#0a0a0a', onAcc: '#ffffff', bg: '#fafafa', neutral: true },
+    light: { acc: '#0a0a0a', onAcc: '#ffffff', bg: '#ebebeb', neutral: true },
     status: { dark: { ok: '#c5e67c' }, light: { ok: '#3f6212' } },
     extra: { dark: { '--acc-h': '#ffffff', '--lime': '#d4f08c', '--lime-tx': '#1a2400', '--out': '#ededed', '--out-tx': '#0a0a0a', '--out-meta': '#5a5a5a', '--tick': '#3f6212' },
              light: { '--acc-h': '#262626', '--lime': '#d4f08c', '--lime-tx': '#1a2400', '--out': '#0a0a0a', '--out-tx': '#ffffff', '--out-meta': '#a3a3a3', '--tick': '#a3e635' } } },
@@ -78,7 +78,12 @@ window.STUDIO_THEMES = {
     var onLight = !s.onAcc || (function (c) { var x = hx(c); return (0.299 * x[0] + 0.587 * x[1] + 0.114 * x[2]) > 140; })(s.onAcc);
     var accH = onLight ? mix(a, 86, '#000000') : mix(a, 85, '#ffffff');
     var st = {}; ['ok', 'warn', 'bad'].forEach(function (x) { st[x] = ((t.status || {})[mode] || {})[x] || STATUS[mode][x]; });
-    var bg = s.bg || (d ? mix(a, 5 * k, '#0b0b0e') : mix(a, 3 * k, '#f7f7f9'));
+    var bg = s.bg || (d ? mix(a, 5 * k, '#0b0b0e') : mix(a, 4 * k, '#e8eaf0'));   /* v190: light page is a step darker so white cards stand on their own */
+    if (!d) {   /* v190: accent text must stay 4.6:1 on the darker light page, so deepen it until it does */
+      var lum = function (c) { return hx(c).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }).reduce(function (o, v, i) { return o + v * [0.2126, 0.7152, 0.0722][i]; }, 0); };
+      var cr = function (x, y) { var p = lum(x), q = lum(y); return (Math.max(p, q) + 0.05) / (Math.min(p, q) + 0.05); };
+      for (var n = 0; n < 12 && cr(at, bg) < 4.6; n++) at = mix(at, 92, '#000000');
+    }
     var v = d ? {
       '--bg': bg, '--s1': mix(a, 6 * k, s.neutral ? '#161616' : '#16161a'), '--s2': mix(a, 9 * k, s.neutral ? '#1f1f1f' : '#1e1e24'), '--s3': mix(a, 12 * k, s.neutral ? '#2a2a2a' : '#28282f'),
       '--line': mix(a, 11 * k, s.neutral ? '#242424' : '#25252b'), '--line-2': mix(a, 15 * k, s.neutral ? '#444444' : '#42424d'),
@@ -87,9 +92,9 @@ window.STUDIO_THEMES = {
       '--out': mix(a, 34, '#17171c'), '--out-tx': '#ffffff', '--out-meta': mix(at, 22, '#e4e4e8'), '--tick': at,
       '--focus': '0 0 0 3px ' + al(at, 45), '--shadow': 'none', '--overlay': 'rgba(0,0,0,0.6)'
     } : {
-      '--bg': bg, '--s1': '#ffffff', '--s2': mix(a, 5 * k, s.neutral ? '#f2f2f2' : '#f1f1f4'), '--s3': mix(a, 8 * k, s.neutral ? '#e8e8e8' : '#e7e7eb'),
-      '--line': mix(a, 8 * k, s.neutral ? '#ebebeb' : '#e5e5ea'), '--line-2': mix(a, 12 * k, s.neutral ? '#c9c9c9' : '#c4c4cd'),
-      '--tx': s.neutral ? '#0a0a0a' : '#131316', '--tx2': mix(a, 10 * k, s.neutral ? '#4a4a4a' : '#4a4a52'), '--tx3': mix(a, 8 * k, s.neutral ? '#636363' : '#53535b'),
+      '--bg': bg, '--s1': '#ffffff', '--s2': mix(a, 5 * k, s.neutral ? '#e6e6e6' : '#e3e5eb'), '--s3': mix(a, 8 * k, s.neutral ? '#dadada' : '#d8dae1'),
+      '--line': mix(a, 8 * k, s.neutral ? '#e0e0e0' : '#dcdee5'), '--line-2': mix(a, 12 * k, s.neutral ? '#adadad' : '#a9abb6'),
+      '--tx': s.neutral ? '#0a0a0a' : '#131316', '--tx2': mix(a, 10 * k, s.neutral ? '#454545' : '#45454d'), '--tx3': mix(a, 8 * k, s.neutral ? '#555555' : '#4a4a52'),
       '--acc-h': accH, '--acc-soft': mix(a, s.neutral ? 6 : 10, '#ffffff'),
       '--out': mix(a, 13, '#ffffff'), '--out-tx': '#131316', '--out-meta': '#4c4c54', '--tick': at,
       '--focus': '0 0 0 3px ' + al(a, 28), '--shadow': '0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04)', '--overlay': 'rgba(15,15,20,0.4)'
@@ -104,7 +109,7 @@ window.STUDIO_THEMES = {
   var css = '';
   Object.keys(TH).forEach(function (id) {
     var t = TH[id], D = t.dark, L = t.light;
-    var dbg = D.bg || mix(D.acc, D.neutral ? 0 : 5, '#0b0b0e'), lbg = L.bg || mix(L.acc, L.neutral ? 0 : 3, '#f7f7f9');
+    var dbg = D.bg || mix(D.acc, D.neutral ? 0 : 5, '#0b0b0e'), lbg = L.bg || mix(L.acc, L.neutral ? 0 : 4, '#e8eaf0');
     t.meta = { dark: dbg, light: lbg };
     t.swatch = [dbg, D.acc2 || D.accTx || D.acc, D.acc];
     css += block('html[data-pal="' + id + '"]', { '--sp-bg': dbg, '--sp-acc': D.accTx || D.acc, '--sp-tx': D.neutral ? '#ededed' : (t.base ? '#e8edf5' : '#eeeef1'), '--sw-dark': dbg, '--sw-light': lbg, 'background': 'var(--sp-bg)' });
@@ -210,10 +215,11 @@ body, body.dark-mode {
   --sel-bg: var(--acc-soft); --sel-tx: var(--acc-tx);
   --dis-op: 0.45;
   --s-elev: var(--s1);  /* elevated surface: light = s1 + shadow, dark = s2 */
+  --ctl-bg: var(--s1);  /* v190: secondary controls (outline buttons, icon buttons, segment tracks) sit white in light mode, s2 in dark */
   --on-bad: #ffffff; --on-ok: #ffffff; --on-warn: #1a1204;  /* text on a solid status fill */
   --focus-line: 0 0 0 1px var(--acc-tx);  /* v187: fields show one crisp 2px accent line when focused, no glow */
 }
-body.dark-mode { --s-elev: var(--s2); --on-bad: #1c0b0b; --on-ok: #04140b; --on-warn: #1a1204; }
+body.dark-mode { --s-elev: var(--s2); --ctl-bg: var(--s2); --on-bad: #1c0b0b; --on-ok: #04140b; --on-warn: #1a1204; }
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
   :root { --gutter: 28px; --card-pad: 20px; --ctl-h: 44px; --ctl-h-md: 40px; --ctl-h-sm: 32px; }
 }
@@ -3148,8 +3154,8 @@ body.dark-mode .td-act-c { color: var(--on-acc); }
    tables (small). Inputs 44. Body 16, secondary 14, label 12 caps.
    ════════════════════════════════════════════════════════════════════ */
 body {
-  --bg: #f5f7fb; --s1: #ffffff; --s2: #eef2f8; --s3: #e4e9f2; --line: #e3e8f0; --line-2: #c1cad8;
-  --tx: #0f172a; --tx2: #475569; --tx3: #5b6b82;
+  --bg: #e9ebf1; --s1: #ffffff; --s2: #e4e6ec; --s3: #d9dbe2; --line: #dddfe6; --line-2: #a7b1c2;
+  --tx: #0f172a; --tx2: #435064; --tx3: #4e5d73;
   --acc: #2f5fe0; --acc-h: #2752cc; --acc-tx: #2f5fe0; --acc-soft: #e8eefe; --on-acc: #ffffff;
   --ok: #157a3a; --ok-soft: #e5f5ea; --warn: #95590a; --warn-soft: #fdf3dc; --bad: #b91c1c; --bad-soft: #fde8e8;
   --out: #dfe8ff; --out-tx: #0f172a; --out-meta: #475569; --in: #ffffff; --tick: #2563eb;
@@ -3646,7 +3652,7 @@ html.mono body .td-row, html.mono body .td-act, html.mono body .ag-row, html.mon
 /* buttons: pills */
 html.mono body .btn-dash, html.mono body .td-next-zoom, html.mono body .td-join, html.mono body .pg-ib, html.mono body .app-bar-btn, html.mono body .hl-run, html.mono body .upd-bar button { border-radius: var(--r-pill) !important; }
 html.mono body .btn-dash-primary, html.mono body .td-next-zoom, html.mono body .pg-ib.add, html.mono body .td-join:not(.ghost) { background: var(--acc) !important; color: var(--on-acc) !important; border-color: var(--acc) !important; }
-html.mono body .btn-dash-outline, html.mono body .btn-dash-ghost { background: var(--s2) !important; border-color: transparent !important; color: var(--tx) !important; }
+html.mono body .btn-dash-outline, html.mono body .btn-dash-ghost { background: var(--ctl-bg) !important; border-color: transparent !important; color: var(--tx) !important; }
 /* type: tight headings */
 html.mono body .dash-section-title, html.mono body #tdTitle, html.mono body .td-head h3, html.mono body .td-next-n, html.mono body .stat-value, html.mono body .m-card-title, html.mono body .hl-hero b, html.mono body .settings-card-title, html.mono body .app-bar-title {
   letter-spacing: -0.035em !important; font-weight: 600 !important; }
@@ -4430,7 +4436,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v189</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v190</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4504,7 +4510,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v189</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v190</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -18688,7 +18694,7 @@ html body .btn-dash, html body .btn-dash-save, html body .td-next-zoom, html bod
 }
 html body .btn-dash-primary, html body .btn-dash-save, html body .td-next-zoom, html body #auth-login-btn, html body .filter-sheet-apply, html body .login-btn { min-height: var(--ctl-h); background: var(--acc) !important; color: var(--on-acc) !important; border: var(--bw) solid transparent !important; }
 html body .btn-dash-primary:hover, html body .btn-dash-save:hover, html body .td-next-zoom:hover { background: var(--acc-h) !important; }
-html body .btn-dash-outline, html body .btn-restore, html body .btn-archive, html body .filter-sheet-clear { background: var(--s2) !important; color: var(--tx) !important; border: var(--bw) solid var(--line) !important; }
+html body .btn-dash-outline, html body .btn-restore, html body .btn-archive, html body .filter-sheet-clear { background: var(--ctl-bg) !important; color: var(--tx) !important; border: var(--bw) solid var(--line) !important; }
 html body .btn-dash-outline:hover, html body .btn-restore:hover, html body .btn-archive:hover { background: var(--s3) !important; }
 html body .btn-dash-ghost { background: transparent !important; color: var(--tx2) !important; border: var(--bw) solid transparent !important; }
 html body .btn-dash-ghost:hover { background: var(--s2) !important; color: var(--tx) !important; }
@@ -18701,7 +18707,7 @@ html body .btn-dash:active:not(:disabled), html body .btn-dash-save:active:not(:
 html body .icon-action-btn, html body .app-bar-btn, html body .pg-ib, html body .sch-ic, html body .notif-dots-btn, html body .mc-ib, html body .wa-ai-icon, html body #auth-pass-eye, html body .mc-copy, html body .modal-close-btn, html body .mobile-picker-sheet-close, html body .filter-sheet-close, html body .wa-back, html body .dp-nav-btn {
   display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
   min-width: var(--ctl-h-md); min-height: var(--ctl-h-md); padding: 0 var(--sp-3); border-radius: var(--r-pill) !important;
-  background: var(--s2); color: var(--tx2); border: var(--bw) solid var(--line); cursor: pointer; -webkit-tap-highlight-color: transparent;
+  background: var(--ctl-bg); color: var(--tx2); border: var(--bw) solid var(--line); cursor: pointer; -webkit-tap-highlight-color: transparent;
   transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur-fast) var(--ease);
 }
 html body .icon-action-btn:hover, html body .app-bar-btn:hover, html body .pg-ib:hover, html body .sch-ic:hover, html body .notif-dots-btn:hover, html body .mc-ib:hover { background: var(--s3); color: var(--tx); }
@@ -18762,7 +18768,7 @@ html body .sch-chip:active, html body .fr-chip:active, html body .ms-chip:active
 html body .fr-chip-off { opacity: 0.55; }
 /* segmented controls: one track, one thumb */
 html body .ag-seg, html body .inv-seg, html body .sch-seg, html body .tw-seg, html body .thm-seg {
-  display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: var(--r-pill) !important; background: var(--s2) !important; border: var(--bw) solid var(--line); height: auto; box-sizing: border-box; }
+  display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: var(--r-pill) !important; background: var(--ctl-bg) !important; border: var(--bw) solid var(--line); height: auto; box-sizing: border-box; }
 html body .ag-seg button, html body .inv-seg button, html body .sch-seg button, html body .tw-seg button, html body #schSegCal, html body #schSegList {
   flex: 1; height: auto; min-height: var(--ctl-h-md) !important; padding: 0 var(--sp-4); border: 0 !important; border-radius: var(--r-pill) !important; background: transparent !important; color: var(--tx2) !important;
   font-family: var(--font-body); font-size: var(--fs-md) !important; font-weight: var(--fw-medium); line-height: 1; cursor: pointer; transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease); }
@@ -18934,7 +18940,7 @@ html body #archiveConfirmModal > div > div:last-child, html body #cancelWsModal 
   display: flex; gap: var(--sp-2); padding: 0 var(--sp-4) var(--sp-4) !important; border-top: 0 !important; }
 html body #archiveConfirmModal > div > div:last-child > button, html body #cancelWsModal > div > div:last-child > button, html body #customConfirmModal > div > div:last-child > button, html body #deleteForeverModal > div > div:last-child > button {
   flex: 1; min-height: var(--ctl-h-md); padding: 0 var(--sp-4) !important; border-radius: var(--r-pill) !important; border: var(--bw) solid var(--line) !important;
-  background: var(--s2) !important; color: var(--tx) !important; font-size: var(--fs-ui) !important; font-weight: var(--fw-medium) !important; font-family: var(--font-body);
+  background: var(--ctl-bg) !important; color: var(--tx) !important; font-size: var(--fs-ui) !important; font-weight: var(--fw-medium) !important; font-family: var(--font-body);
   transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body #archiveConfirmModal > div > div:last-child > button:active, html body #customConfirmModal > div > div:last-child > button:active, html body #deleteForeverModal > div > div:last-child > button:active, html body #cancelWsModal > div > div:last-child > button:active { transform: scale(0.97); }
 html body #customConfirmModal #customConfirmOkBtn { background: var(--acc) !important; color: var(--on-acc) !important; border-color: transparent !important; font-weight: var(--fw-semibold) !important; }
@@ -18962,7 +18968,7 @@ html body .dash-table-wrap table tbody .ws-action-sticky { background: var(--s1)
 html body .dash-table-wrap .btn-dash, html body .dash-table-wrap .btn-dash-sm { min-height: var(--ctl-h-sm); }
 /* secondary buttons share one height outside tables and cards; -sm only inside them */
 html body .btn-dash-sm:not(.dash-table-wrap *):not(.m-card *):not(.td-card *):not(.ag-card *):not(.mobile-cards *):not(.m-card-foot *):not(.hl-acts *):not(.wa-ai-row *) { min-height: var(--ctl-h-md); font-size: var(--fs-ui); }
-html body .sch-today, html body .sch-blk { min-height: var(--ctl-h-md); height: auto !important; padding: 0 var(--sp-4) !important; border-radius: var(--r-pill) !important; border: var(--bw) solid var(--line) !important; background: var(--s2) !important; color: var(--tx) !important; font-size: var(--fs-md) !important; font-weight: var(--fw-medium); }
+html body .sch-today, html body .sch-blk { min-height: var(--ctl-h-md); height: auto !important; padding: 0 var(--sp-4) !important; border-radius: var(--r-pill) !important; border: var(--bw) solid var(--line) !important; background: var(--ctl-bg) !important; color: var(--tx) !important; font-size: var(--fs-md) !important; font-weight: var(--fw-medium); }
 html body .dash-section-title { font-weight: var(--fw-bold) !important; }
 html body .dash-section-count { font-size: var(--fs-ui); opacity: 1; color: var(--tx2); }
 /* Add Lead segment */
@@ -19062,6 +19068,8 @@ html body .cl-who { margin-bottom: var(--sp-6); }
 html body .cl-name { font-size: var(--fs-xl); font-weight: var(--fw-semibold); color: var(--tx); line-height: var(--lh-tight); overflow-wrap: anywhere; }
 html body #clSummary { font-size: var(--fs-ui); color: var(--tx3); margin-top: var(--sp-1); }
 html body #clSummary strong { color: var(--tx); }
+/* v190: light page is darker, so read ticks use the deeper accent shade there */
+body:not(.dark-mode) .wa-pv .wa-ck { color: var(--acc-h); }
 /* country code sheet: search stays at the top, rows are the shared picker rows */
 html body .cc-sheet-search { position: sticky; top: 0; z-index: var(--z-raise); padding: var(--sp-2) var(--card-pad) var(--sp-3); background: var(--s1); }
 html body .cc-sheet-list { min-height: 50vh; }
