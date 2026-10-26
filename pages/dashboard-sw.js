@@ -1,9 +1,9 @@
 // ── STUDIO APP SERVICE WORKER ──
 // Makes the dashboard installable ("Add to Home Screen") and handles push
-// notifications. It never serves an old dashboard: the page always comes from
-// the network first; the saved copy is used only when the phone is offline.
+// notifications. v197: opening the app shows the saved page at once and refreshes it in
+// the background (an update link with ?u= always goes to the network first).
 // Data (Supabase, the server) is never cached here.
-const CACHE = 'studio-v2';   // v194: push also wakes the open app
+const CACHE = 'studio-v3';   // v194: push also wakes the open app
 const SHELL = '/pages/dashboard';
 
 self.addEventListener('install', () => self.skipWaiting());
@@ -20,18 +20,22 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET' || req.mode !== 'navigate') return;   // only the page itself
   const url = new URL(req.url);
   if (!url.pathname.startsWith('/pages/dashboard')) return;
+  const fromNet = async () => {
+    const res = await fetch(req, { cache: 'no-store' });
+    if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(SHELL, copy)).catch(() => {}); }
+    return res;
+  };
+  const offline = () => new Response('<h3 style="font-family:sans-serif;padding:2rem;background:#0b0b0e;color:#eee;margin:0;min-height:100vh">You are offline. Open Studio again when you have internet.</h3>', { headers: { 'Content-Type': 'text/html' } });
+  // v197: an update (?u=…) always comes from the network, so "Update" really loads the new version.
+  if (url.searchParams.has('u')) { e.respondWith(fromNet().catch(async () => (await caches.match(SHELL)) || offline())); return; }
+  // v197: opening the app shows the saved page instantly (no grey gap while the network answers)
+  // and refreshes the saved copy in the background. The app's own version check shows
+  // "A new version is ready" when that copy is older than the live one.
   e.respondWith((async () => {
-    try {
-      const res = await fetch(req, { cache: 'no-store' });
-      if (res && res.ok) {
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put(SHELL, copy)).catch(() => {});
-      }
-      return res;
-    } catch (err) {
-      const cached = await caches.match(SHELL);
-      return cached || new Response('<h3 style="font-family:sans-serif;padding:2rem">You are offline. Open Studio again when you have internet.</h3>', { headers: { 'Content-Type': 'text/html' } });
-    }
+    const cached = await caches.match(SHELL);
+    const net = fromNet();
+    if (cached) { e.waitUntil(net.catch(() => {})); return cached; }
+    try { return await net; } catch (err) { return offline(); }
   })());
 });
 
