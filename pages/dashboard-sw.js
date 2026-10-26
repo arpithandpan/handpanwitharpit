@@ -3,7 +3,7 @@
 // notifications. It never serves an old dashboard: the page always comes from
 // the network first; the saved copy is used only when the phone is offline.
 // Data (Supabase, the server) is never cached here.
-const CACHE = 'studio-v1';
+const CACHE = 'studio-v2';   // v194: push also wakes the open app
 const SHELL = '/pages/dashboard';
 
 self.addEventListener('install', () => self.skipWaiting());
@@ -52,6 +52,9 @@ self.addEventListener('push', e => {
       badge: '/pages/studio-icon-192.png',
       data: { url: d.url || '/pages/dashboard' }
     });
+    // v194: tell any open Studio window, so it refreshes the inbox and badge right away.
+    const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const c of wins) if (c.url.includes('/pages/dashboard')) c.postMessage({ type: 'push', tag: d.tag || '', url: d.url || '' });
   })());
 });
 
