@@ -236,16 +236,19 @@ body.dark-mode { --s-elev: var(--s2); --ctl-bg: var(--s2); --on-bad: #1c0b0b; --
 <style id="splashCss">
 /* v165: splash. Same picture as the iPhone launch image, then the logo starts turning and blinking until the app is ready. */
 html { background: var(--sp-bg, #0b1220); }
-#appSplash { position: fixed; inset: 0; z-index: var(--z-splash); --u: min(1vw, 4.4px); background: radial-gradient(circle calc(55 * var(--u)) at 50% 46%, color-mix(in srgb, var(--sp-acc) 20%, transparent), color-mix(in srgb, var(--sp-acc) 9%, transparent) 30%, color-mix(in srgb, var(--sp-acc) 3%, transparent) 60%, transparent), var(--sp-bg, #0b1220); transition: opacity var(--dur-slow) ease; }
+#appSplash { position: fixed; inset: 0; z-index: var(--z-splash);  --u: min(1vw, 4.4px); background: radial-gradient(circle calc(55 * var(--u)) at 50% 46%, color-mix(in srgb, var(--sp-acc) 20%, transparent), color-mix(in srgb, var(--sp-acc) 9%, transparent) 30%, color-mix(in srgb, var(--sp-acc) 3%, transparent) 60%, transparent), var(--sp-bg, #0b1220); transition: opacity .42s cubic-bezier(.2,.7,.2,1); }
 #appSplash.out { opacity: 0; pointer-events: none; }
 #appSplash .as-mark { position: absolute; left: 50%; top: calc(46vh - 4 * var(--u)); width: calc(20 * var(--u)); height: calc(20 * var(--u)); transform: translate(-50%, -50%); overflow: visible; }
 #appSplash .as-nm { position: absolute; left: 0; right: 0; top: calc(46vh + 13 * var(--u) + 0.97 * var(--u)); text-align: center; font: 600 calc(5.8 * var(--u))/1 Inter, -apple-system, system-ui, sans-serif; color: var(--sp-tx, #e8edf5); letter-spacing: 0; }
 .as-mark rect { stroke: var(--sp-acc, #7aa2ff); stroke-width: 2.4; fill: var(--sp-acc, #7aa2ff); }
 .td-mark rect { stroke: var(--acc-tx); stroke-width: 2.4; fill: var(--acc-tx); }
 /* v174: the launch picture is the aurora mark; the live splash starts from it and settles into the theme colour */
-#appSplash .as-au { position: absolute; left: 50%; top: calc(46vh - 4 * var(--u)); width: calc(20 * var(--u)); height: calc(20 * var(--u)); transform: translate(-50%, -50%); overflow: visible; animation: asfade .9s ease .25s forwards; }
-#appSplash .as-mark { opacity: 0; animation: asin .9s ease .25s forwards; }
-#appSplash::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle calc(55 * var(--u)) at 50% 46%, rgba(255,255,255,.05), transparent), #0b0b0e; animation: asfade .9s ease .25s forwards; }
+/* v195: simple. The splash stays exactly the launch picture (aurora mark on dark) and the mark just turns.
+   No theme crossfade, no background change; one fade out when the app is ready. */
+#appSplash .as-au { position: absolute; left: 50%; top: calc(46vh - 4 * var(--u)); width: calc(20 * var(--u)); height: calc(20 * var(--u)); transform: translate(-50%, -50%); overflow: visible; }
+#appSplash .as-au g { transform-origin: 24px 24px; transform-box: view-box; animation: asq 4.8s cubic-bezier(.65,0,.35,1) -.6s infinite; }   /* starts its first quarter turn right away */
+#appSplash .as-mark { display: none; }
+#appSplash::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle calc(55 * var(--u)) at 50% 46%, rgba(255,255,255,.05), transparent), #0b0b0e; }
 @keyframes asfade { to { opacity: 0 } } @keyframes asin { to { opacity: 1 } }
 .as-mark .r1, .as-mark .r4, .td-mark .r1, .td-mark .r4 { fill-opacity: 0; stroke-opacity: 1; }
 .as-mark .r2, .td-mark .r2 { fill-opacity: .92; stroke-opacity: 0; } .as-mark .r3, .td-mark .r3 { fill-opacity: .51; stroke-opacity: 0; }
@@ -3742,7 +3745,7 @@ body .push-sw, body .push-sw::after { transition: transform var(--dur) ease, bac
 // (or any other page the app reopened on). Never longer than 8 seconds.
 (function () {
   var t0 = Date.now(), done = false;
-  function hide() { if (done) return; done = true; var s = document.getElementById('appSplash'); if (!s) return; s.classList.add('out'); setTimeout(function () { s.remove(); }, 320); }
+  function hide() { if (done) return; done = true; var s = document.getElementById('appSplash'); if (!s) return; s.classList.add('out'); setTimeout(function () { s.remove(); }, 460); }
   function ready() {
     var login = document.getElementById('loginScreen'), root = document.getElementById('dashRoot');
     if (login && login.style.display !== 'none' && getComputedStyle(login).display !== 'none' && (!root || getComputedStyle(root).display === 'none')) return Date.now() - t0 > 400;
@@ -3751,7 +3754,8 @@ body .push-sw, body .push-sw::after { transition: transform var(--dur) ease, bac
     if (today && today.classList.contains('active')) { var w = document.getElementById('tdWrap'); return !!(w && !w.querySelector('.td-load')); }
     return Date.now() - t0 > 900;
   }
-  (function tick() { if (done) return; if (Date.now() - t0 > 8000 || (document.readyState !== 'loading' && ready())) hide(); else setTimeout(tick, 100); })();
+  // v195: shown at least 0.7 s, so a fast load never cuts the turn mid-way
+  (function tick() { if (done) return; if (Date.now() - t0 > 8000 || (Date.now() - t0 > 700 && document.readyState !== 'loading' && ready())) hide(); else setTimeout(tick, 100); })();
   window.appSplashHide = hide;
 })();
 </script>
@@ -4437,7 +4441,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v194</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v195</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4511,7 +4515,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v194</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v195</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
