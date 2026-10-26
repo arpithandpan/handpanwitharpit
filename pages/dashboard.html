@@ -4437,7 +4437,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v191</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v192</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4511,7 +4511,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v191</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v192</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -19071,6 +19071,14 @@ html body #clSummary { font-size: var(--fs-ui); color: var(--tx3); margin-top: v
 html body #clSummary strong { color: var(--tx); }
 /* v190: light page is darker, so read ticks use the deeper accent shade there */
 body:not(.dark-mode) .wa-pv .wa-ck { color: var(--acc-h); }
+/* v192: light mode inbox list (phone, single pane) sits in one white grouped card; dark mode unchanged.
+   overflow hidden also clips the swipe-action layer that showed as a dark sliver at the row edge. */
+@media (max-width: 739px), (max-height: 500px) and (pointer: coarse) {
+  body:not(.dark-mode) #section-whatsapp #waRows:not(:empty) { background: var(--s1); border: var(--bw) solid var(--line); border-radius: var(--card-r); overflow: hidden; margin: var(--sp-2) 14px var(--sp-4); }
+  body:not(.dark-mode) #section-whatsapp #waRows .wa-swipe, body:not(.dark-mode) #section-whatsapp #waRows .wa-row { background: var(--s1) !important; }
+  body:not(.dark-mode) #section-whatsapp #waRows .wa-swipe:last-child .wa-rmain { border-bottom: 0 !important; }
+  body:not(.dark-mode) #section-whatsapp #waRows .ds-skel-row { background: var(--s1); }
+}
 /* country code sheet: search stays at the top, rows are the shared picker rows */
 html body .cc-sheet-search { position: sticky; top: 0; z-index: var(--z-raise); padding: var(--sp-2) var(--card-pad) var(--sp-3); background: var(--s1); }
 html body .cc-sheet-list { min-height: 50vh; }
