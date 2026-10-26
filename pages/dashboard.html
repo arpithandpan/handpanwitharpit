@@ -163,7 +163,8 @@ window.STUDIO_THEMES = {
   --ctl-h-sm: 36px;        /* small buttons in cards and table rows */
   --ctl-fs: var(--fs-body);
   --tap: 44px;             /* minimum touch target */
-  --bar-h: 60px;           /* v187: compact app bar on phones (title, back, + all centred in it) */
+  --bar-h: 76px;           /* v188: compact app bar on phones (title, back, + centred; buttons --bar-btn) */
+  --bar-btn: 48px;         /* round buttons in that bar; 14px air above and below */
   --icon-sm: 16px; --icon-md: 20px; --icon-lg: 24px;
   --avatar: 40px; --stroke: 2px;
 
@@ -4428,7 +4429,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v187</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v188</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4502,7 +4503,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v187</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v188</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -6314,7 +6315,7 @@ table#paymentsTable { min-width: 700px; }
     <button class="btn-dash-save" id="clSaveBtn" onclick="saveClassLog()">+1 Class</button>
   </div>
   <div class="form-page-scroll"><div class="form-page-body" style="touch-action:pan-y;">
-    <div id="clSummary" style="font-size:var(--fs-ui);color:var(--tx3);margin-bottom:1.5rem;"></div>
+    <div class="cl-who"><div class="cl-name" id="clName"></div><div id="clSummary"></div></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Class date</label><input type="date" class="form-input" id="cl-date"/></div>
       <div class="form-group"><label class="form-label">Note (optional)</label><input type="text" class="form-input" id="cl-note" maxlength="120" placeholder="e.g. Worked on the D Kurd scale"/></div>
@@ -8661,7 +8662,8 @@ async function openClassLog(studentId) {
   if (!isAdmin()) { showToast('Viewer access only', 'error'); return; }
   _clStudentId = studentId;
   const stu = classLogStudent();
-  document.getElementById('clTitle').textContent = 'Classes · ' + (stu.full_name || studentId);
+  document.getElementById('clTitle').textContent = 'Classes';   /* v188: the name lives in the body line, the bar never has to truncate it */
+  const nm = document.getElementById('clName'); if (nm) nm.textContent = stu.full_name || studentId;
   const d = document.getElementById('cl-date');
   d.value = localISODate();
   if (d._dpRefresh) d._dpRefresh();
@@ -19017,7 +19019,7 @@ html.mono body .mobile-cards:empty::before, html.mono body .mobile-cards:empty::
 
 @media (prefers-reduced-motion: reduce) { html body .ds-skel i { animation: none; background: var(--s2); } }
 
-/* ── 15 · v187 · refinements (schedule nav, app bar, loading, focus, country sheet, pull) ── */
+/* ── 15 · v187/v188 · refinements (schedule nav, app bar, loading, focus, country sheet, pull, form headers) ── */
 /* skeleton row: avatar and two lines, for the inbox list */
 html body .ds-skel-row { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--card-pad); border: 0; border-radius: 0; background: transparent; margin: 0; }
 html body .ds-skel-row i.av { width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; }
@@ -19037,10 +19039,28 @@ html body .sch-nav .sch-today { margin-left: auto; }
   html body .app-bar-title { top: auto; bottom: 0; height: var(--bar-h); line-height: var(--lh-tight); display: flex; align-items: center; justify-content: center; }
   html body .mobile-topbar.pg-sub .app-bar-back { bottom: 0; height: var(--bar-h); }
   html body .mobile-topbar > div:last-child { align-self: center; }
+  html body .app-bar-btn, html body #mobileSearchBtn { width: var(--bar-btn) !important; height: var(--bar-btn) !important; }
+  html body .app-bar-btn svg, html body #mobileSearchBtn svg { width: var(--icon-lg); height: var(--icon-lg); }
+  html body .mobile-topbar #mobileSearchBtn { border-radius: 50%; background: color-mix(in srgb, var(--acc-tx) 16%, transparent) !important; color: var(--acc-tx) !important; padding: 0 !important; }   /* same chip as the + */
+  html body .mobile-topbar.pg-sub .app-bar-back svg { width: 28px; height: 28px; }
   /* pull to refresh: the indicator lives in the gap that opens above the page */
   html body .ptr { top: 0 !important; transform: translateY(-38px); }
   html.studio-app body .ptr { top: env(safe-area-inset-top, 0px) !important; }
 }
+/* form-page header: the side slots (back, action) take their width first, the title gets the rest and wraps to
+   two lines. The old columns gave the title max-content and squeezed the sides to 48px, so a long title
+   ("Classes · Harsh Priya") slid under the action button. */
+html body .form-page .form-page-header { grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr); }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  /* same height as the compact app bar, content centred in it */
+  html body .form-page .form-page-header { min-height: var(--bar-h); padding-top: 0 !important; padding-bottom: 0 !important; }
+  html.studio-app body .form-page .form-page-header { padding-top: env(safe-area-inset-top, 0px) !important; }
+}
+/* class log: student name as the first body line, summary under it */
+html body .cl-who { margin-bottom: var(--sp-6); }
+html body .cl-name { font-size: var(--fs-xl); font-weight: var(--fw-semibold); color: var(--tx); line-height: var(--lh-tight); overflow-wrap: anywhere; }
+html body #clSummary { font-size: var(--fs-ui); color: var(--tx3); margin-top: var(--sp-1); }
+html body #clSummary strong { color: var(--tx); }
 /* country code sheet: search stays at the top, rows are the shared picker rows */
 html body .cc-sheet-search { position: sticky; top: 0; z-index: var(--z-raise); padding: var(--sp-2) var(--card-pad) var(--sp-3); background: var(--s1); }
 html body .cc-sheet-list { min-height: 50vh; }
