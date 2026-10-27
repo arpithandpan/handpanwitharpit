@@ -4478,7 +4478,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v212</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v213</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4552,7 +4552,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v212</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v213</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -7617,7 +7617,7 @@ function mpRender() {
   const el = document.getElementById('morePage'); if (!el) return;
   const chev = '<svg class="mp-ch" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
   const role = (document.getElementById('mobileRoleBadge') || {}).textContent || '';
-  let h = '<button type="button" class="mp-search" onclick="openMobileSearch()"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>Search everything</button>' +
+  let h = '<button type="button" class="mp-search" onclick="openMobileSearch()"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg><span>Search <span class="mp-roll"><span>everything</span></span></span></button>' +
     '<button type="button" class="mp-me" onclick="mpGo(\'settings\')"><span class="mp-logo"><i></i><i></i><i></i><i></i></span><span style="flex:1;min-width:0"><b>Arpit\'s Studio</b><small>' + zEsc((role.trim() || 'Admin')) + ' · arpitpandey.com</small></span>' + chev + '</button>';
   MP_GROUPS.forEach(([label, items]) => {
     const rows = items.map(([sec, name, col]) => {
@@ -7639,7 +7639,8 @@ function mpRender() {
     + '<div class="av-btns"><button type="button" class="btn-dash ' + (B.state === 'old' ? 'btn-dash-primary' : 'btn-dash-outline') + '" onclick="appUpdate()">' + (B.state === 'old' ? 'Update now' : 'Reload app') + '</button>'
     + (B.state === 'old' ? '' : '<button type="button" class="btn-dash btn-dash-ghost" onclick="appCheckUpdate(true)">Check for update</button>') + '</div></div>';
   h += '<button type="button" class="mp-out" onclick="logout()">Log out</button>';
-  el.innerHTML = h;
+  if (el._h === h) return; // same content: keep the nodes, no flicker
+  el._h = h; el.innerHTML = h;
 }
 async function mpCounts() {
   const num = id => { const e = document.getElementById(id); if (!e || e.style.display === 'none') return 0; const m = (e.textContent || '').match(/\d+/); return m ? +m[0] : 0; };
@@ -19607,6 +19608,36 @@ html body .seg-ind { position: absolute; top: 3px; bottom: 3px; left: 0; width: 
 html body .has-ind > button { position: relative; z-index: 1; transition: color var(--dur) var(--ease) !important; }
 html body .has-ind > button:is(.on, .active), html.mono body .has-ind > button:is(.on, .active), html body .has-ind > #schSegCal.on, html body .has-ind > #schSegList.on { background: transparent !important; box-shadow: none !important; }
 
+/* v213 · Confirms become bottom sheets on the phone. Desktop keeps the centered box. */
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) { align-items: flex-end !important; justify-content: stretch !important; padding: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) > div {
+    max-width: none !important; width: 100% !important; max-height: 90dvh; overflow-y: auto; border: 0 !important; border-radius: var(--r-xl) var(--r-xl) 0 0 !important;
+    background: var(--s1) !important; box-shadow: 0 -8px 30px rgba(0,0,0,.22) !important; padding-bottom: env(safe-area-inset-bottom, 0px) !important; touch-action: pan-y; }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) > div::before { content: ""; display: block; width: 38px; height: 5px; border-radius: var(--r-pill); margin: 10px auto 0; background: color-mix(in srgb, var(--tx) 22%, transparent); }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) > div > div:first-child { padding: 18px 20px 6px !important; }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) > div > div:first-child > div:first-child { flex-direction: column; align-items: flex-start !important; gap: 14px !important; margin-bottom: 8px !important; }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) > div > div:first-child > div:first-child > div:first-child { width: 48px !important; height: 48px !important; border-radius: var(--r-md) !important; border: 0 !important; background: color-mix(in srgb, var(--tx) 8%, transparent) !important; color: var(--tx) !important; }
+  html body .cf-danger > div > div:first-child > div:first-child > div:first-child { background: color-mix(in srgb, var(--bad) 14%, transparent) !important; color: var(--bad) !important; }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) > div > div:first-child > div:first-child > div:first-child svg { width: 24px; height: 24px; stroke: currentColor !important; }
+  html body :is(#archiveConfirmTitle, #customConfirmTitle, #cancelWsTitle, #deleteForeverModal [id$="Title"]) { font-size: var(--fs-xl) !important; font-weight: 700 !important; line-height: 1.25; }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) p { color: var(--tx2) !important; font-size: var(--fs-ui) !important; }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) > div > div:last-child { flex-direction: column-reverse; gap: 10px !important; padding: 10px 20px 18px !important; border-top: 0 !important; }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) > div > div:last-child button {
+    flex: none !important; width: 100%; min-height: 52px; padding: 0 16px !important; border: 0 !important; border-radius: var(--r-md) !important;
+    background: color-mix(in srgb, var(--tx) 8%, transparent) !important; color: var(--tx) !important; font-weight: 600 !important; font-size: var(--fs-body) !important; transition: transform var(--dur-fast) var(--ease); }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) > div > div:last-child button:last-child { background: var(--tx) !important; color: var(--bg) !important; }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) > div > div:last-child button:active { transform: scale(.97); }
+  html body :is(#archiveConfirmModal #archiveConfirmBtn, #customConfirmModal #customConfirmOkBtn, #deleteForeverModal #deleteForeverBtn, #cancelWsModal #cancelWsBtn) { background: var(--tx) !important; background-image: none !important; color: var(--bg) !important; }
+  html body :is(#archiveConfirmModal.cf-danger #archiveConfirmBtn, #customConfirmModal.cf-danger #customConfirmOkBtn, #deleteForeverModal.cf-danger #deleteForeverBtn, #cancelWsModal.cf-danger #cancelWsBtn) { background: var(--bad) !important; color: var(--on-bad) !important; }
+  html body :is(#archiveConfirmModal, #customConfirmModal, #cancelWsModal, #deleteForeverModal) button:focus { outline: none !important; box-shadow: none !important; }
+  html body .cf-leaving { display: flex !important; pointer-events: none; }
+}
+/* Rolling hint on the More page search */
+html body .mp-search > span { line-height: 1.3; }
+html body .mp-roll { position: relative; display: inline-block; height: 1.3em; line-height: 1.3; overflow: hidden; vertical-align: top; min-width: 7.5em; }
+html body .mp-roll > span { position: absolute; left: 0; top: 0; white-space: nowrap; }
+
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -19629,11 +19660,11 @@ html { scroll-behavior: auto; }
   const EASE = 'cubic-bezier(.2,.8,.2,1)', OUT = 'cubic-bezier(.4,0,.2,1)';
   const ok = () => !RM.matches && !document.hidden && typeof Element.prototype.animate === 'function';
   const phone = () => typeof isPhoneLayout === 'function' ? isPhoneLayout() : window.innerWidth <= 900;
-  const ITEMS = '.m-card, .wa-row, .td-row, .nf-row, .mp-it';
-  let lastSec = null, navAt = 0, done = new WeakSet();
+  const ITEMS = '.m-card, .wa-row, .td-row, .nf-row';
+  let lastSec = null, navAt = 0, done = new WeakSet(), staggered = false;
 
   function stagger(root) {
-    if (!ok() || !root) return;
+    if (!ok() || !root || staggered) return; staggered = true;
     const vh = window.innerHeight; let i = 0;
     root.querySelectorAll(ITEMS).forEach(el => {
       if (i >= 8 || done.has(el) || !el.offsetParent) return;
@@ -19644,11 +19675,13 @@ html { scroll-behavior: auto; }
     });
   }
   window.motionPageIn = function (name) {
-    if (name === lastSec) return; const first = lastSec === null; lastSec = name; navAt = Date.now(); done = new WeakSet();
+    if (name === lastSec) return; const first = lastSec === null; lastSec = name; navAt = Date.now(); done = new WeakSet(); staggered = false;
     if (first || !ok()) return;
     const sec = document.getElementById('section-' + name); if (!sec) return;
     sec.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: EASE });
-    requestAnimationFrame(() => stagger(sec));
+    // Only lists that arrive fresh get the one-by-one entrance. A page that already has its
+    // rows (cached) just fades, and a later re-render of the same rows never animates again.
+    if (sec.querySelector(ITEMS)) staggered = true;
   };
   window.motionSettle = function (sec) {
     if (!ok() || !sec) return;
@@ -19715,6 +19748,72 @@ html { scroll-behavior: auto; }
   // Pages that were hidden when we first looked get their pill on show.
   const _ss = window.showSection; if (typeof _ss === 'function') window.showSection = function () { const r = _ss.apply(this, arguments); requestAnimationFrame(scan); return r; };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(scan, 300)); else setTimeout(scan, 300);
+})();
+</script>
+
+<script id="studioSheets">
+// v213: on the phone, confirms slide up from the bottom (tap outside or swipe down to cancel),
+// and the More page search hint rolls through what it can find.
+(function () {
+  const RM = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  const phone = () => typeof isPhoneLayout === 'function' ? isPhoneLayout() : window.innerWidth <= 900;
+  const EASE = 'cubic-bezier(.2,.8,.2,1)', SPRING = 'cubic-bezier(.34,1.2,.64,1)', IN = 'cubic-bezier(.4,0,1,1)';
+  const M = { archiveConfirmModal: 'closeArchiveConfirm', customConfirmModal: 'customConfirmCancel', cancelWsModal: 'closeCancelWs', deleteForeverModal: 'closeDeleteForever' };
+  const shown = el => el.style.display && el.style.display !== 'none';
+  function danger(el) {
+    if (el.id === 'cancelWsModal' || el.id === 'deleteForeverModal') return true;
+    if (el.id === 'customConfirmModal') return el.classList.contains('is-danger');
+    const mail = document.getElementById('archiveConfirmIconMail');
+    return !(mail && mail.style.display !== 'none');
+  }
+  function cancel(el) { const f = window[M[el.id]]; if (typeof f === 'function') f(); }
+  Object.keys(M).forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    const box = el.firstElementChild; let was = shown(el);
+    new MutationObserver(() => {
+      const is = shown(el); if (is === was) return; was = is;
+      if (!phone()) return;
+      if (is) {
+        el.classList.remove('cf-leaving'); el.classList.toggle('cf-danger', danger(el));
+        if (RM.matches || !box.animate) return;
+        box.getAnimations().forEach(a => a.cancel()); box.style.transform = '';
+        el.animate([{ backgroundColor: 'rgba(0,0,0,0)' }, { backgroundColor: getComputedStyle(el).backgroundColor }], { duration: 280, easing: EASE });
+        box.animate([{ transform: 'translateY(100%)' }, { transform: 'none' }], { duration: 420, easing: SPRING });
+      } else {
+        if (RM.matches || !box.animate) return;
+        el.classList.add('cf-leaving');
+        const from = box.style.transform || 'none'; box.style.transform = '';
+        el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, easing: EASE });
+        const a = box.animate([{ transform: from }, { transform: 'translateY(100%)' }], { duration: 260, easing: IN });
+        const end = () => el.classList.remove('cf-leaving'); a.onfinish = end; a.oncancel = end;
+      }
+    }).observe(el, { attributes: true, attributeFilter: ['style'] });
+    // Tap the dimmed area to cancel.
+    el.addEventListener('click', e => { if (e.target === el && phone() && !el.classList.contains('cf-leaving')) cancel(el); });
+    // Swipe the sheet down to cancel; a small pull springs back.
+    let y0 = null, dy = 0;
+    box.addEventListener('touchstart', e => { if (!phone() || box.scrollTop > 0 || e.target.closest('button, input, textarea, select')) { y0 = null; return; } y0 = e.touches[0].clientY; dy = 0; }, { passive: true });
+    box.addEventListener('touchmove', e => { if (y0 == null) return; dy = Math.max(0, e.touches[0].clientY - y0); box.style.transform = dy ? 'translateY(' + dy + 'px)' : ''; }, { passive: true });
+    box.addEventListener('touchend', () => {
+      if (y0 == null) return; y0 = null;
+      if (dy > 90) { cancel(el); return; }
+      if (dy && box.animate && !RM.matches) box.animate([{ transform: 'translateY(' + dy + 'px)' }, { transform: 'none' }], { duration: 300, easing: SPRING });
+      box.style.transform = '';
+    }, { passive: true });
+  });
+
+  // Rolling hint: "Search everything" → students → invoices → payments → workshops → leads.
+  const WORDS = ['everything', 'students', 'invoices', 'payments', 'workshops', 'leads'];
+  let wi = 0;
+  setInterval(() => {
+    const r = document.querySelector('#section-more.active .mp-roll'); if (!r || document.hidden) return;
+    const old = r.lastElementChild; wi = (wi + 1) % WORDS.length;
+    const n = document.createElement('span'); n.textContent = WORDS[wi];
+    if (RM.matches || !n.animate) { r.replaceChildren(n); return; }
+    r.appendChild(n);
+    if (old) old.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateY(-100%)', opacity: 0 }], { duration: 420, easing: EASE, fill: 'forwards' }).onfinish = () => old.remove();
+    n.animate([{ transform: 'translateY(100%)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 420, easing: EASE });
+  }, 2500);
 })();
 </script>
 
