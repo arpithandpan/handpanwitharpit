@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-title" content="Studio"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="theme-color" content="#0b1220"/>
+<meta name="theme-color" content="#111723"/>
 <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pages/studio-splash-750x1334.png?v=2"/>
 <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/pages/studio-splash-828x1792.png?v=2"/>
 <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/pages/studio-splash-1125x2436.png?v=2"/>
@@ -48,10 +48,10 @@ function isPhoneLayout() { return !!(window.matchMedia && window.matchMedia(wind
 // "base": true means the theme's full values are written by hand in the main CSS (Blue).
 window.STUDIO_THEMES = {
   blue: { name: 'Blue', base: true,
-    dark:  { acc: '#2f5fe0', accTx: '#82a6ff', bg: '#0b1220' },
+    dark:  { acc: '#2f5fe0', accTx: '#82a6ff', bg: '#111723' },
     light: { acc: '#2f5fe0' } },
   mono: { name: 'Mono', cls: 'mono',
-    dark:  { acc: '#ededed', accTx: '#ededed', onAcc: '#0a0a0a', bg: '#0a0a0a', neutral: true },
+    dark:  { acc: '#ededed', accTx: '#ededed', onAcc: '#0a0a0a', bg: '#121212', neutral: true },
     light: { acc: '#0a0a0a', onAcc: '#ffffff', bg: '#ebebeb', neutral: true },
     status: { dark: { ok: '#c5e67c' }, light: { ok: '#3f6212' } },
     extra: { dark: { '--acc-h': '#ffffff', '--lime': '#d4f08c', '--lime-tx': '#1a2400', '--out': '#ededed', '--out-tx': '#0a0a0a', '--out-meta': '#5a5a5a', '--tick': '#3f6212' },
@@ -73,22 +73,22 @@ window.STUDIO_THEMES = {
   function hx(c) { c = c.replace('#', ''); if (c.length === 3) c = c.replace(/./g, '$&$&'); return [0, 2, 4].map(function (i) { return parseInt(c.substr(i, 2), 16); }); }
   function mix(a, p, b) { a = hx(a); b = hx(b); return '#' + a.map(function (v, i) { return ('0' + Math.round(v * p / 100 + b[i] * (100 - p) / 100).toString(16)).slice(-2); }).join(''); }
   function al(a, p) { a = hx(a); return 'rgba(' + a.join(',') + ',' + (p / 100) + ')'; }
-  var STATUS = { dark: { ok: '#4ade80', warn: '#fbbf24', bad: '#f87171' }, light: { ok: '#157a3a', warn: '#95590a', bad: '#b91c1c' } };
+  var STATUS = { dark: { ok: '#4ade80', warn: '#fbbf24', bad: '#fa8c8c' }, light: { ok: '#157a3a', warn: '#95590a', bad: '#b91c1c' } };
   function vars(t, mode) {
     var d = mode === 'dark', s = t[mode], a = s.acc, at = s.accTx || a, k = s.neutral ? 0 : 1;
     var onLight = !s.onAcc || (function (c) { var x = hx(c); return (0.299 * x[0] + 0.587 * x[1] + 0.114 * x[2]) > 140; })(s.onAcc);
     var accH = onLight ? mix(a, 86, '#000000') : mix(a, 85, '#ffffff');
     var st = {}; ['ok', 'warn', 'bad'].forEach(function (x) { st[x] = ((t.status || {})[mode] || {})[x] || STATUS[mode][x]; });
-    var bg = s.bg || (d ? mix(a, 5 * k, '#0b0b0e') : mix(a, 4 * k, '#e8eaf0'));   /* v190: light page is a step darker so white cards stand on their own */
+    var bg = s.bg || (d ? mix(a, 5 * k, '#131316') : mix(a, 4 * k, '#e8eaf0'));   /* v190: light page is a step darker so white cards stand on their own */
     if (!d) {   /* v190: accent text must stay 4.6:1 on the darker light page, so deepen it until it does */
       var lum = function (c) { return hx(c).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }).reduce(function (o, v, i) { return o + v * [0.2126, 0.7152, 0.0722][i]; }, 0); };
       var cr = function (x, y) { var p = lum(x), q = lum(y); return (Math.max(p, q) + 0.05) / (Math.min(p, q) + 0.05); };
       for (var n = 0; n < 12 && cr(at, bg) < 4.6; n++) at = mix(at, 92, '#000000');
     }
     var v = d ? {
-      '--bg': bg, '--s1': mix(a, 6 * k, s.neutral ? '#161616' : '#16161a'), '--s2': mix(a, 9 * k, s.neutral ? '#1f1f1f' : '#1e1e24'), '--s3': mix(a, 12 * k, s.neutral ? '#2a2a2a' : '#28282f'),
-      '--line': mix(a, 11 * k, s.neutral ? '#242424' : '#25252b'), '--line-2': mix(a, 15 * k, s.neutral ? '#444444' : '#42424d'),
-      '--tx': s.neutral ? '#ededed' : '#eeeef1', '--tx2': mix(a, 8 * k, s.neutral ? '#a3a3a3' : '#a9a9b1'), '--tx3': mix(a, 8 * k, s.neutral ? '#959595' : '#97979f'),
+      '--bg': bg, '--s1': mix(a, 7 * k, s.neutral ? '#212121' : '#222228'), '--s2': mix(a, 9 * k, s.neutral ? '#2a2a2a' : '#2a2a31'), '--s3': mix(a, 12 * k, s.neutral ? '#333333' : '#33333b'),   /* v205: charcoal dark, cards a clear step above the page */
+      '--line': mix(a, 11 * k, s.neutral ? '#2c2c2c' : '#2e2e35'), '--line-2': mix(a, 15 * k, s.neutral ? '#4d4d4d' : '#4c4c57'),
+      '--tx': s.neutral ? '#ededed' : '#eeeef1', '--tx2': mix(a, 8 * k, s.neutral ? '#b2b2b2' : '#b6b6be'), '--tx3': mix(a, 8 * k, s.neutral ? '#a3a3a3' : '#a6a6ae'),
       '--acc-h': accH, '--acc-soft': al(at, s.neutral ? 8 : 15),
       '--out': mix(a, 34, '#17171c'), '--out-tx': '#ffffff', '--out-meta': mix(at, 22, '#e4e4e8'), '--tick': at,
       '--focus': '0 0 0 3px ' + al(at, 45), '--shadow': 'none', '--overlay': 'rgba(0,0,0,0.6)'
@@ -110,7 +110,7 @@ window.STUDIO_THEMES = {
   var css = '';
   Object.keys(TH).forEach(function (id) {
     var t = TH[id], D = t.dark, L = t.light;
-    var dbg = D.bg || mix(D.acc, D.neutral ? 0 : 5, '#0b0b0e'), lbg = L.bg || mix(L.acc, L.neutral ? 0 : 4, '#e8eaf0');
+    var dbg = D.bg || mix(D.acc, D.neutral ? 0 : 5, '#131316'), lbg = L.bg || mix(L.acc, L.neutral ? 0 : 4, '#e8eaf0');
     t.meta = { dark: dbg, light: lbg };
     t.swatch = [dbg, D.acc2 || D.accTx || D.acc, D.acc];
     css += block('html[data-pal="' + id + '"]', { '--sp-bg': dbg, '--sp-acc': D.accTx || D.acc, '--sp-tx': D.neutral ? '#ededed' : (t.base ? '#e8edf5' : '#eeeef1'), '--sw-dark': dbg, '--sw-light': lbg, 'background': 'var(--sp-bg)' });
@@ -236,7 +236,7 @@ body.dark-mode { --s-elev: var(--s2); --ctl-bg: var(--s2); --on-bad: #1c0b0b; --
 </style>
 <style id="splashCss">
 /* v165: splash. Same picture as the iPhone launch image, then the logo starts turning and blinking until the app is ready. */
-html { background: var(--sp-bg, #0b1220); }
+html { background: var(--sp-bg, #111723); }
 #appSplash { position: fixed; inset: 0; z-index: var(--z-splash); --u: min(1vw, 4.4px); background: radial-gradient(circle calc(55 * var(--u)) at 50% 46%, rgba(255,255,255,.05), transparent), #0b0b0e; transition: opacity .42s cubic-bezier(.2,.7,.2,1); }   /* v197: one layer, painted exactly like the launch picture */
 #appSplash.out { opacity: 0; pointer-events: none; }
 #appSplash .as-mark { position: absolute; left: 50%; top: calc(46vh - 4 * var(--u)); width: calc(20 * var(--u)); height: calc(20 * var(--u)); transform: translate(-50%, -50%); overflow: visible; }
@@ -3179,11 +3179,11 @@ body {
   -webkit-font-smoothing: antialiased; color-scheme: light;
 }
 body.dark-mode {
-  --bg: #0b1220; --s1: #121b2c; --s2: #1a2438; --s3: #222e45; --line: #223049; --line-2: #3b4d6e;
-  --tx: #e8edf5; --tx2: #a9b4c6; --tx3: #8592a8;
+  --bg: #111723; --s1: #1d2535; --s2: #252e41; --s3: #2e384d; --line: #2a3346; --line-2: #46526a;   /* v205 charcoal */
+  --tx: #e8edf5; --tx2: #b6c0d0; --tx3: #9aa6ba;
   --acc: #2f5fe0; --acc-h: #2852c1; --acc-tx: #82a6ff; --acc-soft: rgba(91,140,255,0.14); --on-acc: #ffffff;
-  --ok: #4ade80; --ok-soft: rgba(74,222,128,0.12); --warn: #fbbf24; --warn-soft: rgba(251,191,36,0.12); --bad: #f87171; --bad-soft: rgba(248,113,113,0.12);
-  --out: #1e3a74; --out-tx: #eef3ff; --out-meta: #b3c4ea; --in: #1a2438; --tick: #7cc4ff;
+  --ok: #4ade80; --ok-soft: rgba(74,222,128,0.12); --warn: #fbbf24; --warn-soft: rgba(251,191,36,0.12); --bad: #fa8c8c; --bad-soft: rgba(250,140,140,0.12);
+  --out: #1e3a74; --out-tx: #eef3ff; --out-meta: #b3c4ea; --in: #252e41; --tick: #7cc4ff;
   --focus: 0 0 0 3px rgba(91,140,255,0.45); --shadow: none; --overlay: rgba(0,0,0,0.6);
   color-scheme: dark;
 }
@@ -4286,6 +4286,7 @@ table#paymentsTable { min-width: 700px; }
     <span style="font-size:var(--fs-lg);font-weight:500;color:var(--tx);">Arpit's Studio</span>
   </div>
   <button type="button" class="app-bar-back" id="appBackBtn" onclick="pgBack()" aria-label="Back"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><span id="appBackLbl">More</span></button>
+  <button type="button" class="app-bar-btn app-bar-bell" id="appBellBtn" onclick="openNotifsFromToday()" aria-label="Notifications"></button>
   <div class="app-bar-title" id="appBarTitle" aria-hidden="true"></div>
   <div style="display:flex;align-items:center;gap:8px;">
     <button id="appAddBtn" class="app-bar-btn" type="button" aria-label="Add" onclick="appAdd()" style="display:none;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
@@ -4456,7 +4457,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v204</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v205</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4530,7 +4531,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v204</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v205</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -7539,6 +7540,7 @@ function qaClose() { document.body.classList.remove('qa-open'); }
 const PG_TABS = ['today', 'schedule', 'whatsapp', 'classes', 'more'];
 let _pgPrev = null, _pgBacking = false;
 const PG_ICO = {
+  bell: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
   search: '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>',
   add: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
   back: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
@@ -7562,6 +7564,7 @@ function pgHeadSync(name) {
   if (bar) {
     bar.classList.toggle('pg-sub', !isTab);
     bar.classList.toggle('pg-search', name === 'today');
+    bar.classList.toggle('pg-today', name === 'today');
     const lbl = document.getElementById('appBackLbl'); if (lbl) lbl.textContent = pgTitle(pgBackTarget(name)) || 'More';
   }
   document.querySelectorAll('.pg-acts, .pg-back').forEach(e => e.remove());
@@ -7575,6 +7578,7 @@ function pgHeadSync(name) {
     tdiv.insertBefore(b, tdiv.firstChild); head.classList.add('pg-has-back');
   }
   let acts = '';
+  if (name === 'today') acts += '<button type="button" class="pg-ib pg-bell" onclick="openNotifsFromToday()" aria-label="Notifications">' + PG_ICO.bell + bellBadge() + '</button>';   /* v205 */
   if (name === 'today') acts += '<button type="button" class="pg-ib" onclick="openMobileSearch()" aria-label="Search">' + PG_ICO.search + '</button>';
   if (hasAdd) acts += '<button type="button" class="pg-ib add" onclick="appAdd()" aria-label="Add">' + PG_ICO.add + '</button>';
   if (acts) { const d = document.createElement('div'); d.className = 'pg-acts'; d.innerHTML = acts; head.insertBefore(d, tdiv === head ? head.firstChild : tdiv.nextSibling); head.classList.add('pg-has-acts'); }
@@ -12095,8 +12099,18 @@ function clearFieldErrors(...ids) {
   ids.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('field-error'); });
 }
 
+// v205: bell on Today (header and scrolled bar). The badge counts unread notifications only.
+window._notifUnread = window._notifUnread || 0;
+function bellBadge() { const u = window._notifUnread || 0; return u > 0 ? '<span class="bell-bdg" aria-label="' + u + ' unread">' + (u > 9 ? '9+' : u) + '</span>' : ''; }
+function bellSync() {
+  const top = document.getElementById('appBellBtn'); if (top) top.innerHTML = PG_ICO.bell + bellBadge();
+  document.querySelectorAll('.pg-bell').forEach(b => { b.innerHTML = PG_ICO.bell + bellBadge(); });
+}
+function openNotifsFromToday() { mpGo('notifications'); }
+document.addEventListener('DOMContentLoaded', () => { try { bellSync(); } catch (e) {} });
 function updateNotifBadge(items) {
   const unread = items.filter(n => !n.read).length;
+  window._notifUnread = unread; try { bellSync(); } catch (e) {}
   const countText = unread > 0 ? ' (' + (unread > 9 ? '9+' : unread) + ')' : '';
   const sidebarCount = document.getElementById('sidebarNotifCount');
   if (sidebarCount) sidebarCount.textContent = countText;
@@ -16577,6 +16591,11 @@ async function waRefreshBadge() {
     const res = await sbGetAll('wa_messages', 'direction=eq.in&read_at=is.null&type=neq.reaction&limit=500');
     waSetBadge(new Set((res.data || []).map(r => r.phone)).size);
   } catch (e) { /* table not created yet: no badge */ }
+  // v205: unread notifications for the Today bell ride on the same timer (start, every 30s, on push and resume)
+  try {
+    const nr = await sbGetAll('notifications', 'read=eq.false&limit=100');
+    if (nr && Array.isArray(nr.data)) { window._notifUnread = nr.data.length; if (typeof bellSync === 'function') bellSync(); }
+  } catch (e) {}
 }
 function waBadgeStart() {
   waRefreshBadge();
@@ -19228,7 +19247,7 @@ html.dk body .btn-dash-outline, html.dk body .btn-dash-ghost { background: var(-
    Dark: a light overlay of the text colour (no ring), so it lifts off the page and off a card by the same step.
    Selected states (.on / .active) and the accent buttons keep their own look. */
 html body { --ctl2-bg: var(--s1); --ctl2-ring: color-mix(in srgb, var(--tx) 18%, transparent); --ctl2-shadow: 0 1px 2px rgba(0, 0, 0, 0.07); }
-html.dk body { --ctl2-bg: color-mix(in srgb, var(--tx) 13%, transparent); --ctl2-ring: transparent; --ctl2-shadow: 0 0 0 0 transparent; }
+html.dk body { --ctl2-bg: color-mix(in srgb, var(--tx) 11%, transparent); --ctl2-ring: transparent; --ctl2-shadow: 0 0 0 0 transparent; }
 html body :is(.icon-action-btn, .app-bar-btn, .pg-ib:not(.add), .sch-ic, .sch-today, .sch-blk, .notif-dots-btn, .mc-ib, .wa-ai-icon,
   .mobile-filter-btn, .filter-dd-btn, .mobile-picker-sheet-close, .filter-sheet-close, .filter-sheet-clear,
   .btn-dash-outline, .btn-dash-ghost, .btn-restore, .btn-archive, .wa-back, .wa-cbtn, .mp-search, .mp-me,
@@ -19272,6 +19291,14 @@ html body .mc-tap:active { color: var(--acc-tx); }
 /* only rows that open something get a press colour; cards with their own buttons stay still when touched or scrolled */
 html body .m-card:active, html body .td-row:active { background: var(--s1) !important; }
 html.dk body .m-card:active { background: var(--s1) !important; }
+/* v205: notifications bell on Today. Header: bell, search, +. Scrolled bar: bell on the left (where Back sits on
+   other pages), + and search on the right, so the title stays centred. Red count badge for unread. */
+html body .app-bar-bell { display: none !important; }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body .mobile-topbar.pg-today.scrolled .app-bar-bell { display: inline-flex !important; position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc((var(--bar-h) - var(--bar-btn)) / 2); z-index: 2; }
+}
+html body .pg-bell, html body .app-bar-bell { position: relative; overflow: visible !important; }
+html body .bell-bdg { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: var(--r-pill); background: var(--bad); color: var(--on-fill); font-size: var(--fs-2xs); font-weight: 700; line-height: 18px; text-align: center; box-shadow: 0 0 0 2px var(--bg); pointer-events: none; }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
