@@ -4286,7 +4286,6 @@ table#paymentsTable { min-width: 700px; }
     <span style="font-size:var(--fs-lg);font-weight:500;color:var(--tx);">Arpit's Studio</span>
   </div>
   <button type="button" class="app-bar-back" id="appBackBtn" onclick="pgBack()" aria-label="Back"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><span id="appBackLbl">More</span></button>
-  <button type="button" class="app-bar-btn app-bar-bell" id="appBellBtn" onclick="openNotifsFromToday()" aria-label="Notifications"></button>
   <div class="app-bar-title" id="appBarTitle" aria-hidden="true"></div>
   <div style="display:flex;align-items:center;gap:8px;">
     <button id="appAddBtn" class="app-bar-btn" type="button" aria-label="Add" onclick="appAdd()" style="display:none;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
@@ -4457,7 +4456,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v205</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v206</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4531,7 +4530,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v205</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v206</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5363,13 +5362,14 @@ table#paymentsTable { min-width: 700px; }
           <div class="dash-section-subtitle" id="notifSubtitle">All activity and alerts from your dashboard</div>
         </div>
         <div id="notifActions" style="display:none;gap:0.75rem;align-items:center;">
-          <button class="btn-dash btn-dash-outline btn-dash-sm" id="notifExpandBtn" onclick="toggleAllBuckets()">Collapse all</button>
+          <button class="btn-dash btn-dash-outline btn-dash-sm" id="notifExpandBtn" onclick="toggleAllBuckets()" style="display:none;">Collapse all</button>
+          <button class="btn-dash btn-dash-outline btn-dash-sm nf-markall" id="notifMarkAll" onclick="markAllRead()">Mark all read</button>
           <div style="position:relative;">
             <button class="notif-dots-btn" onclick="toggleNotifMenu(this)" title="More options">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
             </button>
             <div class="notif-dots-menu" id="notifDotsMenu">
-              <button class="notif-dots-menu-item mobile-only" onclick="toggleAllBuckets();closeNotifMenu()">
+              <button class="notif-dots-menu-item mobile-only" onclick="toggleAllBuckets();closeNotifMenu()" style="display:none;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 9 12 15 20 9"/></svg>
                 Collapse / expand all
               </button>
@@ -7545,7 +7545,7 @@ const PG_ICO = {
   add: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
   back: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
 };
-function pgTitle(name) { const t = document.querySelector('#section-' + name + ' .dash-section-title'); return t ? t.textContent.trim() : ''; }
+function pgTitle(name) { if (name === 'today') return 'Today'; const t = document.querySelector('#section-' + name + ' .dash-section-title'); return t ? t.textContent.trim() : ''; }   /* v206: Today's title is the greeting, the back label says Today */
 function pgBackTarget(name) { return (_pgPrev && _pgPrev !== name && document.getElementById('section-' + _pgPrev)) ? _pgPrev : 'more'; }
 function pgBack() {
   const name = sessionStorage.getItem('dash_section') || 'today';
@@ -7578,7 +7578,6 @@ function pgHeadSync(name) {
     tdiv.insertBefore(b, tdiv.firstChild); head.classList.add('pg-has-back');
   }
   let acts = '';
-  if (name === 'today') acts += '<button type="button" class="pg-ib pg-bell" onclick="openNotifsFromToday()" aria-label="Notifications">' + PG_ICO.bell + bellBadge() + '</button>';   /* v205 */
   if (name === 'today') acts += '<button type="button" class="pg-ib" onclick="openMobileSearch()" aria-label="Search">' + PG_ICO.search + '</button>';
   if (hasAdd) acts += '<button type="button" class="pg-ib add" onclick="appAdd()" aria-label="Add">' + PG_ICO.add + '</button>';
   if (acts) { const d = document.createElement('div'); d.className = 'pg-acts'; d.innerHTML = acts; head.insertBefore(d, tdiv === head ? head.firstChild : tdiv.nextSibling); head.classList.add('pg-has-acts'); }
@@ -11716,6 +11715,7 @@ async function loadNotifications() {
     if (!data.length) { container.innerHTML = emptyState; return; }
     renderNotifications(data);
     updateNotifBadge(data);
+    notifAutoRead(data);
   } catch(e) {
     container.innerHTML = emptyState;
   }
@@ -11769,7 +11769,8 @@ function renderNotifications(items) {
   const countEl = document.getElementById('notifUnreadCount');
   if (countEl) countEl.textContent = unreadCount > 0 ? unreadCount : '';
   const notifSubtitle = document.getElementById('notifSubtitle');
-  if (notifSubtitle) notifSubtitle.textContent = items.length + ' notification' + (items.length !== 1 ? 's' : '') + (unreadCount > 0 ? ' · ' + unreadCount + ' unread' : '');
+  if (notifSubtitle) notifSubtitle.textContent = unreadCount > 0 ? unreadCount + ' unread · ' + items.length + ' in total' : items.length + ' notification' + (items.length !== 1 ? 's' : '') + ', all read';
+  const mAll = document.getElementById('notifMarkAll'); if (mAll) mAll.style.display = unreadCount > 0 ? '' : 'none';
 
   if (!items.length) {
     const el = document.getElementById('notificationsContainer');
@@ -11812,40 +11813,85 @@ function renderNotificationsHTML(items) {
     groups[b].push(n);
   });
 
-  const chevronSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
-
+  // v206: one card per day. Each row: a line icon for the kind, a short title, the detail in two lines
+  // with More / Less when it runs longer, and a short time. Unread shows as a dot, not a tinted row.
   let html = '';
   bucketOrder.forEach(bucket => {
     if (!groups[bucket]) return;
-    const count = groups[bucket].length;
-    const unread = groups[bucket].filter(n => !n.read).length;
-    const bucketId = 'bucket-' + bucket.replace(/\s+/g, '-').toLowerCase();
-    html += `<div class="notif-bucket" id="${bucketId}">`;
-    html += `<div class="notif-bucket-header" onclick="toggleBucket('${bucketId}')">
-      <div class="notif-bucket-label">
-        ${bucket}
-        <span class="notif-bucket-count">${count}</span>
-        ${unread > 0 ? `<span class="notif-bucket-count" style="background:color-mix(in srgb, var(--acc-tx) 30%, transparent);color: var(--acc-tx);">${unread} unread</span>` : ''}
-      </div>
-      <div class="notif-bucket-chevron">${chevronSvg}</div>
-    </div>`;
-    html += `<div class="notif-bucket-body">`;
-    html += groups[bucket].map(n => `
-      <div class="notif-item ${n.read?'':'unread'}" onclick="markRead(${n.id})">
-        <div class="notif-icon ${n.type||'info'}">${n.type==='payment'?'💰':n.type==='warning'?'⚠️':n.type==='error'?'❌':'ℹ️'}</div>
-        <div style="flex:1;">
-          <div class="notif-msg">${n.message||'—'}</div>
-          <div class="notif-time">${fmtDateTime(n.created_at)}</div>
-        </div>
-        ${!n.read?'<div class="notif-unread-dot"></div>':''}
-      </div>
-    `).join('');
-    html += `</div></div>`;
+    html += '<div class="nf-grp">' + bucket + '</div><div class="nf-card">' + groups[bucket].map(n => {
+      const p = notifParts(n.message), k = notifKind(n, p.title + ' ' + p.detail);
+      return '<div class="nf-row' + (n.read ? ' read' : '') + '" onclick="markRead(' + n.id + ')">'
+        + '<div class="nf-ic nf-' + k.c + '">' + NF_ICO[k.i] + '</div>'
+        + '<div class="nf-m"><div class="nf-l1"><div class="nf-ti">' + zEsc(p.title) + '</div><div class="nf-tm">' + (n.read ? '' : '<span class="nf-dot" aria-label="Unread"></span>') + nfAgo(n.created_at) + '</div></div>'
+        + (p.detail ? '<div class="nf-de">' + zEsc(p.detail) + '</div><button type="button" class="nf-more" hidden onclick="event.stopPropagation();nfToggle(this)">More</button>' : '')
+        + '</div></div>';
+    }).join('') + '</div>';
   });
   el.innerHTML = html;
-  // Update expand button label
+  requestAnimationFrame(() => el.querySelectorAll('.nf-de').forEach(de => { const b = de.nextElementSibling; if (b && de.scrollHeight > de.clientHeight + 2) b.hidden = false; }));
   updateExpandBtn();
 }
+const NF_ICO = {
+  pay: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12M6 9h12M6 4c5 0 7 2 7 5s-2 5-7 5l7 6"/></svg>',
+  inv: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10v18l-2.5-1.5L12 21l-2.5-1.5L7 21z"/><path d="M10 8h4M10 12h4"/></svg>',
+  trial: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>',
+  cls: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>',
+  chat: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>',
+  warn: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17v.5"/></svg>',
+  info: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg>'
+};
+// "✅ Fee received: ₹6000 from Ananya — Fee for 4 classes" → title "Fee received", detail "₹6000 from Ananya · Fee for 4 classes"
+function notifParts(msg) {
+  let m = String(msg || '—').replace(/^[\s\u200d\ufe0f]*(?:\p{Extended_Pictographic}[\u200d\ufe0f]*\s*)+/u, '').trim();
+  let title = m, detail = '';
+  const i = m.search(/:\s|\s[—–]\s/);
+  if (i > 0 && i <= 48) { title = m.slice(0, i).trim(); detail = m.slice(i).replace(/^(:\s|\s[—–]\s)/, '').trim(); }
+  if (!detail && title.length > 32) {   // "Invoice INV-034 sent to a@b.com (Ananya)" → "Invoice INV-034 sent" + "To a@b.com (Ananya)"
+    const j = title.slice(12).search(/\s(to|from|for)\s/i);
+    if (j >= 0) { detail = title.slice(12 + j + 1); title = title.slice(0, 12 + j); }
+  }
+  detail = detail.replace(/\s[—–]\s/g, ' · ');
+  if (detail) detail = detail.charAt(0).toUpperCase() + detail.slice(1);
+  return { title, detail };
+}
+function notifKind(n, txt) {
+  const t = String(n.type || ''), x = txt || '';
+  if (t === 'error') return { i: 'warn', c: 'bad' };
+  if (t === 'warning' || /fail|couldn.t|could not|bounced|blocked/i.test(x)) return { i: 'warn', c: 'warn' };
+  if (/invoice|receipt/i.test(x)) return { i: 'inv', c: 'acc' };
+  if (t === 'payment' || /fee received|paid|payment|₹|\$\d/i.test(x)) return { i: 'pay', c: 'ok' };
+  if (/trial/i.test(x)) return { i: 'trial', c: 'acc' };
+  if (/class|zoom|attend/i.test(x)) return { i: 'cls', c: 'acc' };
+  if (/whatsapp|message|reply/i.test(x)) return { i: 'chat', c: 'acc' };
+  return { i: 'info', c: 'acc' };
+}
+function nfAgo(ts) {
+  const d = new Date(ts), m = Math.round((Date.now() - d.getTime()) / 60000);
+  if (!isFinite(m)) return '';
+  if (m < 1) return 'now'; if (m < 60) return m + 'm'; if (m < 24 * 60) return Math.round(m / 60) + 'h';
+  if (m < 7 * 24 * 60) return d.toLocaleDateString('en-IN', { weekday: 'short' });
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+}
+function nfToggle(b) { const de = b.previousElementSibling; const open = de.classList.toggle('open'); b.textContent = open ? 'Less' : 'More'; b.classList.toggle('open', open); }
+// v206: opening the page counts as reading. After a short look the unread ones are marked read on the server,
+// so the More badge clears. The dots stay on screen for this visit so you can still see what was new.
+let _nfAutoT = null;
+function notifAutoRead(items) {
+  clearTimeout(_nfAutoT);
+  const ids = (items || []).filter(n => !n.read).map(n => n.id).filter(x => x != null);
+  if (!ids.length) return;
+  _nfAutoT = setTimeout(async () => {
+    const sec = document.getElementById('section-notifications');
+    if (!sec || !sec.classList.contains('active') || document.hidden) return;
+    try {
+      await fetch(SUPABASE_URL + '/rest/v1/notifications?id=in.(' + ids.join(',') + ')', { method: 'PATCH', headers: { 'apikey': SUPABASE_KEY, 'Authorization': SB_HEADERS['Authorization'], 'Content-Type': 'application/json' }, body: JSON.stringify({ read: true }) });
+      (_allNotifItems || []).forEach(n => { if (ids.includes(n.id)) n.read = true; });
+      updateNotifBadge(_allNotifItems || []);
+    } catch (e) {}
+  }, 2500);
+}
+
+function _nfUnusedBuckets() {}
 
 function toggleBucket(id) {
   const b = document.getElementById(id);
@@ -17880,7 +17926,7 @@ async function pushRender() {
     return;
   }
   if (!sub) {
-    box.innerHTML = head('Phone notifications are off', 'Get a ping on this device for WhatsApp messages, payments and new trials.', '<button type="button" class="btn-dash btn-dash-primary" id="pushOnBtn" onclick="pushTurnOn()">Turn on</button>');
+    box.innerHTML = head('Phone alerts are off', 'WhatsApp, payments and new trials', '<button type="button" class="btn-dash btn-dash-primary push-on" id="pushOnBtn" onclick="pushTurnOn()">Turn on</button>');
     return;
   }
   _push.endpoint = sub.endpoint;
@@ -18126,6 +18172,60 @@ function rvRender() {
   window.addEventListener('error', e => report(e.message, (e.filename || '').split('/').pop() + ':' + e.lineno));
   window.addEventListener('unhandledrejection', e => report('Unhandled: ' + (e.reason && e.reason.message || e.reason), ''));
 })();
+
+// ── v206: DAY ART. The line drawing behind "Hi Arpit" changes every day. The date (studio time) picks one of five
+// families (sound curves, ripples, rosette, waves, a handpan seen from above) and shapes it, so the same day always
+// shows the same picture and no two days in a row look alike. Drawn as an SVG mask in the theme's accent.
+// Day art: a line pattern picked and shaped by the date. Same date → same picture.
+function dayArt(ymd, famOverride) {
+  let s = 0; for (const ch of ymd) s = (s * 31 + ch.charCodeAt(0)) >>> 0;
+  const rnd = () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const pick = a => a[Math.floor(rnd() * a.length)];
+  const C = 100, f = n => n.toFixed(1);
+  const fams = ['lissajous', 'ripples', 'rosette', 'waves', 'tonefield'];
+  const fam = famOverride || fams[Math.floor(rnd() * fams.length)];
+  let body = '', sw = 1.6;
+  if (fam === 'lissajous') {
+    const [a, b] = pick([[1, 2], [2, 3], [3, 4], [3, 5], [4, 5], [5, 6], [2, 5]]); const d = pick([0, 0.25, 0.5]) * Math.PI;
+    let p = ''; for (let i = 0; i <= 720; i++) { const t = i / 720 * Math.PI * 2; p += (i ? 'L' : 'M') + f(C + 86 * Math.sin(a * t + d)) + ' ' + f(C + 86 * Math.sin(b * t)); }
+    body = '<path d="' + p + 'Z"/>';
+  } else if (fam === 'ripples') {
+    const n = 2 + Math.floor(rnd() * 2); const pts = []; for (let k = 0; k < n; k++) pts.push([60 + rnd() * 80, 60 + rnd() * 80]);
+    pts.forEach(([x, y], k) => { const rings = 4 + Math.floor(rnd() * 4); for (let r = 1; r <= rings; r++) body += '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r * (10 + k * 3)) + '"/>'; });
+  } else if (fam === 'rosette') {
+    const n = pick([6, 8, 9, 10, 12]); const R = 30 + rnd() * 18; const r = 40 + rnd() * 25;
+    for (let k = 0; k < n; k++) { const a = k / n * Math.PI * 2; body += '<circle cx="' + f(C + R * Math.cos(a)) + '" cy="' + f(C + R * Math.sin(a)) + '" r="' + f(r) + '"/>'; }
+    body += '<circle cx="100" cy="100" r="' + f(R + r) + '"/>';
+  } else if (fam === 'waves') {
+    const lines = 9 + Math.floor(rnd() * 6), amp = 6 + rnd() * 10, freq = 1.5 + rnd() * 2, ph = rnd() * 0.6;
+    for (let k = 0; k < lines; k++) { const y0 = 20 + k * (160 / (lines - 1)); let p = ''; for (let x = 0; x <= 200; x += 4) p += (x ? 'L' : 'M') + x + ' ' + f(y0 + amp * Math.sin(x / 200 * Math.PI * 2 * freq + k * ph)); body += '<path d="' + p + '"/>'; }
+    body = '<g clip-path="url(#c)">' + body + '</g>'; sw = 1.2;
+  } else if (fam === 'harmonograph') {
+    const f1 = pick([2, 3]), f2 = f1 + pick([0.98, 1.01, 0.99]), f3 = pick([2, 3]), f4 = f3 + pick([1.003, 0.997]); const d = 0.0035 + rnd() * 0.003; const p1 = rnd() * Math.PI;
+    let p = ''; for (let i = 0; i <= 2400; i++) { const t = i * 0.05; const e = Math.exp(-d * t); p += (i ? 'L' : 'M') + f(C + e * (48 * Math.sin(f1 * t + p1) + 38 * Math.sin(f2 * t))) + ' ' + f(C + e * (48 * Math.sin(f3 * t) + 38 * Math.sin(f4 * t + 1.2))); }
+    body = '<path d="' + p + '"/>'; sw = 0.9;
+  } else { // tonefield: a handpan seen from above, notes vary
+    const n = pick([7, 8, 9]); const rot = rnd() * Math.PI;
+    body += '<circle cx="100" cy="100" r="92"/><circle cx="100" cy="100" r="22"/><circle cx="100" cy="100" r="12"/>';
+    for (let k = 0; k < n; k++) { const a = rot + k / n * Math.PI * 2, R = 60 + (k % 2) * 6; const x = C + R * Math.cos(a), y = C + R * Math.sin(a), deg = a * 180 / Math.PI;
+      body += '<ellipse cx="' + f(x) + '" cy="' + f(y) + '" rx="15" ry="11" transform="rotate(' + f(deg) + ' ' + f(x) + ' ' + f(y) + ')"/><ellipse cx="' + f(x) + '" cy="' + f(y) + '" rx="7" ry="5" transform="rotate(' + f(deg) + ' ' + f(x) + ' ' + f(y) + ')"/>'; }
+  }
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><clipPath id="c"><circle cx="100" cy="100" r="96"/></clipPath></defs><g fill="none" stroke="#000" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round">' + body + '</g></svg>';
+  return { fam, svg };
+}
+
+function dayArtApply() {
+  try {
+    const tz = (typeof STZ !== 'undefined' && STZ) || 'Asia/Kolkata';
+    const ymd = new Date().toLocaleDateString('en-CA', { timeZone: tz });
+    if (dayArtApply._d === ymd) return; dayArtApply._d = ymd;
+    const a = dayArt(ymd);
+    document.documentElement.style.setProperty('--day-art', 'url("data:image/svg+xml;utf8,' + encodeURIComponent(a.svg) + '")');
+    document.documentElement.classList.add('has-day-art'); document.documentElement.dataset.dayArt = a.fam;
+  } catch (e) {}
+}
+dayArtApply();
+document.addEventListener('visibilitychange', () => { if (!document.hidden) dayArtApply(); });
 
 // ── v203: TAP TO COPY. Phone numbers, emails and links in card values copy with one tap (app text is not
 // selectable on phones any more). A value like "+1 647… · name@mail.com" splits so each part copies alone.
@@ -19299,6 +19399,51 @@ html body .app-bar-bell { display: none !important; }
 }
 html body .pg-bell, html body .app-bar-bell { position: relative; overflow: visible !important; }
 html body .bell-bdg { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: var(--r-pill); background: var(--bad); color: var(--on-fill); font-size: var(--fs-2xs); font-weight: 700; line-height: 18px; text-align: center; box-shadow: 0 0 0 2px var(--bg); pointer-events: none; }
+/* v206: the Today bell is gone (v205). Notifications stay in More, with its badge. */
+/* v206: inbox filter chips sit in one row and scroll sideways, like WhatsApp */
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body #section-whatsapp .wa-tabs.wa-tabs { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; padding-top: 2px !important; padding-bottom: var(--sp-3, 12px) !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: var(--sp-2) !important; }
+  html body #section-whatsapp .wa-tabs::-webkit-scrollbar { display: none; }
+  html body #section-whatsapp .wa-tabs .wa-tab { flex: 0 0 auto !important; white-space: nowrap !important; }
+}
+/* v206: Notifications page. One card per day, rows with a line icon, title, two-line detail (More / Less),
+   short time and an unread dot. Header actions sit on the Back row on phones. Phone-alerts card is one compact row. */
+html body .nf-grp { margin: var(--sp-5) 0 var(--sp-2); font-size: var(--fs-sm); font-weight: var(--fw-semibold); letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--tx3); }
+html body .nf-grp:first-child { margin-top: var(--sp-2); }
+html body .nf-card { background: var(--s1); border-radius: var(--r-lg); overflow: hidden; }
+html body .nf-row { display: flex; gap: var(--sp-3); padding: 14px var(--sp-4); border-top: var(--bw) solid var(--line); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+html body .nf-row:first-child { border-top: 0; }
+html body .nf-ic { width: 40px; height: 40px; border-radius: 50%; flex: none; display: grid; place-items: center; }
+html body .nf-ic.nf-acc { background: color-mix(in srgb, var(--acc-tx) 14%, transparent); color: var(--acc-tx); }
+html body .nf-ic.nf-ok { background: color-mix(in srgb, var(--ok) 15%, transparent); color: var(--ok); }
+html body .nf-ic.nf-warn { background: color-mix(in srgb, var(--warn) 16%, transparent); color: var(--warn); }
+html body .nf-ic.nf-bad { background: color-mix(in srgb, var(--bad) 15%, transparent); color: var(--bad); }
+html body .nf-m { flex: 1; min-width: 0; }
+html body .nf-l1 { display: flex; align-items: baseline; gap: var(--sp-2); }
+html body .nf-ti { flex: 1; min-width: 0; font-size: var(--fs-body); font-weight: var(--fw-semibold); color: var(--tx); line-height: var(--lh-tight); overflow-wrap: break-word; }
+html body .nf-row.read .nf-ti { font-weight: var(--fw-medium); color: var(--tx2); }
+html body .nf-tm { flex: none; display: flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--tx3); white-space: nowrap; }
+html body .nf-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--acc-tx); }
+html body .nf-de { margin-top: 3px; font-size: var(--fs-md); line-height: 1.4; color: var(--tx2); overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+html body .nf-de.open { display: block; -webkit-line-clamp: unset; overflow: visible; }
+html body .nf-more { margin-top: 4px; padding: 6px 0; min-height: 32px; border: 0; background: none; color: var(--acc-tx); font: inherit; font-size: var(--fs-sm); font-weight: var(--fw-semibold); display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+html body .nf-more::after { content: ''; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); }
+html body .nf-more.open::after { transform: translateY(2px) rotate(-135deg); }
+html body .nf-more[hidden] { display: none; }
+html body #section-notifications .notif-tabs { border: 0 !important; margin: var(--sp-4) 0 var(--sp-2) !important; gap: var(--sp-2); display: flex; }
+html body #section-notifications .push-card { border-color: transparent !important; padding: 12px 12px 12px 16px !important; margin: 0 !important; }
+html body #section-notifications .push-h { flex-wrap: nowrap !important; }
+html body #section-notifications .push-h b { font-weight: var(--fw-semibold); }
+html body #section-notifications .push-h .btn-dash.push-on { width: auto !important; margin-left: auto !important; min-height: 40px !important; padding: 0 var(--sp-4) !important; flex: none; }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body #section-notifications .dash-section-header { position: relative; }
+  html body #section-notifications #notifActions { position: absolute; top: -2px; right: 0 !important; left: auto !important; width: auto !important; display: flex; justify-content: flex-end; gap: var(--sp-2) !important; align-items: center; }
+  html body #section-notifications #notifActions .nf-markall { min-height: 40px !important; }
+  html body #section-notifications .dash-section-subtitle { white-space: normal; }
+}
+/* v206: the Today decoration is the day's line drawing (see DAY ART in the script) */
+html.has-day-art body #section-today .dash-section-header::before { -webkit-mask-image: var(--day-art) !important; mask-image: var(--day-art) !important; opacity: 0.13; }
+html.has-day-art body:not(.dark-mode) #section-today .dash-section-header::before { opacity: 0.12; }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
