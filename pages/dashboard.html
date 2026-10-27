@@ -100,7 +100,15 @@ window.STUDIO_THEMES = {
       '--out': mix(a, 13, '#ffffff'), '--out-tx': '#131316', '--out-meta': '#4c4c54', '--tick': at,
       '--focus': '0 0 0 3px ' + al(a, 28), '--shadow': '0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04)', '--overlay': 'rgba(15,15,20,0.4)'
     };
-    v['--acc'] = a; v['--acc-tx'] = at; v['--on-acc'] = s.onAcc || '#ffffff'; v['--in'] = d ? v['--s2'] : '#ffffff';
+    v['--acc'] = a; v['--acc-tx'] = at; v['--on-acc'] = s.onAcc || '#ffffff';
+    /* v215: a "selected" fill that always keeps its label at 4.6:1 (pills, chips, the chosen day) */
+    (function () {
+      var L = function (c) { return hx(c).map(function (x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }).reduce(function (o, x, i) { return o + x * [0.2126, 0.7152, 0.0722][i]; }, 0); };
+      var C = function (x, y) { var p = L(x), q = L(y); return (Math.max(p, q) + 0.05) / (Math.min(p, q) + 0.05); };
+      var on = s.onAcc || '#ffffff', f = a;
+      for (var n = 0; n < 14 && C(on, f) < 4.6; n++) f = mix(f, 92, onLight ? '#000000' : '#ffffff');
+      v['--acc-sel'] = f;
+    })(); v['--in'] = d ? v['--s2'] : '#ffffff';
     v['--grad-img'] = s.acc2 ? 'linear-gradient(120deg, ' + s.acc2 + ', ' + a + ')' : 'none';
     ['ok', 'warn', 'bad'].forEach(function (x) { v['--' + x] = st[x]; v['--' + x + '-soft'] = d ? al(st[x], 13) : mix(st[x], 11, '#ffffff'); });
     var ex = (t.extra || {})[mode] || {}; for (var e in ex) v[e] = ex[e];
@@ -4478,7 +4486,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v214</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v215</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4552,7 +4560,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v214</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v215</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5192,6 +5200,7 @@ table#paymentsTable { min-width: 700px; }
           <button class="inv-fstatus" data-v="notsent" onclick="invSetStatusFilter('notsent')">Not sent</button>
           <button class="inv-fstatus" data-v="cancelled" onclick="invSetStatusFilter('cancelled')">Cancelled</button>
         </div>
+        <button type="button" class="inv-datetog" id="invDateTog" onclick="invDateToggle()" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span id="invDateLbl">Any date</span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
         <div class="inv-daterange">
           <input type="date" class="form-input" id="inv-filter-from" data-placeholder="From" onchange="invSetFilter('from',this.value)"/>
           <input type="date" class="form-input" id="inv-filter-to" data-placeholder="To" onchange="invSetFilter('to',this.value)"/>
@@ -7207,6 +7216,7 @@ const EMPTY_STATES = {
     <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
     <div class="empty-state-title">No invoices yet</div>
     <div class="empty-state-sub">Generate one from a payment row, or use New Invoice to create a blank one</div>
+    <button type="button" class="btn-dash btn-dash-primary es-act admin-only" onclick="openInvoiceEditor()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>New invoice</button>
   </div>`,
   unassigned_payments: `<div class="empty-state">
     <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div>
@@ -7229,42 +7239,49 @@ const EMPTY_STATES = {
     <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
     <div class="empty-state-title">No workshops yet</div>
     <div class="empty-state-sub">Add your first workshop to start tracking revenue and participants</div>
+    <button type="button" class="btn-dash btn-dash-primary es-act admin-only" onclick="openModal('addWorkshop')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add workshop</button>
   </div>`,
 
   participants: `<div class="empty-state">
     <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
     <div class="empty-state-title">No participants yet</div>
     <div class="empty-state-sub">Add participants to track attendance and payments for your workshops</div>
+    <button type="button" class="btn-dash btn-dash-primary es-act admin-only" onclick="openModal('addParticipant')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add participant</button>
   </div>`,
 
   students: `<div class="empty-state">
     <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
     <div class="empty-state-title">No students yet</div>
     <div class="empty-state-sub">Enroll your first student to track classes and fee payments</div>
+    <button type="button" class="btn-dash btn-dash-primary es-act admin-only" onclick="openModal('addStudent')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add student</button>
   </div>`,
 
   payments: `<div class="empty-state">
     <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
     <div class="empty-state-title">No payments yet</div>
     <div class="empty-state-sub">Record income and expenses to track your business finances</div>
+    <button type="button" class="btn-dash btn-dash-primary es-act admin-only" onclick="openModal('addPayment')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add payment</button>
   </div>`,
 
   fee_payments: `<div class="empty-state">
     <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
     <div class="empty-state-title">No fee payments yet</div>
     <div class="empty-state-sub">Track monthly fee payments for your online students here</div>
+    <button type="button" class="btn-dash btn-dash-primary es-act admin-only" onclick="openModal('addFeePayment')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add fee payment</button>
   </div>`,
 
   leads: `<div class="empty-state">
     <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
     <div class="empty-state-title">No leads yet</div>
     <div class="empty-state-sub">Track people interested in buying a handpan and follow up with them</div>
+    <button type="button" class="btn-dash btn-dash-primary es-act admin-only" onclick="openModal('addLead')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add lead</button>
   </div>`,
 
   workshop_waitlist: `<div class="empty-state">
     <div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
     <div class="empty-state-title">No one on the waitlist yet</div>
     <div class="empty-state-sub">People interested in a future workshop will show up here, along with anyone you add manually</div>
+    <button type="button" class="btn-dash btn-dash-primary es-act admin-only" onclick="openModal('addWaitlist')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add to waitlist</button>
   </div>`,
 
   insights: `<div class="empty-state">
@@ -9611,7 +9628,20 @@ function invFilterList(list) {
   if (q) out = out.filter(r => ((invFmtNo(r.invoice_number) + ' ' + (r.billed_name||'') + ' ' + (r.billed_email||'')).toLowerCase().includes(q)));
   return out;
 }
-function invSetFilter(key, val) { invFilter[key] = val; invRenderInvoices(); }
+function invSetFilter(key, val) { invFilter[key] = val; invRenderInvoices(); if (key === 'from' || key === 'to') invDateLabel(); }
+// v215: on the phone the From / To dates fold into one "Any date" button that opens them in place.
+function invDateLabel() {
+  const l = document.getElementById('invDateLbl'), bar = document.getElementById('filter-bar-invoices'); if (!l) return;
+  const f = (invFilter || {}).from, t = (invFilter || {}).to, fm = v => v ? new Date(v + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
+  l.textContent = f && t ? fm(f) + ' – ' + fm(t) : f ? 'From ' + fm(f) : t ? 'Until ' + fm(t) : 'Any date';
+  if (bar) bar.classList.toggle('dates-set', !!(f || t));
+}
+function invDateToggle() {
+  const bar = document.getElementById('filter-bar-invoices'), b = document.getElementById('invDateTog'); if (!bar) return;
+  const open = !bar.classList.contains('dates-open'); bar.classList.toggle('dates-open', open); if (b) b.setAttribute('aria-expanded', open);
+  const r = bar.querySelector('.inv-daterange');
+  if (open && r && r.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) r.animate([{ opacity: 0, transform: 'translateY(-6px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' });
+}
 function invSetStatusFilter(val) {
   invFilter.status = val;
   document.querySelectorAll('.inv-fstatus').forEach(b => b.classList.toggle('active', b.dataset.v === val));
@@ -9680,7 +9710,7 @@ function invClearFilters() {
   if (t) { t.value = ''; if (t._dpRefresh) t._dpRefresh(); }
   if (sr) sr.value = '';
   document.querySelectorAll('.inv-fstatus').forEach(b => b.classList.toggle('active', b.dataset.v === 'all'));
-  invRenderInvoices();
+  invRenderInvoices(); invDateLabel();
 }
 
 async function loadInvoices() {
@@ -11325,7 +11355,7 @@ async function loadGigs() {
         + (isAdmin() ? '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="openEdit(\'gigs\',\'' + g.id + '\')">Edit</button>'
         + '<button class="btn-dash btn-dash-danger btn-dash-sm" onclick="archiveRecord(\'gigs\',\'' + g.id + '\',\'' + (g.client_name || g.id).replace(/'/g, '') + '\')">Delete</button>' : '')
         + '</div></div>';
-    }).join('') || '<div class="mobile-cards-empty"><div class="empty-state"><div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div class="empty-state-title">No performances yet</div><div class="empty-state-sub">Add your first gig and share its payment link</div></div></div>';
+    }).join('') || '<div class="mobile-cards-empty"><div class="empty-state"><div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div class="empty-state-title">No performances yet</div><div class="empty-state-sub">Add your first gig and share its payment link</div><button type="button" class="btn-dash btn-dash-primary es-act admin-only" onclick="openModal(\'addGig\')">Add performance</button></div></div>';
   } catch(e) {
     console.error('loadGigs error:', e);
     showToast('Error loading performances', 'error');
@@ -11866,7 +11896,7 @@ function renderNotificationsHTML(items) {
     if (!groups[bucket]) return;
     html += '<div class="nf-grp">' + bucket + '</div><div class="nf-card">' + groups[bucket].map(n => {
       const p = notifParts(n.message), k = notifKind(n, p.title + ' ' + p.detail);
-      return '<div class="nf-row' + (n.read ? ' read' : '') + '" onclick="markRead(' + n.id + ')">'
+      return '<div class="nf-row' + (n.read ? ' read' : '') + '" data-id="' + n.id + '" onclick="if(!window._nfSwiped)markRead(' + n.id + ')">'
         + '<div class="nf-ic nf-' + k.c + '">' + NF_ICO[k.i] + '</div>'
         + '<div class="nf-m"><div class="nf-l1"><div class="nf-ti">' + zEsc(p.title) + '</div><div class="nf-tm">' + (n.read ? '' : '<span class="nf-dot" aria-label="Unread"></span>') + nfAgo(n.created_at) + '</div></div>'
         + (p.detail ? '<div class="nf-de">' + zEsc(p.detail) + '</div><button type="button" class="nf-more" hidden onclick="event.stopPropagation();nfToggle(this)">More</button>' : '')
@@ -14341,11 +14371,39 @@ function fsActiveCount() {
   const config = FILTER_SHEET_CONFIG[_filterSheetSection] || [];
   return config.filter(c => { const v = _filterSheetPending[c.key]; return v && v !== 'all'; }).length;
 }
+// v215: how many rows the pending choices would leave, worked out by running the page's own
+// filter with the pending values for a moment, then putting everything back as it was.
+function fsPreviewCount() {
+  const section = _filterSheetSection, config = FILTER_SHEET_CONFIG[section] || [];
+  if (typeof applyFilters !== 'function' || !filterState[section]) return null;
+  const saved = Object.assign({}, filterState[section]), restore = [];
+  try {
+    config.forEach(cat => {
+      const val = _filterSheetPending[cat.key];
+      if (cat.type === 'pill') filterState[section][cat.key] = val || 'all';
+      else if (cat.type === 'dd' && cat.ddKey && _dd[cat.ddKey]) { const dd = _dd[cat.ddKey], orig = dd._getValue; restore.push([dd, orig]); dd._getValue = () => val || ''; }
+    });
+    applyFilters(section);
+    const sec = document.getElementById('section-' + section);
+    const cards = sec ? [...sec.querySelectorAll('.mobile-cards .m-card')] : [];
+    const rows = sec ? [...sec.querySelectorAll('tbody tr:not(.search-empty-row)')] : [];
+    const list = cards.length ? cards : rows;
+    return list.filter(el => el.style.display !== 'none').length;
+  } catch (e) { return null; }
+  finally {
+    restore.forEach(([dd, orig]) => { dd._getValue = orig; });
+    filterState[section] = saved;
+    try { applyFilters(section); } catch (e) {}
+  }
+}
 function fsSyncFooter() {
   const n = fsActiveCount();
   const clr = document.querySelector('#filterSheet .filter-sheet-clear'), ap = document.querySelector('#filterSheet .filter-sheet-apply');
   if (clr) clr.classList.toggle('fs-hide', n === 0);
-  if (ap) ap.textContent = n ? 'Apply · ' + n + ' filter' + (n > 1 ? 's' : '') : 'Apply';
+  if (!ap) return;
+  const c = fsPreviewCount();
+  ap.textContent = c == null ? (n ? 'Apply · ' + n + ' filter' + (n > 1 ? 's' : '') : 'Apply') : c === 0 ? 'No matches' : 'Show ' + c + ' result' + (c === 1 ? '' : 's');
+  ap.classList.toggle('fs-none', c === 0);
 }
 function renderFilterSheetCats() { const c = document.getElementById('filterSheetCats'); if (c) c.innerHTML = ''; fsSyncFooter(); }
 function fsOptions(cat) {
@@ -18239,10 +18297,13 @@ function rvRender() {
   if (!R) { box.innerHTML = '<div class="ag-lbl">Weekly review</div><div class="hl-issue rv-card"><div class="hl-it">Claude reads the week and tells you what to improve</div><p>New questions students asked, lines to teach the agent, and repeating problems. It runs by itself every Sunday at 9 AM once there is a week of data. You can run it now too.</p><div class="hl-acts">' + btn + '</div></div>'; return; }
   const W = R.week || {};
   const when = new Date(R.at).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-  const num = (n, l, k) => '<div class="rv-n"><span class="rv-ni">' + hlSvg(k, 16) + '</span><b>' + (n == null ? '—' : n) + '</b><span>' + l + '</span></div>';
-  let h = '<div class="ag-lbl">Weekly review · ' + zEsc(when) + (R.days && R.days !== 7 ? ' · last ' + R.days + ' days' : '') + '</div><div class="hl-issue rv-card">';
+  const P = R.prev_week || null;
+  // v215: ↑ / ↓ against the week before, when the server sent it.
+  const delta = key => { if (!P || W[key] == null || P[key] == null) return ''; const x = W[key] - P[key]; return '<i class="rv-d ' + (x > 0 ? 'up' : x < 0 ? 'down' : 'same') + '" title="Week before: ' + P[key] + '">' + (x > 0 ? '↑' + x : x < 0 ? '↓' + (-x) : '=') + '</i>'; };
+  const num = (n, l, k, key) => '<div class="rv-n"><span class="rv-ni">' + hlSvg(k, 16) + '</span>' + (key ? delta(key) : '') + '<b>' + (n == null ? '—' : n) + '</b><span>' + l + '</span></div>';
+  let h = '<div class="ag-lbl">Weekly review · ' + zEsc(when) + (P ? ' · vs the week before' : '') + (R.days && R.days !== 7 ? ' · last ' + R.days + ' days' : '') + '</div><div class="hl-issue rv-card">';
   h += '<p class="rv-sum">' + zEsc(R.summary || '') + '</p>';
-  h += '<div class="rv-nums">' + num(W.classes, 'classes', 'music') + num(W.trials_booked, 'trials', 'user') + num(W.new_students, 'new students', 'users') + num(W.agent_drafts, 'agent replies', 'reply') + num(W.agent_passed_to_you, 'passed to you', 'hand') + num(W.fixed_by_itself, 'fixed itself', 'check') + '</div>';
+  h += '<div class="rv-nums">' + num(W.classes, 'classes', 'music', 'classes') + num(W.trials_booked, 'trials', 'user', 'trials_booked') + num(W.new_students, 'new students', 'users', 'new_students') + num(W.agent_drafts, 'agent replies', 'reply', 'agent_drafts') + num(W.agent_passed_to_you, 'passed to you', 'hand', 'agent_passed_to_you') + num(W.fixed_by_itself, 'fixed itself', 'check', 'fixed_by_itself') + '</div>';
   const facts = (R.teach_agent || []).filter(f => f.state === 'new');
   if (facts.length) {
     h += '<div class="rv-h">Teach the agent</div>';
@@ -19747,16 +19808,16 @@ html body .mp-roll > span { position: absolute; left: 0; top: 0; white-space: no
 /* ── v214 · SELECTION SPEAKS THE THEME ───────────────────────────────
    Every "chosen" state uses the theme accent: switches, segment pills, chips, checkboxes,
    day strip, theme tiles. Mono's accent is ink, so Mono still reads black and white. */
-html body .seg-ind { background: var(--acc) !important; }
+html body .seg-ind { background: var(--acc-sel, var(--acc)) !important; }
 html body .has-ind > button:is(.on, .active), html body .has-ind > #schSegCal.on, html body .has-ind > #schSegList.on { color: var(--on-acc) !important; }
-html body :is(.ag-seg, .inv-seg, .sch-seg, .tw-seg, .thm-seg) > button:is(.on, .active):not(.x), html body.dark-mode :is(.ag-seg, .inv-seg, .sch-seg, .tw-seg, .thm-seg) > button:is(.on, .active):not(.x) { background: var(--acc) !important; color: var(--on-acc) !important; }
+html body :is(.ag-seg, .inv-seg, .sch-seg, .tw-seg, .thm-seg) > button:is(.on, .active):not(.x), html body.dark-mode :is(.ag-seg, .inv-seg, .sch-seg, .tw-seg, .thm-seg) > button:is(.on, .active):not(.x) { background: var(--acc-sel, var(--acc)) !important; color: var(--on-acc) !important; }
 html body .has-ind.ind-ready > button:is(.on, .active):not(.x), html body.dark-mode .has-ind.ind-ready > button:is(.on, .active):not(.x) { background: transparent !important; }
-html body .push-sw.on, html body .inv-switch input:checked + .sl, html body .checkin-toggle input:checked + .checkin-toggle-track { background: var(--acc) !important; }
+html body .push-sw.on, html body .inv-switch input:checked + .sl, html body .checkin-toggle input:checked + .checkin-toggle-track { background: var(--acc-sel, var(--acc)) !important; }
 html body .push-sw.on::after, html body .inv-switch input:checked + .sl:before, html body .checkin-toggle input:checked ~ .checkin-toggle-thumb,
 html.dk body .push-sw.on::after, html.dk body .inv-switch input:checked + .sl:before, html.dk body .checkin-toggle input:checked ~ .checkin-toggle-thumb { background: var(--on-acc) !important; }
 html body :is(.wa-tab.on, .wa-tab.active, .notif-tab.on, .notif-tab.active, .ms-chip.on, .fr-chip.on, .sch-chip.on, .inv-fstatus.on, .inv-fstatus.active, .schd-strip button.sel, .nf-tab.on),
 html body.dark-mode :is(.wa-tab.on, .wa-tab.active, .notif-tab.on, .notif-tab.active, .ms-chip.on, .fr-chip.on, .sch-chip.on, .inv-fstatus.on, .inv-fstatus.active, .schd-strip button.sel, .nf-tab.on) {
-  background: var(--acc) !important; color: var(--on-acc) !important; border-color: transparent !important; box-shadow: none !important; }
+  background: var(--acc-sel, var(--acc)) !important; color: var(--on-acc) !important; border-color: transparent !important; box-shadow: none !important; }
 html body .checkin-label[data-checked="1"] { color: var(--acc-tx); }
 /* Segments sitting inside a white card get a soft track so every option reads as a control. */
 html:not(.dk) body :is(.m-card, .ag-card, .settings-card, .hl-hero, .hl-issue, .inv-card, .push-card, .td-card) :is(.ag-seg, .inv-seg, .sch-seg, .tw-seg, .thm-seg) { background: color-mix(in srgb, var(--tx) 7%, var(--s1)) !important; }
@@ -19870,11 +19931,11 @@ html body .filter-sheet-opts { padding: 4px 20px 12px !important; overflow: visi
 html body .fs-sec { padding: 14px 0 16px; }
 html body .fs-sec + .fs-sec { border-top: 1px solid var(--line); }
 html body .fs-lbl { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: var(--fs-ui); font-weight: 600; color: var(--tx); }
-html body .fs-bd { min-width: 20px; height: 20px; padding: 0 6px; border-radius: var(--r-pill); background: var(--acc); color: var(--on-acc); font-size: var(--fs-2xs); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+html body .fs-bd { min-width: 20px; height: 20px; padding: 0 6px; border-radius: var(--r-pill); background: var(--acc-sel, var(--acc)); color: var(--on-acc); font-size: var(--fs-2xs); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
 html body .fs-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 html body .fs-chip, html body .fs-more { min-height: 40px; padding: 0 16px; border: 0; border-radius: var(--r-pill); background: color-mix(in srgb, var(--tx) 7%, transparent); color: var(--tx); font-family: var(--font-body); font-size: var(--fs-md); font-weight: 500; cursor: pointer; transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease); -webkit-tap-highlight-color: transparent; }
 html body .fs-chip:active, html body .fs-more:active { transform: scale(.96); }
-html body .fs-chip.on { background: var(--acc); color: var(--on-acc); font-weight: 600; }
+html body .fs-chip.on { background: var(--acc-sel, var(--acc)); color: var(--on-acc); font-weight: 600; }
 html body .fs-more { background: transparent; color: var(--acc-tx); font-weight: 600; padding: 0 8px; }
 html body .filter-sheet-footer { border-top: 1px solid var(--line) !important; }
 html body .filter-sheet-clear { flex: 0 0 auto; padding: 0 18px !important; min-height: 52px; border-radius: var(--r-pill) !important; border: 0 !important; box-shadow: none !important; background: color-mix(in srgb, var(--tx) 8%, transparent) !important; color: var(--tx) !important; font-weight: 600; overflow: hidden; white-space: nowrap; transition: max-width var(--dur-slow) var(--ease), padding var(--dur-slow) var(--ease), opacity var(--dur) var(--ease), margin var(--dur-slow) var(--ease); max-width: 160px; }
@@ -19996,6 +20057,44 @@ html body .set-exp-tx b { font-size: var(--fs-ui); font-weight: 600; } html body
 html body .set-exp-go { width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--acc-tx) 12%, transparent); color: var(--acc-tx); }
 html body .set-exp-go.done { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
 html body .set-exp-go .hp-ld { width: 22px; height: 22px; --hp-note: var(--s1); }
+
+/* Swipe a notification left to bin it (v215) */
+html body .nf-row { position: relative; overflow: hidden; }
+html body .nf-row.sw { background: linear-gradient(to left, var(--bad) calc(-1 * var(--dx, 0px)), transparent 0) !important; transform: none !important; }
+html body .nf-row.sw > * { transform: translateX(var(--dx, 0px)); }
+html body .nf-row.back > * { transition: transform 300ms var(--ease-spring); }
+html body .nf-row.gone > * { transition: transform 220ms var(--ease); }
+html body .nf-row.sw::after { content: ""; position: absolute; right: 22px; top: 50%; width: 22px; height: 22px; margin-top: -11px; background: var(--on-bad); -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%223%206%205%206%2021%206%22%2F%3E%3Cpath%20d%3D%22M19%206l-1%2014a2%202%200%200%201-2%202H8a2%202%200%200%201-2-2L5%206%22%2F%3E%3Cpath%20d%3D%22M10%2011v6M14%2011v6%22%2F%3E%3Cpath%20d%3D%22M9%206V4a1%201%200%200%201%201-1h4a1%201%200%200%201%201%201v2%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%223%206%205%206%2021%206%22%2F%3E%3Cpath%20d%3D%22M19%206l-1%2014a2%202%200%200%201-2%202H8a2%202%200%200%201-2-2L5%206%22%2F%3E%3Cpath%20d%3D%22M10%2011v6M14%2011v6%22%2F%3E%3Cpath%20d%3D%22M9%206V4a1%201%200%200%201%201-1h4a1%201%200%200%201%201%201v2%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat; opacity: var(--ico, 0); transition: opacity 120ms; }
+html body .filter-sheet-apply.fs-none { opacity: .55 !important; }
+
+/* Invoices: dates fold into one button on the phone (v215) */
+html body .inv-datetog { display: none; }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body .inv-datetog { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 0; border-radius: var(--r-pill); background: var(--s1); color: var(--tx); font-family: var(--font-body); font-size: var(--fs-md); font-weight: 500; cursor: pointer; }
+  html.dk body .inv-datetog { background: color-mix(in srgb, var(--tx) 11%, transparent); }
+  html body .dates-set .inv-datetog { background: var(--acc-soft); color: var(--acc-tx); font-weight: 600; }
+  html body .inv-datetog .chev { transition: transform var(--dur) var(--ease); color: var(--tx2); }
+  html body .dates-open .inv-datetog .chev { transform: rotate(180deg); }
+  html body #filter-bar-invoices:not(.dates-open) .inv-daterange, html body #filter-bar-invoices:not(.dates-set) .inv-clearbtn, html body #filter-bar-invoices:not(.dates-open) .inv-clearbtn { display: none !important; }
+}
+
+html body .empty-state .es-act { margin-top: 14px; gap: 8px; min-height: 44px; padding: 0 20px !important; }
+html body td .empty-state .es-act { display: none; }
+
+html body .rv-d { position: absolute; top: 12px; right: 10px; font-style: normal; font-size: var(--fs-2xs); font-weight: 700; padding: 2px 7px; border-radius: var(--r-pill); background: color-mix(in srgb, var(--tx) 8%, transparent); color: var(--tx2); }
+html body .rv-d.up { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+html body .rv-d.down { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
+
+/* Schedule (v215): Block time stays on the first row next to Day / List in both views. */
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body .sch-bar > .sch-seg { order: 0; }
+  html body .sch-bar > .sch-blk { order: 1; margin-left: auto; }
+  html body .sch-bar > .sch-nav { order: 2; }
+  html body .sch-bar > .sch-legend { order: 3; }
+}
+
+/* The chosen day reads in the theme's "on accent" colour, not the page colour (v215). */
+html body .schd-strip button.sel b, html body.dark-mode .schd-strip button.sel b, html body .schd-strip button.sel.tod, html body .schd-strip button.sel.tod b, html body.dark-mode .schd-strip button.sel.tod, html body.dark-mode .schd-strip button.sel.tod b, html body .schd-strip button.sel, html body.dark-mode .schd-strip button.sel { color: var(--on-acc) !important; }
 
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
@@ -20186,6 +20285,37 @@ document.addEventListener('click', e => {
   const cb = t.querySelector('label.cb-box input[type=checkbox]'); if (!cb || cb.disabled) return;
   cb.click();
 });
+</script>
+<script id="studioNfSwipe">
+// v215: swipe a notification left to move it to the Bin.
+(function () {
+  let row = null, x0 = 0, y0 = 0, dx = 0, axis = null;
+  const RM = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const set = v => { dx = v; row.style.setProperty('--dx', v + 'px'); row.style.setProperty('--ico', v < -44 ? 1 : 0); };
+  document.addEventListener('touchstart', e => {
+    const r = e.target.closest && e.target.closest('#notificationsContainer .nf-row'); if (!r || e.target.closest('button')) { row = null; return; }
+    row = r; x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; dx = 0; axis = null; window._nfSwiped = false;
+  }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    if (!row) return;
+    const mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+    if (!axis) { if (Math.abs(mx) < 8 && Math.abs(my) < 8) return; axis = Math.abs(mx) > Math.abs(my) * 1.3 && mx < 0 ? 'x' : 'y'; }
+    if (axis !== 'x') { row = null; return; }
+    row.classList.add('sw'); set(Math.max(-row.offsetWidth, Math.min(0, mx)));
+  }, { passive: true });
+  document.addEventListener('touchend', async () => {
+    if (!row || axis !== 'x') { row = null; return; }
+    const r = row, id = r.dataset.id; row = null; window._nfSwiped = true; setTimeout(() => { window._nfSwiped = false; }, 350);
+    if (dx > -90) { r.classList.add('back'); r.style.setProperty('--dx', '0px'); setTimeout(() => r.classList.remove('sw', 'back'), 300); return; }
+    r.classList.add('gone'); r.style.setProperty('--dx', -r.offsetWidth + 'px');
+    if (!RM() && r.animate) await r.animate([{ height: r.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0, paddingTop: '0px', paddingBottom: '0px' }], { duration: 260, delay: 120, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' }).finished;
+    try {
+      await fetch(SUPABASE_URL + '/rest/v1/notifications?id=eq.' + encodeURIComponent(id), { method: 'PATCH', headers: { 'apikey': SUPABASE_KEY, 'Authorization': SB_HEADERS['Authorization'], 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }, body: JSON.stringify({ archived: true }) });
+      showToast('Moved to bin', 'success');
+    } catch (e) { showToast('Could not remove it: ' + e.message, 'error'); }
+    try { loadBinCount(); loadNotifications(); } catch (e) {}
+  }, { passive: true });
+})();
 </script>
 </body>
 </html>
