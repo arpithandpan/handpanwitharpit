@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v221</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v222</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v221</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v222</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -19754,6 +19754,10 @@ html body :is(.ag-seg, .inv-seg, .sch-seg, .tw-seg, .thm-seg).has-ind { position
 html body .seg-ind { position: absolute; top: 3px; bottom: 3px; left: 0; width: 0; border-radius: var(--r-pill); background: var(--tx); z-index: 0; pointer-events: none;
   transition: transform 380ms var(--ease-spring), width 380ms var(--ease-spring); will-change: transform; }
 html body .has-ind > button { position: relative; z-index: 1; transition: color var(--dur) var(--ease) !important; }
+/* v222: iPhone paints the sliding pill above the labels while the page is pulled down (its own layer wins over the
+   moving page). The labels get their own layer too and the pill no longer keeps one, so the text stays on top. */
+html body .seg-ind { will-change: auto; }
+html body .has-ind > button { transform: translateZ(0); -webkit-backface-visibility: hidden; backface-visibility: hidden; }
 html body .has-ind.ind-ready > button:is(.on, .active), html.mono body .has-ind.ind-ready > button:is(.on, .active), html body .has-ind.ind-ready > #schSegCal.on, html body .has-ind.ind-ready > #schSegList.on { background: transparent !important; box-shadow: none !important; }
 
 /* v213 · Confirms become bottom sheets on the phone. Desktop keeps the centered box. */
