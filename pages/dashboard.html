@@ -4456,7 +4456,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v199</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v201</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4530,7 +4530,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v199</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v201</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -19183,6 +19183,37 @@ html body .td-row .td-join.ghost { background: var(--s2) !important; color: var(
   html body .mobile-topbar.mobile-topbar .app-bar-title { left: calc(16px + var(--bar-btn) + 8px) !important; right: calc(16px + var(--bar-btn) + 8px) !important; }
   html body .mobile-topbar.mobile-topbar.pg-search .app-bar-title { left: calc(16px + 2 * var(--bar-btn) + 16px) !important; right: calc(16px + 2 * var(--bar-btn) + 16px) !important; }
 }
+/* v200: dark mode in every palette drops the outer stroke on cards, chips, sheets and outline buttons, like Mono.
+   The card is already a step lighter than the page, so the fill alone separates it. Dividers inside cards and
+   input borders stay. */
+html.dk body .m-card, html.dk body .settings-card, html.dk body .stat-card, html.dk body .overview-card, html.dk body .insight-tile, html.dk body .chart-box, html.dk body .push-card, html.dk body .ag-card, html.dk body .mp-grp, html.dk body .td-card, html.dk body .td-next, html.dk body .checkin-card, html.dk body .dash-table-wrap,
+html.dk body .modal, html.dk body .modal-box, html.dk body .filter-sheet, html.dk body .mobile-picker-sheet, html.dk body .qa-sheet, html.dk body .m-dots-popover { border-color: transparent !important; }
+html.dk body .td-chip { background: var(--s1) !important; border-color: transparent !important; }
+html.dk body .btn-dash-outline, html.dk body .btn-dash-ghost { background: var(--ctl-bg) !important; border-color: transparent !important; }
+/* v201: secondary controls always stand out from what they sit on.
+   Light: white fill, a thin ring and a soft shadow, so a chip reads on the grey page and on a white card.
+   Dark: a light overlay of the text colour (no ring), so it lifts off the page and off a card by the same step.
+   Selected states (.on / .active) and the accent buttons keep their own look. */
+html body { --ctl2-bg: var(--s1); --ctl2-ring: color-mix(in srgb, var(--tx) 18%, transparent); --ctl2-shadow: 0 1px 2px rgba(0, 0, 0, 0.07); }
+html.dk body { --ctl2-bg: color-mix(in srgb, var(--tx) 13%, transparent); --ctl2-ring: transparent; --ctl2-shadow: 0 0 0 0 transparent; }
+html body :is(.icon-action-btn, .app-bar-btn, .pg-ib:not(.add), .sch-ic, .sch-today, .sch-blk, .notif-dots-btn, .mc-ib, .wa-ai-icon,
+  .mobile-filter-btn, .filter-dd-btn, .mobile-picker-sheet-close, .filter-sheet-close, .filter-sheet-clear,
+  .btn-dash-outline, .btn-dash-ghost, .btn-restore, .btn-archive, .wa-back, .wa-cbtn, .mp-search, .mp-me,
+  .td-chip, .hl-pill:not(.warn):not(.bad), .wa-tab, .ms-chip, .fr-chip, .filter-sheet-cat, .notif-tab, .tod):not(.on):not(.active),
+html body .mobile-topbar #mobileSearchBtn {
+  background-color: var(--ctl2-bg) !important; background-image: none !important; border-color: transparent !important;
+  box-shadow: 0 0 0 var(--bw) var(--ctl2-ring), var(--ctl2-shadow) !important; }
+/* the search chip keeps its accent icon on the new neutral fill */
+html body .mobile-topbar #mobileSearchBtn { color: var(--acc-tx) !important; }
+/* v201: a selected chip or tab is inverted (text colour fill), same as the segmented controls, so the choice is
+   the strongest thing in the row in every palette. Some palettes had a pale accent tint here (1.1:1 on the page). */
+html body :is(.wa-tab, .ms-chip, .notif-tab, .fr-chip, .filter-sheet-cat, .tod):is(.on, .active),
+html body.dark-mode :is(.wa-tab, .ms-chip, .notif-tab, .fr-chip, .filter-sheet-cat, .tod):is(.on, .active) {
+  background-color: var(--tx) !important; background-image: none !important; color: var(--bg) !important; border-color: var(--tx) !important; box-shadow: none !important; }
+html body :is(.wa-tab, .ms-chip, .notif-tab, .fr-chip, .filter-sheet-cat, .tod):is(.on, .active) *, html body.dark-mode :is(.wa-tab, .ms-chip, .notif-tab, .fr-chip, .filter-sheet-cat, .tod):is(.on, .active) * { color: inherit !important; }
+/* soft danger buttons (Delete) get the same solid secondary fill, red text keeps the meaning */
+html body .btn-dash.btn-dash-danger:not(.btn-dash-primary) { background-color: var(--ctl2-bg) !important; background-image: none !important; border-color: transparent !important; box-shadow: 0 0 0 var(--bw) var(--ctl2-ring), var(--ctl2-shadow) !important; color: var(--bad) !important; }
+html.dk body .btn-dash.btn-dash-danger:not(.btn-dash-primary) { color: color-mix(in srgb, var(--bad) 72%, var(--tx)) !important; }   /* the lifted dark fill needs a lighter red to keep 4.5:1 */
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
