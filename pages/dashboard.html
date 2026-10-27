@@ -202,8 +202,8 @@ window.STUDIO_THEMES = {
   --z-splash: 1000;
 
   /* ── motion ── */
-  --dur-fast: 120ms; --dur: 200ms; --dur-slow: 320ms;
-  --ease: cubic-bezier(0.2, 0.7, 0.2, 1); --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --dur-fast: 150ms; --dur: 250ms; --dur-slow: 350ms;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1); --ease-in: cubic-bezier(0.4, 0, 1, 1); --ease-spring: cubic-bezier(0.34, 1.32, 0.64, 1);
 
   /* ── fills that stay the same in every theme ── */
   --on-fill: #ffffff;  /* text on avatars and status fills */
@@ -4478,7 +4478,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v210</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v211</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4552,7 +4552,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v210</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v211</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -7382,6 +7382,7 @@ function showSection(name, el) {
   if (el) el.classList.add('active');
   document.getElementById('dashSidebar').classList.remove('open');
   sessionStorage.setItem('dash_section', name);
+  try { motionPageIn(name); } catch (e) {}
   appTabsSync(name);
   if (typeof appBarSync === 'function') appBarSync(name);
   loadSection(name);
@@ -7501,9 +7502,9 @@ function qaClose() { document.body.classList.remove('qa-open'); }
   const MAX = 90, TRIGGER = 64, HOLD = 56, IND = 38;
   function pageTo(y, animate) {
     const m = main(); if (!m) return;
-    m.style.transition = animate ? 'transform var(--dur-slow) var(--ease)' : 'none';
+    m.style.transition = animate ? (y ? 'transform var(--dur-slow) var(--ease)' : 'transform 420ms var(--ease-spring)') : 'none';
     m.style.transform = y ? 'translateY(' + y + 'px)' : '';
-    if (!y && animate) setTimeout(() => { if (!pulling && !busy) m.style.transition = ''; }, 400);
+    if (!y && animate) setTimeout(() => { if (!pulling && !busy) m.style.transition = ''; }, 460);
   }
   function indTo(y, op, animate) {
     const el = indicator(); el.style.transition = animate ? 'transform var(--dur-slow) var(--ease), opacity var(--dur) var(--ease)' : 'none';
@@ -7542,7 +7543,10 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     busy = true; pulling = false; const el = indicator(); el.firstElementChild.style.transform = ''; el.classList.add('spin');
     pageTo(HOLD, true); indTo(HOLD, 1, true);
     const name = sessionStorage.getItem('dash_section') || 'today';
+    window._softRefresh = true;
     try { await Promise.all([Promise.resolve(loadSection(name)), new Promise(r => setTimeout(r, 700))]); } catch (e) {}
+    window._softRefresh = false;
+    try { motionSettle(document.getElementById('section-' + name)); } catch (e) {}
     try { if (typeof waRefreshBadge === 'function') waRefreshBadge(); } catch (e) {}
     el.classList.remove('spin'); busy = false; indTo(0, 0, true); pageTo(0, true);
   });
@@ -8511,7 +8515,7 @@ async function toggleWsPax(wsId) {
 async function loadWsPax(wsId) {
   const list = document.getElementById('ws-pax-list-' + wsId);
   if (!list) return;
-  list.innerHTML = skelHTML(2, 1);
+  if (!window._softRefresh) list.innerHTML = skelHTML(2, 1);
   try {
     const res = await fetch(SUPABASE_URL + '/rest/v1/participants?select=*&workshop_id=eq.' + wsId + '&archived=eq.false&order=created_at.asc', {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': SB_HEADERS['Authorization'] }
@@ -8712,7 +8716,7 @@ async function openClassLog(studentId) {
   d.value = localISODate();
   if (d._dpRefresh) d._dpRefresh();
   document.getElementById('cl-note').value = '';
-  document.getElementById('clList').innerHTML = skelHTML(2, 3);
+  if (!window._softRefresh) document.getElementById('clList').innerHTML = skelHTML(2, 3);
   openFormPage('classLog');
   renderClassLog();
 }
@@ -11327,7 +11331,7 @@ async function loadBin(manual) {
   if (manual) _binManualRefresh = true;
   const container = document.getElementById('binContainer');
   if (!container) return;
-  container.innerHTML = skelHTML(2, 3);
+  if (!window._softRefresh) container.innerHTML = skelHTML(2, 3);
   try {
     let allItems = [];
     for (const t of BIN_TABLES) {
@@ -11649,7 +11653,7 @@ function skelHTML(rows = 3, cards = 1, kind = 'card') {
    state and reloads it; the old full-screen logo overlay is gone. */
 function skelSection(name) {
   const sec = document.getElementById('section-' + (name || sessionStorage.getItem('dash_section') || 'overview'));
-  if (!sec) return;
+  if (!sec || window._softRefresh) return;
   sec.querySelectorAll('tbody[id]').forEach(tb => { const n = (sec.querySelector('thead tr') || tb.closest('table')?.querySelector('thead tr'))?.children.length || 6; tb.innerHTML = '<tr><td colspan="' + n + '" class="loading"></td></tr>'; });
   sec.querySelectorAll('.mobile-cards').forEach(mc => { mc.innerHTML = ''; });
 }
@@ -11715,7 +11719,7 @@ async function loadNotifications() {
   const actions = document.getElementById('notifActions');
   const emptyState = '<div class="empty-state"><div class="empty-state-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="empty-state-title">No notifications yet</div><div class="empty-state-sub">Activity and alerts from your dashboard will appear here</div></div>';
   if (actions) actions.style.display = 'none';
-  container.innerHTML = skelHTML(3, 2);
+  if (!window._softRefresh) container.innerHTML = skelHTML(3, 2);
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 6000);
@@ -14413,7 +14417,7 @@ async function loadUnassignedPayments() {
   const container = document.getElementById('unassignedContainer');
   if (!container) return;
 
-  container.innerHTML = skelHTML(3, 2);
+  if (!window._softRefresh) container.innerHTML = skelHTML(3, 2);
 
   try {
     const url = 'https://sabdevsguuobgqjputtv.supabase.co/rest/v1/unassigned_payments?select=*&status=eq.pending&order=date.desc';
@@ -14864,7 +14868,7 @@ function openWsPaxPage(wsId, venueName, wsDate) {
   if (title) title.textContent = (venueName||wsId) + (wsDate ? ' · ' + wsDate : '');
   if (sub) sub.textContent = 'Loading participants...';
   if (addBtn) { addBtn.onclick = function() { openParticipantForWorkshop(wsId); }; }
-  document.getElementById('vpParticipantsList').innerHTML = skelHTML(3, 2);
+  if (!window._softRefresh) document.getElementById('vpParticipantsList').innerHTML = skelHTML(3, 2);
   document.getElementById('form-viewParticipants').classList.add('open');
   lockScroll();
   loadVPParticipants(wsId);
@@ -19576,6 +19580,21 @@ html body .inv-preview-btn { gap: 8px; min-height: 52px; }
 
 html body #notifUnreadCount:empty { display: none !important; }
 
+/* ── v211 · MOTION SYSTEM ─────────────────────────────────────────────
+   Two curves (--ease, --ease-spring), three speeds (150/250/350).
+   Only transform and opacity move. Reduce Motion turns it all off. */
+html body .push-sw::after, html body .inv-switch .sl:before, html body .checkin-toggle-thumb {
+  transition: transform var(--dur-slow) var(--ease-spring), width var(--dur-fast) var(--ease), background var(--dur) var(--ease) !important; }
+html body .push-sw, html body .inv-switch .sl, html body .checkin-toggle-track { transition: background var(--dur) var(--ease) !important; }
+html body .push-opt:active .push-sw::after, html body .push-sw:active::after, html body .inv-switch:active .sl:before, html body .inv-opt:active .sl:before, html body .checkin-toggle:active .checkin-toggle-thumb { width: 28px !important; }
+html body .push-opt:active .push-sw.on::after, html body .push-sw.on:active::after, html body .inv-switch:active input:checked + .sl:before, html body .inv-opt:active input:checked + .sl:before, html body .checkin-toggle:active input:checked ~ .checkin-toggle-thumb { transform: translateX(12px) !important; }
+html body :is(.td-row, .wa-row, .mp-it, .nf-row, .push-opt, .inv-opt) { transition: transform var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease); }
+html body :is(.td-row, .wa-row, .mp-it, .nf-row):active { transform: scale(.985); }
+html body :is(.btn-dash, .app-tab, .pg-ib, .app-bar-btn, .bb-btn, .inv-add-line, .wa-tab, .sch-chip):active { transform: scale(.96); }
+html body :is(.btn-dash, .app-tab, .pg-ib, .app-bar-btn, .bb-btn, .inv-add-line, .wa-tab, .sch-chip) { transition: transform var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease); }
+html body .form-page.fp-leaving { display: flex; flex-direction: column; pointer-events: none; }
+html body .form-page { box-shadow: -12px 0 32px rgba(0,0,0,.12); }
+
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -19590,5 +19609,70 @@ html { scroll-behavior: auto; }
   html body .ptr.spin[class] svg { animation: ptrspin 1.6s linear infinite !important; }
 }
 </style>
+<script id="studioMotion">
+// v211: one motion system. Page switch fades, cards arrive one after another,
+// form pages slide in from the right and back out, pull-to-refresh settles softly.
+(function () {
+  const RM = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  const EASE = 'cubic-bezier(.2,.8,.2,1)', OUT = 'cubic-bezier(.4,0,.2,1)';
+  const ok = () => !RM.matches && !document.hidden && typeof Element.prototype.animate === 'function';
+  const phone = () => typeof isPhoneLayout === 'function' ? isPhoneLayout() : window.innerWidth <= 900;
+  const ITEMS = '.m-card, .wa-row, .td-row, .nf-row, .mp-it';
+  let lastSec = null, navAt = 0, done = new WeakSet();
+
+  function stagger(root) {
+    if (!ok() || !root) return;
+    const vh = window.innerHeight; let i = 0;
+    root.querySelectorAll(ITEMS).forEach(el => {
+      if (i >= 8 || done.has(el) || !el.offsetParent) return;
+      const r = el.getBoundingClientRect(); if (r.top > vh || r.bottom < 0) return;
+      done.add(el);
+      el.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 280, delay: i * 35, easing: EASE, fill: 'backwards' });
+      i++;
+    });
+  }
+  window.motionPageIn = function (name) {
+    if (name === lastSec) return; const first = lastSec === null; lastSec = name; navAt = Date.now(); done = new WeakSet();
+    if (first || !ok()) return;
+    const sec = document.getElementById('section-' + name); if (!sec) return;
+    sec.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: EASE });
+    requestAnimationFrame(() => stagger(sec));
+  };
+  window.motionSettle = function (sec) {
+    if (!ok() || !sec) return;
+    sec.animate([{ opacity: .6 }, { opacity: 1 }], { duration: 260, easing: EASE });
+  };
+  // Lists that render a moment after the page opens (data arriving) still get the entrance.
+  const main = document.getElementById('dashMain');
+  if (main && window.MutationObserver) new MutationObserver(muts => {
+    if (Date.now() - navAt > 1500 || window._softRefresh || !ok()) return;
+    for (const m of muts) { if (m.addedNodes.length > 1 || (m.addedNodes[0] && m.addedNodes[0].nodeType === 1 && m.addedNodes[0].matches && m.addedNodes[0].matches(ITEMS))) { const sec = document.querySelector('.dash-section.active'); if (sec) requestAnimationFrame(() => stagger(sec)); return; } }
+  }).observe(main, { childList: true, subtree: true });
+
+  // Form pages: slide in from the right, the page behind drifts left a little.
+  const behind = () => document.getElementById('dashMain');
+  function fpIn(fp) {
+    if (!ok() || !phone()) return;
+    fp.getAnimations().forEach(a => a.cancel()); fp.classList.remove('fp-leaving');
+    fp.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: 350, easing: EASE });
+    const b = behind(); if (b && !document.querySelector('.form-page.open:not(#' + fp.id + ')')) b.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateX(-20%)', opacity: .7 }], { duration: 350, easing: EASE });
+  }
+  function fpOut(fp) {
+    if (!ok() || !phone()) return;
+    fp.classList.add('fp-leaving');
+    const a = fp.animate([{ transform: 'none' }, { transform: 'translateX(100%)' }], { duration: 300, easing: OUT });
+    const b = behind(); if (b && !document.querySelector('.form-page.open')) b.animate([{ transform: 'translateX(-20%)', opacity: .7 }, { transform: 'none', opacity: 1 }], { duration: 300, easing: OUT });
+    const end = () => fp.classList.remove('fp-leaving'); a.onfinish = end; a.oncancel = end;
+  }
+  if (window.MutationObserver) new MutationObserver(muts => {
+    for (const m of muts) {
+      const el = m.target; if (!el.classList || !el.classList.contains('form-page')) continue;
+      const was = (m.oldValue || '').split(/\s+/).includes('open'), is = el.classList.contains('open');
+      if (!was && is) fpIn(el); else if (was && !is) fpOut(el);
+    }
+  }).observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true, subtree: true });
+})();
+</script>
+
 </body>
 </html>
