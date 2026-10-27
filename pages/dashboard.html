@@ -7522,7 +7522,7 @@ function qaClose() { document.body.classList.remove('qa-open'); }
   document.addEventListener('touchend', async () => {
     if (startY == null) return; startY = null;
     if (!pulling || dist < TRIGGER) { pulling = false; indTo(0, 0, true); pageTo(0, true); return; }
-    busy = true; pulling = false; const el = indicator(); el.firstElementChild.style.transform = ''; el.classList.add('spin');
+    busy = true; pulling = false; const el = indicator(); el.firstElementChild.style.transform = ''; el.classList.remove('hit'); void el.offsetWidth; el.classList.add('spin', 'hit');   // v220: the strike
     pageTo(HOLD, true); indTo(HOLD, 1, true);
     const name = sessionStorage.getItem('dash_section') || 'today';
     window._softRefresh = true;
@@ -7530,9 +7530,7 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     window._softRefresh = false;
     try { motionSettle(document.getElementById('section-' + name)); } catch (e) {}
     try { if (typeof waRefreshBadge === 'function') waRefreshBadge(); } catch (e) {}
-    el.classList.remove('spin'); el.classList.add('done');   // v220: ripple out, then slide away
-    await new Promise(r => setTimeout(r, 620));
-    busy = false; indTo(0, 0, true); pageTo(0, true); setTimeout(() => el.classList.remove('done'), 450);
+    el.classList.remove('spin', 'hit'); busy = false; indTo(0, 0, true); pageTo(0, true);
   });
 })();
 
@@ -20188,13 +20186,14 @@ html { --hp-brand: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2
 html body .ptr { width: 58px; height: 58px; margin-left: -29px; background: none; border: 0; border-radius: 0; box-shadow: none; --hp-note: var(--bg); color: var(--acc-tx); transform: translateY(-58px); }
 html body .ptr .hp-svg { position: relative; z-index: 1; width: 58px; height: 58px; filter: none; }
 html body .ptr .hp-svg > circle:first-child { display: none; }
-/* v220: the pan stays solid while it turns. When the refresh is done, a soft filled ripple spreads out and the pan pops once. */
+/* v220: the pan stays solid while it turns. The moment you let go, two quick rings burst out like a note being struck and the pan pops once. */
 html body .ptr .ptr-rp { position: absolute; inset: 0; pointer-events: none; }
-html body .ptr .ptr-rp i { position: absolute; inset: 0; border-radius: 50%; background: var(--acc-tx); opacity: 0; }
-html body .ptr.done .ptr-rp i { animation: ptrRip .8s var(--ease) forwards; }
-html body .ptr.done .ptr-rp i:nth-child(2) { animation-delay: .14s; } html body .ptr.done .ptr-rp i:nth-child(3) { animation-delay: .28s; }
-html body .ptr.done .hp-svg { animation: ptrPop .45s var(--ease-spring); }
-@keyframes ptrRip { 0% { transform: scale(.9); opacity: .28; } 100% { transform: scale(2.3); opacity: 0; } }
+html body .ptr .ptr-rp i { position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--acc-tx); opacity: 0; }
+html body .ptr.hit .ptr-rp i { animation: ptrHit .75s var(--ease) forwards; }
+html body .ptr.hit .ptr-rp i:nth-child(2) { animation-delay: .12s; } html body .ptr .ptr-rp i:nth-child(3) { display: none; }
+html body .ptr.hit .hp-svg { animation: ptrPop .45s var(--ease-spring); }
+html body .ptr.hit.spin .hp-svg { animation: ptrPop .45s var(--ease-spring), hpspin 1.9s linear .45s infinite; }
+@keyframes ptrHit { 0% { transform: scale(1); opacity: .7; border-width: 3px; } 100% { transform: scale(2.4); opacity: 0; border-width: 1px; } }
 @keyframes ptrPop { 0% { transform: scale(.86); } 100% { transform: scale(1); } }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
