@@ -4456,7 +4456,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v207</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v208</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4530,7 +4530,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v207</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v208</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -6178,9 +6178,9 @@ table#paymentsTable { min-width: 700px; }
     </div>
     <div class="form-group"><label class="form-label">Per class rate</label>
       <input type="hidden" id="stu-basis" value="session"/>
-      <div style="display:flex;gap:0;">
-        <select class="form-input native-select" id="stu-currency" data-customized="1" data-currency-select="1" style="border-radius:var(--r-sm) 0 0 var(--r-sm);border-right:none;max-width:90px;"><option value="INR">INR</option></select>
-        <input type="number" class="form-input" id="stu-fee" placeholder="0" style="border-radius:0 var(--r-sm) var(--r-sm) 0;"/>
+      <div class="fld-row">
+        <select class="form-input native-select" id="stu-currency" data-customized="1" data-currency-select="1" style="max-width:96px;"><option value="INR">INR</option></select>
+        <input type="number" class="form-input" id="stu-fee" placeholder="0"/>
       </div>
     </div>
     <input type="hidden" id="stu-country" value="India"/>
@@ -12512,9 +12512,9 @@ function buildEditForm(entity, r) {
           fi('Start Date','stu-start','date',r.join_date))}
     <div class="form-group"><label class="form-label">Per class rate</label>
       <input type="hidden" id="ef-stu-basis" value="session"/>
-      <div style="display:flex;gap:0;">
-        <select class="form-input native-select" id="ef-stu-currency" data-customized="1" data-currency-select="1" style="border-radius:var(--r-sm) 0 0 var(--r-sm);border-right:none;max-width:90px;">${currencyOptionsHtml(r.currency)}</select>
-        <input type="number" class="form-input" id="ef-stu-fee" value="${r.monthly_fee||0}" style="border-radius:0 var(--r-sm) var(--r-sm) 0;"/>
+      <div class="fld-row">
+        <select class="form-input native-select" id="ef-stu-currency" data-customized="1" data-currency-select="1" style="max-width:96px;">${currencyOptionsHtml(r.currency)}</select>
+        <input type="number" class="form-input" id="ef-stu-fee" value="${r.monthly_fee||0}"/>
       </div>
       ${r.fee_basis && r.fee_basis !== 'session' ? '<span class="inv-date-hint" style="color:var(--acc-tx);">This was saved as a per ' + (r.fee_basis === 'month' ? 'month' : 'course') + ' fee. Change it to one class’s rate before saving.</span>' : ''}
     </div>
@@ -19477,6 +19477,11 @@ html body .ag-ta:focus, html body .wa-ibox:focus-within { border-color: var(--ac
 html body .schd-strip button.sel, html body.dark-mode .schd-strip button.sel { outline: 0 !important; background: var(--tx) !important; color: var(--bg) !important; }
 html body .schd-strip button.sel b, html body.dark-mode .schd-strip button.sel b, html body .schd-strip button.sel.tod, html body .schd-strip button.sel.tod b, html body.dark-mode .schd-strip button.sel.tod, html body.dark-mode .schd-strip button.sel.tod b { color: var(--bg) !important; }
 html body .thm-pick button.on, html body.dark-mode .thm-pick button.on { background: var(--tx) !important; color: var(--bg) !important; }
+/* v208: fields that sit side by side never touch: 8px between them (currency + amount, phone flag + code + number,
+   time pickers). The old joined currency/amount pair looked fused once outlines went away. */
+html body .fld-row { display: flex; gap: var(--sp-2); align-items: stretch; }
+html body .fld-row > :last-child { flex: 1; min-width: 0; }
+html body .form-group div[style*="display:flex"][style*="gap:0;"], html body .form-group div[style*="display:flex"][style*="gap:0\""] { gap: var(--sp-2) !important; }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
