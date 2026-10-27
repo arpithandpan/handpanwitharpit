@@ -170,7 +170,7 @@ window.STUDIO_THEMES = {
   --ctl-fs: var(--fs-body);
   --tap: 44px;             /* minimum touch target */
   --sat: env(safe-area-inset-top, 0px);     /* v189: status-bar inset as a var, so bar rules can add it and tests can fake it */
-  --bar-h: 84px;           /* v198 (was 76): compact app bar on phones, NOT counting --sat (title, back, + centred; buttons --bar-btn) */
+  --bar-h: 76px;           /* v204 (v198 had 84, earlier 76): compact app bar on phones, NOT counting --sat (title, back, + centred; buttons --bar-btn) */
   --bar-btn: 48px;         /* round buttons in that bar; 14px air above and below */
   --icon-sm: 16px; --icon-md: 20px; --icon-lg: 24px;
   --avatar: 40px; --stroke: 2px;
@@ -4456,7 +4456,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v201</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v204</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4530,7 +4530,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v201</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v204</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -18108,6 +18108,39 @@ function rvRender() {
   window.addEventListener('unhandledrejection', e => report('Unhandled: ' + (e.reason && e.reason.message || e.reason), ''));
 })();
 
+// ── v203: TAP TO COPY. Phone numbers, emails and links in card values copy with one tap (app text is not
+// selectable on phones any more). A value like "+1 647… · name@mail.com" splits so each part copies alone.
+(function () {
+  const RX = /(\+?\d[\d\s()-]{6,}\d|[^\s@·,]+@[^\s@·,]+\.[^\s@·,]{2,}|https?:\/\/\S+)/g;
+  function mark(root) {
+    (root || document).querySelectorAll('.m-card-val:not([data-mc-tap])').forEach(v => {
+      v.dataset.mcTap = '1';
+      if (v.querySelector('a,button,input,select,textarea') || v.dataset.mcMail) return;
+      const w = document.createTreeWalker(v, NodeFilter.SHOW_TEXT); const nodes = []; let n; while ((n = w.nextNode())) nodes.push(n);
+      nodes.forEach(t => {
+        const s = t.nodeValue; RX.lastIndex = 0; if (!RX.test(s)) return; RX.lastIndex = 0;
+        const frag = document.createDocumentFragment(); let last = 0, m;
+        while ((m = RX.exec(s))) {
+          if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+          const sp = document.createElement('span'); sp.className = 'mc-tap'; sp.textContent = m[0]; sp.setAttribute('role', 'button'); sp.setAttribute('aria-label', 'Copy ' + m[0]);
+          frag.appendChild(sp); last = m.index + m[0].length;
+        }
+        if (last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+        t.parentNode.replaceChild(frag, t);
+      });
+    });
+  }
+  document.addEventListener('click', e => {
+    const t = e.target.closest && e.target.closest('.mc-tap'); if (!t) return;
+    e.preventDefault(); e.stopPropagation();
+    const txt = t.textContent.trim(); const what = /@/.test(txt) ? 'Email' : /^https?:/.test(txt) ? 'Link' : 'Number';
+    try { navigator.clipboard.writeText(txt).then(() => showToast(what + ' copied', 'success'), () => showToast('Could not copy', 'error')); } catch (err) {}
+  }, true);
+  const mo = new MutationObserver(muts => { for (const m of muts) for (const a of m.addedNodes) if (a.nodeType === 1 && (a.matches('.m-card-val, .m-card, .mobile-cards') || a.querySelector && a.querySelector('.m-card-val'))) { clearTimeout(mark._t); mark._t = setTimeout(() => mark(), 60); return; } });
+  document.addEventListener('DOMContentLoaded', () => { mark(); mo.observe(document.body, { childList: true, subtree: true }); });
+  if (document.readyState !== 'loading') { mark(); mo.observe(document.body, { childList: true, subtree: true }); }
+})();
+
 // ── v169: LONG TEXT FITTER (phones). One rule for every card list. ──
 // A value that would wrap next to its label moves under it (.mc-stack).
 // Emails stay on one line with a Copy button. Runs whenever cards are drawn.
@@ -19214,6 +19247,31 @@ html body :is(.wa-tab, .ms-chip, .notif-tab, .fr-chip, .filter-sheet-cat, .tod):
 /* soft danger buttons (Delete) get the same solid secondary fill, red text keeps the meaning */
 html body .btn-dash.btn-dash-danger:not(.btn-dash-primary) { background-color: var(--ctl2-bg) !important; background-image: none !important; border-color: transparent !important; box-shadow: 0 0 0 var(--bw) var(--ctl2-ring), var(--ctl2-shadow) !important; color: var(--bad) !important; }
 html.dk body .btn-dash.btn-dash-danger:not(.btn-dash-primary) { color: color-mix(in srgb, var(--bad) 72%, var(--tx)) !important; }   /* the lifted dark fill needs a lighter red to keep 4.5:1 */
+/* v202: light mode drops the outer strokes too, same as dark (v200). Cards, chips, sheets and dialogs are told apart
+   by fill alone: white on the grey page. Secondary buttons lose their ring: on the page they are white with a soft
+   shadow, inside a white card or sheet they take a light grey fill so they still read as buttons. */
+html:not(.dk) body .m-card, html:not(.dk) body .settings-card, html:not(.dk) body .stat-card, html:not(.dk) body .overview-card, html:not(.dk) body .insight-tile, html:not(.dk) body .chart-box, html:not(.dk) body .push-card, html:not(.dk) body .ag-card, html:not(.dk) body .mp-grp, html:not(.dk) body .td-card, html:not(.dk) body .td-next, html:not(.dk) body .checkin-card, html:not(.dk) body .dash-table-wrap,
+html:not(.dk) body .modal, html:not(.dk) body .modal-box, html:not(.dk) body .filter-sheet, html:not(.dk) body .mobile-picker-sheet, html:not(.dk) body .qa-sheet, html:not(.dk) body .m-dots-popover { border-color: transparent !important; }
+html:not(.dk) body { --ctl2-ring: transparent; --ctl2-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.05); }
+html:not(.dk) body :is(.m-card, .td-card, .settings-card, .stat-card, .ag-card, .mp-grp, .push-card, .overview-card, .dash-table-wrap, .modal, .modal-box, .filter-sheet, .mobile-picker-sheet, .qa-sheet, .m-dots-popover, .wa-ai-in, .wa-ai-body) {
+  --ctl2-bg: color-mix(in srgb, var(--tx) 12%, var(--s1)); --ctl2-shadow: 0 0 0 0 transparent; }
+/* v203: a form page is one colour from the status bar down. On iPhone the status bar strip is painted with the page
+   colour (theme-color), so a white or lifted header under it looked like a separate band. The thin line under the
+   header stays. Fields keep their borders. */
+html body .form-page, html body.dark-mode .form-page, html body .form-page .form-page-scroll, html body.dark-mode .form-page .form-page-scroll,
+html body .form-page .form-page-header.form-page-header, html body .tw-page, html body .tw-page .tw-bar.tw-bar { background: var(--bg) !important; }
+/* v203: app chrome does not select like web text. Long press on a card, chip, button or label no longer selects words
+   or opens the magnifier. Typing fields keep normal selection. Phone, email and links copy with a tap instead. */
+@media (max-width: 900px), (pointer: coarse) {
+  html body .dash-root, html body .form-page, html body .mobile-topbar, html body .app-tabs, html body .tw-page, html body .filter-sheet, html body .mobile-picker-sheet, html body .modal-overlay, html body .checkin-screen {
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+}
+html body :is(input, textarea, select, [contenteditable="true"]) { -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }
+html body .mc-tap { cursor: copy; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--tx) 25%, transparent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+html body .mc-tap:active { color: var(--acc-tx); }
+/* only rows that open something get a press colour; cards with their own buttons stay still when touched or scrolled */
+html body .m-card:active, html body .td-row:active { background: var(--s1) !important; }
+html.dk body .m-card:active { background: var(--s1) !important; }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
