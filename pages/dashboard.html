@@ -4456,7 +4456,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v208</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v209</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4530,7 +4530,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v208</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v209</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17723,13 +17723,21 @@ function schPopOpen(i, el) {
   else if (!past) info += '<br>WhatsApp reminder at ' + schTime12(schIst(remind).hhmm);
   const zoom = o.slot && o.slot.zoom_link;
   let btns = '';
-  if (admin && !past) {
+  // v208: a class that already went by can still be moved (a make-up) or skipped, for two weeks. Before, past
+  // classes showed no buttons at all, so a missed class could not be rescheduled.
+  const recent = past && (Date.now() - o.utc.getTime()) < 14 * 86400000;
+  if (admin && recent && !o.ex) info += '<br>This time has passed. Move it to give a make-up class.';
+  if (admin && (!past || recent)) {
     btns = o.ex
       ? '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schUndo(' + o.ex.id + ')">Undo</button>'
       : '<button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schOpenMove(' + i + ',\'cal\')">Move</button><button class="btn-dash btn-dash-outline btn-dash-sm" onclick="schSkip(' + i + ',\'cal\')">Skip</button>';
   }
   if (zoom && o.state !== 'skip' && o.state !== 'move' && !past) btns += '<a class="btn-dash btn-dash-primary btn-dash-sm sch-pop-wide" href="' + zEsc(zoom) + '" target="_blank" rel="noopener">Join Zoom</a>';
   const pop = document.getElementById('schPop');
+  // v208: live on <body>. Inside the scrolling page, iPhone traps a fixed sheet under the tab bar.
+  const shade0 = document.getElementById('schPopShade');
+  if (pop.parentElement !== document.body) document.body.appendChild(pop);
+  if (shade0 && shade0.parentElement !== document.body) document.body.appendChild(shade0);
   pop.innerHTML = '<h4>' + zEsc(name) + '</h4><p>' + info + '</p>' + (btns ? '<div class="sch-pop-row">' + btns + '</div>' : '');
   pop.classList.add('open');
   document.getElementById('schPopShade').classList.add('open');
