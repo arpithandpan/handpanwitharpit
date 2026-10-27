@@ -4478,7 +4478,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v211</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v212</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4552,7 +4552,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v211</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v212</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17567,9 +17567,14 @@ function schEventBlock(ymd, timeTxt, defaultLen) {
 }
 
 function schSetView(v) {
+  const prev = _schView;
   _schView = v === 'cal' ? 'cal' : 'list';
   try { localStorage.setItem('sch_view', _schView); } catch (e) {}
   schApplyView();
+  if (prev !== _schView) try {
+    const w = document.getElementById(_schView === 'cal' ? 'schCalWrap' : 'schListWrap');
+    if (w && w.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) w.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  } catch (e) {}
 }
 function schApplyView() {
   const cal = _schView === 'cal';
@@ -19595,6 +19600,13 @@ html body :is(.btn-dash, .app-tab, .pg-ib, .app-bar-btn, .bb-btn, .inv-add-line,
 html body .form-page.fp-leaving { display: flex; flex-direction: column; pointer-events: none; }
 html body .form-page { box-shadow: -12px 0 32px rgba(0,0,0,.12); }
 
+/* Segmented controls (v211): one pill slides between options, like a real switch. */
+html body :is(.ag-seg, .inv-seg, .sch-seg, .tw-seg, .thm-seg).has-ind { position: relative; isolation: isolate; }
+html body .seg-ind { position: absolute; top: 3px; bottom: 3px; left: 0; width: 0; border-radius: var(--r-pill); background: var(--tx); z-index: 0; pointer-events: none;
+  transition: transform 380ms var(--ease-spring), width 380ms var(--ease-spring); will-change: transform; }
+html body .has-ind > button { position: relative; z-index: 1; transition: color var(--dur) var(--ease) !important; }
+html body .has-ind > button:is(.on, .active), html.mono body .has-ind > button:is(.on, .active), html body .has-ind > #schSegCal.on, html body .has-ind > #schSegList.on { background: transparent !important; box-shadow: none !important; }
+
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -19671,6 +19683,38 @@ html { scroll-behavior: auto; }
       if (!was && is) fpIn(el); else if (was && !is) fpOut(el);
     }
   }).observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true, subtree: true });
+})();
+</script>
+
+<script id="studioSeg">
+// v211: sliding pill for segmented controls. If a control is re-rendered the
+// buttons keep their own selected fill, so nothing ever looks unselected.
+(function () {
+  const SEG = '.ag-seg, .inv-seg, .sch-seg, .tw-seg, .thm-seg';
+  const sel = s => s.querySelector(':scope > button.on, :scope > button.active');
+  function place(s, animate) {
+    const ind = s.querySelector(':scope > .seg-ind'), b = sel(s); if (!ind) return;
+    if (!b || !b.offsetWidth) { ind.style.opacity = '0'; return; }
+    if (!animate) ind.style.transition = 'none';
+    ind.style.opacity = '1'; ind.style.width = b.offsetWidth + 'px'; ind.style.transform = 'translateX(' + b.offsetLeft + 'px)';
+    if (!animate) { ind.offsetWidth; ind.style.transition = ''; }
+  }
+  function init(s) {
+    if (!s || s.classList.contains('has-ind')) return;
+    const i = document.createElement('i'); i.className = 'seg-ind'; i.setAttribute('aria-hidden', 'true');
+    s.insertBefore(i, s.firstChild); s.classList.add('has-ind'); place(s, false);
+  }
+  const scan = () => document.querySelectorAll(SEG).forEach(s => { if (s.offsetParent) { init(s); place(s, false); } });
+  document.addEventListener('pointerdown', e => { const s = e.target.closest && e.target.closest(SEG); if (s) { init(s); place(s, false); } }, true);
+  if (window.MutationObserver) new MutationObserver(muts => {
+    const seen = new Set();
+    for (const m of muts) { const t = m.target; if (t.tagName === 'BUTTON' && t.parentElement && t.parentElement.classList.contains('has-ind')) seen.add(t.parentElement); }
+    seen.forEach(s => requestAnimationFrame(() => place(s, true)));
+  }).observe(document.body, { attributes: true, attributeFilter: ['class'], subtree: true });
+  window.addEventListener('resize', () => document.querySelectorAll('.has-ind').forEach(s => place(s, false)));
+  // Pages that were hidden when we first looked get their pill on show.
+  const _ss = window.showSection; if (typeof _ss === 'function') window.showSection = function () { const r = _ss.apply(this, arguments); requestAnimationFrame(scan); return r; };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(scan, 300)); else setTimeout(scan, 300);
 })();
 </script>
 
