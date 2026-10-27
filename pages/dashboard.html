@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v219</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v220</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v219</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v220</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -7476,12 +7476,12 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     const top = window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches ? m.getBoundingClientRect().top : bar.getBoundingClientRect().bottom;
     bar.classList.toggle('scrolled', !!t && t.getBoundingClientRect().bottom < top + 4);
     // v187: the large title no longer shrinks or fades while scrolling (it stuttered on phones); the bar simply slides in.
-    if (m.scrollTop > 2) { const p = document.querySelector('.ptr'); if (p && !p.classList.contains('spin')) { p.style.opacity = 0; p.style.transform = 'translateY(-66px)'; } }
+    if (m.scrollTop > 2) { const p = document.querySelector('.ptr'); if (p && !p.classList.contains('spin')) { p.style.opacity = 0; p.style.transform = 'translateY(-58px)'; } }
   }, true);
   // Pull to refresh (touch, phone layout only). v187: the page itself follows the finger and
   // springs back, the indicator sits in the gap that opens above it.
   let startY = null, startX = 0, axis = null, pulling = false, dist = 0, busy = false, ind = null;
-  const MAX = 132, TRIGGER = 92, HOLD = 104, IND = 66;   // v217: bigger pan, sits lower
+  const MAX = 128, TRIGGER = 88, HOLD = 100, IND = 58;   // v220: a touch smaller, still sits low
   function pageTo(y, animate) {
     const m = main(); if (!m) return;
     m.style.transition = animate ? (y ? 'transform var(--dur-slow) var(--ease)' : 'transform 420ms var(--ease-spring)') : 'none';
@@ -7493,7 +7493,7 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     el.style.opacity = op; el.style.transform = 'translateY(' + Math.max(-IND, y - IND - 14) + 'px) scale(' + (0.6 + 0.4 * Math.min(1, y / TRIGGER)) + ')';
   }
   function indicator() {
-    if (!ind) { ind = document.createElement('div'); ind.className = 'ptr'; ind.innerHTML = HP_SVG; document.body.appendChild(ind); }
+    if (!ind) { ind = document.createElement('div'); ind.className = 'ptr'; ind.innerHTML = HP_SVG + '<span class="ptr-rp" aria-hidden="true"><i></i><i></i><i></i></span>'; document.body.appendChild(ind); }
     return ind;
   }
   function blocked() { return !isPhoneLayout() || document.body.classList.contains('menu-is-open') || document.body.classList.contains('wa-chat-open') || document.body.classList.contains('qa-open') || (typeof _scrollLocked !== 'undefined' && _scrollLocked); }
@@ -7530,7 +7530,9 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     window._softRefresh = false;
     try { motionSettle(document.getElementById('section-' + name)); } catch (e) {}
     try { if (typeof waRefreshBadge === 'function') waRefreshBadge(); } catch (e) {}
-    el.classList.remove('spin'); busy = false; indTo(0, 0, true); pageTo(0, true);
+    el.classList.remove('spin'); el.classList.add('done');   // v220: ripple out, then slide away
+    await new Promise(r => setTimeout(r, 620));
+    busy = false; indTo(0, 0, true); pageTo(0, true); setTimeout(() => el.classList.remove('done'), 450);
   });
 })();
 
@@ -19431,7 +19433,7 @@ html body .sch-nav .sch-today { margin-left: auto; }
   html body .mobile-topbar #mobileSearchBtn { border-radius: 50%; background: color-mix(in srgb, var(--acc-tx) 16%, transparent) !important; color: var(--acc-tx) !important; padding: 0 !important; }   /* same chip as the + */
   html body .mobile-topbar.pg-sub .app-bar-back svg { width: 28px; height: 28px; }
   /* pull to refresh: the indicator lives in the gap that opens above the page */
-  html body .ptr { top: 0 !important; transform: translateY(-66px); }
+  html body .ptr { top: 0 !important; transform: translateY(-58px); }
   html.studio-app body .ptr { top: var(--sat) !important; }
 }
 /* form-page header: the side slots (back, action) take their width first, the title gets the rest and wraps to
@@ -20183,10 +20185,17 @@ html { --hp-brand: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2
 .hp-brand { display: inline-block; flex: none; background: currentColor; -webkit-mask: var(--hp-brand) center / contain no-repeat; mask: var(--hp-brand) center / contain no-repeat; vertical-align: middle; }
 .td-hp { animation: hpspin 1.9s linear infinite; }
 /* pull to refresh: no bubble, no ring. A bigger pan that turns with the finger, then spins and plays its notes. */
-html body .ptr { width: 66px; height: 66px; margin-left: -33px; background: none; border: 0; border-radius: 0; box-shadow: none; --hp-note: var(--bg); color: var(--acc-tx); transform: translateY(-66px); }
-html body .ptr .hp-svg { width: 66px; height: 66px; filter: none; }
+html body .ptr { width: 58px; height: 58px; margin-left: -29px; background: none; border: 0; border-radius: 0; box-shadow: none; --hp-note: var(--bg); color: var(--acc-tx); transform: translateY(-58px); }
+html body .ptr .hp-svg { position: relative; z-index: 1; width: 58px; height: 58px; filter: none; }
 html body .ptr .hp-svg > circle:first-child { display: none; }
-html body .ptr.spin .hp-n { animation: hpnote 1.6s ease-in-out infinite; animation-delay: calc(var(--i) * .16s); }
+/* v220: the pan stays solid while it turns. When the refresh is done, a soft filled ripple spreads out and the pan pops once. */
+html body .ptr .ptr-rp { position: absolute; inset: 0; pointer-events: none; }
+html body .ptr .ptr-rp i { position: absolute; inset: 0; border-radius: 50%; background: var(--acc-tx); opacity: 0; }
+html body .ptr.done .ptr-rp i { animation: ptrRip .8s var(--ease) forwards; }
+html body .ptr.done .ptr-rp i:nth-child(2) { animation-delay: .14s; } html body .ptr.done .ptr-rp i:nth-child(3) { animation-delay: .28s; }
+html body .ptr.done .hp-svg { animation: ptrPop .45s var(--ease-spring); }
+@keyframes ptrRip { 0% { transform: scale(.9); opacity: .28; } 100% { transform: scale(2.3); opacity: 0; } }
+@keyframes ptrPop { 0% { transform: scale(.86); } 100% { transform: scale(1); } }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
