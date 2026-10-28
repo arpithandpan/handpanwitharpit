@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v252</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v253</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v252</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v253</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17124,8 +17124,9 @@ async function loadToday(silent) {
     q('zoom_unmatched', 'select=id&status=eq.pending'),
     q('fee_requests', 'select=id,student_id,created_at&status=eq.pending&order=created_at.asc&created_at=lt.' + new Date(now.getTime() - 3 * 86400000).toISOString()),
     q('trials', 'select=id&created_at=gte.' + dayStart(weekStart)),
-    q('class_log', 'select=id&class_date=gte.' + weekStart)
-  ]);
+    q('class_log', 'select=id&class_date=gte.' + weekStart),
+    window._feeLast ? Promise.resolve(null) : q('class_log', 'select=student_id,class_date&class_date=gte.' + schAddDays(today, -90))
+  ]).then(r => { if (r[9]) { const L = {}; r[9].forEach(x => { if (x.student_id) L[x.student_id] = true; }); window._feeLast = window._feeLast || L; } return r.slice(0, 9); });
   if (_early) await _early;
   if (!slots || !stus) {
     if (!silent) wrap.innerHTML = '<div class="td-card" style="grid-column:1/-1;"><div class="td-empty" style="border-top:0;">Could not load today. Check your connection and refresh.</div></div>';
@@ -17239,9 +17240,12 @@ async function loadToday(silent) {
     acts.push([unreadPeople, unreadPeople === 1 ? 'person is waiting for a WhatsApp reply' : 'people are waiting for a WhatsApp reply', 'whatsapp', 'wa', oldest ? 'Oldest message ' + ago(oldest) : '']);
   }
   if (zoomRev && zoomRev.length) acts.push([zoomRev.length, 'Zoom attendance ' + (zoomRev.length === 1 ? 'needs' : 'need') + ' a student linked', 'classes', 'zoom', '']);
-  if (feeOld && feeOld.length) {
-    const o = feeOld[0], days = o.created_at ? Math.floor((nowMs - new Date(o.created_at).getTime()) / 86400000) : 0;
-    acts.push([feeOld.length, 'fee link' + (feeOld.length === 1 ? ' is' : 's are') + ' unpaid for 3+ days', 'fee-payments', 'fee', o.student_id && days ? 'Oldest: ' + schStudentName(o.student_id) + ', ' + days + ' days' : '']);
+  // v253: only links worth chasing count here (not students on a break, not people after a trial)
+  const stuById = {}; (stus || []).forEach(s => { stuById[s.id] = s; });
+  const feeChase = (feeOld || []).filter(fr => typeof feeKind !== 'function' || feeKind(fr, stuById[fr.student_id], window._feeLast) === 'chase');
+  if (feeChase.length) {
+    const o = feeChase[0], days = o.created_at ? Math.floor((nowMs - new Date(o.created_at).getTime()) / 86400000) : 0;
+    acts.push([feeChase.length, 'fee link' + (feeChase.length === 1 ? ' is' : 's are') + ' unpaid for 3+ days', 'fee-payments', 'fee', o.student_id && days ? 'Oldest: ' + schStudentName(o.student_id) + ', ' + days + ' days' : '']);
   }
   const needCard = '<div class="td-card td-o-need"><div class="td-head"><h3>Needs you</h3>' + (acts.length ? '<span>' + acts.length + '</span>' : '') + '</div>'
     + (acts.length ? acts.map(a => '<button type="button" class="td-act" onclick="tdGo(\'' + a[2] + '\')"><span class="td-ico ' + a[3] + '">' + ICO[a[3]] + '</span><span class="td-act-t">' + a[0] + ' ' + a[1] + (a[4] ? '<small>' + zEsc(a[4]) + '</small>' : '') + '</span>' + TD_CHEV + '</button>').join('')
@@ -17262,14 +17266,14 @@ async function loadToday(silent) {
     if (live.length) parts.push('<b>' + (nCl ? nCl + ' class' + (nCl === 1 ? '' : 'es') : '') + (nCl && nTr ? ' and ' : '') + (nTr ? nTr + ' trial' + (nTr === 1 ? '' : 's') : '') + '</b> today' + (nextToday ? ', next at ' + schTime12(nextToday.hhmm) : ', all done'));
     else parts.push('No classes today');
     if (unreadPeople) parts.push('<b>' + unreadPeople + (unreadPeople === 1 ? ' person' : ' people') + '</b> waiting for a reply');
-    if (feeOld && feeOld.length) parts.push('<b>' + feeOld.length + ' fee link' + (feeOld.length === 1 ? '' : 's') + '</b> unpaid');
+    if (feeChase.length) parts.push('<b>' + feeChase.length + ' fee link' + (feeChase.length === 1 ? '' : 's') + '</b> unpaid');
     const sec = document.getElementById('section-today'); if (sec) sec.classList.toggle('tod-night', h >= 18 || h < 6);
     const chip = (cls, html) => '<span class="td-chip ' + cls + '"><i></i>' + html + '</span>';
     const chips = [];
     if (live.length) chips.push(chip('ok', '<b>' + (nCl ? nCl + ' class' + (nCl === 1 ? '' : 'es') : '') + (nCl && nTr ? ' + ' : '') + (nTr ? nTr + ' trial' + (nTr === 1 ? '' : 's') : '') + '</b>' + (nextToday ? ' · next ' + schTime12(nextToday.hhmm) : ' · all done')));
     else chips.push(chip('', 'No classes today'));
     if (unreadPeople) chips.push(chip('acc', '<b>' + unreadPeople + '</b> waiting for reply'));
-    if (feeOld && feeOld.length) chips.push(chip('warn', '<b>' + feeOld.length + '</b> fee link' + (feeOld.length === 1 ? '' : 's') + ' unpaid'));
+    if (feeChase.length) chips.push(chip('warn', '<b>' + feeChase.length + '</b> fee link' + (feeChase.length === 1 ? '' : 's') + ' unpaid'));
     const g = document.getElementById('tdGreet'); if (g) { g.classList.add('chips'); g.innerHTML = chips.join(''); }
     // Mono shows one plain sentence instead of chips.
     try {
@@ -17279,7 +17283,7 @@ async function loadToday(silent) {
         if (live.length) bits.push((nCl ? '<b>' + nCl + ' class' + (nCl === 1 ? '' : 'es') + '</b>' : '') + (nCl && nTr ? ' and ' : '') + (nTr ? '<b>' + nTr + ' trial' + (nTr === 1 ? '' : 's') + '</b>' : '') + ' today' + (nextToday ? ', next at ' + schTime12(nextToday.hhmm) + '.' : ', all done.'));
         else { const t0 = tomItems.find(it => !it.off); bits.push('No classes today.' + (t0 ? ' <b>' + zEsc(String(t0.name || '').split(' ')[0]) + '</b> is next, tomorrow at ' + schTime12(t0.hhmm) + '.' : '')); }
         if (unreadPeople) bits.push('<b>' + unreadPeople + (unreadPeople === 1 ? ' person is' : ' people are') + '</b> waiting for a reply.');
-        if (feeOld && feeOld.length) bits.push('<b>' + feeOld.length + ' fee link' + (feeOld.length === 1 ? '' : 's') + '</b> ' + (feeOld.length === 1 ? 'is' : 'are') + ' still unpaid.');
+        if (feeChase.length) bits.push('<b>' + feeChase.length + ' fee link' + (feeChase.length === 1 ? '' : 's') + '</b> ' + (feeChase.length === 1 ? 'is' : 'are') + ' still unpaid.');
         sm.innerHTML = bits.join(' ');
       }
     } catch (e) {}
@@ -20779,7 +20783,7 @@ document.addEventListener('click', e => {
     X.leads = lds.filter(l => !l.archived && (l.status === 'Hot' || l.status === 'Warm') && l.follow_up_date && String(l.follow_up_date).slice(0, 10) <= F.today)
       .sort((a, b) => String(a.follow_up_date).localeCompare(String(b.follow_up_date)));
     const last = {}; cl.forEach(r => { const d = String(r.class_date || '').slice(0, 10); if (d && (!last[r.student_id] || d > last[r.student_id])) last[r.student_id] = d; });
-    X.last = last;
+    X.last = last; window._feeLast = last;
     X.quiet = (F.stus || []).filter(s => !s.archived && s.status === 'Active' && s.id !== 'S-DEMO').map(s => {
       const d = last[s.id];
       return d ? { s, days: daysBetween(d, F.today) } : null;   // only students with a logged class, so a missing log never reads as "gone quiet"
@@ -20789,6 +20793,17 @@ document.addEventListener('click', e => {
 
   // v224: three tiers. Urgent (red/amber) is only what needs Arpit today. Follow-ups are things he is waiting on
   // (unpaid fees, trial people, quiet students, lead follow-ups) and keep the orb calm. Students on break are never chased.
+  // v253: one rule for fee links, used by the orb, the summary line and the Needs you card.
+  // break: student on a break, never chased. trial: took a trial, never paid or had a class (kept 14 days).
+  // chase: a regular student's unpaid link.
+  window.feeKind = function (fr, s, last) {
+    s = s || {};
+    if (s.status === 'On Break') return 'break';
+    const trial = !(Number(s.total_paid) > 0) && !(Number(s.total_classes) > 0) && !(last && last[s.id]);
+    if (trial) return 'trial';
+    return 'chase';
+  };
+  window._feeLast = null;
   const SNZ_KEY = 'orbSnooze';
   const snz = () => { try { const o = JSON.parse(localStorage.getItem(SNZ_KEY) || '{}'), now = Date.now(); Object.keys(o).forEach(k => { if (o[k] < now) delete o[k]; }); return o; } catch (e) { return {}; } };
   window.orbSnooze = function (key) { try { const o = snz(); o[key] = Date.now() + 3 * 86400000; localStorage.setItem(SNZ_KEY, JSON.stringify(o)); } catch (e) {} KEY = ''; render(); if (document.getElementById('orbSh')) { orbClose(); setTimeout(orbOpen, 320); } };
@@ -20813,13 +20828,14 @@ document.addEventListener('click', e => {
       const s = stu[fr.student_id] || {}, nm = s.full_name || schStudentName(fr.student_id) || 'A student';
       const days = fr.created_at ? Math.floor((nowMs - new Date(fr.created_at).getTime()) / 86400000) : 0;
       const ago = days + ' day' + (days === 1 ? '' : 's'), when = days ? ago + ' ago' : 'today';
-      if (s.status === 'On Break') { BRK.push({ key: 'fee:' + fr.id, ic: 'pay', t: nm, s: 'On break · fee link sent ' + when + ', no reminder needed', go: 'fee-payments' }); return; }
-      const trial = !(Number(s.total_paid) > 0) && !(Number(s.total_classes) > 0) && !(X.last && X.last[s.id]);   // took a trial, never paid, no class yet
-      if (trial) { if (days < 14) add(FU, { key: 'fee:' + fr.id, k: 'acc', ic: 'lead', t: nm + ' · after their trial', s: 'Fee link sent ' + when + '. Drops off after 14 days', go: 'fee-payments' }); return; }
+      const fk = feeKind(fr, s, X.last);
+      if (fk === 'break') { BRK.push({ key: 'fee:' + fr.id, ic: 'pay', t: nm, s: 'On break · fee link sent ' + when + ', no reminder needed', go: 'fee-payments' }); return; }
+      if (fk === 'trial') { if (days < 14) add(FU, { key: 'fee:' + fr.id, k: 'acc', ic: 'lead', t: nm + ' · after their trial', s: 'Fee link sent ' + when + '. Drops off after 14 days', go: 'fee-payments' }); return; }
       if (days >= 7) overdue.push({ key: 'fee:' + fr.id, nm, days, ago });
       else add(FU, { key: 'fee:' + fr.id, k: 'acc', ic: 'pay', t: nm + '’s fee', s: 'Link sent ' + when, go: 'fee-payments' });
     });
-    overdue.sort((a, b) => b.days - a.days).forEach(o => add(L, { key: o.key, k: 'warn', ic: 'pay', big: first(o.nm), small: 'fee · ' + o.days + ' days', t: o.nm + '’s fee is unpaid for ' + o.ago, s: 'Send a reminder or check with them', go: 'fee-payments' }));
+    // v253: an old unpaid fee is a follow-up, not today's work, so it no longer turns the orb yellow all day
+    overdue.sort((a, b) => b.days - a.days).forEach(o => add(FU, { key: o.key, k: 'acc', ic: 'pay', big: first(o.nm), small: 'fee · ' + o.days + ' days', t: o.nm + '’s fee is unpaid for ' + o.ago, s: 'Send a reminder or check with them', go: 'fee-payments' }));
     X.leads.forEach(l => add(FU, { key: 'lead:' + l.id, k: 'acc', ic: 'lead', t: 'Follow up with ' + (l.full_name || 'a lead'), s: (l.status || '') + ' lead · due ' + (typeof fmtDate === 'function' ? fmtDate(l.follow_up_date) : String(l.follow_up_date).slice(0, 10)), go: 'leads' }));
     X.quiet.forEach(q => add(FU, { key: 'quiet:' + q.s.id, k: 'acc', ic: 'user', t: (q.s.full_name || 'A student') + ' · ' + q.days + ' days, no class', s: 'A short check-in keeps them going', go: 'classes' }));
     return { L, FU, BRK };
@@ -20844,7 +20860,12 @@ document.addEventListener('click', e => {
   function face(P, nowMs) {
     if (P.st === 'orb') {
       const L = P.L, top = L[0];
-      if (!top && P.FU && P.FU.length) { const n = P.FU.length; return '<button type="button" class="orb-b orb ok" onclick="orbOpen()" aria-label="All good. ' + n + ' follow-ups."><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>All good</small><b>' + n + ' follow-up' + (n === 1 ? '' : 's') + '</b><span>nothing urgent</span></span></button>'; }
+      if (!top && P.FU && P.FU.length) {
+        // v253: calm face, but it still names the follow-up worth doing first
+        const n = P.FU.length, f = P.FU.find(x => x.big) || null, more = n - (f ? 1 : 0);
+        const big = f ? f.big : String(n), small = f ? f.small : 'follow-up' + (n === 1 ? '' : 's') + ', nothing urgent';
+        return '<button type="button" class="orb-b orb ok" onclick="orbOpen()" aria-label="Nothing urgent. ' + n + ' follow-ups."><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>Follow up</small><b' + (big.length > 10 ? ' class="xs"' : big.length > 8 ? ' class="sm"' : '') + '>' + esc(big) + '</b><span>' + esc(small) + '</span>' + (f && more ? '<em>+' + more + ' more</em>' : '') + '</span></button>';
+      }
       if (!top) return '<button type="button" class="orb-b orb ok" onclick="orbOpen()" aria-label="All clear. Nothing needs you."><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>All clear</small>' + IC.ok + '<span>Nothing needs you</span></span></button>';
       const more = L.length - 1;
       return '<button type="button" class="orb-b orb' + (top.k === 'bad' ? ' bad' : '') + '" onclick="orbOpen()" aria-label="Needs you: ' + esc(top.t) + (more ? ', and ' + more + ' more' : '') + '"><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>Needs you</small><b' + (top.big.length > 10 ? ' class="xs"' : top.big.length > 8 ? ' class="sm"' : '') + '>' + esc(top.big) + '</b><span>' + esc(top.small) + '</span>' + (more ? '<em>+' + more + ' more</em>' : '') + '</span></button>';
