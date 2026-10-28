@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v250</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v251</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v250</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v251</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17169,12 +17169,13 @@ async function loadToday(silent) {
     const h0 = Math.max(0, Math.min(7, Math.floor(Math.min.apply(null, items.map(it => schHhmmToMin(it.hhmm))) / 60))), h1 = 24, span = (h1 - h0) * 60;
     const pos = min => ((min - h0 * 60) / span * 100);
     const nowMin = schHhmmToMin(schIst(now).hhmm);
-    const blocks = items.map(it => {
+    window._tdItems = items;   // v251: the scrub card reads these (same order as the rows below)
+    const blocks = items.map((it, i) => {
       const st = schHhmmToMin(it.hhmm), done = !it.off && nowMs > it.t + it.len * 60000;
-      return '<div class="td-blk ' + (it.off ? 'off' : it.kind) + (done ? ' done' : '') + '" style="left:' + pos(st) + '%;width:calc(' + Math.min(it.len, 1440 - st) / span * 100 + '% - 2px)" title="' + zEsc(schTime12(it.hhmm) + ' ' + it.name + (it.note ? ' (' + it.note + ')' : '')) + '"></div>';
+      return '<div class="td-blk ' + (it.off ? 'off' : it.kind) + (done ? ' done' : '') + '" data-i="' + i + '" style="left:' + pos(st) + '%;width:calc(' + Math.min(it.len, 1440 - st) / span * 100 + '% - 3px)"></div>';
     }).join('');
     const ticks = []; for (let h = h0; h < h1; h += 3) ticks.push('<span style="left:' + pos(h * 60) + '%">' + schTime12(String(h).padStart(2, '0') + ':00').replace(':00', '') + '</span>');
-    return '<div class="td-tl"><div class="td-bar">' + blocks + (nowMin >= h0 * 60 ? '<div class="td-nowline" style="left:' + pos(nowMin) + '%"></div>' : '') + '</div><div class="td-ticks">' + ticks.join('') + '</div></div>';
+    return '<div class="td-tl"><div class="td-tip" aria-live="polite"></div><div class="td-bar" data-h0="' + h0 + '" data-now="' + nowMin + '">' + blocks + (nowMin >= h0 * 60 ? '<div class="td-nowline" style="left:' + pos(nowMin) + '%"></div>' : '') + '<div class="td-scrub"></div></div><div class="td-ticks">' + ticks.join('') + '</div></div>';
   };
   const todayItems = rowsFor(today), tomItems = rowsFor(tomorrow);
   const zsOf = it => zState(it, nowMs);
@@ -20479,6 +20480,35 @@ body.feeTabs-on #feeRequestsPanel > div:first-child { justify-content: flex-end;
 .wa-tbtn { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px -2px 2px; padding: 10px 0 2px; border-top: 1px solid color-mix(in srgb, currentColor 14%, transparent); color: inherit; font-weight: 600; font-size: var(--fs-md); }
 /* v250: when the weekly link goes out by itself */
 .enr-row .enr-auto { color: var(--acc-tx); font-weight: 500; }
+/* v251: Today timeline. Blocks get a real fill (it was the same colour as the bar, so only the edge showed),
+   and sliding on the bar shows a line, the time and a card for the class under the finger. */
+:root { --td-mix: 62%; }
+html.dk { --td-mix: 48%; }
+html body .td-blk.cls { background: color-mix(in srgb, var(--bad) var(--td-mix), var(--s2)) !important; border: 0 !important; border-radius: var(--r-xs); }
+html body .td-blk.tr { background: color-mix(in srgb, var(--ok) var(--td-mix), var(--s2)) !important; border: 0 !important; border-radius: var(--r-xs); }
+.td-blk { top: 6px; bottom: 6px; transition: background var(--dur-fast) ease, transform var(--dur-fast) ease; }
+.td-blk.done { opacity: .5; }
+html body .td-blk.cls.hit { background: var(--bad) !important; transform: scaleY(1.18); }
+html body .td-blk.tr.hit { background: var(--ok) !important; transform: scaleY(1.18); }
+.td-tl { position: relative; }
+.td-bar { height: 44px; touch-action: pan-y; cursor: crosshair; user-select: none; -webkit-user-select: none; }
+.td-nowline { margin-left: -1px; pointer-events: none; }
+.td-scrub { position: absolute; top: -8px; bottom: -8px; width: 2px; margin-left: -1px; background: var(--tx); opacity: 0; pointer-events: none; transition: opacity var(--dur-fast) ease; }
+.td-scrub.on { opacity: 1; }
+.td-tip { position: absolute; bottom: calc(100% - 0.6rem); left: 0; z-index: 6; min-width: 210px; max-width: min(300px, calc(100% - 24px)); background: var(--tx); color: var(--bg); border-radius: var(--r-md); padding: 12px 14px; box-shadow: 0 10px 28px rgba(0,0,0,.3); opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity var(--dur-fast) ease, transform var(--dur-fast) ease; }
+.td-tip.on { opacity: 1; transform: none; }
+.td-tip.pin { pointer-events: auto; }
+.td-tip .t { font-size: var(--fs-sm); font-weight: 600; opacity: .72; }
+.td-tip .n { font-size: var(--fs-lg); font-weight: 700; margin-top: 2px; }
+.td-tip .m { font-size: var(--fs-sm); opacity: .82; margin-top: 2px; }
+.td-tip .j { display: none; margin-top: 10px; height: 42px; border-radius: var(--r-pill); background: var(--bg); color: var(--tx); font-weight: 600; font-size: var(--fs-ui); align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+.td-tip.pin .j { display: flex; }
+.td-tip.free { min-width: 0; padding: 6px 12px; border-radius: var(--r-pill); }
+.td-o-today { overflow: visible !important; position: relative; }
+.td-o-today.tip-on { z-index: 5; }
+.td-o-today > .td-row:last-child { border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.td-o-today > .td-row { transition: background var(--dur) ease; }
+.td-o-today > .td-row.hl { background: color-mix(in srgb, var(--tx) 7%, transparent); }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -21240,6 +21270,96 @@ document.addEventListener('click', e => {
   let q = 0; const soon = () => { cancelAnimationFrame(q); q = requestAnimationFrame(run); };
   if (window.MutationObserver) new MutationObserver(soon).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+</script>
+<script id="studioTdScrub">
+// v251: slide on the Today timeline. A thin line follows the finger (or mouse) with the time on top.
+// Over a class it snaps, the block and its row light up and a card shows who, when and their time.
+// Let go on a class and the card stays with Join Zoom until you tap elsewhere. The red line stays on "now".
+(function () {
+  const H1 = 24;
+  let drag = null, pinned = null, last = null;
+  const t12 = m => { m = ((Math.round(m) % 1440) + 1440) % 1440; const h = Math.floor(m / 60), mm = m % 60; return ((h % 12) || 12) + ':' + String(mm).padStart(2, '0') + ' ' + (h < 12 ? 'AM' : 'PM'); };
+  const durTxt = m => m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const CAM = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>';
+  function geo(bar) { const h0 = Number(bar.dataset.h0) || 0; return { h0, span: (H1 - h0) * 60, now: Number(bar.dataset.now) || 0 }; }
+  function minAt(bar, x) { const r = bar.getBoundingClientRect(), g = geo(bar); const f = Math.max(0, Math.min(1, (x - r.left) / r.width)); return Math.round(g.h0 * 60 + f * g.span); }
+  function startMin(it) { const [h, m] = String(it.hhmm || '0:0').split(':').map(Number); return h * 60 + m; }
+  function hitAt(m) {
+    const items = window._tdItems || []; let best = null, bd = 1e9;
+    items.forEach((it, i) => { const s = startMin(it), e = s + (it.len || 60); const d = m < s ? s - m : m > e ? m - e : 0; if (d <= 10 && d < bd) { bd = d; best = i; } });
+    return best;
+  }
+  function parts(bar) { const tl = bar.closest('.td-tl'); return { tl, tip: tl && tl.querySelector('.td-tip'), line: bar.querySelector('.td-scrub'), card: bar.closest('.td-o-today') }; }
+  function clear(bar, all) {
+    const p = parts(bar); if (!p.tl) return;
+    p.line && p.line.classList.remove('on');
+    if (all || pinned === null) {
+      p.tip && p.tip.classList.remove('on', 'pin');
+      bar.querySelectorAll('.td-blk.hit').forEach(b => b.classList.remove('hit'));
+      p.card && p.card.querySelectorAll(':scope > .td-row.hl').forEach(r => r.classList.remove('hl'));
+      p.card && p.card.classList.remove('tip-on');
+      pinned = null; last = null;
+    }
+  }
+  function show(bar, m, pin) {
+    const p = parts(bar), g = geo(bar); if (!p.tip) return;
+    const items = window._tdItems || [], i = hitAt(m), it = i === null ? null : items[i];
+    bar.querySelectorAll('.td-blk').forEach(b => b.classList.toggle('hit', Number(b.dataset.i) === i));
+    const rows = p.card ? p.card.querySelectorAll(':scope > .td-row') : [];
+    rows.forEach((r, k) => r.classList.toggle('hl', k === i));
+    if (it) {
+      const s = startMin(it), e = s + (it.len || 60), nowMs = Date.now(), endMs = it.t + (it.len || 60) * 60000;
+      m = Math.max(s, Math.min(e, m));
+      if (last !== i && navigator.vibrate) { try { navigator.vibrate(8); } catch (er) {} }
+      const when = it.off ? 'Skipped' : nowMs > endMs ? 'Done' : nowMs >= it.t ? 'Happening now' : 'In ' + durTxt(Math.round((it.t - nowMs) / 60000));
+      const meta = [it.note, it.kind === 'tr' ? String(it.sub || '').replace(/^Free trial( · )?/, '') : it.sub, when].filter(Boolean).join(' · ');
+      const join = !it.off && it.link && nowMs <= endMs ? '<a class="j" href="' + esc(it.link) + '" target="_blank" rel="noopener">' + CAM + 'Join Zoom</a>' : '';
+      p.tip.classList.remove('free');
+      p.tip.innerHTML = '<div class="t">' + t12(s) + ' to ' + t12(e) + ' IST' + (it.kind === 'tr' ? ' · Trial' : '') + '</div><div class="n">' + esc(it.name) + '</div>' + (meta ? '<div class="m">' + esc(meta) + '</div>' : '') + join;
+    } else {
+      p.tip.classList.add('free');
+      p.tip.innerHTML = '<div class="t">' + t12(m) + (Math.abs(m - g.now) < 4 ? ' · now' : '') + '</div>';
+    }
+    last = i;
+    const pct = (m - g.h0 * 60) / g.span * 100;
+    if (p.line) { p.line.style.left = pct + '%'; p.line.classList.toggle('on', !pin); }
+    p.tip.classList.add('on'); p.tip.classList.toggle('pin', !!pin && !!it);
+    p.card && p.card.classList.add('tip-on');
+    pinned = pin && it ? i : null;
+    // keep the card inside the timeline box
+    const tlW = p.tl.clientWidth, br = bar.getBoundingClientRect(), tr = p.tl.getBoundingClientRect();
+    const x = (br.left - tr.left) + br.width * pct / 100, tw = p.tip.offsetWidth;
+    p.tip.style.left = Math.max(8, Math.min(tlW - tw - 8, x - tw / 2)) + 'px';
+  }
+  document.addEventListener('pointerdown', e => {
+    const bar = e.target.closest && e.target.closest('.td-bar');
+    if (!bar) { if (!(e.target.closest && e.target.closest('.td-tip'))) document.querySelectorAll('.td-bar').forEach(b => clear(b, true)); return; }
+    drag = { bar, id: e.pointerId };
+    if (e.pointerType === 'mouse') { try { bar.setPointerCapture(e.pointerId); } catch (er) {} }
+    show(bar, minAt(bar, e.clientX), false);
+  }, true);
+  document.addEventListener('pointermove', e => {
+    if (drag) { show(drag.bar, minAt(drag.bar, e.clientX), false); return; }
+    if (e.pointerType !== 'mouse') return;
+    const bar = e.target.closest && e.target.closest('.td-bar');
+    if (bar && pinned === null) show(bar, minAt(bar, e.clientX), false);
+  }, { passive: true });
+  const end = e => {
+    if (!drag) return; const bar = drag.bar; drag = null;
+    const m = minAt(bar, e.clientX);
+    if (hitAt(m) !== null) show(bar, m, true); else clear(bar, true);
+  };
+  document.addEventListener('pointerup', end, true);
+  document.addEventListener('pointercancel', () => { if (drag) { clear(drag.bar, true); drag = null; } }, true);
+  document.addEventListener('pointerout', e => {
+    if (e.pointerType !== 'mouse' || drag || pinned !== null) return;
+    const bar = e.target.closest && e.target.closest('.td-bar');
+    if (bar && !(e.relatedTarget && bar.contains(e.relatedTarget))) clear(bar, true);
+  });
+  // while sliding with a finger, the page must not move sideways or pull to refresh
+  document.addEventListener('touchmove', e => { if (drag) e.preventDefault(); }, { passive: false });
 })();
 </script>
 </body>
