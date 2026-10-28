@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v223</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v224</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v223</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v224</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -7476,12 +7476,12 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     const top = window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches ? m.getBoundingClientRect().top : bar.getBoundingClientRect().bottom;
     bar.classList.toggle('scrolled', !!t && t.getBoundingClientRect().bottom < top + 4);
     // v187: the large title no longer shrinks or fades while scrolling (it stuttered on phones); the bar simply slides in.
-    if (m.scrollTop > 2) { const p = document.querySelector('.ptr'); if (p && !p.classList.contains('spin')) { p.style.opacity = 0; p.style.transform = 'translateY(-58px)'; } }
+    if (m.scrollTop > 2) { const p = document.querySelector('.ptr'); if (p && !p.classList.contains('spin')) { p.style.opacity = 0; p.style.transform = 'translateY(-50px)'; } }
   }, true);
   // Pull to refresh (touch, phone layout only). v187: the page itself follows the finger and
   // springs back, the indicator sits in the gap that opens above it.
   let startY = null, startX = 0, axis = null, pulling = false, dist = 0, busy = false, ind = null;
-  const MAX = 128, TRIGGER = 88, HOLD = 100, IND = 58;   // v220: a touch smaller, still sits low
+  const MAX = 124, TRIGGER = 84, HOLD = 92, IND = 50;   // v224: smaller pan
   function pageTo(y, animate) {
     const m = main(); if (!m) return;
     m.style.transition = animate ? (y ? 'transform var(--dur-slow) var(--ease)' : 'transform 420ms var(--ease-spring)') : 'none';
@@ -7493,7 +7493,7 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     el.style.opacity = op; el.style.transform = 'translateY(' + Math.max(-IND, y - IND - 14) + 'px) scale(' + (0.6 + 0.4 * Math.min(1, y / TRIGGER)) + ')';
   }
   function indicator() {
-    if (!ind) { ind = document.createElement('div'); ind.className = 'ptr'; ind.innerHTML = HP_SVG + '<span class="ptr-rp" aria-hidden="true"><i></i><i></i><i></i></span>'; document.body.appendChild(ind); }
+    if (!ind) { ind = document.createElement('div'); ind.className = 'ptr'; ind.innerHTML = '<span class="ptr-rot">' + HP_SVG + '</span>' + '<span class="ptr-rp" aria-hidden="true"><i></i><i></i><i></i></span>'; document.body.appendChild(ind); }
     return ind;
   }
   function blocked() { return !isPhoneLayout() || document.body.classList.contains('menu-is-open') || document.body.classList.contains('wa-chat-open') || document.body.classList.contains('qa-open') || (typeof _scrollLocked !== 'undefined' && _scrollLocked); }
@@ -7522,7 +7522,7 @@ function qaClose() { document.body.classList.remove('qa-open'); }
   document.addEventListener('touchend', async () => {
     if (startY == null) return; startY = null;
     if (!pulling || dist < TRIGGER) { pulling = false; indTo(0, 0, true); pageTo(0, true); return; }
-    busy = true; pulling = false; const el = indicator(); el.firstElementChild.style.transform = ''; el.classList.remove('hit'); void el.offsetWidth; el.classList.add('spin', 'hit');   // v220: the strike
+    busy = true; pulling = false; const el = indicator(); el.classList.remove('hit'); void el.offsetWidth; el.classList.add('spin', 'hit');   // v220: the strike. v224: the pan keeps the angle the finger left it at
     pageTo(HOLD, true); indTo(HOLD, 1, true);
     const name = sessionStorage.getItem('dash_section') || 'today';
     window._softRefresh = true;
@@ -7530,7 +7530,8 @@ function qaClose() { document.body.classList.remove('qa-open'); }
     window._softRefresh = false;
     try { motionSettle(document.getElementById('section-' + name)); } catch (e) {}
     try { if (typeof waRefreshBadge === 'function') waRefreshBadge(); } catch (e) {}
-    el.classList.remove('spin', 'hit'); busy = false; indTo(0, 0, true); pageTo(0, true);
+    busy = false; indTo(0, 0, true); pageTo(0, true);
+    setTimeout(() => { if (!pulling) { el.classList.remove('spin', 'hit'); el.firstElementChild.style.transform = ''; } }, 380);   // stop and reset only once it has faded out
   });
 })();
 
@@ -18767,7 +18768,7 @@ async function appCheckUpdate(manual) {
 }
 // One tap: a full-screen "Updating" view stays up until the new version is live,
 // then the app reloads itself. No more tapping Update again and again.
-const UPD_STEP = [[/latest version/i, 25], [/being published/i, 50], [/Restarting/i, 85], [/Almost there/i, 95]];
+const UPD_STEP = [[/latest version/i, 25], [/Publishing/i, 55], [/Restarting/i, 85], [/Almost there/i, 95]];
 function appUpdOverlay(title, sub, actions, done) {
   let o = document.getElementById('updOverlay');
   if (!o) { o = document.createElement('div'); o.id = 'updOverlay'; o.className = 'upd-ov'; o.setAttribute('role', 'alertdialog'); o.setAttribute('aria-modal', 'true'); o.setAttribute('aria-live', 'polite'); document.body.appendChild(o); }
@@ -18795,12 +18796,13 @@ function appUpdOverlay(title, sub, actions, done) {
     + (done ? '<div class="upd-ok">' + OK + '</div>' : actions ? '' : hpLoader(92, true))
     + '<div class="upd-t">' + title + '</div>'
     + (actions || done ? '<div class="upd-s">' + sub + '</div>' : '<div class="upd-roll"><div class="upd-s">' + sub + '</div></div><div class="upd-prog"><i></i></div>'
-      + '<div class="upd-late"><button type="button" class="btn-dash btn-dash-ghost" onclick="location.reload()">Taking a while? Reload</button></div>')
+      + '<div class="upd-hint">Usually under a minute</div>'
+      + '<div class="upd-late"><button type="button" class="btn-dash btn-dash-ghost" onclick="appUpdBg()">Keep using Studio</button><small>We will tell you when it is ready</small></div>')
     + (actions || '') + '</div>';
   o.classList.add('show');
   if (!actions && !done) {
     const bar = o.querySelector('.upd-prog i'); requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = (step || 20) + '%'; }));
-    window._updLateT = setTimeout(() => { const l = o.querySelector('.upd-late'); if (l) l.classList.add('show'); }, 15000);
+    window._updLateT = setTimeout(() => { const l = o.querySelector('.upd-late'); if (l) l.classList.add('show'); }, 8000);
   }
   if (done) { o.classList.add('done'); setTimeout(() => { o.classList.remove('show', 'done'); }, 1200); }
 }
@@ -18815,7 +18817,8 @@ async function appUpdate() {
       live = await appLiveCommit();
       if (live && live !== B.built && (!latest || live === latest)) { target = live; break; }
       if (live && live === latest) { target = live; break; }
-      appUpdOverlay('Updating Studio', 'The new version is being published. This usually takes under a minute.');
+      if (window._updBg) { await new Promise(r => setTimeout(r, 5000)); continue; }
+      appUpdOverlay('Updating Studio', 'Publishing the new version…');
       await new Promise(r => setTimeout(r, 5000));
     }
     if (!target && live === B.built && latest && latest !== B.built) {
@@ -18824,6 +18827,7 @@ async function appUpdate() {
       return;
     }
   }
+  if (window._updBg) { window._updBg = false; appUpdReady(); return; }   // v224: the person kept working, so just offer the restart
   appUpdOverlay('Updating Studio', 'Restarting the app…');
   try { sessionStorage.setItem('upd_target', JSON.stringify({ sha: target || '', n: 0 })); } catch (e) {}
   try { if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); } } catch (e) {}
@@ -18849,6 +18853,14 @@ async function appUpdate() {
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
 })();
+// v224: carry on using the app while the new version goes live; a bar offers the restart when it is ready.
+function appUpdBg() { window._updBg = true; const o = document.getElementById('updOverlay'); if (o) o.classList.remove('show'); clearTimeout(window._updLateT); }
+function appUpdReady() {
+  let bar = document.getElementById('updBar');
+  if (!bar) { bar = document.createElement('div'); bar.id = 'updBar'; bar.className = 'upd-bar'; bar.setAttribute('role', 'status'); document.body.appendChild(bar); }
+  bar.innerHTML = '<span>Update ready</span><button type="button" onclick="appUpdate()">Restart</button><button type="button" class="x" aria-label="Later" onclick="document.getElementById(\'updBar\').classList.remove(\'show\')">✕</button>';
+  requestAnimationFrame(() => bar.classList.add('show'));
+}
 function appUpdSync() {
   const B = window._build || {};
   if (typeof mpRender === 'function' && document.getElementById('section-more')?.classList.contains('active')) mpRender();
@@ -19431,7 +19443,7 @@ html body .sch-nav .sch-today { margin-left: auto; }
   html body .mobile-topbar #mobileSearchBtn { border-radius: 50%; background: color-mix(in srgb, var(--acc-tx) 16%, transparent) !important; color: var(--acc-tx) !important; padding: 0 !important; }   /* same chip as the + */
   html body .mobile-topbar.pg-sub .app-bar-back svg { width: 28px; height: 28px; }
   /* pull to refresh: the indicator lives in the gap that opens above the page */
-  html body .ptr { top: 0 !important; transform: translateY(-58px); }
+  html body .ptr { top: 0 !important; transform: translateY(-50px); }
   html.studio-app body .ptr { top: var(--sat) !important; }
 }
 /* form-page header: the side slots (back, action) take their width first, the title gets the rest and wraps to
@@ -19848,6 +19860,9 @@ html body .upd-prog { width: 180px; height: 4px; border-radius: var(--r-pill); b
 html body .upd-prog i { display: block; height: 100%; width: 10%; border-radius: inherit; background: var(--acc); transition: width 900ms var(--ease); }
 html body .upd-late { margin-top: 22px; opacity: 0; transform: translateY(6px); transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); pointer-events: none; }
 html body .upd-late.show { opacity: 1; transform: none; pointer-events: auto; }
+html body .upd-hint { margin-top: 12px; font-size: var(--fs-sm); color: var(--tx3); }
+html body .upd-late { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+html body .upd-late small { font-size: var(--fs-sm); color: var(--tx3); }
 html body .upd-acts { width: 100%; }
 
 /* ── v214 · ONE EMPTY STATE ──────────────────────────────────────────
@@ -20166,6 +20181,11 @@ body .orb-sh h3 { margin: 0; font-size: var(--fs-xl); font-weight: 700; line-hei
 body .orb-sh .orb-sub { margin: 4px 0 14px; color: var(--tx2); font-size: var(--fs-ui); }
 body .orb-row { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 14px; width: 100%; min-height: 64px; padding: 10px 2px; border-top: 1px solid var(--line); cursor: pointer; }
 body .orb-row:first-of-type { border-top: 0; }
+body .orb-grp { margin: 20px 0 2px; font-size: var(--fs-xs); font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--tx3); }
+body .orb-grp + .orb-row { border-top: 0; }
+body .orb-row .oi.mute { background: color-mix(in srgb, var(--tx) 8%, transparent); color: var(--tx3); }
+body .orb-snz { all: unset; flex: none; height: 34px; padding: 0 12px; border-radius: var(--r-pill); background: color-mix(in srgb, var(--tx) 8%, transparent); color: var(--tx2); font-size: var(--fs-xs); font-weight: 600; cursor: pointer; white-space: nowrap; }
+body .orb-snz:active { transform: scale(.96); }
 body .orb-row .oi { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--warn-soft); color: var(--warn); }
 body .orb-row .oi.bad { background: var(--bad-soft); color: var(--bad); } body .orb-row .oi.acc { background: var(--acc-soft); color: var(--acc-tx); }
 body .orb-row .ot { flex: 1; min-width: 0; font-size: var(--fs-ui); color: var(--tx2); line-height: 1.35; }
@@ -20187,17 +20207,18 @@ html { --hp-brand: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2
 .hp-brand { display: inline-block; flex: none; background: currentColor; -webkit-mask: var(--hp-brand) center / contain no-repeat; mask: var(--hp-brand) center / contain no-repeat; vertical-align: middle; }
 .td-hp { animation: hpspin 1.9s linear infinite; }
 /* pull to refresh: no bubble, no ring. A bigger pan that turns with the finger, then spins and plays its notes. */
-html body .ptr { width: 58px; height: 58px; margin-left: -29px; background: none; border: 0; border-radius: 0; box-shadow: none; --hp-note: var(--bg); color: var(--acc-tx); transform: translateY(-58px); }
-html body .ptr .hp-svg { position: relative; z-index: 1; width: 58px; height: 58px; filter: none; }
+html body .ptr { width: 50px; height: 50px; margin-left: -25px; background: none; border: 0; border-radius: 0; box-shadow: none; --hp-note: var(--bg); color: var(--acc-tx); transform: translateY(-50px); }
+html body .ptr .ptr-rot { position: relative; z-index: 1; display: block; width: 50px; height: 50px; }
+html body .ptr .hp-svg { width: 50px; height: 50px; filter: none; }
 /* v220: the pan stays solid while it turns. The moment you let go, two quick rings burst out like a note being struck and the pan pops once. */
 html body .ptr .ptr-rp { position: absolute; inset: 0; pointer-events: none; }
 html body .ptr .ptr-rp i { position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--acc-tx); opacity: 0; }
 html body .ptr.hit .ptr-rp i { animation: ptrHit .75s var(--ease) forwards; }
 html body .ptr.hit .ptr-rp i:nth-child(2) { animation-delay: .12s; } html body .ptr .ptr-rp i:nth-child(3) { display: none; }
-html body .ptr.hit .hp-svg { animation: ptrPop .45s var(--ease-spring); }
-html body .ptr.hit.spin .hp-svg { animation: ptrPop .45s var(--ease-spring), hpspin 1.9s linear .45s infinite; }
+/* v224: the finger turns the outer layer, the spin runs on the inner one from 0, so nothing jumps on release. The pop uses scale, not transform, so it never fights the spin. */
+html body .ptr.hit .hp-svg { animation: hpspin 1.6s linear infinite, ptrPop .45s var(--ease-spring); }
 @keyframes ptrHit { 0% { transform: scale(1); opacity: .7; border-width: 3px; } 100% { transform: scale(2.4); opacity: 0; border-width: 1px; } }
-@keyframes ptrPop { 0% { transform: scale(.86); } 100% { transform: scale(1); } }
+@keyframes ptrPop { 0% { scale: .86; } 100% { scale: 1; } }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -20466,6 +20487,7 @@ document.addEventListener('click', e => {
     X.leads = lds.filter(l => !l.archived && (l.status === 'Hot' || l.status === 'Warm') && l.follow_up_date && String(l.follow_up_date).slice(0, 10) <= F.today)
       .sort((a, b) => String(a.follow_up_date).localeCompare(String(b.follow_up_date)));
     const last = {}; cl.forEach(r => { const d = String(r.class_date || '').slice(0, 10); if (d && (!last[r.student_id] || d > last[r.student_id])) last[r.student_id] = d; });
+    X.last = last;
     X.quiet = (F.stus || []).filter(s => !s.archived && s.status === 'Active' && s.id !== 'S-DEMO').map(s => {
       const d = last[s.id];
       return d ? { s, days: daysBetween(d, F.today) } : null;   // only students with a logged class, so a missing log never reads as "gone quiet"
@@ -20473,25 +20495,42 @@ document.addEventListener('click', e => {
     return true;
   }
 
-  // Everything that waits on Arpit, most urgent first.
+  // v224: three tiers. Urgent (red/amber) is only what needs Arpit today. Follow-ups are things he is waiting on
+  // (unpaid fees, trial people, quiet students, lead follow-ups) and keep the orb calm. Students on break are never chased.
+  const SNZ_KEY = 'orbSnooze';
+  const snz = () => { try { const o = JSON.parse(localStorage.getItem(SNZ_KEY) || '{}'), now = Date.now(); Object.keys(o).forEach(k => { if (o[k] < now) delete o[k]; }); return o; } catch (e) { return {}; } };
+  window.orbSnooze = function (key) { try { const o = snz(); o[key] = Date.now() + 3 * 86400000; localStorage.setItem(SNZ_KEY, JSON.stringify(o)); } catch (e) {} KEY = ''; render(); if (document.getElementById('orbSh')) { orbClose(); setTimeout(orbOpen, 320); } };
   function needs(nowMs) {
-    const L = [];
+    const L = [], FU = [], BRK = [], S = snz();
+    const add = (arr, x) => { if (!S[x.key]) arr.push(x); };
     X.fail.forEach(n => {
       const p = typeof notifParts === 'function' ? notifParts(n.message) : { title: 'Payment failed', detail: n.message };
       const amt = (String(n.message).match(/₹\s?[\d,]+/) || [''])[0].replace(/\s/g, '');
       const who = (String(n.message).match(/(?:from|by|for)\s+([A-Z][\w.'-]+)/) || [])[1] || '';
-      L.push({ k: 'bad', ic: 'pay', big: amt ? amt + ' failed' : 'Payment failed', small: who ? who + '’s payment' : 'check the payment', t: p.title || 'Payment failed', s: p.detail || '', go: 'notifications' });
+      add(L, { key: 'fail:' + n.id, k: 'bad', ic: 'pay', big: amt ? amt + ' failed' : 'Payment failed', small: who ? who + '’s payment' : 'check the payment', t: p.title || 'Payment failed', s: p.detail || '', go: 'notifications' });
     });
     (F.todayItems || []).filter(it => !it.off && it.kind === 'cls' && !it.link && it.t > nowMs).forEach(it => {
-      L.push({ k: 'warn', ic: 'cam', big: first(it.name), small: 'class has no Zoom link', t: first(it.name) + '’s class has no Zoom link', s: schTime12(it.hhmm) + ' today', go: 'schedule' });
+      add(L, { key: 'zl:' + it.t, k: 'warn', ic: 'cam', big: first(it.name), small: 'class has no Zoom link', t: first(it.name) + '’s class has no Zoom link', s: schTime12(it.hhmm) + ' today', go: 'schedule' });
     });
-    if (F.unreadPeople) L.push({ k: 'warn', ic: 'wa', big: F.unreadPeople + (F.unreadPeople === 1 ? ' person' : ' people'), small: 'waiting for a reply', t: F.unreadPeople + (F.unreadPeople === 1 ? ' person is' : ' people are') + ' waiting on WhatsApp', s: 'Reply from the inbox', go: 'whatsapp' });
-    if (F.feeOld && F.feeOld.length) { const n = F.feeOld.length, o = F.feeOld[0], dd = o.created_at ? Math.floor((nowMs - new Date(o.created_at).getTime()) / 86400000) : 0;
-      L.push({ k: 'warn', ic: 'pay', big: n + ' fee link' + (n === 1 ? '' : 's'), small: 'unpaid 3+ days', t: n + ' fee link' + (n === 1 ? ' is' : 's are') + ' unpaid for 3+ days', s: o.student_id && dd ? 'Oldest: ' + schStudentName(o.student_id) + ', ' + dd + ' days' : '', go: 'fee-payments' }); }
-    if (F.zoomRev && F.zoomRev.length) { const n = F.zoomRev.length; L.push({ k: 'warn', ic: 'clock', big: 'Zoom check', small: n + ' to link', t: 'Zoom attendance needs a student linked', s: n + ' waiting', go: 'classes' }); }
-    if (X.leads.length) { const l = X.leads[0], n = X.leads.length; L.push({ k: 'acc', ic: 'lead', big: first(l.full_name), small: 'follow-up due', t: 'Follow up with ' + (l.full_name || 'a lead') + (n > 1 ? ' and ' + (n - 1) + ' more' : ''), s: (l.status || '') + ' lead · due ' + (typeof fmtDate === 'function' ? fmtDate(l.follow_up_date) : String(l.follow_up_date).slice(0, 10)), go: 'leads' }); }
-    if (X.quiet.length) { const q = X.quiet[0], n = X.quiet.length; L.push({ k: 'acc', ic: 'user', big: first(q.s.full_name), small: q.days + ' days, no class', t: (q.s.full_name || 'A student') + ' hasn’t had a class in ' + q.days + ' days' + (n > 1 ? ' · ' + (n - 1) + ' more' : ''), s: 'A short check-in keeps them going', go: 'classes' }); }
-    return L;
+    if (F.unreadPeople) add(L, { key: 'wa:' + F.unreadPeople, k: 'warn', ic: 'wa', big: F.unreadPeople + (F.unreadPeople === 1 ? ' person' : ' people'), small: 'waiting for a reply', t: F.unreadPeople + (F.unreadPeople === 1 ? ' person is' : ' people are') + ' waiting on WhatsApp', s: 'Reply from the inbox', go: 'whatsapp' });
+    if (F.zoomRev && F.zoomRev.length) { const n = F.zoomRev.length; add(L, { key: 'zr:' + n, k: 'warn', ic: 'clock', big: 'Zoom check', small: n + ' to link', t: 'Zoom attendance needs a student linked', s: n + ' waiting', go: 'classes' }); }
+    // Fee links: who is it, how old is it
+    const stu = {}; (F.stus || []).forEach(s => { stu[s.id] = s; });
+    const overdue = [];
+    (F.feeOld || []).forEach(fr => {
+      const s = stu[fr.student_id] || {}, nm = s.full_name || schStudentName(fr.student_id) || 'A student';
+      const days = fr.created_at ? Math.floor((nowMs - new Date(fr.created_at).getTime()) / 86400000) : 0;
+      const ago = days + ' day' + (days === 1 ? '' : 's'), when = days ? ago + ' ago' : 'today';
+      if (s.status === 'On Break') { BRK.push({ key: 'fee:' + fr.id, ic: 'pay', t: nm, s: 'On break · fee link sent ' + when + ', no reminder needed', go: 'fee-payments' }); return; }
+      const trial = !(Number(s.total_paid) > 0) && !(Number(s.total_classes) > 0) && !(X.last && X.last[s.id]);   // took a trial, never paid, no class yet
+      if (trial) { if (days < 14) add(FU, { key: 'fee:' + fr.id, k: 'acc', ic: 'lead', t: nm + ' · after their trial', s: 'Fee link sent ' + when + '. Drops off after 14 days', go: 'fee-payments' }); return; }
+      if (days >= 7) overdue.push({ key: 'fee:' + fr.id, nm, days, ago });
+      else add(FU, { key: 'fee:' + fr.id, k: 'acc', ic: 'pay', t: nm + '’s fee', s: 'Link sent ' + when, go: 'fee-payments' });
+    });
+    overdue.sort((a, b) => b.days - a.days).forEach(o => add(L, { key: o.key, k: 'warn', ic: 'pay', big: first(o.nm) + '’s fee', small: 'unpaid ' + o.ago, t: o.nm + '’s fee is unpaid for ' + o.ago, s: 'Send a reminder or check with them', go: 'fee-payments' }));
+    X.leads.forEach(l => add(FU, { key: 'lead:' + l.id, k: 'acc', ic: 'lead', t: 'Follow up with ' + (l.full_name || 'a lead'), s: (l.status || '') + ' lead · due ' + (typeof fmtDate === 'function' ? fmtDate(l.follow_up_date) : String(l.follow_up_date).slice(0, 10)), go: 'leads' }));
+    X.quiet.forEach(q => add(FU, { key: 'quiet:' + q.s.id, k: 'acc', ic: 'user', t: (q.s.full_name || 'A student') + ' · ' + q.days + ' days, no class', s: 'A short check-in keeps them going', go: 'classes' }));
+    return { L, FU, BRK };
   }
 
   // Which face to show right now.
@@ -20506,13 +20545,14 @@ document.addEventListener('click', e => {
     }
     const nx = items.find(it => it.t > nowMs && it.t - nowMs <= 30 * 60000);
     if (nx) return { st: (nx.t - nowMs <= 10 * 60000 && nx.link) ? 'join' : 'cd', it: nx };
-    const L = needs(nowMs);
-    return { st: 'orb', L };
+    const N = needs(nowMs);
+    return { st: 'orb', L: N.L, FU: N.FU, BRK: N.BRK };
   }
 
   function face(P, nowMs) {
     if (P.st === 'orb') {
       const L = P.L, top = L[0];
+      if (!top && P.FU && P.FU.length) { const n = P.FU.length; return '<button type="button" class="orb-b orb ok" onclick="orbOpen()" aria-label="All good. ' + n + ' follow-ups."><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>All good</small><b>' + n + ' follow-up' + (n === 1 ? '' : 's') + '</b><span>nothing urgent</span></span></button>'; }
       if (!top) return '<button type="button" class="orb-b orb ok" onclick="orbOpen()" aria-label="All clear. Nothing needs you."><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>All clear</small>' + IC.ok + '<span>Nothing needs you</span></span></button>';
       const more = L.length - 1;
       return '<button type="button" class="orb-b orb' + (top.k === 'bad' ? ' bad' : '') + '" onclick="orbOpen()" aria-label="Needs you: ' + esc(top.t) + (more ? ', and ' + more + ' more' : '') + '"><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>Needs you</small><b' + (top.big.length > 10 ? ' class="sm"' : '') + '>' + esc(top.big) + '</b><span>' + esc(top.small) + '</span>' + (more ? '<em>+' + more + ' more</em>' : '') + '</span></button>';
@@ -20540,7 +20580,7 @@ document.addEventListener('click', e => {
   function render() {
     const box = document.getElementById('tdOrb'); if (!box || !F) return;
     const nowMs = Date.now(), P = pick(nowMs);
-    const key = P.st + '|' + (P.it ? P.it.t + P.it.name + (P.wait ? 'w' : '') : P.L.map(x => x.big + x.small).join(','));
+    const key = P.st + '|' + (P.it ? P.it.t + P.it.name + (P.wait ? 'w' : '') : P.L.map(x => x.big + x.small).join(',') + '|' + (P.FU || []).length);
     if (key !== KEY) {
       KEY = key; box.innerHTML = face(P, nowMs); box.hidden = false;
       document.documentElement.classList.add('has-orb');
@@ -20573,15 +20613,19 @@ document.addEventListener('click', e => {
     if (!F) return; const P = CUR || pick(Date.now());
     let h = '<div class="orb-grab"></div>';
     if (P.st === 'orb') {
-      const L = P.L;
-      if (!L.length) {
+      const L = P.L, FU = P.FU || [], BRK = P.BRK || [];
+      const row = (x, snooze) => '<div class="orb-row" role="button" tabindex="0" onclick="orbGo(\'' + x.go + '\')" onkeydown="if(event.key===\'Enter\')orbGo(\'' + x.go + '\')"><span class="oi ' + (x.k === 'bad' ? 'bad' : x.k === 'acc' ? 'acc' : x.k === 'mute' ? 'mute' : '') + '">' + IC[x.ic] + '</span><span class="ot"><b>' + esc(x.t) + '</b>' + esc(x.s) + '</span>'
+        + (snooze ? '<button type="button" class="orb-snz" aria-label="Snooze for 3 days" onclick="event.stopPropagation();orbSnooze(\'' + x.key + '\')">Snooze</button>' : CHEV) + '</div>';
+      if (!L.length && !FU.length) {
         const nx = (F.todayItems || []).concat(F.tomItems || []).find(it => !it.off && it.t > Date.now());
         h += '<h3>All clear</h3><p class="orb-sub">Nothing is waiting on you right now.</p>'
           + (nx ? '<div class="orb-kv"><span>Next</span><b>' + esc(nx.name) + ' · ' + (schIst(new Date(nx.t)).ymd === F.today ? '' : 'tomorrow ') + schTime12(nx.hhmm) + '</b></div>' : '');
       } else {
-        h += '<h3>Needs you</h3><p class="orb-sub">' + L.length + (L.length === 1 ? ' thing' : ' things') + ', most urgent first</p>'
-          + L.map(x => '<button type="button" class="orb-row" onclick="orbGo(\'' + x.go + '\')"><span class="oi ' + (x.k === 'bad' ? 'bad' : x.k === 'acc' ? 'acc' : '') + '">' + IC[x.ic] + '</span><span class="ot"><b>' + esc(x.t) + '</b>' + esc(x.s) + '</span>' + CHEV + '</button>').join('');
+        h += L.length ? '<h3>Needs you</h3><p class="orb-sub">' + L.length + (L.length === 1 ? ' thing' : ' things') + ' to do today, most urgent first</p>' + L.map(x => row(x, true)).join('')
+          : '<h3>All good</h3><p class="orb-sub">Nothing urgent. Just people you are waiting on.</p>';
+        if (FU.length) h += '<div class="orb-grp">Follow-ups · ' + FU.length + '</div>' + FU.map(x => row(x, true)).join('');
       }
+      if (BRK.length) h += '<div class="orb-grp">On break · not counted</div>' + BRK.map(x => row(Object.assign({ k: 'mute' }, x), false)).join('');
     } else {
       const it = P.it, nm = it.name;
       const day = schIst(new Date(it.t)).ymd === F.today ? F.todayItems : F.tomItems;
