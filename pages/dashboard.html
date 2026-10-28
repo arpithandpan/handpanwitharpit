@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v224</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v225</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v224</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v225</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -20142,13 +20142,15 @@ body .orb-blobs i:nth-child(1) { left: -4%; top: -2%; background: radial-gradien
 body .orb-blobs i:nth-child(2) { right: -6%; bottom: -4%; background: radial-gradient(closest-side, color-mix(in srgb, var(--oc2) 70%, transparent), transparent); }
 body .orb-core { position: absolute; inset: 12%; border-radius: 50%; background: radial-gradient(circle at 32% 26%, color-mix(in srgb, var(--core) 86%, white), var(--core) 58%); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 10%; box-shadow: 0 10px 28px color-mix(in srgb, var(--oc) 30%, transparent); animation: orbBreathe2 3.2s var(--ease) infinite; }
 body .orb-core small { font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .09em; text-transform: uppercase; opacity: .82; }
-body .orb-core b { font-size: var(--fs-lg); font-weight: 800; line-height: 1.15; margin: 3px 0 1px; overflow-wrap: anywhere; }
+body .orb-core b { font-size: var(--fs-lg); font-weight: 800; line-height: 1.15; margin: 3px 0 1px; overflow-wrap: normal; word-break: normal; }
 body .orb-core b.sm { font-size: var(--fs-ui); }
+body .orb-core b.xs { font-size: var(--fs-sm); }
+body .orb-core b, body .orb-core span { max-width: 100%; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 body .orb-core span { font-size: var(--fs-xs); font-weight: 600; line-height: 1.25; }
 body .orb-core em { font-style: normal; font-size: var(--fs-2xs); font-weight: 700; opacity: .75; margin-top: 4px; }
 body .orb-core svg { margin: 2px 0 2px; }
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
-  body .orb-core small { font-size: var(--fs-2xs); } body .orb-core b { font-size: var(--fs-xl); } body .orb-core b.sm { font-size: var(--fs-lg); } body .orb-core span { font-size: var(--fs-md); } body .orb-core em { font-size: var(--fs-xs); }
+  body .orb-core small { font-size: var(--fs-2xs); } body .orb-core b { font-size: var(--fs-xl); } body .orb-core b.sm { font-size: var(--fs-lg); } body .orb-core b.xs { font-size: var(--fs-ui); } body .orb-core span { font-size: var(--fs-md); } body .orb-core em { font-size: var(--fs-xs); }
 }
 @keyframes orbBreathe { 0%, 100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.06); opacity: 1; } }
 @keyframes orbBreathe2 { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
@@ -20507,12 +20509,12 @@ document.addEventListener('click', e => {
       const p = typeof notifParts === 'function' ? notifParts(n.message) : { title: 'Payment failed', detail: n.message };
       const amt = (String(n.message).match(/₹\s?[\d,]+/) || [''])[0].replace(/\s/g, '');
       const who = (String(n.message).match(/(?:from|by|for)\s+([A-Z][\w.'-]+)/) || [])[1] || '';
-      add(L, { key: 'fail:' + n.id, k: 'bad', ic: 'pay', big: amt ? amt + ' failed' : 'Payment failed', small: who ? who + '’s payment' : 'check the payment', t: p.title || 'Payment failed', s: p.detail || '', go: 'notifications' });
+      add(L, { key: 'fail:' + n.id, k: 'bad', ic: 'pay', big: amt ? amt + ' failed' : 'Payment failed', small: who ? who + '’s payment' : 'payment', t: p.title || 'Payment failed', s: p.detail || '', go: 'notifications' });
     });
     (F.todayItems || []).filter(it => !it.off && it.kind === 'cls' && !it.link && it.t > nowMs).forEach(it => {
-      add(L, { key: 'zl:' + it.t, k: 'warn', ic: 'cam', big: first(it.name), small: 'class has no Zoom link', t: first(it.name) + '’s class has no Zoom link', s: schTime12(it.hhmm) + ' today', go: 'schedule' });
+      add(L, { key: 'zl:' + it.t, k: 'warn', ic: 'cam', big: first(it.name), small: 'no Zoom link', t: first(it.name) + '’s class has no Zoom link', s: schTime12(it.hhmm) + ' today', go: 'schedule' });
     });
-    if (F.unreadPeople) add(L, { key: 'wa:' + F.unreadPeople, k: 'warn', ic: 'wa', big: F.unreadPeople + (F.unreadPeople === 1 ? ' person' : ' people'), small: 'waiting for a reply', t: F.unreadPeople + (F.unreadPeople === 1 ? ' person is' : ' people are') + ' waiting on WhatsApp', s: 'Reply from the inbox', go: 'whatsapp' });
+    if (F.unreadPeople) add(L, { key: 'wa:' + F.unreadPeople, k: 'warn', ic: 'wa', big: F.unreadPeople + (F.unreadPeople === 1 ? ' person' : ' people'), small: 'need a reply', t: F.unreadPeople + (F.unreadPeople === 1 ? ' person is' : ' people are') + ' waiting on WhatsApp', s: 'Reply from the inbox', go: 'whatsapp' });
     if (F.zoomRev && F.zoomRev.length) { const n = F.zoomRev.length; add(L, { key: 'zr:' + n, k: 'warn', ic: 'clock', big: 'Zoom check', small: n + ' to link', t: 'Zoom attendance needs a student linked', s: n + ' waiting', go: 'classes' }); }
     // Fee links: who is it, how old is it
     const stu = {}; (F.stus || []).forEach(s => { stu[s.id] = s; });
@@ -20527,7 +20529,7 @@ document.addEventListener('click', e => {
       if (days >= 7) overdue.push({ key: 'fee:' + fr.id, nm, days, ago });
       else add(FU, { key: 'fee:' + fr.id, k: 'acc', ic: 'pay', t: nm + '’s fee', s: 'Link sent ' + when, go: 'fee-payments' });
     });
-    overdue.sort((a, b) => b.days - a.days).forEach(o => add(L, { key: o.key, k: 'warn', ic: 'pay', big: first(o.nm) + '’s fee', small: 'unpaid ' + o.ago, t: o.nm + '’s fee is unpaid for ' + o.ago, s: 'Send a reminder or check with them', go: 'fee-payments' }));
+    overdue.sort((a, b) => b.days - a.days).forEach(o => add(L, { key: o.key, k: 'warn', ic: 'pay', big: first(o.nm), small: 'fee · ' + o.days + ' days', t: o.nm + '’s fee is unpaid for ' + o.ago, s: 'Send a reminder or check with them', go: 'fee-payments' }));
     X.leads.forEach(l => add(FU, { key: 'lead:' + l.id, k: 'acc', ic: 'lead', t: 'Follow up with ' + (l.full_name || 'a lead'), s: (l.status || '') + ' lead · due ' + (typeof fmtDate === 'function' ? fmtDate(l.follow_up_date) : String(l.follow_up_date).slice(0, 10)), go: 'leads' }));
     X.quiet.forEach(q => add(FU, { key: 'quiet:' + q.s.id, k: 'acc', ic: 'user', t: (q.s.full_name || 'A student') + ' · ' + q.days + ' days, no class', s: 'A short check-in keeps them going', go: 'classes' }));
     return { L, FU, BRK };
@@ -20555,7 +20557,7 @@ document.addEventListener('click', e => {
       if (!top && P.FU && P.FU.length) { const n = P.FU.length; return '<button type="button" class="orb-b orb ok" onclick="orbOpen()" aria-label="All good. ' + n + ' follow-ups."><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>All good</small><b>' + n + ' follow-up' + (n === 1 ? '' : 's') + '</b><span>nothing urgent</span></span></button>'; }
       if (!top) return '<button type="button" class="orb-b orb ok" onclick="orbOpen()" aria-label="All clear. Nothing needs you."><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>All clear</small>' + IC.ok + '<span>Nothing needs you</span></span></button>';
       const more = L.length - 1;
-      return '<button type="button" class="orb-b orb' + (top.k === 'bad' ? ' bad' : '') + '" onclick="orbOpen()" aria-label="Needs you: ' + esc(top.t) + (more ? ', and ' + more + ' more' : '') + '"><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>Needs you</small><b' + (top.big.length > 10 ? ' class="sm"' : '') + '>' + esc(top.big) + '</b><span>' + esc(top.small) + '</span>' + (more ? '<em>+' + more + ' more</em>' : '') + '</span></button>';
+      return '<button type="button" class="orb-b orb' + (top.k === 'bad' ? ' bad' : '') + '" onclick="orbOpen()" aria-label="Needs you: ' + esc(top.t) + (more ? ', and ' + more + ' more' : '') + '"><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>Needs you</small><b' + (top.big.length > 10 ? ' class="xs"' : top.big.length > 8 ? ' class="sm"' : '') + '>' + esc(top.big) + '</b><span>' + esc(top.small) + '</span>' + (more ? '<em>+' + more + ' more</em>' : '') + '</span></button>';
     }
     const it = P.it, nm = first(it.name), tag = (it.kind === 'tr' ? 'Trial · ' : '') + schTime12(it.hhmm);
     const their = it.kind === 'tr' ? String(it.sub || '').replace(/^Free trial( · )?/, '') : String(it.sub || '');
