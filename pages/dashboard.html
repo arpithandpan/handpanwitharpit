@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v254</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v255</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v254</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v255</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17289,7 +17289,7 @@ async function loadToday(silent) {
     } catch (e) {}
     if (typeof appBarSync === 'function' && sessionStorage.getItem('dash_section') !== 'whatsapp') { const at = document.getElementById('appBarTitle'); if (at && document.getElementById('section-today')?.classList.contains('active')) at.textContent = 'Today'; }
   } catch (e) {}
-  if (typeof orbFeed === 'function') { try { orbFeed({ today, todayItems, tomItems, unreadPeople, feeOld, zoomRev, stus }); } catch (e) {} }
+  if (typeof orbFeed === 'function') { try { orbFeed({ today, todayItems, tomItems, unreadPeople, feeOld, zoomRev, stus, wk: { classes: (wkClasses || []).length, trials: (wkTrials || []).length } }); } catch (e) {} }
   if (typeof enrRender === 'function') enrRender(acts.length);
   zLiveArm(todayItems);
   clearInterval(_tdTimer);
@@ -20537,6 +20537,53 @@ html body #tdWrap .td-load.td-skel { display: contents; min-height: 0; padding: 
 .tsk-greet { display: grid; gap: 10px; max-width: 320px; }
 .tsk-greet i { height: 14px; } .tsk-greet i:last-child { width: 60%; }
 @media (prefers-reduced-motion: reduce) { .tsk i, .tsk-greet i { animation: none; background: var(--s2); } }
+/* ── v255 · TODAY HERO ── the handpan with a ring around class time, the job's icon the rest of the day */
+html.has-orb body #section-today #tdGreet, html.has-orb body #section-today #tdSum { display: none !important; }
+html.has-orb body #section-today #tdOrb.td-orb { grid-column: 1 / -1; grid-row: 3; width: auto; height: auto; margin: 18px 0 0; justify-self: stretch; align-self: start; }
+.hx { all: unset; box-sizing: border-box; position: relative; display: flex; align-items: center; gap: 18px; width: 100%; min-height: 168px; padding: 18px 20px; border-radius: var(--r-lg); background: var(--s1); color: var(--tx); overflow: hidden; isolation: isolate; cursor: pointer; text-decoration: none; -webkit-tap-highlight-color: transparent; --sc: var(--tx3); }
+.hx:focus-visible { box-shadow: var(--focus); }
+.hx:active { transform: scale(.99); transition: transform var(--dur-fast) var(--ease); }
+.hx.warn { --sc: var(--warn); } .hx.bad { --sc: var(--bad); } .hx.ok, .hx.live { --sc: var(--ok); } .hx.acc { --sc: var(--acc-tx); }
+html.mono .hx.acc { --sc: var(--tx); }
+.hx-glow { position: absolute; z-index: -1; left: -50px; top: 50%; width: 240px; height: 240px; margin-top: -120px; border-radius: 50%; background: var(--sc); opacity: .28; filter: blur(34px); animation: hxBreath 6s ease-in-out infinite; }
+@keyframes hxBreath { 50% { opacity: .4; transform: scale(1.1); } }
+.hx-art { position: relative; width: 132px; height: 132px; flex-shrink: 0; display: grid; place-items: center; }
+.hx-pan { width: 100%; height: 100%; overflow: visible; }
+.hx-pan .hx-p { fill: var(--tx); }
+.hx-pan .hx-h { fill: var(--s1); }
+.hx-trk { fill: none; stroke: color-mix(in srgb, var(--tx) 10%, transparent); stroke-width: 14; animation: hxFade .6s ease both; }
+.hx-prg { fill: none; stroke: var(--sc); stroke-width: 14; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 170px 170px; transition: stroke-dashoffset .9s linear; animation: hxFade .6s ease both; }
+@keyframes hxFade { from { opacity: 0; } }
+.hx-pan.join .hx-prg { animation: hxFade .6s ease both, hxBreathe 1.6s ease-in-out infinite; }
+@keyframes hxBreathe { 50% { stroke-width: 20; } }
+.hx-rip { fill: none; stroke: var(--sc); stroke-width: 4; opacity: 0; transform-origin: 170px 170px; animation: hxRip 2.4s ease-out infinite; }
+.hx-rip.b { animation-delay: 1.2s; }
+@keyframes hxRip { 0% { transform: scale(.94); opacity: .7; } 100% { transform: scale(1.3); opacity: 0; } }
+.hx-spin { transform-origin: 170px 170px; }
+.hx-pan.live.on .hx-spin { animation: hxSpin 6s linear infinite; }
+@keyframes hxSpin { to { transform: rotate(360deg); } }
+.hx-disc { position: relative; width: 104px; height: 104px; border-radius: 50%; display: grid; place-items: center; animation: hxPop .5s var(--ease-spring) both; }
+@keyframes hxPop { from { opacity: 0; transform: scale(.85); } }
+.hx-dc { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--sc) 22%, var(--s1)); color: var(--sc); box-shadow: 0 0 0 10px color-mix(in srgb, var(--sc) 8%, transparent); }
+.hx-dc svg { width: 44px !important; height: 44px !important; color: inherit !important; }
+.hx-bdg { position: absolute; top: -2px; right: -4px; min-width: 32px; height: 32px; padding: 0 8px; border-radius: var(--r-pill); background: var(--sc); color: var(--bg); display: grid; place-items: center; font-size: var(--fs-ui); font-weight: 800; box-shadow: 0 0 0 4px var(--s1); }
+.hx-tx { position: relative; min-width: 0; display: grid; gap: 4px; justify-items: start; }
+.hx-tx small { font-size: var(--fs-2xs); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--tx3); }
+.hx-tx b { font-size: var(--fs-xl); font-weight: 700; line-height: 1.15; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.hx-tx b.hx-tm { font-size: calc(var(--fs-3xl) * 1.18); font-weight: 300; letter-spacing: -.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.hx-tx span { font-size: var(--fs-sm); color: var(--tx2); line-height: 1.4; }
+.hx-go { font-style: normal; margin-top: 8px; height: 42px; padding: 0 18px; border-radius: var(--r-pill); display: inline-grid; place-items: center; font-weight: 600; font-size: var(--fs-ui); background: var(--sc); color: var(--bg); }
+.hx-go.soft { background: var(--s2); color: var(--tx); }
+.hx.calm .hx-go, .hx.acc .hx-go { background: var(--acc); color: var(--on-acc); }
+.hx-line { margin: 12px 4px 0; font-size: var(--fs-md); color: var(--tx3); }
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
+  html.has-orb body #section-today #tdOrb.td-orb { grid-column: 2; grid-row: 1 / span 3; margin: 0; width: 460px; max-width: 46vw; align-self: center; }
+  html.has-orb body #section-today .dash-section-header > div:first-child > .td-hrow.td-hrow { grid-column: 1; }
+  html.has-orb body #section-today .dash-section-header > div:first-child > .td-brand.td-brand { grid-column: 1; }
+  .hx-art { width: 140px; height: 140px; }
+}
+@media (max-width: 359px) { .hx-art { width: 108px; height: 108px; } .hx-tx b.hx-tm { font-size: var(--fs-3xl); } }
+@media (prefers-reduced-motion: reduce) { .hx-glow, .hx-rip, .hx-pan.live.on .hx-spin, .hx-pan.join .hx-prg, .hx-disc { animation: none !important; } }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -20868,10 +20915,10 @@ document.addEventListener('click', e => {
     const items = (F.todayItems || []).filter(it => !it.off);
     for (const it of items) {
       const z = typeof zState === 'function' ? zState(it, nowMs) : null;
-      if (z && z.st === 'live') return { st: 'live', it, mins: z.mins };
+      if (z && z.st === 'live') return { st: 'live', it, mins: z.mins, since: z.since ? new Date(z.since).getTime() : it.t };
       if (z && z.st === 'wait') return { st: 'join', it, wait: true };
       if (z && z.st === 'done') continue;
-      if (!z && nowMs >= it.t && nowMs <= it.t + it.len * 60000) return { st: 'live', it, mins: Math.floor((nowMs - it.t) / 60000), guess: true };
+      if (!z && nowMs >= it.t && nowMs <= it.t + it.len * 60000) return { st: 'live', it, mins: Math.floor((nowMs - it.t) / 60000), guess: true, since: it.t };
     }
     const nx = items.find(it => it.t > nowMs && it.t - nowMs <= 30 * 60000);
     if (nx) return { st: (nx.t - nowMs <= 10 * 60000 && nx.link) ? 'join' : 'cd', it: nx };
@@ -20879,43 +20926,95 @@ document.addEventListener('click', e => {
     return { st: 'orb', L: N.L, FU: N.FU, BRK: N.BRK };
   }
 
+  // v255: the Today hero. A card under "Hi Arpit": the studio handpan with a ring around class time
+  // (counting down, Join, live), and the job's own icon the rest of the day. One quiet line under it.
+  const HP_NOTES = [[150,46,18,14,0],[220,80,20,16,45],[254,150,16,22,0],[220,220,26,21,-45],[150,256,28,22,0],[80,220,26,21,45],[46,150,16,22,0],[80,80,20,16,-45]];
+  function panSvg(ring, mode) {
+    let n = '';
+    HP_NOTES.forEach(([x, y, rx, ry, a]) => {
+      const g = 1.22, cx = (150 + (x - 150) * .97).toFixed(1), cy = (150 + (y - 150) * .97).toFixed(1), t = a ? ' transform="rotate(' + a + ' ' + cx + ' ' + cy + ')"' : '';
+      n += '<ellipse class="hx-h" cx="' + cx + '" cy="' + cy + '" rx="' + (rx * g).toFixed(1) + '" ry="' + (ry * g).toFixed(1) + '"' + t + '/><ellipse class="hx-p" cx="' + cx + '" cy="' + cy + '" rx="' + (rx * g * .48).toFixed(1) + '" ry="' + (ry * g * .48).toFixed(1) + '"' + t + '/>';
+    });
+    return '<svg class="hx-pan ' + mode + '" viewBox="0 0 340 340" aria-hidden="true">'
+      + (mode === 'join' ? '<circle class="hx-rip" cx="170" cy="170" r="156"/><circle class="hx-rip b" cx="170" cy="170" r="156"/>' : '')
+      + (ring ? '<circle class="hx-trk" cx="170" cy="170" r="156"/><circle class="hx-prg" id="orbPrg" cx="170" cy="170" r="156" pathLength="100" stroke-dasharray="100" stroke-dashoffset="' + (mode === 'join' ? 0 : 100) + '"/>' : '')
+      + '<g class="hx-spin"><g transform="translate(20 20)"><circle class="hx-p" cx="150" cy="150" r="146"/><ellipse class="hx-h" cx="150" cy="150" rx="62" ry="52"/><ellipse class="hx-p" cx="150" cy="150" rx="34" ry="28"/>' + n + '</g></g></svg>';
+  }
+  const disc = (ic, badge) => '<span class="hx-disc"><span class="hx-dc">' + IC[ic] + '</span>' + (badge ? '<b class="hx-bdg">' + esc(badge) + '</b>' : '') + '</span>';
+  const t12 = ms => schTime12(schIst(new Date(ms)).hhmm);
+  function dayLine(P, nowMs) {
+    const items = (F.todayItems || []).filter(it => !it.off);
+    if (P.it) {
+      const nxt = items.find(x => x !== P.it && x.t > P.it.t);
+      if (nxt) return 'Then ' + first(nxt.name) + ' at ' + schTime12(nxt.hhmm);
+    }
+    const tom = (F.tomItems || []).find(it => !it.off);
+    if (!items.length) return 'No classes today' + (tom ? ' · ' + first(tom.name) + ' tomorrow at ' + schTime12(tom.hhmm) : '');
+    const nTr = items.filter(it => it.kind === 'tr').length, nCl = items.length - nTr;
+    const what = [nCl ? nCl + ' class' + (nCl === 1 ? '' : 'es') : '', nTr ? nTr + ' trial' + (nTr === 1 ? '' : 's') : ''].filter(Boolean).join(' and ') + ' today';
+    const nx = items.find(it => it.t + it.len * 60000 > nowMs);
+    return what + (nx ? ' · next ' + first(nx.name) + ' at ' + schTime12(nx.hhmm) : ' · all done');
+  }
+  const GO_LABEL = { wa: 'Reply', cam: 'Add link', clock: 'Review', pay: 'View', lead: 'View', user: 'View' };
   function face(P, nowMs) {
+    let art, tx, mode = 'idle', cls = 'calm', click = 'orbOpen()', tag = 'button type="button"', end = 'button';
     if (P.st === 'orb') {
-      const L = P.L, top = L[0];
-      if (!top && P.FU && P.FU.length) {
-        // v253: calm face, but it still names the follow-up worth doing first
-        const n = P.FU.length, f = P.FU.find(x => x.big) || null, more = n - (f ? 1 : 0);
-        const big = f ? f.big : String(n), small = f ? f.small : 'follow-up' + (n === 1 ? '' : 's') + ', nothing urgent';
-        return '<button type="button" class="orb-b orb ok" onclick="orbOpen()" aria-label="Nothing urgent. ' + n + ' follow-ups."><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>Follow up</small><b' + (big.length > 10 ? ' class="xs"' : big.length > 8 ? ' class="sm"' : '') + '>' + esc(big) + '</b><span>' + esc(small) + '</span>' + (f && more ? '<em>+' + more + ' more</em>' : '') + '</span></button>';
+      const L = P.L, top = L[0], FU = P.FU || [];
+      if (top) {
+        cls = top.k === 'bad' ? 'bad' : 'warn';
+        const more = L.length - 1, badge = top.ic === 'wa' ? String(F.unreadPeople || '') : top.k === 'bad' ? '!' : '';
+        art = disc(top.ic, badge);
+        tx = '<small>Needs you</small><b>' + esc(top.big) + '</b><span>' + esc(top.small + (more ? ' · +' + more + ' more' : '')) + '</span>'
+          + '<i class="hx-go" role="button" tabindex="0" onclick="event.stopPropagation();orbGo(\'' + top.go + '\')">' + (top.k === 'bad' ? 'Check' : (GO_LABEL[top.ic] || 'View')) + '</i>';
+      } else if (FU.length) {
+        const f = FU.find(x => x.big) || FU[0], more = FU.length - 1;
+        art = disc(f.ic || 'pay');
+        tx = '<small>Follow up</small><b>' + esc(f.big || (FU.length + ' follow-ups')) + '</b><span>' + esc((f.small || f.s || '') + (more ? ' · +' + more + ' more' : '')) + '</span>'
+          + '<i class="hx-go soft" role="button" tabindex="0" onclick="event.stopPropagation();orbGo(\'' + f.go + '\')">View</i>';
+      } else {
+        cls = 'ok'; art = disc('ok');
+        const w = F.wk || {};
+        tx = w.classes || w.trials
+          ? '<small>This week</small><b>' + w.classes + ' class' + (w.classes === 1 ? '' : 'es') + '</b><span>' + (w.trials ? w.trials + ' trial' + (w.trials === 1 ? '' : 's') + ' booked · ' : '') + 'nothing needs you</span>'
+          : '<small>All clear</small><b>A quiet day</b><span>Nothing needs you right now</span>';
       }
-      if (!top) return '<button type="button" class="orb-b orb ok" onclick="orbOpen()" aria-label="All clear. Nothing needs you."><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>All clear</small>' + IC.ok + '<span>Nothing needs you</span></span></button>';
-      const more = L.length - 1;
-      return '<button type="button" class="orb-b orb' + (top.k === 'bad' ? ' bad' : '') + '" onclick="orbOpen()" aria-label="Needs you: ' + esc(top.t) + (more ? ', and ' + more + ' more' : '') + '"><span class="orb-glow"></span><span class="orb-blobs"><i></i><i></i></span><span class="orb-core"><small>Needs you</small><b' + (top.big.length > 10 ? ' class="xs"' : top.big.length > 8 ? ' class="sm"' : '') + '>' + esc(top.big) + '</b><span>' + esc(top.small) + '</span>' + (more ? '<em>+' + more + ' more</em>' : '') + '</span></button>';
+    } else {
+      const it = P.it, nm = first(it.name), who = (it.kind === 'tr' ? 'Trial · ' : '') + esc(nm) + ' · ' + schTime12(it.hhmm);
+      const their = it.kind === 'tr' ? String(it.sub || '').replace(/^Free trial( · )?/, '') : String(it.sub || '');
+      if (it.link && P.st !== 'cd') { tag = 'a href="' + esc(it.link) + '" target="_blank" rel="noopener"'; end = 'a'; click = ''; }
+      if (P.st === 'cd') {
+        mode = 'cd'; cls = 'acc';
+        tx = '<small>' + who + '</small><b class="hx-tm" id="orbTx">--:--</b><span>' + esc(their ? 'their time ' + their : 'until class') + (it.link ? ' · Join at ' + t12(it.t - 10 * 60000) : '') + '</span>';
+      } else if (P.st === 'join') {
+        mode = 'join'; cls = 'acc';
+        tx = '<small>' + who + '</small>' + (P.wait ? '<b>' + esc(nm) + ' is waiting</b>' : '<b class="hx-tm" id="orbTx">--:--</b>')
+          + (it.link ? '<i class="hx-go">Join Zoom</i>' : '<span>No Zoom link yet</span>');
+      } else {
+        mode = P.guess ? 'live' : 'live on'; cls = 'live';
+        tx = '<small>' + (P.guess ? 'Class time · ' : 'Live with ') + esc(nm) + '</small><b class="hx-tm" id="orbTx">0:00</b>'
+          + (it.link ? '<i class="hx-go">' + (P.guess ? 'Open Zoom' : 'Back to Zoom') + '</i>' : '<span>ends ' + t12(it.t + it.len * 60000) + '</span>');
+      }
+      art = panSvg(true, mode);
     }
-    const it = P.it, nm = first(it.name), tag = (it.kind === 'tr' ? 'Trial · ' : '') + schTime12(it.hhmm);
-    const their = it.kind === 'tr' ? String(it.sub || '').replace(/^Free trial( · )?/, '') : String(it.sub || '');
-    const ring = '<svg class="orb-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="trk" cx="50" cy="50" r="46"/><circle class="prg" id="orbPrg" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>';
-    if (P.st === 'join') {
-      const tagA = it.link ? 'a href="' + esc(it.link) + '" target="_blank" rel="noopener"' : 'button type="button" onclick="orbOpen()"';
-      return '<' + tagA + ' class="orb-b join" aria-label="Join Zoom with ' + esc(nm) + '">' + ring + '<span class="orb-in">' + CAM + '<b>Join Zoom</b><span id="orbTx">' + esc(P.wait ? nm + ' is waiting' : nm) + '</span></span></' + (it.link ? 'a' : 'button') + '>';
-    }
-    if (P.st === 'cd') return '<button type="button" class="orb-b cd" onclick="orbOpen()" aria-label="Next class with ' + esc(nm) + '">' + ring + '<span class="orb-in"><i class="orb-av">' + esc(nm.charAt(0).toUpperCase()) + '</i><b id="orbTx">--:--</b><span>' + esc(nm + ' · ' + tag) + '</span>' + (their ? '<small>' + esc(their) + '</small>' : '') + '</span></button>';
-    return '<button type="button" class="orb-b live" onclick="orbOpen()" aria-label="In class with ' + esc(nm) + '">' + ring + '<span class="orb-in"><i class="orb-av">' + esc(nm.charAt(0).toUpperCase()) + '</i><b id="orbTx">0 min</b><span>with ' + esc(nm) + '</span><small>ends ' + schTime12(schIst(new Date(it.t + it.len * 60000)).hhmm) + '</small></span></button>';
+    if (mode === 'idle') art = art || panSvg(false, 'idle');
+    return '<' + tag + ' class="hx ' + cls + '"' + (click ? ' onclick="' + click + '"' : '') + '><i class="hx-glow" aria-hidden="true"></i><span class="hx-art">' + art + '</span><span class="hx-tx">' + tx + '</span></' + end + '>'
+      + '<p class="hx-line" id="hxLine">' + esc(dayLine(P, nowMs)) + '</p>';
   }
 
-  // Live numbers inside the face, once a second.
+  // Live numbers inside the hero, once a second.
+  const mmss = ms => { const t = Math.max(0, Math.round(ms / 1000)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
   function tickFace(P, nowMs) {
     const tx = document.getElementById('orbTx'), pr = document.getElementById('orbPrg');
     if (!P.it) return;
-    if (P.st === 'cd' && tx) { const s = Math.max(0, Math.round((P.it.t - nowMs) / 1000)); tx.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); if (pr) pr.style.strokeDashoffset = 100 - Math.min(100, s / 18); }
-    if (P.st === 'join') { const m = Math.max(0, Math.ceil((P.it.t - nowMs) / 60000)); if (tx && !P.wait) tx.textContent = first(P.it.name) + (m ? ' · in ' + m + ' min' : ' · now'); if (pr) pr.style.strokeDashoffset = 100 - Math.min(100, (P.it.t - nowMs) / 6000); }
-    if (P.st === 'live') { const m = P.mins; if (tx) tx.textContent = Math.max(0, m) + ' min'; if (pr) pr.style.strokeDashoffset = 100 - Math.min(100, Math.max(0, m) / P.it.len * 100); }
+    if (P.st === 'cd') { const left = P.it.t - nowMs; if (tx) tx.textContent = mmss(left); if (pr) pr.style.strokeDashoffset = String(Math.max(0, Math.min(100, left / 18000))); }
+    if (P.st === 'join' && tx) tx.textContent = mmss(P.it.t - nowMs);
+    if (P.st === 'live') { const el = nowMs - (P.since || P.it.t); if (tx) tx.textContent = mmss(el); if (pr) pr.style.strokeDashoffset = String(100 - Math.min(100, Math.max(0, el / (P.it.len * 600)))); }
   }
 
   function render() {
     const box = document.getElementById('tdOrb'); if (!box || !F) return;
     const nowMs = Date.now(), P = pick(nowMs);
-    const key = P.st + '|' + (P.it ? P.it.t + P.it.name + (P.wait ? 'w' : '') : P.L.map(x => x.big + x.small).join(',') + '|' + (P.FU || []).length);
+    const key = P.st + '|' + (P.it ? P.it.t + P.it.name + (P.wait ? 'w' : '') + (P.guess ? 'g' : '') : P.L.map(x => x.big + x.small).join(',') + '|' + (P.FU || []).map(x => x.key).slice(0, 3).join(',') + '|' + (P.FU || []).length + '|' + ((F.wk || {}).classes || 0));
     if (key !== KEY) {
       KEY = key; box.innerHTML = face(P, nowMs); box.hidden = false;
       document.documentElement.classList.add('has-orb');
