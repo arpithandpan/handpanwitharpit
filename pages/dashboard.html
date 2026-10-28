@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v222</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v223</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v222</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v223</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -20296,15 +20296,28 @@ html { scroll-behavior: auto; }
   function init(s) {
     if (!s || s.classList.contains('has-ind')) return;
     const i = document.createElement('i'); i.className = 'seg-ind'; i.setAttribute('aria-hidden', 'true');
-    s.insertBefore(i, s.firstChild); s.classList.add('has-ind'); place(s, false);
+    s.insertBefore(i, s.firstChild); s.classList.add('has-ind'); s._ind = i; place(s, false);
+  }
+  // v223: some pages rebuild their buttons with innerHTML on every tap, which threw the pill away and left the
+  // chosen label dark on the dark track. Put the same pill back (it keeps its last position) and slide it over.
+  function ensure(s) {
+    if (s.querySelector(':scope > .seg-ind')) return false;
+    const i = s._ind || document.createElement('i'); i.className = 'seg-ind'; i.setAttribute('aria-hidden', 'true');
+    s.insertBefore(i, s.firstChild); s._ind = i; return true;
   }
   const scan = () => document.querySelectorAll(SEG).forEach(s => { if (s.offsetParent) { init(s); place(s, false); } });
   document.addEventListener('pointerdown', e => { const s = e.target.closest && e.target.closest(SEG); if (s) { init(s); place(s, false); } }, true);
   if (window.MutationObserver) new MutationObserver(muts => {
-    const seen = new Set();
-    for (const m of muts) { const t = m.target; if (t.tagName === 'BUTTON' && t.parentElement && t.parentElement.classList.contains('has-ind')) seen.add(t.parentElement); }
-    seen.forEach(s => requestAnimationFrame(() => place(s, true)));
-  }).observe(document.body, { attributes: true, attributeFilter: ['class'], subtree: true });
+    const seen = new Set(), fresh = new Set();
+    for (const m of muts) {
+      const t = m.target;
+      if (m.type === 'attributes' && t.tagName === 'BUTTON' && t.parentElement && t.parentElement.classList.contains('has-ind')) seen.add(t.parentElement);
+      if (m.type === 'childList' && t.classList && t.classList.contains('has-ind')) seen.add(t);
+      if (m.type === 'childList') m.addedNodes.forEach(nd => { if (nd.nodeType !== 1) return; (nd.matches(SEG) ? [nd] : nd.querySelectorAll ? nd.querySelectorAll(SEG) : []).forEach(s => fresh.add(s)); });
+    }
+    if (fresh.size) requestAnimationFrame(() => fresh.forEach(s => { if (s.offsetParent && s.querySelector(':scope > button')) { init(s); place(s, false); } }));
+    seen.forEach(s => { ensure(s); requestAnimationFrame(() => place(s, true)); });
+  }).observe(document.body, { attributes: true, attributeFilter: ['class'], childList: true, subtree: true });
   window.addEventListener('resize', () => document.querySelectorAll('.has-ind').forEach(s => place(s, false)));
   // Pages that were hidden when we first looked get their pill on show.
   const _ss = window.showSection; if (typeof _ss === 'function') window.showSection = function () { const r = _ss.apply(this, arguments); requestAnimationFrame(scan); return r; };
