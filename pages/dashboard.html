@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v247</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v248</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v247</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v248</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5239,6 +5239,7 @@ table#paymentsTable { min-width: 700px; }
         <div class="sch-seg" role="tablist">
           <button type="button" id="schSegCal" onclick="schSetView('cal')"><span class="sch-lbl-wk">Week</span><span class="sch-lbl-day">Day</span></button>
           <button type="button" id="schSegList" onclick="schSetView('list')">List</button>
+          <button type="button" id="schSegSlots" onclick="schSetView('slots')">Weekly slots<span class="pg-n" id="schSlotsN"></span></button>
         </div>
         <div class="sch-nav" id="schNav">
           <button type="button" class="sch-ic" onclick="schCalShift(-1)" aria-label="Previous week">&#8249;</button>
@@ -5256,7 +5257,7 @@ table#paymentsTable { min-width: 700px; }
         <div class="sch-cal-note">Times in <span class="stz-lbl">IST</span>. Click a class to move or skip it. Empty space is free time.</div>
       </div>
       <div id="schListWrap" style="display:none;">
-      <div style="font-weight:500;margin-bottom:0.6rem;">Next 14 days</div>
+      <div style="font-weight:500;margin-bottom:0.6rem;color:var(--tx3);font-size:var(--fs-md);">Next 14 days</div>
       <div class="dash-table-wrap" style="margin:0 0 2rem;">
         <table class="desktop-table" style="min-width:720px;"><thead><tr>
           <th>Time (<span class="stz-lbl">IST</span>)</th><th>Student</th><th>Their time</th><th>Status</th><th class="ws-action-sticky">Action</th>
@@ -5266,12 +5267,13 @@ table#paymentsTable { min-width: 700px; }
       </div>
       <div class="sch-pop-shade" id="schPopShade" onclick="schPopClose()"></div>
       <div class="sch-pop" id="schPop" role="dialog"></div>
-      <div style="font-weight:500;margin-bottom:0.6rem;">Weekly slots</div>
+      <div id="schSlotsWrap">
       <div class="dash-table-wrap" style="margin:0;">
         <table class="desktop-table" style="min-width:860px;"><thead><tr>
           <th>Student</th><th>Slot (IST)</th><th>Their time</th><th>Zoom link</th><th>Status</th><th class="ws-action-sticky">Action</th>
         </tr></thead><tbody id="schWeeklyTable"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody></table>
         <div class="mobile-cards mobile-only" id="schWeeklyCards"></div>
+      </div>
       </div>
     </section>
 
@@ -17352,6 +17354,7 @@ function schRender() {
     return { s, local, extra };
   };
   const sorted = _sch.slots.slice().sort((a, b) => (b.active - a.active) || (a.weekday - b.weekday) || String(a.time_ist).localeCompare(String(b.time_ist)));
+  { const n = document.getElementById('schSlotsN'); if (n) n.textContent = _sch.slots.filter(x => x.active).length || ''; }
   document.getElementById('schWeeklyTable').innerHTML = sorted.map(r => {
     const x = slotRow(r);
     return '<tr' + (r.active ? '' : ' style="opacity:0.55;"') + '>'
@@ -17655,7 +17658,7 @@ async function schUndo(id) {
 const SCH_HOUR_PX = 48, SCH_DAY_HOUR_PX = 52;
 // Calendar is the default; List only when Arpit picked it last time.
 let _schView = 'cal', _schWeekStart = null, _schDaySel = null;
-try { if (localStorage.getItem('sch_view') === 'list') _schView = 'list'; } catch (e) {}
+try { const v = localStorage.getItem('sch_view'); if (v === 'list' || v === 'slots') _schView = v; } catch (e) {}
 
 function schMonday(ymd) { const w = schWeekday(ymd); return schAddDays(ymd, w === 0 ? -6 : 1 - w); }
 function schShortDate(ymd) { return new Date(ymd + 'T00:00:00Z').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' }); }
@@ -17683,11 +17686,11 @@ function schEventBlock(ymd, timeTxt, defaultLen) {
 
 function schSetView(v) {
   const prev = _schView;
-  _schView = v === 'cal' ? 'cal' : 'list';
+  _schView = v === 'cal' || v === 'slots' ? v : 'list';
   try { localStorage.setItem('sch_view', _schView); } catch (e) {}
   schApplyView();
   if (prev !== _schView) try {
-    const w = document.getElementById(_schView === 'cal' ? 'schCalWrap' : 'schListWrap');
+    const w = document.getElementById(_schView === 'cal' ? 'schCalWrap' : _schView === 'slots' ? 'schSlotsWrap' : 'schListWrap');
     if (w && w.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) w.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: 'cubic-bezier(.2,.8,.2,1)' });
   } catch (e) {}
 }
@@ -17695,10 +17698,15 @@ function schApplyView() {
   const cal = _schView === 'cal';
   const lw = document.getElementById('schListWrap'), cw = document.getElementById('schCalWrap');
   if (!lw || !cw) return;
-  lw.style.display = cal ? 'none' : '';
+  const slots = _schView === 'slots', sw = document.getElementById('schSlotsWrap');
+  // v248: Week, List and Weekly slots are three tabs, one shown at a time.
+  lw.style.display = _schView === 'list' ? '' : 'none';
   cw.style.display = cal ? '' : 'none';
-  document.getElementById('schSegList').classList.toggle('on', !cal);
+  if (sw) sw.style.display = slots ? '' : 'none';
+  document.getElementById('schSegList').classList.toggle('on', _schView === 'list');
   document.getElementById('schSegCal').classList.toggle('on', cal);
+  const ss = document.getElementById('schSegSlots'); if (ss) ss.classList.toggle('on', slots);
+  document.querySelector('.sch-bar').classList.toggle('slots', slots);
   document.querySelector('.sch-bar').classList.toggle('cal', cal);
   if (cal) schCalRender();
 }
@@ -20418,6 +20426,13 @@ html body #agPage.ag-locked :is(.ag-row.tap, .ag-seg > button, .custom-select-bt
 body.stuTabs-on #trialsPanel > div:first-child > div:first-child { display: none; }
 body.stuTabs-on #trialsPanel > div:first-child { justify-content: flex-end; margin-bottom: 0.25rem; }
 body.stuTabs-on #trialsPanel { margin-bottom: 0 !important; }
+body.feeTabs-on #feeRequestsPanel > div:first-child > div:first-child { display: none; }
+body.feeTabs-on #feeRequestsPanel > div:first-child { justify-content: flex-end; }
+/* v248: Weekly slots tab on Schedule hides the week controls */
+.sch-bar.slots .sch-nav, .sch-bar.slots .sch-legend { display: none !important; }
+#schSegSlots .pg-n:empty { display: none; }
+#schSegSlots .pg-n { margin-left: 8px; font-size: var(--fs-sm); font-weight: 600; opacity: .75; font-variant-numeric: tabular-nums; }
+.sch-bar.slots .sch-blk { display: none !important; }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -21141,7 +21156,14 @@ document.addEventListener('click', e => {
 // v247: a page with two lists shows them as tabs, one at a time, instead of stacked tables.
 // Students page: Students | Trials. The groups are existing blocks, so every list keeps working the same.
 (function () {
+  const rowsIn = id => { const t = document.getElementById(id); return t ? Array.from(t.children).filter(r => r.tagName === 'TR' && !r.querySelector('.loading') && r.children.length > 1).length : 0; };
   const PAGES = [{
+    id: 'feeTabs', key: 'tab_fees', before: 'feeRequestsPanel',
+    tabs: [
+      { k: 'paid', label: 'Payments', count: () => rowsIn('feePaymentsTable'), els: ['search-wrap-fee-payments', 'filter-bar-fee-payments', () => { const s = document.getElementById('feePaymentsTable'); return s && s.closest('.dash-table-wrap'); }] },
+      { k: 'links', label: 'Pending links', count: () => rowsIn('feeRequestsTable') || (document.getElementById('feeRequestsCards') || { children: [] }).children.length, els: ['feeRequestsPanel'], show: () => { const p = document.getElementById('feeRequestsPanel'); return p && p.style.display !== 'none'; } }
+    ]
+  }, {
     id: 'stuTabs', key: 'tab_students', before: 'trialsPanel',
     tabs: [
       { k: 'students', label: 'Students', count: () => (window._totalCounts || {}).classes, els: ['search-wrap-classes', 'filter-bar-classes', el => { const s = document.getElementById('studentsTable'); return s && s.closest('.dash-table-wrap'); }] },
