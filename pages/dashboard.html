@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v231</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v232</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v231</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v232</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -12248,6 +12248,7 @@ async function markAllRead() {
 function notifSettingsOpen() {
   const box = document.getElementById('pushCard'); if (!box || typeof openMobilePicker !== 'function') return;
   const home = box.parentNode, next = box.nextSibling;
+  if (!box.textContent.trim() && typeof pushRender === 'function') pushRender();   // v232: fill it if the page hasn't yet
   openMobilePicker('Notification settings', body => { box.classList.add('in-sheet'); body.appendChild(box); },
     () => { box.classList.remove('in-sheet'); home.insertBefore(box, next); });
 }
@@ -18041,6 +18042,8 @@ async function pushRender() {
     return;
   }
   if (!pushSupported()) { box.innerHTML = head('Phone notifications', 'This browser can\'t show notifications.'); return; }
+  // v232: never an empty card while the browser looks up this device (that can take a few seconds)
+  if (!box.textContent.trim()) box.innerHTML = head('Phone alerts', 'Checking this device…');
   let sub = null;
   try { const reg = await pushReg(); sub = await reg.pushManager.getSubscription(); } catch (e) {}
   if (Notification.permission === 'denied') {
@@ -20273,6 +20276,9 @@ html body #pushCard.in-sheet:not(.has-opts) .push-h { display: flex; }   /* with
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
   html body .mobile-picker-sheet { left: 50%; right: auto; bottom: auto; top: 50%; width: 480px; max-width: calc(100vw - 48px); max-height: min(80vh, 640px); border-radius: var(--sheet-r) !important; border-top: 0 !important; overflow: hidden; opacity: 0; pointer-events: none; transform: translate(-50%, -46%) scale(.97); transition: transform var(--dur) var(--ease-spring), opacity var(--dur) var(--ease); }
   html body .mobile-picker-sheet.open { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%); }
+  /* the list sizes to its content (it was told to share leftover height, which on some screens left it 0 px tall) */
+  html body .mobile-picker-sheet { height: auto !important; }
+  html body .mobile-picker-sheet > .mobile-picker-sheet-body { flex: 0 1 auto; min-height: 0; }
 }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
