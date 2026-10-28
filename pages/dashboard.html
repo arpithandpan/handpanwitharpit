@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v225</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v226</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v225</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v226</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -20221,6 +20221,38 @@ html body .ptr.hit .ptr-rp i:nth-child(2) { animation-delay: .12s; } html body .
 html body .ptr.hit .hp-svg { animation: hpspin 1.6s linear infinite, ptrPop .45s var(--ease-spring); }
 @keyframes ptrHit { 0% { transform: scale(1); opacity: .7; border-width: 3px; } 100% { transform: scale(2.4); opacity: 0; border-width: 1px; } }
 @keyframes ptrPop { 0% { scale: .86; } 100% { scale: 1; } }
+/* ── v226 · DESKTOP TABLE ROWS ────────────────────────────────────────
+   Fewer columns, text columns take the spare width, words never break in the middle,
+   at most 2 lines a cell, and a row opens its details under it. */
+html body table.rd-t { table-layout: auto; }
+html body table.rd-t :is(th, td).rd-x { display: none; }
+html body table.rd-t td { overflow-wrap: normal; word-break: normal; }
+html body table.rd-t td:not(.rd-w):not(.rd-chev) { white-space: nowrap; }
+html body table.rd-t th { white-space: normal; }
+html body table.rd-t :is(th, td).rd-w { min-width: 140px; white-space: normal; }
+html body table.rd-t .rd-c { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+html body table.rd-t .rd-sub { font-size: var(--fs-sm); color: var(--tx3); margin-top: 2px; font-weight: 400; }
+html body table.rd-t .rd-sub * { color: inherit; font-size: inherit; }
+html body table.rd-t tr.rd-row { cursor: pointer; transition: background var(--dur-fast) var(--ease); }
+html body table.rd-t tr.rd-row:hover > td { background: color-mix(in srgb, var(--tx) 3%, transparent); }
+html body table.rd-t tr.rd-row:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--acc); }
+html body table.rd-t tr.rd-row.open > td { background: color-mix(in srgb, var(--acc) 7%, transparent); border-bottom-color: transparent; }
+html body table.rd-t th.rd-chev-h, html body table.rd-t td.rd-chev { width: 44px; padding-left: 4px; padding-right: 12px; text-align: right; }
+html body table.rd-t td.rd-chev span { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: var(--tx3); transition: transform var(--dur-slow) var(--ease), color var(--dur) var(--ease); }
+html body table.rd-t tr.rd-row.open td.rd-chev span { transform: rotate(180deg); color: var(--acc-tx); }
+html body table.rd-t tr.rd-det > td { padding: 0 !important; border-top: 0; background: color-mix(in srgb, var(--acc) 7%, transparent); white-space: normal; }
+html body table.rd-t .rd-in { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur-slow) var(--ease); }
+html body table.rd-t tr.rd-det.open .rd-in { grid-template-rows: 1fr; }
+html body table.rd-t .rd-in > div { overflow: hidden; min-height: 0; }
+html body table.rd-t .rd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px 28px; padding: 8px 20px 18px; }
+html body table.rd-t .rd-kv small { display: block; font-size: var(--fs-xs); font-weight: 600; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--tx3); margin-bottom: 4px; }
+html body table.rd-t .rd-kv > div { color: var(--tx); line-height: 1.45; overflow-wrap: anywhere; }
+html body table.rd-t .rd-kv.wide { grid-column: 1 / -1; }
+html body table.rd-t .rd-acts { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 20px; }
+html body table.rd-t .rd-grid + .rd-acts { padding-top: 0; }
+html body table.rd-t .rd-acts > div, html body table.rd-t .rd-acts > span { display: flex; flex-wrap: wrap; gap: 8px; }
+html body table.rd-t .rd-acts .rd-btn { display: inline-flex !important; align-items: center; gap: 8px; width: auto !important; min-width: 40px; height: 40px !important; padding: 0 14px !important; border-radius: var(--r-pill) !important; margin: 0 !important; font-size: var(--fs-md); font-weight: 600; white-space: nowrap; }
+html body table.rd-t .rd-in > div > .rd-acts:first-child { padding-top: 16px; }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -20653,6 +20685,101 @@ document.addEventListener('click', e => {
     requestAnimationFrame(() => requestAnimationFrame(() => { sh.classList.add('open'); bd.classList.add('open'); }));
   };
   document.addEventListener('visibilitychange', () => { if (!document.hidden && F) render(); });
+})();
+</script>
+<script id="studioRows">
+// v226: desktop tables. Fewer columns, text gets the room, a cell shows at most 2 lines, and a row
+// opens its details right under it (one at a time). The page code still renders the full table; this
+// only rearranges what is shown, so every table keeps working the same underneath.
+(function () {
+  const CFG = {
+    gigsTable:         { hide: ['Advance', 'Balance', 'Action'], wide: ['Client', 'Event'] },
+    participantsTable: { under: { 'Email': 'Name', 'Mode': 'Amount' }, hide: ['P #', 'Bringing Handpan', 'Phone', 'Action'], wide: ['Name', 'Workshop'] },
+    workshopsTable:    { hide: ['Expenses', 'Margin', 'Action'], wide: ['Venue'] },
+    studentsTable:     { under: { 'Phone': 'Name' }, hide: ['Email', 'Joined', 'Rate', 'Classes Paid', 'Description', 'Action'], wide: ['Name'] },
+    feePaymentsTable:  { under: { 'Mode': 'Amount' }, hide: ['Classes Paid', 'Description', 'Action'], wide: ['Student'] },
+    paymentsTable:     { hide: ['Mode', 'Action'], wide: ['Description'] },
+    leadsTable:        { under: { 'Phone': 'Name' }, hide: ['Bought Handpan?', 'Referral Amt', 'Action'], wide: ['Name', 'Workshop'] },
+    invoicesTable:     { hide: ['Action'], wide: ['Billed To'] },
+    waitlistTable:     { under: { 'Phone': 'Name' }, hide: ['Date Added', 'Action'], wide: ['Name'] }
+  };
+  const norm = s => String(s || '').toLowerCase().replace(/[^a-z#?]/g, '');
+  const CHEV = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  const desk = () => !(typeof isPhoneLayout === 'function' && isPhoneLayout());
+  const empty = h => { const t = String(h || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(); return !t || t === '—' || t === '-'; };
+
+  function labels(tbody) {
+    const table = tbody.closest('table'); const ths = table ? table.querySelectorAll('thead tr:first-child > th') : [];
+    return Array.from(ths).filter(th => !th.classList.contains('rd-chev-h')).map(th => th.textContent.replace(/\s+/g, ' ').trim());
+  }
+  function enhance(tbody) {
+    const cfg = CFG[tbody.id]; if (!cfg || !desk()) return;
+    const table = tbody.closest('table'); if (!table) return;
+    const L = labels(tbody), idx = name => L.findIndex(l => norm(l) === norm(name));
+    const hide = new Set((cfg.hide || []).map(idx).filter(i => i >= 0));
+    const under = Object.entries(cfg.under || {}).map(([a, b]) => [idx(a), idx(b)]).filter(([a, b]) => a >= 0 && b >= 0);
+    under.forEach(([a]) => hide.add(a));
+    const wide = new Set((cfg.wide || []).map(idx).filter(i => i >= 0));
+    const act = idx('Action');
+    table.classList.add('rd-t');
+    const hr = table.querySelector('thead tr:first-child');
+    if (hr && !hr.querySelector('.rd-chev-h')) {
+      Array.from(hr.children).forEach((th, i) => { th.classList.toggle('rd-x', hide.has(i)); th.classList.toggle('rd-w', wide.has(i)); });
+      const th = document.createElement('th'); th.className = 'rd-chev-h'; th.setAttribute('aria-label', 'Details'); hr.appendChild(th);
+    }
+    Array.from(tbody.children).forEach(tr => {
+      if (tr._rd || tr.classList.contains('rd-det')) return;
+      const tds = Array.from(tr.children);
+      if (tds.length !== L.length) return;   // loading / empty rows
+      tr._rd = true; tr.classList.add('rd-row'); tr.setAttribute('aria-expanded', 'false');
+      under.forEach(([a, b]) => { if (!empty(tds[a].innerHTML)) tds[b].insertAdjacentHTML('beforeend', '<div class="rd-sub">' + tds[a].innerHTML + '</div>'); });
+      tds.forEach((td, i) => {
+        if (hide.has(i)) td.classList.add('rd-x');
+        if (wide.has(i)) { td.classList.add('rd-w'); td.innerHTML = '<div class="rd-c" title="' + td.textContent.replace(/\s+/g, ' ').trim().replace(/"/g, '&quot;') + '">' + td.innerHTML + '</div>'; }
+      });
+      const c = document.createElement('td'); c.className = 'rd-chev'; c.innerHTML = '<span>' + CHEV + '</span>'; tr.appendChild(c);
+      tr._det = () => {
+        let h = '';
+        tds.forEach((td, i) => {
+          if (i === act || !hide.has(i) || under.some(([a]) => a === i) || empty(td.innerHTML) || !L[i]) return;
+          h += '<div class="rd-kv"><small>' + L[i] + '</small><div>' + td.innerHTML + '</div></div>';
+        });
+        tds.forEach((td, i) => {   // a clamped cell shows its full text here
+          const cc = td.querySelector(':scope > .rd-c'); if (cc && cc.scrollHeight > cc.clientHeight + 2) h += '<div class="rd-kv wide"><small>' + L[i] + '</small><div>' + cc.innerHTML + '</div></div>';
+        });
+        return '<div class="rd-in"><div>' + (h ? '<div class="rd-grid">' + h + '</div>' : '') + (act >= 0 && tds[act].querySelector('button, a') ? '<div class="rd-acts">' + tds[act].innerHTML + '</div>' : '') + '</div></div>';
+      };
+    });
+    if (!tbody._rdClick) {
+      tbody._rdClick = true;
+      tbody.addEventListener('click', e => {
+        if (!desk()) return;
+        if (e.target.closest('button, a, input, select, textarea, label, .rd-det')) return;
+        const tr = e.target.closest('tr.rd-row'); if (!tr || tr.parentElement !== tbody) return;
+        toggle(tbody, tr);
+      });
+      tbody.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches && e.target.matches('tr.rd-row')) toggle(tbody, e.target); });
+    }
+    tbody.querySelectorAll(':scope > tr.rd-row').forEach(tr => tr.tabIndex = 0);
+  }
+  function toggle(tbody, tr) {
+    const was = tr.classList.contains('open');
+    tbody.querySelectorAll(':scope > tr.rd-row.open').forEach(r => { r.classList.remove('open'); r.setAttribute('aria-expanded', 'false'); const d = r.nextElementSibling; if (d && d.classList.contains('rd-det')) { d.classList.remove('open'); setTimeout(() => d.remove(), 320); } });
+    if (was) return;
+    const n = Array.from(tr.children).filter(td => !td.classList.contains('rd-x')).length;
+    const det = document.createElement('tr'); det.className = 'rd-det'; det.innerHTML = '<td colspan="' + n + '">' + tr._det() + '</td>';
+    // icon-only buttons get their name written next to the icon, so the open row reads "Edit · Delete", not four mystery icons
+    det.querySelectorAll('.rd-acts button, .rd-acts a').forEach(b => { const l = b.getAttribute('aria-label') || b.getAttribute('title') || (b.dataset && b.dataset.tip) || b.getAttribute('tip') || ''; b.classList.add('rd-btn'); if (!b.textContent.trim() && l) b.insertAdjacentHTML('beforeend', '<span>' + l.replace(/</g, '&lt;') + '</span>'); });
+    tr.after(det); tr.classList.add('open'); tr.setAttribute('aria-expanded', 'true');
+    requestAnimationFrame(() => requestAnimationFrame(() => det.classList.add('open')));
+  }
+  const run = () => Object.keys(CFG).forEach(id => { const tb = document.getElementById(id); if (tb) enhance(tb); });
+  if (window.MutationObserver) new MutationObserver(muts => {
+    const seen = new Set();
+    muts.forEach(m => { const t = m.target; if (t && t.id && CFG[t.id]) seen.add(t); });
+    seen.forEach(enhance);
+  }).observe(document.body, { childList: true, subtree: true });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
 </script>
 </body>
