@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v245</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v247</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v245</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v247</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -8952,6 +8952,7 @@ async function loadTrials() {
     panel.style.display = 'block';
     const upcoming = rows.filter(t => t.status === 'booked').sort((a, b) => String(a.start_at).localeCompare(String(b.start_at)));
     const pending = upcoming.concat(rows.filter(t => t.status === 'pending' || t.status === 'no_show'));
+    window._trialOpen = pending.length;
     const converted = rows.filter(t => t.status === 'converted');
     const decided = rows.filter(t => !['pending', 'booked', 'no_show'].includes(t.status));
     // Cancelled trials never happened, so they stay out of the conversion rate.
@@ -15964,7 +15965,7 @@ async function waOpen(phone) {
   waRenderThread(false);
   // Mark this person's incoming messages as read.
   const unread = _wa.rows.filter(r => r.phone === phone && r.direction === 'in' && !r.read_at);
-  if (unread.length) {
+  if (unread.length && _wa._auto !== phone) {
     const now = new Date().toISOString();
     unread.forEach(r => { r.read_at = now; });
     waRenderList();
@@ -16163,6 +16164,7 @@ async function waRowFee(phone) {
     if (Math.abs(dx) > 8) moved = true;
     const r = row.querySelector('.wa-row'); if (!r) return;
     const base = row.classList.contains('open') ? -168 : 0;
+    row.classList.add('sw-drag'); clearTimeout(row._swT);
     r.style.transition = 'none'; r.style.transform = 'translateX(' + Math.max(-200, Math.min(0, base + dx)) + 'px)';
   }, { passive: true });
   document.addEventListener('touchend', e => {
@@ -16170,6 +16172,7 @@ async function waRowFee(phone) {
     const r = row.querySelector('.wa-row');
     const dx = (e.changedTouches[0].clientX - sx);
     if (r) { r.style.transition = ''; r.style.transform = ''; }
+    { const rw = row; clearTimeout(rw._swT); rw._swT = setTimeout(() => rw.classList.remove('sw-drag'), 400); }
     if (moved) {
       const wasOpen = row.classList.contains('open');
       document.querySelectorAll('.wa-swipe.open').forEach(x => x.classList.remove('open'));
@@ -20405,6 +20408,16 @@ html body .ag-lockbar.nudge { animation: agNudge .45s var(--ease); }
 @keyframes agNudge { 0%, 100% { transform: none; } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
 html body #agPage.ag-locked :is(.push-sw, .ag-seg, .ag-chk, .custom-select-btn, .form-select-btn, textarea:not(#agTestQ), select) { opacity: .7; }
 html body #agPage.ag-locked :is(.ag-row.tap, .ag-seg > button, .custom-select-btn, .form-select-btn) { cursor: not-allowed; }
+/* v246: the swipe buttons stay hidden until a row is actually being swiped, so no pink sliver at the row edge */
+.wa-swipe:not(.open):not(.sw-drag) .wa-swipe-acts { visibility: hidden; }
+/* v247: page tabs (Students | Trials) */
+.pg-tabs { margin: var(--sp-2) 0 var(--sp-4); }
+.pg-tabs .inv-seg button { gap: 8px; }
+.pg-tabs .pg-n { margin-left: 8px; font-size: var(--fs-sm); font-weight: 600; opacity: .75; font-variant-numeric: tabular-nums; }
+.pg-hide { display: none !important; }
+body.stuTabs-on #trialsPanel > div:first-child > div:first-child { display: none; }
+body.stuTabs-on #trialsPanel > div:first-child { justify-content: flex-end; margin-bottom: 0.25rem; }
+body.stuTabs-on #trialsPanel { margin-bottom: 0 !important; }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -21092,6 +21105,73 @@ document.addEventListener('click', e => {
   // leaving the page locks it again
   const _ss = window.showSection; if (typeof _ss === 'function') window.showSection = function (name) { if (name !== 'agent' && open) { open = false; clearTimeout(timer); } const v = _ss.apply(this, arguments); if (name === 'agent') setTimeout(bar, 0); return v; };
   document.addEventListener('visibilitychange', () => { if (document.hidden && open) agLock(true); });
+})();
+</script>
+<script id="studioWaAuto">
+// v246: on desktop and iPad split view the Inbox always has a chat open. The newest conversation in the
+// current filter opens by itself. It is not marked read until Arpit clicks into it or opens it himself.
+(function () {
+  if (typeof waRenderList !== 'function') return;
+  const twoPane = () => window.matchMedia('(min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine)').matches || (typeof waSplit === 'function' && waSplit());
+  const orig = waRenderList;
+  let busy = false, refilter = false;
+  waRenderList = function () {
+    const r = orig.apply(this, arguments);
+    if (busy || !twoPane()) return r;
+    const rows = Array.from(document.querySelectorAll('#waRows .wa-swipe[data-phone]'));
+    if (!rows.length) return r;
+    // Keep the open chat, unless there is none or Arpit just switched to a filter that hides it.
+    if (_wa.sel && (!refilter || rows.some(x => x.dataset.phone === _wa.sel))) return r;
+    busy = true;
+    try { const ph = rows[0].dataset.phone; _wa._auto = ph; waOpen(ph); } finally { busy = false; }
+    return r;
+  };
+  if (typeof waSetFilter === 'function') { const f = waSetFilter; waSetFilter = function () { refilter = true; try { return f.apply(this, arguments); } finally { refilter = false; } }; }
+  // A click inside the auto-opened chat counts as reading it.
+  document.addEventListener('click', e => {
+    if (!_wa._auto || _wa._auto !== _wa.sel) return;
+    if (!e.target.closest || !e.target.closest('#waThread')) return;
+    _wa._auto = null; waOpen(_wa.sel);
+  }, true);
+  // Opening any chat by hand clears the auto flag first.
+  if (typeof waRowTap === 'function') { const t = waRowTap; waRowTap = function () { _wa._auto = null; return t.apply(this, arguments); }; }
+})();
+</script>
+<script id="studioPageTabs">
+// v247: a page with two lists shows them as tabs, one at a time, instead of stacked tables.
+// Students page: Students | Trials. The groups are existing blocks, so every list keeps working the same.
+(function () {
+  const PAGES = [{
+    id: 'stuTabs', key: 'tab_students', before: 'trialsPanel',
+    tabs: [
+      { k: 'students', label: 'Students', count: () => (window._totalCounts || {}).classes, els: ['search-wrap-classes', 'filter-bar-classes', el => { const s = document.getElementById('studentsTable'); return s && s.closest('.dash-table-wrap'); }] },
+      { k: 'trials', label: 'Trials', count: () => window._trialOpen, els: ['trialsPanel'], show: () => { const p = document.getElementById('trialsPanel'); return p && p.style.display !== 'none'; } }
+    ]
+  }];
+  const get = x => typeof x === 'function' ? x() : document.getElementById(x);
+  function cur(P) { let v = null; try { v = localStorage.getItem(P.key); } catch (e) {} return P.tabs.some(t => t.k === v) ? v : P.tabs[0].k; }
+  function apply(P) {
+    const anchor = document.getElementById(P.before); if (!anchor) return;
+    let seg = document.getElementById(P.id);
+    const avail = P.tabs.filter(t => !t.show || t.show());
+    if (!seg) {
+      seg = document.createElement('div'); seg.id = P.id; seg.className = 'pg-tabs';
+      seg.innerHTML = '<div class="inv-seg" role="tablist"></div>';
+      anchor.parentNode.insertBefore(seg, anchor);
+      seg.addEventListener('click', e => { const b = e.target.closest('button[data-k]'); if (!b) return; try { localStorage.setItem(P.key, b.dataset.k); } catch (er) {} apply(P); });
+    }
+    const on = avail.length > 1 ? cur(P) : P.tabs[0].k;
+    seg.style.display = avail.length > 1 ? '' : 'none';
+    const box = seg.firstElementChild;
+    const html = avail.map(t => { const n = t.count(); return '<button type="button" role="tab" data-k="' + t.k + '" class="' + (t.k === on ? 'on' : '') + '" aria-selected="' + (t.k === on) + '">' + t.label + (n ? '<span class="pg-n">' + n + '</span>' : '') + '</button>'; }).join('');
+    if (box._h !== html) { Array.from(box.querySelectorAll(':scope > button')).forEach(b => b.remove()); box.insertAdjacentHTML('beforeend', html); box._h = html; }
+    P.tabs.forEach(t => t.els.forEach(x => { const el = get(x); if (el) el.classList.toggle('pg-hide', avail.length > 1 && t.k !== on); }));
+    document.body.classList.toggle(P.id + '-on', avail.length > 1);
+  }
+  const run = () => PAGES.forEach(apply);
+  let q = 0; const soon = () => { cancelAnimationFrame(q); q = requestAnimationFrame(run); };
+  if (window.MutationObserver) new MutationObserver(soon).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
 </script>
 </body>
