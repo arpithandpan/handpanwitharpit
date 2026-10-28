@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v232</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v233</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v232</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v233</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -12826,9 +12826,9 @@ function searchData(query) {
   if (!query || query.length < 2) return [];
   const q = query.toLowerCase();
   return getSearchData().filter(r =>
-    (r.name||'').toLowerCase().includes(q) ||
-    (r.meta||'').toLowerCase().includes(q) ||
-    (r.id||'').toLowerCase().includes(q)
+    String(r.name||'').toLowerCase().includes(q) ||
+    String(r.meta||'').toLowerCase().includes(q) ||
+    String(r.id||'').toLowerCase().includes(q)
   ).slice(0, 30);
 }
 
@@ -20261,9 +20261,9 @@ html body table.rd-t .rd-in > div > .rd-acts:first-child { padding-top: 16px; }
    sidebar and the title line stops where the content stops. Search sits beside the filters. */
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
   html body .dash-section { max-width: 1520px; margin-left: 0; margin-right: 0; }   /* 1440 px of content plus its padding */
-  html body :is(#section-notifications, #section-health, #section-settings, #section-agent) { max-width: 900px; }   /* 820 px of content */
+  html body :is(#section-notifications, #section-health, #section-settings, #section-agent, #section-search, #section-bin, #section-unassigned-payments) { max-width: 900px; }   /* 820 px of content */
   /* v229 · smart centring: only when the empty space on the right would be more than half the column (big monitors) */
-  html.wide-main body :is(#section-notifications, #section-health, #section-settings, #section-agent) { margin-left: auto; margin-right: auto; }
+  html.wide-main body :is(#section-notifications, #section-health, #section-settings, #section-agent, #section-search, #section-bin, #section-unassigned-payments) { margin-left: auto; margin-right: auto; }
   html body #agPage { max-width: none; }   /* the agent page follows the 820 px reading width */
   html body .sec-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
   html body .sec-tools > .section-search-wrap { flex: 0 0 340px; width: 340px; max-width: 340px; margin: 0 !important; }
@@ -20280,6 +20280,32 @@ html body #pushCard.in-sheet:not(.has-opts) .push-h { display: flex; }   /* with
   html body .mobile-picker-sheet { height: auto !important; }
   html body .mobile-picker-sheet > .mobile-picker-sheet-body { flex: 0 1 auto; min-height: 0; }
 }
+/* ── v233 · SEARCH PAGE ──────────────────────────────────────────────── */
+html body #sectionSearchResults.sr-box { min-height: 0 !important; display: block !important; }
+html body .sr-kbd { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font: 600 var(--fs-xs)/1 inherit; font-family: inherit; color: var(--tx3); background: color-mix(in srgb, var(--tx) 8%, transparent); border-radius: var(--r-xs); padding: 5px 7px; pointer-events: none; }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { html body .sr-kbd { display: none; } }
+html body .sr-lab { font-size: var(--fs-xs); font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--tx3); margin: 26px 0 10px; }
+html body .sr-lab:first-child { margin-top: 4px; }
+html body .sr-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+html body .sr-chip { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; gap: 10px; height: 42px; padding: 0 16px 0 6px; border-radius: var(--r-pill); background: var(--s1); color: var(--tx); font-size: var(--fs-md); font-weight: 600; cursor: pointer; }
+html body .sr-chip:hover { background: var(--s2); }
+html body .sr-av { width: 32px; height: 32px; flex: none; border-radius: 50%; display: grid; place-items: center; color: white; font-size: var(--fs-xs); font-weight: 800; }
+html body .sr-qs { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+html body .sr-q { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: var(--r-lg); background: var(--s1); cursor: pointer; }
+html body .sr-q:hover { background: var(--s2); }
+html body .sr-qi { width: 42px; height: 42px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--acc-soft); color: var(--acc-tx); }
+html body .sr-q b { display: block; font-size: var(--fs-ui); color: var(--tx); font-weight: 600; }
+html body .sr-q small { display: block; font-size: var(--fs-sm); color: var(--tx2); margin-top: 2px; }
+html body .sr-grp { background: var(--s1); border-radius: var(--r-lg); padding: 4px 0; margin-bottom: 12px; overflow: hidden; }
+html body .sr-gh { display: flex; justify-content: space-between; padding: 12px 20px 6px; font-size: var(--fs-xs); font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--tx3); }
+html body .sr-r { display: flex; align-items: center; gap: 14px; padding: 12px 20px; border-top: 1px solid var(--line); cursor: pointer; }
+html body .sr-gh + .sr-r { border-top: 0; }
+html body .sr-r:hover, html body .sr-r.sel { background: color-mix(in srgb, var(--acc) 9%, transparent); }
+html body .sr-t { flex: 1; min-width: 0; }
+html body .sr-t b { display: block; font-weight: 600; color: var(--tx); font-size: var(--fs-ui); }
+html body .sr-t small { display: block; font-size: var(--fs-sm); color: var(--tx2); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html body .sr-id { font-size: var(--fs-xs); color: var(--tx3); white-space: nowrap; }
+html body .sr-r mark, html body .sr-t mark { background: color-mix(in srgb, var(--acc) 28%, transparent); color: inherit; border-radius: 4px; padding: 0 2px; }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -20815,8 +20841,10 @@ document.addEventListener('click', e => {
 (function () {
   function pair() {
     document.querySelectorAll('.section-search-wrap').forEach(s => {
-      const f = s.nextElementSibling; if (!f || !f.classList.contains('filter-bar') || s.parentElement.classList.contains('sec-tools')) return;
-      const w = document.createElement('div'); w.className = 'sec-tools'; s.before(w); w.appendChild(s); w.appendChild(f);
+      if (s.parentElement.classList.contains('sec-tools')) return;
+      let f = s.nextElementSibling; const isBar = e => e && (e.classList.contains('filter-bar') || /^filter-bar-/.test(e.id || ''));
+      if (!isBar(f)) { f = s.parentElement.querySelector(':scope > .filter-bar, :scope > [id^="filter-bar-"]'); if (!isBar(f) || (f.compareDocumentPosition(s) & Node.DOCUMENT_POSITION_FOLLOWING)) return; }
+      const w = document.createElement('div'); w.className = 'sec-tools'; f.before(w); w.appendChild(s); w.appendChild(f);
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pair); else pair();
@@ -20833,6 +20861,80 @@ document.addEventListener('click', e => {
   };
   if (window.ResizeObserver) new ResizeObserver(check).observe(main); else window.addEventListener('resize', check);
   check();
+})();
+</script>
+<script id="studioSearch">
+// v233: the Search page. Recent people and quick links when nothing is typed, results grouped by kind
+// with the match highlighted, ↑ ↓ Enter from the keyboard, and ⌘K or / from anywhere on a desktop.
+(function () {
+  const RK = 'srchRecent';
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const recent = () => { try { return JSON.parse(localStorage.getItem(RK) || '[]'); } catch (e) { return []; } };
+  const remember = (entity, id, name) => { try { const r = recent().filter(x => !(x.e === entity && x.i === id)); r.unshift({ e: entity, i: id, n: name }); localStorage.setItem(RK, JSON.stringify(r.slice(0, 6))); } catch (e) {} };
+  const LABEL = { workshops: 'Workshops', participants: 'Participants', classes: 'Students', 'fee-payments': 'Fee payments', payments: 'Payments', leads: 'Leads', waitlist: 'Waitlist', invoices: 'Invoices', gigs: 'Performances' };
+  const TINT = ['#6d4b5e', '#4b5e6d', '#5e6d4b', '#6d5e4b', '#4b6d5e', '#5e4b6d'];
+  const tint = s => TINT[[...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0) % TINT.length];
+  const QUICK = [
+    ['fee-payments', 'Fee Tracker', 'Who still has to pay', 'pay'],
+    ['schedule', 'Schedule', 'This week’s classes', 'cal'],
+    ['leads', 'Leads', 'People to follow up', 'lead'],
+    ['workshops', 'Workshops', 'Upcoming and past', 'music'],
+    ['invoices', 'Invoices', 'Sent and not sent', 'inv'],
+    ['classes', 'Students', 'Trials and students', 'user']];
+  const IC = {
+    pay: '<path d="M6 3h12M6 8h12M6 13l8.5 8M6 13h3a5 5 0 0 0 0-10"/>',
+    cal: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    lead: '<path d="M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3 21l2.2-5.4A8.5 8.5 0 1 1 21 11.5z"/>',
+    music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+    inv: '<path d="M7 3h10v18l-2.5-1.5L12 21l-2.5-1.5L7 21z"/><path d="M10 8h4M10 12h4"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'
+  };
+  const svg = k => '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + IC[k] + '</svg>';
+  const go = (entity, id, name) => { remember(entity, id, name); goToSearchResult(entity, id); };
+  window.srGo = (el) => go(el.dataset.e, el.dataset.i, el.dataset.n);
+  window.srNav = (sec) => { const a = document.querySelector('.dash-nav a[onclick*="\'' + sec + '\'"]'); showSection(sec, a); };
+  function emptyView() {
+    const r = recent();
+    return (r.length ? '<div class="sr-lab">Recent</div><div class="sr-chips">' + r.map(x => '<button type="button" class="sr-chip" data-e="' + esc(x.e) + '" data-i="' + esc(x.i) + '" data-n="' + esc(x.n) + '" onclick="srGo(this)"><span class="sr-av" style="background:' + tint(x.n) + '">' + esc(String(x.n || '?').trim().charAt(0).toUpperCase()) + '</span>' + esc(x.n) + '</button>').join('') + '</div>' : '')
+      + '<div class="sr-lab">Quick links</div><div class="sr-qs">' + QUICK.map(([s, t, d, i]) => '<button type="button" class="sr-q" onclick="srNav(\'' + s + '\')"><span class="sr-qi">' + svg(i) + '</span><span><b>' + t + '</b><small>' + d + '</small></span></button>').join('') + '</div>';
+  }
+  let SEL = 0;
+  function results(query, items) {
+    const groups = {}; items.forEach(r => { (groups[r.entity] = groups[r.entity] || []).push(r); });
+    let n = 0;
+    return Object.entries(groups).map(([e, list]) => '<div class="sr-grp"><div class="sr-gh"><span>' + (LABEL[e] || e) + '</span><span>' + list.length + '</span></div>'
+      + list.map(it => '<div class="sr-r' + (n === SEL ? ' sel' : '') + '" role="option" data-k="' + (n++) + '" data-e="' + esc(e) + '" data-i="' + esc(it.id) + '" data-n="' + esc(it.name) + '" onclick="srGo(this)"><span class="sr-av" style="background:' + tint(it.name || it.id) + '">' + esc(String(it.name || '#').trim().charAt(0).toUpperCase()) + '</span><span class="sr-t"><b>' + highlight(it.name || '', query) + '</b>' + (it.meta ? '<small>' + highlight(it.meta, query) + '</small>' : '') + '</span><span class="sr-id">' + esc(it.id) + '</span></div>').join('') + '</div>').join('');
+  }
+  window.handleSectionSearch = async function (query) {
+    const box = document.getElementById('sectionSearchResults'); if (!box) return;
+    box.classList.add('sr-box'); SEL = 0;
+    if (!query || query.trim().length < 2) { box.innerHTML = emptyView(); return; }
+    await ensureSearchCache();
+    const items = searchData(query.trim());
+    box.innerHTML = items.length ? results(query.trim(), items) : EMPTY_STATES.search_noresults(query);
+  };
+  // keyboard: ↑ ↓ to move, Enter to open
+  document.addEventListener('keydown', e => {
+    const inp = document.getElementById('sectionSearchInput');
+    if (e.target === inp && /^(ArrowDown|ArrowUp|Enter)$/.test(e.key)) {
+      const rows = [...document.querySelectorAll('#sectionSearchResults .sr-r')]; if (!rows.length) return;
+      e.preventDefault();
+      if (e.key === 'Enter') { srGo(rows[SEL] || rows[0]); return; }
+      SEL = Math.max(0, Math.min(rows.length - 1, SEL + (e.key === 'ArrowDown' ? 1 : -1)));
+      rows.forEach((r, i) => r.classList.toggle('sel', i === SEL)); rows[SEL].scrollIntoView({ block: 'nearest' });
+      return;
+    }
+    // ⌘K / Ctrl+K anywhere, or "/" when not typing: open Search (desktop)
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target || {}).tagName) || (e.target && e.target.isContentEditable);
+    if (((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') || (e.key === '/' && !typing)) {
+      if (typeof isPhoneLayout === 'function' && isPhoneLayout()) return;
+      e.preventDefault(); srNav('search');
+      setTimeout(() => { const i = document.getElementById('sectionSearchInput'); if (i) { i.focus(); i.select(); } }, 120);
+    }
+  });
+  const ph = () => { const i = document.getElementById('sectionSearchInput'); if (i) i.placeholder = 'Search people, workshops, invoices…'; const w = i && i.closest('.section-search-wrap'); if (w && !w.querySelector('.sr-kbd')) w.insertAdjacentHTML('beforeend', '<kbd class="sr-kbd">' + (/Mac/.test(navigator.platform) ? '⌘K' : 'Ctrl K') + '</kbd>'); const b = document.getElementById('sectionSearchResults'); if (b && !(i && i.value)) { b.classList.add('sr-box'); b.innerHTML = emptyView(); } };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ph); else ph();
+  const _ls = window.loadSearchSection; if (typeof _ls === 'function') window.loadSearchSection = async function () { const i = document.getElementById('sectionSearchInput'); if (i && !i.value) handleSectionSearch(''); return _ls.apply(this, arguments); };
 })();
 </script>
 </body>
