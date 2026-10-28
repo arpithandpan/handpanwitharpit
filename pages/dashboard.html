@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v243</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v245</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v243</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v245</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -20357,7 +20357,7 @@ html:not(.dk) body #auth-email:-webkit-autofill, html:not(.dk) body #auth-pass:-
 html body #auth-pass-eye { border: 0 !important; background: transparent !important; }   /* it sits inside the field */
 html body #auth-pass-eye:hover { background: color-mix(in srgb, var(--tx) 8%, transparent) !important; }
 /* v241 · Inbox: the filter chips stay on one line and slide sideways when they don't fit */
-html body #waTabs { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+html body #waTabs { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
 html body #waTabs::-webkit-scrollbar { display: none; }
 html body #waTabs > * { flex: none; white-space: nowrap; }
 html body #waTabs.wa-more { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent); }   /* a soft fade says there is more to the right */
@@ -20372,6 +20372,19 @@ html body #waTabs.wa-more { -webkit-mask-image: linear-gradient(90deg, #000 calc
 @media (min-width: 1280px) and (min-height: 501px), (min-width: 1280px) and (pointer: fine) {   /* full sidebar only, the icon rail keeps its own spacing */
   html body aside.dash-sidebar .dash-nav ul, html body aside.dash-sidebar ul.dash-nav { padding: 0 16px !important; margin: 0; list-style: none; }
 }
+/* v244 · desktop: buttons are as wide as their words, not the whole card */
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
+  html body .set-exp-all { display: inline-flex !important; width: auto !important; min-width: 0 !important; padding: 0 22px !important; height: 46px !important; }
+  html body .set-exp-all + .set-exp-note { display: inline-block; margin: 0 0 0 14px !important; vertical-align: middle; text-align: left !important; }
+  html body .set-exp-all { margin-bottom: 18px !important; }
+  html body .hl-run { width: auto !important; align-self: center; padding: 0 22px !important; }
+  html body #section-settings .form-select-btn, html body #section-settings .custom-select-btn { max-width: 380px; }
+}
+/* v245 · Today: the orb has replaced the old line drawing, so it never shows (it used to flash while the orb loaded).
+   The page loader is a bigger turning handpan, centred in the space below the greeting. */
+html body #section-today .dash-section-header::before { content: none !important; display: none !important; }
+html body #tdWrap .td-load { display: flex; align-items: center; justify-content: center; min-height: 46vh; grid-column: 1 / -1; width: 100%; }
+html body #tdWrap .td-load .td-hp { width: 76px !important; height: 76px !important; }
 /* Inbox list on desktop, light: rows were the page grey inside the white box. White rows, a soft tint when chosen. */
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
   html:not(.dk) body #section-whatsapp .wa-row, html:not(.dk) body #section-whatsapp .wa-swipe .wa-row { background: var(--s1) !important; }
@@ -21033,7 +21046,15 @@ document.addEventListener('click', e => {
 <script id="studioWaTabs">
 (function () {   // v241: fade the right edge of the Inbox chips only while more of them are hidden there
   const upd = t => t.classList.toggle('wa-more', t.scrollLeft + t.clientWidth < t.scrollWidth - 4);
-  const hook = () => { const t = document.getElementById('waTabs'); if (!t || t._wm) return; t._wm = true; t.addEventListener('scroll', () => upd(t), { passive: true }); if (window.ResizeObserver) new ResizeObserver(() => upd(t)).observe(t); new MutationObserver(() => upd(t)).observe(t, { childList: true, subtree: true }); upd(t); };
+  function wheel(t) {   // v244: a laptop trackpad or mouse wheel scrolls up and down, so turn that into sideways movement here
+    t.addEventListener('wheel', e => { if (t.scrollWidth <= t.clientWidth) return; const dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY; if (!dx) return; e.preventDefault(); t.scrollLeft += dx; }, { passive: false });
+    let x0 = null, s0 = 0, moved = false;   // and drag with the mouse
+    t.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; x0 = e.clientX; s0 = t.scrollLeft; moved = false; });
+    window.addEventListener('pointermove', e => { if (x0 == null) return; const dx = e.clientX - x0; if (Math.abs(dx) > 4) { moved = true; t.scrollLeft = s0 - dx; } });
+    window.addEventListener('pointerup', () => { x0 = null; });
+    t.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+  }
+  const hook = () => { const t = document.getElementById('waTabs'); if (!t || t._wm) return; t._wm = true; wheel(t); t.addEventListener('scroll', () => upd(t), { passive: true }); if (window.ResizeObserver) new ResizeObserver(() => upd(t)).observe(t); new MutationObserver(() => upd(t)).observe(t, { childList: true, subtree: true }); upd(t); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hook); else hook();
 })();
 </script>
