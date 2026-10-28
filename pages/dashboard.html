@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v235</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v237</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v235</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v237</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -16874,14 +16874,23 @@ async function twRender() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('twRoot')) twClose(); });
 
 // ── v139: weekly class requests (self-enrolment) in Today → Needs you ──
-let _enr = [], _enrF = [];
+let _enr = [], _enrF = [], _enrP = null;
+// v237: remember the last list so a fresh page paints it straight away, and let Today start the request
+// early so these rows arrive with the other cards instead of a few seconds after them.
+try { const c = JSON.parse(localStorage.getItem('enrCache') || 'null'); if (c && Date.now() - c.at < 6 * 3600000) { _enr = c.r || []; _enrF = c.f || []; } } catch (e) {}
+function enrFetch() {
+  if (typeof isAdmin === 'function' && !isAdmin()) return Promise.resolve(false);
+  if (!_enrP && window._enrAt && Date.now() - window._enrAt < 20000) return Promise.resolve(true);   // just fetched
+  if (!_enrP) _enrP = invApi('/api/admin/enrol').then(r => r.json()).then(j => { _enr = j.requests || []; _enrF = j.followups || []; window._enrAt = Date.now(); try { localStorage.setItem('enrCache', JSON.stringify({ at: Date.now(), r: _enr, f: _enrF })); } catch (e) {} return true; }).catch(() => false).finally(() => { setTimeout(() => { _enrP = null; }, 50); });
+  return _enrP;
+}
 function enrAgo(iso) { const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 60 ? m + ' min' : m < 1440 ? Math.round(m / 60) + ' h' : Math.round(m / 1440) + ' d'; }
 // v140: Today re-renders every minute. Paint the last known requests straight
 // away so the row never blinks out while the fresh list loads.
 async function enrRender(baseCount) {
   if (typeof isAdmin === 'function' && !isAdmin()) return;
   if (_enr.length || _enrF.length) enrPaint(baseCount);
-  try { const j = await (await invApi('/api/admin/enrol')).json(); _enr = j.requests || []; _enrF = j.followups || []; } catch (e) { return; }
+  const ok = await enrFetch(); if (!ok) return;
   enrPaint(baseCount);
 }
 function enrPaint(baseCount) {
@@ -17043,6 +17052,7 @@ async function loadToday(silent) {
   // Monday of this week (Arpit's clock)
   const wd = (schWeekday(today) + 6) % 7, weekStart = schAddDays(today, -wd);
   const q = (t, p) => sbGetAll(t, p).then(r => r.data || []).catch(() => null);
+  const _early = !wrap.querySelector('.td-load') ? null : Promise.race([typeof enrFetch === 'function' ? enrFetch() : null, new Promise(r => setTimeout(r, 2500))]);
   const [slots, exc, stus, trials, unread, zoomRev, feeOld, wkTrials, wkClasses] = await Promise.all([
     q('class_schedule', 'order=weekday.asc,time_ist.asc'),
     q('class_exceptions', 'or=(original_date.gte.' + schAddDays(today, -7) + ',new_date.gte.' + today + ')'),
@@ -17054,6 +17064,7 @@ async function loadToday(silent) {
     q('trials', 'select=id&created_at=gte.' + dayStart(weekStart)),
     q('class_log', 'select=id&class_date=gte.' + weekStart)
   ]);
+  if (_early) await _early;
   if (!slots || !stus) {
     if (!silent) wrap.innerHTML = '<div class="td-card" style="grid-column:1/-1;"><div class="td-empty" style="border-top:0;">Could not load today. Check your connection and refresh.</div></div>';
     return;
@@ -20317,6 +20328,8 @@ html.mono:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { backgro
    It was the dark launch colour in every mode, so light themes flashed a black band at the top. */
 html:not(.dk):not(.splashing), html:not(.dk):not(.splashing) body { background: var(--sw-light, var(--bg)) !important; }
 html.dk:not(.splashing) { background: var(--sw-dark, var(--bg)) !important; }
+/* v236: a switch at the top of a form lines up with the fields under it (it sat 18 px in on each side) */
+html body .form-page-body > :is(.tw-seg, .ag-seg, .inv-seg) { margin-left: 0 !important; margin-right: 0 !important; width: auto; box-sizing: border-box; }
 /* Inbox list on desktop, light: rows were the page grey inside the white box. White rows, a soft tint when chosen. */
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
   html:not(.dk) body #section-whatsapp .wa-row, html:not(.dk) body #section-whatsapp .wa-swipe .wa-row { background: var(--s1) !important; }
@@ -20700,6 +20713,10 @@ document.addEventListener('click', e => {
 
   window.orbFeed = function (d) {
     F = Object.assign({ at: Date.now() }, d);
+    // v237: the first time, wait (up to 2.5 s) for failed payments, leads and class history, so the orb
+    // appears once with the right message instead of changing a moment later
+    if (window._orbWait) return;   // the first load is still on its way, it will paint with this data
+    if (!X.at) { let shown = false; window._orbWait = true; const lp = loadExtra(); Promise.race([lp, new Promise(r => setTimeout(r, 2500))]).then(() => { shown = true; window._orbWait = false; KEY = ''; render(); }, () => { shown = true; window._orbWait = false; render(); }); lp.then(ch => { if (ch && shown) { KEY = ''; render(); } }).catch(() => {}); return; }
     render();
     loadExtra().then(ch => { if (ch) { KEY = ''; render(); } }).catch(() => {});
   };
