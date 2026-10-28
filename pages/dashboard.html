@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v233</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v234</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v233</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v234</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -20306,6 +20306,19 @@ html body .sr-t b { display: block; font-weight: 600; color: var(--tx); font-siz
 html body .sr-t small { display: block; font-size: var(--fs-sm); color: var(--tx2); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 html body .sr-id { font-size: var(--fs-xs); color: var(--tx3); white-space: nowrap; }
 html body .sr-r mark, html body .sr-t mark { background: color-mix(in srgb, var(--acc) 28%, transparent); color: inherit; border-radius: 4px; padding: 0 2px; }
+/* v234 · light themes: table and card headers were the same grey as the page, so the white card seemed to start
+   below them. They now take a soft tint of the theme on white, with a clear line under them. */
+html:not(.dk) body table thead th, html:not(.dk) body .overview-card-head { background: color-mix(in srgb, var(--acc) 6%, var(--s1)) !important; color: var(--tx2) !important; border-bottom: 1px solid color-mix(in srgb, var(--acc) 14%, var(--line)) !important; }
+html.mono:not(.dk) body table thead th, html.mono:not(.dk) body .overview-card-head { background: #f6f6f6 !important; }
+html:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: color-mix(in srgb, var(--acc) 6%, var(--s1)) !important; }
+html.mono:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: #f6f6f6 !important; }
+@media (hover: hover) { html:not(.dk) body :is(.btn-dash-outline, .btn-dash-ghost, .btn-dash-sync):not(:disabled):hover { background: color-mix(in srgb, var(--tx) 7%, var(--s1)) !important; } }   /* light: secondary buttons react to the mouse */
+/* Inbox list on desktop, light: rows were the page grey inside the white box. White rows, a soft tint when chosen. */
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
+  html:not(.dk) body #section-whatsapp .wa-row, html:not(.dk) body #section-whatsapp .wa-swipe .wa-row { background: var(--s1) !important; }
+  html:not(.dk) body #section-whatsapp .wa-row:hover { background: color-mix(in srgb, var(--acc) 4%, var(--s1)) !important; }
+  html:not(.dk) body #section-whatsapp .wa-row.on { background: color-mix(in srgb, var(--acc) 9%, var(--s1)) !important; }
+}
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
