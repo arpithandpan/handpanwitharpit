@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v261</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v263</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v261</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v263</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -17078,12 +17078,15 @@ async function enrInviteTrial(trialId) {
 }
 function tdGo(section) { const a = document.querySelector('.dash-nav a[onclick*="\'' + section + '\'"]'); showSection(section, a); }
 // ── v140: live Zoom state for Today (server keeps it from Zoom's join/leave events) ──
-let _zLive = {}, _zLiveSig = '', _zLiveTimer = null;
+let _zLive = {}, _zLiveSig = '', _zLiveTimer = null, _zLiveAt = 0;
 function zMeetingId(link) { const m = String(link || '').match(/\/j\/(\d{9,12})/); return m ? m[1] : ''; }
 // What the room looks like for one class: null when Zoom has told us nothing.
 function zState(it, nowMs) {
   const m = _zLive[zMeetingId(it.link)];
   if (!m || it.off) return null;
+  // v263: old news is no news. If the app has not heard from the server in the last 90 s
+  // (phone was asleep, poll stopped), the clock decides instead of a frozen picture.
+  if (!_zLiveAt || Date.now() - _zLiveAt > 90000) return null;
   // Only trust a meeting that belongs to this slot (started within 3 h of it).
   const st = m.startedAt ? new Date(m.startedAt).getTime() : 0;
   if (st && Math.abs(st - it.t) > 3 * 3600e3) return null;
@@ -17094,6 +17097,17 @@ function zState(it, nowMs) {
     return { st: 'done', mins, ago: nowMs - end };
   }
   const ppl = m.people || [], inside = ppl.filter(p => !p.lobby);
+  // v263: after the class's end time only a real class (you and the student both inside) keeps it
+  // running, and never more than 90 min over. You alone in the room, or a missed "left" event, no longer
+  // keeps an old class on the Today card.
+  const slotEnd = it.t + (it.len || 60) * 60000;
+  // both of you left early and nobody came back for 3 min: the class is over, whatever the clock says
+  if (m.bothSince && m.emptySince && !m.hostIn && !inside.length && nowMs - new Date(m.emptySince).getTime() > 3 * 60000)
+    return { st: 'done', mins: Math.max(1, Math.round((new Date(m.emptySince).getTime() - new Date(m.bothSince).getTime()) / 60000)), ago: nowMs - new Date(m.emptySince).getTime() };
+  if (nowMs > slotEnd && (!(m.hostIn && inside.length) || nowMs > slotEnd + 90 * 60000)) {
+    if (m.bothSince && m.emptySince) return { st: 'done', mins: Math.max(1, Math.round((new Date(m.emptySince).getTime() - new Date(m.bothSince).getTime()) / 60000)), ago: nowMs - new Date(m.emptySince).getTime() };
+    return null;
+  }
   if (m.hostIn && inside.length) return { st: 'live', mins: Math.max(0, Math.floor((nowMs - new Date(m.bothSince || inside[0].since).getTime()) / 60000)), since: m.bothSince || inside[0].since };
   if (ppl.length) return { st: 'wait', who: ppl[0].name, mins: Math.max(0, Math.round((nowMs - new Date(ppl[0].since).getTime()) / 60000)) };
   if (m.hostIn) return { st: 'host' };
@@ -17108,15 +17122,18 @@ async function zLivePoll() {
     const j = await r.json();
     const map = {}; (j.meetings || []).forEach(m => { map[m.meetingId] = m; });
     const sig = JSON.stringify(j.meetings || []);
-    _zLive = map;
+    _zLive = map; _zLiveAt = Date.now();
     if (sig !== _zLiveSig) { _zLiveSig = sig; loadToday(true); }
   } catch (e) {}
 }
 // Poll only around class time: 15 min before a class until 30 min after it.
 function zLiveArm(items) {
   const nowMs = Date.now();
-  const near = items.some(it => !it.off && it.link && nowMs >= it.t - 15 * 60000 && nowMs <= it.t + (it.len + 30) * 60000);
-  if (near && !_zLiveTimer) { _zLiveTimer = setInterval(zLivePoll, 20000); zLivePoll(); }
+  // v263: keep listening up to 2 h after a class, and for as long as Zoom says a meeting is still open
+  const open = Object.values(_zLive).some(m => !m.endedAt);
+  const near = open || items.some(it => !it.off && it.link && nowMs >= it.t - 15 * 60000 && nowMs <= it.t + (it.len + 120) * 60000);
+  if (near && !_zLiveTimer) { _zLiveTimer = setInterval(zLivePoll, 10000); zLivePoll(); }
+  else if (near && Date.now() - _zLiveAt > 15000) zLivePoll();   // phone just woke up: ask now, do not wait for the timer
   if (!near && _zLiveTimer) { clearInterval(_zLiveTimer); _zLiveTimer = null; }
 }
 async function loadToday(silent) {
@@ -20662,7 +20679,7 @@ html body #tdGreet:has(.tsk-greet) { width: 100%; max-width: none; grid-column: 
   html body .sch-nav .sch-cap .sch-ic { --ctl2-bg: transparent; --ctl2-shadow: none; box-shadow: none; flex: 0 0 auto; }
   html body .sch-nav .sch-cap #schWeekLabel { flex: 1 1 auto; text-align: center; }
   html body .sch-nav .sch-today { flex: 0 0 auto; margin-left: 0; transition: background .2s, color .2s; }
-  html body .sch-nav .sch-today.now { --ctl2-bg: transparent; --ctl2-shadow: none; box-shadow: none; color: var(--tx2) !important; }
+  html body .sch-nav .sch-today.now { color: var(--tx3) !important; pointer-events: none; }
 }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
@@ -21646,5 +21663,45 @@ document.addEventListener('click', e => {
 })();
 </script>
 
+<script id="studioFresh">
+// v263: every page stays current. Today and Inbox already refresh themselves; this keeps the
+// other pages fresh too: straight away when you come back to the app (after 30 s away), when a
+// push arrives, and every 60 s while the page is open and you are not in the middle of something.
+(function () {
+  const PAGES = { classes: 'loadStudents', schedule: 'loadSchedule', 'fee-payments': 'loadFeePayments', payments: 'loadPayments', participants: 'loadParticipants', workshops: 'loadWorkshops', leads: 'loadLeads', waitlist: 'loadWaitlist', invoices: 'loadInvoices', gigs: 'loadGigs', 'unassigned-payments': 'loadUnassignedPayments', unassigned: 'loadUnassignedPayments', insights: 'loadInsights' };
+  let touched = 0, hiddenAt = 0, busy = false;
+  ['pointerdown', 'keydown', 'wheel', 'touchmove', 'input'].forEach(ev => document.addEventListener(ev, () => { touched = Date.now(); }, { capture: true, passive: true }));
+  const cur = () => { const el = document.querySelector('[id^="section-"].active'); return el ? el.id.slice(8) : ''; };
+  // never pull the page out from under you: no refresh while typing, while a sheet or form is open,
+  // or within 20 s of your last tap or scroll
+  const shown = sel => [...document.querySelectorAll(sel)].some(el => el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+  function calm() {
+    const a = document.activeElement;
+    if (a && (a.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return false;
+    if (shown('.modal.active, .modal.open, .modal.show, [aria-modal="true"], .sheet.open, .orb-sh, .dp-pop.open, .filter-sheet.open, .mobile-picker-sheet.open, .sch-form.open, .ctx-menu, .row-menu.open')) return false;
+    if (shown('[id^="section-"].active :is(.open, .sw-drag, .editing)')) return false;   // an opened row, a swiped card
+    if (shown('.modal-overlay.open, .qa-sheet.open, .mobile-menu-overlay.open, .loading-overlay.active, .wa-sheet.open, .cf-ov, #orbSh')) return false;
+    if ((typeof _scrollLocked !== 'undefined' && _scrollLocked) || document.body.style.position === 'fixed' || document.body.style.overflow === 'hidden') return false;
+    if ((window.getSelection && String(window.getSelection())).length) return false;
+    return true;
+  }
+  async function refresh(force) {
+    if (busy || document.hidden || sessionStorage.getItem('dash_auth') !== '1') return;
+    const fn = window[PAGES[cur()]]; if (typeof fn !== 'function') return;
+    if (!calm() || (!force && Date.now() - touched < 20000)) return;
+    busy = true; const y = window.scrollY;
+    try { await fn(); } catch (e) {} finally { busy = false; }
+    if (Math.abs(window.scrollY - y) > 4) window.scrollTo(0, y);
+  }
+  window.studioFresh = refresh;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { hiddenAt = Date.now(); return; }
+    if (hiddenAt && Date.now() - hiddenAt > 30000) setTimeout(() => refresh(true), 300);
+  });
+  window.addEventListener('online', () => setTimeout(() => refresh(true), 800));
+  if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev => { if (ev.data && ev.data.type === 'push') setTimeout(() => refresh(false), 500); });
+  setInterval(() => refresh(false), 60000);
+})();
+</script>
 </body>
 </html>
