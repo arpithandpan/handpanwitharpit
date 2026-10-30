@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v259</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v260</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v259</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v260</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -20617,6 +20617,39 @@ html.mono.dk .hx.acc .hx-go { background: var(--tx); }
 @media (max-width: 359px) { .hx-art { width: 108px; height: 108px; } .hx-tx b.hx-tm { font-size: var(--fs-3xl); } }
 @media (prefers-reduced-motion: reduce) { .hx-glow, .hx-rip, .hx-pan.live.on .hx-spin, .hx-pan.join .hx-prg, .hx-disc { animation: none !important; } }
 .cl-start { margin-top: 6px; font-size: var(--fs-sm); color: var(--tx3); }
+/* ── v260 · PHONE TIDY ── top action areas balanced on phones */
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  /* segmented tabs fill the width, equal parts */
+  html body .pg-tabs .inv-seg, html body .sch-bar > .sch-seg { display: flex !important; width: 100%; box-sizing: border-box; }
+  html body .pg-tabs .inv-seg > button, html body .sch-bar > .sch-seg > button { flex: 1 1 0; justify-content: center; min-width: 0; }
+  /* search + filter in one row */
+  html body .sf-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; margin-bottom: 16px; }
+  html body .sf-row > .section-search-wrap { margin: 0 !important; }
+  html body .sf-row > .filter-bar { display: contents; }
+  html body .sf-row .mobile-filter-btn { height: 52px; min-height: 52px; padding: 0 16px; border-radius: var(--r-pill); }
+  html body .sf-row .mobile-active-chips { grid-column: 1 / -1; }
+  html body .sf-row .mobile-active-chips:empty { display: none; }
+  /* schedule: two quiet actions in one row, then tabs, then the week */
+  html body .sch-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 16px; }
+  html body .sch-acts > * { width: 100%; justify-content: center; margin: 0 !important; min-height: 48px; }
+  html body .sch-bar { display: grid !important; grid-template-columns: 1fr; gap: 14px; }
+  html body .sch-bar > .sch-nav { width: 100%; display: flex; align-items: center; gap: 8px !important; }
+  html body .sch-bar:not(.cal) > .sch-nav { display: none; }
+  html body .sch-nav #schWeekLabel { flex: 1 1 auto; text-align: center; font-weight: 600; }
+  html body .sch-nav .sch-today { margin-left: 4px; }
+  /* students: two small counts side by side, the money full width */
+  html body #section-classes .stats-grid > .stat-card:nth-child(2) { order: 3; grid-column: 1 / -1; }
+  html body #section-classes .stats-grid > .stat-card:nth-child(3) { order: 2; }
+  /* any other stats row with an odd card: last one spans */
+  html body .stats-grid:not(#section-classes .stats-grid) > .stat-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+/* Today: the loading line under "Hi Arpit" becomes a card shaped like the real one, with room above */
+html body #tdGreet .tsk-greet { display: grid; grid-template-columns: 104px 1fr; gap: 12px 18px; align-items: center; margin-top: 18px; padding: 22px 20px; min-height: 168px; border-radius: var(--r-lg); background: var(--s1); max-width: none; box-sizing: border-box; }
+html body #tdGreet .tsk-greet i:first-child { width: 104px; height: 104px; border-radius: 50%; grid-row: span 2; }
+html body #tdGreet .tsk-greet i:last-child { width: 70%; height: 14px; }
+html body #tdGreet .tsk-greet::after { content: ""; display: block; height: 28px; width: 50%; border-radius: var(--r-pill); background: var(--s2); grid-column: 2; }
+html body #tdGreet:has(.tsk-greet) { width: 100%; max-width: none; grid-column: 1 / -1; }
+
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
@@ -21562,5 +21595,42 @@ document.addEventListener('click', e => {
   document.addEventListener('touchmove', e => { if (drag) e.preventDefault(); }, { passive: false });
 })();
 </script>
+<script id="studioPhoneTidy">
+// v260: phones get a tidier top area. Search and Filters share one row, and on Schedule
+// "Block time" sits next to "Trial booking settings". Moves back on wider screens.
+(function () {
+  const phone = () => window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').matches;
+  function rows() {
+    document.querySelectorAll('.section-search-wrap').forEach(s => {
+      const f = s.nextElementSibling;
+      if (!f || !f.classList.contains('filter-bar') || s.parentElement.classList.contains('sf-row')) return;
+      const w = document.createElement('div'); w.className = 'sf-row';
+      s.parentNode.insertBefore(w, s); w.appendChild(s); w.appendChild(f);
+    });
+  }
+  let home = null;
+  function sched() {
+    const blk = document.querySelector('.sch-bar > .sch-blk, .sch-acts > .sch-blk');
+    const tr = document.querySelector('#section-schedule [onclick="schOpenTrialSettings()"]');
+    const bar = document.querySelector('#section-schedule .sch-bar');
+    if (!blk || !tr || !bar) return;
+    if (!home) home = { blkNext: blk.nextSibling, blkParent: blk.parentNode, trNext: tr.nextSibling, trParent: tr.parentNode };
+    let acts = document.querySelector('#section-schedule .sch-acts');
+    if (phone()) {
+      if (!acts) { acts = document.createElement('div'); acts.className = 'sch-acts'; bar.parentNode.insertBefore(acts, bar); }
+      if (tr.parentNode !== acts) acts.appendChild(tr);
+      if (blk.parentNode !== acts) acts.appendChild(blk);
+      tr.textContent = 'Trial settings';
+    } else if (acts) {
+      home.trParent.insertBefore(tr, home.trNext); home.blkParent.insertBefore(blk, home.blkNext);
+      tr.textContent = 'Trial booking settings'; acts.remove();
+    }
+  }
+  const run = () => { try { rows(); sched(); } catch (e) {} };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').addEventListener('change', run);
+})();
+</script>
+
 </body>
 </html>
