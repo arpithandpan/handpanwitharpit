@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v260</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v261</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v260</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v261</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -5242,9 +5242,9 @@ table#paymentsTable { min-width: 700px; }
           <button type="button" id="schSegSlots" onclick="schSetView('slots')">Weekly slots<span class="pg-n" id="schSlotsN"></span></button>
         </div>
         <div class="sch-nav" id="schNav">
-          <button type="button" class="sch-ic" onclick="schCalShift(-1)" aria-label="Previous week">&#8249;</button>
+          <div class="sch-cap"><button type="button" class="sch-ic" onclick="schCalShift(-1)" aria-label="Previous week">&#8249;</button>
           <span id="schWeekLabel"></span>
-          <button type="button" class="sch-ic" onclick="schCalShift(1)" aria-label="Next week">&#8250;</button>
+          <button type="button" class="sch-ic" onclick="schCalShift(1)" aria-label="Next week">&#8250;</button></div>
           <button type="button" class="sch-today" onclick="schCalToday()">Today</button>
         </div>
         <button type="button" class="sch-blk admin-only" onclick="schOpenBlock()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg>Block time</button>
@@ -17864,7 +17864,8 @@ function schCalRender() {
   const byDay = {}; days.forEach(d => { byDay[d] = schDayItems(d, plan); });
   const all = days.reduce((a, d) => a.concat(byDay[d]), []);
   const [h0, h1] = schHoursRange(all);
-  document.getElementById('schWeekLabel').textContent = schShortDate(ws).split(' ')[0] + ' – ' + schShortDate(we);
+  document.getElementById('schWeekLabel').textContent = schShortDate(ws) + ' – ' + schShortDate(we);
+  { const tb = document.querySelector('.sch-today'); if (tb) tb.classList.toggle('now', ws <= today && today <= we && _schDaySel === today); }
   const nowMin = schMinOfDay(new Date());
   const hrs = '<div class="sch-hrs">' + Array.from({ length: h1 - h0 }, (_, i) => '<div style="height:' + SCH_HOUR_PX + 'px">' + schHourLabel(h0 + i) + '</div>').join('') + '</div>';
   const grid = 'background:repeating-linear-gradient(to bottom,transparent 0,transparent ' + (SCH_HOUR_PX - 1) + 'px,var(--sch-line) ' + (SCH_HOUR_PX - 1) + 'px,var(--sch-line) ' + SCH_HOUR_PX + 'px);height:' + ((h1 - h0) * SCH_HOUR_PX) + 'px;';
@@ -20650,6 +20651,19 @@ html body #tdGreet .tsk-greet i:last-child { width: 70%; height: 14px; }
 html body #tdGreet .tsk-greet::after { content: ""; display: block; height: 28px; width: 50%; border-radius: var(--r-pill); background: var(--s2); grid-column: 2; }
 html body #tdGreet:has(.tsk-greet) { width: 100%; max-width: none; grid-column: 1 / -1; }
 
+/* ── v261 · SCHEDULE WEEK CAPSULE ── */
+.sch-cap { display: contents; }
+@media (max-width: 900px), (max-height: 500px) and (pointer: coarse) {
+  html body .pg-tabs .inv-seg > button, html body .sch-bar > .sch-seg > button { flex: 1 1 auto; padding: 0 12px; white-space: nowrap; }
+  html body :is(.pg-tabs, #schSegSlots) .pg-n { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; margin-left: 6px; border-radius: var(--r-pill); background: var(--s3); color: var(--tx); opacity: 1; font-size: var(--fs-xs); line-height: 1; box-sizing: border-box; }
+  html body :is(.pg-tabs, #schSegSlots) .pg-n:empty { display: none; }
+  html body :is(.pg-tabs .inv-seg > button.on, .pg-tabs .inv-seg > button.active, .pg-tabs .inv-seg > button[aria-selected="true"], #schSegSlots.on, #schSegSlots.active) .pg-n { background: color-mix(in srgb, white 25%, transparent); color: inherit; }
+  html body .sch-nav .sch-cap { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; height: var(--ctl-h-md); padding: 0 4px; border-radius: var(--r-pill); background: var(--s1); }
+  html body .sch-nav .sch-cap .sch-ic { --ctl2-bg: transparent; --ctl2-shadow: none; box-shadow: none; flex: 0 0 auto; }
+  html body .sch-nav .sch-cap #schWeekLabel { flex: 1 1 auto; text-align: center; }
+  html body .sch-nav .sch-today { flex: 0 0 auto; margin-left: 0; transition: background .2s, color .2s; }
+  html body .sch-nav .sch-today.now { --ctl2-bg: transparent; --ctl2-shadow: none; box-shadow: none; color: var(--tx2) !important; }
+}
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
