@@ -295,6 +295,8 @@
         $$('[data-ws-none]').forEach(function (el) { el.hidden = true; });
         var first = list.filter(function (w) { return w.bookingOpen && w.date > today && !(typeof w.participantsRemaining === 'number' && w.participantsRemaining <= 0); })[0] || list[0];
         $$('[data-ws-next]').forEach(function (el) { var d = new Date(first.date + 'T12:00:00Z'); el.textContent = WD[d.getUTCDay()] + ', ' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + (first.venue ? ' · ' + first.venue.split(',')[0] : ''); });
+        var isOpen = first.bookingOpen && first.date > today && !(typeof first.participantsRemaining === 'number' && first.participantsRemaining <= 0);
+        $$('[data-ws-bar]').forEach(function (el) { el.hidden = !isOpen; });
         $$('[data-ws-next-link]').forEach(function (el) { if (first.bookingOpen) el.href = '/pages/book?ws=' + encodeURIComponent(first.id); });
         try { injectEvents(list); } catch (e) {}
       }).catch(function () {
