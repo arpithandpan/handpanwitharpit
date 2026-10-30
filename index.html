@@ -1,841 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<!-- Version check after upload: view source and look for site-version -->
-<meta name="site-version" content="v46"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta property="og:type" content="website"/>
-<meta property="og:site_name" content="Arpit Pandey"/>
-<meta property="og:title" content="Arpit Pandey · Handpan Artist and Educator"/>
-<meta property="og:description" content="Handpan performances, one-to-one online lessons, and in-person workshops."/>
-<meta property="og:url" content="https://arpitpandey.com/"/>
-<meta property="og:image" content="https://arpitpandey.com/images/og-image.png"/>
-<meta property="og:image:width" content="1200"/>
-<meta property="og:image:height" content="630"/>
-<meta property="og:image:alt" content="Handpan with Arpit Pandey"/>
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Arpit Pandey · Handpan Artist and Educator"/>
-<meta name="twitter:description" content="Handpan performances, one-to-one online lessons, and in-person workshops."/>
-<meta name="twitter:image" content="https://arpitpandey.com/images/og-image.png"/>
-<title>Arpit Pandey | Handpan Artist</title>
-<meta name="description" content="Handpan artist, teacher and workshop facilitator. Music releases, live workshops across India, and online classes for all levels."/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/style.css"/>
-<style>
-/* ---- HERO ---- */
-.hero {
-  min-height: 100vh;
-  display: grid; grid-template-columns: 1fr 1fr;
-  position: relative; overflow: hidden;
-  padding-top: var(--nav-h);
-}
-.hero-left {
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 4rem 4rem 4rem 4rem; position: relative; z-index: 2;
-}
-.hero-eyebrow { letter-spacing: 0.04em;
-  text-transform: none; color: var(--maroon);
-  margin-bottom: 1.5rem;
-  animation: fadeUp 0.8s 0.2s both;
-}
-.hero-title {
-  font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 600;
-  font-size: calc(var(--t-display) * 1.12); line-height: 0.98; letter-spacing: 0;
-  color: var(--maroon); margin-bottom: 1rem;
-  animation: fadeUp 0.8s 0.35s both;
-}
-.hero-title em { font-style: italic; font-weight: 600; color: var(--maroon); display: block; }
-.hero-sub {
-  font-family: var(--font-body); font-style: normal;
-  color: var(--text-mid); line-height: 1.7; max-width: 380px;
-  margin-bottom: 3rem;
-  animation: fadeUp 0.8s 0.5s both;
-}
-.hero-actions {
-  display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;
-  animation: fadeUp 0.8s 0.65s both;
-}
-.hero-right {
-  position: relative; overflow: hidden;
-}
-.hero-photo-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to right, rgba(245,238,229,0.15) 0%, transparent 40%),
-              linear-gradient(to top, rgba(80,0,24,0.32) 0%, transparent 50%);
-}
-.hero-note {
-  position: absolute; bottom: 2rem; left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-body); font-style: normal; color: var(--ivory);
-  white-space: nowrap; z-index: 2;
-}
-
-/* ---- INTRO BAND ---- */
-.intro-band {
-  background: var(--bark); padding: 5rem 4rem;
-  position: relative; overflow: hidden;
-}
-.intro-label {
-  font-family: var(--font-body);
-  font-weight: 400; font-style: normal;
-  color: var(--clay-pale); line-height: 1.1;
-}
-.intro-body p {
-  font-family: var(--font-body);
-  font-weight: 400; color: var(--ivory);
-  line-height: 1.85; margin-bottom: 1rem;
-}
-.intro-body p:last-of-type { margin-bottom: 2rem; }
-.intro-stats { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid rgba(245,238,229,0.22); }
-.stat span { font-family: var(--font-body); font-weight: 400; color: var(--ivory); display: block; }
-.stat small { letter-spacing: 0.12em; text-transform: uppercase; color: var(--label-on-wine); }
-
-/* ---- CLASS CARD ACCORDION ---- */
-.class-card-top { cursor: pointer; }
-.class-toggle { display: inline-block; letter-spacing: 0.08em; color: var(--clay); margin-top: 0.8rem; -webkit-tap-highlight-color: transparent; }
-.class-card-body { display: none; margin-bottom: 1rem; }
-.class-card-body.open { display: block; }
-.class-card.featured .class-toggle { color: var(--ivory); }
-
-/* ---- MUSIC SECTION ---- */
-.music-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
-.music-card {
-  background: var(--card); border-radius: var(--card-radius); overflow: hidden;
-  border: 1px solid var(--card-rule); box-shadow: var(--card-shadow);
-  transition: border-color 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-}
-/* hover only. On a touch screen the state sticks after a tap. */
-@media (hover: hover) and (pointer: fine) {
-  .music-card:hover { transform: scale(1.012); }
-}
-.music-art {
-  aspect-ratio: 1; background: var(--sand-deep);
-  display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
-}
-.music-art-overlay {
-  position: absolute; inset: 0;
-  background: rgba(80,0,24,0.82);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 1rem;
-  opacity: 0; transition: opacity 0.25s ease;
-  padding: 1.5rem;
-  pointer-events: none;
-}
-.music-card.tapped .music-art-overlay { opacity: 1; pointer-events: auto; }
-@media (hover: hover) and (pointer: fine) {
-  .music-card:hover .music-art-overlay { opacity: 1; pointer-events: auto; }
-}
-.music-art-overlay .music-link { letter-spacing: 0.02em; text-transform: none; font-weight: 600;
-  color: var(--cream); text-decoration: none;
-  border: 2px solid rgba(245,238,229,0.55); padding: calc(0.79rem - 2px) 1.5rem; border-radius: 40px;
-  transition: all 0.2s; width: 240px; text-align: center;
-  background: rgba(80,0,24,0.5);
-  -webkit-tap-highlight-color: transparent;
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-}
-.music-art-overlay .music-link:first-child {
-  background: var(--ivory); border-color: var(--ivory); color: var(--maroon);
-}
-@media (hover: hover) and (pointer: fine) {
-  .music-art-overlay .music-link:hover { border-color: var(--ivory); color: var(--ivory); }
-  .music-art-overlay .music-link:first-child:hover { background: var(--ivory-warm); border-color: var(--ivory-warm); color: var(--maroon); }
-}
-.music-info { padding: 1.2rem 1.4rem 1.5rem; }
-.music-type { letter-spacing: 0.04em; text-transform: none; color: var(--clay); margin-bottom: 0.4rem; }
-.music-name { font-family: var(--font-body); color: var(--bark); margin-bottom: 0.3rem; }
-.music-meta { color: var(--text-light); }
-.music-links { display: none; }
-
-/* ---- WORKSHOPS PREVIEW ---- */
-.workshop-rows { display: flex; flex-direction: column; gap: 0.75rem; }
-/* The text in a row always ends around 530px, so on a wide screen the
-   middle of the row is empty: 47% of it at 1440, 71% at 2560. Capping
-   the column keeps the content filling the row at any screen size. */
-@media (min-width: 1024px) {
-  .workshop-rows { max-width: 960px; margin-left: auto; margin-right: auto; }
-}
-.workshop-row {
-  display: grid; grid-template-columns: 100px 1fr auto;
-  gap: 2rem; align-items: center;
-  padding: 1.8rem 2rem; background: var(--card);
-  border: 1px solid var(--card-rule); border-radius: var(--card-radius);
-  transition: background 0.2s;
-  -webkit-tap-highlight-color: transparent;
-  cursor: default;
-}
-/* .workshop-row is cursor:default, so it has no hover state.
-   Reacting to hover on something you cannot click is a lie. */
-.w-date { text-align: left; flex-shrink: 0; }
-.w-day { font-family: var(--font-body); font-weight: 400; color: var(--clay); line-height: 1; display: block; }
-.w-month { letter-spacing: 0.12em; text-transform: none; color: var(--text-light); display: block; white-space: nowrap; }
-.w-card.is-open, .workshop-row.is-open {
-  border: 1px solid var(--maroon) !important;
-  background: var(--maroon);
-}
-.w-title { font-family: var(--font-body); color: var(--bark); margin-bottom: 0.4rem; }
-.w-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: baseline; }
-.w-meta span { color: var(--text-light); }
-.w-counts { color: var(--text-mid); margin-top: 0.55rem; }
-.w-counts .w-dim { color: var(--text-light); }
-.w-empty { color: var(--text-light); padding: 1.5rem 0; margin: 0; }
-.w-pill-off { font-weight:500; cursor:not-allowed; white-space:nowrap; color:var(--text-light); border:1.5px solid rgba(80,0,24,0.28); padding:calc(0.79rem - 1.5px) 2rem; border-radius:40px; display:inline-block; letter-spacing:0.08em; text-transform:none; }
-.w-meta span + span::before { content: none; }
-.w-action { text-align: right; flex-shrink: 0; }
-.spots-badge { letter-spacing: 0.3px;
-  text-transform: none; padding: 5px 12px 5px 16px; border-radius: 0;
-  background: #5E6E4D; color: var(--cream); font-weight: 600;
-}
-.workshop-row:has(.spots-badge) { position: relative; padding-top: 3.4rem; }
-.workshop-row .spots-badge { position: absolute; top: 16px; left: 0; margin: 0; }
-.spots-badge.few { background: rgba(180,60,40,0.1); color: #B43C28; }
-.spots-badge.full { background: rgba(100,100,100,0.1); color: var(--text-light); }
-
-/* ---- PHOTO BANNER ---- */
-.photo-banner {
-  position: relative; height: 340px; overflow: hidden;
-}
-.photo-banner img {
-  width: 100%; height: 100%; object-fit: cover; object-position: center 40%;
-}
-.photo-banner-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to right, rgba(80,0,24,0.82) 0%, rgba(80,0,24,0.35) 60%, transparent 100%);
-  display: flex; align-items: center; padding: 3rem 4rem;
-}
-.photo-banner-text p:first-child { letter-spacing: 0.04em; text-transform: none;
-  color: var(--ivory); margin-bottom: 0.8rem;
-}
-.photo-banner-title {
-  font-family: var(--font-body); color: var(--ivory); line-height: 1.2; margin-bottom: 1.2rem;
-}
-.photo-banner-title em { font-style: normal; color: var(--ivory); }
-.photo-banner-link { letter-spacing: 0.02em; text-transform: none; font-weight: 500;
-  color: var(--ivory); border-bottom: 1px solid rgba(245,238,229,0.45);
-  padding-bottom: 2px; text-decoration: none;
-}
-
-/* ---- CLASSES PREVIEW ---- */
-.classes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; align-items: stretch; }
-.class-card {
-  border: 1px solid var(--card-rule); border-radius: var(--card-radius); overflow: hidden;
-  display: flex; flex-direction: column; background: var(--card);
-  box-shadow: var(--card-shadow);
-  transition: border-color 0.25s, transform 0.25s;
-}
-/* hover only. On a touch screen the state sticks after a tap. */
-@media (hover: hover) and (pointer: fine) {
-  .class-card:hover { transform: scale(1.012); }
-}
-.class-card.featured { background: var(--bark); border-color: var(--bark); }
-.class-card-inner { padding: 2rem; display: flex; flex-direction: column; flex: 1; }
-.class-level { letter-spacing: 0.04em; text-transform: none; color: var(--clay); margin-bottom: 0.7rem; }
-.class-card.featured .class-level { color: var(--label-on-wine); }
-.class-name { font-family: var(--font-body); color: var(--bark); margin-bottom: 0.5rem; line-height: 1.1; }
-.class-card.featured .class-name { color: var(--clay-pale); }
-.class-meta { color: var(--text-light); margin-bottom: 1.4rem; }
-.class-card.featured .class-meta { color: var(--ivory); }
-.class-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.8rem; }
-.class-pill { letter-spacing: 0.06em; padding: 0.3rem 0.75rem;
-  border-radius: 20px; background: transparent;
-  color: var(--maroon); border: 1px solid var(--rule);
-}
-.class-card.featured .class-pill { background: transparent; color: var(--ivory); border-color: rgba(245,238,229,0.3); }
-.btn-enroll {
-  margin-top: auto; display: block; text-align: center; text-decoration: none;
-  width: 100%; padding: calc(0.79rem - 2px) 1rem;
-  font-family: var(--font-body); font-weight: 600;
-  letter-spacing: 0.02em; text-transform: none;
-  border: 2px solid var(--bark); color: var(--bark);
-  background: transparent; border-radius: 40px; cursor: pointer; transition: all 0.2s; box-sizing: border-box;
-}
-.btn-enroll:hover { background: var(--maroon-deep); color: var(--ivory); }
-.class-card.featured .btn-enroll { background: var(--ivory); border-color: var(--ivory); color: var(--maroon); }
-.class-card.featured .btn-enroll:hover { background: var(--ivory-warm); border-color: var(--ivory-warm); color: var(--maroon); }
-@media (max-width: 600px) { .classes-grid { grid-template-columns: 1fr; } }
-/* One card for online classes: 1:1, any level, free trial first */
-.cls-one { display: grid; grid-template-columns: 1.5fr 1fr; gap: 2.5rem; align-items: center; background: var(--card); border: 1px solid var(--card-rule); border-radius: var(--card-radius); box-shadow: var(--card-shadow); padding: 2.4rem 2.6rem; }
-.cls-one .class-pills { margin-bottom: 0; }
-.cls-one .class-meta { max-width: 34rem; }
-.cls-one-cta { display: flex; flex-direction: column; gap: 0.75rem; }
-.cls-btn { display: block; text-align: center; text-decoration: none; padding: calc(0.85rem - 2px) 1rem; border-radius: 40px; border: 2px solid var(--bark); color: var(--bark); font-family: var(--font-body); font-weight: 600; letter-spacing: 0.02em; box-sizing: border-box; transition: background 0.2s, color 0.2s; }
-.cls-btn:hover { background: var(--maroon-deep); border-color: var(--maroon-deep); color: var(--ivory); }
-.cls-btn.primary { background: var(--maroon); border-color: var(--maroon); color: var(--ivory); }
-.cls-btn.primary:hover { background: var(--maroon-deep); border-color: var(--maroon-deep); }
-.cls-note { text-align: center; color: var(--text-light); font-size: 0.85rem; margin: 0.2rem 0 0; }
-@media (max-width: 760px) { .cls-one { grid-template-columns: 1fr; gap: 1.6rem; padding: 1.8rem 1.4rem; } }
-
-/* ---- REVIEWS ---- */
-.rev-sub { color: var(--text-mid);
-  margin: -2.5rem 0 2.5rem;
-}
-/* renders from the markup so a failed API call cannot hide it */
-.rev-badge {
-  display: inline-flex; align-items: center; gap: 0.7rem;
-  background: var(--cream); border-radius: 40px;
-  padding: 0.55rem 1.2rem; margin: 0;
-}
-/* title, sub and badge share one centred column on the wine band, so
-   the rule that used to floor the header is no longer doing a job */
-.rev-dark .section-header {
-  border-bottom: none; padding-bottom: 0;
-  justify-content: center; text-align: center; margin-bottom: 0.9rem;
-}
-.rev-dark .rev-sub { text-align: center; margin: 0 auto 1.6rem; }
-.rev-badge-wrap { text-align: center; margin-bottom: 2.6rem; }
-/* the global header rule flips to flex-start below 600px, which would
-   leave the title left while the sub and badge stay centred */
-@media (max-width: 600px) {
-  .rev-dark .section-header { align-items: center; }
-}
-.rev-badge-stars { color: #A96D06; letter-spacing: 0.16em; }
-.rev-badge-rating { font-weight: 600; color: var(--bark); }
-.rev-badge-count { color: var(--text-light); }
-.rev-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-  gap: 1.4rem;
-  align-items: stretch;
-}
-.rev-card {
-  background: var(--cream);
-  border-radius: 18px;
-  padding: 1.7rem 1.6rem;
-}
-.rev-who {
-  display: flex; align-items: center; gap: 0.8rem;
-  margin-bottom: 1rem;
-}
-.rev-avatar {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: var(--clay); color: var(--cream);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-body); font-weight: 400;
-  flex-shrink: 0; user-select: none;
-}
-.rev-name { color: var(--bark);
-  line-height: 1.3;
-}
-.rev-context { letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--text-light);
-  margin-top: 0.2rem;
-}
-.rev-stars {
-  color: #A96D06;
-  letter-spacing: 0.18em; margin-bottom: 0.85rem;
-}
-.rev-quote { line-height: 1.8;
-  color: var(--text-mid); margin: 0;
-}
-.rev-foot { padding-top: 2.4rem; text-align: center; }
-
-.rev-btn {
-  display: inline-block; text-decoration: none;
-  padding: calc(0.79rem - 2px) 1.9rem;
-  font-family: var(--font-body); font-weight: 600;
-  letter-spacing: 0.02em;
-  border: 2px solid var(--bark); color: var(--bark);
-  background: transparent; border-radius: 40px;
-  transition: all 0.2s;
-}
-.rev-btn:hover { background: var(--maroon-deep); color: var(--ivory); }
-
-@media (max-width: 900px) {
-  .rev-grid { grid-template-columns: 1fr; gap: 1.1rem; }
-}
-@media (max-width: 600px) {
-  .rev-card { padding: 1.4rem 1.3rem; }
-  .rev-avatar { width: 40px; height: 40px; }
-  .rev-quote { line-height: 1.75; }
-  .rev-sub { margin: -2rem 0 2rem; }
-  .rev-foot { padding-top: 2rem; }
-}
-
-/* ---- NEWSLETTER ---- */
-.newsletter { padding: 5rem 4rem; background: var(--sand); text-align: center; border-top: 1px solid var(--clay-pale); }
-.nl-title { font-family: var(--font-body); font-weight: 400; color: var(--bark); margin-bottom: 0.7rem; }
-.nl-title em { font-style: normal; color: var(--clay); }
-.nl-sub { color: var(--text-light); margin-bottom: 2rem; }
-.newsletter-form {
-  display: flex; max-width: 400px; margin: 0 auto;
-  border: 1px solid rgba(80,0,24,0.35); border-radius: 999px; overflow: hidden;
-}
-.newsletter-form input {
-  flex: 1; padding: 0.85rem 1.1rem;
-  font-family: var(--font-body);
-  border: none; background: var(--card); color: var(--text-dark); outline: none;
-  min-width: 0;
-}
-.newsletter-form input::placeholder { color: var(--text-light); }
-.newsletter-form button {
-  padding: 0.85rem 1.2rem;
-  font-family: var(--font-body);
-  letter-spacing: 0.1em; text-transform: none;
-  background: var(--clay); color: var(--cream); border: none; cursor: pointer; transition: background 0.2s;
-  white-space: nowrap; flex-shrink: 0;
-}
-.newsletter-form button:hover { background: var(--maroon-deep); color: var(--ivory); }
-
-/* ---- RESPONSIVE TABLET (≤960px) ---- */
-@media (max-width: 1080px) {
-  .hero { grid-template-columns: 1fr; min-height: auto; }
-  .hero-left { padding: 3rem 2rem 2.5rem; }
-  .hero-right { height: 60vw; min-height: 300px; }
-  .hero-right img { width: 100%; height: 100%; object-fit: cover; }
-
-  .intro-band { padding: 4rem 2rem; }
-  .intro-stats { gap: 1.5rem; }
-
-  .music-grid { grid-template-columns: repeat(2,1fr); }
-  .classes-grid { grid-template-columns: 1fr 1fr; }
-
-  .workshop-row { grid-template-columns: 70px 1fr auto; gap: 1rem; padding: 1.5rem; }
-  .w-action { text-align: right; min-width: unset; margin-top: 0; }
-
-  .photo-banner { height: 280px; }
-  .photo-banner-overlay { padding: 2rem; }
-
-  .newsletter { padding: 4rem 2rem; }
-  .newsletter-form { max-width: 100%; }
-}
-
-/* ---- RESPONSIVE MOBILE (≤768px) ---- */
-@media (max-width: 768px) {
-  .workshop-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1.4rem; }
-  .w-date { display: flex; align-items: baseline; gap: 0.5rem; text-align: left; }
-  .w-action { text-align: left; min-width: unset; margin-top: 1.2rem; }
-}
-
-/* ---- RESPONSIVE MOBILE (≤600px) ---- */
-@media (max-width: 600px) {
-  .hero-left { padding: 2.5rem 1.2rem 2rem; }
-  .hero-right { height: 75vw; min-height: 260px; }
-  .hero-sub { max-width: 100%; margin-bottom: 2rem; }
-  .hero-actions { flex-direction: column; align-items: stretch; gap: 1.5rem; }
-  .hero-actions .btn-primary,
-  .hero-actions .btn-ghost { text-align: center; }
-
-  .intro-band { padding: 3rem 1.2rem; }
-  .intro-stats { gap: 1.2rem; }
-
-  .music-grid { grid-template-columns: 1fr; }
-  .classes-grid { grid-template-columns: 1fr; }
-
-  .workshop-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1.2rem; }
-  .w-date { display: flex; align-items: baseline; gap: 0.5rem; text-align: left; }
-  .w-action { text-align: left; min-width: unset; margin-top: 1.2rem; }
-
-  .photo-banner { height: 220px; }
-  .photo-banner-overlay { padding: 1.5rem 1.2rem; }
-
-  .newsletter { padding: 3rem 1.2rem; }
-  .newsletter-form { flex-direction: column; border: none; gap: 0.8rem; }
-  .newsletter-form input { border: 1px solid rgba(80,0,24,0.35); border-radius: 8px; padding: 0.85rem 1rem; }
-  .newsletter-form button { border-radius: 2px; padding: 0.85rem; width: 100%; }
-}
-
-
-/* --- mobile type step: card titles and body were still at desktop size --- */
-@media (max-width: 600px) {
-  .w-title,
-  .music-name,
-}
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arpit Pandey · Handpan artist, teacher and performer</title>
+<meta name="description" content="Learn the handpan online with Arpit Pandey, join a handpan workshop in Bengaluru, or book live handpan music for your event. First class free.">
+<link rel="canonical" href="https://arpitpandey.com/">
+<meta name="theme-color" content="#F5EEE5">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Arpit Pandey">
+<meta property="og:title" content="Arpit Pandey · Learn the handpan, workshops and live music">
+<meta property="og:description" content="Learn the handpan online with Arpit Pandey, join a handpan workshop in Bengaluru, or book live handpan music for your event. First class free.">
+<meta property="og:url" content="https://arpitpandey.com/">
+<meta property="og:image" content="https://arpitpandey.com/images/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="/fonts/cormorant-garamond-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/figtree-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="/images/w/arpit-sunset-1080.webp" fetchpriority="high">
+<link rel="stylesheet" href="/css/site.css?v=2026-10-31a">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Arpit Pandey", "url": "https://arpitpandey.com", "image": "https://arpitpandey.com/images/arpit-sunset.jpg", "jobTitle": "Handpan artist and teacher", "homeLocation": {"@type": "Place", "name": "Bengaluru, India"}, "sameAs": ["https://www.instagram.com/pandeyarpit", "https://www.youtube.com/@ArpitPandeyhandpan", "https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc"]}</script>
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','2322564451222517');fbq('track','PageView');
+</script>
 </head>
 <body>
-
-<nav>
-  <a href="index.html" class="nav-logo"><img src="images/handpan-logo.svg" alt="Handpan with Arpit" width="44" height="44" style="display:block;">
-  </a>
-  <button class="nav-hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="pages/about.html">About</a></li>
-    <li><a href="pages/music.html">Music</a></li>
-    <li><a href="pages/workshops.html">Workshops</a></li>
-    <li><a href="pages/classes.html">Classes</a></li>
-    <li><a href="pages/contact.html">Contact</a></li>
-    <li class="nav-account-li"><a class="nav-account" href="pages/my.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Log in</span></a></li>
-  </ul>
-</nav>
-<div class="mobile-menu">
-<div class="mobile-menu-inner">
-  <a href="index.html">Home</a>
-  <a href="pages/about.html">About</a>
-  <a href="pages/music.html">Music</a>
-  <a href="pages/workshops.html">Workshops</a>
-  <a href="pages/classes.html">Classes</a>
-  <a href="pages/contact.html">Contact</a>
-  <a class="mm-account" href="pages/my.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Log in</span></a>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap nav-in" role="navigation" aria-label="Main">
+    <a class="brand" href="/" aria-label="Arpit Pandey, home"><img src="/images/handpan-logo.svg" alt="" width="40" height="40"><b>Arpit <i>Pandey</i></b></a>
+    <ul class="navl"><li><a href="/pages/classes">Learn</a></li><li><a href="/pages/workshops">Workshops</a></li><li><a href="/pages/performances">Performances</a></li><li><a href="/pages/music">Music</a></li><li><a href="/pages/about">About</a></li></ul>
+    <div class="nav-acts" data-acct="/pages/my">
+      <a class="nav-login" href="/pages/my"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Student login</a>
+      <a class="btn btn-sm" href="/pages/trial">Free trial</a>
+      <button class="nav-burger" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mnav" id="mnav">
+  <ul><li><a href="/pages/classes">Learn</a></li><li><a href="/pages/workshops">Workshops</a></li><li><a href="/pages/performances">Performances</a></li><li><a href="/pages/music">Music</a></li><li><a href="/pages/about">About</a></li><li><a href="/pages/contact">Contact</a></li></ul>
+  <a class="btn" href="/pages/trial">Book a free trial</a>
+  <div class="mnav-sub" data-macct="/pages/my"><a href="/pages/my">Student login</a></div>
+  <div class="mnav-sub"><a href="https://wa.me/919380140907">WhatsApp</a><a href="mailto:arpithandpan@gmail.com">arpithandpan@gmail.com</a></div>
 </div>
-</div>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-left">
-    <p class="hero-eyebrow">Handpan artist · India<span class="hero-rating is-live" id="heroRating" role="img" aria-label="Rated 4.9 out of 5 on Google"><svg class="g-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.5 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.2 5.3-4.7 6.9l7.3 5.7c4.3-3.9 6.8-9.8 6.8-17.1z"/><path fill="#FBBC05" d="M10.4 28.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6l-7.8-6.1C1 16.5 0 20.1 0 24s1 7.5 2.6 10.7l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.3-5.7c-2 1.4-4.7 2.3-8.6 2.3-6.3 0-11.7-4-13.6-9.8l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span class="hero-rating-stars" aria-hidden="true">★★★★★</span><span class="hero-rating-value">4.9</span></span></p>
-    <h1 class="hero-title">Arpit<br/><em>Pandey</em></h1>
-    <p class="hero-sub">Performing and recording handpan music, and teaching people to make their own.</p>
-    <div class="hero-actions">
-      <a href="pages/music.html" class="btn-primary">Listen to music</a>
-      <a href="pages/classes.html" class="btn-ghost">Explore classes →</a>
+<main id="main">
+<section class="hero sec-tight">
+  <div class="wrap hero-grid">
+    <div class="rv">
+      <span class="eyebrow">Handpan artist and teacher · Bengaluru</span>
+      <h1>Learn the handpan with <em>Arpit Pandey</em></h1>
+      <p class="lead">Live online lessons from your very first note, small workshops in Bengaluru, and handpan music for your events. Recorded, performed and taught with the same care.</p>
+      <div class="btn-row">
+        <a class="btn" href="/pages/classes">Explore online classes</a>
+        <a class="btn btn-soft" href="/pages/performances">Book a performance</a>
+      </div>
+      <div class="hero-note">
+        <a class="rating" href="https://www.google.com/maps/place/Arpit+Pandey/data=!4m8!3m7!1s0x47de02542929477b:0x1633bee98002fa57!8m2!3d12.987977!4d77.6219718!9m1!1b1!16s%2Fg%2F11zgfhymgx" aria-label="Rated 4.9 out of 5 on Google. Read the reviews"><span class="stars" aria-hidden="true">★★★★★</span>4.9 on Google</a>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>First class free, 45 minutes</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>Students in India, the US and Canada</span>
+      </div>
+    </div>
+    <div class="hero-media rv">
+      <img src="/images/w/arpit-sunset-1080.webp" srcset="/images/w/arpit-sunset-600.webp 600w, /images/w/arpit-sunset-1080.webp 1080w" sizes="(max-width: 900px) 100vw, 46vw" alt="Arpit Pandey playing the handpan on a balcony at sunset" width="1080" height="1080" fetchpriority="high" style="object-position:50% 40%">
     </div>
   </div>
-  <div class="hero-right" style="position:relative;overflow:hidden;">
-    <img src="images/arpit-sunset.jpg" alt="Arpit Pandey playing handpan at sunset" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"/>
+  <div class="wrap">
+    <a class="wsbar rv" href="/pages/workshops#dates">
+      <span class="wsbar-tag">Workshops</span>
+      <span data-ws-when hidden>Next workshop in Bengaluru: <b data-ws-next>Loading</b></span>
+      <span data-ws-none>New workshop dates are coming soon. Get notified when booking opens.</span>
+      <span class="wsbar-go" aria-hidden="true">→</span>
+    </a>
   </div>
 </section>
 
-<!-- INTRO -->
-<section class="intro-band">
-  <div class="intro-body" style="max-width:720px;">
-    <p>Arpit Pandey is a handpan artist based in Bengaluru, India, drawn to the instrument for its rare ability to hold both melody and meditation in the same breath.</p>
-    <p>He performs, records, and teaches, carrying everything he has learned into every session, workshop, and note.</p>
-    <a href="pages/about.html" class="btn-ghost" style="color:var(--ivory);border-color:rgba(245,238,229,0.4);">Read full story →</a></div>
-</section>
-
-<!-- MUSIC -->
-<section class="section bg-cream" id="music">
-  <div class="section-header">
-    <h2 class="section-title">Music <em>Releases</em></h2>
-    <a href="pages/music.html" class="section-link">All releases →</a>
-  </div>
-  <div class="music-grid">
-    <div class="music-card">
-      <div class="music-art" style="padding:0;">
-        <img src="images/Resonance-Dialogue_Spotify-Cover.jpg" alt="Resonance Dialogue cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="music-art-overlay">
-          <a href="https://open.spotify.com/track/0dNjIvkYt8GHoHV49PT5E2?si=980812fcaece48d5" class="music-link" target="_blank" rel="noopener">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://music.apple.com/us/song/resonance-dialogue/6764633887" class="music-link" target="_blank" rel="noopener">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://www.youtube.com/watch?v=sUMPDPOaV8M&list=OLAK5uy_m7zg5oP9OZKhh9LdMj37Rq7qu04RyPTGw" class="music-link" target="_blank" rel="noopener">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+<section class="sec" aria-labelledby="ways-h">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow">Three ways in</span>
+        <h2 id="ways-h">Play it, feel it in a room, or <em>hear it live</em></h2>
+      </div>
+    </div>
+    <div class="ways">
+      <a class="way big rv" href="/pages/classes">
+        <img src="/images/w/arpit-bamboo-profile-1360.webp" srcset="/images/w/arpit-bamboo-profile-700.webp 700w, /images/w/arpit-bamboo-profile-1360.webp 1360w" sizes="(max-width: 900px) 100vw, 55vw" alt="Arpit playing a handpan in a bamboo grove" width="1360" height="1360" loading="lazy" decoding="async">
+        <div class="way-tx">
+        <span class="eyebrow">Online classes</span>
+        <h3>Learn the handpan</h3>
+        <p>Live lessons on Zoom for beginners and intermediate players. One hour a week, at a time that works in your time zone.</p>
+        <span class="fake-btn">Explore classes →</span>
         </div>
-      </div>
-      <div class="music-info">
-        <p class="music-type">Single</p>
-        <p class="music-name">Resonance Dialogue</p>
-        <p class="music-meta">2026 · with Omkar Argulwar</p>
-      </div>
-    </div>
-    <div class="music-card">
-      <div class="music-art" style="padding:0;">
-        <img src="images/Dandelion-Dreams_Spotify-Cover.png" alt="Dandelion Dreams cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="music-art-overlay">
-          <a href="https://open.spotify.com/track/6kZ0p0dY0UgoaVfCrmCyO7?si=fc3cf8c0b7b34dd6" class="music-link" target="_blank" rel="noopener">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://music.apple.com/us/album/dandelion-dreams-single/1778759790" class="music-link" target="_blank" rel="noopener">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://www.youtube.com/watch?v=MB8GINsNn_4" class="music-link" target="_blank" rel="noopener">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+      </a>
+      <a class="way rv" href="/pages/workshops">
+        <img src="/images/w/Handpan_Workshop_10-10-26-1600.webp" srcset="/images/w/Handpan_Workshop_10-10-26-900.webp 900w, /images/w/Handpan_Workshop_10-10-26-1600.webp 1600w" sizes="(max-width: 900px) 100vw, 45vw" alt="Participants of a handpan workshop in Bengaluru with their instruments" width="1600" height="900" loading="lazy" decoding="async">
+        <div class="way-tx">
+        <span class="eyebrow">Bengaluru</span>
+        <h3>Join a workshop</h3>
+        <p>Two hours in a small circle. Handpans are provided and no experience is needed.</p>
+        <span class="fake-btn">Explore workshops →</span>
         </div>
-      </div>
-      <div class="music-info">
-        <p class="music-type">Single</p>
-        <p class="music-name">Dandelion Dreams</p>
-        <p class="music-meta">2024 · 1 track</p>
-      </div>
-    </div>
-    <div class="music-card">
-      <div class="music-art" style="padding:0;">
-        <img src="images/Una-Mattina-Spotify-Cover.jpg" alt="Una Mattina cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="music-art-overlay">
-          <a href="https://open.spotify.com/track/1o42EIauXHwOoAqQZM1Jd3?si=36588b5e3de840c6" class="music-link" target="_blank" rel="noopener">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://music.apple.com/us/album/una-mattina-single/1736906194" class="music-link" target="_blank" rel="noopener">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://www.youtube.com/watch?v=0yWFzxMqVdY&list=OLAK5uy_kYpasaZqF29vyw75WBx1K4W5mPpoFpFUw" class="music-link" target="_blank" rel="noopener">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+      </a>
+      <a class="way rv" href="/pages/performances">
+        <img src="/images/w/arpit-amphitheatre-1600.webp" srcset="/images/w/arpit-amphitheatre-800.webp 800w, /images/w/arpit-amphitheatre-1600.webp 1600w" sizes="(max-width: 900px) 100vw, 45vw" alt="Arpit performing handpan on stage at an open-air amphitheatre" width="1600" height="900" loading="lazy" decoding="async">
+        <div class="way-tx">
+        <span class="eyebrow">Live music</span>
+        <h3>Experience live handpan</h3>
+        <p>Sets for private, corporate, cultural and wellness events.</p>
+        <span class="fake-btn">Enquire now →</span>
         </div>
-      </div>
-      <div class="music-info">
-        <p class="music-type">Single</p>
-        <p class="music-name">Una Mattina</p>
-        <p class="music-meta">2024 · 1 track</p>
-      </div>
+      </a>
     </div>
   </div>
 </section>
 
-<!-- WORKSHOPS -->
-<section class="section bg-sand-deep" id="workshops">
-  <div class="section-header">
-    <h2 class="section-title">Upcoming <em>Workshops</em></h2>
-    <a href="pages/workshops.html" class="section-link">All workshops →</a>
-  </div>
-  <div class="workshop-rows" id="wsUpcoming" data-empty="hide" aria-live="polite"><p class="w-empty">Loading workshop dates…</p></div>
-</section>
-
-<!-- PHOTO BANNER -->
-<div class="photo-banner">
-  <img src="images/arpit-community.jpg" alt="Arpit performing live"/>
-  <div class="photo-banner-overlay">
-    <div class="photo-banner-text">
-      <p>Community</p>
-      <p class="photo-banner-title">Some sounds you feel<br/><em>before you hear.</em></p>
-      <a href="pages/workshops.html" class="photo-banner-link">View all workshops →</a>
-    </div>
-  </div>
-</div>
-
-<!-- CLASSES -->
-<section class="section bg-cream" id="classes">
-  <div class="section-header">
-    <h2 class="section-title">Online <em>Classes</em></h2>
-  </div>
-  <div class="cls-one">
-    <div class="cls-one-text">
-      <p class="class-level">1:1 on Zoom</p>
-      <h3 class="class-name">Learn at your own pace</h3>
-      <p class="class-meta">Complete beginners welcome, and players who want to go deeper. Every class is built around where you are.</p>
-      <div class="class-pills">
-        <span class="class-pill">Live on Zoom</span>
-        <span class="class-pill">Any level</span>
-        <span class="class-pill">Compose your own piece</span>
+<section class="sec bg-paper" id="workshops" aria-labelledby="ws-h">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow">In person</span>
+        <h2 id="ws-h">Upcoming <em>workshops</em></h2>
+        <p>Small groups, real instruments, and everyone leaves having played.</p>
       </div>
+      <a class="link" href="/pages/workshops">All workshops</a>
     </div>
-    <div class="cls-one-cta">
-      <a href="pages/trial.html" class="cls-btn primary">Book a free trial</a>
-      <a href="pages/classes.html" class="cls-btn">See plans &amp; pricing &rarr;</a>
-      <p class="cls-note">First class is free. No payment needed to book.</p>
-    </div>
-  </div>
-</section>
-
-<!-- REVIEWS -->
-<section class="section bg-maroon rev-dark" id="reviews">
-  <div class="section-header">
-    <h2 class="section-title">What People <em>Say</em></h2>
-  </div>
-  <p class="rev-sub">From people who came to a workshop or took classes.</p>
-
-  <div class="rev-badge-wrap">
-  <div class="rev-badge" id="revBadge">
-    <svg class="rev-badge-g" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.5 17.7 9.5 24 9.5z"/>
-      <path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.2 5.3-4.7 6.9l7.3 5.7c4.3-3.9 6.8-9.8 6.8-17.1z"/>
-      <path fill="#FBBC05" d="M10.4 28.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6l-7.8-6.1C1 16.5 0 20.1 0 24s1 7.5 2.6 10.7l7.8-6.1z"/>
-      <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.3-5.7c-2 1.4-4.7 2.3-8.6 2.3-6.3 0-11.7-4-13.6-9.8l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/>
-    </svg>
-    <span class="rev-badge-stars" id="revBadgeStars" aria-hidden="true">★★★★★</span>
-    <span class="rev-badge-rating" id="revBadgeRating">4.9</span>
-    <span class="rev-badge-count" id="revBadgeCount"></span>
-  </div>
-  </div>
-
-  <div class="rev-grid">
-
-    <div class="rev-card">
-      <div class="rev-who">
-        <div class="rev-avatar">J</div>
+    <div data-workshops="notify" data-limit="3" aria-live="polite"><div class="skel"></div></div>
+    <div data-ws-none hidden>
+      <div class="notify rv">
         <div>
-          <div class="rev-name">Jayanth N</div>
-          <div class="rev-context">Workshop &middot; Aug 2026</div>
+          <h3>New dates are on the way</h3>
+          <p class="muted mt-s">Leave your name and number and Arpit will message you on WhatsApp as soon as the next workshop opens for booking. No spam, just the date.</p>
         </div>
+        <form class="form" data-notify novalidate>
+          <div class="field"><label for="hn-name">Your name</label><input id="hn-name" name="name" autocomplete="name" required data-msg="Please enter your name."></div>
+          <div class="field"><label for="hn-phone">WhatsApp number</label><div class="tel"><select name="dial" data-dial aria-label="Country code"></select><input id="hn-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" required data-phone data-msg="Please enter your number."></div></div>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">
+          <div class="form-foot"><button class="btn" type="submit">Notify me</button></div>
+        </form>
       </div>
-      <div class="rev-stars" aria-label="Five out of five stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-      <p class="rev-quote">I came across an ad for Arpit's handpan workshop on Instagram, and I signed up for it without knowing what to expect. It was the best two hours of my time spent on something in a long time.</p>
     </div>
-
-    <div class="rev-card">
-      <div class="rev-who">
-        <div class="rev-avatar">B</div>
-        <div>
-          <div class="rev-name">Bala Senthil Kumar</div>
-          <div class="rev-context">One to one classes &middot; Aug 2026</div>
-        </div>
-      </div>
-      <div class="rev-stars" aria-label="Five out of five stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-      <p class="rev-quote">I had been searching for someone to teach me Handpan on a one to one basis. Each class he just amazed me with his way of teaching.</p>
-    </div>
-
-    <div class="rev-card">
-      <div class="rev-who">
-        <div class="rev-avatar">M</div>
-        <div>
-          <div class="rev-name">Megha Koul</div>
-          <div class="rev-context">Workshop &middot; Aug 2026</div>
-        </div>
-      </div>
-      <div class="rev-stars" aria-label="Five out of five stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-      <p class="rev-quote">I had an amazing time at the workshop. Well curated and easy to follow instructions. Arpit is very thorough with his approach.</p>
-    </div>
-
-  </div>
-
-  <div class="rev-foot">
-    <a class="rev-btn" href="https://www.google.com/maps/place/Arpit+Pandey/data=!4m8!3m7!1s0x47de02542929477b:0x1633bee98002fa57!8m2!3d12.987977!4d77.6219718!9m1!1b1!16s%2Fg%2F11zgfhymgx" target="_blank" rel="noopener">Read them on Google &rarr;</a>
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer class="site-footer">
-  <div class="footer-main">
-    <div class="footer-brand">
-      <span class="footer-brand-name">Arpit <em>Pandey</em></span>
-      <span class="footer-brand-tag">Handpan artist · Bengaluru, India</span>
+<section class="sec" aria-labelledby="learn-h">
+  <div class="wrap split">
+    <div class="rv">
+      <div class="ph" style="aspect-ratio:4/5"><img src="/images/w/arpit-forest-front-960.webp" srcset="/images/w/arpit-forest-front-600.webp 600w, /images/w/arpit-forest-front-960.webp 960w" sizes="(max-width: 900px) 100vw, 46vw" alt="Arpit playing the handpan outdoors, hands on the notes" width="960" height="1200" loading="lazy" decoding="async"></div>
     </div>
-    <div class="footer-col">
-      <h4>Navigate</h4>
-      <ul>
-        <li><a href="pages/about.html">About</a></li>
-        <li><a href="pages/music.html">Music</a></li>
-        <li><a href="pages/workshops.html">Workshops</a></li>
-        <li><a href="pages/classes.html">Classes</a></li>
-        <li><a href="pages/contact.html">Contact</a></li>
-        <li><a href="pages/dashboard.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;">Dashboard <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></svg></a></li>
-        <li><a href="privacy.html">Privacy</a></li>
+    <div class="rv">
+      <span class="eyebrow">Learn with Arpit</span>
+      <h2 id="learn-h">Lessons that start <em>where you are</em></h2>
+      <p class="lead mt">Every class is live, so Arpit hears you play and helps in the moment. Complete beginners are welcome, and so are players who want to go deeper.</p>
+      <ul class="checks mt">
+        <li>A free 45-minute trial first, no payment needed</li>
+        <li>Then one hour a week on Zoom, at the same time each week</li>
+        <li>Beginner and intermediate paths, built around your pace</li>
+        <li>Move or skip a class yourself from your student page</li>
       </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Learn</h4>
-      <ul>
-        <li><a href="pages/trial.html">Free trial</a></li>
-        <li><a href="pages/classes.html">Online classes</a></li>
-        <li><a href="pages/workshops.html">Live workshops</a></li>
-        <li><a href="pages/my.html">My bookings</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Connect</h4>
-      <ul>
-        <li><a href="https://www.instagram.com/pandeyarpit" target="_blank" rel="noopener">Instagram</a></li>
-        <li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank" rel="noopener">YouTube</a></li>
-        <li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank" rel="noopener">Spotify</a></li>
-        <li><a href="mailto:arpithandpan@gmail.com">Email</a></li>
-      </ul>
+      <p class="mt"><b class="price-line"><span data-home-price>₹1,500</span> per class</b> <span class="muted small">· 10% off on quarterly plans</span></p>
+      <div class="btn-row mt">
+        <a class="btn" href="/pages/trial">Book a free trial</a>
+        <a class="link" href="/pages/classes">How classes work</a>
+      </div>
     </div>
   </div>
-  <div class="footer-bottom">
-    <p>© 2026 Arpit Pandey</p>
+</section>
+
+<section class="sec on-wine" aria-labelledby="music-h">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow">On stage and on record</span>
+        <h2 id="music-h">Music that sits between <em>the meditative and the melodic</em></h2>
+        <p>Originals and live recordings on every major platform, and performances from living rooms to open-air festivals.</p>
+      </div>
+      <div class="btn-row"><a class="btn" href="/pages/performances">Book a performance</a><a class="link" href="/pages/music">All music</a></div>
+    </div>
+    <div class="strip rv">
+      <figure class="ph" style="margin:0"><img src="/images/w/arpit-amphitheatre-1600.webp" srcset="/images/w/arpit-amphitheatre-800.webp 800w, /images/w/arpit-amphitheatre-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 50vw" alt="Arpit performing at Dfrost Festival, National Institute of Design, Bengaluru" width="1600" height="900" loading="lazy" decoding="async"></figure>
+      <figure class="ph" style="margin:0"><img src="/images/w/pic8-750.webp" srcset="/images/w/pic8-750.webp 750w" sizes="(max-width: 760px) 50vw, 25vw" alt="Arpit playing handpan at an evening outdoor performance" width="750" height="1075" loading="lazy" decoding="async"></figure>
+      <figure class="ph" style="margin:0"><img src="/images/w/arpit-bw-studio-1200.webp" srcset="/images/w/arpit-bw-studio-700.webp 700w, /images/w/arpit-bw-studio-1200.webp 1200w" sizes="(max-width: 760px) 50vw, 25vw" alt="Black and white portrait of Arpit holding a handpan" width="1200" height="1200" loading="lazy" decoding="async" style="object-position:50% 30%"></figure>
+    </div>
+    <div class="releases mt-l">
+      <article class="rel rv">
+        <div class="ph"><img src="/images/w/Resonance-Dialogue_Spotify-Cover-480.webp" srcset="/images/w/Resonance-Dialogue_Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Resonance Dialogue cover art" width="480" height="480" loading="lazy" decoding="async"></div>
+        <h3>Resonance Dialogue</h3><p class="muted">Single · 2026 · with Omkar Argulwar</p>
+        <div class="rel-links"><a href="https://open.spotify.com/track/0dNjIvkYt8GHoHV49PT5E2">Spotify</a><a href="https://music.apple.com/us/song/resonance-dialogue/6764633887">Apple Music</a><a href="https://www.youtube.com/watch?v=ZqP6yiAkZuQ">YouTube</a></div>
+      </article>
+      <article class="rel rv">
+        <div class="ph"><img src="/images/w/Azal-RAV_Spotify-Cover-480.webp" srcset="/images/w/Azal-RAV_Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Azal extended version cover art" width="480" height="480" loading="lazy" decoding="async"></div>
+        <h3>Azal (Extended)</h3><p class="muted">Single · 2025 · one hour</p>
+        <div class="rel-links"><a href="https://open.spotify.com/track/4fITsPKZ6ZL8BnnXPEQOoz">Spotify</a><a href="https://music.apple.com/us/album/azal-1-hour-extended-version-relaxing-rav-vast-music/1834683168">Apple Music</a><a href="https://www.youtube.com/watch?v=KLE0zdu48BQ">YouTube</a></div>
+      </article>
+      <article class="rel rv">
+        <div class="ph"><img src="/images/w/Dandelion-Dreams_Spotify-Cover-480.webp" srcset="/images/w/Dandelion-Dreams_Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Dandelion Dreams cover art" width="480" height="480" loading="lazy" decoding="async"></div>
+        <h3>Dandelion Dreams</h3><p class="muted">Single · 2024</p>
+        <div class="rel-links"><a href="https://open.spotify.com/track/6kZ0p0dY0UgoaVfCrmCyO7">Spotify</a><a href="https://music.apple.com/us/album/dandelion-dreams-single/1778759790">Apple Music</a><a href="https://www.youtube.com/watch?v=MB8GINsNn_4">YouTube</a></div>
+      </article>
+      <article class="rel rv">
+        <div class="ph"><img src="/images/w/Una-Mattina-Spotify-Cover-480.webp" srcset="/images/w/Una-Mattina-Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Una Mattina cover art" width="480" height="480" loading="lazy" decoding="async"></div>
+        <h3>Una Mattina</h3><p class="muted">Single · 2024</p>
+        <div class="rel-links"><a href="https://open.spotify.com/track/1o42EIauXHwOoAqQZM1Jd3">Spotify</a><a href="https://music.apple.com/us/album/una-mattina-single/1736906194">Apple Music</a><a href="https://www.youtube.com/watch?v=0yWFzxMqVdY">YouTube</a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" aria-labelledby="rev-h">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow">Kind words</span>
+        <h2 id="rev-h">From people who <em>played with Arpit</em></h2>
+      </div>
+      <a class="link" href="https://www.google.com/maps/place/Arpit+Pandey/data=!4m8!3m7!1s0x47de02542929477b:0x1633bee98002fa57!8m2!3d12.987977!4d77.6219718!9m1!1b1!16s%2Fg%2F11zgfhymgx">Read all reviews on Google</a>
+    </div>
+    <div class="reviews">
+      <figure class="review rv" style="margin:0"><span class="stars" aria-label="5 out of 5">★★★★★</span><blockquote>“I came across an ad for Arpit’s handpan workshop on Instagram, and I signed up for it without knowing what to expect. It was the best two hours of my time spent on something in a long time.”</blockquote><figcaption><span class="av" aria-hidden="true">J</span><span><b>Jayanth N</b><span>Workshop · Aug 2026</span></span></figcaption></figure>
+      <figure class="review rv" style="margin:0"><span class="stars" aria-label="5 out of 5">★★★★★</span><blockquote>“I had been searching for someone to teach me Handpan on a one to one basis. Each class he just amazed me with his way of teaching.”</blockquote><figcaption><span class="av" aria-hidden="true">B</span><span><b>Bala Senthil Kumar</b><span>Online classes · Aug 2026</span></span></figcaption></figure>
+      <figure class="review rv" style="margin:0"><span class="stars" aria-label="5 out of 5">★★★★★</span><blockquote>“I had an amazing time at the workshop. Well curated and easy to follow instructions. Arpit is very thorough with his approach.”</blockquote><figcaption><span class="av" aria-hidden="true">M</span><span><b>Megha Koul</b><span>Workshop · Aug 2026</span></span></figcaption></figure>
+    </div>
+    <div class="past-grid scroller mt-l rv" aria-label="Photos from past workshops">
+      <div class="ph" style="aspect-ratio:3/2"><img src="/images/w/Handpan_Workshop_08-08-26-1600.webp" srcset="/images/w/Handpan_Workshop_08-08-26-900.webp 900w, /images/w/Handpan_Workshop_08-08-26-1600.webp 1600w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" alt="Group photo after the August 2026 workshop" width="1600" height="900" loading="lazy" decoding="async"></div>
+      <div class="ph" style="aspect-ratio:3/2"><img src="/images/w/Handpan_Workshop_06-06-26-1600.webp" srcset="/images/w/Handpan_Workshop_06-06-26-900.webp 900w, /images/w/Handpan_Workshop_06-06-26-1600.webp 1600w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" alt="Group photo after the June 2026 workshop" width="1600" height="1067" loading="lazy" decoding="async"></div>
+      <div class="ph" style="aspect-ratio:3/2"><img src="/images/w/Handpan_Workshop_05-07-26-1200.webp" srcset="/images/w/Handpan_Workshop_05-07-26-900.webp 900w, /images/w/Handpan_Workshop_05-07-26-1200.webp 1200w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" alt="Group photo after the July 2026 workshop" width="1200" height="800" loading="lazy" decoding="async"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec bg-paper" aria-labelledby="about-h">
+  <div class="wrap split rev">
+    <div class="rv">
+      <span class="eyebrow">About Arpit</span>
+      <h2 id="about-h">A video in 2015, and <em>a decade of playing</em></h2>
+      <p class="lead mt">Arpit grew up in Uttar Pradesh, drawn to rhythm long before he found the handpan. A YouTube video in 2015 stopped him mid-scroll. He got a handpan soon after and hasn’t put it down since.</p>
+      <p class="mt">Today he performs, records and composes from Bengaluru, and has taught through workshops and online classes since 2022. His approach is simple: slow down, listen deeply, and let the playing come from feeling rather than repetition.</p>
+      <a class="link mt" href="/pages/about">Read the full story</a>
+    </div>
+    <div class="rv"><div class="ph" style="aspect-ratio:1"><img src="/images/w/arpit-mountain-900.webp" srcset="/images/w/arpit-mountain-900.webp 900w" sizes="(max-width: 900px) 100vw, 46vw" alt="Arpit playing handpan facing the Kodaikanal hills" width="900" height="900" loading="lazy" decoding="async"></div></div>
+  </div>
+</section>
+
+<section class="sec on-wine" aria-labelledby="next-h">
+  <div class="wrap">
+    <div class="rv center">
+      <span class="eyebrow">Your next step</span>
+      <h2 id="next-h">Where would you like <em>to begin?</em></h2>
+    </div>
+    <div class="choose rv">
+      <a href="/pages/trial"><b>Learn the handpan</b><span>Book a free 45-minute trial on Zoom, in your own time zone.</span><i>Book a free trial →</i></a>
+      <a href="/pages/workshops"><b>Find a workshop</b><span>Two hours in Bengaluru, instruments provided.</span><i>See workshop dates →</i></a>
+      <a href="/pages/performances#enquire"><b>Book a performance</b><span>Tell Arpit about your event and get a quote.</span><i>Send an enquiry →</i></a>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <a class="brand" href="/" aria-label="Arpit Pandey, home"><img src="/images/handpan-logo-inverse.svg" alt="" width="40" height="40"><b>Arpit <i>Pandey</i></b></a>
+        <p>Handpan artist, recording musician and teacher. Based in Bengaluru, teaching students across India and abroad.</p>
+        <a class="btn btn-sm foot-cta" href="/pages/trial">Book a free trial</a>
+      </div>
+      <div><p class="foot-h">Learn</p><ul>
+        <li><a href="/pages/classes">Online classes</a></li>
+        <li><a href="/pages/classes#pricing">Pricing</a></li>
+        <li><a href="/pages/trial">Free trial</a></li>
+        <li><a href="/enroll/new">Start weekly classes</a></li>
+        <li><a href="/pages/my">Student login</a></li>
+      </ul></div>
+      <div><p class="foot-h">Experience</p><ul>
+        <li><a href="/pages/workshops">Workshops</a></li>
+        <li><a href="/pages/performances">Performances</a></li>
+        <li><a href="/pages/music">Music</a></li>
+        <li><a href="/pages/about">About Arpit</a></li>
+      </ul></div>
+      <div><p class="foot-h">Connect</p><ul>
+        <li><a href="/pages/contact">Contact</a></li>
+        <li><a href="https://wa.me/919380140907">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/pandeyarpit">Instagram</a></li>
+        <li><a href="https://www.youtube.com/@ArpitPandeyhandpan">YouTube</a></li>
+        <li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc">Spotify</a></li>
+        <li><a href="mailto:arpithandpan@gmail.com">arpithandpan@gmail.com</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-bot"><span>© <span data-year>2026</span> Arpit Pandey · Bengaluru, India</span><a href="/privacy">Privacy policy</a></div>
   </div>
 </footer>
-
-<script src="js/main.js"></script>
-<script>
-function toggleClass(el) {
-  const body = el.nextElementSibling;
-  const toggle = el.querySelector('.class-toggle');
-  const isOpen = body.classList.contains('open');
-  body.classList.toggle('open');
-  toggle.textContent = isOpen ? '+ See details' : '− Hide details';
-}
-</script>
-<script>
-(function () {
-  var API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
-  var badge = document.getElementById('revBadge');
-  if (!badge) return;
-
-  fetch(API_BASE + '/api/reviews')
-    .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (d) {
-      if (!d) return;
-      var rating = Number(d.rating);
-      var count = Number(d.count);
-      if (!isFinite(rating) || !isFinite(count) || count < 1) return;
-
-      var filled = Math.round(rating);
-      if (filled < 0) filled = 0;
-      if (filled > 5) filled = 5;
-      var stars = '';
-      for (var i = 0; i < 5; i++) stars += (i < filled ? '\u2605' : '\u2606');
-
-      // the badge renders from the markup; the API only corrects it
-      document.getElementById('revBadgeStars').textContent = stars;
-      document.getElementById('revBadgeRating').textContent = rating.toFixed(1);
-      // the count only helps once it is large enough to be persuasive
-      var SHOW_COUNT_FROM = 25;
-
-      // same numbers drive the hero badge
-      // the badge is already in the markup; the API only corrects the number
-      var hr = document.getElementById('heroRating');
-      if (hr) {
-        hr.querySelector('.hero-rating-value').textContent = rating.toFixed(1);
-        hr.setAttribute('aria-label',
-          'Rated ' + rating.toFixed(1) + ' out of 5 on Google');
-      }
-      document.getElementById('revBadgeCount').textContent =
-        count >= SHOW_COUNT_FROM ? ('\u00B7 ' + count + ' Google reviews') : '';
-
-      badge.setAttribute('aria-label', rating.toFixed(1) + ' out of 5 from ' + count + ' Google reviews');
-    })
-    .catch(function () { /* badge stays hidden */ });
-})();
-</script>
-
-<script>
-// Upcoming workshops come from the dashboard (Workshops), so the site never
-// shows a stale date, venue or "booking opens" note. One request returns
-// every upcoming workshop with the seats left.
-(function () {
-  var API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
-  var LOW_SEATS = 2;
-  var box = document.getElementById('wsUpcoming');
-  if (!box) return;
-  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  function clockMin(t) {
-    var m = String(t || '').match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
-    if (!m) return null;
-    var h = +m[1], mi = +(m[2] || 0), ap = (m[3] || '').toUpperCase();
-    if (ap === 'PM' && h < 12) h += 12;
-    if (ap === 'AM' && h === 12) h = 0;
-    return h * 60 + mi;
-  }
-  // "4:00 PM - 6:00 PM" → "2 hours"
-  function duration(time) {
-    var p = String(time || '').split(/\s*(?:-|–|to)\s*/i);
-    if (p.length < 2) return '';
-    var a = clockMin(p[0]), b = clockMin(p[1]);
-    if (a == null || b == null) return '';
-    if (!/AM|PM/i.test(p[0]) && /PM/i.test(p[1]) && a < 720 && a + 720 < b + 60) a += 720;
-    var d = b - a; if (d <= 0) return '';
-    var h = d / 60;
-    return (h % 1 === 0 ? h : h.toFixed(1)) + (h === 1 ? ' hour' : ' hours');
-  }
-  function row(w) {
-    var d = String(w.date).slice(0, 10).split('-');
-    var title = w.title || 'Handpan Workshop';
-    var meta = [w.venue || 'Venue to be announced, Bengaluru', duration(w.time), 'Beginner friendly'].filter(Boolean).join(' · ');
-    var dayStart = new Date(w.date + 'T00:00:00+05:30');
-    var now = new Date();
-    var action = '', counts = '', open = false;
-    if (!w.bookingOpen) {
-      action = '<div class="w-action w-status"><span class="w-status-label">Coming soon</span><span class="w-status-note">Booking opens soon</span></div>';
-    } else if (now >= dayStart) {
-      action = '<div class="w-action"><span class="w-pill-off">Booking closed</span></div>';
-    } else if (w.participantsRemaining != null && w.participantsRemaining <= 0) {
-      action = '<div class="w-action"><span class="w-pill-off">Slots full</span></div>';
-      counts = '<p class="w-counts"><span class="w-dot full" role="img" aria-label="Slots full"></span>All participant spots are taken</p>';
-    } else {
-      open = true;
-      action = '<div class="w-action"><a href="/pages/book?ws=' + encodeURIComponent(w.id) + '" class="btn-primary" style="font-size:1rem;padding:0.79rem 2rem;">Book now</a></div>';
-      var pn = w.participantsRemaining, on = w.observersRemaining;
-      if (pn != null) {
-        var few = pn <= LOW_SEATS;
-        var line = pn + ' participant ' + (pn === 1 ? 'spot' : 'spots') + ' left';
-        if (on != null) line += on > 0 ? ' <span class="w-dim">·</span> ' + on + ' audience ' + (on === 1 ? 'pass' : 'passes') + ' left' : ' <span class="w-dim">· audience full</span>';
-        counts = '<p class="w-counts"><span class="w-dot' + (few ? ' few' : '') + '" role="img" aria-label="' + (few ? 'Only a few spots left' : 'Bookings open') + '"></span>' + line + '</p>';
-      }
-    }
-    return '<div class="workshop-row' + (open ? ' is-open' : '') + '">'
-      + '<div class="w-date"><span class="w-day">' + d[2] + '</span><span class="w-month">' + MONTHS[+d[1] - 1] + ' ' + d[0] + '</span></div>'
-      + '<div><p class="w-title">' + esc(title) + '</p><div class="w-meta"><span>' + esc(meta) + '</span></div>' + counts + '</div>'
-      + action + '</div>';
-  }
-  // Nothing to list (none planned, or the list could not load): hide the
-  // whole section. The workshops page shows "Notify me" instead.
-  function empty() { var sec = box.closest('section'); if (sec) sec.style.display = 'none'; }
-
-  fetch(API_BASE + '/api/workshops/upcoming')
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (data) {
-      var list = (data && data.workshops) || [];
-      var today = new Date(Date.now() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
-      list = list.filter(function (w) { return String(w.date).slice(0, 10) >= today; });
-      if (!list.length) { empty(); return; }
-      box.innerHTML = list.map(row).join('');
-    })
-    .catch(function () { empty(); });
-})();
-</script>
+<script src="/js/site.js?v=2026-10-31a" defer></script>
 </body>
 </html>

@@ -1,429 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta property="og:type" content="website"/>
-<meta property="og:site_name" content="Arpit Pandey"/>
-<meta property="og:title" content="Music · Arpit Pandey"/>
-<meta property="og:description" content="Handpan releases and live sessions by Arpit Pandey, on Spotify, Apple Music and YouTube."/>
-<meta property="og:url" content="https://arpitpandey.com/pages/music.html"/>
-<meta property="og:image" content="https://arpitpandey.com/images/og-image.png"/>
-<meta property="og:image:width" content="1200"/>
-<meta property="og:image:height" content="630"/>
-<meta property="og:image:alt" content="Handpan with Arpit Pandey"/>
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Music · Arpit Pandey"/>
-<meta name="twitter:description" content="Handpan releases and live sessions by Arpit Pandey, on Spotify, Apple Music and YouTube."/>
-<meta name="twitter:image" content="https://arpitpandey.com/images/og-image.png"/>
-<title>Music | Arpit Pandey</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="../css/style.css"/>
-<style>
-.release-featured {
-  display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: center;
-  background: var(--card); border-radius: var(--card-radius); padding: 3rem; margin-bottom: 4rem;
-}
-.release-art-lg {
-  aspect-ratio: 1; background: var(--sand-deep); border-radius: var(--card-radius);
-  display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
-}
-.release-eyebrow { letter-spacing: 0.04em; text-transform: none; color: var(--clay); margin-bottom: 0.8rem; }
-.release-title { font-family: var(--font-body); color: var(--bark); line-height: 1.1; margin-bottom: 0.6rem; }
-.release-title em { font-style: normal; color: var(--clay); }
-.release-year { color: var(--text-light); margin-bottom: 1.5rem; }
-.release-desc { font-family: var(--font-body); font-style: normal; color: var(--text-mid); line-height: 1.8; margin-bottom: 2rem; }
-.platform-links { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2rem; }
-.platform-btn { letter-spacing: 0.02em; text-transform: none; font-weight: 600;
-  padding: calc(0.79rem - 2px) 1.8rem; border-radius: 40px; text-decoration: none; transition: all 0.2s;
-  border: 2px solid var(--bark); color: var(--bark); white-space: nowrap;
-  -webkit-tap-highlight-color: transparent;
-}
-.platform-btn.primary { background: var(--maroon); border-color: var(--maroon); color: var(--ivory); }
-@media (hover: hover) and (pointer: fine) {
-  .platform-btn:hover { background: var(--maroon); color: var(--ivory); }
-  .platform-btn.primary:hover { background: var(--maroon-deep); border-color: var(--maroon-deep); color: var(--ivory); }
-}
-
-.tracklist { border-top: 1px solid var(--clay-pale); padding-top: 1.5rem; }
-.tracklist-title { letter-spacing: 0.04em; text-transform: none; color: var(--text-light); margin-bottom: 1rem; }
-.track-item {
-  display: flex; align-items: center; gap: 1rem; padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(80,0,24,0.1); cursor: pointer;
-  transition: background 0.15s; border-radius: 2px;
-}
-.track-num { color: var(--text-light); min-width: 20px; }
-.track-name { color: var(--text-mid); flex: 1; }
-.track-dur { color: var(--text-light); }
-.rp-link { letter-spacing: 0.01em; text-transform: none; font-weight: 500; color: var(--text-mid); text-decoration: none; border: 1.5px solid var(--rule); padding: 0.32rem 0.75rem; border-radius: 20px; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-@media (hover: hover) and (pointer: fine) {
-  .track-item:hover { padding-left: 0.5rem; }
-  .rp-link:hover { border-color: var(--clay); color: var(--clay); }
-  .video-card:hover .video-play-btn { background: rgba(245,238,229,0.28); }
-}
-
-.releases-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
-.release-card { background: var(--card); border-radius: var(--card-radius); overflow: hidden; border: 1px solid var(--card-rule); -webkit-tap-highlight-color: transparent; cursor: pointer; }
-.release-art { aspect-ratio: 1; background: var(--sand-deep); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-/* The card was doing the rounding by clipping a square image. On a long
-   press iOS lifts the raw image out of that clip, so its real corners
-   showed. Rounding the image itself keeps them in the lifted preview. */
-.release-art img { border-radius: var(--card-radius) var(--card-radius) 0 0; }
-.release-art-overlay {
-  position: absolute; inset: 0;
-  background: rgba(80,0,24,0.78);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 1rem;
-  opacity: 0; transition: opacity 0.25s ease;
-  padding: 1.5rem;
-  pointer-events: none;
-}
-.release-card.tapped .release-art-overlay { opacity: 1; pointer-events: auto; }
-@media (hover: hover) and (pointer: fine) {
-  .release-card:hover { transform: scale(1.012); }
-  .release-card:hover .release-art-overlay { opacity: 1; pointer-events: auto; }
-}
-.release-art-overlay .rp-link { letter-spacing: 0.02em; text-transform: none; font-weight: 600;
-  color: var(--cream); text-decoration: none;
-  border: 2px solid rgba(245,238,229,0.6); padding: calc(0.79rem - 2px) 1.5rem; border-radius: 40px;
-  transition: all 0.2s; width: 240px; text-align: center;
-  background: rgba(80,0,24,0.55);
-  -webkit-tap-highlight-color: transparent;
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-}
-.release-art-overlay .rp-link:first-child {
-  background: var(--ivory); border-color: var(--ivory); color: var(--maroon);
-}
-@media (hover: hover) and (pointer: fine) {
-  .release-art-overlay .rp-link:hover { border-color: var(--ivory); color: var(--ivory); }
-  .release-art-overlay .rp-link:first-child:hover { background: var(--ivory-warm); border-color: var(--ivory-warm); color: var(--maroon); }
-}
-.release-body { padding: 1.2rem 1.4rem 1.5rem; }
-.release-type { letter-spacing: 0.04em; text-transform: none; color: var(--clay); margin-bottom: 0.3rem; }
-.release-name { font-family: var(--font-body); color: var(--bark); margin-bottom: 0.3rem; }
-.release-info { color: var(--text-light); }
-.release-platforms { display: none; }
-
-.video-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; }
-.video-card { background: var(--card); border-radius: var(--card-radius); overflow: hidden; }
-.video-thumb {
-  aspect-ratio: 16/9; background: var(--bark);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; position: relative; overflow: hidden;
-}
-.video-thumb-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #6B0A20, #3A0011); }
-.video-play-btn {
-  position: relative; z-index: 1;
-  width: 56px; height: 56px; border-radius: 50%;
-  background: rgba(245,238,229,0.15); border: 1.5px solid rgba(245,238,229,0.4);
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s;
-}
-.video-play-tri { width:0; height:0; border-style:solid; border-width:9px 0 9px 16px; border-color:transparent transparent transparent rgba(245,238,229,0.9); margin-left:4px; }
-.video-info { padding: 1.1rem 1.3rem 1.3rem; }
-.video-label { letter-spacing: 0.12em; text-transform: none; color: var(--clay); margin-bottom: 0.3rem; }
-.video-title { font-family: var(--font-body); color: var(--bark); }
-
-@media (max-width: 1080px) {
-  .release-featured { grid-template-columns: 1fr; padding: 2rem; gap: 2rem; }
-  .release-art-lg { max-width: none; }
-  .releases-grid { grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
-  .video-grid { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-  .release-art-wrap { max-width: 240px; margin: 0 auto; }
-}
-@media (max-width: 600px) {
-  .release-featured { padding: 1.5rem; }
-  .releases-grid { grid-template-columns: 1fr; }
-  .video-grid { grid-template-columns: 1fr; }
-  /* three streaming buttons will not fit on one line at readable
-     padding, so they stack full width rather than sitting ragged */
-  .platform-links { flex-direction: column; gap: 0.6rem; }
-  .platform-btn { width: 100%; text-align: center; padding: 0.72rem 1rem; }
-}
-
-/* --- mobile type step --- */
-
-/* Two columns hold down to 760px. Before this the layout dropped to a
-   single column at 1080, which is desktop territory: any phone in
-   landscape or tablet in portrait got a capped square with space
-   either side. Below 760 it stacks and the art fills the card. */
-@media (min-width: 760px) and (max-width: 1080px) {
-  .release-featured {
-    grid-template-columns: 0.9fr 1.1fr; gap: 2.5rem; align-items: center;
-  }
-}
-.artist-band {
-  display: grid; grid-template-columns: 1fr 1.2fr; gap: 3.5rem; align-items: center;
-  background: var(--card); border-radius: var(--card-radius); padding: 2.5rem; margin-top: 4rem;
-}
-.artist-band-photo { aspect-ratio: 1; border-radius: 3px; overflow: hidden; }
-.artist-band-photo img { width:100%; height:100%; object-fit:cover; display:block; }
-.artist-band .artist-band-eyebrow { font-size: var(--t-body); font-weight: 600; color: var(--maroon); margin-bottom: 0.6rem; }
-.artist-band h3 { font-family: var(--font-body); font-size: var(--t-3); font-weight: 500; line-height: 1.3; color: var(--bark); margin-bottom: 1rem; }
-.artist-band p { font-size: var(--t-body); color: var(--text-mid); line-height: 1.8; margin-bottom: 1.6rem; max-width: 460px; }
-@media (max-width: 900px) { .artist-band { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem; } }
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Music and releases · Arpit Pandey</title>
+<meta name="description" content="Handpan releases and live sessions by Arpit Pandey, including Resonance Dialogue, Azal and Dandelion Dreams, on Spotify, Apple Music and YouTube.">
+<link rel="canonical" href="https://arpitpandey.com/pages/music">
+<meta name="theme-color" content="#F5EEE5">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Arpit Pandey">
+<meta property="og:title" content="Music and releases · Arpit Pandey">
+<meta property="og:description" content="Handpan releases and live sessions by Arpit Pandey, including Resonance Dialogue, Azal and Dandelion Dreams, on Spotify, Apple Music and YouTube.">
+<meta property="og:url" content="https://arpitpandey.com/pages/music">
+<meta property="og:image" content="https://arpitpandey.com/images/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="/fonts/cormorant-garamond-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/figtree-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/site.css?v=2026-10-31a">
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','2322564451222517');fbq('track','PageView');
+</script>
 </head>
 <body>
-<nav>
-  <a href="../index.html" class="nav-logo"><img src="../images/handpan-logo.svg" alt="Handpan with Arpit" width="44" height="44" style="display:block;">
-  </a>
-  <button class="nav-hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-  <ul class="nav-links">
-    <li><a href="../index.html">Home</a></li><li><a href="about.html">About</a></li>
-    <li><a href="music.html" class="active">Music</a></li><li><a href="workshops.html">Workshops</a></li>
-    <li><a href="classes.html">Classes</a></li><li><a href="contact.html">Contact</a></li>
-    <li class="nav-account-li"><a class="nav-account" href="my.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Log in</span></a></li>
-  </ul>
-</nav>
-<div class="mobile-menu">
-<div class="mobile-menu-inner">
-  <a href="../index.html">Home</a><a href="about.html">About</a><a href="music.html">Music</a>
-  <a href="workshops.html">Workshops</a><a href="classes.html">Classes</a><a href="contact.html">Contact</a>
-  <a class="mm-account" href="my.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Log in</span></a>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap nav-in" role="navigation" aria-label="Main">
+    <a class="brand" href="/" aria-label="Arpit Pandey, home"><img src="/images/handpan-logo.svg" alt="" width="40" height="40"><b>Arpit <i>Pandey</i></b></a>
+    <ul class="navl"><li><a href="/pages/classes">Learn</a></li><li><a href="/pages/workshops">Workshops</a></li><li><a href="/pages/performances">Performances</a></li><li><a href="/pages/music" aria-current="page">Music</a></li><li><a href="/pages/about">About</a></li></ul>
+    <div class="nav-acts" data-acct="/pages/my">
+      <a class="nav-login" href="/pages/my"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Student login</a>
+      <a class="btn btn-sm" href="/pages/trial">Free trial</a>
+      <button class="nav-burger" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mnav" id="mnav">
+  <ul><li><a href="/pages/classes">Learn</a></li><li><a href="/pages/workshops">Workshops</a></li><li><a href="/pages/performances">Performances</a></li><li><a href="/pages/music" aria-current="page">Music</a></li><li><a href="/pages/about">About</a></li><li><a href="/pages/contact">Contact</a></li></ul>
+  <a class="btn" href="/pages/trial">Book a free trial</a>
+  <div class="mnav-sub" data-macct="/pages/my"><a href="/pages/my">Student login</a></div>
+  <div class="mnav-sub"><a href="https://wa.me/919380140907">WhatsApp</a><a href="mailto:arpithandpan@gmail.com">arpithandpan@gmail.com</a></div>
 </div>
-</div>
-
+<main id="main">
 <section class="page-hero">
-  <p class="page-hero-eyebrow">Discography</p>
-  <h1 class="page-hero-title">Releases</h1>
-  <p class="page-hero-sub">A mix of originals and covers, recorded live wherever possible.</p>
-</section>
-<div class="page-hero-rule" aria-hidden="true"></div>
-
-<section class="section">
-  <!-- FEATURED RELEASE -->
-  <div class="release-featured">
-    <div class="release-art-lg">
-      <img src="../images/Resonance-Dialogue_Spotify-Cover.jpg" alt="Resonance Dialogue cover" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:3px;"/>
-    </div>
-    <div>
-      <p class="release-eyebrow">Latest release · single · 2026</p>
-      <h2 class="release-title">Resonance <em>Dialogue</em></h2>
-      <p class="release-year">Arpit Pandey &amp; Omkar Argulwar · 1 track · 11:04</p>
-      <p class="release-desc">Handpan and bansuri, recorded together in a single take. No overdubs, no edits, just two players listening to each other.</p>
-      <div class="platform-links">
-        <a href="https://open.spotify.com/track/0dNjIvkYt8GHoHV49PT5E2?si=980812fcaece48d5" target="_blank" rel="noopener" class="platform-btn primary">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-        <a href="https://music.apple.com/us/song/resonance-dialogue/6764633887" target="_blank" rel="noopener" class="platform-btn">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-        <a href="https://www.youtube.com/watch?v=ZqP6yiAkZuQ" target="_blank" rel="noopener" class="platform-btn">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ALL RELEASES -->
-  <div class="section-header"><h2 class="section-title">All <em>Releases</em></h2></div>
-  <div class="releases-grid">
-
-    <div class="release-card">
-      <div class="release-art" style="padding:0;">
-        <img src="../images/Azal-RAV_Spotify-Cover.png" alt="Azal Extended cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="release-art-overlay">
-          <a href="https://open.spotify.com/track/4fITsPKZ6ZL8BnnXPEQOoz?si=dca6387f271b4adc" target="_blank" rel="noopener" class="rp-link">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://music.apple.com/us/album/azal-1-hour-extended-version-relaxing-rav-vast-music/1834683168" target="_blank" rel="noopener" class="rp-link">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://www.youtube.com/watch?v=KLE0zdu48BQ&list=OLAK5uy_nAX5Ut4NP_V_NyvdXxLvS4OHy0QLTrtnQ" target="_blank" rel="noopener" class="rp-link">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+  <div class="wrap">
+    <div class="feature-rel">
+      <div class="ph rv"><img src="/images/w/Resonance-Dialogue_Spotify-Cover-480.webp" srcset="/images/w/Resonance-Dialogue_Spotify-Cover-480.webp 480w" sizes="(max-width: 820px) 100vw, 420px" alt="Resonance Dialogue cover art" width="480" height="480" fetchpriority="high"></div>
+      <div class="rv">
+        <span class="eyebrow">Latest release · 2026</span>
+        <h1>Resonance <em>Dialogue</em></h1>
+        <p class="muted mt-s">Arpit Pandey and Omkar Argulwar · single · 11:04</p>
+        <p class="lead mt">Handpan and bansuri, recorded together in a single take. No overdubs, no edits, just two players listening to each other.</p>
+        <div class="btn-row mt">
+          <a class="btn" href="https://open.spotify.com/track/0dNjIvkYt8GHoHV49PT5E2">Listen on Spotify</a>
+          <a class="btn btn-soft" href="https://music.apple.com/us/song/resonance-dialogue/6764633887">Apple Music</a>
+          <a class="btn btn-soft" href="https://www.youtube.com/watch?v=ZqP6yiAkZuQ">YouTube</a>
         </div>
-      </div>
-      <div class="release-body">
-        <p class="release-type">Single</p>
-        <p class="release-name">Azal (Extended Version)</p>
-        <p class="release-info">2025 · 1 track · 1:00:08</p>
-      </div>
-    </div>
-
-    <div class="release-card">
-      <div class="release-art" style="padding:0;">
-        <img src="../images/Dandelion-Dreams_Spotify-Cover.png" alt="Dandelion Dreams cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="release-art-overlay">
-          <a href="https://open.spotify.com/track/6kZ0p0dY0UgoaVfCrmCyO7?si=fc3cf8c0b7b34dd6" target="_blank" rel="noopener" class="rp-link">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://music.apple.com/us/album/dandelion-dreams-single/1778759790" target="_blank" rel="noopener" class="rp-link">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://www.youtube.com/watch?v=MB8GINsNn_4" target="_blank" rel="noopener" class="rp-link">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-        </div>
-      </div>
-      <div class="release-body">
-        <p class="release-type">Single</p>
-        <p class="release-name">Dandelion Dreams</p>
-        <p class="release-info">2024 · 1 track · 9:12</p>
-      </div>
-    </div>
-
-    <div class="release-card">
-      <div class="release-art" style="padding:0;">
-        <img src="../images/Una-Mattina-Spotify-Cover.jpg" alt="Una Mattina cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="release-art-overlay">
-          <a href="https://open.spotify.com/track/1o42EIauXHwOoAqQZM1Jd3?si=36588b5e3de840c6" target="_blank" rel="noopener" class="rp-link">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://music.apple.com/us/album/una-mattina-single/1736906194" target="_blank" rel="noopener" class="rp-link">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://www.youtube.com/watch?v=0yWFzxMqVdY&list=OLAK5uy_kYpasaZqF29vyw75WBx1K4W5mPpoFpFUw" target="_blank" rel="noopener" class="rp-link">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-        </div>
-      </div>
-      <div class="release-body">
-        <p class="release-type">Single</p>
-        <p class="release-name">Una Mattina</p>
-        <p class="release-info">2024 · 1 track · 3:50</p>
-      </div>
-    </div>
-
-    <div class="release-card">
-      <div class="release-art" style="padding:0;">
-        <img src="../images/Echoes_of_Raindrops_Spotify-Cover.jpg" alt="Echoes of Raindrops cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="release-art-overlay">
-          <a href="https://open.spotify.com/track/10nBIUKkH93vEQmdqBgIjH?si=1803dd2e59ba44dc" target="_blank" rel="noopener" class="rp-link">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://music.apple.com/us/album/echoes-of-raindrops-single/1733530819" target="_blank" rel="noopener" class="rp-link">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://www.youtube.com/watch?v=-yKA7NZwc8g&list=OLAK5uy_kGU67QeyyBCO-1vJkGnsZNE9Re_vplY90" target="_blank" rel="noopener" class="rp-link">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-        </div>
-      </div>
-      <div class="release-body">
-        <p class="release-type">Single</p>
-        <p class="release-name">Echoes of Raindrops</p>
-        <p class="release-info">2024 · 1 track · 3:26</p>
-      </div>
-    </div>
-
-    <div class="release-card">
-      <div class="release-art" style="padding:0;">
-        <img src="../images/A-Look-Back_Spotify-Cover.jpg" alt="A Look Back cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="release-art-overlay">
-          <a href="https://open.spotify.com/track/6NdtTDDV2IIStQeCWKkNg5?si=f05215bbc96448e7" target="_blank" rel="noopener" class="rp-link">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://music.apple.com/us/album/a-look-back-single/1597094686" target="_blank" rel="noopener" class="rp-link">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://www.youtube.com/watch?v=PxlgEOzSjRU&list=OLAK5uy_mQhkaws2nzgVPpOFS8tDjDVNFQ4uVnaFc" target="_blank" rel="noopener" class="rp-link">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-        </div>
-      </div>
-      <div class="release-body">
-        <p class="release-type">Single</p>
-        <p class="release-name">A Look Back</p>
-        <p class="release-info">2021 · 1 track · 6:14</p>
-      </div>
-    </div>
-
-    <div class="release-card">
-      <div class="release-art" style="padding:0;">
-        <img src="../images/Little-Waves_Spotify-Cover.png" alt="Little Waves cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="release-art-overlay">
-          <a href="https://open.spotify.com/track/4vWyUT87Ir07HNU1m92VmA?si=f6537e657bab4933" target="_blank" rel="noopener" class="rp-link">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://music.apple.com/us/album/little-waves-single/1567234437" target="_blank" rel="noopener" class="rp-link">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://www.youtube.com/watch?v=mlx7JQ4UNZ0&list=OLAK5uy_l5HfXCvVFWPZIAvZ7mDcg_452jp65LfMw" target="_blank" rel="noopener" class="rp-link">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-        </div>
-      </div>
-      <div class="release-body">
-        <p class="release-type">Single</p>
-        <p class="release-name">Little Waves</p>
-        <p class="release-info">2021 · 1 track · 6:19</p>
-      </div>
-    </div>
-
-    <div class="release-card">
-      <div class="release-art" style="padding:0;">
-        <img src="../images/Azal-Album_Spotify-Cover.jpg" alt="Azal album cover" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        <div class="release-art-overlay">
-          <a href="https://open.spotify.com/album/0IM8sjJtxppPSx0w4fZ2f5?si=S5Sf187wQ_Oo2mBdnIsRcQ" target="_blank" rel="noopener" class="rp-link">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://music.apple.com/us/album/azal/1539297427" target="_blank" rel="noopener" class="rp-link">Apple Music <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          <a href="https://www.youtube.com/watch?v=orU8jYtkWcg&list=OLAK5uy_lXYpYPYLbfb_VN6upgmNduVTMb_clIEHw" target="_blank" rel="noopener" class="rp-link">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-        </div>
-      </div>
-      <div class="release-body">
-        <p class="release-type">Album</p>
-        <p class="release-name">Azal</p>
-        <p class="release-info">2020 · 7 tracks</p>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="artist-band">
-    <div class="artist-band-photo">
-      <img src="../images/arpit-bw-studio.jpg" alt="Arpit Pandey holding a handpan, studio portrait" loading="lazy"/>
-    </div>
-    <div>
-      <p class="artist-band-eyebrow">Listen everywhere</p>
-      <h3>All of it, in one place.</h3>
-      <p>Originals and covers, recorded live wherever possible. Everything is on Spotify and YouTube, and new releases land there first.</p>
-      <div class="platform-links" style="margin-bottom:0;">
-        <a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank" rel="noopener" class="platform-btn primary">Spotify <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-        <a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank" rel="noopener" class="platform-btn">YouTube <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-        <a href="https://www.instagram.com/pandeyarpit" target="_blank" rel="noopener" class="platform-btn">Instagram <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- VIDEOS -->
-<section class="section bg-sand-deep">
-  <div class="section-header"><h2 class="section-title">Videos &amp; <em>Live Sessions</em></h2><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank" class="section-link">YouTube channel →</a></div>
-  <div class="video-grid">
-
-    <div class="video-card">
-      <div class="video-thumb" style="padding:0;aspect-ratio:16/9;position:relative;">
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/2gX8OXzQJm4" title="Echoes of Raindrops" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;"></iframe>
-      </div>
-      <div class="video-info"><p class="video-label">Single</p><p class="video-title">Echoes of Raindrops</p></div>
+<section class="sec bg-paper" aria-labelledby="all-h">
+  <div class="wrap">
+    <div class="sec-head rv"><div><span class="eyebrow">Discography</span><h2 id="all-h">All <em>releases</em></h2><p>Originals, covers and live recordings, released wherever you listen.</p></div><a class="link" href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc">Follow on Spotify</a></div>
+    <div class="releases">
+      <article class="rel rv"><div class="ph"><img src="/images/w/Azal-RAV_Spotify-Cover-480.webp" srcset="/images/w/Azal-RAV_Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Azal extended version cover art" width="480" height="480" loading="lazy" decoding="async"></div><h3>Azal (Extended Version)</h3><p class="muted">Single · 2025 · 1:00:08</p><div class="rel-links"><a href="https://open.spotify.com/track/4fITsPKZ6ZL8BnnXPEQOoz">Spotify</a><a href="https://music.apple.com/us/album/azal-1-hour-extended-version-relaxing-rav-vast-music/1834683168">Apple Music</a><a href="https://www.youtube.com/watch?v=KLE0zdu48BQ">YouTube</a></div></article>
+      <article class="rel rv"><div class="ph"><img src="/images/w/Dandelion-Dreams_Spotify-Cover-480.webp" srcset="/images/w/Dandelion-Dreams_Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Dandelion Dreams cover art" width="480" height="480" loading="lazy" decoding="async"></div><h3>Dandelion Dreams</h3><p class="muted">Single · 2024 · 9:12</p><div class="rel-links"><a href="https://open.spotify.com/track/6kZ0p0dY0UgoaVfCrmCyO7">Spotify</a><a href="https://music.apple.com/us/album/dandelion-dreams-single/1778759790">Apple Music</a><a href="https://www.youtube.com/watch?v=MB8GINsNn_4">YouTube</a></div></article>
+      <article class="rel rv"><div class="ph"><img src="/images/w/Una-Mattina-Spotify-Cover-480.webp" srcset="/images/w/Una-Mattina-Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Una Mattina cover art" width="480" height="480" loading="lazy" decoding="async"></div><h3>Una Mattina</h3><p class="muted">Single · 2024 · 3:50</p><div class="rel-links"><a href="https://open.spotify.com/track/1o42EIauXHwOoAqQZM1Jd3">Spotify</a><a href="https://music.apple.com/us/album/una-mattina-single/1736906194">Apple Music</a><a href="https://www.youtube.com/watch?v=0yWFzxMqVdY">YouTube</a></div></article>
+      <article class="rel rv"><div class="ph"><img src="/images/w/Echoes_of_Raindrops_Spotify-Cover-480.webp" srcset="/images/w/Echoes_of_Raindrops_Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Echoes of Raindrops cover art" width="480" height="480" loading="lazy" decoding="async"></div><h3>Echoes of Raindrops</h3><p class="muted">Single · 2024 · 3:26</p><div class="rel-links"><a href="https://open.spotify.com/track/10nBIUKkH93vEQmdqBgIjH">Spotify</a><a href="https://music.apple.com/us/album/echoes-of-raindrops-single/1733530819">Apple Music</a><a href="https://www.youtube.com/watch?v=-yKA7NZwc8g">YouTube</a></div></article>
+      <article class="rel rv"><div class="ph"><img src="/images/w/A-Look-Back_Spotify-Cover-480.webp" srcset="/images/w/A-Look-Back_Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="A Look Back cover art" width="480" height="480" loading="lazy" decoding="async"></div><h3>A Look Back</h3><p class="muted">Single · 2021 · 6:14</p><div class="rel-links"><a href="https://open.spotify.com/track/6NdtTDDV2IIStQeCWKkNg5">Spotify</a><a href="https://music.apple.com/us/album/a-look-back-single/1597094686">Apple Music</a><a href="https://www.youtube.com/watch?v=PxlgEOzSjRU">YouTube</a></div></article>
+      <article class="rel rv"><div class="ph"><img src="/images/w/Little-Waves_Spotify-Cover-480.webp" srcset="/images/w/Little-Waves_Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Little Waves cover art" width="480" height="481" loading="lazy" decoding="async"></div><h3>Little Waves</h3><p class="muted">Single · 2021 · 6:19</p><div class="rel-links"><a href="https://open.spotify.com/track/4vWyUT87Ir07HNU1m92VmA">Spotify</a><a href="https://music.apple.com/us/album/little-waves-single/1567234437">Apple Music</a><a href="https://www.youtube.com/watch?v=mlx7JQ4UNZ0">YouTube</a></div></article>
+      <article class="rel rv"><div class="ph"><img src="/images/w/Azal-Album_Spotify-Cover-480.webp" srcset="/images/w/Azal-Album_Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Azal album cover art" width="480" height="480" loading="lazy" decoding="async"></div><h3>Azal</h3><p class="muted">Album · 2020 · 7 tracks</p><div class="rel-links"><a href="https://open.spotify.com/album/0IM8sjJtxppPSx0w4fZ2f5">Spotify</a><a href="https://music.apple.com/us/album/azal/1539297427">Apple Music</a><a href="https://www.youtube.com/watch?v=orU8jYtkWcg">YouTube</a></div></article>
+      <article class="rel rv"><div class="ph"><img src="/images/w/Resonance-Dialogue_Spotify-Cover-480.webp" srcset="/images/w/Resonance-Dialogue_Spotify-Cover-480.webp 480w" sizes="(max-width: 960px) 50vw, 25vw" alt="Resonance Dialogue cover art" width="480" height="480" loading="lazy" decoding="async"></div><h3>Resonance Dialogue</h3><p class="muted">Single · 2026 · 11:04</p><div class="rel-links"><a href="https://open.spotify.com/track/0dNjIvkYt8GHoHV49PT5E2">Spotify</a><a href="https://music.apple.com/us/song/resonance-dialogue/6764633887">Apple Music</a><a href="https://www.youtube.com/watch?v=ZqP6yiAkZuQ">YouTube</a></div></article>
     </div>
-
-    <div class="video-card">
-      <div class="video-thumb" style="padding:0;aspect-ratio:16/9;position:relative;">
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/ZqP6yiAkZuQ" title="Resonance Dialogue" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;"></iframe>
-      </div>
-      <div class="video-info"><p class="video-label">Single · with Omkar Argulwar</p><p class="video-title">Resonance Dialogue</p></div>
-    </div>
-
-    <div class="video-card">
-      <div class="video-thumb" style="padding:0;aspect-ratio:16/9;position:relative;">
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/_iqdg4rsSQ8" title="A Look Back" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;"></iframe>
-      </div>
-      <div class="video-info"><p class="video-label">Single</p><p class="video-title">A Look Back</p></div>
-    </div>
-
-    <div class="video-card">
-      <div class="video-thumb" style="padding:0;aspect-ratio:16/9;position:relative;">
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/0VlrWfIR8XQ" title="Little Waves" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;"></iframe>
-      </div>
-      <div class="video-info"><p class="video-label">Single</p><p class="video-title">Little Waves</p></div>
-    </div>
-
   </div>
 </section>
 
-<footer class="site-footer">
-  <div class="footer-main">
-    <div class="footer-brand">
-      <span class="footer-brand-name">Arpit <em>Pandey</em></span>
-      <span class="footer-brand-tag">Handpan artist · Bengaluru, India</span>
-    </div>
-    <div class="footer-col">
-      <h4>Navigate</h4>
-      <ul>
-        <li><a href="about.html">About</a></li>
-        <li><a href="music.html">Music</a></li>
-        <li><a href="workshops.html">Workshops</a></li>
-        <li><a href="classes.html">Classes</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="dashboard.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;">Dashboard <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></svg></a></li>
-        <li><a href="../privacy.html">Privacy</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Learn</h4>
-      <ul>
-        <li><a href="trial.html">Free trial</a></li>
-        <li><a href="classes.html">Online classes</a></li>
-        <li><a href="workshops.html">Live workshops</a></li>
-        <li><a href="my.html">My bookings</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Connect</h4>
-      <ul>
-        <li><a href="https://www.instagram.com/pandeyarpit" target="_blank" rel="noopener">Instagram</a></li>
-        <li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank" rel="noopener">YouTube</a></li>
-        <li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank" rel="noopener">Spotify</a></li>
-        <li><a href="mailto:arpithandpan@gmail.com">Email</a></li>
-      </ul>
+<section class="sec" aria-labelledby="vid-h">
+  <div class="wrap">
+    <div class="sec-head rv"><div><span class="eyebrow">Watch</span><h2 id="vid-h">Videos and <em>live sessions</em></h2></div><a class="link" href="https://www.youtube.com/@ArpitPandeyhandpan">YouTube channel</a></div>
+    <div class="videos">
+      <div class="vid rv"><button class="yt" type="button" data-yt="2gX8OXzQJm4" aria-label="Play Echoes of Raindrops"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button><h3>Echoes of Raindrops</h3><p class="muted small">Single</p></div>
+      <div class="vid rv"><button class="yt" type="button" data-yt="ZqP6yiAkZuQ" aria-label="Play Resonance Dialogue"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button><h3>Resonance Dialogue</h3><p class="muted small">Single · with Omkar Argulwar</p></div>
+      <div class="vid rv"><button class="yt" type="button" data-yt="_iqdg4rsSQ8" aria-label="Play A Look Back"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button><h3>A Look Back</h3><p class="muted small">Single</p></div>
+      <div class="vid rv"><button class="yt" type="button" data-yt="0VlrWfIR8XQ" aria-label="Play Little Waves"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button><h3>Little Waves</h3><p class="muted small">Single</p></div>
     </div>
   </div>
-  <div class="footer-bottom">
-    <p>© 2026 Arpit Pandey</p>
+</section>
+
+<section class="sec on-wine" aria-labelledby="live-h">
+  <div class="wrap split">
+    <div class="rv"><div class="ph" style="aspect-ratio:1"><img src="/images/w/arpit-bw-studio-1200.webp" srcset="/images/w/arpit-bw-studio-700.webp 700w, /images/w/arpit-bw-studio-1200.webp 1200w" sizes="(max-width: 900px) 100vw, 46vw" alt="Black and white portrait of Arpit holding a handpan" width="1200" height="1200" loading="lazy" decoding="async" style="object-position:50% 25%"></div></div>
+    <div class="rv">
+      <span class="eyebrow">Hear it in person</span>
+      <h2 id="live-h">Bring this music <em>to your event</em></h2>
+      <p class="lead mt" style="color:rgba(245,238,229,.84)">Private gatherings, corporate and wellness days, festivals and cultural evenings. Every set is shaped around the space.</p>
+      <div class="btn-row mt"><a class="btn" href="/pages/performances#enquire">Enquire about a performance</a><a class="btn btn-soft" href="https://www.instagram.com/pandeyarpit">Instagram</a></div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <a class="brand" href="/" aria-label="Arpit Pandey, home"><img src="/images/handpan-logo-inverse.svg" alt="" width="40" height="40"><b>Arpit <i>Pandey</i></b></a>
+        <p>Handpan artist, recording musician and teacher. Based in Bengaluru, teaching students across India and abroad.</p>
+        <a class="btn btn-sm foot-cta" href="/pages/trial">Book a free trial</a>
+      </div>
+      <div><p class="foot-h">Learn</p><ul>
+        <li><a href="/pages/classes">Online classes</a></li>
+        <li><a href="/pages/classes#pricing">Pricing</a></li>
+        <li><a href="/pages/trial">Free trial</a></li>
+        <li><a href="/enroll/new">Start weekly classes</a></li>
+        <li><a href="/pages/my">Student login</a></li>
+      </ul></div>
+      <div><p class="foot-h">Experience</p><ul>
+        <li><a href="/pages/workshops">Workshops</a></li>
+        <li><a href="/pages/performances">Performances</a></li>
+        <li><a href="/pages/music">Music</a></li>
+        <li><a href="/pages/about">About Arpit</a></li>
+      </ul></div>
+      <div><p class="foot-h">Connect</p><ul>
+        <li><a href="/pages/contact">Contact</a></li>
+        <li><a href="https://wa.me/919380140907">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/pandeyarpit">Instagram</a></li>
+        <li><a href="https://www.youtube.com/@ArpitPandeyhandpan">YouTube</a></li>
+        <li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc">Spotify</a></li>
+        <li><a href="mailto:arpithandpan@gmail.com">arpithandpan@gmail.com</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-bot"><span>© <span data-year>2026</span> Arpit Pandey · Bengaluru, India</span><a href="/privacy">Privacy policy</a></div>
   </div>
 </footer>
-<script src="../js/main.js"></script>
+<script src="/js/site.js?v=2026-10-31a" defer></script>
 </body>
 </html>

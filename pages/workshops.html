@@ -1,569 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<!-- Version check after upload: view source and look for site-version -->
-<meta name="site-version" content="v26"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta property="og:type" content="website"/>
-<meta property="og:site_name" content="Arpit Pandey"/>
-<meta property="og:title" content="Handpan Workshops in Bengaluru · Arpit Pandey"/>
-<meta property="og:description" content="Monthly in-person handpan workshops in Bengaluru. No experience needed."/>
-<meta property="og:url" content="https://arpitpandey.com/pages/workshops.html"/>
-<meta property="og:image" content="https://arpitpandey.com/images/og-image.png"/>
-<meta property="og:image:width" content="1200"/>
-<meta property="og:image:height" content="630"/>
-<meta property="og:image:alt" content="Handpan with Arpit Pandey"/>
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Handpan Workshops in Bengaluru · Arpit Pandey"/>
-<meta name="twitter:description" content="Monthly in-person handpan workshops in Bengaluru. No experience needed."/>
-<meta name="twitter:image" content="https://arpitpandey.com/images/og-image.png"/>
-<title>Workshops | Arpit Pandey</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="../css/style.css"/>
-<style>
-.workshop-card {
-  background: var(--card); border: 1px solid var(--card-rule);
-  border-radius: var(--card-radius);
-  overflow: hidden; margin-bottom: 1.5rem;
-  -webkit-tap-highlight-color: transparent; cursor: default;
-}
-.workshop-card.is-open {
-  border: 1px solid var(--maroon);
-  background: var(--maroon);
-}
-.workshop-card-header {
-  display: grid; grid-template-columns: 110px 1fr auto;
-  gap: 2rem; align-items: center; padding: 2rem;
-}
-
-.wc-date { text-align: left; }
-.wc-day { font-family: var(--font-body); font-weight: 400; color: var(--clay); line-height: 1; display: block; }
-.wc-month { letter-spacing: 0.12em; text-transform: none; color: var(--text-light); }
-.wc-badge { letter-spacing: 0.3px;
-  text-transform: none; padding: 5px 12px 5px 16px; border-radius: 0;
-}
-.workshop-card-header:has(.wc-badge) { position: relative; padding-top: 3.4rem; }
-.workshop-card-header .wc-badge { position: absolute; top: 16px; left: 0; margin: 0; }
-.wc-badge.open { background: #5E6E4D; color: var(--cream); font-weight: 600; }
-.wc-badge.few  { background: rgba(180,60,40,0.1); color: #B43C28; }
-.wc-badge.full { background: rgba(100,100,100,0.1); color: var(--text-light); }
-.wc-title { font-family: var(--font-body); color: var(--bark); margin-bottom: 0.5rem; }
-.wc-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-.wc-meta span { color: var(--text-light); }
-.wc-counts { color: var(--text-mid); margin-top: 0.6rem; }
-.wc-counts .wc-dim { color: var(--text-light); }
-.wc-pill-off { font-weight:500; padding:calc(0.79rem - 1.5px) 2.6rem; display:inline-block; cursor:not-allowed; color:var(--text-light); border:1.5px solid rgba(80,0,24,0.28); border-radius:40px; letter-spacing:0.08em; text-transform:none; }
-.wc-action { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.8rem; }
-.wc-price { font-family: var(--font-body); font-weight: 400; color: var(--bark); display: block; margin-bottom: 0.5rem; }
-
-.workshop-card-body {
-  display: block; padding: 0 2rem 2rem; border-top: 1px solid var(--clay-pale);
-}
-
-.workshop-details-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-top: 1.5rem; }
-.detail-block h4 { letter-spacing: 0.12em; text-transform: none; color: var(--clay); margin-bottom: 0.8rem; }
-.detail-block ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
-.detail-block ul li { color: var(--text-mid); padding-left: 1rem; position: relative; }
-.detail-block ul li::before { content: '—'; position: absolute; left: 0; color: var(--maroon); }
-.detail-block p { color: var(--text-mid); line-height: 1.7; }
-
-/* ---- WORKSHOPS PREVIEW ---- */
-.workshop-rows { display: flex; flex-direction: column; gap: 0.75rem; }
-/* The text in a row always ends around 530px, so on a wide screen the
-   middle of the row is empty: 47% of it at 1440, 71% at 2560. Capping
-   the column keeps the content filling the row at any screen size. */
-@media (min-width: 1024px) {
-  .workshop-rows { max-width: 960px; margin-left: auto; margin-right: auto; }
-}
-.workshop-row {
-  display: grid; grid-template-columns: 100px 1fr auto;
-  gap: 2rem; align-items: center;
-  padding: 1.8rem 2rem; background: var(--card);
-  border: 1px solid var(--card-rule); border-radius: var(--card-radius);
-  transition: background 0.2s;
-  -webkit-tap-highlight-color: transparent;
-  cursor: default;
-}
-/* .workshop-row is cursor:default, so it has no hover state.
-   Reacting to hover on something you cannot click is a lie. */
-.w-date { text-align: left; flex-shrink: 0; }
-.w-day { font-family: var(--font-body); font-weight: 400; color: var(--clay); line-height: 1; display: block; }
-.w-month { letter-spacing: 0.12em; text-transform: none; color: var(--text-light); display: block; white-space: nowrap; }
-.w-card.is-open, .workshop-row.is-open {
-  border: 1px solid var(--maroon) !important;
-  background: var(--maroon);
-}
-.w-title { font-family: var(--font-body); color: var(--bark); margin-bottom: 0.4rem; }
-.w-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: baseline; }
-.w-meta span { color: var(--text-light); }
-.w-counts { color: var(--text-mid); margin-top: 0.55rem; }
-.w-counts .w-dim { color: var(--text-light); }
-.w-empty { color: var(--text-light); padding: 1.5rem 0; margin: 0; }
-.w-notify { display: grid; grid-template-columns: 1fr 1.15fr; gap: 2.5rem; align-items: start; background: var(--card, #FDFBF7); border: 1px solid var(--card-rule, rgba(80,0,24,0.12)); border-radius: var(--card-radius, 16px); padding: 2.2rem 2.4rem; }
-.w-notify-title { font-size: 1.35rem; font-weight: 500; color: var(--maroon); margin: 0 0 0.5rem; }
-.w-notify-sub { color: var(--text-mid); line-height: 1.6; margin: 0; }
-.w-notify-form { display: flex; flex-direction: column; gap: 1rem; }
-.w-nf label { display: block; font-size: 0.92rem; font-weight: 500; color: var(--text-mid); margin-bottom: 0.4rem; }
-.w-nf label span { font-weight: 400; color: var(--text-light); }
-.w-in { width: 100%; height: 48px; padding: 0 16px; box-sizing: border-box; border-radius: 10px; border: 1px solid #D9C8C6; background: #F5EEE5; color: #5A4645; font-family: var(--font-body); font-size: 16px; outline: none; transition: border-color .15s; }
-.w-in::placeholder { color: #8A7560; }
-.w-in:focus { border-color: var(--maroon); }
-.w-err { display: none; font-size: 14px; color: #8A2614; font-weight: 500; line-height: 1.45; background: #F4D8CE; border-radius: 8px; padding: 10px 12px; margin: 0; }
-.w-err.show { display: flex; align-items: flex-start; }
-.w-err::before { content: ''; flex-shrink: 0; width: 16px; height: 16px; margin-right: 8px; margin-top: 2px; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A2614' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 8v4'/><path d='M12 16h.01'/></svg>") center/contain no-repeat; }
-.w-phone { display: flex; gap: 8px; }
-.w-phone .w-in { flex: 1; min-width: 0; }
-.w-cc { display: flex; align-items: center; gap: 6px; height: 48px; padding: 0 14px; flex-shrink: 0; border-radius: 10px; border: 1px solid #D9C8C6; background: #F5EEE5; color: #5A4645; font-family: var(--font-body); font-size: 16px; cursor: pointer; white-space: nowrap; }
-.w-cc svg { transition: transform .15s; }
-.w-cc.open svg { transform: rotate(180deg); }
-.w-ccd { display: none; flex-direction: column; gap: 8px; margin-top: 8px; border: 1px solid #D9C8C6; border-radius: 10px; background: var(--cream, #F5EEE5); padding: 0.75rem; }
-.w-ccd.open { display: flex; }
-.w-ccl { overflow-y: auto; max-height: 240px; display: flex; flex-direction: column; }
-.w-cci { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0.75rem 0.6rem; min-height: 46px; cursor: pointer; border-radius: 6px; color: #5A4645; }
-@media (hover: hover) { .w-cci:hover { background: #EDE3D9; } }
-.w-cci-code { color: var(--text-light); }
-.w-hint { font-size: 14px; color: var(--text-light); margin: 0.45rem 0 0; line-height: 1.5; }
-.w-notify-btn { align-self: flex-start; border: 0; cursor: pointer; font-size: 1rem; padding: 0.85rem 2.2rem; }
-.w-notify-btn:disabled { opacity: 0.6; cursor: default; }
-.w-notify-done { grid-column: 1 / -1; display: flex; gap: 1rem; align-items: flex-start; }
-.w-tick { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; background: #CFE5C4 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232F6522' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center/18px no-repeat; }
-@media (max-width: 760px) { .w-notify { grid-template-columns: 1fr; gap: 1.5rem; padding: 1.6rem 1.25rem; } .w-notify-btn { align-self: stretch; } }
-.w-pill-off { font-weight:500; cursor:not-allowed; white-space:nowrap; color:var(--text-light); border:1.5px solid rgba(80,0,24,0.28); padding:calc(0.79rem - 1.5px) 2rem; border-radius:40px; display:inline-block; letter-spacing:0.08em; text-transform:none; }
-.w-meta span + span::before { content: none; }
-.w-action { text-align: right; flex-shrink: 0; }
-.spots-badge { letter-spacing: 0.3px;
-  text-transform: none; padding: 5px 12px 5px 16px; border-radius: 0;
-  background: #5E6E4D; color: var(--cream); font-weight: 600;
-}
-.workshop-row:has(.spots-badge) { position: relative; padding-top: 3.4rem; }
-.workshop-row .spots-badge { position: absolute; top: 16px; left: 0; margin: 0; }
-.spots-badge.few { background: rgba(180,60,40,0.1); color: #B43C28; }
-.spots-badge.full { background: rgba(100,100,100,0.1); color: var(--text-light); }
-
-/* PAST WORKSHOPS */
-.past-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
-.past-date { letter-spacing: 0.08em; text-transform: none; color: var(--text-light); margin-bottom: 0.5rem; }
-.past-title { font-family: var(--font-body); font-weight: 400; color: var(--maroon); margin-bottom: 0.3rem; }
-.past-loc { color: var(--text-light); }
-
-/* Past workshop photo-rows */
-.past-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 2.25rem;
-}
-.past-card { background: var(--card); border-radius: var(--card-radius); overflow: hidden; }
-.past-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
-.past-card-info { padding: 1.8rem 2rem 2rem; }
-.past-photo-eyebrow { letter-spacing: 0.04em; text-transform: none; color: var(--text-light); margin-bottom: 0.6rem; }
-.past-photo-title { font-family: var(--font-body); color: var(--maroon); margin-bottom: 0.6rem; }
-.past-photo-meta { color: var(--text-light); }
-
-/* Private / Custom section */
-.private-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 3rem; align-items: center;
-}
-.private-text p { font-family: var(--font-body); color: var(--text-mid); line-height: 1.85; margin-bottom: 1.5rem; }
-.private-text p:last-of-type { margin-bottom: 2rem; }
-.private-cards { display: flex; flex-direction: column; gap: 1rem; }
-.private-card { background: var(--card); border: 1px solid var(--card-rule); border-radius: var(--card-radius); padding: 1.5rem 1.8rem; }
-.private-card-label { color: var(--clay); margin-bottom: 0.3rem; }
-.private-card-desc { color: var(--text-mid); }
-
-@media (max-width: 1080px) {
-  .workshop-card-header { grid-template-columns: 80px 1fr auto; gap: 1rem; padding: 1.5rem; }
-  .wc-action { align-items: flex-end; }
-  .workshop-details-grid { grid-template-columns: 1fr; }
-  .past-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-  .form-row { grid-template-columns: 1fr; }
-  .workshop-details { padding: 0 1.5rem 1.5rem; }
-  .past-grid { grid-template-columns: 1fr; }
-  .private-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-}
-@media (max-width: 768px) {
-  .workshop-card-header { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; padding: 1.2rem; }
-  .wc-date { display: flex; align-items: baseline; gap: 0.5rem; text-align: left; }
-  .wc-action { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.2rem; }
-}
-@media (max-width: 600px) {
-  .past-grid { grid-template-columns: 1fr; }
-  .past-grid { grid-template-columns: 1fr; }
-
-  .booking-overlay { align-items: flex-end; padding: 0; }
-}
-
-/* --- workshop rows, responsive (same breakpoints as the home page) --- */
-@media (max-width: 1080px) {
-  .workshop-row { grid-template-columns: 70px 1fr auto; gap: 1rem; padding: 1.5rem; }
-  .w-action { text-align: right; min-width: unset; margin-top: 0; }
-}
-@media (max-width: 768px) {
-  .workshop-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1.4rem; }
-  .w-date { display: flex; align-items: baseline; gap: 0.5rem; text-align: left; }
-  .w-action { text-align: left; min-width: unset; margin-top: 1.2rem; }
-}
-@media (max-width: 600px) {
-  .workshop-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1.2rem; }
-  .w-date { display: flex; align-items: baseline; gap: 0.5rem; text-align: left; }
-  .w-action { text-align: left; min-width: unset; margin-top: 1.2rem; }
-}
-
-/* --- mobile type step --- */
-
-/* The per-card descriptions came off: the photo already shows the room
-   and the mood, and four of the six opened the same way. The origin note
-   lives here now, framing the grid instead of sitting on one tile. */
-.past-lede {
-  color: var(--label-on-wine); max-width: 52ch;
-  margin: -1.5rem 0 2.5rem;
-}
-@media (max-width: 600px) { .past-lede { margin-bottom: 2rem; } }
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Handpan workshops in Bengaluru · Arpit Pandey</title>
+<meta name="description" content="Two-hour handpan workshops in Bengaluru for complete beginners. Handpans provided, small groups, book online. See upcoming dates or get notified.">
+<link rel="canonical" href="https://arpitpandey.com/pages/workshops">
+<meta name="theme-color" content="#F5EEE5">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Arpit Pandey">
+<meta property="og:title" content="Handpan workshops in Bengaluru · Arpit Pandey">
+<meta property="og:description" content="Two-hour handpan workshops in Bengaluru for complete beginners. Handpans provided, small groups, book online. See upcoming dates or get notified.">
+<meta property="og:url" content="https://arpitpandey.com/pages/workshops">
+<meta property="og:image" content="https://arpitpandey.com/images/og-workshop.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="/fonts/cormorant-garamond-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/figtree-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="/images/w/Handpan_Workshop_10-10-26-900.webp" fetchpriority="high">
+<link rel="stylesheet" href="/css/site.css?v=2026-10-31a">
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','2322564451222517');fbq('track','PageView');
+</script>
 </head>
 <body>
-<nav>
-  <a href="../index.html" class="nav-logo"><img src="../images/handpan-logo.svg" alt="Handpan with Arpit" width="44" height="44" style="display:block;">
-  </a>
-  <button class="nav-hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-  <ul class="nav-links">
-    <li><a href="../index.html">Home</a></li><li><a href="about.html">About</a></li>
-    <li><a href="music.html">Music</a></li><li><a href="workshops.html" class="active">Workshops</a></li>
-    <li><a href="classes.html">Classes</a></li><li><a href="contact.html">Contact</a></li>
-    <li class="nav-account-li"><a class="nav-account" href="my.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Log in</span></a></li>
-  </ul>
-</nav>
-<div class="mobile-menu">
-<div class="mobile-menu-inner">
-  <a href="../index.html">Home</a><a href="about.html">About</a><a href="music.html">Music</a>
-  <a href="workshops.html">Workshops</a><a href="classes.html">Classes</a><a href="contact.html">Contact</a>
-  <a class="mm-account" href="my.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Log in</span></a>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap nav-in" role="navigation" aria-label="Main">
+    <a class="brand" href="/" aria-label="Arpit Pandey, home"><img src="/images/handpan-logo.svg" alt="" width="40" height="40"><b>Arpit <i>Pandey</i></b></a>
+    <ul class="navl"><li><a href="/pages/classes">Learn</a></li><li><a href="/pages/workshops" aria-current="page">Workshops</a></li><li><a href="/pages/performances">Performances</a></li><li><a href="/pages/music">Music</a></li><li><a href="/pages/about">About</a></li></ul>
+    <div class="nav-acts" data-acct="/pages/my">
+      <a class="nav-login" href="/pages/my"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Student login</a>
+      <a class="btn btn-sm" href="/pages/trial">Free trial</a>
+      <button class="nav-burger" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mnav" id="mnav">
+  <ul><li><a href="/pages/classes">Learn</a></li><li><a href="/pages/workshops" aria-current="page">Workshops</a></li><li><a href="/pages/performances">Performances</a></li><li><a href="/pages/music">Music</a></li><li><a href="/pages/about">About</a></li><li><a href="/pages/contact">Contact</a></li></ul>
+  <a class="btn" href="/pages/trial">Book a free trial</a>
+  <div class="mnav-sub" data-macct="/pages/my"><a href="/pages/my">Student login</a></div>
+  <div class="mnav-sub"><a href="https://wa.me/919380140907">WhatsApp</a><a href="mailto:arpithandpan@gmail.com">arpithandpan@gmail.com</a></div>
 </div>
-</div>
-
-<section class="page-hero">
-  <p class="page-hero-eyebrow">In-person learning</p>
-  <h1 class="page-hero-title">Workshops</h1>
-  <p class="page-hero-sub">A small circle, a couple of hours together, and everyone leaves having played.</p>
-</section>
-<div class="page-hero-rule" aria-hidden="true"></div>
-
-<!-- UPCOMING -->
-<section class="section" id="upcoming">
-  <div class="section-header"><h2 class="section-title">Upcoming <em>Workshops</em></h2></div>
-
-  <div class="workshop-rows" id="wsUpcoming" data-empty="notify" aria-live="polite"><p class="w-empty">Loading workshop dates…</p></div>
-</section>
-
-<!-- PAST WORKSHOPS -->
-<section class="section bg-bark">
-  <div class="section-header section-header-dark">
-    <h2 class="section-title section-title-light">Past <em>Workshops</em></h2>
+<main id="main">
+<section class="hero page-hero has-media">
+  <div class="wrap hero-grid">
+    <div class="rv">
+      <span class="eyebrow">In person · Bengaluru</span>
+      <h1>Handpan <em>workshops</em></h1>
+      <p class="lead">A small circle, two hours together, and everyone leaves having played. No experience needed, and handpans are provided.</p>
+      <div class="btn-row">
+        <a class="btn" href="#dates">See upcoming dates</a>
+        <a class="btn btn-soft" href="#notify">Get notified</a>
+      </div>
+    </div>
+    <div class="hero-media rv"><img src="/images/w/Handpan_Workshop_10-10-26-1600.webp" srcset="/images/w/Handpan_Workshop_10-10-26-900.webp 900w, /images/w/Handpan_Workshop_10-10-26-1600.webp 1600w" sizes="(max-width: 900px) 100vw, 46vw" alt="Workshop participants sitting with their handpans in Bengaluru, October 2026" width="1600" height="900" fetchpriority="high" style="object-position:50% 50%"></div>
   </div>
-  <p class="past-lede">Seven workshops since March 2026, starting with a ninety minute
-     introduction at Creative Bloom in E-City.</p>
+</section>
 
-  <!-- Past workshops grid -->
-  <div class="past-grid">
-    <div class="past-card">
-      <img src="../images/Handpan_Workshop_10-10-26.jpg" alt="Breath, Pause, Resonance workshop — October 2026"/>
-      <div class="past-card-info">
-        <p class="past-photo-eyebrow">10 October 2026 · Workshop 07</p>
-        <h3 class="past-photo-title">Breath, Pause, Resonance</h3>
-        <p class="past-photo-meta">Creative Bloom, Haralur, Bengaluru · 2 hours</p>
-      </div>
-    </div>
-    <div class="past-card">
-      <img src="../images/Handpan_Workshop_08-08-26.jpg" alt="First Notes, Open Hands workshop — August 2026"/>
-      <div class="past-card-info">
-        <p class="past-photo-eyebrow">08 August 2026 · Workshop 06</p>
-        <h3 class="past-photo-title">First Notes, Open Hands</h3>
-        <p class="past-photo-meta">Bloom Creative Zone, HSR Layout, Bengaluru · 2 hours</p>
-      </div>
-    </div>
-    <div class="past-card">
-      <img src="../images/Handpan_Workshop_05-07-26.jpg" alt="Finding Your Still Sound workshop — July 2026"/>
-      <div class="past-card-info">
-        <p class="past-photo-eyebrow">05 July 2026 · Workshop 05</p>
-        <h3 class="past-photo-title">Finding Your Still Sound</h3>
-        <p class="past-photo-meta">Creative Bloom, Haralur, Bengaluru · 2 hours</p>
-      </div>
-    </div>
-    <div class="past-card">
-      <img src="../images/Handpan_Workshop_06-06-26.png" alt="Sound and Silence Circle workshop — June 2026"/>
-      <div class="past-card-info">
-        <p class="past-photo-eyebrow">06 June 2026 · Workshop 04</p>
-        <h3 class="past-photo-title">Sound and Silence Circle</h3>
-        <p class="past-photo-meta">Creative Bloom, Indiranagar, Bengaluru · 2 hours</p>
-      </div>
-    </div>
-    <div class="past-card">
-      <img src="../images/Handpan_Workshop_10-05-26.png" alt="Open Hands workshop — May 2026"/>
-      <div class="past-card-info">
-        <p class="past-photo-eyebrow">10 May 2026 · Workshop 03</p>
-        <h3 class="past-photo-title">Open Hands</h3>
-        <p class="past-photo-meta">Creative Bloom, Haralur, Bengaluru · 2 hours</p>
-      </div>
-    </div>
-    <div class="past-card">
-      <img src="../images/Handpan_Workshop_04-04-26.png" alt="Feel the Sound workshop — April 2026"/>
-      <div class="past-card-info">
-        <p class="past-photo-eyebrow">04 April 2026 · Workshop 02</p>
-        <h3 class="past-photo-title">Feel the Sound</h3>
-        <p class="past-photo-meta">Creative Bloom, HSR Layout, Bengaluru · 2 hours</p>
-      </div>
-    </div>
-    <div class="past-card">
-      <img src="../images/arpit-workshop1.png" alt="First Touch workshop — March 2026"/>
-      <div class="past-card-info">
-        <p class="past-photo-eyebrow">14 March 2026 · Workshop 01</p>
-        <h3 class="past-photo-title">First Touch</h3>
-        <p class="past-photo-meta">Creative Bloom, E-City, Bengaluru · 1.5 hours</p>
+<section class="sec bg-paper" id="dates" aria-labelledby="dates-h">
+  <div class="wrap">
+    <div class="sec-head rv"><div><span class="eyebrow">Book a spot</span><h2 id="dates-h">Upcoming <em>workshops</em></h2><p>Booking closes at midnight before each workshop. Payment is online and your confirmation arrives on WhatsApp.</p></div></div>
+    <div data-workshops="full" aria-live="polite"><div class="skel"></div></div>
+    <div data-ws-none hidden>
+      <div class="card rv" style="background:var(--ivory)">
+        <h3>No dates open right now</h3>
+        <p class="muted mt-s">New dates are announced here and on Instagram. Leave your number below and you’ll hear first.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PRIVATE / CUSTOM -->
-<section class="section bg-sand">
-  <div class="section-header"><h2 class="section-title">Private &amp; <em>Custom Events</em></h2></div>
-  <div class="private-grid">
-    <div class="private-text">
-      <p>Arpit also does private sessions, corporate wellness days, yoga retreats and special events. Every session is shaped around the group and the space.</p>
-      <p>Get in touch to talk about dates, format, and what you have in mind.</p>
-      <a href="contact.html" class="btn-primary">Get in touch</a>
-    </div>
-    <div class="private-cards">
-      <div class="private-card">
-        <p class="private-card-label">Gigs &amp; performances</p>
-        <p class="private-card-desc">Concerts, private events, cultural shows</p>
-      </div>
-      <div class="private-card">
-        <p class="private-card-label">Custom Workshops</p>
-        <p class="private-card-desc">Group sessions at your venue or event</p>
-      </div>
-      <div class="private-card">
-        <p class="private-card-label">Collaborations</p>
-        <p class="private-card-desc">With musicians, artists, or organisations</p>
-      </div>
+<section class="sec" aria-labelledby="exp-h">
+  <div class="wrap">
+    <div class="sec-head rv"><div><span class="eyebrow">What to expect</span><h2 id="exp-h">Two hours, <em>start to finish</em></h2></div></div>
+    <div class="grid-3">
+      <div class="card rv"><h3>Instruments provided</h3><p class="muted">Every participant gets a handpan to play. Have your own? You can bring it, just say so when you book.</p></div>
+      <div class="card rv"><h3>Beginner friendly</h3><p class="muted">No music background needed. You’ll learn the notes, simple rhythms, and play together as a group.</p></div>
+      <div class="card rv"><h3>A small circle</h3><p class="muted">Seats are limited so everyone gets attention. The number of spots left shows next to each date.</p></div>
+      <div class="card rv"><h3>Audience passes</h3><p class="muted">Some sessions offer a pass for a friend who wants to sit in and listen. It shows when you book if it’s available.</p></div>
+      <div class="card rv"><h3>Venues in Bengaluru</h3><p class="muted">Usually at Creative Bloom spaces across the city. The venue is shown on each date, with a map link when you book.</p></div>
+      <div class="card rv"><h3>Simple booking</h3><p class="muted">Pick your tickets, pay securely by UPI or card, and your confirmation and reminders come on WhatsApp.</p></div>
     </div>
   </div>
 </section>
 
-<footer class="site-footer">
-  <div class="footer-main">
-    <div class="footer-brand">
-      <span class="footer-brand-name">Arpit <em>Pandey</em></span>
-      <span class="footer-brand-tag">Handpan artist · Bengaluru, India</span>
-    </div>
-    <div class="footer-col">
-      <h4>Navigate</h4>
-      <ul>
-        <li><a href="about.html">About</a></li>
-        <li><a href="music.html">Music</a></li>
-        <li><a href="workshops.html">Workshops</a></li>
-        <li><a href="classes.html">Classes</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="dashboard.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;">Dashboard <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></svg></a></li>
-        <li><a href="../privacy.html">Privacy</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Learn</h4>
-      <ul>
-        <li><a href="trial.html">Free trial</a></li>
-        <li><a href="classes.html">Online classes</a></li>
-        <li><a href="workshops.html">Live workshops</a></li>
-        <li><a href="my.html">My bookings</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Connect</h4>
-      <ul>
-        <li><a href="https://www.instagram.com/pandeyarpit" target="_blank" rel="noopener">Instagram</a></li>
-        <li><a href="https://www.youtube.com/@ArpitPandeyhandpan" target="_blank" rel="noopener">YouTube</a></li>
-        <li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc" target="_blank" rel="noopener">Spotify</a></li>
-        <li><a href="mailto:arpithandpan@gmail.com">Email</a></li>
-      </ul>
+<section class="sec bg-paper" id="notify" aria-labelledby="nt-h">
+  <div class="wrap">
+    <div class="notify rv">
+      <div>
+        <span class="eyebrow">Never miss a date</span>
+        <h3 id="nt-h">Hear about the next workshop first</h3>
+        <p class="muted mt-s">Leave your name and WhatsApp number. Arpit will message you as soon as booking opens. Your details are used only for this.</p>
+      </div>
+      <form class="form" data-notify novalidate>
+        <div class="field"><label for="wn-name">Your name</label><input id="wn-name" name="name" autocomplete="name" required data-msg="Please enter your name."></div>
+        <div class="field"><label for="wn-phone">WhatsApp number</label><div class="tel"><select name="dial" data-dial aria-label="Country code"></select><input id="wn-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" required data-phone data-msg="Please enter your number."></div></div>
+        <div class="field"><label for="wn-email">Email <span class="opt">(optional)</span></label><input id="wn-email" name="email" type="email" autocomplete="email"></div>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">
+        <div class="form-foot"><button class="btn" type="submit">Notify me</button></div>
+      </form>
     </div>
   </div>
-  <div class="footer-bottom">
-    <p>© 2026 Arpit Pandey</p>
+</section>
+
+<section class="sec on-wine" aria-labelledby="past-h">
+  <div class="wrap">
+    <div class="sec-head rv"><div><span class="eyebrow">Past workshops</span><h2 id="past-h">Recent <em>circles</em></h2><p>Seven workshops since March 2026, starting with a ninety-minute introduction at Creative Bloom in Electronic City.</p></div></div>
+    <div class="past-grid">
+      <article class="past rv"><div class="ph"><img src="/images/w/Handpan_Workshop_10-10-26-1600.webp" srcset="/images/w/Handpan_Workshop_10-10-26-900.webp 900w, /images/w/Handpan_Workshop_10-10-26-1600.webp 1600w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" alt="Breath, Pause, Resonance workshop, October 2026" width="1600" height="900" loading="lazy" decoding="async"></div><h3>Breath, Pause, Resonance</h3><p>10 October 2026 · Creative Bloom, Haralur</p></article>
+      <article class="past rv"><div class="ph"><img src="/images/w/Handpan_Workshop_08-08-26-1600.webp" srcset="/images/w/Handpan_Workshop_08-08-26-900.webp 900w, /images/w/Handpan_Workshop_08-08-26-1600.webp 1600w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" alt="First Notes, Open Hands workshop, August 2026" width="1600" height="900" loading="lazy" decoding="async"></div><h3>First Notes, Open Hands</h3><p>8 August 2026 · Bloom Creative Zone, HSR Layout</p></article>
+      <article class="past rv"><div class="ph"><img src="/images/w/Handpan_Workshop_05-07-26-1200.webp" srcset="/images/w/Handpan_Workshop_05-07-26-900.webp 900w, /images/w/Handpan_Workshop_05-07-26-1200.webp 1200w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" alt="Finding Your Still Sound workshop, July 2026" width="1200" height="800" loading="lazy" decoding="async"></div><h3>Finding Your Still Sound</h3><p>5 July 2026 · Creative Bloom, Haralur</p></article>
+      <article class="past rv"><div class="ph"><img src="/images/w/Handpan_Workshop_06-06-26-1600.webp" srcset="/images/w/Handpan_Workshop_06-06-26-900.webp 900w, /images/w/Handpan_Workshop_06-06-26-1600.webp 1600w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" alt="Sound and Silence Circle workshop, June 2026" width="1600" height="1067" loading="lazy" decoding="async"></div><h3>Sound and Silence Circle</h3><p>6 June 2026 · Creative Bloom, Indiranagar</p></article>
+      <article class="past rv"><div class="ph"><img src="/images/w/Handpan_Workshop_10-05-26-1600.webp" srcset="/images/w/Handpan_Workshop_10-05-26-900.webp 900w, /images/w/Handpan_Workshop_10-05-26-1600.webp 1600w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" alt="Open Hands workshop, May 2026" width="1600" height="1117" loading="lazy" decoding="async"></div><h3>Open Hands</h3><p>10 May 2026 · Creative Bloom, Haralur</p></article>
+      <article class="past rv"><div class="ph"><img src="/images/w/Handpan_Workshop_04-04-26-1600.webp" srcset="/images/w/Handpan_Workshop_04-04-26-900.webp 900w, /images/w/Handpan_Workshop_04-04-26-1600.webp 1600w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw" alt="Feel the Sound workshop, April 2026" width="1600" height="900" loading="lazy" decoding="async"></div><h3>Feel the Sound</h3><p>4 April 2026 · Creative Bloom, HSR Layout</p></article>
+    </div>
+    <div class="reviews mt-l">
+      <figure class="review rv" style="margin:0"><span class="stars" aria-label="5 out of 5">★★★★★</span><blockquote>“It was the best two hours of my time spent on something in a long time.”</blockquote><figcaption><span class="av" aria-hidden="true">J</span><span><b>Jayanth N</b><span>Workshop · Aug 2026</span></span></figcaption></figure>
+      <figure class="review rv" style="margin:0"><span class="stars" aria-label="5 out of 5">★★★★★</span><blockquote>“Well curated and easy to follow instructions. Arpit is very thorough with his approach.”</blockquote><figcaption><span class="av" aria-hidden="true">M</span><span><b>Megha Koul</b><span>Workshop · Aug 2026</span></span></figcaption></figure>
+      <figure class="review rv" style="margin:0;justify-content:center"><blockquote>Read every review, or leave one after your workshop.</blockquote><a class="btn" style="align-self:flex-start" href="https://www.google.com/maps/place/Arpit+Pandey/data=!4m8!3m7!1s0x47de02542929477b:0x1633bee98002fa57!8m2!3d12.987977!4d77.6219718!9m1!1b1!16s%2Fg%2F11zgfhymgx">Reviews on Google</a></figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec" aria-labelledby="priv-h">
+  <div class="wrap split">
+    <div class="rv"><div class="ph" style="aspect-ratio:4/3"><img src="/images/w/arpit-workshop1-922.webp" srcset="/images/w/arpit-workshop1-922.webp 922w" sizes="(max-width: 900px) 100vw, 46vw" alt="Arpit leading the first handpan workshop at Creative Bloom, March 2026" width="922" height="816" loading="lazy" decoding="async"></div></div>
+    <div class="rv">
+      <span class="eyebrow">For your group</span>
+      <h2 id="priv-h">Private and <em>custom workshops</em></h2>
+      <p class="lead mt">Corporate wellness days, yoga retreats and private celebrations. Every session is shaped around the group and the space.</p>
+      <div class="btn-row mt"><a class="btn" href="/pages/performances?type=Private%20or%20team%20workshop#enquire">Enquire for your group</a><a class="link" href="/pages/performances">Live performances</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec bg-paper" aria-labelledby="wfaq-h">
+  <div class="wrap wrap-text">
+    <div class="rv"><span class="eyebrow">Good to know</span><h2 id="wfaq-h">Workshop <em>questions</em></h2></div>
+    <div class="faq mt-l">
+      <details><summary>Do I need any experience?</summary><div class="ans">None at all. Workshops are made for complete beginners.</div></details>
+      <details><summary>Do I need my own handpan?</summary><div class="ans">No, a handpan is provided for every participant. If you have your own and want to bring it, choose that option when you book.</div></details>
+      <details><summary>What if I can’t make it?</summary><div class="ans">Tickets are non-refundable, but you’re welcome to send a friend in your place. Just message Arpit their name before the workshop. If Arpit cancels a workshop, you get a full refund.</div></details>
+      <details><summary>Can a friend come and watch?</summary><div class="ans">When a session has audience passes, you’ll see the option while booking, after adding at least one participant ticket.</div></details>
+      <details><summary>Anything else to know?</summary><div class="ans">Please handle the instruments with care, since any damage is charged. Photos and short videos are taken during sessions and may be used on social media and to promote future workshops, as set out in the booking terms.</div></details>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <a class="brand" href="/" aria-label="Arpit Pandey, home"><img src="/images/handpan-logo-inverse.svg" alt="" width="40" height="40"><b>Arpit <i>Pandey</i></b></a>
+        <p>Handpan artist, recording musician and teacher. Based in Bengaluru, teaching students across India and abroad.</p>
+        <a class="btn btn-sm foot-cta" href="/pages/trial">Book a free trial</a>
+      </div>
+      <div><p class="foot-h">Learn</p><ul>
+        <li><a href="/pages/classes">Online classes</a></li>
+        <li><a href="/pages/classes#pricing">Pricing</a></li>
+        <li><a href="/pages/trial">Free trial</a></li>
+        <li><a href="/enroll/new">Start weekly classes</a></li>
+        <li><a href="/pages/my">Student login</a></li>
+      </ul></div>
+      <div><p class="foot-h">Experience</p><ul>
+        <li><a href="/pages/workshops">Workshops</a></li>
+        <li><a href="/pages/performances">Performances</a></li>
+        <li><a href="/pages/music">Music</a></li>
+        <li><a href="/pages/about">About Arpit</a></li>
+      </ul></div>
+      <div><p class="foot-h">Connect</p><ul>
+        <li><a href="/pages/contact">Contact</a></li>
+        <li><a href="https://wa.me/919380140907">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/pandeyarpit">Instagram</a></li>
+        <li><a href="https://www.youtube.com/@ArpitPandeyhandpan">YouTube</a></li>
+        <li><a href="https://open.spotify.com/artist/0gzgFdsIBjNRibSJ0e9Vsc">Spotify</a></li>
+        <li><a href="mailto:arpithandpan@gmail.com">arpithandpan@gmail.com</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-bot"><span>© <span data-year>2026</span> Arpit Pandey · Bengaluru, India</span><a href="/privacy">Privacy policy</a></div>
   </div>
 </footer>
-
-<script src="../js/main.js"></script>
-<script>
-// Upcoming workshops come from the dashboard (Workshops), so the site never
-// shows a stale date, venue or "booking opens" note. One request returns
-// every upcoming workshop with the seats left.
-(function () {
-  var API_BASE = 'https://handpan-webhook-server-production.up.railway.app';
-  var LOW_SEATS = 2;
-  var box = document.getElementById('wsUpcoming');
-  if (!box) return;
-  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  function clockMin(t) {
-    var m = String(t || '').match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
-    if (!m) return null;
-    var h = +m[1], mi = +(m[2] || 0), ap = (m[3] || '').toUpperCase();
-    if (ap === 'PM' && h < 12) h += 12;
-    if (ap === 'AM' && h === 12) h = 0;
-    return h * 60 + mi;
-  }
-  // "4:00 PM - 6:00 PM" → "2 hours"
-  function duration(time) {
-    var p = String(time || '').split(/\s*(?:-|–|to)\s*/i);
-    if (p.length < 2) return '';
-    var a = clockMin(p[0]), b = clockMin(p[1]);
-    if (a == null || b == null) return '';
-    if (!/AM|PM/i.test(p[0]) && /PM/i.test(p[1]) && a < 720 && a + 720 < b + 60) a += 720;
-    var d = b - a; if (d <= 0) return '';
-    var h = d / 60;
-    return (h % 1 === 0 ? h : h.toFixed(1)) + (h === 1 ? ' hour' : ' hours');
-  }
-  function row(w) {
-    var d = String(w.date).slice(0, 10).split('-');
-    var title = w.title || 'Handpan Workshop';
-    var meta = [w.venue || 'Venue to be announced, Bengaluru', duration(w.time), 'Beginner friendly'].filter(Boolean).join(' · ');
-    var dayStart = new Date(w.date + 'T00:00:00+05:30');
-    var now = new Date();
-    var action = '', counts = '', open = false;
-    if (!w.bookingOpen) {
-      action = '<div class="w-action w-status"><span class="w-status-label">Coming soon</span><span class="w-status-note">Booking opens soon</span></div>';
-    } else if (now >= dayStart) {
-      action = '<div class="w-action"><span class="w-pill-off">Booking closed</span></div>';
-    } else if (w.participantsRemaining != null && w.participantsRemaining <= 0) {
-      action = '<div class="w-action"><span class="w-pill-off">Slots full</span></div>';
-      counts = '<p class="w-counts"><span class="w-dot full" role="img" aria-label="Slots full"></span>All participant spots are taken</p>';
-    } else {
-      open = true;
-      action = '<div class="w-action"><a href="/pages/book?ws=' + encodeURIComponent(w.id) + '" class="btn-primary" style="font-size:1rem;padding:0.79rem 2rem;">Book now</a></div>';
-      var pn = w.participantsRemaining, on = w.observersRemaining;
-      if (pn != null) {
-        var few = pn <= LOW_SEATS;
-        var line = pn + ' participant ' + (pn === 1 ? 'spot' : 'spots') + ' left';
-        if (on != null) line += on > 0 ? ' <span class="w-dim">·</span> ' + on + ' audience ' + (on === 1 ? 'pass' : 'passes') + ' left' : ' <span class="w-dim">· audience full</span>';
-        counts = '<p class="w-counts"><span class="w-dot' + (few ? ' few' : '') + '" role="img" aria-label="' + (few ? 'Only a few spots left' : 'Bookings open') + '"></span>' + line + '</p>';
-      }
-    }
-    return '<div class="workshop-row' + (open ? ' is-open' : '') + '">'
-      + '<div class="w-date"><span class="w-day">' + d[2] + '</span><span class="w-month">' + MONTHS[+d[1] - 1] + ' ' + d[0] + '</span></div>'
-      + '<div><p class="w-title">' + esc(title) + '</p><div class="w-meta"><span>' + esc(meta) + '</span></div>' + counts + '</div>'
-      + action + '</div>';
-  }
-  // Nothing to list (none planned, or the list could not load): the home page
-  // hides the whole section; the workshops page offers "Notify me", which
-  // saves to the dashboard's Waitlist.
-  // Same country list and phone rules as the booking page.
-  var COUNTRIES = [
-    { name: 'India', flag: '🇮🇳', code: '+91', minLen: 10, maxLen: 10 },
-    { name: 'United States', flag: '🇺🇸', code: '+1', minLen: 10, maxLen: 10 },
-    { name: 'United Kingdom', flag: '🇬🇧', code: '+44', minLen: 10, maxLen: 10 },
-    { name: 'Canada', flag: '🇨🇦', code: '+1', minLen: 10, maxLen: 10 },
-    { name: 'Germany', flag: '🇩🇪', code: '+49', minLen: 9, maxLen: 11 },
-    { name: 'Australia', flag: '🇦🇺', code: '+61', minLen: 9, maxLen: 9 },
-    { name: 'United Arab Emirates', flag: '🇦🇪', code: '+971', minLen: 9, maxLen: 9 },
-    { name: 'Singapore', flag: '🇸🇬', code: '+65', minLen: 8, maxLen: 8 },
-    { name: 'France', flag: '🇫🇷', code: '+33', minLen: 9, maxLen: 9 },
-    { name: 'Netherlands', flag: '🇳🇱', code: '+31', minLen: 9, maxLen: 9 },
-    { name: 'Switzerland', flag: '🇨🇭', code: '+41', minLen: 9, maxLen: 9 },
-    { name: 'New Zealand', flag: '🇳🇿', code: '+64', minLen: 8, maxLen: 9 },
-    { name: 'Nepal', flag: '🇳🇵', code: '+977', minLen: 10, maxLen: 10 }
-  ];
-  var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M6 9l6 6l6 -6"/></svg>';
-
-  // Nothing to list (none planned, or the list could not load): the home page
-  // hides the whole section; the workshops page offers "Notify me", which
-  // saves to the dashboard's Waitlist. Same fields as the booking page's
-  // sold-out form: name, phone with country, optional email.
-  function empty() {
-    if (box.getAttribute('data-empty') === 'hide') { var sec = box.closest('section'); if (sec) sec.style.display = 'none'; return; }
-    box.innerHTML = '<div class="w-notify" id="wNotify">'
-      + '<div class="w-notify-text"><p class="w-notify-title">New dates coming soon</p>'
-      + '<p class="w-notify-sub">Leave your details and Arpit will message you as soon as the next workshop opens for booking.</p></div>'
-      + '<form class="w-notify-form" id="wNotifyForm" novalidate>'
-      + '<div class="w-nf"><label for="wnName">Name</label><input class="w-in" id="wnName" autocomplete="name" placeholder="Full name"/></div>'
-      + '<div class="w-nf"><label for="wnPhone">Phone</label><div class="w-phone"><button type="button" class="w-cc" id="wnCc" aria-haspopup="listbox" aria-expanded="false"><span id="wnFlag">🇮🇳</span><span id="wnCode">+91</span>' + CHEV + '</button>'
-      + '<input class="w-in" id="wnPhone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="Number"/></div>'
-      + '<div class="w-ccd" id="wnCcd"><input class="w-in" id="wnCcs" placeholder="Search country..." autocomplete="off"/><div class="w-ccl" id="wnCcl" role="listbox"></div></div>'
-      + '<p class="w-hint">We\'ll message you on WhatsApp when the next workshop opens.</p></div>'
-      + '<div class="w-nf"><label for="wnEmail">Email <span>(optional)</span></label><input class="w-in" id="wnEmail" type="email" autocomplete="email" placeholder="you@example.com"/></div>'
-      + '<p class="w-err" id="wnErr" role="alert"></p>'
-      + '<button type="submit" class="btn-primary w-notify-btn" id="wnBtn">Notify me</button>'
-      + '</form></div>';
-
-    var country = COUNTRIES[0];
-    var cc = document.getElementById('wnCc'), ccd = document.getElementById('wnCcd'), ccs = document.getElementById('wnCcs'), ccl = document.getElementById('wnCcl');
-    function closeCc() { ccd.classList.remove('open'); cc.classList.remove('open'); cc.setAttribute('aria-expanded', 'false'); }
-    function renderCc(f) {
-      f = (f || '').trim().toLowerCase();
-      ccl.innerHTML = '';
-      COUNTRIES.filter(function (c) { return c.name.toLowerCase().indexOf(f) > -1 || c.code.indexOf(f) > -1; }).forEach(function (c) {
-        var it = document.createElement('div');
-        it.className = 'w-cci'; it.setAttribute('role', 'option');
-        it.innerHTML = '<span><span>' + c.flag + '</span> ' + c.name + '</span><span class="w-cci-code">' + c.code + '</span>';
-        it.addEventListener('click', function () {
-          country = c;
-          document.getElementById('wnFlag').textContent = c.flag;
-          document.getElementById('wnCode').textContent = c.code;
-          ccs.value = ''; renderCc(''); closeCc();
-          document.getElementById('wnPhone').focus();
-        });
-        ccl.appendChild(it);
-      });
-    }
-    renderCc('');
-    cc.addEventListener('click', function () {
-      var open = !ccd.classList.contains('open');
-      ccd.classList.toggle('open', open); cc.classList.toggle('open', open); cc.setAttribute('aria-expanded', String(open));
-      if (open) ccs.focus();
-    });
-    ccs.addEventListener('input', function () { renderCc(ccs.value); });
-    document.addEventListener('click', function (e) { if (!ccd.contains(e.target) && !cc.contains(e.target)) closeCc(); });
-
-    // Typing again clears an old error.
-    document.getElementById('wNotifyForm').addEventListener('input', function () { document.getElementById('wnErr').classList.remove('show'); });
-    document.getElementById('wNotifyForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      var name = document.getElementById('wnName').value.trim();
-      var num = document.getElementById('wnPhone').value.replace(/[\s-]/g, '');
-      var email = document.getElementById('wnEmail').value.trim();
-      var err = document.getElementById('wnErr'), btn = document.getElementById('wnBtn');
-      var len = country.minLen === country.maxLen ? country.minLen + ' digits' : country.minLen + '-' + country.maxLen + ' digits';
-      var msg = !name ? 'Please enter your name.'
-        : !num ? 'Please enter your phone number.'
-        : !/^\d+$/.test(num) ? 'Phone number should contain digits only.'
-        : (num.length < country.minLen || num.length > country.maxLen) ? 'Enter a valid mobile number (' + len + ' for ' + country.name + ').'
-        : (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) ? 'Please enter a valid email.' : '';
-      if (msg) { err.textContent = msg; err.classList.add('show'); return; }
-      err.classList.remove('show');
-      btn.disabled = true; btn.textContent = 'Saving…';
-      fetch(API_BASE + '/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, phone: country.code + num, email: email || null }) })
-        .then(function (r) { if (!r.ok) throw new Error(r.status); })
-        .then(function () {
-          document.getElementById('wNotify').innerHTML = '<div class="w-notify-done"><span class="w-tick" aria-hidden="true"></span><div><p class="w-notify-title">You\'re on the list</p><p class="w-notify-sub">Thanks, ' + esc(name.split(' ')[0]) + '. Arpit will message you when the next workshop opens.</p></div></div>';
-        })
-        .catch(function () {
-          btn.disabled = false; btn.textContent = 'Notify me';
-          err.textContent = 'Something went wrong. Please try again, or message Arpit on WhatsApp.'; err.classList.add('show');
-        });
-    });
-  }
-
-  fetch(API_BASE + '/api/workshops/upcoming')
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (data) {
-      var list = (data && data.workshops) || [];
-      var today = new Date(Date.now() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
-      list = list.filter(function (w) { return String(w.date).slice(0, 10) >= today; });
-      if (!list.length) { empty(); return; }
-      box.innerHTML = list.map(row).join('');
-    })
-    .catch(function () { empty(); });
-})();
-</script>
+<script src="/js/site.js?v=2026-10-31a" defer></script>
 </body>
 </html>
