@@ -17,6 +17,31 @@
   function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k) || ''; if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return ''; } }
   HP.esc = esc;
 
+  /* ---------- header logo turns with scroll (as on the old site) ---------- */
+  (function () {
+    var img = $('.nav .brand img') || $('header .brand img');
+    if (!img || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    var rot = 0, lastY = window.scrollY, ticking = false, scale = 1;
+    try { rot = parseFloat(sessionStorage.getItem('logoRot')) || 0; } catch (e) {}
+    function paint() { img.style.transform = 'rotate(' + rot.toFixed(1) + 'deg) scale(' + scale + ')'; ticking = false; }
+    img.style.willChange = 'transform';
+    paint();
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY; rot += (y - lastY) * 0.3; lastY = y;
+      if (!ticking) { ticking = true; requestAnimationFrame(paint); }
+    }, { passive: true });
+    window.addEventListener('pagehide', function () { try { sessionStorage.setItem('logoRot', rot % 360); } catch (e) {} });
+    var a = img.closest('a');
+    if (a) {
+      var down = function () { img.style.transition = 'none'; scale = .88; paint(); };
+      var up = function () { img.style.transition = 'transform .15s ease'; scale = 1; paint(); setTimeout(function () { img.style.transition = 'none'; }, 160); };
+      a.addEventListener('pointerdown', down);
+      a.addEventListener('pointerup', up);
+      a.addEventListener('pointerleave', up);
+      a.addEventListener('pointercancel', up);
+    }
+  })();
+
   /* ---------- tracking: only completed outcomes call this ---------- */
   HP.track = function (name, props) {
     try { (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: name }, props || {})); } catch (e) {}
@@ -36,10 +61,12 @@
     if (open) { nav.setAttribute('data-open', ''); mnav.setAttribute('data-open', ''); doc.body.style.overflow = 'hidden'; }
     else { nav.removeAttribute('data-open'); mnav.removeAttribute('data-open'); doc.body.style.overflow = ''; }
     burger.setAttribute('aria-expanded', String(!!open));
-    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    var x = $('.mnav-x', mnav);
+    if (open && x) setTimeout(function () { x.focus(); }, 30);
+    if (!open && doc.activeElement && mnav.contains(doc.activeElement)) burger.focus();
   }
   if (burger) burger.addEventListener('click', function () { setMenu(!mnav.hasAttribute('data-open')); });
-  if (mnav) mnav.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+  if (mnav) mnav.addEventListener('click', function (e) { if (e.target.closest('a, .mnav-x')) setMenu(false); });
   doc.addEventListener('keydown', function (e) { if (e.key === 'Escape') { setMenu(false); closeAcct(); } });
   var mq = window.matchMedia('(min-width: 1081px)');
   (mq.addEventListener ? mq.addEventListener.bind(mq, 'change') : mq.addListener.bind(mq))(function (m) { if (m.matches) setMenu(false); });
@@ -63,8 +90,8 @@
     $$('[data-macct]').forEach(function (box) {
       var href = box.getAttribute('data-macct');
       box.innerHTML = me
-        ? '<span>Logged in as ' + esc(me.name) + '</span><a href="' + esc(href) + '">My classes</a><a href="#" data-logout>Log out</a>'
-        : '<a href="' + esc(href) + '">Student login</a>';
+        ? '<a class="btn btn-soft" href="' + esc(href) + '">My classes</a><span class="who">Logged in as ' + esc(me.name) + ' · <a class="inline-link" href="#" data-logout>Log out</a></span>'
+        : '<a class="btn btn-soft" href="' + esc(href) + '">Student login</a>';
     });
   }
   doc.addEventListener('click', function (e) {
@@ -99,35 +126,67 @@
     });
   });
 
-  /* ---------- phone field helper ---------- */
-  var DIALS = [['91', 'IN', 10, 10], ['1', 'US/CA', 10, 10], ['44', 'UK', 10, 10], ['61', 'AU', 9, 9], ['971', 'AE', 9, 9], ['65', 'SG', 8, 8], ['49', 'DE', 9, 11], ['33', 'FR', 9, 9], ['31', 'NL', 9, 9], ['41', 'CH', 9, 9], ['64', 'NZ', 8, 9], ['977', 'NP', 10, 10], ['', 'Other', 6, 15]];
-  function guessDial() { try { var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; if (/Kolkata|Calcutta/.test(tz)) return '91'; if (/^America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Toronto|Vancouver|Edmonton|Winnipeg|Halifax|Regina|St_Johns|Montreal|Indiana|Kentucky|Boise)/.test(tz) || /^(US|Canada)\//.test(tz) || /Honolulu/.test(tz)) return '1'; if (/London/.test(tz)) return '44'; if (/Australia/.test(tz)) return '61'; if (/Dubai/.test(tz)) return '971'; if (/Singapore/.test(tz)) return '65'; if (/Berlin/.test(tz)) return '49'; if (/Paris/.test(tz)) return '33'; if (/Amsterdam/.test(tz)) return '31'; if (/Zurich/.test(tz)) return '41'; if (/Auckland/.test(tz)) return '64'; if (/Kathmandu/.test(tz)) return '977'; return tz ? '' : '91'; } catch (e) { return '91'; } }
-  HP.fillDial = function (sel) {
-    if (!sel || sel.options.length) return;
-    var g = guessDial();
-    DIALS.forEach(function (d) { var o = doc.createElement('option'); o.value = d[0]; o.textContent = d[0] ? '+' + d[0] + ' ' + d[1] : d[1]; if (d[0] === g) o.selected = true; sel.appendChild(o); });
-  };
+  /* ---------- phone field: country picker (same list and behaviour as the booking pages) ---------- */
+  var CC = [['IN','India','91',10,10],['US','United States','1',10,10],['GB','United Kingdom','44',10,10],['CA','Canada','1',10,10],['AU','Australia','61',9,9],
+    ['AE','United Arab Emirates','971',9,9],['SG','Singapore','65',8,8],['DE','Germany','49',9,11],['FR','France','33',9,9],['NL','Netherlands','31',9,9],['CH','Switzerland','41',9,9],
+    ['NZ','New Zealand','64',8,9],['NP','Nepal','977',10,10],['IE','Ireland','353',7,9],['ES','Spain','34',9,9],['IT','Italy','39',9,10],['PT','Portugal','351',9,9],['BE','Belgium','32',8,9],
+    ['AT','Austria','43',7,13],['SE','Sweden','46',7,9],['NO','Norway','47',8,8],['DK','Denmark','45',8,8],['FI','Finland','358',6,10],['PL','Poland','48',9,9],['GR','Greece','30',10,10],
+    ['IL','Israel','972',8,9],['SA','Saudi Arabia','966',9,9],['QA','Qatar','974',8,8],['KW','Kuwait','965',8,8],['BH','Bahrain','973',8,8],['OM','Oman','968',8,8],['ZA','South Africa','27',9,9],
+    ['KE','Kenya','254',9,9],['JP','Japan','81',9,10],['KR','South Korea','82',8,10],['HK','Hong Kong','852',8,8],['MY','Malaysia','60',9,10],['TH','Thailand','66',9,9],['ID','Indonesia','62',9,12],
+    ['PH','Philippines','63',10,10],['LK','Sri Lanka','94',9,9],['BD','Bangladesh','880',10,10],['MV','Maldives','960',7,7],['MX','Mexico','52',10,10],['BR','Brazil','55',10,11],['AR','Argentina','54',10,10]];
+  var TZC = { 'Asia/Kolkata':'IN','Asia/Calcutta':'IN','Europe/London':'GB','Europe/Dublin':'IE','Europe/Berlin':'DE','Europe/Paris':'FR','Europe/Amsterdam':'NL','Europe/Madrid':'ES','Europe/Rome':'IT','Europe/Lisbon':'PT','Europe/Brussels':'BE','Europe/Zurich':'CH','Europe/Vienna':'AT','Europe/Stockholm':'SE','Europe/Oslo':'NO','Europe/Copenhagen':'DK','Europe/Helsinki':'FI','Europe/Warsaw':'PL','Europe/Athens':'GR','Asia/Jerusalem':'IL','Asia/Dubai':'AE','Asia/Riyadh':'SA','Asia/Qatar':'QA','Asia/Tokyo':'JP','Asia/Seoul':'KR','Asia/Hong_Kong':'HK','Asia/Singapore':'SG','Asia/Kuala_Lumpur':'MY','Asia/Bangkok':'TH','Asia/Jakarta':'ID','Asia/Manila':'PH','Asia/Colombo':'LK','Asia/Kathmandu':'NP','Asia/Katmandu':'NP','Asia/Dhaka':'BD','Pacific/Auckland':'NZ','America/Toronto':'CA','America/Vancouver':'CA','America/Edmonton':'CA','America/Winnipeg':'CA','America/Halifax':'CA','America/Mexico_City':'MX','America/Sao_Paulo':'BR','America/Argentina/Buenos_Aires':'AR','Africa/Johannesburg':'ZA','Africa/Nairobi':'KE' };
+  function flagOf(iso) { return iso.replace(/./g, function (c) { return String.fromCodePoint(127397 + c.charCodeAt(0)); }); }
+  function guessIso() { try { var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; if (TZC[tz]) return TZC[tz]; if (/^America\//.test(tz) || /^US\//.test(tz) || /Honolulu/.test(tz)) return 'US'; if (/^Australia\//.test(tz)) return 'AU'; } catch (e) {} return 'IN'; }
+  function ccByIso(iso) { return CC.filter(function (c) { return c[0] === iso; })[0] || CC[0]; }
+  var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  function buildPicker(old) {
+    var field = old.closest('.field'), row = old.parentNode, iso = guessIso(), c = ccByIso(iso), uid = 'cc' + Math.random().toString(36).slice(2, 7);
+    var hidden = doc.createElement('input'); hidden.type = 'hidden'; hidden.name = 'dial'; hidden.value = c[2]; hidden.setAttribute('data-dial', ''); hidden.setAttribute('data-iso', c[0]);
+    var btn = doc.createElement('button'); btn.type = 'button'; btn.className = 'cc-btn'; btn.setAttribute('aria-haspopup', 'listbox'); btn.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-controls', uid);
+    var paint = function () { var k = ccByIso(hidden.getAttribute('data-iso')); btn.innerHTML = '<span class="cc-flag" aria-hidden="true">' + flagOf(k[0]) + '</span><span>+' + k[2] + '</span>' + CHEV; btn.setAttribute('aria-label', 'Country code: ' + k[1] + ' +' + k[2]); };
+    paint();
+    var pop = doc.createElement('div'); pop.className = 'cc-pop'; pop.id = uid; pop.hidden = true;
+    pop.innerHTML = '<input type="text" class="cc-search" placeholder="Search country" aria-label="Search country" autocomplete="off"><div class="cc-list" role="listbox"></div>';
+    var list = pop.querySelector('.cc-list'), search = pop.querySelector('.cc-search');
+    var render = function (q) {
+      q = String(q || '').trim().toLowerCase().replace('+', '');
+      var items = CC.filter(function (k) { return !q || k[1].toLowerCase().indexOf(q) > -1 || k[2].indexOf(q) === 0; });
+      list.innerHTML = items.length ? items.map(function (k) { return '<button type="button" role="option" class="cc-item" data-iso="' + k[0] + '" aria-selected="' + (k[0] === hidden.getAttribute('data-iso')) + '"><span class="cc-name"><span aria-hidden="true">' + flagOf(k[0]) + '</span>' + esc(k[1]) + '</span><span class="cc-code">+' + k[2] + '</span></button>'; }).join('') : '<p class="cc-none">No country found</p>';
+    };
+    var open = function (on) { pop.hidden = !on; btn.setAttribute('aria-expanded', String(on)); btn.classList.toggle('open', on); if (on) { render(''); search.value = ''; setTimeout(function () { search.focus(); }, 20); } };
+    btn.addEventListener('click', function () { open(pop.hidden); });
+    search.addEventListener('input', function () { render(search.value); });
+    search.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); var f = list.querySelector('.cc-item'); if (f) f.click(); } if (e.key === 'ArrowDown') { e.preventDefault(); var g = list.querySelector('.cc-item'); if (g) g.focus(); } });
+    list.addEventListener('click', function (e) { var it = e.target.closest('.cc-item'); if (!it) return; var k = ccByIso(it.getAttribute('data-iso')); hidden.value = k[2]; hidden.setAttribute('data-iso', k[0]); paint(); open(false); var ph = field.querySelector('[data-phone]'); if (ph) { ph.focus(); if (field.classList.contains('invalid')) validateField(ph); } });
+    pop.addEventListener('keydown', function (e) { if (e.key === 'Escape') { open(false); btn.focus(); } });
+    doc.addEventListener('click', function (e) { if (!pop.hidden && !pop.contains(e.target) && !btn.contains(e.target)) open(false); });
+    row.replaceChild(btn, old); row.appendChild(hidden); row.insertAdjacentElement('afterend', pop);
+  }
   function normPhone(dial, num) { var d = String(num || '').replace(/\D/g, ''); if (dial && d.indexOf(dial) === 0 && d.length > 10) d = d.slice(dial.length); return d.replace(/^0+/, ''); }
   HP.normPhone = normPhone;
-  function phoneOk(dial, num) {
-    var d = normPhone(dial, num); var r = DIALS.filter(function (x) { return x[0] === dial; })[0] || DIALS[DIALS.length - 1];
-    if (dial === '91' && d.length === 10 && !/^[6-9]/.test(d)) return false;
-    return d.length >= r[2] && d.length <= r[3];
+  function phoneRule(iso) { var c = ccByIso(iso || 'IN'); return { min: c[3], max: c[4], name: c[1] }; }
+  function phoneMsg(dialEl, num) {
+    var iso = dialEl ? dialEl.getAttribute('data-iso') : 'IN', dial = dialEl ? dialEl.value : '91', d = normPhone(dial, num), r = phoneRule(iso);
+    if (/[^\d\s()+-]/.test(String(num))) return 'Phone number should contain digits only.';
+    if (iso === 'IN' && d.length === 10 && !/^[6-9]/.test(d)) return 'Enter a valid Indian mobile number. Landline numbers are not accepted.';
+    if (d.length < r.min || d.length > r.max) return 'Enter a valid mobile number (' + (r.min === r.max ? r.min : r.min + ' to ' + r.max) + ' digits for ' + r.name + ').';
+    return '';
   }
-  $$('select[data-dial]').forEach(HP.fillDial);
+  $$('select[data-dial]').forEach(buildPicker);
 
   /* ---------- forms: validation + submit ---------- */
   function fieldOf(el) { return el.closest('.field'); }
   function setErr(el, msg) { var f = fieldOf(el); if (!f) return; var e = $('.err', f); if (!e) { e = doc.createElement('span'); e.className = 'err'; e.setAttribute('role', 'alert'); f.appendChild(e); } e.textContent = msg || ''; f.classList.toggle('invalid', !!msg); el.setAttribute('aria-invalid', msg ? 'true' : 'false'); }
+  function validateField(el) { var f = fieldOf(el); if (!f) return; var m = phoneMsg($('[data-dial]', f), el.value); setErr(el, el.value.trim() ? m : ''); }
   function validate(form) {
     var bad = null;
     $$('input, select, textarea', form).forEach(function (el) {
-      if (el.type === 'hidden' || el.name === 'website' || el.disabled) return;
+      if (el.type === 'hidden' || el.name === 'website' || el.disabled || el.classList.contains('cc-search')) return;
       var v = (el.value || '').trim(), msg = '';
       if (el.type === 'radio') { if (el.required && !form.querySelector('input[name="' + el.name + '"]:checked')) msg = el.getAttribute('data-msg') || 'Please choose one.'; }
       else if (el.required && !v) msg = el.getAttribute('data-msg') || 'This is needed.';
       else if (v && el.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) msg = 'Please enter a valid email address.';
-      else if (v && el.hasAttribute('data-phone')) { var dial = $('select[data-dial]', fieldOf(el)); if (!phoneOk(dial ? dial.value : '', v)) msg = 'Please check the number' + (dial && dial.value === '91' ? ' (10 digits, starting 6 to 9).' : '.'); }
+      else if (v && el.hasAttribute('data-phone')) { msg = phoneMsg($('[data-dial]', fieldOf(el)), v); }
       else if (v && el.minLength > 0 && v.length < el.minLength) msg = el.getAttribute('data-msg') || 'A little more detail, please.';
       if (el.type === 'radio') { if (el === form.querySelector('input[name="' + el.name + '"]')) setErr(el, msg); }
       else setErr(el, msg);
@@ -136,7 +195,7 @@
     if (bad) { try { bad.focus({ preventScroll: true }); } catch (e) { bad.focus(); } bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
     return !bad;
   }
-  doc.addEventListener('input', function (e) { var f = e.target.closest && e.target.closest('.field.invalid'); if (f) { f.classList.remove('invalid'); e.target.setAttribute('aria-invalid', 'false'); } });
+  doc.addEventListener('input', function (e) { if (e.target.classList && e.target.classList.contains('cc-search')) return; var f = e.target.closest && e.target.closest('.field.invalid'); if (f) { f.classList.remove('invalid'); e.target.setAttribute('aria-invalid', 'false'); } });
   doc.addEventListener('change', function (e) { var f = e.target.closest && e.target.closest('.field.invalid'); if (f) f.classList.remove('invalid'); });
 
   function busy(btn, on, label) {
