@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v258</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v259</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v258</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v259</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -8734,6 +8734,10 @@ async function renderClassLog() {
     // v257: never pre-ticked. A class is free only when you say so (the server adds a converted trial by itself).
     document.getElementById('cl-free').checked = false;
     if (!rows.length) { list.innerHTML = '<div class="ws-pax-empty">No classes logged yet</div>'; return; }
+    // v259: how they started, at a glance (the list stays newest first)
+    { const asc = rows.slice().reverse(), tr = asc.find(r => r.is_free && (r.trial_id || r.source === 'trial' || /trial/i.test(r.note || ''))), c1 = asc.find(r => !r.is_free);
+      const bits = [tr ? 'Trial ' + fmtDate(tr.class_date) : '', c1 ? 'First class ' + fmtDate(c1.class_date) : ''].filter(Boolean);
+      if (bits.length) sum.innerHTML += '<div class="cl-start">' + bits.join(' · ') + '</div>'; }
     const TR = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
     const DOTS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
     let n = counted;
@@ -8759,6 +8763,8 @@ async function saveClassLog() {
   try {
     await sbPost('class_log', { student_id: _clStudentId, class_date: date, note: note || null, is_free: isFree });
     document.getElementById('cl-note').value = '';
+    // v259: back to today, so the next class is never logged on an old date by mistake
+    { const d = document.getElementById('cl-date'); if (d) { d.value = localISODate(); if (d._dpRefresh) d._dpRefresh(); } }
     showToast((isFree ? '✓ Free trial logged for ' : '✓ Class logged for ') + (classLogStudent().full_name || _clStudentId), 'success');
     await renderClassLog();
     loadStudents();
@@ -20610,6 +20616,7 @@ html.mono.dk .hx.acc .hx-go { background: var(--tx); }
 }
 @media (max-width: 359px) { .hx-art { width: 108px; height: 108px; } .hx-tx b.hx-tm { font-size: var(--fs-3xl); } }
 @media (prefers-reduced-motion: reduce) { .hx-glow, .hx-rip, .hx-pan.live.on .hx-spin, .hx-pan.join .hx-prg, .hx-disc { animation: none !important; } }
+.cl-start { margin-top: 6px; font-size: var(--fs-sm); color: var(--tx3); }
 /* ── 12 · MOTION ───────────────────────────────────────────────────── */
 html body .m-card, html body .td-row, html body .wa-row, html body .mp-it { transition: background-color var(--dur-fast) var(--ease), border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease); }
 html body .filter-sheet, html body .mobile-picker-sheet, html body .qa-sheet, html body .m-dots-popover, html body .modal, html body .tw-sheet { transition-duration: var(--dur-slow); transition-timing-function: var(--ease); }
