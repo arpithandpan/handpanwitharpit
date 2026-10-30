@@ -326,14 +326,16 @@
     var SYM = { inr: '₹', usd: '$', cad: 'C$' };
     var fmt = function (c, n) { return SYM[c] + Math.round(n).toLocaleString(c === 'inr' ? 'en-IN' : 'en-US'); };
     var pick = ls('hp_region');
-    if (!/^(inr|usd|cad)$/.test(pick)) { try { var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; pick = /Kolkata|Calcutta/.test(tz) || !tz ? 'inr' : /Toronto|Vancouver|Edmonton|Winnipeg|Halifax|Regina|St_Johns|Montreal|Canada\//.test(tz) ? 'cad' : 'usd'; } catch (e) { pick = 'inr'; } }
+    if (pick === 'cad') pick = 'usd';
+    if (!/^(inr|usd)$/.test(pick)) { try { var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; pick = /Kolkata|Calcutta/.test(tz) || !tz ? 'inr' : 'usd'; } catch (e) { pick = 'inr'; } }
     var paint = function () {
       $$('button', cur).forEach(function (b) { b.setAttribute('aria-pressed', String(b.value === pick)); });
       var per = P[pick];
       $$('[data-p]').forEach(function (el) {
         var k = el.getAttribute('data-p');
         var v = k === 'per' ? per : k === 'm' ? per * 4 : k === 'q' ? Math.round(per * 12 * .9) : k === 'qlist' ? per * 12 : k === 'qper' ? per * .9 : 0;
-        el.textContent = k === 'qper' ? (pick === 'inr' ? fmt(pick, v) : SYM[pick] + (v % 1 ? v.toFixed(2) : String(v))) : fmt(pick, v);
+        var txt = k === 'qper' ? (pick === 'inr' ? fmt(pick, v) : SYM[pick] + (v % 1 ? v.toFixed(2) : String(v))) : fmt(pick, v);
+        if (el.tagName === 'B') el.innerHTML = '<span class="cs">' + SYM[pick] + '</span>' + esc(txt.slice(SYM[pick].length)); else el.textContent = txt;
       });
       $$('[data-cur-note]').forEach(function (el) { el.hidden = el.getAttribute('data-cur-note') !== pick; });
     };
