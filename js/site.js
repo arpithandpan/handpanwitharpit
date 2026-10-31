@@ -174,6 +174,88 @@
   }
   $$('select[data-dial]').forEach(buildPicker);
 
+  /* ---------- our own select (no browser dropdowns) ---------- */
+  function closeAllPops(except) { $$('.xs-pop:not([hidden]), .dp-pop:not([hidden])').forEach(function (p) { if (p !== except && p._close) p._close(); }); }
+  function buildSelect(sel) {
+    var field = sel.closest('.field'), uid = 'xs' + Math.random().toString(36).slice(2, 7);
+    var opts = Array.prototype.map.call(sel.options, function (o) { return { v: o.value, t: o.textContent }; });
+    var hidden = doc.createElement('input'); hidden.type = 'hidden'; hidden.name = sel.name; hidden.value = sel.value;
+    var btn = doc.createElement('button'); btn.type = 'button'; btn.className = 'xs-btn'; btn.id = sel.id; btn.setAttribute('aria-haspopup', 'listbox'); btn.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-controls', uid);
+    var pop = doc.createElement('div'); pop.className = 'xs-pop'; pop.id = uid; pop.hidden = true; pop.setAttribute('role', 'listbox');
+    var paint = function () { var o = opts.filter(function (x) { return x.v === hidden.value; })[0] || opts[0]; btn.innerHTML = '<span class="' + (o.v ? '' : 'xs-ph') + '">' + esc(o.t) + '</span>' + CHEV; };
+    var render = function () { pop.innerHTML = opts.map(function (o, i) { return '<button type="button" role="option" class="xs-item" data-i="' + i + '" aria-selected="' + (o.v === hidden.value) + '">' + esc(o.t) + '</button>'; }).join(''); };
+    var open = function (on) { if (on) closeAllPops(pop); pop.hidden = !on; btn.setAttribute('aria-expanded', String(on)); btn.classList.toggle('open', on); if (on) { render(); var s = pop.querySelector('[aria-selected="true"]') || pop.querySelector('.xs-item'); setTimeout(function () { s.focus(); }, 10); } };
+    pop._close = function () { open(false); };
+    btn.addEventListener('click', function () { open(pop.hidden); });
+    btn.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); open(true); } });
+    pop.addEventListener('click', function (e) { var it = e.target.closest('.xs-item'); if (!it) return; hidden.value = opts[+it.getAttribute('data-i')].v; paint(); open(false); btn.focus(); if (field) field.classList.remove('invalid'); });
+    pop.addEventListener('keydown', function (e) {
+      var items = $$('.xs-item', pop), i = items.indexOf(doc.activeElement);
+      if (e.key === 'ArrowDown') { e.preventDefault(); (items[i + 1] || items[0]).focus(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); (items[i - 1] || items[items.length - 1]).focus(); }
+      else if (e.key === 'Escape' || e.key === 'Tab') { open(false); if (e.key === 'Escape') btn.focus(); }
+    });
+    paint();
+    var wrap = doc.createElement('div'); wrap.className = 'xs-wrap';
+    sel.parentNode.replaceChild(wrap, sel); wrap.appendChild(btn); wrap.appendChild(hidden); wrap.appendChild(pop);
+  }
+  $$('.field select:not([data-dial])').forEach(buildSelect);
+
+  /* ---------- our own date picker (no browser calendar) ---------- */
+  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+  var ARR = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>'; };
+  function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function buildDate(inp) {
+    var field = inp.closest('.field'), uid = 'dp' + Math.random().toString(36).slice(2, 7), today = new Date(); today.setHours(0, 0, 0, 0);
+    var hidden = doc.createElement('input'); hidden.type = 'hidden'; hidden.name = inp.name; hidden.value = inp.value || '';
+    var btn = doc.createElement('button'); btn.type = 'button'; btn.className = 'xs-btn dp-btn'; btn.id = inp.id; btn.setAttribute('aria-haspopup', 'dialog'); btn.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-controls', uid);
+    var pop = doc.createElement('div'); pop.className = 'dp-pop'; pop.id = uid; pop.hidden = true; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Choose a date');
+    var view = new Date(today.getFullYear(), today.getMonth(), 1);
+    var label = function (v) { var p = v.split('-'); var d = new Date(+p[0], +p[1] - 1, +p[2]); return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear(); };
+    var paint = function () { btn.innerHTML = '<span class="' + (hidden.value ? '' : 'xs-ph') + '">' + (hidden.value ? label(hidden.value) : 'Choose a date') + '</span>' + CAL; };
+    var render = function () {
+      var y = view.getFullYear(), m = view.getMonth(), first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate(), t = ymd(today);
+      var canPrev = new Date(y, m, 1) > new Date(today.getFullYear(), today.getMonth(), 1);
+      var h = '<div class="dp-head"><button type="button" class="dp-nav" data-go="-1" aria-label="Previous month"' + (canPrev ? '' : ' disabled') + '>' + ARR('M15 6l-6 6 6 6') + '</button><b>' + MONTHS[m] + ' ' + y + '</b><button type="button" class="dp-nav" data-go="1" aria-label="Next month">' + ARR('M9 6l6 6-6 6') + '</button></div>';
+      h += '<div class="dp-grid" role="grid">' + ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(function (d) { return '<span class="dp-dow" aria-hidden="true">' + d + '</span>'; }).join('');
+      for (var i = 0; i < first; i++) h += '<span></span>';
+      for (var d = 1; d <= days; d++) {
+        var v = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0'), past = v < t;
+        h += '<button type="button" class="dp-day' + (v === t ? ' today' : '') + '" data-v="' + v + '" aria-label="' + label(v) + '"' + (v === hidden.value ? ' aria-pressed="true"' : '') + (past ? ' disabled' : '') + '>' + d + '</button>';
+      }
+      h += '</div><div class="dp-foot"><button type="button" class="dp-link" data-clear>Clear</button><button type="button" class="dp-link" data-close>Done</button></div>';
+      pop.innerHTML = h;
+    };
+    var open = function (on) {
+      if (on) { closeAllPops(pop); if (hidden.value) { var p = hidden.value.split('-'); view = new Date(+p[0], +p[1] - 1, 1); } render(); }
+      pop.hidden = !on; btn.setAttribute('aria-expanded', String(on)); btn.classList.toggle('open', on);
+      if (on) setTimeout(function () { var f = pop.querySelector('.dp-day[aria-pressed="true"]') || pop.querySelector('.dp-day.today') || pop.querySelector('.dp-day:not([disabled])'); if (f) f.focus(); }, 10);
+    };
+    pop._close = function () { open(false); };
+    btn.addEventListener('click', function () { open(pop.hidden); });
+    pop.addEventListener('click', function (e) {
+      var nav = e.target.closest('.dp-nav'), day = e.target.closest('.dp-day');
+      if (nav && !nav.disabled) { view = new Date(view.getFullYear(), view.getMonth() + (+nav.getAttribute('data-go')), 1); render(); var n = pop.querySelector('.dp-nav[data-go="' + nav.getAttribute('data-go') + '"]'); if (n && !n.disabled) n.focus(); return; }
+      if (day && !day.disabled) { hidden.value = day.getAttribute('data-v'); paint(); open(false); btn.focus(); if (field) field.classList.remove('invalid'); return; }
+      if (e.target.closest('[data-clear]')) { hidden.value = ''; paint(); open(false); btn.focus(); return; }
+      if (e.target.closest('[data-close]')) { open(false); btn.focus(); }
+    });
+    pop.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { open(false); btn.focus(); return; }
+      var a = doc.activeElement; if (!a || !a.classList.contains('dp-day')) return;
+      var step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key]; if (!step) return;
+      e.preventDefault(); var p = a.getAttribute('data-v').split('-'), d = new Date(+p[0], +p[1] - 1, +p[2] + step); if (d < today) return;
+      if (d.getMonth() !== view.getMonth()) { view = new Date(d.getFullYear(), d.getMonth(), 1); render(); }
+      var nb = pop.querySelector('.dp-day[data-v="' + ymd(d) + '"]'); if (nb) nb.focus();
+    });
+    paint();
+    var wrap = doc.createElement('div'); wrap.className = 'xs-wrap';
+    inp.parentNode.replaceChild(wrap, inp); wrap.appendChild(btn); wrap.appendChild(hidden); wrap.appendChild(pop);
+  }
+  $$('.field input[type="date"]').forEach(buildDate);
+  doc.addEventListener('click', function (e) { if (!e.target.isConnected || e.target.closest('.xs-wrap')) return; closeAllPops(); });
+
   /* ---------- forms: validation + submit ---------- */
   function fieldOf(el) { return el.closest('.field'); }
   function setErr(el, msg) { var f = fieldOf(el); if (!f) return; var e = $('.err', f); if (!e) { e = doc.createElement('span'); e.className = 'err'; e.setAttribute('role', 'alert'); f.appendChild(e); } e.textContent = msg || ''; f.classList.toggle('invalid', !!msg); el.setAttribute('aria-invalid', msg ? 'true' : 'false'); }
