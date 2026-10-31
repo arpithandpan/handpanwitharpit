@@ -4486,7 +4486,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v266</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v267</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4554,7 +4554,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v266</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v267</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -18387,7 +18387,7 @@ function hlRender(checking) {
   const act = hlActive(), bad = act.filter(i => i.level === 'bad');
   const ico = { ok: '<path d="M20 6 9 17l-5-5"/>', warn: '<path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="10"/>', bad: '<path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="10"/>' };
   const lvl = bad.length ? 'bad' : act.length ? 'warn' : 'ok';
-  let h = '<div class="hl-hero ' + lvl + '"><div class="hl-ring' + (checking ? ' busy' : '') + '"><i></i><i></i><span class="hl-hic">' + (checking ? hpLoader(34) : '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + ico[lvl] + '</svg>') + '</span></div><div class="hl-ht"><b>'
+  let h = '<div class="hl-hero ' + lvl + '"><div class="hl-ring' + (checking ? ' busy' : '') + '"><i></i><i></i><span class="hl-hic">' + (checking ? hpLoader(72) : '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + ico[lvl] + '</svg>') + '</span></div><div class="hl-ht"><b>'
     + (checking ? 'Checking everything…' : lvl === 'ok' ? 'Everything is running fine' : act.length + (act.length === 1 ? ' thing needs you' : ' things need you')) + '</b><span>'
     + (checking ? 'Services, jobs and data, about 10 seconds' : lvl === 'ok' ? 'Services, automatic jobs and data all checked' : bad.length ? bad.length + ' urgent · you were alerted' : 'Nothing urgent') + '</span></div>'
     + '<button type="button" class="btn-dash btn-dash-ghost hl-run" onclick="hlLoad(true)"' + (checking ? ' disabled' : '') + '>' + (checking ? 'Checking…' : hlSvg('refresh', 17) + 'Check now') + '</button></div>';
@@ -20212,7 +20212,8 @@ html body .hl-ring > i { position: absolute; inset: 0; border-radius: 50%; backg
 html body .hl-ring > i + i { animation-delay: 1.5s; }
 html body .hl-hero.ok .hl-ring { color: var(--ok); } html body .hl-hero.warn .hl-ring { color: var(--warn); } html body .hl-hero.bad .hl-ring { color: var(--bad); }
 html body .hl-hero .hl-hic { position: relative; width: 72px !important; height: 72px !important; }
-html body .hl-ring.busy .hl-hic { background: color-mix(in srgb, var(--acc-tx) 12%, transparent) !important; }
+html body .hl-ring.busy .hl-hic { background: transparent !important; }   /* v267: just the handpan while checking, no circle behind it */
+html body .hl-ring.busy .hp-ld { width: 72px; height: 72px; --hp-note: var(--s1); }
 html body .hl-ring.busy > i { display: none; }
 @keyframes hlPulse { 0% { transform: scale(.85); opacity: .35; } 100% { transform: scale(1.35); opacity: 0; } }
 html body .hl-ht { display: flex; flex-direction: column; gap: 4px; }
@@ -20786,7 +20787,8 @@ html body #tdGreet:has(.tsk-greet) { width: 100%; max-width: none; grid-column: 
   html body .pg-tabs .inv-seg > button, html body .sch-bar > .sch-seg > button { flex: 1 1 auto; padding: 0 12px; white-space: nowrap; }
   html body :is(.pg-tabs, #schSegSlots) .pg-n { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; margin-left: 6px; border-radius: var(--r-pill); background: var(--s3); color: var(--tx); opacity: 1; font-size: var(--fs-xs); line-height: 1; box-sizing: border-box; }
   html body :is(.pg-tabs, #schSegSlots) .pg-n:empty { display: none; }
-  html body :is(.pg-tabs .inv-seg > button.on, .pg-tabs .inv-seg > button.active, .pg-tabs .inv-seg > button[aria-selected="true"], #schSegSlots.on, #schSegSlots.active) .pg-n { background: color-mix(in srgb, white 25%, transparent); color: inherit; }
+  /* v267: the count on the chosen tab takes the page colours (inverse of the pill), so it reads on every theme */
+  html body :is(.pg-tabs .inv-seg > button.on, .pg-tabs .inv-seg > button.active, .pg-tabs .inv-seg > button[aria-selected="true"], #schSegSlots.on, #schSegSlots.active) .pg-n { background: var(--bg); color: var(--tx); }
   html body .sch-nav .sch-cap { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; height: var(--ctl-h-md); padding: 0 4px; border-radius: var(--r-pill); background: var(--s1); }
   html body .sch-nav .sch-cap .sch-ic { --ctl2-bg: transparent; --ctl2-shadow: none; box-shadow: none; flex: 0 0 auto; }
   html body .sch-nav .sch-cap #schWeekLabel { flex: 1 1 auto; text-align: center; }
