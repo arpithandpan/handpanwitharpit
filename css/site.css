@@ -688,8 +688,13 @@ body[data-page="trial"] .nav-cta { display: none; }
    Browsers without cross-page view transitions simply switch pages as before. */
 @view-transition { navigation: auto; }
 .nav { view-transition-name: site-nav; }
-::view-transition-group(nav-pill) { animation-duration: .38s; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
-::view-transition-old(root), ::view-transition-new(root) { animation-duration: .22s; }
+::view-transition-group(nav-pill) { animation-duration: .32s; animation-timing-function: cubic-bezier(.3, .7, .2, 1); mix-blend-mode: multiply; }
+::view-transition-old(nav-pill), ::view-transition-new(nav-pill) { animation: none; height: 100%; }
+::view-transition-old(nav-pill) { display: none; }
+::view-transition-old(root) { animation: .16s ease-out both vt-fade-out; }
+::view-transition-new(root) { animation: .22s ease-out both vt-fade-in; }
+@keyframes vt-fade-out { to { opacity: 0; } }
+@keyframes vt-fade-in { from { opacity: 0; } }
 ::view-transition-group(site-nav) { animation: none; }
 ::view-transition-old(site-nav) { display: none; }
 ::view-transition-new(site-nav) { animation: none; }
