@@ -112,7 +112,15 @@
     if (!open && doc.activeElement && mnav.contains(doc.activeElement)) burger.focus();
   }
   if (burger) burger.addEventListener('click', function () { setMenu(!mnav.hasAttribute('data-open')); });
-  if (mnav) mnav.addEventListener('click', function (e) { if (e.target.closest('a, .mnav-x')) setMenu(false); });
+  // Going to another page keeps the menu up until the new page replaces it, so the old page never flashes in between.
+  if (mnav) mnav.addEventListener('click', function (e) {
+    var a = e.target.closest('a, .mnav-x'); if (!a) return;
+    var leaving = a.tagName === 'A' && !e.defaultPrevented && !a.target && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey &&
+      a.origin === location.origin && (a.pathname !== location.pathname || !a.hash);
+    if (!leaving) { setMenu(false); return; }
+    setTimeout(function () { if (doc.visibilityState === 'visible') setMenu(false); }, 3000);   // safety: if the page didn't change
+  });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) setMenu(false); });   // Back button: come back with the menu closed
   doc.addEventListener('keydown', function (e) { if (e.key === 'Escape') { setMenu(false); closeAcct(); } });
   var mq = window.matchMedia('(min-width: 1081px)');
   (mq.addEventListener ? mq.addEventListener.bind(mq, 'change') : mq.addListener.bind(mq))(function (m) { if (m.matches) setMenu(false); });
