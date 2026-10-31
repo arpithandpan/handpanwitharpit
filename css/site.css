@@ -764,3 +764,16 @@ a.ext { white-space: nowrap; }
 .inline-link.ext, .foot a.ext { white-space: normal; }
 .link.ext::after { content: none; }
 .link.ext { gap: 0; }
+
+/* page entrance: the first screen eases in piece by piece, header and footer stay still */
+@keyframes enter-up { from { opacity: 0; transform: translateY(10px); } }
+@keyframes enter-fade { from { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  [data-enter] main > section:first-child .rv:not(.ph):not(.hero-media) > *, [data-enter] main > section:first-child .wrap-text > * { animation: enter-up .45s var(--ease) both; }
+  [data-enter] main > section:first-child .rv:not(.ph):not(.hero-media) > *:nth-child(2), [data-enter] main > section:first-child .wrap-text > *:nth-child(2) { animation-delay: 60ms; }
+  [data-enter] main > section:first-child .rv:not(.ph):not(.hero-media) > *:nth-child(3), [data-enter] main > section:first-child .wrap-text > *:nth-child(3) { animation-delay: 120ms; }
+  [data-enter] main > section:first-child .rv:not(.ph):not(.hero-media) > *:nth-child(4), [data-enter] main > section:first-child .wrap-text > *:nth-child(4) { animation-delay: 180ms; }
+  [data-enter] main > section:first-child .rv:not(.ph):not(.hero-media) > *:nth-child(5), [data-enter] main > section:first-child .wrap-text > *:nth-child(5) { animation-delay: 240ms; }
+  [data-enter] main > section:first-child .rv:not(.ph):not(.hero-media) > *:nth-child(n+6), [data-enter] main > section:first-child .wrap-text > *:nth-child(n+6) { animation-delay: 300ms; }
+  [data-enter] main > section:first-child .hero-media, [data-enter] main > section:first-child .ph { animation: enter-fade .6s var(--ease) 100ms both; }
+}

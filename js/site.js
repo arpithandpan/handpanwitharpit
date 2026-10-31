@@ -152,7 +152,16 @@
 
   /* ---------- reveal on scroll ---------- */
   if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in', 'visible'); io.unobserve(en.target); } }); }, { rootMargin: '0px 0px -8% 0px', threshold: .08 });
+    var stag = document.body.hasAttribute('data-enter');
+    var io = new IntersectionObserver(function (es) {
+      // things that come into view together appear one after another, top to bottom, left to right
+      var hit = es.filter(function (en) { return en.isIntersecting; }).map(function (en) { return en.target; });
+      if (stag) hit.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return Math.abs(ra.top - rb.top) > 40 ? ra.top - rb.top : ra.left - rb.left; });
+      hit.forEach(function (el, k) {
+        if (stag && k) { el.style.transitionDelay = Math.min(k, 5) * 80 + 'ms'; setTimeout(function () { el.style.transitionDelay = ''; }, 1200); }
+        el.classList.add('in', 'visible'); io.unobserve(el);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: .08 });
     $$('.rv, .reveal').forEach(function (el) { io.observe(el); });
   } else $$('.rv, .reveal').forEach(function (el) { el.classList.add('in', 'visible'); });
 
