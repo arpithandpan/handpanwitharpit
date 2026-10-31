@@ -173,7 +173,7 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 .navl a { position: relative; isolation: isolate; }
 .navl a[aria-current="page"] { color: var(--wine); }
 .navl a[aria-current="page"]:hover { background: none; }
-.nav-pill { position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: rgba(80, 0, 24, .14); view-transition-name: nav-pill; }
+.nav-pill { position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: rgba(80, 0, 24, .14); transform-origin: 0 50%; }
 .nav-acts { display: flex; align-items: center; gap: 8px; }
 .nav-login { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; font-weight: 500; font-size: .98rem; color: var(--ink-2); text-decoration: none; }
 .nav-login:hover { background: rgba(80, 0, 24, .06); color: var(--wine); }
@@ -684,21 +684,9 @@ body[data-page="trial"] .nav-free { background: rgba(80, 0, 24, .14); color: var
 .nav .brand img { rotate: var(--lr, 0deg); transition: scale .15s ease; will-change: rotate; }
 @media (prefers-reduced-motion: reduce) { .nav .brand img { rotate: 0deg; } }
 
-/* smooth page-to-page switch: the active pill slides to the new tab, the header stays put, the page gently fades.
-   Browsers without cross-page view transitions simply switch pages as before. */
-@view-transition { navigation: auto; }
-.nav { view-transition-name: site-nav; }
-::view-transition-group(nav-pill) { animation-duration: .32s; animation-timing-function: cubic-bezier(.3, .7, .2, 1); mix-blend-mode: multiply; }
-::view-transition-old(nav-pill), ::view-transition-new(nav-pill) { animation: none; height: 100%; }
-::view-transition-old(nav-pill) { display: none; }
-::view-transition-old(root) { animation: .12s ease-in both vt-fade-out; }
-::view-transition-new(root) { animation: .2s ease-out .1s both vt-fade-in; }
-@keyframes vt-fade-out { to { opacity: 0; } }
-@keyframes vt-fade-in { from { opacity: 0; } }
-::view-transition-group(site-nav) { animation: none; }
-::view-transition-old(site-nav) { display: none; }
-::view-transition-new(site-nav) { animation: none; }
-@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+/* page switch: no browser snapshots at all (they caused ghosting and jumps in Safari).
+   The new page loads normally, and the active pill glides in from the tab you clicked on (see site.js). */
+html { scrollbar-gutter: stable; }
 
 .acct-btn.on { box-shadow: 0 0 0 3px var(--ivory), 0 0 0 5px rgba(80, 0, 24, .35); }
 

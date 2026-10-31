@@ -51,6 +51,29 @@
     }
   })();
 
+  /* ---------- active pill glides from the previous tab (header itself never moves) ---------- */
+  (function () {
+    var KEY = 'hpPill', tabs = $$('.navl a, .nav-login');
+    tabs.forEach(function (a) {
+      a.addEventListener('click', function () {
+        var cur = $('.nav-pill');
+        if (!cur) return;
+        var r = cur.getBoundingClientRect();
+        try { sessionStorage.setItem(KEY, JSON.stringify({ x: r.left, w: r.width, t: Date.now() })); } catch (e) {}
+      });
+    });
+    var pill = $('.nav-pill'), from = null;
+    try { from = JSON.parse(sessionStorage.getItem(KEY) || 'null'); sessionStorage.removeItem(KEY); } catch (e) {}
+    if (!pill || !from || Date.now() - from.t > 4000 || !pill.animate) return;
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var to = pill.getBoundingClientRect();
+    if (!to.width || Math.abs(from.x - to.left) < 2) return;
+    // move the left and right edges (not a scale), so the rounded ends never stretch
+    var l = from.x - to.left, r = (to.left + to.width) - (from.x + from.w);
+    pill.animate([{ left: l + 'px', right: r + 'px' }, { left: '0px', right: '0px' }],
+      { duration: 320, easing: 'cubic-bezier(.3, .7, .2, 1)' });
+  })();
+
   /* ---------- tracking: only completed outcomes call this ---------- */
   HP.track = function (name, props) {
     try { (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: name }, props || {})); } catch (e) {}
