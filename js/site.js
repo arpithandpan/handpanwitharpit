@@ -74,6 +74,20 @@
       { duration: 320, easing: 'cubic-bezier(.3, .7, .2, 1)' });
   })();
 
+  /* ---------- links to other sites: open in a new tab and show a small "leaves the site" arrow ---------- */
+  (function () {
+    var EXT = '<svg class="ext-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19h11a1.5 1.5 0 0 0 1.5-1.5v-4"/><path d="M14 5h5v5"/><path d="M19 5l-8 8"/></svg>';
+    $$('a[href^="http"]').forEach(function (a) {
+      var u; try { u = new URL(a.href); } catch (e) { return; }
+      if (u.hostname === location.hostname || /(^|\.)arpitpandey\.com$/.test(u.hostname)) return;
+      a.target = '_blank'; a.rel = 'noopener';
+      if (!doc.getElementById('ext-note')) doc.body.insertAdjacentHTML('beforeend', '<span id="ext-note" class="sr-only">Opens in a new tab</span>');
+      a.setAttribute('aria-describedby', 'ext-note');
+      if (a.closest('.rel-links, .qcard, .brand, .ways, .yt, .channel') || a.querySelector('img')) return;
+      if (a.matches('.btn, .link, .inline-link, .foot a')) { a.classList.add('ext'); a.insertAdjacentHTML('beforeend', EXT); }
+    });
+  })();
+
   /* ---------- tracking: only completed outcomes call this ---------- */
   HP.track = function (name, props) {
     try { (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: name }, props || {})); } catch (e) {}
