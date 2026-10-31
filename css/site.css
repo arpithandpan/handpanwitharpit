@@ -170,10 +170,16 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 .navl { display: flex; align-items: center; gap: 4px; list-style: none; }
 .navl a { display: block; padding: 10px 14px; border-radius: 999px; font-weight: 500; font-size: .98rem; color: var(--ink-2); text-decoration: none; transition: background .2s, color .2s; }
 .navl a:hover { background: rgba(80, 0, 24, .06); color: var(--wine); }
-.navl a[aria-current="page"] { color: var(--wine); background: rgba(80, 0, 24, .14); font-weight: 600; }
+.navl a { position: relative; isolation: isolate; }
+.navl a[aria-current="page"] { color: var(--wine); font-weight: 600; }
+.navl a[aria-current="page"]:hover { background: none; }
+.nav-pill { position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: rgba(80, 0, 24, .14); view-transition-name: nav-pill; }
 .nav-acts { display: flex; align-items: center; gap: 8px; }
 .nav-login { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; font-weight: 500; font-size: .98rem; color: var(--ink-2); text-decoration: none; }
 .nav-login:hover { background: rgba(80, 0, 24, .06); color: var(--wine); }
+.nav-login { position: relative; isolation: isolate; }
+.nav-login[aria-current="page"] { color: var(--wine); font-weight: 600; }
+.nav-login[aria-current="page"]:hover { background: none; }
 .nav-login svg { width: 18px; height: 18px; }
 .nav-burger { display: none; width: 48px; height: 48px; border: 0; border-radius: 999px; background: rgba(80, 0, 24, .07); cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px; -webkit-tap-highlight-color: transparent; }
 .nav-burger:focus:not(:focus-visible) { outline: none; }
@@ -665,3 +671,28 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 .dp-day:disabled { color: var(--ink-3); opacity: .4; cursor: default; }
 .dp-foot { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
 .dp-link { border: 0; background: none; padding: 6px 4px; font: inherit; font-weight: 600; font-size: .95rem; color: var(--wine); cursor: pointer; }
+.nw { white-space: nowrap; }
+
+/* header CTA: full label on wide screens, short on phones; hidden on the trial page itself */
+.nav-cta .cta-s { display: none; }
+@media (max-width: 600px) { .nav-cta .cta-l { display: none; } .nav-cta .cta-s { display: inline; } }
+body[data-page="trial"] .nav-cta { display: none; }
+.nav-login, .nav-cta { white-space: nowrap; }
+@media (max-width: 1240px) and (min-width: 1081px) { .nav-acts { gap: 12px; } .nav-cta .cta-l { display: none; } .nav-cta .cta-s { display: inline; } }
+
+/* header logo: angle set before first paint, press is a separate smooth scale */
+.nav .brand img { rotate: var(--lr, 0deg); transition: scale .15s ease; will-change: rotate; }
+@media (prefers-reduced-motion: reduce) { .nav .brand img { rotate: 0deg; } }
+
+/* smooth page-to-page switch: the active pill slides to the new tab, the header stays put, the page gently fades.
+   Browsers without cross-page view transitions simply switch pages as before. */
+@view-transition { navigation: auto; }
+.nav { view-transition-name: site-nav; }
+::view-transition-group(nav-pill) { animation-duration: .38s; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .22s; }
+::view-transition-group(site-nav) { animation: none; }
+::view-transition-old(site-nav) { display: none; }
+::view-transition-new(site-nav) { animation: none; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+
+.acct-btn.on { box-shadow: 0 0 0 3px var(--ivory), 0 0 0 5px rgba(80, 0, 24, .35); }

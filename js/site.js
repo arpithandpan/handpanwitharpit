@@ -17,28 +17,37 @@
   function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k) || ''; if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return ''; } }
   HP.esc = esc;
 
-  /* ---------- header logo turns with scroll (as on the old site) ---------- */
+  /* ---------- header logo turns with scroll (as on the old site) ----------
+     The saved angle is applied in <head> before first paint (--lr), so a new page never
+     shows the logo at 0 and then jumps. Rotation and press use separate CSS properties
+     (rotate, scale), so the press animation never drags the rotation along. */
   (function () {
-    var img = $('.nav .brand img') || $('header .brand img');
+    var img = $('.nav .brand img');
     if (!img || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-    var rot = 0, lastY = window.scrollY, ticking = false, scale = 1;
+    var rot = 0, lastY = null, ticking = false;
     try { rot = parseFloat(sessionStorage.getItem('logoRot')) || 0; } catch (e) {}
-    function paint() { img.style.transform = 'rotate(' + rot.toFixed(1) + 'deg) scale(' + scale + ')'; ticking = false; }
-    img.style.willChange = 'transform';
+    function paint() { img.style.rotate = rot.toFixed(1) + 'deg'; ticking = false; }
+    function save() { try { sessionStorage.setItem('logoRot', (rot % 360).toFixed(1)); } catch (e) {} }
     paint();
     window.addEventListener('scroll', function () {
-      var y = window.scrollY; rot += (y - lastY) * 0.3; lastY = y;
+      var y = window.scrollY;
+      if (lastY === null) { lastY = y; return; }              // first event after load: just take the position
+      var dy = y - lastY; lastY = y;
+      if (Math.abs(dy) > window.innerHeight * 1.5) return;   // a jump (refresh restore, anchor), not a scroll
+      rot += dy * 0.3;
       if (!ticking) { ticking = true; requestAnimationFrame(paint); }
     }, { passive: true });
-    window.addEventListener('pagehide', function () { try { sessionStorage.setItem('logoRot', rot % 360); } catch (e) {} });
+    window.addEventListener('pagehide', save);
+    document.addEventListener('visibilitychange', function () { if (document.hidden) save(); });
     var a = img.closest('a');
     if (a) {
-      var down = function () { img.style.transition = 'none'; scale = .88; paint(); };
-      var up = function () { img.style.transition = 'transform .15s ease'; scale = 1; paint(); setTimeout(function () { img.style.transition = 'none'; }, 160); };
+      var down = function () { img.style.scale = '.88'; };
+      var up = function () { img.style.scale = ''; };
       a.addEventListener('pointerdown', down);
       a.addEventListener('pointerup', up);
       a.addEventListener('pointerleave', up);
       a.addEventListener('pointercancel', up);
+      a.addEventListener('click', save);
     }
   })();
 
@@ -85,6 +94,7 @@
       var wrap = doc.createElement('div'); wrap.className = 'acct';
       wrap.innerHTML = '<button type="button" class="acct-btn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu for ' + esc(me.name) + '">' + esc(me.name.charAt(0).toUpperCase()) + '</button>'
         + '<div class="acctm"><p>Logged in as <b>' + esc(me.name) + '</b></p><a href="' + esc(href) + '">My classes and bookings</a><button type="button" data-logout>Log out</button></div>';
+      if (/^\/pages\/my/.test(location.pathname)) wrap.querySelector('.acct-btn').classList.add('on');
       slot.appendChild(wrap);
     });
     $$('[data-macct]').forEach(function (box) {
