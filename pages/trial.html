@@ -20,9 +20,9 @@
 <link rel="preload" href="/fonts/figtree-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/pages/dashboard*"}}]},"eagerness":"moderate"}]}</script>
 <script>document.documentElement.classList.add('js');try{var r=sessionStorage.getItem('logoRot');if(r)document.documentElement.style.setProperty('--lr',r+'deg')}catch(e){}</script>
-<link rel="stylesheet" href="/css/site.css?v=2026-11-01d">
+<link rel="stylesheet" href="/css/site.css?v=2026-11-01e">
 <link rel="stylesheet" href="../css/style.css"/>
-<link rel="stylesheet" href="/css/flow.css?v=2026-11-01d">
+<link rel="stylesheet" href="/css/flow.css?v=2026-11-01e">
 <style>
 .tb-wrap { max-width: 760px; margin: 0 auto; }
 .tb-card { background: var(--card); border-radius: var(--card-radius); padding: 2rem 2rem 2.2rem; }
@@ -505,7 +505,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 </footer>
 
 
-<script src="/js/site.js?v=2026-11-01d"></script>
+<script src="/js/site.js?v=2026-11-01e"></script>
 <script>
 (function () {
   const API = 'https://handpan-webhook-server-production.up.railway.app';
@@ -614,7 +614,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
       data = await r.json();
       if (!r.ok || !data.ok) throw new Error(data.error || 'load failed');
     } catch (e) {
-      $('tbDays').innerHTML = '<div class="tb-loadfail" role="alert"><strong>Couldn\'t load the free times.</strong>Check your connection and try again.<br><button type="button" class="tb-retry" id="tbRetry">Try again</button><span class="alt">or <a href="' + waLink('Hi Arpit, I\'d like to book a free trial.') + '" target="_blank" rel="noopener">message Arpit on WhatsApp</a></span></div>';
+      softIn($('tbDays')); $('tbDays').innerHTML = '<div class="tb-loadfail" role="alert"><strong>Couldn\'t load the free times.</strong>Check your connection and try again.<br><button type="button" class="tb-retry" id="tbRetry">Try again</button><span class="alt">or <a href="' + waLink('Hi Arpit, I\'d like to book a free trial.') + '" target="_blank" rel="noopener">message Arpit on WhatsApp</a></span></div>';
       $('tbTimes').innerHTML = '<div class="tb-empty">Pick a day first.</div>';
       $('tbRetry').addEventListener('click', () => { renderSkeleton(); loadSlots(false); });
       return;
@@ -622,7 +622,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     $('tbWa').href = waLink('Hi Arpit, I have a question about the free trial.');
     renderPrice();
     if (!data.open) {
-      $('tbDays').innerHTML = '<div class="tb-empty" style="grid-column:1/-1;">Trial bookings are paused for now. Please <a href="' + waLink('Hi Arpit, I\'d like to book a free trial.') + '" target="_blank" rel="noopener" style="color:var(--maroon);">message Arpit on WhatsApp</a>.</div>';
+      softIn($('tbDays')); $('tbDays').innerHTML = '<div class="tb-empty" style="grid-column:1/-1;">Trial bookings are paused for now. Please <a href="' + waLink('Hi Arpit, I\'d like to book a free trial.') + '" target="_blank" rel="noopener" style="color:var(--maroon);">message Arpit on WhatsApp</a>.</div>';
       $('tbTimes').innerHTML = '';
       return;
     }
@@ -640,8 +640,10 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     if (allFull) $('tbFullWa').href = waLink('Hi Arpit, all the trial slots were full. Can we find a time for my free trial?');
     // a time picked earlier that has since gone (booked or passed) is cleared, so it can't be submitted
     if (selSlot && !(byDay[selDay] || []).some(x => x.iso === selSlot && !x.b)) selSlot = null;
+    const fresh = !!document.querySelector('#tbDays .sk');
     renderDays();
     renderTimes();
+    if (fresh) { softIn($('tbDays')); softIn($('tbTimes')); }
   }
 
   // ── Pure calendar logic (no page access), so it can be tested on any date and time zone ──
@@ -699,10 +701,13 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     $('tbTimes').innerHTML = '<div class="tb-tsk"></div><div class="tb-tsk" style="width:72%"></div>';
   }
 
+  // things that arrive later ease in over .3s instead of popping in (no motion if the visitor asked for less)
+  function softIn(el) { if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return; el.classList.remove('soft-in'); void el.offsetWidth; el.classList.add('soft-in'); }
+
   function renderDays() {
     const keys = dayKeys;
     if (!Object.keys(byDay).length) {
-      $('tbDays').innerHTML = '<div class="tb-empty" style="grid-column:1/-1;">No free times in the next two weeks. Please <a href="' + waLink('Hi Arpit, I\'d like to book a free trial but no times were free.') + '" target="_blank" rel="noopener" style="color:var(--maroon);">message Arpit on WhatsApp</a> and he\'ll find one.</div>';
+      softIn($('tbDays')); $('tbDays').innerHTML = '<div class="tb-empty" style="grid-column:1/-1;">No free times in the next two weeks. Please <a href="' + waLink('Hi Arpit, I\'d like to book a free trial but no times were free.') + '" target="_blank" rel="noopener" style="color:var(--maroon);">message Arpit on WhatsApp</a> and he\'ll find one.</div>';
       return;
     }
     // One small calendar per month, stacked, so crossing into a new month is obvious.
@@ -784,7 +789,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 
   $('tbDays').addEventListener('click', e => {
     const b = e.target.closest('.tb-day'); if (!b || b.disabled) return;
-    selDay = b.dataset.k; selSlot = null; renderDays(); renderTimes();
+    selDay = b.dataset.k; selSlot = null; renderDays(); renderTimes(); softIn($('tbTimes'));
   });
   $('tbTimes').addEventListener('click', e => {
     const b = e.target.closest('.tb-time'); if (!b) return;
@@ -843,7 +848,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     if (input) input.classList.toggle('err', !!msg);
   }
   ['tbName', 'tbEmail', 'tbPhone'].forEach(id => $(id).addEventListener('input', () => setErr(id === 'tbName' ? 'name' : id === 'tbEmail' ? 'email' : 'phone', '')));
-  function showAlert(html) { $('tbAlert').innerHTML = html; $('tbAlert').classList.add('show'); }
+  function showAlert(html) { $('tbAlert').innerHTML = html; $('tbAlert').classList.add('show'); softIn($('tbAlert')); }
   function hideAlert() { $('tbAlert').classList.remove('show'); }
   function waLink(text) { return 'https://wa.me/' + ((data && data.whatsapp) || '919380140907') + '?text=' + encodeURIComponent(text); }
 
@@ -887,6 +892,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     const d = new Date(j.start);
     $('tbForm').style.display = 'none';
     $('tbIntro').style.display = 'none';
+    softIn($('tbDone'));
     $('tbDone').innerHTML =
       '<div class="tick"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
       '<h2>You\'re booked</h2>' +

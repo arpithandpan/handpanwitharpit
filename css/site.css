@@ -778,3 +778,14 @@ a.ext { white-space: nowrap; }
   [data-enter] main > section:first-child .rv:not(.ph):not(.hero-media) > *:nth-child(n+6), [data-enter] main > section:first-child .wrap-text > *:nth-child(n+6) { animation-delay: .75s; }
   [data-enter] main > section:first-child .hero-media, [data-enter] main > section:first-child .ph { animation: enter-op .9s var(--ease-calm) .15s both; }
 }
+
+/* things that arrive later (free times, a new step, a message) ease in quickly instead of popping */
+@keyframes soft-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .soft-in { animation: soft-in .3s var(--ease-calm) both; }
+  .form-done, .mc-wrap:not([hidden]), #lkForm:not([hidden]), #lkCode:not([hidden]), .lk-err:not([hidden]), .lk-note:not([hidden]) { animation: soft-in .3s var(--ease-calm) both; }
+  /* booking pages: only the title area eases in, like every other page; the calendar and forms stay instant */
+  body:not([data-enter]) .page-hero > * { animation: enter-move .7s var(--ease-calm) both, enter-op .9s var(--ease-calm) both; }
+  body:not([data-enter]) .page-hero > :nth-child(2) { animation-delay: .15s; }
+  body:not([data-enter]) .page-hero > :nth-child(n+3) { animation-delay: .3s; }
+}
