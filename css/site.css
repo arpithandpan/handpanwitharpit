@@ -674,11 +674,11 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 .nw { white-space: nowrap; }
 
 /* header CTA: full label on wide screens, short on phones; hidden on the trial page itself */
-.nav-cta .cta-s { display: none; }
-@media (max-width: 600px) { .nav-cta .cta-l { display: none; } .nav-cta .cta-s { display: inline; } }
-body[data-page="trial"] .nav-cta { display: none; }
-.nav-login, .nav-cta { white-space: nowrap; }
-@media (max-width: 1240px) and (min-width: 1081px) { .nav-acts { gap: 12px; } .nav-cta .cta-l { display: none; } .nav-cta .cta-s { display: inline; } }
+.nav-free .cta-s { display: none; }
+@media (max-width: 600px) { .nav-free .cta-l { display: none; } .nav-free .cta-s { display: inline; } }
+body[data-page="trial"] .nav-free { background: rgba(80, 0, 24, .14); color: var(--wine); box-shadow: none; pointer-events: none; }
+.nav-login, .nav-free { white-space: nowrap; }
+@media (max-width: 1240px) and (min-width: 1081px) { .nav-acts { gap: 12px; } .nav-free .cta-l { display: none; } .nav-free .cta-s { display: inline; } }
 
 /* header logo: angle set before first paint, press is a separate smooth scale */
 .nav .brand img { rotate: var(--lr, 0deg); transition: scale .15s ease; will-change: rotate; }
@@ -701,3 +701,11 @@ body[data-page="trial"] .nav-cta { display: none; }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 
 .acct-btn.on { box-shadow: 0 0 0 3px var(--ivory), 0 0 0 5px rgba(80, 0, 24, .35); }
+
+/* bold active label without moving anything: each label reserves the width of its bold version */
+.navl .t, .nav-login .t { display: inline-grid; }
+.navl .t::after, .nav-login .t::after { content: attr(data-t); grid-area: 1 / 1; font-weight: 600; visibility: hidden; height: 0; overflow: hidden; }
+.navl a { display: flex; align-items: center; line-height: 1.2; }
+.navl .t, .nav-login .t { display: grid; }
+.navl .t::after, .nav-login .t::after { line-height: 0; }
+.nav-login { line-height: 1.2; }
