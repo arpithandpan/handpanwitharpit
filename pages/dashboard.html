@@ -4476,7 +4476,7 @@ table#paymentsTable { min-width: 700px; }
       </a>
       <div id="mobileBuildStamp" style="display:flex;align-items:center;gap:6px;padding:0 2.5rem 1.25rem;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v264</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v265</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -4544,7 +4544,7 @@ table#paymentsTable { min-width: 700px; }
       <a href="https://arpitpandey.com" style="font-size:var(--fs-md);color:color-mix(in srgb, var(--tx) 55%, transparent);text-decoration:none;letter-spacing:0.03em;" onmouseover="this.style.color='color-mix(in srgb, var(--acc-tx) 80%, transparent)'" onmouseout="this.style.color='color-mix(in srgb, var(--tx) 55%, transparent)'">← arpitpandey.com</a>
       <div id="buildStamp" style="margin-top:0.9rem;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);letter-spacing:0.02em;color:color-mix(in srgb, var(--tx) 80%, transparent);">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        <span style="color:var(--acc-tx);font-weight:500;">v264</span>
+        <span style="color:var(--acc-tx);font-weight:500;">v265</span>
         <span style="color:color-mix(in srgb, var(--tx) 45%, transparent);">·</span>
         <span class="build-date">__COMMIT__</span>
       </div>
@@ -18859,6 +18859,17 @@ async function appLiveCommit() {
     return m ? m[1] : null;
   } catch (e) { return null; }
 }
+// v265: the version label (v265 etc.) of the live dashboard. Every website upload makes a new
+// commit, so a different commit alone does not mean the app changed. Only a new label does.
+async function appLiveVer() {
+  try {
+    const r = await fetch(location.pathname + '?vv=' + Date.now(), { cache: 'no-store', credentials: 'same-origin' });
+    if (!r.ok) return null;
+    const m = (await r.text()).match(/id="mobileBuildStamp"[\s\S]{0,800}?<span[^>]*>(v\d+[a-z]?)<\/span>/);
+    return m ? m[1] : null;
+  } catch (e) { return null; }
+}
+function appOwnVer() { return ((document.querySelector('#mobileBuildStamp span') || {}).textContent || '').trim(); }
 async function appGitCommit(len) {
   try {
     const r = await fetch('https://api.github.com/repos/arpithandpan/handpanwitharpit/commits/main', { headers: { 'Accept': 'application/vnd.github+json' }, cache: 'no-store' });
@@ -18881,7 +18892,12 @@ async function appCheckUpdate(manual) {
   B.latest = latest; B.at = Date.now();
   if (!latest) B.state = 'unknown';
   else if (latest === B.built) B.state = 'ok';
-  else if (live && live !== B.built) { B.state = 'old'; B.latest = live; }
+  else if (live && live !== B.built) {
+    // v265: website-only uploads change the commit but not the app. Ask for an update only when the app's own version changed.
+    const lv = await appLiveVer(), own = appOwnVer();
+    if (lv && own && lv === own) B.state = 'ok';
+    else { B.state = 'old'; B.latest = live; }
+  }
   else B.state = 'publishing';
   if (manual) showToast(B.state === 'old' ? 'A new version is ready' : B.state === 'publishing' ? 'A new version is being published. It will be ready in a minute.' : B.state === 'ok' ? 'You\'re on the latest version' : 'Could not check right now', B.state === 'unknown' ? 'error' : 'success');
   appStampPaint(); appUpdSync();
