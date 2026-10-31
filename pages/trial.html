@@ -20,9 +20,9 @@
 <link rel="preload" href="/fonts/figtree-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/pages/dashboard*"}}]},"eagerness":"moderate"}]}</script>
 <script>document.documentElement.classList.add('js');try{var r=sessionStorage.getItem('logoRot');if(r)document.documentElement.style.setProperty('--lr',r+'deg')}catch(e){}</script>
-<link rel="stylesheet" href="/css/site.css?v=2026-10-31x">
+<link rel="stylesheet" href="/css/site.css?v=2026-10-31y">
 <link rel="stylesheet" href="../css/style.css"/>
-<link rel="stylesheet" href="/css/flow.css?v=2026-10-31x">
+<link rel="stylesheet" href="/css/flow.css?v=2026-10-31y">
 <style>
 .tb-wrap { max-width: 760px; margin: 0 auto; }
 .tb-card { background: var(--card); border-radius: var(--card-radius); padding: 2rem 2rem 2.2rem; }
@@ -505,7 +505,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 </footer>
 
 
-<script src="/js/site.js?v=2026-10-31x"></script>
+<script src="/js/site.js?v=2026-10-31y"></script>
 <script>
 (function () {
   const API = 'https://handpan-webhook-server-production.up.railway.app';
@@ -555,7 +555,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
   let cc = COUNTRIES.find(c => c[0] === HOME) || COUNTRIES[0];
 
   // ── State ──
-  let data = null, byDay = {}, dayKeys = [], selDay = null, selSlot = null, handpan = null;
+  let data = null, byDay = {}, dayKeys = [], selDay = null, selSlot = null, handpan = null, lastLoad = 0;
   const isIndiaTz = TZ === 'Asia/Kolkata' || TZ === 'Asia/Calcutta';
 
   // ── Date helpers in the visitor's zone ──
@@ -572,6 +572,13 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
   const fmtDayNumLocal = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, day: 'numeric' });
   const fmtLong = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' });
   const fmtMin = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  function nextDayKeys(n, nowMs) {
+    const first = fmtDayKey.format(new Date(nowMs == null ? Date.now() : nowMs));
+    const base = new Date(first + 'T12:00:00Z');
+    const out = [];
+    for (let i = 0; i < n; i++) out.push(new Date(base.getTime() + i * 86400000).toISOString().slice(0, 10));
+    return out;
+  }
   function localMinutes(d) { const [h, m] = fmtMin.format(d).split(':').map(Number); return h * 60 + m; }
   function tzName() {
     if (isIndiaTz) return 'IST';
@@ -619,27 +626,8 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
       $('tbTimes').innerHTML = '';
       return;
     }
-    byDay = {};
-    const [lo, hi] = data.bookerDay || [420, 1380];
-    const addSlot = (iso, booked) => {
-      const d = new Date(iso);
-      if (!isIndiaTz) {
-        // Only times that are comfortable for the visitor too.
-        const s = localMinutes(d), e = s + (data.trialMin || 45);
-        if (s < lo || e > hi) return;
-      }
-      // 12:00–4:59 AM belongs to the evening before, so it sits under that day as "Late night".
-      const k = fmtDayKey.format(localMinutes(d) < 300 ? new Date(d.getTime() - 6 * 3600000) : d);
-      (byDay[k] = byDay[k] || []).push({ iso, b: booked });
-    };
-    for (const iso of data.slots) addSlot(iso, false);
-    for (const iso of (data.booked || [])) addSlot(iso, true);
-    for (const k in byDay) byDay[k].sort((a, c) => a.iso < c.iso ? -1 : 1);
-    // 14 local days from today, shown as one grid.
-    dayKeys = [];
-    const now = new Date();
-    for (let i = 0; i < 15; i++) dayKeys.push(fmtDayKey.format(new Date(now.getTime() + i * 86400000)));
-    dayKeys = [...new Set(dayKeys)].slice(0, 14);
+    ({ dayKeys, byDay } = buildCal(Date.now(), data));
+    lastLoad = Date.now();
     const dayHasFree = k => byDay[k] && byDay[k].some(x => !x.b);
     if (!keepSelection) {
       selSlot = null;
@@ -650,18 +638,55 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
     $('tbFull').style.display = allFull ? '' : 'none';
     $('tbStep4').style.display = allFull ? 'none' : '';
     if (allFull) $('tbFullWa').href = waLink('Hi Arpit, all the trial slots were full. Can we find a time for my free trial?');
+    // a time picked earlier that has since gone (booked or passed) is cleared, so it can't be submitted
+    if (selSlot && !(byDay[selDay] || []).some(x => x.iso === selSlot && !x.b)) selSlot = null;
     renderDays();
     renderTimes();
   }
 
+  // ── Pure calendar logic (no page access), so it can be tested on any date and time zone ──
+  // The visible days: 14 calendar days from the visitor's today. byDay: slots grouped by those days.
+  function buildCal(nowMs, d) {
+    const keys = nextDayKeys(14, nowMs), inView = new Set(keys), by = {};
+    const [lo, hi] = d.bookerDay || [420, 1380];
+    const add = (iso, booked) => {
+      const t = new Date(iso);
+      if (isNaN(t) || t.getTime() <= nowMs) return;            // never show a time that has passed
+      if (!isIndiaTz) {
+        // Only times that are comfortable for the visitor too.
+        const s = localMinutes(t), e = s + (d.trialMin || 45);
+        if (s < lo || e > hi) return;
+      }
+      // 12:00–4:59 AM belongs to the evening before, so it sits under that day as "Late night".
+      const k = fmtDayKey.format(localMinutes(t) < 300 ? new Date(t.getTime() - 6 * 3600000) : t);
+      if (!inView.has(k)) return;                               // outside the two weeks on screen
+      (by[k] = by[k] || []).push({ iso, b: booked });
+    };
+    for (const iso of d.slots || []) add(iso, false);
+    for (const iso of d.booked || []) add(iso, true);
+    for (const k in by) by[k].sort((a, c) => a.iso < c.iso ? -1 : 1);
+    return { dayKeys: keys, byDay: by };
+  }
+  // Months to draw: one block per month, dropping a month with no times at all (when another has some).
+  // label is the single month name above the grid, or '' when each block carries its own name.
+  function monthsFor(keys, by) {
+    const months = [];
+    for (const k of keys) {
+      const ym = k.slice(0, 7);
+      if (!months.length || months[months.length - 1].ym !== ym) months.push({ ym, keys: [] });
+      months[months.length - 1].keys.push(k);
+    }
+    if (Object.keys(by).length) for (let i = months.length - 1; i >= 0 && months.length > 1; i--) if (!months[i].keys.some(k => by[k])) months.splice(i, 1);
+    const label = months.length > 1 ? '' : fmtMonthYearU.format(new Date(months[0].keys[0] + 'T12:00:00Z'));
+    return { months, label };
+  }
+  window.__tbCal = { buildCal, monthsFor, nextDayKeys, TZ };
+
   // Dates are known without the server, so the calendar shows at once and pulses until the free times arrive.
   function renderSkeleton() {
-    let ks = []; const now = new Date();
-    for (let i = 0; i < 15; i++) ks.push(fmtDayKey.format(new Date(now.getTime() + i * 86400000)));
-    ks = [...new Set(ks)].slice(0, 14);
-    const months = [];
-    for (const k of ks) { const ym = k.slice(0, 7); if (!months.length || months[months.length - 1].ym !== ym) months.push({ ym, keys: [] }); months[months.length - 1].keys.push(k); }
-    $('tbMonths').textContent = months.length > 1 ? '' : fmtMonthYearU.format(new Date(ks[0] + 'T12:00:00Z'));
+    const ks = nextDayKeys(14);
+    const { months, label } = monthsFor(ks, {});
+    $('tbMonths').textContent = label;
     const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(w => '<div class="tb-dow">' + w + '</div>').join('');
     $('tbDays').innerHTML = '<span class="tb-sr" role="status">Loading free times</span>' + months.map(m => {
       const lead = new Date(m.keys[0] + 'T12:00:00Z').getUTCDay();
@@ -681,16 +706,8 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
       return;
     }
     // One small calendar per month, stacked, so crossing into a new month is obvious.
-    const months = [];
-    for (const k of keys) {
-      const ym = k.slice(0, 7);
-      if (!months.length || months[months.length - 1].ym !== ym) months.push({ ym, keys: [] });
-      months[months.length - 1].keys.push(k);
-    }
-    // A month with no free day at all (say a lone Sunday the 1st) adds nothing, so drop it.
-    for (let i = months.length - 1; i >= 0 && months.length > 1; i--) if (!months[i].keys.some(k => byDay[k])) months.splice(i, 1);
-    // name the month that is actually shown (the first one may have been dropped above)
-    $('tbMonths').textContent = months.length > 1 ? '' : fmtMonthYearU.format(new Date(months[0].keys[0] + 'T12:00:00Z'));
+    const { months, label } = monthsFor(keys, byDay);
+    $('tbMonths').textContent = label;
     const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(w => '<div class="tb-dow">' + w + '</div>').join('');
     $('tbDays').innerHTML = months.map(m => {
       const lead = new Date(m.keys[0] + 'T12:00:00Z').getUTCDay();
@@ -890,6 +907,9 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
   renderCc();
   renderSkeleton();
   loadSlots(false);
+  const refreshIfStale = () => { if (!document.hidden && lastLoad && Date.now() - lastLoad > 10 * 60000 && !document.querySelector('.tb-submit[disabled], [aria-busy="true"]')) loadSlots(true); };
+  document.addEventListener('visibilitychange', refreshIfStale);
+  window.addEventListener('focus', refreshIfStale);
 })();
 </script>
 </body>
