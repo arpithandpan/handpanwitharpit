@@ -123,8 +123,8 @@
     $$('[data-macct]').forEach(function (box) {
       var href = box.getAttribute('data-macct');
       box.innerHTML = me
-        ? '<a class="btn btn-soft" href="' + esc(href) + '">My classes</a><span class="who">Logged in as ' + esc(me.name) + ' · <a class="inline-link" href="#" data-logout>Log out</a></span>'
-        : '<a class="btn btn-soft" href="' + esc(href) + '">Student login</a>';
+        ? '<a class="btn btn-line" href="' + esc(href) + '">My classes</a><span class="who">Logged in as ' + esc(me.name) + ' · <a class="inline-link" href="#" data-logout>Log out</a></span>'
+        : '<a class="btn btn-line" href="' + esc(href) + '">Student login</a>';
     });
   }
   doc.addEventListener('click', function (e) {

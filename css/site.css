@@ -600,7 +600,7 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
   .cur { display: flex; width: 100%; }
   .cur button { flex: 1 1 0; padding: 0 8px; font-size: .875rem; }
   .rel-links a { min-height: 32px; padding: 0 10px; }
-  .scroller { display: grid; grid-auto-flow: column; grid-auto-columns: 82%; grid-template-columns: none; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scrollbar-width: none; }
+  .scroller { display: grid; grid-auto-flow: column; grid-auto-columns: 82%; grid-template-columns: none; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); gap: 12px; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scrollbar-width: none; overscroll-behavior-x: contain; }
   .scroller::-webkit-scrollbar { display: none; }
   .scroller > * { scroll-snap-align: start; }
 }
@@ -706,3 +706,48 @@ html { scrollbar-gutter: stable; }
 
 /* first screen of every page is already in place when the page arrives: no second fade or slide after the page switch */
 .js main > section:first-child .rv { opacity: 1; transform: none; transition: none; }
+/* phones: any row with two or more real buttons stacks into equal full-width buttons (same as the home hero) */
+@media (max-width: 600px) {
+  .btn-row:has(> .btn ~ .btn) { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; align-self: stretch; }
+  .btn-row:has(> .btn ~ .btn) > .btn { width: 100%; justify-content: center; }
+  .btn-row:has(> .btn ~ .btn) > .link { justify-self: center; margin-top: 4px; }
+}
+
+/* event type: equal tiles with icons, two columns */
+.chips-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.chips-grid .chip span { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 54px; padding: 10px 14px; border-radius: 14px; line-height: 1.25; }
+.chips-grid .ci { flex: none; width: 20px; height: 20px; display: grid; color: var(--wine); }
+.chips-grid .ci svg { width: 20px; height: 20px; }
+.chips-grid .chip input:checked + span .ci { color: var(--ivory); }
+@media (min-width: 900px) { .chips-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* phones: release cards become one wide row each (cover left, details right) */
+@media (max-width: 600px) {
+  .releases { grid-template-columns: 1fr; gap: 12px; }
+  .rel { display: grid; grid-template-columns: 112px minmax(0, 1fr); padding: 0; align-items: stretch; }
+  .rel .ph { aspect-ratio: auto; width: 112px; height: 100%; min-height: 112px; }
+  .rel .bd { padding: 14px 16px 14px; }
+  .rel h3 { font-size: 1.25rem; }
+  .rel .meta { margin: 2px 0 10px; font-size: .9rem; }
+  .rel-links { margin-top: auto; padding-top: 10px; gap: 6px; }
+  .rel-links a { width: 34px; height: 34px; }
+  .rel-links svg { width: 16px; height: 16px; }
+}
+/* phones: form submit buttons full width, note centred under them */
+@media (max-width: 600px) {
+  .form-foot { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .form-foot .btn { width: 100%; justify-content: center; }
+  .form-foot .micro { max-width: none; text-align: center; }
+}
+/* phones and tablets in portrait (single column): all three "ways in" cards share one layout */
+@media (max-width: 900px) {
+  .way.big { display: grid; grid-template-columns: 1fr; padding: 0; min-height: 0; background: var(--wine); }
+  .way.big::before { display: none; }
+  .way.big img { position: relative; inset: auto; z-index: 0; aspect-ratio: 16 / 10; height: auto; }
+  .way.big .way-tx { padding: clamp(20px, 2.4vw, 30px); }
+  .way.big h3 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); }
+  .way.big p { font-size: var(--t-small); }
+  .way { min-height: 0; }
+}
+/* no double-tap zoom on phones (pinch-zoom still works, for accessibility) */
+html, body, a, button, label, input, select, textarea, .btn { touch-action: manipulation; }
