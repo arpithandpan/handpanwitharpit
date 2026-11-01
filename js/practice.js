@@ -78,7 +78,7 @@
         for (var lr = 0; lr < LR; lr++) beats.forEach(function (halves, b) {
           for (var h = 0; h < pc.sub; h++) {
             var k = halves.length, ev = (h * k) % pc.sub === 0 ? halves[h * k / pc.sub] : null;
-            seq.push({ si: si, sr: sr, li: li, lr: lr, b: b, part: ev ? h * k / pc.sub : -1, k: k, ev: ev });
+            seq.push({ si: si, sr: sr, li: li, lr: lr, b: b, h: h, part: ev ? h * k / pc.sub : -1, k: k, ev: ev });
           }
         });
       });
@@ -126,6 +126,7 @@
   if (!LAYOUTS[S.notes]) S.notes = S.size === 9 ? 10 : 9;   // older saves kept notes around the Ding
   delete S.size;
   function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
+  var mini = document.createElement('div'); mini.className = 'pmini'; mini.setAttribute('aria-hidden', 'true');
   // phones: a list screen and a player screen instead of one long page
   var MQ = window.matchMedia ? window.matchMedia('(max-width: 899px)') : { matches: false };
   var isPhone = function () { return !!MQ.matches; };
@@ -168,7 +169,7 @@
     setBpm(S.bpm); drawDial(); renderChips(); renderList(); renderDone(); applyMode(); if (pan.D) drawPan(); playerHead(); save();
   }
   // ---- pieces
-  var PC = null, pcCells = {}, pcAt = null;
+  var PC = null, pcCells = {}, pcHeads = [], pcAt = null;
   function pickPiece(id, fromTap) {
     var pc = pieceOf(id); if (!pc) return;
     if (running) stop();
@@ -209,7 +210,7 @@
       if (pc.secs.length > 1) c.push('then the next part');
     }
     $('pcCount').innerHTML = c.join(' · ');
-    var box = $('pcLines'); box.innerHTML = ''; pcCells = {}; var anyHand = false;
+    var box = $('pcLines'); box.innerHTML = ''; pcCells = {}; pcHeads = []; var anyHand = false;
     var curLi = pos ? pos.li : 0;
     // long parts show a window around the current line, so the map stays in view
     var lo = 0, hi = sec.lines.length - 1;
@@ -221,7 +222,7 @@
       row.className = 'pc-now'; row.style.gridTemplateColumns = beats.map(function (h) { return h.length + 'fr'; }).join(' ');
       beats.forEach(function (halves, b) {
         var cell = document.createElement('div'); cell.className = 'pc-bt';
-        if (pc.sub > 1) { var n = document.createElement('small'); n.textContent = b + 1; cell.appendChild(n); }
+        var n = document.createElement('small'); n.className = 'bh'; n.textContent = b + 1; cell.appendChild(n); pcHeads.push(n);
         var wrap = document.createElement('div'); wrap.className = 'pc-in';
         halves.forEach(function (e, j) {
           var d = document.createElement('div');
@@ -255,6 +256,7 @@
     var pos = PC.seq[(PC.starts[S.pcSec] + t) % PC.seq.length];
     if (pcAt !== pos.si + '.' + pos.sr + '.' + pos.li) renderPiece(pos);
     else if ((PC.pc.secs[pos.si].lineRep || PC.pc.lineRep) > 1 && pos.b === 0 && pos.part === 0) renderPiece(pos);   // new time through the same line
+    if (pos.h === 0) pcHeads.forEach(function (x, i) { x.classList.toggle('on', i === pos.b); });
     if (!pos.ev) return;
     for (var k in pcCells) pcCells[k].classList.toggle('cur', k === pos.b + '.' + pos.part);
     // notes inside one beat (two quick Dings) flash on and off, so each hit shows as its own flash
@@ -285,6 +287,7 @@
   // ---- beat dial
   var fields = [], ding;
   function drawDial() {
+    if (S.beatUi) drawBeatUi();
     var pd = $('pDots'); pd.innerHTML = ''; for (var di = 0; di < S.beats; di++) pd.appendChild(document.createElement('i'));
     var svg = $('svg'); svg.innerHTML = ''; fields = [];
     var mk = function (t, a) { var el = document.createElementNS(NS, t); for (var k in a) el.setAttribute(k, a[k]); svg.appendChild(el); return el; };
@@ -297,20 +300,13 @@
   }
 
   // ---- handpan map
-  var pan = {}, panShell, stripEls = [], rim = [];
+  var pan = {}, panShell, stripEls = [];
   function drawPan() {
-    var svg = $('panSvg'); svg.innerHTML = ''; pan = {}; rim = [];
-    svg.setAttribute('viewBox', isPhone() ? '-26 -32 352 352' : '0 0 300 300');
+    var svg = $('panSvg'); svg.innerHTML = ''; pan = {};
+    svg.setAttribute('viewBox', isPhone() ? '14 8 272 272' : '0 0 300 300');
     var used = {}; if (S.piece && PC) PC.seq.forEach(function (q) { if (q.ev) (q.ev.opts || q.ev.keys).forEach(function (x) { used[x] = 1; }); }); else S.pat.forEach(function (x) { used[x] = 1; });
     var mk = function (t, a, tx) { var el = document.createElementNS(NS, t); for (var k in a) el.setAttribute(k, a[k]); if (tx) el.textContent = tx; svg.appendChild(el); return el; };
     panShell = mk('circle', { cx: 150, cy: 142, r: 128, class: 'pshell' });
-    // the beat runs around the rim, clockwise from the top, so the eye never leaves the map
-    var seg = 360 / S.beats, pt = function (r, deg) { var a = deg * Math.PI / 180; return [150 + r * Math.cos(a), 142 + r * Math.sin(a)]; };
-    for (var bi = 0; bi < S.beats; bi++) {
-      var a0 = -90 + bi * seg + 5, a1 = -90 + (bi + 1) * seg - 5, p0 = pt(140, a0), p1 = pt(140, a1), pm = pt(157, (a0 + a1) / 2);
-      rim.push([mk('path', { d: 'M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A140 140 0 0 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1), class: 'rim' }),
-                mk('text', { x: pm[0].toFixed(1), y: pm[1].toFixed(1), class: 'rimn' }, String(bi + 1))]);
-    }
     var place = function (k, x, y, rx, ry, rot) {
       var u = used[k] ? ' use' : '';
       pan[k] = [mk('ellipse', { cx: x, cy: y, rx: rx, ry: ry, class: 'pf' + u, transform: 'rotate(' + rot + ' ' + x + ' ' + y + ')' }), mk('text', { x: x, y: y, class: 'pl' + u }, k === 'D' ? 'Ding' : k)];
@@ -403,7 +399,7 @@
         ding.classList.add('pulse'); setTimeout(function () { ding.classList.remove('pulse'); }, 90);
         $('gapNote').textContent = q.muted ? 'silent · keep going' : '';
         $('pSilent').textContent = q.muted ? 'Silent bar · keep going' : '';
-        rim.forEach(function (r, i) { r[0].classList.toggle('on', i === q.beat); r[1].classList.toggle('on', i === q.beat); r[0].classList.toggle('mu', q.muted); });
+        showBeat(q.beat, q.muted);
       }
     }
     requestAnimationFrame(draw);
@@ -424,7 +420,7 @@
     clearTimeout(offT); fields.forEach(function (f) { f.classList.remove('on', 'muted'); }); stripEls.forEach(function (n) { n.classList.remove('on'); }); lightPan(null);
     $('gapNote').textContent = ''; $('play').innerHTML = PLAY; $('pPlay').innerHTML = PLAY; $('pPlay').setAttribute('aria-label', 'Start');
     Array.prototype.forEach.call($('pDots').children, function (d) { d.classList.remove('on'); });
-    rim.forEach(function (r) { r[0].classList.remove('on', 'mu'); r[1].classList.remove('on'); }); $('pSilent').textContent = '';
+    showBeat(-1, false); $('pSilent').textContent = '';
     if (S.piece && PC) renderPiece(null);
     try { if (wake) wake.release(); } catch (e) {} wake = null;
     try { if (keepAlive) keepAlive.pause(); } catch (e) {}
@@ -438,6 +434,27 @@
   document.addEventListener('visibilitychange', async function () {
     if (running && document.visibilityState === 'visible' && !wake) { try { wake = await navigator.wakeLock.request('screen'); } catch (e) {} }
   });
+
+  // ---- beat display on phones: a small circle in the map's corner, or the numbers above the boxes
+  // (two ways on trial; S.beatUi picks one)
+  if (S.beatUi !== 'corner') S.beatUi = 'boxes';
+  function drawBeatUi() {
+    var n = S.beats, h = '<svg viewBox="0 0 80 80">';
+    for (var i = 0; i < n; i++) { var a = (-90 + i * 360 / n) * Math.PI / 180; h += '<circle cx="' + (40 + 27 * Math.cos(a)).toFixed(1) + '" cy="' + (40 + 27 * Math.sin(a)).toFixed(1) + '" r="' + (i ? 8 : 9.5) + '"/>'; }
+    mini.innerHTML = h + '<text x="40" y="41"></text></svg><small>BEAT</small>';
+    var row = $('pRow'); row.innerHTML = ''; for (var j = 0; j < n; j++) { var sp = document.createElement('span'); sp.textContent = j + 1; row.appendChild(sp); }
+    document.body.classList.toggle('bu-corner', S.beatUi === 'corner'); document.body.classList.toggle('bu-boxes', S.beatUi !== 'corner');
+    Array.prototype.forEach.call($('beatUi').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === S.beatUi)); });
+  }
+  function showBeat(beat, muted) {
+    Array.prototype.forEach.call(mini.querySelectorAll('circle'), function (c, i) { c.classList.toggle('on', i === beat); });
+    mini.classList.toggle('mu', !!muted); var tx = mini.querySelector('text'); if (tx) tx.textContent = beat >= 0 ? beat + 1 : '';
+    Array.prototype.forEach.call($('pRow').children, function (x, i) { x.classList.toggle('on', i === beat); });
+    $('pRow').classList.toggle('mu', !!muted);
+    if (beat < 0) pcHeads.forEach(function (x) { x.classList.remove('on'); });
+  }
+  Array.prototype.forEach.call($('beatUi').children, function (b) { b.onclick = function () { S.beatUi = b.getAttribute('data-v'); save(); drawBeatUi(); }; });
+  drawBeatUi();
 
   // ---- phone layout: list screen, player screen, settings sheet
   function renderLib() {
@@ -508,9 +525,11 @@
       var pb = $('pBody'), sb = $('sBody');
       move($('chips'), pb); move($('pcBox'), pb); move(document.querySelector('.dial'), pb); move($('strip'), pb); move(document.querySelector('.pan'), pb);
       drawPan();
-      move(document.querySelector('.task'), sb); move($('sizes').parentNode, sb); move($('lookRow'), sb); move($('doneBtn'), sb);
+      document.querySelector('.pan').appendChild(mini);
+      move(document.querySelector('.task'), sb); move($('sizes').parentNode, sb); move($('lookRow'), sb); move($('beatRow'), sb); move($('doneBtn'), sb);
     } else if (!isPhone() && moved.length) {
       closePlayer(true);
+      if (mini.parentNode) mini.parentNode.removeChild(mini);
       moved.forEach(function (m) { m[1].parentNode.replaceChild(m[0], m[1]); }); moved = [];
       drawPan();
     }
