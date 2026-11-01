@@ -315,6 +315,27 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
   .dock{gap:8px;padding-top:8px}
   .dock .play{min-height:52px}
 }
+
+/* beat on trial: corner circle or box numbers */
+.pmini,.prow{display:none}
+.pc-bt .bh{display:block;text-align:center;font-size:.7rem;font-weight:600;color:var(--ink-3);margin-bottom:3px;border-radius:999px}
+@media (max-width:899px){
+  .pbody .pan{position:relative}
+  .pbody .pc-bt .bh{font-size:.9rem;line-height:1.7;margin:0 4px 4px}
+  body.bu-boxes .pbody .pc-bt .bh.on{background:var(--wine);color:var(--on-wine)}
+  body.bu-corner .player .pmini{display:flex;flex-direction:column;align-items:center;position:absolute;right:0;top:0;z-index:2}
+  .pbody .pan .pmini svg{width:80px;height:80px;max-height:none;max-width:none}
+  .pbody .chips,.pbody .pcbox{order:1}.pbody .prow{order:2}.pbody .strip{order:3}.pbody .pan{order:4}
+  .pmini circle{fill:var(--paper);stroke:var(--line-2);stroke-width:2}
+  .pmini circle.on{fill:var(--wine);stroke:var(--wine)}
+  .pmini.mu circle.on{fill:var(--ink-3);stroke:var(--ink-3)}
+  .pmini text{font:600 20px var(--sans);fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+  .pmini small{font-size:.75rem;font-weight:600;letter-spacing:.12em;color:var(--ink-3)}
+  body.bu-boxes.pv-ex .player .prow{display:flex;justify-content:center;gap:12px}
+  .prow span{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:1.35rem;color:var(--ink-3);background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line-2)}
+  .prow span.on{background:var(--wine);color:var(--on-wine);box-shadow:none}
+  .prow.mu span.on{background:var(--ink-3)}
+}
 </style>
 </head>
 <body>
@@ -371,6 +392,7 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
           <div class="strip" id="strip"></div>
           <div class="pan"><svg id="panSvg" viewBox="0 0 300 300" role="img" aria-label="Handpan map"></svg></div>
           <div class="pats" id="pats" role="group" aria-label="Pattern"></div>
+          <div class="row-l look" id="beatRow"><b>Beat (trial)</b><div class="seg3" id="beatUi" role="group" aria-label="Beat display"><button type="button" data-v="corner">Corner</button><button type="button" data-v="boxes">Boxes</button></div></div>
           <div class="row-l look" id="lookRow"><b>Look</b><div class="seg3" id="look" role="group" aria-label="Look"><button type="button" data-v="auto">Auto</button><button type="button" data-v="light">Light</button><button type="button" data-v="dark">Dark</button></div></div>
           <div class="row-l"><b>Notes on your handpan (with Ding)</b><div class="sizes" id="sizes" role="group" aria-label="Notes on your handpan"></div></div>
         </div>
@@ -383,6 +405,7 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
   <div class="ptop"><button class="ic" id="pBack" type="button" aria-label="Back to the list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><div class="pt"><b id="pTitle"></b><small id="pSub"></small></div><button class="ic" id="pInfo" type="button" aria-label="How to play and settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></div>
   <div class="pbody" id="pBody">
     <div class="pmode" id="pMode" role="group" aria-label="View"><button type="button" data-v="dial">Beat circle</button><button type="button" data-v="map">Handpan map</button></div>
+    <div class="prow" id="pRow" aria-hidden="true"></div>
     <div class="psilent" id="pSilent" aria-live="polite"></div>
   </div>
   <div class="dock">
@@ -401,6 +424,6 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
   <div class="spanel" role="dialog" aria-label="How to play and settings"><div class="stop"><span class="grab"></span><button class="ic sx" id="sX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="sbody" id="sBody"></div></div>
 </div>
 
-<script src="/js/practice.js?v=15" defer></script>
+<script src="/js/practice.js?v=16" defer></script>
 </body>
 </html>
