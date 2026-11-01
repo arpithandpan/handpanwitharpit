@@ -126,6 +126,11 @@
   if (!LAYOUTS[S.notes]) S.notes = S.size === 9 ? 10 : 9;   // older saves kept notes around the Ding
   delete S.size;
   function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
+  // phones: a list screen and a player screen instead of one long page
+  var MQ = window.matchMedia ? window.matchMedia('(max-width: 899px)') : { matches: false };
+  var isPhone = function () { return !!MQ.matches; };
+  if (S.lib !== 'ex') S.lib = 'pc';
+  if (S.mview !== 'map') S.mview = 'dial';
 
   // ---- exercises
   function renderList() {
@@ -138,7 +143,7 @@
       b.setAttribute('aria-current', on ? 'true' : 'false'); if (pc.soon) b.disabled = true;
       b.innerHTML = '<span class="n">' + (done && !on ? '✓' : pi + 1) + '</span><span><b></b><small></small></span><span class="t"></span>';
       b.querySelector('b').textContent = pc.t; b.querySelector('small').textContent = pc.sum; b.querySelector('.t').textContent = pc.tag;
-      if (!pc.soon) b.onclick = function () { pickPiece(pc.id, true); };
+      if (!pc.soon) b.onclick = function () { pickPiece(pc.id, true); if (isPhone()) openPlayer(); };
       L.appendChild(b);
     });
     head('Exercises');
@@ -148,10 +153,11 @@
       b.setAttribute('aria-current', on ? 'true' : 'false');
       b.innerHTML = '<span class="n">' + (done && !on ? '✓' : i + 1) + '</span><span><b></b><small></small></span><span class="t"></span>';
       b.querySelector('b').textContent = e.t; b.querySelector('small').textContent = e.g; b.querySelector('.t').textContent = e.min;
-      b.onclick = function () { pick(i, true); };
+      b.onclick = function () { pick(i, true); if (isPhone()) openPlayer(); };
       L.appendChild(b);
     });
-    var cur = L.querySelector('.ex.on'); if (cur && L.scrollWidth > L.clientWidth) L.scrollLeft = cur.offsetLeft - 16;
+    L.classList.toggle('lib-ex', S.lib === 'ex');
+    renderLib();
   }
   function pick(i, fromTap) {
     var e = EX[i]; S.ex = i; if (running && S.piece) stop(); S.piece = null;
@@ -159,7 +165,7 @@
     if (fromTap) S.bpm = e.bpm;
     S.beats = e.beats; S.sub = e.sub; S.accent = e.accent; S.gap = e.gap;
     $('exK').textContent = 'Exercise ' + (i + 1); $('exT').textContent = e.t; $('exP').textContent = e.p; $('exG').textContent = 'Goal: ' + e.g;
-    setBpm(S.bpm); drawDial(); renderChips(); renderList(); renderDone(); applyMode(); if (pan.D) drawPan(); save();
+    setBpm(S.bpm); drawDial(); renderChips(); renderList(); renderDone(); applyMode(); if (pan.D) drawPan(); playerHead(); save();
   }
   // ---- pieces
   var PC = null, pcCells = {}, pcAt = null;
@@ -171,7 +177,7 @@
     if (!(S.pcSec >= 0 && S.pcSec < pc.secs.length)) S.pcSec = 0;
     S.beats = pc.secs[0].lines[0].split(' ').length; S.sub = pc.sub; S.accent = true; S.gap = null;
     $('exK').textContent = 'Piece from Arpit'; $('exT').textContent = pc.t; $('exP').textContent = pc.p; $('exG').textContent = 'Goal: ' + pc.g;
-    setBpm(S.bpm); drawDial(); renderChips(); renderList(); renderDone(); applyMode(); renderPiece(null); drawPan(); save();
+    setBpm(S.bpm); drawDial(); renderChips(); renderList(); renderDone(); applyMode(); renderPiece(null); drawPan(); playerHead(); save();
   }
   function applyMode() {
     var pc = !!S.piece;
@@ -270,7 +276,7 @@
     renderDone(); renderList(); save();
   };
 
-  function setBpm(v) { S.bpm = Math.max(30, Math.min(200, Math.round(v))); $('bpm').value = S.bpm; $('bpmText').textContent = S.bpm; save(); }
+  function setBpm(v) { S.bpm = Math.max(30, Math.min(200, Math.round(v))); $('bpm').value = S.bpm; $('bpmText').textContent = S.bpm; $('pBpm').textContent = S.bpm; save(); }
   $('bpm').oninput = function (e) { setBpm(+e.target.value); };
   $('minus').onclick = function () { setBpm(S.bpm - 1); };
   $('plus').onclick = function () { setBpm(S.bpm + 1); };
@@ -279,6 +285,7 @@
   // ---- beat dial
   var fields = [], ding;
   function drawDial() {
+    var pd = $('pDots'); pd.innerHTML = ''; for (var di = 0; di < S.beats; di++) pd.appendChild(document.createElement('i'));
     var svg = $('svg'); svg.innerHTML = ''; fields = [];
     var mk = function (t, a) { var el = document.createElementNS(NS, t); for (var k in a) el.setAttribute(k, a[k]); svg.appendChild(el); return el; };
     mk('circle', { cx: 150, cy: 150, r: 144, class: 'shell' }); ding = mk('circle', { cx: 150, cy: 150, r: 64, class: 'ding' });
@@ -383,6 +390,7 @@
       if (S.piece && PC) pieceTick(q.tick);
       else if (S.pat.length && q.step >= 0) { stripEls.forEach(function (n, j) { n.classList.toggle('on', j === q.step); }); lightPan(S.pat[q.step]); }
       if (q.isBeat) {
+        Array.prototype.forEach.call($('pDots').children, function (d, i) { d.classList.toggle('on', i === q.beat); });
         fields.forEach(function (f, i) { f.classList.toggle('on', i === q.beat); f.classList.toggle('muted', q.muted); });
         ding.classList.add('pulse'); setTimeout(function () { ding.classList.remove('pulse'); }, 90);
         $('gapNote').textContent = q.muted ? 'silent · keep going' : '';
@@ -398,13 +406,14 @@
     unlock(); try { await ctx.resume(); } catch (e) {}
     running = true; tick = 0; queue = []; nextTime = ctx.currentTime + 0.08;
     schedule(); timer = setInterval(schedule, 25); requestAnimationFrame(draw);
-    $('play').innerHTML = STOP;
+    $('play').innerHTML = STOP; $('pPlay').innerHTML = STOP; $('pPlay').setAttribute('aria-label', 'Stop');
     try { wake = await navigator.wakeLock.request('screen'); } catch (e) { wake = null; }
   }
   function stop() {
     running = false; clearInterval(timer); queue = [];
     clearTimeout(offT); fields.forEach(function (f) { f.classList.remove('on', 'muted'); }); stripEls.forEach(function (n) { n.classList.remove('on'); }); lightPan(null);
-    $('gapNote').textContent = ''; $('play').innerHTML = PLAY;
+    $('gapNote').textContent = ''; $('play').innerHTML = PLAY; $('pPlay').innerHTML = PLAY; $('pPlay').setAttribute('aria-label', 'Start');
+    Array.prototype.forEach.call($('pDots').children, function (d) { d.classList.remove('on'); });
     if (S.piece && PC) renderPiece(null);
     try { if (wake) wake.release(); } catch (e) {} wake = null;
     try { if (keepAlive) keepAlive.pause(); } catch (e) {}
@@ -419,8 +428,72 @@
     if (running && document.visibilityState === 'visible' && !wake) { try { wake = await navigator.wakeLock.request('screen'); } catch (e) {} }
   });
 
+  // ---- phone layout: list screen, player screen, settings sheet
+  function renderLib() {
+    var pc = S.piece && pieceOf(S.piece);
+    $('contT').textContent = pc ? pc.t + ' · ' + pc.secs[S.pcSec].n : EX[S.ex].t;
+    $('contS').textContent = 'Last time at ' + S.bpm + ' BPM';
+    Array.prototype.forEach.call($('seg').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-t') === S.lib)); });
+  }
+  Array.prototype.forEach.call($('seg').children, function (b) {
+    b.onclick = function () { S.lib = b.getAttribute('data-t'); save(); renderList(); };
+  });
+  $('cont').onclick = function () { openPlayer(); };
+  function playerHead() {
+    var pc = S.piece && pieceOf(S.piece), b = document.body;
+    $('pTitle').textContent = pc ? pc.t : EX[S.ex].t;
+    $('pSub').textContent = pc ? 'Piece ' + (PIECES.indexOf(pc) + 1) + ' · easy to hard' : 'Exercise ' + (S.ex + 1);
+    b.classList.toggle('pv-piece', !!pc); b.classList.toggle('pv-ex', !pc);
+    b.classList.toggle('pv-map', S.mview === 'map'); b.classList.toggle('pv-dial', S.mview !== 'map');
+    Array.prototype.forEach.call($('pMode').children, function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-v') === S.mview)); });
+  }
+  Array.prototype.forEach.call($('pMode').children, function (x) {
+    x.onclick = function () { S.mview = x.getAttribute('data-v'); save(); playerHead(); };
+  });
+  function openPlayer() {
+    if (document.body.classList.contains('pv')) return;
+    playerHead(); document.body.classList.add('pv');
+    if (!pendingBack) { try { history.pushState({ pv: 1 }, ''); } catch (e) {} }
+  }
+  function closePlayer(fromHistory) {
+    if (!document.body.classList.contains('pv')) return;
+    if (running) stop();
+    closeSheet(); document.body.classList.remove('pv'); renderList();
+    if (!fromHistory && history.state && history.state.pv) { pendingBack = true; try { history.back(); } catch (e) { pendingBack = false; } }
+  }
+  // the phone's back button closes the player; a back we started ourselves is only bookkeeping
+  var pendingBack = false;
+  window.addEventListener('popstate', function () {
+    if (pendingBack) { pendingBack = false; if (document.body.classList.contains('pv')) { try { history.pushState({ pv: 1 }, ''); } catch (e) {} } return; }
+    closePlayer(true);
+  });
+  $('pBack').onclick = function () { closePlayer(false); };
+  $('pMinus').onclick = function () { setBpm(S.bpm - 1); };
+  $('pPlus').onclick = function () { setBpm(S.bpm + 1); };
+  $('pPlay').onclick = toggle;
+  function openSheet() { $('sheet').hidden = false; document.body.classList.add('sv'); $('sClose').focus(); }
+  function closeSheet() { $('sheet').hidden = true; document.body.classList.remove('sv'); }
+  $('pInfo').onclick = openSheet; $('pSet').onclick = openSheet;
+  $('sBg').onclick = closeSheet; $('sClose').onclick = closeSheet;
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (!$('sheet').hidden) closeSheet(); else closePlayer(false); } });
+  // the same elements move between the desktop columns and the phone screens, so nothing is duplicated
+  var moved = [];
+  function move(node, parent) { var ph = document.createComment('slot'); node.parentNode.insertBefore(ph, node); moved.push([node, ph]); parent.appendChild(node); }
+  function layout() {
+    if (isPhone() && !moved.length) {
+      var pb = $('pBody'), sb = $('sBody');
+      move($('chips'), pb); move($('pcBox'), pb); move(document.querySelector('.dial'), pb); move($('strip'), pb); move(document.querySelector('.pan'), pb);
+      move(document.querySelector('.task'), sb); move(document.querySelector('.row-l'), sb); move(document.querySelector('.vol'), sb); move(document.querySelector('.tempo'), sb); move($('doneBtn'), sb);
+    } else if (!isPhone() && moved.length) {
+      closePlayer(true);
+      moved.forEach(function (m) { m[1].parentNode.replaceChild(m[0], m[1]); }); moved = [];
+    }
+  }
+  if (MQ.addEventListener) MQ.addEventListener('change', layout); else if (MQ.addListener) MQ.addListener(layout);
+  layout();
+
   // ---- start
-  $('play').innerHTML = PLAY;
+  $('play').innerHTML = PLAY; $('pPlay').innerHTML = PLAY;
   renderStrip(); drawPan(); renderPats(); renderSizes(); setHp(S.hp !== false);
   if (S.piece) { var keepBpm = S.bpm; pickPiece(S.piece, false); setBpm(keepBpm); drawPan(); } else pick(S.ex, false);
 
