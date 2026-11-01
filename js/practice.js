@@ -29,13 +29,13 @@
         { n: 'Part 1', lines: ['DR 1L 6R 1L', 'DR 2L 7R 2L', 'DR 1L 5R 1L', 'DR 2L 6R 2L'] },
         { n: 'Part 2', lines: ['DR 1L 8R 4L', 'DR 2L 7R 4L', 'DR 1L 5R 4L', 'DR 2L 6R 4L'] }
       ] },
-    { id: 'scale', t: 'Scale up and down', sum: '3 steps · the scale, then every note back to 4', tag: '60', bpm: 60, sub: 1, lineRep: 1, secRep: 1,
-      p: 'Step 1 is the plain scale up and down. In Step 2 every note comes back to 4. In Step 3 you play three notes in a row, each one back to 4, then move up by one. Play slow first, keep it steady, then raise the tempo.',
-      g: 'All three steps with no stop, at a steady tempo',
+    { id: 'scale', t: 'Scale up and down', sum: '3 variations · the scale, then every note back to 4', tag: '60', bpm: 60, sub: 1, lineRep: 1, secRep: 1,
+      p: 'R is your right hand, L your left. Variation 1 is the scale up and down with hands taking turns. In Variation 2 every note (right hand) comes back to 4 (left hand). Variation 3 plays three notes in a row, each one back to 4, then moves up by one. Play slow first, keep it steady, then raise the tempo.',
+      g: 'All three variations with no stop, at a steady tempo',
       secs: [
-        { n: 'Step 1', lines: ['1 2 3 4', '5 6 7 8', '8 7 6 5', '4 3 2 1'] },
-        { n: 'Step 2', root: '4', lines: ['1 4 2 4', '3 4 4 4', '5 4 6 4', '7 4 8 4', '8 4 7 4', '6 4 5 4', '4 4 3 4', '2 4 1 4'] },
-        { n: 'Step 3', root: '4', lines: ['1 4 2 4 3 4', '2 4 3 4 4 4', '3 4 4 4 5 4', '4 4 5 4 6 4', '5 4 6 4 7 4', '6 4 7 4 8 4', '8 4 7 4 6 4', '7 4 6 4 5 4', '6 4 5 4 4 4', '5 4 4 4 3 4', '4 4 3 4 2 4', '3 4 2 4 1 4'] }
+        { n: 'Variation 1', lines: ['1R 2L 3R 4L', '5R 6L 7R 8L', '8L 7R 6L 5R', '4L 3R 2L 1R'] },
+        { n: 'Variation 2', lines: ['1R 4L 2R 4L', '3R 4L 4R 4L', '5R 4L 6R 4L', '7R 4L 8R 4L', '8R 4L 7R 4L', '6R 4L 5R 4L', '4R 4L 3R 4L', '2R 4L 1R 4L'] },
+        { n: 'Variation 3', lines: ['1R 4L 2R 4L 3R 4L', '2R 4L 3R 4L 4R 4L', '3R 4L 4R 4L 5R 4L', '4R 4L 5R 4L 6R 4L', '5R 4L 6R 4L 7R 4L', '6R 4L 7R 4L 8R 4L', '8R 4L 7R 4L 6R 4L', '7R 4L 6R 4L 5R 4L', '6R 4L 5R 4L 4R 4L', '5R 4L 4R 4L 3R 4L', '4R 4L 3R 4L 2R 4L', '3R 4L 2R 4L 1R 4L'] }
       ] },
     { id: 'pairs', t: 'Note Pair Progressions', sum: 'Two notes together, Tak, two quick Dings', tag: '4 beats', bpm: 70, sub: 2, lineRep: 1, secRep: 2,
       p: 'Play both notes of a pair together, cleanly. Beat 3 has two quick Dings. In Step 3 the note 8 takes the place of the first Tak.',
@@ -105,8 +105,9 @@
   var pieceOf = function (id) { for (var i = 0; i < PIECES.length; i++) if (PIECES[i].id === id && !PIECES[i].soon) return PIECES[i]; return null; };
   if (S.piece && !pieceOf(S.piece)) S.piece = null;
   // the handpan is chosen by its total notes, Ding included, as makers name them (9, 10, 12 …)
-  var LAYOUTS = { 8: { ring: 7, inner: 0 }, 9: { ring: 8, inner: 0 }, 10: { ring: 9, inner: 0 }, 12: { ring: 9, inner: 2 } };
-  if (!LAYOUTS[S.notes]) S.notes = S.size >= 7 && S.size <= 9 ? S.size + 1 : 9;   // older saves kept notes around the Ding
+  // the pieces use notes 1 to 8, so the smallest pan is 9 (Ding + 8)
+  var LAYOUTS = { 9: { ring: 8, inner: 0 }, 10: { ring: 9, inner: 0 }, 12: { ring: 9, inner: 2 } };
+  if (!LAYOUTS[S.notes]) S.notes = S.size === 9 ? 10 : 9;   // older saves kept notes around the Ding
   delete S.size;
   function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
 
@@ -308,7 +309,7 @@
   }
   function renderSizes() {
     var box = $('sizes'); box.innerHTML = '';
-    [8, 9, 10, 12].forEach(function (n) {
+    [9, 10, 12].forEach(function (n) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = n;
       b.setAttribute('aria-pressed', String(S.notes === n));
       b.onclick = function () { S.notes = n; drawPan(); renderSizes(); save(); };
