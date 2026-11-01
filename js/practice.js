@@ -6,10 +6,10 @@
   var NS = 'http://www.w3.org/2000/svg';
 
   var EX = [
-    { t: 'One per click', p: 'Play one note on every click. Clapping works too.', g: '4 bars without a slip at 60 BPM', bpm: 60, beats: 4, sub: 1, accent: false, gap: null, min: '3 min' },
-    { t: 'Two per click', p: 'Count "1 & 2 &" out loud and play on every count.', g: '4 clean rounds at 60 BPM', bpm: 60, beats: 4, sub: 2, accent: false, gap: null, min: '4 min' },
+    { t: 'One per beat', p: 'One click on every beat. Play one note on each click. Clapping works too.', g: '4 bars without a slip at 60 BPM', bpm: 60, beats: 4, sub: 1, accent: false, gap: null, min: '3 min' },
+    { t: 'Two per beat', p: 'Every beat has 2 clicks. Play on each click and count "1 & 2 &" out loud.', g: '4 clean rounds at 60 BPM', bpm: 60, beats: 4, sub: 2, accent: false, gap: null, min: '4 min' },
     { t: 'Lean on beat 1', p: 'Play beat 1 a little louder. The higher click marks it.', g: '8 bars, beat 1 always clear', bpm: 65, beats: 4, sub: 2, accent: true, gap: null, min: '4 min' },
-    { t: 'Three per click', p: 'Count "1 trip let" and spread three notes evenly.', g: '8 bars of even triplets', bpm: 55, beats: 4, sub: 3, accent: true, gap: null, min: '5 min' },
+    { t: 'Four per beat', p: 'Every beat has 4 clicks. Play on each click and count "1 e & a". Keep all four evenly spaced.', g: '4 clean rounds at 45 BPM', bpm: 45, beats: 4, sub: 4, accent: true, gap: null, min: '5 min' },
     { t: 'Silent bars', p: 'The click stops for 2 bars. Keep going and land back on beat 1.', g: 'Land on beat 1 after the gap', bpm: 60, beats: 4, sub: 2, accent: true, gap: [2, 2], min: '5 min' },
     { t: 'On your own', p: '1 bar of click, 3 bars silent. Your inner clock does the work.', g: 'Land on beat 1 three times in a row', bpm: 60, beats: 4, sub: 1, accent: true, gap: [1, 3], min: '5 min' }
   ];
@@ -45,9 +45,13 @@
 
   // ---- saved settings (this device)
   var STORE = 'hp_practice_v1';
-  var S = { ex: 1, done: [], bpm: 60, beats: 4, sub: 2, accent: false, gap: null, size: 8, pat: PRESETS[0].steps.slice(), hp: true, vol: 80 };
+  var S = { ex: 1, done: [], bpm: 60, beats: 4, sub: 2, accent: false, gap: null, notes: 9, pat: PRESETS[0].steps.slice(), hp: true, vol: 80 };
   try { var saved = JSON.parse(localStorage.getItem(STORE) || '{}'); for (var k in saved) S[k] = saved[k]; } catch (e) {}
   if (!(S.ex >= 0 && S.ex < EX.length)) S.ex = 0;
+  // the handpan is chosen by its total notes, Ding included, as makers name them (9, 10, 12 …)
+  var LAYOUTS = { 8: { ring: 7, inner: 0 }, 9: { ring: 8, inner: 0 }, 10: { ring: 9, inner: 0 }, 12: { ring: 9, inner: 2 } };
+  if (!LAYOUTS[S.notes]) S.notes = S.size >= 7 && S.size <= 9 ? S.size + 1 : 9;   // older saves kept notes around the Ding
+  delete S.size;
   function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
 
   // ---- exercises
@@ -66,14 +70,16 @@
   }
   function pick(i, fromTap) {
     var e = EX[i]; S.ex = i;
-    if (fromTap) { S.bpm = e.bpm; S.beats = e.beats; S.sub = e.sub; S.accent = e.accent; S.gap = e.gap; }
+    // the exercise always sets its own beats, clicks, accent and gap; a tap also resets the tempo, a reopen keeps the student's tempo
+    if (fromTap) S.bpm = e.bpm;
+    S.beats = e.beats; S.sub = e.sub; S.accent = e.accent; S.gap = e.gap;
     $('exK').textContent = 'Exercise ' + (i + 1); $('exT').textContent = e.t; $('exP').textContent = e.p; $('exG').textContent = 'Goal: ' + e.g;
     setBpm(S.bpm); drawDial(); renderChips(); renderList(); renderDone(); save();
   }
   function renderChips() {
     var c = $('chips'); c.innerHTML = '';
     var add = function (txt) { var s = document.createElement('span'); s.className = 'chip'; s.textContent = txt; c.appendChild(s); };
-    add(S.beats + ' beats'); add(S.sub + ' per click'); if (S.accent) add('Accent on 1'); if (S.gap) add(S.gap[0] + ' on · ' + S.gap[1] + ' off');
+    add(S.beats + ' beats'); add(S.sub === 1 ? '1 click per beat' : S.sub + ' clicks per beat'); if (S.accent) add('Accent on 1'); if (S.gap) add(S.gap[0] + ' on · ' + S.gap[1] + ' off');
   }
   function renderDone() {
     var d = S.done.indexOf(S.ex) >= 0, b = $('doneBtn');
@@ -115,9 +121,12 @@
       var u = used[k] ? ' use' : '';
       pan[k] = [mk('ellipse', { cx: x, cy: y, rx: rx, ry: ry, class: 'pf' + u, transform: 'rotate(' + rot + ' ' + x + ' ' + y + ')' }), mk('text', { x: x, y: y, class: 'pl' + u }, k === 'D' ? 'Ding' : k)];
     };
-    place('D', 150, 142, 40, 40, 0);
-    var n = S.size, rx = n > 8 ? 21 : 25;
-    for (var i = 1; i <= n; i++) { var d = noteAngle(i, n), a = d * Math.PI / 180; place(String(i), 150 + 86 * Math.cos(a), 142 + 86 * Math.sin(a), rx, rx * 0.84, d + 90); }
+    var L = LAYOUTS[S.notes], n = L.ring, inner = L.inner > 0;
+    var dr = inner ? 32 : 40, R = inner ? 92 : 86, rx = inner ? 19 : (n > 8 ? 21 : 25);
+    place('D', 150, 142, dr, dr, 0);
+    for (var i = 1; i <= n; i++) { var d = noteAngle(i, n), a = d * Math.PI / 180; place(String(i), 150 + R * Math.cos(a), 142 + R * Math.sin(a), rx, rx * 0.84, d + 90); }
+    // 12-note pans: two smaller notes inside the ring, above the Ding (left, then right)
+    if (inner) [[n + 1, 236], [n + 2, 304]].forEach(function (q) { var a = q[1] * Math.PI / 180; place(String(q[0]), 150 + 57 * Math.cos(a), 142 + 57 * Math.sin(a), 15, 13, q[1] + 90); });
     mk('text', { x: 150, y: 292, class: 'you' }, 'YOU SIT HERE');
   }
   function renderStrip() {
@@ -139,10 +148,10 @@
   }
   function renderSizes() {
     var box = $('sizes'); box.innerHTML = '';
-    [7, 8, 9, 10].forEach(function (n) {
+    [8, 9, 10, 12].forEach(function (n) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = n;
-      b.setAttribute('aria-pressed', String(S.size === n));
-      b.onclick = function () { S.size = n; drawPan(); renderSizes(); save(); };
+      b.setAttribute('aria-pressed', String(S.notes === n));
+      b.onclick = function () { S.notes = n; drawPan(); renderSizes(); save(); };
       box.appendChild(b);
     });
   }
