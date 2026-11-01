@@ -20,15 +20,7 @@
   // Pieces Arpit teaches. One word per beat: 4R = note 4 right hand, DR = Ding right hand, T = Tak,
   // 4+6 = two notes together, D,D = two notes inside one beat. Each line is played lineRep times, each part secRep times.
   var PIECES = [
-    { id: 'sparrow', t: 'Golden Sparrow', sum: 'Start, Part 1, Part 2 · each line 4 times', tag: '4 beats', bpm: 60, sub: 1, lineRep: 4, secRep: 2,
-      p: 'R is your right hand, L your left. Ding is always the right hand. Each line 4 times, each part 2 times, then the next part. After Part 2 it goes back to Start.',
-      g: 'The full piece in one go, then send Arpit a video',
-      secs: [
-        { n: 'Start', lines: ['4R 2L 6R 2L', '5R 3L 7R 3L', '3R 1L 5R 1L', '4R 2L 6R 2L'] },
-        { n: 'Part 1', lines: ['DR 1L 6R 1L', 'DR 2L 7R 2L', 'DR 1L 5R 1L', 'DR 2L 6R 2L'] },
-        { n: 'Part 2', lines: ['DR 1L 8R 4L', 'DR 2L 7R 4L', 'DR 1L 5R 4L', 'DR 2L 6R 4L'] }
-      ] },
-    { id: 'scale', t: 'Scale up and down', sum: '3 variations · the scale, then every note back to 4', tag: '60', bpm: 60, sub: 1, lineRep: 1, secRep: 1,
+    { id: 'scale', t: 'The Ladder', sum: 'Scale up and down · 3 variations', tag: '60', bpm: 60, sub: 1, lineRep: 1, secRep: 1,
       p: 'R is your right hand, L your left. Variation 1 is the scale up and down with hands taking turns. In Variation 2 every note (right hand) comes back to 4 (left hand). Variation 3 plays three notes in a row, each one back to 4, then moves up by one. Play slow first, keep it steady, then raise the tempo.',
       g: 'All three variations with no stop, at a steady tempo',
       secs: [
@@ -46,13 +38,21 @@
         { n: 'Variation 4', lines: ['D 1 5 6', 'D 1 T 6', 'D 1 5 6', 'D 1 T 6', 'D 2 5 6', 'D 2 T 6', 'D 2 5 6', 'D 2 T 6'] },
         { n: 'Variation 5', lineRep: 4, lines: ['D 1 5 X', 'D 2 5 X'] }
       ] },
-    { id: 'pairs', t: 'Note Pair Progressions', sum: 'Two notes together, Tak, two quick Dings', tag: '4 beats', bpm: 70, sub: 2, lineRep: 1, secRep: 2,
+    { id: 'pairs', t: 'Twin Steps', sum: 'Two notes together, Tak, quick Dings', tag: '70', bpm: 70, sub: 2, lineRep: 1, secRep: 2,
       p: 'Play both notes of a pair together, cleanly. Beat 3 has two quick Dings. In Step 3 the note 8 takes the place of the first Tak.',
       g: 'All three steps, soft and even',
       secs: [
         { n: 'Step 1', lines: ['4+6 T D,D T', '3+5 T D,D T'] },
         { n: 'Step 2', lines: ['2+4 T D,D T', '3+5 T D,D T'] },
         { n: 'Step 3', lines: ['4+6 8 D,D T', '3+5 8 D,D T', '2+4 8 D,D T', '3+5 8 D,D T'] }
+      ] },
+    { id: 'sparrow', t: 'Golden Sparrow', sum: 'A composition · Start, Part 1, Part 2', tag: '60', bpm: 60, sub: 1, lineRep: 4, secRep: 2,
+      p: 'R is your right hand, L your left. Ding is always the right hand. Each line 4 times, each part 2 times, then the next part. After Part 2 it goes back to Start.',
+      g: 'The full piece in one go, then send Arpit a video',
+      secs: [
+        { n: 'Start', lines: ['4R 2L 6R 2L', '5R 3L 7R 3L', '3R 1L 5R 1L', '4R 2L 6R 2L'] },
+        { n: 'Part 1', lines: ['DR 1L 6R 1L', 'DR 2L 7R 2L', 'DR 1L 5R 1L', 'DR 2L 6R 2L'] },
+        { n: 'Part 2', lines: ['DR 1L 8R 4L', 'DR 2L 7R 4L', 'DR 1L 5R 4L', 'DR 2L 6R 4L'] }
       ] },
     { id: 'pingpong', t: 'Ping Pong', sum: 'Two hands at once · coming later', tag: 'later', soon: true }
   ];
@@ -128,12 +128,12 @@
   function renderList() {
     var L = $('exList'); L.innerHTML = '';
     var head = function (t) { var h = document.createElement('h2'); h.textContent = t; L.appendChild(h); };
-    head('Pieces from Arpit');
-    PIECES.forEach(function (pc) {
+    head('Pieces from Arpit · easy to hard');
+    PIECES.forEach(function (pc, pi) {
       var b = document.createElement('button'), done = S.done.indexOf('p:' + pc.id) >= 0, on = S.piece === pc.id;
       b.type = 'button'; b.className = 'ex pc' + (on ? ' on' : '') + (done && !on ? ' done' : '') + (pc.soon ? ' soon' : '');
       b.setAttribute('aria-current', on ? 'true' : 'false'); if (pc.soon) b.disabled = true;
-      b.innerHTML = '<span class="n">' + (done && !on ? '✓' : '♪') + '</span><span><b></b><small></small></span><span class="t"></span>';
+      b.innerHTML = '<span class="n">' + (done && !on ? '✓' : pi + 1) + '</span><span><b></b><small></small></span><span class="t"></span>';
       b.querySelector('b').textContent = pc.t; b.querySelector('small').textContent = pc.sum; b.querySelector('.t').textContent = pc.tag;
       if (!pc.soon) b.onclick = function () { pickPiece(pc.id, true); };
       L.appendChild(b);
