@@ -268,7 +268,7 @@
   /* ---------- our own date picker (no browser calendar) ---------- */
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   var CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
-  var ARR = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>'; };
+  var ARR = function (d) { return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>'; };
   function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
   function buildDate(inp) {
     var field = inp.closest('.field'), uid = 'dp' + Math.random().toString(36).slice(2, 7), today = new Date(); today.setHours(0, 0, 0, 0);
@@ -294,6 +294,8 @@
     var open = function (on) {
       if (on) { closeAllPops(pop); if (hidden.value) { var p = hidden.value.split('-'); view = new Date(+p[0], +p[1] - 1, 1); } render(); }
       pop.hidden = !on; btn.setAttribute('aria-expanded', String(on)); btn.classList.toggle('open', on);
+      // keep the calendar on screen: open it to the left when the field sits near the right edge
+      if (on) { pop.classList.remove('to-right'); var r = pop.getBoundingClientRect(); if (r.right > doc.documentElement.clientWidth - 12) pop.classList.add('to-right'); }
       if (on) setTimeout(function () { var f = pop.querySelector('.dp-day[aria-pressed="true"]') || pop.querySelector('.dp-day.today') || pop.querySelector('.dp-day:not([disabled])'); if (f) f.focus(); }, 10);
     };
     pop._close = function () { open(false); };

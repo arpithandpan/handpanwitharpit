@@ -659,25 +659,29 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 .xs-pop, .dp-pop { position: absolute; z-index: 40; top: calc(100% + 8px); left: 0; right: 0; padding: 8px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 14px 34px rgba(42, 20, 24, .14); }
 .xs-pop { display: grid; max-height: 300px; overflow-y: auto; }
 .xs-pop[hidden], .dp-pop[hidden] { display: none; }
-.xs-item { min-height: 46px; padding: 0 12px; border: 0; border-radius: 8px; background: none; text-align: left; font: inherit; font-size: 1rem; color: var(--ink); cursor: pointer; }
+.xs-item { -webkit-appearance: none; appearance: none; min-height: 46px; padding: 0 12px; border: 0; border-radius: 8px; background: none; text-align: left; font: inherit; font-size: 1rem; color: var(--ink); cursor: pointer; }
 .xs-item:hover, .xs-item:focus-visible { background: var(--ivory); outline: none; }
 .xs-item[aria-selected="true"] { background: rgba(80, 0, 24, .07); color: var(--wine); font-weight: 600; }
-.dp-pop { right: auto; width: min(320px, 100%); min-width: 288px; padding: 14px; }
+.dp-pop { right: auto; box-sizing: border-box; width: 320px; max-width: calc(100vw - 24px); padding: 14px; }
+.dp-pop.to-right { left: auto; right: 0; }
+.xs-wrap:has(> .xs-pop:not([hidden])), .xs-wrap:has(> .dp-pop:not([hidden])) { z-index: 45; }
 .dp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .dp-head b { font: 600 1.15rem/1 var(--serif); color: var(--ink); }
-.dp-nav { width: 38px; height: 38px; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--ivory); color: var(--wine); cursor: pointer; }
-.dp-nav svg { width: 18px; height: 18px; }
-@media (hover: hover) { .dp-nav:hover { background: rgba(80, 0, 24, .1); } }
-.dp-nav:disabled { opacity: .35; cursor: default; background: var(--ivory); }
-.dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+/* month arrows: solid wine with ivory arrows so they read on any screen; disabled is a quiet outline */
+.dp-nav { -webkit-appearance: none; appearance: none; flex: none; width: 40px; height: 40px; padding: 0; margin: 0; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--wine); color: var(--ivory); cursor: pointer; }
+.dp-nav svg { display: block; width: 18px; height: 18px; stroke: currentColor; }
+@media (hover: hover) { .dp-nav:not(:disabled):hover { background: var(--wine-2); } }
+.dp-nav:disabled { background: transparent; color: var(--ink-3); box-shadow: inset 0 0 0 1.5px var(--line-2); cursor: default; }
+.dp-nav:focus-visible { outline: 2px solid var(--wine); outline-offset: 2px; }
+.dp-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; text-align: center; }
 .dp-dow { padding: 6px 0; font-size: .78rem; font-weight: 600; color: var(--ink-3); }
-.dp-day { aspect-ratio: 1; min-height: 36px; border: 0; border-radius: 50%; background: none; font: inherit; font-size: .95rem; color: var(--ink); cursor: pointer; }
+.dp-day { -webkit-appearance: none; appearance: none; display: grid; place-items: center; width: 100%; min-width: 0; height: auto; min-height: 0; aspect-ratio: 1; max-height: 44px; margin: 0 auto; padding: 0; border: 0; border-radius: 50%; background: none; font: inherit; font-size: .95rem; line-height: 1; color: var(--ink); cursor: pointer; }
 .dp-day:hover:not(:disabled), .dp-day:focus-visible { background: var(--ivory); outline: none; }
 .dp-day.today { box-shadow: inset 0 0 0 1.5px var(--wine); }
 .dp-day[aria-pressed="true"] { background: var(--wine); color: var(--ivory); font-weight: 600; }
 .dp-day:disabled { color: var(--ink-3); opacity: .4; cursor: default; }
 .dp-foot { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
-.dp-link { border: 0; background: none; padding: 6px 4px; font: inherit; font-weight: 600; font-size: .95rem; color: var(--wine); cursor: pointer; }
+.dp-link { -webkit-appearance: none; appearance: none; border: 0; background: none; padding: 6px 4px; font: inherit; font-weight: 600; font-size: .95rem; color: var(--wine); cursor: pointer; }
 .nw { white-space: nowrap; }
 
 /* header CTA: full label on wide screens, short on phones; hidden on the trial page itself */
