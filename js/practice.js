@@ -64,7 +64,7 @@
         for (var lr = 0; lr < pc.lineRep; lr++) beats.forEach(function (halves, b) {
           for (var h = 0; h < pc.sub; h++) {
             var k = halves.length, ev = (h * k) % pc.sub === 0 ? halves[h * k / pc.sub] : null;
-            seq.push({ si: si, sr: sr, li: li, lr: lr, b: b, part: ev ? h * k / pc.sub : -1, ev: ev });
+            seq.push({ si: si, sr: sr, li: li, lr: lr, b: b, part: ev ? h * k / pc.sub : -1, k: k, ev: ev });
           }
         });
       });
@@ -227,7 +227,8 @@
     else if (PC.pc.lineRep > 1 && pos.b === 0 && pos.part === 0) renderPiece(pos);   // new time through the same line
     if (!pos.ev) return;
     for (var k in pcCells) pcCells[k].classList.toggle('cur', k === pos.b + '.' + pos.part);
-    lightEv(pos.ev);
+    // notes inside one beat (two quick Dings) flash on and off, so each hit shows as its own flash
+    lightEv(pos.ev, pos.k > 1 ? interval(S) * 1000 * 0.6 : 0);
   }
   function renderChips() {
     var c = $('chips'); c.innerHTML = '';
@@ -293,8 +294,10 @@
     if (panShell) panShell.classList.remove('on');
   }
   // a piece step: one or more notes in one hand's colour, or a Tak on the rim; the same note twice in a row flashes again
-  function lightEv(ev) {
-    lightPan(null); if (panShell) panShell.getBoundingClientRect();
+  var offT = null;
+  function lightEv(ev, dur) {
+    clearTimeout(offT); lightPan(null);
+    if (dur) offT = setTimeout(function () { lightPan(null); }, dur);
     if (ev.tak) { panShell.classList.add('on'); return; }
     ev.keys.forEach(function (k) { if (!pan[k]) return; pan[k][0].classList.add('on'); pan[k][1].classList.add('on'); if (ev.h === 'L') pan[k][0].classList.add('l'); });
   }
@@ -375,7 +378,7 @@
   }
   function stop() {
     running = false; clearInterval(timer); queue = [];
-    fields.forEach(function (f) { f.classList.remove('on', 'muted'); }); stripEls.forEach(function (n) { n.classList.remove('on'); }); lightPan(null);
+    clearTimeout(offT); fields.forEach(function (f) { f.classList.remove('on', 'muted'); }); stripEls.forEach(function (n) { n.classList.remove('on'); }); lightPan(null);
     $('gapNote').textContent = ''; $('play').innerHTML = PLAY;
     if (S.piece && PC) renderPiece(null);
     try { if (wake) wake.release(); } catch (e) {} wake = null;
