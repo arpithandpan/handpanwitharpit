@@ -29,22 +29,22 @@
         { n: 'Variation 3', lines: ['1R 4L 2R 4L 3R 4L', '2R 4L 3R 4L 4R 4L', '3R 4L 4R 4L 5R 4L', '4R 4L 5R 4L 6R 4L', '5R 4L 6R 4L 7R 4L', '6R 4L 7R 4L 8R 4L', '8R 4L 7R 4L 6R 4L', '7R 4L 6R 4L 5R 4L', '6R 4L 5R 4L 4R 4L', '5R 4L 4R 4L 3R 4L', '4R 4L 3R 4L 2R 4L', '3R 4L 2R 4L 1R 4L'] }
       ] },
     { id: 'groove', t: 'Meditative Groove', sum: 'Ding 1 5 6 · 5 variations', tag: '60', bpm: 60, sub: 1, lineRep: 1, secRep: 1,
-      p: 'Let the Ding guide your rhythm. One note on every beat, each note ringing clearly. Start slow and stay relaxed.',
+      p: 'Ding with the right hand, 1 or 2 with the left, 5 right, 6 left. Let the Ding guide your rhythm, one note on every beat, each one ringing clearly. Tak is a knock or a slap. Start slow and stay relaxed.',
       g: 'All five variations with an even, relaxed flow',
       secs: [
-        { n: 'Variation 1', lineRep: 4, lines: ['D 1 5 6', 'D 2 5 6'] },
-        { n: 'Variation 2', lineRep: 2, lines: ['D 1 5 6', 'D 2 5 6'] },
-        { n: 'Variation 3', lines: ['D 1 5 6', 'D 2 5 6'] },
-        { n: 'Variation 4', lines: ['D 1 5 6', 'D 1 T 6', 'D 1 5 6', 'D 1 T 6', 'D 2 5 6', 'D 2 T 6', 'D 2 5 6', 'D 2 T 6'] },
-        { n: 'Variation 5', lineRep: 4, lines: ['D 1 5 X', 'D 2 5 X'] }
+        { n: 'Variation 1', lineRep: 4, lines: ['DR 1L 5R 6L', 'DR 2L 5R 6L'] },
+        { n: 'Variation 2', lineRep: 2, lines: ['DR 1L 5R 6L', 'DR 2L 5R 6L'] },
+        { n: 'Variation 3', lines: ['DR 1L 5R 6L', 'DR 2L 5R 6L'] },
+        { n: 'Variation 4', lines: ['DR 1L 5R 6L', 'DR 1L T 6L', 'DR 1L 5R 6L', 'DR 1L T 6L', 'DR 2L 5R 6L', 'DR 2L T 6L', 'DR 2L 5R 6L', 'DR 2L T 6L'] },
+        { n: 'Variation 5', lineRep: 4, lines: ['DR 1L 5R X', 'DR 2L 5R X'] }
       ] },
     { id: 'pairs', t: 'Twin Steps', sum: 'Two notes together, Tak, quick Dings', tag: '70', bpm: 70, sub: 2, lineRep: 1, secRep: 2,
-      p: 'Play both notes of a pair together, cleanly. Beat 3 has two quick Dings. In Step 3 the note 8 takes the place of the first Tak.',
+      p: 'Play both notes of a pair together, cleanly: 4 left with 6 right, 3 right with 5 left, 2 left with 4 right. Tak is a knock or a slap. Beat 3 has two quick Dings, with your thumb or any finger that feels easy. In Step 3 the note 8 takes the place of the first Tak.',
       g: 'All three steps, soft and even',
       secs: [
-        { n: 'Step 1', lines: ['4+6 T D,D T', '3+5 T D,D T'] },
-        { n: 'Step 2', lines: ['2+4 T D,D T', '3+5 T D,D T'] },
-        { n: 'Step 3', lines: ['4+6 8 D,D T', '3+5 8 D,D T', '2+4 8 D,D T', '3+5 8 D,D T'] }
+        { n: 'Step 1', lines: ['4L+6R T D,D T', '3R+5L T D,D T'] },
+        { n: 'Step 2', lines: ['2L+4R T D,D T', '3R+5L T D,D T'] },
+        { n: 'Step 3', lines: ['4L+6R 8 D,D T', '3R+5L 8 D,D T', '2L+4R 8 D,D T', '3R+5L 8 D,D T'] }
       ] },
     { id: 'sparrow', t: 'Golden Sparrow', sum: 'A composition · Start, Part 1, Part 2', tag: '60', bpm: 60, sub: 1, lineRep: 4, secRep: 2,
       p: 'R is your right hand, L your left. Ding is always the right hand. Each line 4 times, each part 2 times, then the next part. After Part 2 it goes back to Start.',
@@ -58,10 +58,14 @@
   ];
   function parseBeat(tok) {
     return tok.split(',').map(function (h) {
-      if (h === 'T') return { keys: [], tak: true, h: null };
-      if (h === 'X') return { keys: [], free: true, opts: ['6', '7', '8', '1'], h: null };
-      var m = /^(.+?)([RL]?)$/.exec(h);
-      return { keys: m[1].split('+'), tak: false, h: m[2] || null };
+      if (h === 'T') return { keys: [], hands: [], tak: true, h: null };
+      var xm = /^X([RL]?)$/.exec(h);
+      if (xm) return { keys: [], hands: [], free: true, opts: ['6', '7', '8', '1'], h: xm[1] || null };
+      // each note of a pair can have its own hand: 4L+6R
+      var parts = h.split('+').map(function (x) { return /^(.+?)([RL]?)$/.exec(x); });
+      var hands = parts.map(function (m) { return m[2] || null; });
+      var same = hands.every(function (x) { return x === hands[0]; });
+      return { keys: parts.map(function (m) { return m[1]; }), hands: hands, tak: false, h: same ? hands[0] : 'mix' };
     });
   }
   // the whole piece as one list of ticks, in playing order
@@ -163,7 +167,7 @@
   function pickPiece(id, fromTap) {
     var pc = pieceOf(id); if (!pc) return;
     if (running) stop();
-    S.piece = id; PC = pieceSeq(pc); PC.pc = pc;
+    S.piece = id; PC = pieceSeq(pc); PC.pc = pc; PC.hands = /\d[RL]|D[RL]/.test(pc.secs.map(function (x) { return x.lines.join(' '); }).join(' '));
     if (fromTap) { S.bpm = pc.bpm; S.pcSec = 0; }
     if (!(S.pcSec >= 0 && S.pcSec < pc.secs.length)) S.pcSec = 0;
     S.beats = pc.secs[0].lines[0].split(' ').length; S.sub = pc.sub; S.accent = true; S.gap = null;
@@ -178,7 +182,7 @@
   }
   var label = function (k) { return k === 'D' ? 'Ding' : k; };
   function beatText(halves) {
-    return halves.map(function (e) { return e.free ? '?' : e.tak ? 'Tak' : e.keys.map(label).join('+') + (e.h || ''); }).join(' ');
+    return halves.map(function (e) { return e.free ? '?' + (e.h || '') : e.tak ? 'Tak' : e.keys.map(function (k, i) { return e.hands[i] ? (k === 'D' ? 'D' : k) + e.hands[i] : label(k); }).join('+'); }).join(' ');
   }
   function renderPiece(pos) {
     var pc = PC.pc, si = pos ? pos.si : S.pcSec, sec = pc.secs[si];
@@ -200,7 +204,7 @@
       if (pc.secs.length > 1) c.push('then the next part');
     }
     $('pcCount').innerHTML = c.join(' · ');
-    var box = $('pcLines'); box.innerHTML = ''; pcCells = {};
+    var box = $('pcLines'); box.innerHTML = ''; pcCells = {}; var anyHand = false;
     var curLi = pos ? pos.li : 0;
     // long parts show a window around the current line, so the map stays in view
     var lo = 0, hi = sec.lines.length - 1;
@@ -216,10 +220,14 @@
         var wrap = document.createElement('div'); wrap.className = 'pc-in';
         halves.forEach(function (e, j) {
           var d = document.createElement('div');
-          d.className = 'pc-n' + (e.free ? ' free' : e.tak ? ' tak' : e.h === 'L' ? ' l' : ' r') + (sec.root && e.keys.length === 1 && e.keys[0] === sec.root ? ' root' : '');
-          var big = document.createElement('b'); big.textContent = e.free ? '?' : e.tak ? 'Tak' : e.keys.map(halves.length > 1 ? String : label).join('+'); d.appendChild(big);
+          if (!e.free && !e.tak && !e.h && PC.hands) anyHand = true;
+          d.className = 'pc-n' + (e.free ? ' free' : e.tak ? ' tak' : e.h === 'L' ? ' l' : e.h === 'mix' ? ' mix' : e.h === 'R' || !PC.hands ? ' r' : ' any') + (sec.root && e.keys.length === 1 && e.keys[0] === sec.root ? ' root' : '');
+          var big = document.createElement('b');
+          if (e.h === 'mix') e.keys.forEach(function (k, i) { if (i) big.appendChild(document.createTextNode('+')); var sp = document.createElement('i'); sp.className = e.hands[i] === 'L' ? 'hl' : 'hr'; sp.textContent = k; big.appendChild(sp); });
+          else big.textContent = e.free ? '?' : e.tak ? 'Tak' : e.keys.map(halves.length > 1 ? String : label).join('+');
+          d.appendChild(big);
           if (e.free) { var fs = document.createElement('span'); fs.textContent = 'Your note'; d.appendChild(fs); }
-          if (e.h) { var hs = document.createElement('span'); hs.textContent = e.h === 'L' ? 'Left' : 'Right'; d.appendChild(hs); }
+          if (e.h && !e.free) { var hs = document.createElement('span'); hs.textContent = e.h === 'mix' ? e.hands.map(function (x) { return x === 'L' ? 'L' : 'R'; }).join(' + ') : e.h === 'L' ? 'Left' : 'Right'; d.appendChild(hs); }
           wrap.appendChild(d); pcCells[b + '.' + j] = d;
         });
         cell.appendChild(wrap); row.appendChild(cell);
@@ -229,7 +237,8 @@
     if (hi < sec.lines.length - 1) { var more = document.createElement('div'); more.className = 'pc-ln past'; more.textContent = '+ ' + (sec.lines.length - 1 - hi) + ' more lines'; box.appendChild(more); }
     // key: only what this piece uses
     var all = pc.secs.map(function (x) { return x.lines.join(' '); }).join(' '), key = [];
-    if (/\d[RL]|D[RL]/.test(all)) key.push('<i class="r"></i>Right hand', '<i class="l"></i>Left hand');
+    if (PC.hands) key.push('<i class="r"></i>Right hand', '<i class="l"></i>Left hand');
+    if (anyHand) key.push('<i class="a"></i>Any finger');
     var here = sec.lines.join(' ');
     if (/(^| )T( |$)/.test(here)) key.push('<i class="t"></i>Tak');
     if (/(^| )X( |$)/.test(here)) key.push('<i class="o"></i>Your choice');
@@ -306,7 +315,7 @@
     S.pat.forEach(function (s) { var d = document.createElement('div'); d.className = 'note' + (s === 'D' ? ' d' : ''); d.textContent = s; el.appendChild(d); stripEls.push(d); });
   }
   function lightPan(k) {
-    for (var n in pan) { var on = n === k; pan[n][0].classList.toggle('on', on); pan[n][1].classList.toggle('on', on); pan[n][0].classList.remove('l', 'opt'); }
+    for (var n in pan) { var on = n === k; pan[n][0].classList.toggle('on', on); pan[n][1].classList.toggle('on', on); pan[n][0].classList.remove('l', 'opt', 'any'); }
     if (panShell) panShell.classList.remove('on');
   }
   // a piece step: one or more notes in one hand's colour, or a Tak on the rim; the same note twice in a row flashes again
@@ -316,7 +325,7 @@
     if (dur) offT = setTimeout(function () { lightPan(null); }, dur);
     if (ev.tak) { panShell.classList.add('on'); return; }
     if (ev.free) { ev.opts.forEach(function (k) { if (pan[k]) pan[k][0].classList.add('opt'); }); return; }
-    ev.keys.forEach(function (k) { if (!pan[k]) return; pan[k][0].classList.add('on'); pan[k][1].classList.add('on'); if (ev.h === 'L') pan[k][0].classList.add('l'); });
+    ev.keys.forEach(function (k, i) { if (!pan[k]) return; pan[k][0].classList.add('on'); pan[k][1].classList.add('on'); var hd = ev.hands[i]; if (hd === 'L') pan[k][0].classList.add('l'); else if (!hd && PC && PC.hands) pan[k][0].classList.add('any'); });
   }
   function renderPats() {
     var box = $('pats'); box.innerHTML = '';
