@@ -218,7 +218,7 @@
       if (li < lo || li > hi) return;
       var beats = line.split(' ').map(parseBeat), row = document.createElement('div');
       if (li !== curLi) { row.className = 'pc-ln' + (pos && li < curLi ? ' past' : ''); row.textContent = beats.map(beatText).join('  '); box.appendChild(row); return; }
-      row.className = 'pc-now'; row.style.gridTemplateColumns = beats.map(function (h) { return h.length > 1 ? '1.4fr' : '1fr'; }).join(' ');
+      row.className = 'pc-now'; row.style.gridTemplateColumns = beats.map(function (h) { return h.length + 'fr'; }).join(' ');
       beats.forEach(function (halves, b) {
         var cell = document.createElement('div'); cell.className = 'pc-bt';
         if (pc.sub > 1) { var n = document.createElement('small'); n.textContent = b + 1; cell.appendChild(n); }
@@ -232,7 +232,7 @@
           else big.textContent = e.free ? '?' : e.tak ? 'Tak' : e.keys.map(halves.length > 1 ? String : label).join('+');
           d.appendChild(big);
           if (e.free) { var fs = document.createElement('span'); fs.textContent = 'Your note'; d.appendChild(fs); }
-          if (e.h && !e.free) { var hs = document.createElement('span'); hs.textContent = e.h === 'mix' ? e.hands.map(function (x) { return x === 'L' ? 'L' : 'R'; }).join(' + ') : e.h === 'L' ? 'Left' : 'Right'; d.appendChild(hs); }
+          if (!e.free) { var hs = document.createElement('span'); hs.textContent = e.h === 'mix' ? e.hands.map(function (x) { return x === 'L' ? 'L' : 'R'; }).join(' + ') : e.h === 'L' ? 'Left' : e.h === 'R' ? 'Right' : e.tak ? 'Knock' : PC.hands ? 'Any' : '\u00a0'; d.appendChild(hs); }
           wrap.appendChild(d); pcCells[b + '.' + j] = d;
         });
         cell.appendChild(wrap); row.appendChild(cell);
@@ -242,7 +242,7 @@
     if (hi < sec.lines.length - 1) { var more = document.createElement('div'); more.className = 'pc-ln past'; more.textContent = '+ ' + (sec.lines.length - 1 - hi) + ' more lines'; box.appendChild(more); }
     // key: only what this piece uses
     var all = pc.secs.map(function (x) { return x.lines.join(' '); }).join(' '), key = [];
-    if (PC.hands) key.push('<i class="r"></i>Right hand', '<i class="l"></i>Left hand');
+    if (PC.hands) key.push('<i class="r"></i>Right', '<i class="l"></i>Left');
     if (anyHand) key.push('<i class="a"></i>Any finger');
     var here = sec.lines.join(' ');
     if (/(^| )T( |$)/.test(here)) key.push('<i class="t"></i>Tak');
@@ -276,7 +276,7 @@
     renderDone(); renderList(); save();
   };
 
-  function setBpm(v) { S.bpm = Math.max(30, Math.min(200, Math.round(v))); $('bpm').value = S.bpm; $('bpmText').textContent = S.bpm; $('pBpm').textContent = S.bpm; save(); }
+  function setBpm(v) { S.bpm = Math.max(30, Math.min(200, Math.round(v))); $('bpm').value = S.bpm; $('bpmText').textContent = S.bpm; $('pBpm').textContent = S.bpm; $('pRange').value = S.bpm; save(); }
   $('bpm').oninput = function (e) { setBpm(+e.target.value); };
   $('minus').onclick = function () { setBpm(S.bpm - 1); };
   $('plus').onclick = function () { setBpm(S.bpm + 1); };
@@ -297,12 +297,20 @@
   }
 
   // ---- handpan map
-  var pan = {}, panShell, stripEls = [];
+  var pan = {}, panShell, stripEls = [], rim = [];
   function drawPan() {
-    var svg = $('panSvg'); svg.innerHTML = ''; pan = {};
+    var svg = $('panSvg'); svg.innerHTML = ''; pan = {}; rim = [];
+    svg.setAttribute('viewBox', isPhone() ? '-26 -32 352 352' : '0 0 300 300');
     var used = {}; if (S.piece && PC) PC.seq.forEach(function (q) { if (q.ev) (q.ev.opts || q.ev.keys).forEach(function (x) { used[x] = 1; }); }); else S.pat.forEach(function (x) { used[x] = 1; });
     var mk = function (t, a, tx) { var el = document.createElementNS(NS, t); for (var k in a) el.setAttribute(k, a[k]); if (tx) el.textContent = tx; svg.appendChild(el); return el; };
     panShell = mk('circle', { cx: 150, cy: 142, r: 128, class: 'pshell' });
+    // the beat runs around the rim, clockwise from the top, so the eye never leaves the map
+    var seg = 360 / S.beats, pt = function (r, deg) { var a = deg * Math.PI / 180; return [150 + r * Math.cos(a), 142 + r * Math.sin(a)]; };
+    for (var bi = 0; bi < S.beats; bi++) {
+      var a0 = -90 + bi * seg + 5, a1 = -90 + (bi + 1) * seg - 5, p0 = pt(140, a0), p1 = pt(140, a1), pm = pt(157, (a0 + a1) / 2);
+      rim.push([mk('path', { d: 'M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A140 140 0 0 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1), class: 'rim' }),
+                mk('text', { x: pm[0].toFixed(1), y: pm[1].toFixed(1), class: 'rimn' }, String(bi + 1))]);
+    }
     var place = function (k, x, y, rx, ry, rot) {
       var u = used[k] ? ' use' : '';
       pan[k] = [mk('ellipse', { cx: x, cy: y, rx: rx, ry: ry, class: 'pf' + u, transform: 'rotate(' + rot + ' ' + x + ' ' + y + ')' }), mk('text', { x: x, y: y, class: 'pl' + u }, k === 'D' ? 'Ding' : k)];
@@ -394,6 +402,8 @@
         fields.forEach(function (f, i) { f.classList.toggle('on', i === q.beat); f.classList.toggle('muted', q.muted); });
         ding.classList.add('pulse'); setTimeout(function () { ding.classList.remove('pulse'); }, 90);
         $('gapNote').textContent = q.muted ? 'silent · keep going' : '';
+        $('pSilent').textContent = q.muted ? 'Silent bar · keep going' : '';
+        rim.forEach(function (r, i) { r[0].classList.toggle('on', i === q.beat); r[1].classList.toggle('on', i === q.beat); r[0].classList.toggle('mu', q.muted); });
       }
     }
     requestAnimationFrame(draw);
@@ -414,6 +424,7 @@
     clearTimeout(offT); fields.forEach(function (f) { f.classList.remove('on', 'muted'); }); stripEls.forEach(function (n) { n.classList.remove('on'); }); lightPan(null);
     $('gapNote').textContent = ''; $('play').innerHTML = PLAY; $('pPlay').innerHTML = PLAY; $('pPlay').setAttribute('aria-label', 'Start');
     Array.prototype.forEach.call($('pDots').children, function (d) { d.classList.remove('on'); });
+    rim.forEach(function (r) { r[0].classList.remove('on', 'mu'); r[1].classList.remove('on'); }); $('pSilent').textContent = '';
     if (S.piece && PC) renderPiece(null);
     try { if (wake) wake.release(); } catch (e) {} wake = null;
     try { if (keepAlive) keepAlive.pause(); } catch (e) {}
@@ -442,7 +453,7 @@
   function playerHead() {
     var pc = S.piece && pieceOf(S.piece), b = document.body;
     $('pTitle').textContent = pc ? pc.t : EX[S.ex].t;
-    $('pSub').textContent = pc ? 'Piece ' + (PIECES.indexOf(pc) + 1) + ' · easy to hard' : 'Exercise ' + (S.ex + 1);
+    $('pSub').textContent = pc ? 'Piece ' + (PIECES.indexOf(pc) + 1) + ' of ' + PIECES.length : 'Exercise ' + (S.ex + 1) + ' of ' + EX.length;
     b.classList.toggle('pv-piece', !!pc); b.classList.toggle('pv-ex', !pc);
     b.classList.toggle('pv-map', S.mview === 'map'); b.classList.toggle('pv-dial', S.mview !== 'map');
     Array.prototype.forEach.call($('pMode').children, function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-v') === S.mview)); });
@@ -471,10 +482,23 @@
   $('pMinus').onclick = function () { setBpm(S.bpm - 1); };
   $('pPlus').onclick = function () { setBpm(S.bpm + 1); };
   $('pPlay').onclick = toggle;
-  function openSheet() { $('sheet').hidden = false; document.body.classList.add('sv'); $('sClose').focus(); }
+  $('pRange').oninput = function (e) { setBpm(+e.target.value); };
+  function openSheet() { $('sheet').hidden = false; document.body.classList.add('sv'); $('sX').focus(); }
   function closeSheet() { $('sheet').hidden = true; document.body.classList.remove('sv'); }
   $('pInfo').onclick = openSheet; $('pSet').onclick = openSheet;
-  $('sBg').onclick = closeSheet; $('sClose').onclick = closeSheet;
+  $('sBg').onclick = closeSheet; $('sX').onclick = closeSheet;
+  (function () {   // swipe the sheet down to close it
+    var panel = document.querySelector('.spanel'), y0 = null, dy = 0;
+    panel.addEventListener('touchstart', function (e) { if (panel.scrollTop > 0) return; y0 = e.touches[0].clientY; dy = 0; panel.style.transition = 'none'; }, { passive: true });
+    panel.addEventListener('touchmove', function (e) { if (y0 === null) return; dy = Math.max(0, e.touches[0].clientY - y0); panel.style.transform = 'translateY(' + dy + 'px)'; }, { passive: true });
+    panel.addEventListener('touchend', function () { if (y0 === null) return; panel.style.transition = ''; panel.style.transform = ''; if (dy > 70) closeSheet(); y0 = null; });
+  })();
+  function applyTheme() {
+    if (S.theme === 'light' || S.theme === 'dark') document.documentElement.setAttribute('data-theme', S.theme); else document.documentElement.removeAttribute('data-theme');
+    Array.prototype.forEach.call($('look').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === (S.theme || 'auto'))); });
+  }
+  Array.prototype.forEach.call($('look').children, function (b) { b.onclick = function () { S.theme = b.getAttribute('data-v'); save(); applyTheme(); }; });
+  applyTheme();
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (!$('sheet').hidden) closeSheet(); else closePlayer(false); } });
   // the same elements move between the desktop columns and the phone screens, so nothing is duplicated
   var moved = [];
@@ -483,10 +507,12 @@
     if (isPhone() && !moved.length) {
       var pb = $('pBody'), sb = $('sBody');
       move($('chips'), pb); move($('pcBox'), pb); move(document.querySelector('.dial'), pb); move($('strip'), pb); move(document.querySelector('.pan'), pb);
-      move(document.querySelector('.task'), sb); move(document.querySelector('.row-l'), sb); move(document.querySelector('.vol'), sb); move(document.querySelector('.tempo'), sb); move($('doneBtn'), sb);
+      drawPan();
+      move(document.querySelector('.task'), sb); move($('sizes').parentNode, sb); move($('lookRow'), sb); move($('doneBtn'), sb);
     } else if (!isPhone() && moved.length) {
       closePlayer(true);
       moved.forEach(function (m) { m[1].parentNode.replaceChild(m[0], m[1]); }); moved = [];
+      drawPan();
     }
   }
   if (MQ.addEventListener) MQ.addEventListener('change', layout); else if (MQ.addListener) MQ.addListener(layout);
