@@ -250,6 +250,71 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
   .sbody .task h3{font-size:1.4rem}
 }
 @media (min-width:600px) and (max-width:899px){.pbody{width:100%;max-width:680px;margin:0 auto}.pbody .pan svg{max-height:520px}.pbody .dial svg{max-height:460px}.spanel{left:50%;right:auto;width:560px;transform:translateX(-50%)}}
+
+/* ---- phone refinements: beat on the rim, equal boxes, larger type, slider dock, sheet with close ---- */
+.rim,.rimn,.look{display:none}
+:root:not([data-theme="dark"]){--ink-3:#5e4645}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink-3:#c9b8b0}}
+:root[data-theme="dark"]{--ink-3:#c9b8b0}
+.pc-n{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:56px}
+@media (max-width:899px){
+  .look{display:flex}
+  .seg3{display:flex;padding:3px;border-radius:999px;background:var(--sand)}
+  .seg3 button{min-width:56px;min-height:40px;padding:0 10px;border:0;border-radius:999px;background:none;font-weight:600;font-size:.95rem;color:var(--ink-3)}
+  .seg3 button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(42,20,24,.14)}
+  .ex b{font-size:1.06rem}.ex small{font-size:.9rem}.ex .t{font-size:.85rem}
+  .ic{width:48px;height:48px}
+  .ptop{grid-template-columns:48px 1fr 48px}
+  .pt b{font-size:1.75rem}.pt small{font-size:.88rem}
+  .pbody .pc-tabs .chip{min-height:44px;padding:0 18px;font-size:1rem;font-weight:600}
+  .pbody .pc-count{font-size:.95rem}
+  .pbody .pdots{display:none}
+  .pbody .pc-now{gap:6px}
+  .pbody .pc-n{min-height:64px;padding:0}
+  .pbody .pc-n b{font-size:1.4rem}
+  .pbody .pc-n span{font-size:.75rem;letter-spacing:.04em}
+  .pbody .pc-now+.pc-ln:not(.past){font-size:.95rem;color:var(--ink-3)}
+  .pbody .pc-key{font-size:.88rem;gap:6px 10px}.pbody .pc-key i{width:12px;height:12px}
+  .pbody .chips .chip{min-height:34px;font-size:.88rem;padding:0 12px}
+  .player .dial,.player .pmode{display:none!important}
+  body.pv-ex.pv-dial .player .strip,body.pv-ex.pv-dial .player .pan{display:flex}
+  body.pv-ex.pv-dial .player .strip{display:grid}
+  .player .pl{font-size:19px}
+  .player .you{display:none}
+  .player .rim{display:block;fill:none;stroke:var(--line-2);stroke-width:7;stroke-linecap:round;transition:stroke .06s}
+  .player .rim.on{stroke:var(--wine);stroke-width:12}
+  .player .rim.mu{stroke-dasharray:2 11}.player .rim.mu.on{stroke:var(--ink-3)}
+  .player .rimn{display:block;font:600 16px var(--sans);fill:var(--ink-3);text-anchor:middle;dominant-baseline:central}
+  .player .rimn.on{fill:var(--wine)}
+  .pbody .pan svg{max-height:380px}
+  .psilent{order:10;text-align:center;font-weight:600;font-size:1.05rem;color:var(--wine);min-height:1.4em}
+  body.pv-piece .psilent{display:none}
+  .dock{display:grid;gap:12px;padding:12px 14px max(16px,env(safe-area-inset-bottom))}
+  .trow{display:flex;align-items:center;gap:10px}
+  .trow .step{flex:none;width:48px;height:48px;font-size:1.6rem}
+  #pRange{flex:1;min-width:0;height:40px;accent-color:var(--wine)}
+  .pbpm{min-width:58px}.pbpm b{font-size:1.85rem}.pbpm small{font-size:.8rem}
+  .pbody .pc-bt small{font-size:.82rem}
+  .dock .play{min-height:58px;font-size:1.15rem}
+  .dock .play span{display:inline}
+  .stop{position:relative;display:flex;justify-content:center;min-height:44px}
+  .grab{margin-top:4px}
+  .sx{position:absolute;right:-4px;top:0;width:44px;height:44px}
+  .spanel{transition:transform .2s}
+  .sbody .task p{font-size:1.06rem;line-height:1.55}
+  .sbody .row-l b{font-size:.98rem;color:var(--ink)}
+  .sbody .check{min-height:54px;font-size:1.05rem}
+}
+@media (max-width:899px) and (max-height:760px){
+  .ptop{padding-top:max(6px,env(safe-area-inset-top))}
+  .pt b{font-size:1.5rem}.pt small{display:none}
+  .pbody{gap:6px;padding-top:2px}
+  .pbody .pc-tabs .chip{min-height:40px}
+  .pbody .pc-n{min-height:56px}
+  .pbody .pc-key{display:none}
+  .dock{gap:8px;padding-top:8px}
+  .dock .play{min-height:52px}
+}
 </style>
 </head>
 <body>
@@ -306,6 +371,7 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
           <div class="strip" id="strip"></div>
           <div class="pan"><svg id="panSvg" viewBox="0 0 300 300" role="img" aria-label="Handpan map"></svg></div>
           <div class="pats" id="pats" role="group" aria-label="Pattern"></div>
+          <div class="row-l look" id="lookRow"><b>Look</b><div class="seg3" id="look" role="group" aria-label="Look"><button type="button" data-v="auto">Auto</button><button type="button" data-v="light">Light</button><button type="button" data-v="dark">Dark</button></div></div>
           <div class="row-l"><b>Notes on your handpan (with Ding)</b><div class="sizes" id="sizes" role="group" aria-label="Notes on your handpan"></div></div>
         </div>
       </div>
@@ -317,20 +383,24 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
   <div class="ptop"><button class="ic" id="pBack" type="button" aria-label="Back to the list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><div class="pt"><b id="pTitle"></b><small id="pSub"></small></div><button class="ic" id="pInfo" type="button" aria-label="How to play and settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></div>
   <div class="pbody" id="pBody">
     <div class="pmode" id="pMode" role="group" aria-label="View"><button type="button" data-v="dial">Beat circle</button><button type="button" data-v="map">Handpan map</button></div>
+    <div class="psilent" id="pSilent" aria-live="polite"></div>
   </div>
   <div class="dock">
-    <button class="step" id="pMinus" type="button" aria-label="Slower">−</button>
-    <div class="pbpm"><b id="pBpm">60</b><small>BPM</small></div>
-    <button class="step" id="pPlus" type="button" aria-label="Faster">+</button>
+    <div class="trow">
+      <button class="step" id="pMinus" type="button" aria-label="Slower">−</button>
+      <input type="range" id="pRange" min="30" max="200" value="60" aria-label="Tempo in BPM">
+      <button class="step" id="pPlus" type="button" aria-label="Faster">+</button>
+      <div class="pbpm"><b id="pBpm">60</b><small>BPM</small></div>
+    </div>
     <button class="play" id="pPlay" type="button" aria-label="Start"></button>
-    <button class="ic" id="pSet" type="button" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
+    <button class="ic" id="pSet" type="button" aria-label="Settings" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
   </div>
 </section>
 <div class="sheet" id="sheet" hidden>
   <div class="sbg" id="sBg"></div>
-  <div class="spanel" role="dialog" aria-label="How to play and settings"><span class="grab"></span><div class="sbody" id="sBody"></div><button class="check" id="sClose" type="button">Close</button></div>
+  <div class="spanel" role="dialog" aria-label="How to play and settings"><div class="stop"><span class="grab"></span><button class="ic sx" id="sX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="sbody" id="sBody"></div></div>
 </div>
 
-<script src="/js/practice.js?v=14" defer></script>
+<script src="/js/practice.js?v=15" defer></script>
 </body>
 </html>
