@@ -149,6 +149,38 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
 [hidden]{display:none!important}
 .dial{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .hint{margin:0;text-align:center;font-size:.8rem;color:var(--ink-3)}
+/* pieces */
+:root{--teal:#2f6461}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--teal:#8cc5bd}}
+:root[data-theme="dark"]{--teal:#8cc5bd}
+.ex.soon{opacity:.55;cursor:default}
+.ex-list h2:not(:first-child){margin-top:14px}
+.pcbox{display:grid;gap:10px}
+.pc-tabs{display:flex;flex-wrap:wrap;gap:6px}
+.pc-tabs .chip[aria-pressed="true"]{background:var(--wine);color:var(--on-wine);box-shadow:none}
+.pc-count{font-size:.86rem;color:var(--ink-3);min-height:1.4em}
+.pc-count b{color:var(--ink);font-variant-numeric:tabular-nums}
+.pc-lines{display:grid;gap:2px;padding:6px;border-radius:14px;background:var(--ivory)}
+.pc-ln{padding:7px 8px;font-size:.88rem;font-weight:600;letter-spacing:.03em;color:var(--ink-3);white-space:pre}
+.pc-ln.past{opacity:.5}
+.pc-now{display:grid;gap:6px;padding:4px}
+.pc-bt small{display:block;text-align:center;font-size:.7rem;font-weight:600;color:var(--ink-3);margin-bottom:3px}
+.pc-in{display:flex;gap:4px}
+.pc-n{flex:1;min-width:0;text-align:center;padding:7px 0 6px;border-radius:10px;background:var(--paper);transition:background .06s,color .06s}
+.pc-n b{display:block;font-size:1.15rem;line-height:1.15}
+.pc-n span{display:block;font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.pc-n.r{color:var(--wine);box-shadow:inset 0 0 0 1.5px var(--wine)}
+.pc-n.l{color:var(--teal);box-shadow:inset 0 0 0 1.5px var(--teal)}
+.pc-n.tak{color:var(--ink-3);box-shadow:inset 0 0 0 1.5px var(--line-2);background:transparent}
+.pc-n.r.cur{background:var(--wine);color:var(--on-wine)}
+.pc-n.l.cur{background:var(--teal);color:var(--on-wine)}
+.pc-n.tak.cur{background:var(--ink-3);color:var(--paper)}
+.pc-n.r.root{background:var(--wine-soft);box-shadow:none}
+.pc-n.r.root.cur{background:var(--wine);color:var(--on-wine)}
+.pc-key{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 6px;font-size:.78rem;color:var(--ink-3)}
+.pc-key i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-left:8px}
+.pc-key .r{background:var(--wine)}.pc-key .o{background:var(--wine-soft);box-shadow:inset 0 0 0 1px var(--line-2)}.pc-key .l{background:var(--teal)}.pc-key .t{background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink-3)}
+.pf.on.l{fill:var(--teal);stroke:var(--teal)}
 </style>
 </head>
 <body>
@@ -161,7 +193,7 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
 <main class="page" id="app">
   <div class="head"><span class="eyebrow">Practice</span><h1>Keep <em>steady time</em></h1></div>
 
-  <nav class="ex-list" id="exList" aria-label="Exercises"><h2>Exercises</h2></nav>
+  <nav class="ex-list" id="exList" aria-label="Pieces and exercises"></nav>
 
   <section class="practice">
     <div class="card">
@@ -189,6 +221,12 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
 
     <div class="card">
       <div class="hp">
+        <div class="pcbox" id="pcBox" hidden>
+          <div class="pc-tabs" id="pcTabs" role="group" aria-label="Part"></div>
+          <div class="pc-count" id="pcCount" aria-live="off"></div>
+          <div class="pc-lines" id="pcLines"></div>
+          <div class="pc-key" id="pcKey"></div>
+        </div>
         <button class="toggle" id="hpTog" role="switch" aria-checked="true"><span><b>Handpan map</b><small>Shows which note to hit on each click</small></span><span class="sw"></span></button>
         <div id="hpBox">
           <div class="strip" id="strip"></div>
@@ -201,6 +239,6 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
   </section>
 </main>
 
-<script src="/js/practice.js?v=3" defer></script>
+<script src="/js/practice.js?v=5" defer></script>
 </body>
 </html>
