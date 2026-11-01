@@ -39,12 +39,11 @@
         { n: 'Variation 5', lines: ['DR 1L 5R 6L', 'DR 1L 5R 8L', 'DR 1L 5R 7L', 'DR 1L 5R 4L', 'DR 2L 5R 6L', 'DR 2L 5R 8L', 'DR 2L 5R 7L', 'DR 2L 5R 4L'] }
       ] },
     { id: 'pairs', t: 'Twin Steps', sum: 'Two notes together, Tak, quick Dings', tag: '70', bpm: 70, sub: 2, lineRep: 1, secRep: 2,
-      p: 'Play both notes of a pair together, cleanly. The lower note is the left hand, the higher note the right: 4 left with 6 right, 3 left with 5 right, 2 left with 4 right. Tak is a knock or a slap. Beat 3 has two quick Dings, with your thumb or any finger that feels easy. In Step 3 the note 8 takes the place of the first Tak.',
-      g: 'All three steps, soft and even',
+      p: 'Play both notes of a pair together, cleanly. The lower note is the left hand, the higher note the right: 4 left with 6 right, 3 left with 5 right, 2 left with 4 right. Tak is a knock or a slap. Beat 3 has two quick Dings, with your thumb or any finger that feels easy. In Step 2 the note 8 takes the place of the first Tak.',
+      g: 'Both steps, soft and even',
       secs: [
-        { n: 'Step 1', lines: ['4L+6R T D,D T', '3L+5R T D,D T'] },
-        { n: 'Step 2', lines: ['2L+4R T D,D T', '3L+5R T D,D T'] },
-        { n: 'Step 3', lines: ['4L+6R 8 D,D T', '3L+5R 8 D,D T', '2L+4R 8 D,D T', '3L+5R 8 D,D T'] }
+        { n: 'Step 1', lines: ['4L+6R T D,D T', '3L+5R T D,D T', '2L+4R T D,D T', '3L+5R T D,D T'] },
+        { n: 'Step 2', lines: ['4L+6R 8 D,D T', '3L+5R 8 D,D T', '2L+4R 8 D,D T', '3L+5R 8 D,D T'] }
       ] },
     { id: 'sparrow', t: 'Golden Sparrow', sum: 'A composition · Start, Part 1, Part 2', tag: '60', bpm: 60, sub: 1, lineRep: 4, secRep: 2,
       p: 'R is your right hand, L your left. Ding is always the right hand. Each line 4 times, each part 2 times, then the next part. After Part 2 it goes back to Start.',
