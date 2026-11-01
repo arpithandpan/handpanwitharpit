@@ -14,7 +14,6 @@
     { t: 'On your own', p: '1 bar of click, 3 bars silent. Your inner clock does the work.', g: 'Land on beat 1 three times in a row', bpm: 60, beats: 4, sub: 1, accent: true, gap: [1, 3], min: '5 min' }
   ];
   var PRESETS = [
-    { name: 'Ding 1 5 6 / Ding 2 5 6', steps: ['D', '1', '5', '6', 'D', '2', '5', '6'] },
     { name: 'Scale up', steps: ['1', '2', '3', '4', '5', '6', '7', '8'] }
   ];
 
@@ -37,6 +36,16 @@
         { n: 'Variation 2', lines: ['1R 4L 2R 4L', '3R 4L 4R 4L', '5R 4L 6R 4L', '7R 4L 8R 4L', '8R 4L 7R 4L', '6R 4L 5R 4L', '4R 4L 3R 4L', '2R 4L 1R 4L'] },
         { n: 'Variation 3', lines: ['1R 4L 2R 4L 3R 4L', '2R 4L 3R 4L 4R 4L', '3R 4L 4R 4L 5R 4L', '4R 4L 5R 4L 6R 4L', '5R 4L 6R 4L 7R 4L', '6R 4L 7R 4L 8R 4L', '8R 4L 7R 4L 6R 4L', '7R 4L 6R 4L 5R 4L', '6R 4L 5R 4L 4R 4L', '5R 4L 4R 4L 3R 4L', '4R 4L 3R 4L 2R 4L', '3R 4L 2R 4L 1R 4L'] }
       ] },
+    { id: 'groove', t: 'Meditative Groove', sum: 'Ding 1 5 6 · 5 variations', tag: '60', bpm: 60, sub: 1, lineRep: 1, secRep: 1,
+      p: 'Let the Ding guide your rhythm. One note on every beat, each note ringing clearly. Start slow and stay relaxed.',
+      g: 'All five variations with an even, relaxed flow',
+      secs: [
+        { n: 'Variation 1', lineRep: 4, lines: ['D 1 5 6', 'D 2 5 6'] },
+        { n: 'Variation 2', lineRep: 2, lines: ['D 1 5 6', 'D 2 5 6'] },
+        { n: 'Variation 3', lines: ['D 1 5 6', 'D 2 5 6'] },
+        { n: 'Variation 4', lines: ['D 1 5 6', 'D 1 T 6', 'D 1 5 6', 'D 1 T 6', 'D 2 5 6', 'D 2 T 6', 'D 2 5 6', 'D 2 T 6'] },
+        { n: 'Variation 5', lineRep: 4, lines: ['D 1 5 X', 'D 2 5 X'] }
+      ] },
     { id: 'pairs', t: 'Note Pair Progressions', sum: 'Two notes together, Tak, two quick Dings', tag: '4 beats', bpm: 70, sub: 2, lineRep: 1, secRep: 2,
       p: 'Play both notes of a pair together, cleanly. Beat 3 has two quick Dings. In Step 3 the note 8 takes the place of the first Tak.',
       g: 'All three steps, soft and even',
@@ -50,6 +59,7 @@
   function parseBeat(tok) {
     return tok.split(',').map(function (h) {
       if (h === 'T') return { keys: [], tak: true, h: null };
+      if (h === 'X') return { keys: [], free: true, opts: ['6', '7', '8', '1'], h: null };
       var m = /^(.+?)([RL]?)$/.exec(h);
       return { keys: m[1].split('+'), tak: false, h: m[2] || null };
     });
@@ -59,9 +69,10 @@
     var seq = [], starts = [];
     pc.secs.forEach(function (sec, si) {
       starts.push(seq.length);
-      for (var sr = 0; sr < pc.secRep; sr++) sec.lines.forEach(function (line, li) {
+      var SR = sec.secRep || pc.secRep, LR = sec.lineRep || pc.lineRep;
+      for (var sr = 0; sr < SR; sr++) sec.lines.forEach(function (line, li) {
         var beats = line.split(' ').map(parseBeat);
-        for (var lr = 0; lr < pc.lineRep; lr++) beats.forEach(function (halves, b) {
+        for (var lr = 0; lr < LR; lr++) beats.forEach(function (halves, b) {
           for (var h = 0; h < pc.sub; h++) {
             var k = halves.length, ev = (h * k) % pc.sub === 0 ? halves[h * k / pc.sub] : null;
             seq.push({ si: si, sr: sr, li: li, lr: lr, b: b, part: ev ? h * k / pc.sub : -1, k: k, ev: ev });
@@ -100,10 +111,12 @@
   // ---- saved settings (this device)
   var STORE = 'hp_practice_v1';
   var S = { ex: 1, piece: null, pcSec: 0, done: [], bpm: 60, beats: 4, sub: 2, accent: false, gap: null, notes: 9, pat: PRESETS[0].steps.slice(), hp: true, vol: 80 };
+  var fixPat = function () { var ok = PRESETS.some(function (q) { return q.steps.join() === (S.pat || []).join(); }); if (!ok) S.pat = PRESETS[0].steps.slice(); };
   try { var saved = JSON.parse(localStorage.getItem(STORE) || '{}'); for (var k in saved) S[k] = saved[k]; } catch (e) {}
   if (!(S.ex >= 0 && S.ex < EX.length)) S.ex = 0;
   var pieceOf = function (id) { for (var i = 0; i < PIECES.length; i++) if (PIECES[i].id === id && !PIECES[i].soon) return PIECES[i]; return null; };
   if (S.piece && !pieceOf(S.piece)) S.piece = null;
+  fixPat();
   // the handpan is chosen by its total notes, Ding included, as makers name them (9, 10, 12 …)
   // the pieces use notes 1 to 8, so the smallest pan is 9 (Ding + 8)
   var LAYOUTS = { 9: { ring: 8, inner: 0 }, 10: { ring: 9, inner: 0 }, 12: { ring: 9, inner: 2 } };
@@ -159,13 +172,13 @@
   }
   function applyMode() {
     var pc = !!S.piece;
-    $('pcBox').hidden = !pc; $('hpTog').hidden = pc; $('strip').hidden = pc; $('pats').hidden = pc;
+    $('pcBox').hidden = !pc; $('hpTog').hidden = pc; $('strip').hidden = pc; $('pats').hidden = pc || PRESETS.length < 2;
     $('hpBox').hidden = pc ? false : !S.hp;
     if (!pc) PC = null;
   }
   var label = function (k) { return k === 'D' ? 'Ding' : k; };
   function beatText(halves) {
-    return halves.map(function (e) { return e.tak ? 'Tak' : e.keys.map(label).join('+') + (e.h || ''); }).join(' ');
+    return halves.map(function (e) { return e.free ? '?' : e.tak ? 'Tak' : e.keys.map(label).join('+') + (e.h || ''); }).join(' ');
   }
   function renderPiece(pos) {
     var pc = PC.pc, si = pos ? pos.si : S.pcSec, sec = pc.secs[si];
@@ -176,14 +189,14 @@
       b.onclick = function () { var was = running; if (was) stop(); S.pcSec = i; save(); renderPiece(null); if (was) start(); };
       tabs.appendChild(b);
     });
-    var c = [];
+    var c = [], LR = sec.lineRep || pc.lineRep, SR = sec.secRep || pc.secRep;
     if (pos) {
       c.push('Line <b>' + (pos.li + 1) + '</b> of ' + sec.lines.length);
-      if (pc.lineRep > 1) c.push('time <b>' + (pos.lr + 1) + '</b> of ' + pc.lineRep);
-      if (pc.secRep > 1) c.push('round <b>' + (pos.sr + 1) + '</b> of ' + pc.secRep);
+      if (LR > 1) c.push('time <b>' + (pos.lr + 1) + '</b> of ' + LR);
+      if (SR > 1) c.push('round <b>' + (pos.sr + 1) + '</b> of ' + SR);
     } else {
-      c.push(pc.lineRep > 1 ? 'Each line ' + pc.lineRep + ' times' : sec.lines.length + ' lines');
-      if (pc.secRep > 1) c.push('each part ' + pc.secRep + ' times');
+      c.push(LR > 1 ? 'Each line ' + LR + ' times' : sec.lines.length + ' lines');
+      if (SR > 1) c.push('each part ' + SR + ' times');
       if (pc.secs.length > 1) c.push('then the next part');
     }
     $('pcCount').innerHTML = c.join(' · ');
@@ -203,8 +216,9 @@
         var wrap = document.createElement('div'); wrap.className = 'pc-in';
         halves.forEach(function (e, j) {
           var d = document.createElement('div');
-          d.className = 'pc-n' + (e.tak ? ' tak' : e.h === 'L' ? ' l' : ' r') + (sec.root && e.keys.length === 1 && e.keys[0] === sec.root ? ' root' : '');
-          var big = document.createElement('b'); big.textContent = e.tak ? 'Tak' : e.keys.map(halves.length > 1 ? String : label).join('+'); d.appendChild(big);
+          d.className = 'pc-n' + (e.free ? ' free' : e.tak ? ' tak' : e.h === 'L' ? ' l' : ' r') + (sec.root && e.keys.length === 1 && e.keys[0] === sec.root ? ' root' : '');
+          var big = document.createElement('b'); big.textContent = e.free ? '?' : e.tak ? 'Tak' : e.keys.map(halves.length > 1 ? String : label).join('+'); d.appendChild(big);
+          if (e.free) { var fs = document.createElement('span'); fs.textContent = 'Your note'; d.appendChild(fs); }
           if (e.h) { var hs = document.createElement('span'); hs.textContent = e.h === 'L' ? 'Left' : 'Right'; d.appendChild(hs); }
           wrap.appendChild(d); pcCells[b + '.' + j] = d;
         });
@@ -216,7 +230,9 @@
     // key: only what this piece uses
     var all = pc.secs.map(function (x) { return x.lines.join(' '); }).join(' '), key = [];
     if (/\d[RL]|D[RL]/.test(all)) key.push('<i class="r"></i>Right hand', '<i class="l"></i>Left hand');
-    if (/(^| )T( |$)/.test(all)) key.push('<i class="t"></i>Tak');
+    var here = sec.lines.join(' ');
+    if (/(^| )T( |$)/.test(here)) key.push('<i class="t"></i>Tak');
+    if (/(^| )X( |$)/.test(here)) key.push('<i class="o"></i>Your choice');
     if (sec.root) key.push('<i class="o"></i>Back to ' + sec.root);
     $('pcKey').innerHTML = key.join(' '); $('pcKey').hidden = !key.length;
     pcAt = pos ? pos.si + '.' + pos.sr + '.' + pos.li : null;
@@ -224,7 +240,7 @@
   function pieceTick(t) {
     var pos = PC.seq[(PC.starts[S.pcSec] + t) % PC.seq.length];
     if (pcAt !== pos.si + '.' + pos.sr + '.' + pos.li) renderPiece(pos);
-    else if (PC.pc.lineRep > 1 && pos.b === 0 && pos.part === 0) renderPiece(pos);   // new time through the same line
+    else if ((PC.pc.secs[pos.si].lineRep || PC.pc.lineRep) > 1 && pos.b === 0 && pos.part === 0) renderPiece(pos);   // new time through the same line
     if (!pos.ev) return;
     for (var k in pcCells) pcCells[k].classList.toggle('cur', k === pos.b + '.' + pos.part);
     // notes inside one beat (two quick Dings) flash on and off, so each hit shows as its own flash
@@ -269,7 +285,7 @@
   var pan = {}, panShell, stripEls = [];
   function drawPan() {
     var svg = $('panSvg'); svg.innerHTML = ''; pan = {};
-    var used = {}; if (S.piece && PC) PC.seq.forEach(function (q) { if (q.ev) q.ev.keys.forEach(function (x) { used[x] = 1; }); }); else S.pat.forEach(function (x) { used[x] = 1; });
+    var used = {}; if (S.piece && PC) PC.seq.forEach(function (q) { if (q.ev) (q.ev.opts || q.ev.keys).forEach(function (x) { used[x] = 1; }); }); else S.pat.forEach(function (x) { used[x] = 1; });
     var mk = function (t, a, tx) { var el = document.createElementNS(NS, t); for (var k in a) el.setAttribute(k, a[k]); if (tx) el.textContent = tx; svg.appendChild(el); return el; };
     panShell = mk('circle', { cx: 150, cy: 142, r: 128, class: 'pshell' });
     var place = function (k, x, y, rx, ry, rot) {
@@ -290,7 +306,7 @@
     S.pat.forEach(function (s) { var d = document.createElement('div'); d.className = 'note' + (s === 'D' ? ' d' : ''); d.textContent = s; el.appendChild(d); stripEls.push(d); });
   }
   function lightPan(k) {
-    for (var n in pan) { var on = n === k; pan[n][0].classList.toggle('on', on); pan[n][1].classList.toggle('on', on); pan[n][0].classList.remove('l'); }
+    for (var n in pan) { var on = n === k; pan[n][0].classList.toggle('on', on); pan[n][1].classList.toggle('on', on); pan[n][0].classList.remove('l', 'opt'); }
     if (panShell) panShell.classList.remove('on');
   }
   // a piece step: one or more notes in one hand's colour, or a Tak on the rim; the same note twice in a row flashes again
@@ -299,6 +315,7 @@
     clearTimeout(offT); lightPan(null);
     if (dur) offT = setTimeout(function () { lightPan(null); }, dur);
     if (ev.tak) { panShell.classList.add('on'); return; }
+    if (ev.free) { ev.opts.forEach(function (k) { if (pan[k]) pan[k][0].classList.add('opt'); }); return; }
     ev.keys.forEach(function (k) { if (!pan[k]) return; pan[k][0].classList.add('on'); pan[k][1].classList.add('on'); if (ev.h === 'L') pan[k][0].classList.add('l'); });
   }
   function renderPats() {
