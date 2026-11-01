@@ -29,22 +29,22 @@
         { n: 'Variation 3', lines: ['1R 4L 2R 4L 3R 4L', '2R 4L 3R 4L 4R 4L', '3R 4L 4R 4L 5R 4L', '4R 4L 5R 4L 6R 4L', '5R 4L 6R 4L 7R 4L', '6R 4L 7R 4L 8R 4L', '8R 4L 7R 4L 6R 4L', '7R 4L 6R 4L 5R 4L', '6R 4L 5R 4L 4R 4L', '5R 4L 4R 4L 3R 4L', '4R 4L 3R 4L 2R 4L', '3R 4L 2R 4L 1R 4L'] }
       ] },
     { id: 'groove', t: 'Meditative Groove', sum: 'Ding 1 5 6 · 5 variations', tag: '60', bpm: 60, sub: 1, lineRep: 1, secRep: 1,
-      p: 'Ding with the right hand, 1 or 2 with the left, 5 right, 6 left. Let the Ding guide your rhythm, one note on every beat, each one ringing clearly. Tak is a knock or a slap. Start slow and stay relaxed.',
+      p: 'Ding with the right hand, 1 or 2 with the left, 5 right, 6 left. In Variation 5 the last note changes: 6, 8, 7, then 4. Let the Ding guide your rhythm, one note on every beat, each one ringing clearly. Tak is a knock or a slap. Start slow and stay relaxed.',
       g: 'All five variations with an even, relaxed flow',
       secs: [
         { n: 'Variation 1', lineRep: 4, lines: ['DR 1L 5R 6L', 'DR 2L 5R 6L'] },
         { n: 'Variation 2', lineRep: 2, lines: ['DR 1L 5R 6L', 'DR 2L 5R 6L'] },
         { n: 'Variation 3', lines: ['DR 1L 5R 6L', 'DR 2L 5R 6L'] },
         { n: 'Variation 4', lines: ['DR 1L 5R 6L', 'DR 1L T 6L', 'DR 1L 5R 6L', 'DR 1L T 6L', 'DR 2L 5R 6L', 'DR 2L T 6L', 'DR 2L 5R 6L', 'DR 2L T 6L'] },
-        { n: 'Variation 5', lineRep: 4, lines: ['DR 1L 5R X', 'DR 2L 5R X'] }
+        { n: 'Variation 5', lines: ['DR 1L 5R 6L', 'DR 1L 5R 8L', 'DR 1L 5R 7L', 'DR 1L 5R 4L', 'DR 2L 5R 6L', 'DR 2L 5R 8L', 'DR 2L 5R 7L', 'DR 2L 5R 4L'] }
       ] },
     { id: 'pairs', t: 'Twin Steps', sum: 'Two notes together, Tak, quick Dings', tag: '70', bpm: 70, sub: 2, lineRep: 1, secRep: 2,
-      p: 'Play both notes of a pair together, cleanly: 4 left with 6 right, 3 right with 5 left, 2 left with 4 right. Tak is a knock or a slap. Beat 3 has two quick Dings, with your thumb or any finger that feels easy. In Step 3 the note 8 takes the place of the first Tak.',
+      p: 'Play both notes of a pair together, cleanly. The lower note is the left hand, the higher note the right: 4 left with 6 right, 3 left with 5 right, 2 left with 4 right. Tak is a knock or a slap. Beat 3 has two quick Dings, with your thumb or any finger that feels easy. In Step 3 the note 8 takes the place of the first Tak.',
       g: 'All three steps, soft and even',
       secs: [
-        { n: 'Step 1', lines: ['4L+6R T D,D T', '3R+5L T D,D T'] },
-        { n: 'Step 2', lines: ['2L+4R T D,D T', '3R+5L T D,D T'] },
-        { n: 'Step 3', lines: ['4L+6R 8 D,D T', '3R+5L 8 D,D T', '2L+4R 8 D,D T', '3R+5L 8 D,D T'] }
+        { n: 'Step 1', lines: ['4L+6R T D,D T', '3L+5R T D,D T'] },
+        { n: 'Step 2', lines: ['2L+4R T D,D T', '3L+5R T D,D T'] },
+        { n: 'Step 3', lines: ['4L+6R 8 D,D T', '3L+5R 8 D,D T', '2L+4R 8 D,D T', '3L+5R 8 D,D T'] }
       ] },
     { id: 'sparrow', t: 'Golden Sparrow', sum: 'A composition · Start, Part 1, Part 2', tag: '60', bpm: 60, sub: 1, lineRep: 4, secRep: 2,
       p: 'R is your right hand, L your left. Ding is always the right hand. Each line 4 times, each part 2 times, then the next part. After Part 2 it goes back to Start.',
