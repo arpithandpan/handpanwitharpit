@@ -1,8 +1,8 @@
 // Practice page: works offline after the first visit.
 // The page and its script come from the network when online (so updates show at once)
 // and from this cache when offline.
-const CACHE = 'practice-v21';
-const FILES = ['/pages/practice', '/js/practice.js?v=21', '/fonts/cormorant-garamond-latin-600-normal.woff2', '/fonts/cormorant-garamond-latin-600-italic.woff2', '/fonts/figtree-latin-400-normal.woff2', '/fonts/figtree-latin-500-normal.woff2', '/fonts/figtree-latin-600-normal.woff2', '/favicon.svg?v=2'];
+const CACHE = 'practice-v22';
+const FILES = ['/pages/practice', '/js/practice.js?v=22', '/fonts/cormorant-garamond-latin-600-normal.woff2', '/fonts/cormorant-garamond-latin-600-italic.woff2', '/fonts/figtree-latin-400-normal.woff2', '/fonts/figtree-latin-500-normal.woff2', '/fonts/figtree-latin-600-normal.woff2', '/favicon.svg?v=2'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(FILES.map(f => c.add(f).catch(() => {})))).then(() => self.skipWaiting()));
