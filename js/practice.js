@@ -29,7 +29,7 @@
         { n: 'Variation 3', lines: ['1R,4L 2R,4L 3R,4L', '2R,4L 3R,4L 4R,4L', '3R,4L 4R,4L 5R,4L', '4R,4L 5R,4L 6R,4L', '5R,4L 6R,4L 7R,4L', '6R,4L 7R,4L 8R,4L', '8R,4L 7R,4L 6R,4L', '7R,4L 6R,4L 5R,4L', '6R,4L 5R,4L 4R,4L', '5R,4L 4R,4L 3R,4L', '4R,4L 3R,4L 2R,4L', '3R,4L 2R,4L 1R,4L'] }
       ] },
     { id: 'groove', t: 'Meditative Groove', sum: 'Ding 1 5 6 · 5 variations', tag: '60', bpm: 60, sub: 1, lineRep: 1, secRep: 1,
-      p: 'Ding with the right hand, 1 or 2 with the left, 5 right, 6 left. In Variation 5 the last note changes: 6, 8, 7, then 4. Let the Ding guide your rhythm, one note on every beat, each one ringing clearly. Tak is a knock or a slap. Start slow and stay relaxed.',
+      p: 'In this pattern the **Ding is your right hand**. Then 1 or 2 with the left, 5 with the right, 6 with the left. One note on every beat, each one ringing clearly. In Variation 4, Tak is a knock or a slap. In Variation 5 the last note changes: 6, 8, 7, then 4. Start slow and stay relaxed.',
       g: 'All five variations with an even, relaxed flow',
       secs: [
         { n: 'Variation 1', lineRep: 4, lines: ['DR 1L 5R 6L', 'DR 2L 5R 6L'] },
@@ -46,7 +46,7 @@
         { n: 'Step 2', lines: ['4L+6R 8 D,D T', '3L+5R 8 D,D T', '2L+4R 8 D,D T', '3L+5R 8 D,D T'] }
       ] },
     { id: 'sparrow', t: 'Golden Sparrow', sum: 'A composition in 3 parts', tag: '60', bpm: 60, sub: 1, lineRep: 4, secRep: 2,
-      p: 'R is your right hand, L your left. Ding is always the right hand. Each line 4 times, each part 2 times, then the next part. After Part 2 it goes back to Start.',
+      p: 'R is your right hand, L your left. In this piece the **Ding is played with the right hand**. Each line 4 times, each part 2 times, then the next part. After Part 2 it goes back to Start.',
       g: 'The full piece in one go, then send Arpit a video',
       secs: [
         { n: 'Start', lines: ['4R 2L 6R 2L', '5R 3L 7R 3L', '3R 1L 5R 1L', '4R 2L 6R 2L'] },
@@ -125,6 +125,11 @@
   var LAYOUTS = { 9: { ring: 8, inner: 0 }, 10: { ring: 9, inner: 0 }, 12: { ring: 9, inner: 2 } };
   if (!LAYOUTS[S.notes]) S.notes = S.size === 9 ? 10 : 9;   // older saves kept notes around the Ding
   delete S.size;
+  // text with **bold** parts (our own data only)
+  function setRich(el, txt) {
+    el.textContent = '';
+    txt.split('**').forEach(function (part, i) { if (!part) return; var n = i % 2 ? document.createElement('b') : document.createTextNode(part); if (i % 2) n.textContent = part; el.appendChild(n); });
+  }
   function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
   // phones: a list screen and a player screen instead of one long page
   var MQ = window.matchMedia ? window.matchMedia('(max-width: 899px)') : { matches: false };
@@ -133,26 +138,35 @@
   if (S.mview !== 'map') S.mview = 'dial';
 
   // ---- exercises
+  function addBadge(b, what) {
+    b.classList.add('last');
+    var sp = document.createElement('span'); sp.className = 'lastb';
+    sp.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
+    sp.appendChild(document.createTextNode('Continue · ' + what));
+    b.children[1].appendChild(sp);
+  }
   function renderList() {
     var L = $('exList'); L.innerHTML = '';
     var head = function (t) { var h = document.createElement('h2'); h.textContent = t; L.appendChild(h); };
-    head('Pieces from Arpit · easy to hard');
+    head('From class · easy to hard');
     PIECES.forEach(function (pc, pi) {
       var b = document.createElement('button'), done = S.done.indexOf('p:' + pc.id) >= 0, on = S.piece === pc.id;
       b.type = 'button'; b.className = 'ex pc' + (on ? ' on' : '') + (done && !on ? ' done' : '') + (pc.soon ? ' soon' : '');
       b.setAttribute('aria-current', on ? 'true' : 'false'); if (pc.soon) b.disabled = true;
       b.innerHTML = '<span class="n">' + (done && !on ? '✓' : pi + 1) + '</span><span><b></b><small></small></span><span class="t"></span>';
       b.querySelector('b').textContent = pc.t; b.querySelector('small').textContent = pc.sum; b.querySelector('.t').textContent = pc.tag;
+      if (on && S.played) addBadge(b, pc.secs[Math.min(S.pcSec, pc.secs.length - 1)].n.replace('Variation ', 'Var '));
       if (!pc.soon) b.onclick = function () { pickPiece(pc.id, true); if (isPhone()) openPlayer(); };
       L.appendChild(b);
     });
-    head('Exercises');
+    head('Rhythm basics');
     EX.forEach(function (e, i) {
       var b = document.createElement('button'), done = S.done.indexOf(i) >= 0, on = !S.piece && i === S.ex;
       b.type = 'button'; b.className = 'ex' + (on ? ' on' : '') + (done && !on ? ' done' : '');
       b.setAttribute('aria-current', on ? 'true' : 'false');
       b.innerHTML = '<span class="n">' + (done && !on ? '✓' : i + 1) + '</span><span><b></b><small></small></span><span class="t"></span>';
       b.querySelector('b').textContent = e.t; b.querySelector('small').textContent = e.g; b.querySelector('.t').textContent = e.min;
+      if (on && S.played) addBadge(b, S.bpm + ' BPM');
       b.onclick = function () { pick(i, true); if (isPhone()) openPlayer(); };
       L.appendChild(b);
     });
@@ -176,7 +190,7 @@
     if (fromTap) { S.bpm = pc.bpm; S.pcSec = 0; }
     if (!(S.pcSec >= 0 && S.pcSec < pc.secs.length)) S.pcSec = 0;
     S.beats = pc.secs[0].lines[0].split(' ').length; S.sub = pc.sub; S.accent = true; S.gap = null;
-    $('exK').textContent = 'Piece from Arpit'; $('exT').textContent = pc.t; $('exP').textContent = pc.p; $('exG').textContent = 'Goal: ' + pc.g;
+    $('exK').textContent = 'Piece from Arpit'; $('exT').textContent = pc.t; setRich($('exP'), pc.p); $('exG').textContent = 'Goal: ' + pc.g;
     setBpm(S.bpm); drawDial(); renderChips(); renderList(); renderDone(); applyMode(); renderPiece(null); drawPan(); playerHead(); save();
   }
   function applyMode() {
@@ -290,17 +304,33 @@
   }
   function doneKey() { return S.piece ? 'p:' + S.piece : S.ex; }
   function renderDone() {
-    var d = S.done.indexOf(doneKey()) >= 0, b = $('doneBtn');
+    var d = S.done.indexOf(doneKey()) >= 0, b = $('doneBtn'); if (!b) return;
     b.classList.toggle('is-done', d); b.querySelector('span').textContent = d ? 'Goal reached' : 'I reached the goal';
   }
-  $('doneBtn').onclick = function () {
+  if ($('doneBtn')) $('doneBtn').onclick = function () {
     var i = S.done.indexOf(doneKey());
     if (i >= 0) S.done.splice(i, 1); else S.done.push(doneKey());
     renderDone(); renderList(); save();
   };
 
-  function setBpm(v) { S.bpm = Math.max(30, Math.min(200, Math.round(v))); $('bpm').value = S.bpm; $('bpmText').textContent = S.bpm; $('pBpm').textContent = S.bpm; $('pRange').value = S.bpm; save(); }
+  function setBpm(v) { S.bpm = Math.max(30, Math.min(200, Math.round(v))); $('bpm').value = S.bpm; if (document.activeElement !== $('bpmText')) $('bpmText').value = S.bpm; if (document.activeElement !== $('pBpm')) $('pBpm').value = S.bpm; $('pRange').value = S.bpm; save(); }
   $('bpm').oninput = function (e) { setBpm(+e.target.value); };
+  // the tempo number is a field: tap, type, Done (or tap away) sets it
+  var toastT = null;
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 2200); }
+  [$('bpmText'), $('pBpm')].forEach(function (f) {
+    f.addEventListener('focus', function () { setTimeout(function () { try { f.select(); } catch (e) {} }, 0); });
+    f.addEventListener('click', function (e) { e.stopPropagation(); });
+    f.addEventListener('input', function () { f.value = f.value.replace(/[^0-9]/g, '').slice(0, 3); });
+    var commit = function () {
+      var v = parseInt(f.value, 10);
+      if (isNaN(v)) { f.value = S.bpm; return; }
+      if (v > 200) toast('Max is 200. Set to 200.'); else if (v < 30) toast('Lowest is 30. Set to 30.');
+      setBpm(v); f.value = S.bpm; renderLib();
+    };
+    f.addEventListener('change', commit); f.addEventListener('blur', commit);
+    f.addEventListener('keydown', function (e) { e.stopPropagation(); if (e.key === 'Enter') { commit(); f.blur(); } if (e.key === 'Escape') { f.value = S.bpm; f.blur(); } });
+  });
   $('minus').onclick = function () { setBpm(S.bpm - 1); };
   $('plus').onclick = function () { setBpm(S.bpm + 1); };
   $('vol').value = S.vol; $('vol').oninput = function (e) { S.vol = +e.target.value; save(); };
@@ -339,6 +369,7 @@
     // 12-note pans: two smaller notes inside the ring, above the Ding (left, then right)
     if (inner) [[n + 1, 236], [n + 2, 304]].forEach(function (q) { var a = q[1] * Math.PI / 180; place(String(q[0]), 150 + 57 * Math.cos(a), 142 + 57 * Math.sin(a), 15, 13, q[1] + 90); });
     mk('text', { x: 150, y: 292, class: 'you' }, 'YOU SIT HERE');
+    var sm = $('sMap'); if (sm) { var c = svg.cloneNode(true); c.removeAttribute('id'); c.setAttribute('aria-hidden', 'true'); sm.innerHTML = ''; sm.appendChild(c); }
   }
   function renderStrip() {
     var el = $('strip'); el.innerHTML = ''; stripEls = [];
@@ -432,10 +463,21 @@
   }
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg><span>Start</span>';
   var STOP = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><span>Stop</span>';
+  // After the app was in the background, iPhones can leave the audio clock stopped for good ("interrupted").
+  // Start makes a fresh clock in the same tap when the old one is not running, and never waits forever.
+  var starting = false;
+  function fresh(AC) { try { if (ctx && ctx.close) ctx.close(); } catch (e) {} ctx = new AC(); }
+  function wakeUp() { return Promise.race([Promise.resolve().then(function () { return ctx.resume(); }).then(function () { return true; }, function () { return false; }), new Promise(function (z) { setTimeout(function () { z(false); }, 600); })]); }
+  var alive = function () { return !ctx.state || ctx.state === 'running'; };
   async function start() {
-    var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
-    ctx = ctx || new AC();
-    unlock(); try { await ctx.resume(); } catch (e) {}
+    var AC = window.AudioContext || window.webkitAudioContext; if (!AC || starting) return;
+    starting = true;
+    if (!ctx || (ctx.state && ctx.state !== 'running')) fresh(AC);
+    unlock();
+    if (!(await wakeUp()) || !alive()) { fresh(AC); unlock(); await wakeUp(); }
+    starting = false;
+    if (!alive()) { toast('Tap Start again'); return; }
+    S.played = true; save();
     running = true; tick = 0; queue = []; nextTime = ctx.currentTime + 0.08;
     schedule(); timer = setInterval(schedule, 25); requestAnimationFrame(draw);
     $('play').innerHTML = STOP; $('pPlay').innerHTML = STOP; $('pPlay').setAttribute('aria-label', 'Stop');
@@ -457,9 +499,9 @@
   document.addEventListener('keydown', function (e) {
     if (e.code === 'Space' && !/INPUT|SELECT|BUTTON|TEXTAREA/.test(e.target.tagName)) { e.preventDefault(); toggle(); }
   });
-  document.addEventListener('visibilitychange', async function () {
-    if (running && document.visibilityState === 'visible' && !wake) { try { wake = await navigator.wakeLock.request('screen'); } catch (e) {} }
-  });
+  // leaving the app stops the click cleanly, so Start works on return
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden' && running) stop(); });
+  window.addEventListener('pagehide', function () { if (running) stop(); });
 
   // ---- beat bar for exercises (pieces show the beat on the strip above the boxes)
   function drawExBar() {
@@ -474,15 +516,13 @@
 
   // ---- phone layout: list screen, player screen, settings sheet
   function renderLib() {
-    var pc = S.piece && pieceOf(S.piece);
-    $('contT').textContent = pc ? pc.t : EX[S.ex].t;
-    $('contS').textContent = (pc ? pc.secs[S.pcSec].n + ' · ' : 'Exercise ' + (S.ex + 1) + ' · ') + S.bpm + ' BPM';
+    $('nPc').textContent = PIECES.filter(function (x) { return !x.soon; }).length; $('nEx').textContent = EX.length;
+    $('segNote').textContent = S.lib === 'ex' ? 'Timing drills for any instrument' : 'Pieces Arpit teaches in your lessons';
     Array.prototype.forEach.call($('seg').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-t') === S.lib)); });
   }
   Array.prototype.forEach.call($('seg').children, function (b) {
     b.onclick = function () { S.lib = b.getAttribute('data-t'); save(); renderList(); };
   });
-  $('cont').onclick = function () { openPlayer(); };
   function playerHead() {
     var pc = S.piece && pieceOf(S.piece), b = document.body;
     $('pTitle').textContent = pc ? pc.t : EX[S.ex].t;
@@ -528,7 +568,9 @@
   })();
   function applyTheme() {
     if (S.theme === 'light' || S.theme === 'dark') document.documentElement.setAttribute('data-theme', S.theme); else document.documentElement.removeAttribute('data-theme');
-    Array.prototype.forEach.call($('look').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === (S.theme || 'auto'))); });
+    // until the student picks one, the page follows the phone
+    var cur = S.theme === 'light' || S.theme === 'dark' ? S.theme : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    Array.prototype.forEach.call($('look').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === cur)); });
   }
   Array.prototype.forEach.call($('look').children, function (b) { b.onclick = function () { S.theme = b.getAttribute('data-v'); save(); applyTheme(); }; });
   applyTheme();
@@ -541,7 +583,7 @@
       var pb = $('pBody'), sb = $('sBody');
       move($('chips'), pb); move($('pcBox'), pb); move(document.querySelector('.dial'), pb); move($('strip'), pb); move(document.querySelector('.pan'), pb);
       drawPan();
-      move(document.querySelector('.task'), sb); move($('sizes').parentNode, sb); move($('lookRow'), sb); move($('doneBtn'), sb);
+      move($('hpSel'), sb); move($('sizes'), $('sizesSlot')); move(document.querySelector('.task'), sb); move($('lookRow'), sb);
     } else if (!isPhone() && moved.length) {
       closePlayer(true);
       moved.forEach(function (m) { m[1].parentNode.replaceChild(m[0], m[1]); }); moved = [];
