@@ -338,9 +338,27 @@
       if (v > 200) toast('Max is 200. Set to 200.'); else if (v < 30) toast('Lowest is 30. Set to 30.');
       setBpm(v); f.value = S.bpm; renderLib();
     };
-    f.addEventListener('change', commit); f.addEventListener('blur', commit);
+    f.commit = commit;
+    if (f.id === 'bpmText') { f.addEventListener('change', commit); f.addEventListener('blur', commit); }
     f.addEventListener('keydown', function (e) { e.stopPropagation(); if (e.key === 'Enter') { commit(); f.blur(); } if (e.key === 'Escape') { f.value = S.bpm; f.blur(); } });
   });
+  // phone keypads have no Done key: while typing, the Start button becomes "Set N BPM" with Cancel beside it
+  (function () {
+    var f = $('pBpm'), setB = $('pSetB'), cancel = $('pCancel'), hint = $('pHint'), setting = false;
+    var label = function () {
+      var v = parseInt(f.value, 10), c = isNaN(v) ? null : Math.max(30, Math.min(200, v));
+      setB.querySelector('span').textContent = c === null ? 'Type a tempo' : 'Set ' + c + ' BPM';
+      setB.disabled = c === null;
+      hint.textContent = isNaN(v) ? '30 to 200' : v > 200 ? 'Max is 200' : v < 30 ? 'Lowest is 30' : '30 to 200';
+      hint.classList.toggle('warn', !isNaN(v) && (v > 200 || v < 30));
+    };
+    f.addEventListener('focus', function () { document.body.classList.add('bpm-edit'); label(); });
+    f.addEventListener('input', label);
+    f.addEventListener('blur', function () { setTimeout(function () { if (!setting) f.value = S.bpm; setting = false; document.body.classList.remove('bpm-edit'); }, 0); });
+    [setB, cancel].forEach(function (b) { b.addEventListener('mousedown', function (e) { e.preventDefault(); }); b.addEventListener('touchstart', function () { setting = b === setB; }, { passive: true }); });
+    setB.onclick = function () { setting = true; f.commit(); f.blur(); document.body.classList.remove('bpm-edit'); };
+    cancel.onclick = function () { setting = false; f.value = S.bpm; f.blur(); document.body.classList.remove('bpm-edit'); };
+  })();
   $('minus').onclick = function () { setBpm(S.bpm - 1); };
   $('plus').onclick = function () { setBpm(S.bpm + 1); };
   $('vol').value = S.vol; $('vol').oninput = function (e) { S.vol = +e.target.value; save(); };
@@ -580,9 +598,12 @@
     if (S.theme === 'light' || S.theme === 'dark') document.documentElement.setAttribute('data-theme', S.theme); else document.documentElement.removeAttribute('data-theme');
     // until the student picks one, the page follows the phone
     var cur = S.theme === 'light' || S.theme === 'dark' ? S.theme : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    Array.prototype.forEach.call($('look').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === cur)); });
+    // the button shows where a tap takes you: a sun in dark, a moon in light
+    var SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>';
+    var MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>';
+    [$('thBar'), $('thP')].forEach(function (b) { b.innerHTML = cur === 'dark' ? SUN : MOON; b.setAttribute('aria-label', cur === 'dark' ? 'Switch to light' : 'Switch to dark'); b.setAttribute('data-cur', cur); });
   }
-  Array.prototype.forEach.call($('look').children, function (b) { b.onclick = function () { S.theme = b.getAttribute('data-v'); save(); applyTheme(); }; });
+  [$('thBar'), $('thP')].forEach(function (b) { b.onclick = function () { S.theme = b.getAttribute('data-cur') === 'dark' ? 'light' : 'dark'; save(); applyTheme(); }; });
   applyTheme();
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (!$('sheet').hidden) closeSheet(); else closePlayer(false); } });
   // the same elements move between the desktop columns and the phone screens, so nothing is duplicated
@@ -593,7 +614,7 @@
       var pb = $('pBody'), sb = $('sBody');
       move($('chips'), pb); move($('pcBox'), pb); move(document.querySelector('.dial'), pb); move($('strip'), pb); move(document.querySelector('.pan'), pb);
       drawPan();
-      move($('hpSel'), sb); move($('sizes'), $('sizesSlot')); move(document.querySelector('.task'), sb); move($('lookRow'), sb);
+      move($('hpSel'), sb); move($('sizes'), $('sizesSlot')); move(document.querySelector('.task'), sb);
     } else if (!isPhone() && moved.length) {
       closePlayer(true);
       moved.forEach(function (m) { m[1].parentNode.replaceChild(m[0], m[1]); }); moved = [];
