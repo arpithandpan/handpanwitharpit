@@ -248,7 +248,8 @@ a.mc-opt { text-decoration: none; }
 .rp-row b{color:var(--ink)}
 .rp-btns{display:flex;gap:10px;flex-wrap:wrap}
 .rp-btns .mc-btn{gap:8px;text-decoration:none}
-.rp-btns .solid{flex:1 1 160px;justify-content:center}
+.rp-btns{flex-direction:column}
+.rp-btns .mc-btn{width:100%;flex:none;justify-content:center;box-sizing:border-box}
 @media (min-width:700px){.rp{grid-template-columns:1fr auto;align-items:center}.rp-row{grid-column:1}.rp-btns{grid-column:2;grid-row:1 / span 2;flex-direction:column;min-width:200px}.rp-btns .solid{flex:none}}
 </style>
 <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml"/>
@@ -492,11 +493,11 @@ a.mc-opt { text-decoration: none; }
     let pan = '<svg class="rp-ic" viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="138" class="pi-s"/><circle cx="150" cy="150" r="42" class="pi-d"/>';
     for (let a = 0; a < 360; a += 45) { const r = a * Math.PI / 180; pan += '<ellipse cx="' + (150 + 92 * Math.cos(r)).toFixed(0) + '" cy="' + (150 + 92 * Math.sin(r)).toFixed(0) + '" rx="24" ry="20" class="pi-n' + (a === 0 ? ' on' : '') + '"/>'; }
     pan += '</svg>';
-    const title = last && last.t ? esc(last.t) : 'Start with The Ladder';
-    const sub = last && last.t ? esc((last.s || '') + (last.bpm ? ' · last at ' + last.bpm + ' BPM' : '')) : 'Piece 1 of 4 · 60 BPM';
+    const title = last && last.t ? 'Welcome back' : 'Start your practice';
+    const sub = last && last.t ? 'Last time: ' + esc(last.t + (last.s ? ', ' + String(last.s).replace(/ /g, '\u00a0') : '')) : 'Begins with the first pattern';
     return '<div class="mc-card rp"><div class="rp-top">' + pan + '<div><p class="rp-k">Rhythm practice</p><p class="rp-t">' + title + '</p><p class="rp-s">' + sub + '</p></div></div>'
-      + '<div class="rp-row"><span><b>4</b> pieces from class</span><span><b>6</b> rhythm drills</span></div>'
-      + '<div class="rp-btns"><a class="mc-btn solid" href="/pages/practice#' + (last && last.t ? 'play' : 'start') + '">' + play + (last && last.t ? 'Continue' : 'Start') + '</a><a class="mc-btn line" href="/pages/practice">All practice</a></div></div>';
+      + '<div class="rp-row"><span><b>4</b> patterns from class</span><span><b>6</b> rhythm drills</span></div>'
+      + '<div class="rp-btns"><a class="mc-btn solid" href="/pages/practice#' + (last && last.t ? 'play' : 'start') + '">' + play + (last && last.t ? 'Continue practice' : 'Start practice') + '</a><a class="mc-btn line" href="/pages/practice">Choose what to play</a></div></div>';
   }
 
   function render() {
