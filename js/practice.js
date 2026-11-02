@@ -148,40 +148,64 @@
   if (S.mview !== 'map') S.mview = 'dial';
 
   // ---- exercises
-  function addBadge(b, what) {
-    b.classList.add('last');
-    var sp = document.createElement('span'); sp.className = 'lastb';
-    sp.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
-    sp.appendChild(document.createTextNode('Continue · ' + what));
-    b.children[1].appendChild(sp);
+  // ---- the library: a Continue card, then shelves. Each shelf shows 3 and "See all";
+  // a new shelf or a new item is only data, the layout never changes.
+  var SHOW = 3;
+  function itemBtn(isPc, idx, t, sub, tag, on, done, soon) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'ex' + (isPc ? ' pc' : '') + (on ? ' on' : '') + (done && !on ? ' done' : '') + (soon ? ' soon' : '');
+    b.setAttribute('aria-current', on ? 'true' : 'false'); if (soon) b.disabled = true;
+    b.innerHTML = '<span class="n">' + (done && !on ? '✓' : idx + 1) + '</span><span><b></b><small></small></span><span class="t"></span>';
+    b.querySelector('b').textContent = t; b.querySelector('small').textContent = sub; b.querySelector('.t').textContent = tag;
+    return b;
   }
   function renderList() {
     var L = $('exList'); L.innerHTML = '';
-    var head = function (t) { var h = document.createElement('h2'); h.textContent = t; L.appendChild(h); };
-    head('From class · easy to hard');
-    PIECES.forEach(function (pc, pi) {
-      var b = document.createElement('button'), done = S.done.indexOf('p:' + pc.id) >= 0, on = S.piece === pc.id;
-      b.type = 'button'; b.className = 'ex pc' + (on ? ' on' : '') + (done && !on ? ' done' : '') + (pc.soon ? ' soon' : '');
-      b.setAttribute('aria-current', on ? 'true' : 'false'); if (pc.soon) b.disabled = true;
-      b.innerHTML = '<span class="n">' + (done && !on ? '✓' : pi + 1) + '</span><span><b></b><small></small></span><span class="t"></span>';
-      b.querySelector('b').textContent = pc.t; b.querySelector('small').textContent = pc.sum; b.querySelector('.t').textContent = pc.tag;
-      if (on && S.played) addBadge(b, pc.secs[Math.min(S.pcSec, pc.secs.length - 1)].n.replace('Variation ', 'Var '));
-      if (!pc.soon) b.onclick = function () { pickPiece(pc.id, true); if (isPhone()) openPlayer(); };
-      L.appendChild(b);
+    // Continue: where this student stopped last time
+    var lib = $('lib'); lib.innerHTML = '';
+    if (S.played) {
+      var pc0 = S.piece && pieceOf(S.piece), c = document.createElement('button');
+      c.type = 'button'; c.className = 'cont'; c.id = 'contP';
+      c.innerHTML = '<span class="cont-t"><span class="ck">Continue</span><b></b></span><span class="cbtn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span>';
+      c.querySelector('b').textContent = pc0 ? pc0.t + ' · ' + pc0.secs[Math.min(S.pcSec, pc0.secs.length - 1)].n.replace('Variation ', 'Var ') : EX[S.ex].t + ' · ' + S.bpm + ' BPM';
+      c.onclick = function () { openPlayer(); };
+      lib.appendChild(c);
+    }
+    var shelves = [
+      { id: 'pc', t: 'Your class patterns', sub: 'What Arpit teaches in your lessons', n: PIECES.filter(function (x) { return !x.soon; }).length,
+        items: PIECES.map(function (pc, pi) {
+          var b = itemBtn(true, pi, pc.t, pc.sum, pc.tag, S.piece === pc.id, S.done.indexOf('p:' + pc.id) >= 0, pc.soon);
+          if (!pc.soon) b.onclick = function () { pickPiece(pc.id, true); openPlayer(); };
+          return b;
+        }) },
+      { id: 'ex', t: 'Timing drills', sub: 'Build steady time · any instrument', n: EX.length,
+        items: EX.map(function (e, i) {
+          var b = itemBtn(false, i, e.t, e.g, e.min, !S.piece && i === S.ex, S.done.indexOf(i) >= 0, false);
+          b.onclick = function () { pick(i, true); openPlayer(); };
+          return b;
+        }) }
+    ];
+    var only = S.shelf === 'pc' || S.shelf === 'ex' ? S.shelf : null;
+    if (only) {
+      var bk = document.createElement('button'); bk.type = 'button'; bk.className = 'shback';
+      bk.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>All practice';
+      bk.onclick = function () { S.shelf = null; save(); renderList(); window.scrollTo(0, 0); };
+      L.appendChild(bk);
+    }
+    shelves.forEach(function (sh) {
+      if (only && sh.id !== only) return;
+      var h = document.createElement('div'); h.className = 'shh'; h.setAttribute('data-shelf', sh.id);
+      h.innerHTML = '<div><h2><span></span> <i></i></h2><small></small></div>';
+      h.querySelector('span').textContent = sh.t; h.querySelector('i').textContent = sh.n; h.querySelector('small').textContent = sh.sub;
+      if (!only && sh.items.length > SHOW) {
+        var see = document.createElement('button'); see.type = 'button'; see.className = 'see';
+        see.textContent = 'See all ›';
+        see.onclick = function () { S.shelf = sh.id; save(); renderList(); window.scrollTo(0, 0); };
+        h.appendChild(see);
+      }
+      L.appendChild(h);
+      sh.items.forEach(function (b, k) { if (!only && k >= SHOW) b.classList.add('more'); L.appendChild(b); });
     });
-    head('Rhythm basics');
-    EX.forEach(function (e, i) {
-      var b = document.createElement('button'), done = S.done.indexOf(i) >= 0, on = !S.piece && i === S.ex;
-      b.type = 'button'; b.className = 'ex' + (on ? ' on' : '') + (done && !on ? ' done' : '');
-      b.setAttribute('aria-current', on ? 'true' : 'false');
-      b.innerHTML = '<span class="n">' + (done && !on ? '✓' : i + 1) + '</span><span><b></b><small></small></span><span class="t"></span>';
-      b.querySelector('b').textContent = e.t; b.querySelector('small').textContent = e.g; b.querySelector('.t').textContent = e.min;
-      if (on && S.played) addBadge(b, S.bpm + ' BPM');
-      b.onclick = function () { pick(i, true); if (isPhone()) openPlayer(); };
-      L.appendChild(b);
-    });
-    L.classList.toggle('lib-ex', S.lib === 'ex');
-    renderLib();
   }
   function pick(i, fromTap) {
     var e = EX[i]; S.ex = i; if (running && S.piece) stop(); S.piece = null;
@@ -217,7 +241,7 @@
     var pc = PC.pc, si = pos ? pos.si : S.pcSec, sec = pc.secs[si];
     var tabs = $('pcTabs'); tabs.innerHTML = '';
     pc.secs.forEach(function (x, i) {
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = isPhone() ? x.n.replace('Variation ', 'Var ') : x.n; b.setAttribute('aria-label', x.n);
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = x.n.replace('Variation ', 'Var '); b.setAttribute('aria-label', x.n);
       b.setAttribute('aria-pressed', String(i === si));
       b.onclick = function () { var was = running; if (was) stop(); S.pcSec = i; save(); renderPiece(null); if (was) start(); };
       tabs.appendChild(b);
@@ -382,7 +406,7 @@
   var pan = {}, panShell, stripEls = [];
   function drawPan() {
     var svg = $('panSvg'); svg.innerHTML = ''; pan = {};
-    svg.setAttribute('viewBox', isPhone() ? '14 8 272 272' : '0 0 300 300');
+    svg.setAttribute('viewBox', '14 8 272 272');
     var used = {}; if (S.piece && PC) PC.seq.forEach(function (q) { if (q.ev) (q.ev.opts || q.ev.keys).forEach(function (x) { used[x] = 1; }); }); else S.pat.forEach(function (x) { used[x] = 1; });
     var mk = function (t, a, tx) { var el = document.createElementNS(NS, t); for (var k in a) el.setAttribute(k, a[k]); if (tx) el.textContent = tx; svg.appendChild(el); return el; };
     panShell = mk('circle', { cx: 150, cy: 142, r: 128, class: 'pshell' });
@@ -543,18 +567,11 @@
   }
 
   // ---- phone layout: list screen, player screen, settings sheet
-  function renderLib() {
-    $('nPc').textContent = PIECES.filter(function (x) { return !x.soon; }).length; $('nEx').textContent = EX.length;
-    $('segNote').textContent = S.lib === 'ex' ? 'Timing drills for any instrument' : 'Pieces Arpit teaches in your lessons';
-    Array.prototype.forEach.call($('seg').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-t') === S.lib)); });
-  }
-  Array.prototype.forEach.call($('seg').children, function (b) {
-    b.onclick = function () { S.lib = b.getAttribute('data-t'); save(); renderList(); };
-  });
+  function renderLib() {}
   function playerHead() {
     var pc = S.piece && pieceOf(S.piece), b = document.body;
     $('pTitle').textContent = pc ? pc.t : EX[S.ex].t;
-    $('pSub').textContent = pc ? 'Piece ' + (PIECES.indexOf(pc) + 1) + ' of ' + PIECES.length : 'Exercise ' + (S.ex + 1) + ' of ' + EX.length;
+    $('pSub').textContent = pc ? 'Class pattern ' + (PIECES.indexOf(pc) + 1) + ' of ' + PIECES.filter(function (x) { return !x.soon; }).length : 'Timing drill ' + (S.ex + 1) + ' of ' + EX.length;
     b.classList.toggle('pv-piece', !!pc); b.classList.toggle('pv-ex', !pc);
     b.classList.toggle('pv-map', S.mview === 'map'); b.classList.toggle('pv-dial', S.mview !== 'map');
     Array.prototype.forEach.call($('pMode').children, function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-v') === S.mview)); });
@@ -563,6 +580,7 @@
     x.onclick = function () { S.mview = x.getAttribute('data-v'); save(); playerHead(); };
   });
   function openPlayer() {
+    if (!isPhone()) { playerHead(); return; }
     if (document.body.classList.contains('pv')) return;
     playerHead(); document.body.classList.add('pv');
     if (!pendingBack) { try { history.pushState({ pv: 1 }, ''); } catch (e) {} }
@@ -609,17 +627,17 @@
   // the same elements move between the desktop columns and the phone screens, so nothing is duplicated
   var moved = [];
   function move(node, parent) { var ph = document.createComment('slot'); node.parentNode.insertBefore(ph, node); moved.push([node, ph]); parent.appendChild(node); }
+  // one layout for every screen: the parts live in the player and the sheet;
+  // phones show the player as its own screen, wide screens next to the list
   function layout() {
-    if (isPhone() && !moved.length) {
+    if (!moved.length) {
       var pb = $('pBody'), sb = $('sBody');
-      move($('chips'), pb); move($('pcBox'), pb); move(document.querySelector('.dial'), pb); move($('strip'), pb); move(document.querySelector('.pan'), pb);
-      drawPan();
+      move($('chips'), pb); move($('pcBox'), pb); move($('strip'), pb); move(document.querySelector('.pan'), pb);
       move($('hpSel'), sb); move($('sizes'), $('sizesSlot')); move(document.querySelector('.task'), sb);
-    } else if (!isPhone() && moved.length) {
-      closePlayer(true);
-      moved.forEach(function (m) { m[1].parentNode.replaceChild(m[0], m[1]); }); moved = [];
+      $('app').appendChild($('player'));
       drawPan();
     }
+    if (!isPhone()) closePlayer(true);
   }
   if (MQ.addEventListener) MQ.addEventListener('change', layout); else if (MQ.addListener) MQ.addListener(layout);
   layout();
@@ -630,7 +648,7 @@
   if (S.piece) { var keepBpm = S.bpm; pickPiece(S.piece, false); setBpm(keepBpm); drawPan(); } else pick(S.ex, false);
   // arriving from My classes: Start opens piece 1, Continue opens where the student left off
   if (jump === 'start') { S.lib = 'pc'; pickPiece('scale', true); renderList(); }
-  if (jump && isPhone()) openPlayer();
+  if (jump) openPlayer();
 
   // works offline after the first visit
   if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('/pages/practice-sw.js', { scope: '/pages/practice' }).catch(function () {}); });
