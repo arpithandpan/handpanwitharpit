@@ -6,12 +6,12 @@
   var NS = 'http://www.w3.org/2000/svg';
 
   var EX = [
-    { t: 'One per beat', p: 'One click on every beat. Play one note on each click. Clapping works too.', g: '4 bars without a slip at 60 BPM', bpm: 60, beats: 4, sub: 1, accent: false, gap: null, min: '3 min' },
+    { t: 'One per beat', p: 'One click on every beat. Play one note on each click. Clapping works too.', g: '4 clean bars at 60 BPM', bpm: 60, beats: 4, sub: 1, accent: false, gap: null, min: '3 min' },
     { t: 'Two per beat', p: 'Every beat has 2 clicks. Play on each click and count "1 & 2 &" out loud.', g: '4 clean rounds at 60 BPM', bpm: 60, beats: 4, sub: 2, accent: false, gap: null, min: '4 min' },
     { t: 'Lean on beat 1', p: 'Play beat 1 a little louder. The higher click marks it.', g: '8 bars, beat 1 always clear', bpm: 65, beats: 4, sub: 2, accent: true, gap: null, min: '4 min' },
     { t: 'Four per beat', p: 'Every beat has 4 clicks. Play on each click and count "1 e & a". Keep all four evenly spaced.', g: '4 clean rounds at 45 BPM', bpm: 45, beats: 4, sub: 4, accent: true, gap: null, min: '5 min' },
-    { t: 'Silent bars', p: 'The click stops for 2 bars. Keep going and land back on beat 1.', g: 'Land on beat 1 after the gap', bpm: 60, beats: 4, sub: 2, accent: true, gap: [2, 2], min: '5 min' },
-    { t: 'On your own', p: '1 bar of click, 3 bars silent. Your inner clock does the work.', g: 'Land on beat 1 three times in a row', bpm: 60, beats: 4, sub: 1, accent: true, gap: [1, 3], min: '5 min' }
+    { t: 'Silent bars', p: 'The click stops for 2 bars. Keep going and land back on beat 1.', g: 'Land on 1 after the gap', bpm: 60, beats: 4, sub: 2, accent: true, gap: [2, 2], min: '5 min' },
+    { t: 'On your own', p: '1 bar of click, 3 bars silent. Your inner clock does the work.', g: 'Land on 1, three times', bpm: 60, beats: 4, sub: 1, accent: true, gap: [1, 3], min: '5 min' }
   ];
   var PRESETS = [
     { name: 'Scale up', steps: ['1', '2', '3', '4', '5', '6', '7', '8'] }
@@ -20,13 +20,13 @@
   // Pieces Arpit teaches. One word per beat: 4R = note 4 right hand, DR = Ding right hand, T = Tak,
   // 4+6 = two notes together, D,D = two notes inside one beat. Each line is played lineRep times, each part secRep times.
   var PIECES = [
-    { id: 'scale', t: 'The Ladder', sum: 'Scale up and down · 3 variations', tag: '60', bpm: 60, sub: 1, lineRep: 1, secRep: 1,
-      p: 'R is your right hand, L your left. Variation 1 is the scale up and down with hands taking turns. In Variation 2 every note (right hand) comes back to 4 (left hand). Variation 3 plays three notes in a row, each one back to 4, then moves up by one. Play slow first, keep it steady, then raise the tempo.',
+    { id: 'scale', t: 'The Ladder', sum: 'Up and down · 3 variations', tag: '60', bpm: 60, sub: 2, lineRep: 1, secRep: 1,
+      p: 'R is your right hand, L your left. Variation 1 is the scale up and down with hands taking turns. In Variation 2 every note (right hand) comes back to 4 (left hand). Variation 3 is counted in 3: on each beat a note and the 4, three notes in a row, then move up by one. Play slow first, keep it steady, then raise the tempo.',
       g: 'All three variations with no stop, at a steady tempo',
       secs: [
         { n: 'Variation 1', lines: ['1R 2L 3R 4L', '5R 6L 7R 8L', '8L 7R 6L 5R', '4L 3R 2L 1R'] },
         { n: 'Variation 2', lines: ['1R 4L 2R 4L', '3R 4L 4R 4L', '5R 4L 6R 4L', '7R 4L 8R 4L', '8R 4L 7R 4L', '6R 4L 5R 4L', '4R 4L 3R 4L', '2R 4L 1R 4L'] },
-        { n: 'Variation 3', lines: ['1R 4L 2R 4L 3R 4L', '2R 4L 3R 4L 4R 4L', '3R 4L 4R 4L 5R 4L', '4R 4L 5R 4L 6R 4L', '5R 4L 6R 4L 7R 4L', '6R 4L 7R 4L 8R 4L', '8R 4L 7R 4L 6R 4L', '7R 4L 6R 4L 5R 4L', '6R 4L 5R 4L 4R 4L', '5R 4L 4R 4L 3R 4L', '4R 4L 3R 4L 2R 4L', '3R 4L 2R 4L 1R 4L'] }
+        { n: 'Variation 3', lines: ['1R,4L 2R,4L 3R,4L', '2R,4L 3R,4L 4R,4L', '3R,4L 4R,4L 5R,4L', '4R,4L 5R,4L 6R,4L', '5R,4L 6R,4L 7R,4L', '6R,4L 7R,4L 8R,4L', '8R,4L 7R,4L 6R,4L', '7R,4L 6R,4L 5R,4L', '6R,4L 5R,4L 4R,4L', '5R,4L 4R,4L 3R,4L', '4R,4L 3R,4L 2R,4L', '3R,4L 2R,4L 1R,4L'] }
       ] },
     { id: 'groove', t: 'Meditative Groove', sum: 'Ding 1 5 6 · 5 variations', tag: '60', bpm: 60, sub: 1, lineRep: 1, secRep: 1,
       p: 'Ding with the right hand, 1 or 2 with the left, 5 right, 6 left. In Variation 5 the last note changes: 6, 8, 7, then 4. Let the Ding guide your rhythm, one note on every beat, each one ringing clearly. Tak is a knock or a slap. Start slow and stay relaxed.',
@@ -38,14 +38,14 @@
         { n: 'Variation 4', lines: ['DR 1L 5R 6L', 'DR 1L T 6L', 'DR 1L 5R 6L', 'DR 1L T 6L', 'DR 2L 5R 6L', 'DR 2L T 6L', 'DR 2L 5R 6L', 'DR 2L T 6L'] },
         { n: 'Variation 5', lines: ['DR 1L 5R 6L', 'DR 1L 5R 8L', 'DR 1L 5R 7L', 'DR 1L 5R 4L', 'DR 2L 5R 6L', 'DR 2L 5R 8L', 'DR 2L 5R 7L', 'DR 2L 5R 4L'] }
       ] },
-    { id: 'pairs', t: 'Twin Steps', sum: 'Two notes together, Tak, quick Dings', tag: '70', bpm: 70, sub: 2, lineRep: 1, secRep: 2,
+    { id: 'pairs', t: 'Twin Steps', sum: 'Pairs, Tak, quick Dings', tag: '70', bpm: 70, sub: 2, lineRep: 1, secRep: 2,
       p: 'Play both notes of a pair together, cleanly. The lower note is the left hand, the higher note the right: 4 left with 6 right, 3 left with 5 right, 2 left with 4 right. Tak is a knock or a slap. Beat 3 has two quick Dings, with your thumb or any finger that feels easy. In Step 2 the note 8 takes the place of the first Tak.',
       g: 'Both steps, soft and even',
       secs: [
         { n: 'Step 1', lines: ['4L+6R T D,D T', '3L+5R T D,D T', '2L+4R T D,D T', '3L+5R T D,D T'] },
         { n: 'Step 2', lines: ['4L+6R 8 D,D T', '3L+5R 8 D,D T', '2L+4R 8 D,D T', '3L+5R 8 D,D T'] }
       ] },
-    { id: 'sparrow', t: 'Golden Sparrow', sum: 'A composition · Start, Part 1, Part 2', tag: '60', bpm: 60, sub: 1, lineRep: 4, secRep: 2,
+    { id: 'sparrow', t: 'Golden Sparrow', sum: 'A composition in 3 parts', tag: '60', bpm: 60, sub: 1, lineRep: 4, secRep: 2,
       p: 'R is your right hand, L your left. Ding is always the right hand. Each line 4 times, each part 2 times, then the next part. After Part 2 it goes back to Start.',
       g: 'The full piece in one go, then send Arpit a video',
       secs: [
@@ -53,7 +53,7 @@
         { n: 'Part 1', lines: ['DR 1L 6R 1L', 'DR 2L 7R 2L', 'DR 1L 5R 1L', 'DR 2L 6R 2L'] },
         { n: 'Part 2', lines: ['DR 1L 8R 4L', 'DR 2L 7R 4L', 'DR 1L 5R 4L', 'DR 2L 6R 4L'] }
       ] },
-    { id: 'pingpong', t: 'Ping Pong', sum: 'Two hands at once · coming later', tag: 'later', soon: true }
+    { id: 'pingpong', t: 'Ping Pong', sum: 'Two hands · coming later', tag: 'later', soon: true }
   ];
   function parseBeat(tok) {
     return tok.split(',').map(function (h) {
@@ -78,7 +78,7 @@
         for (var lr = 0; lr < LR; lr++) beats.forEach(function (halves, b) {
           for (var h = 0; h < pc.sub; h++) {
             var k = halves.length, ev = (h * k) % pc.sub === 0 ? halves[h * k / pc.sub] : null;
-            seq.push({ si: si, sr: sr, li: li, lr: lr, b: b, h: h, part: ev ? h * k / pc.sub : -1, k: k, ev: ev });
+            seq.push({ si: si, sr: sr, li: li, lr: lr, b: b, nb: beats.length, h: h, part: ev ? h * k / pc.sub : -1, k: k, ev: ev });
           }
         });
       });
@@ -96,7 +96,7 @@
   function interval(s) { return 60 / s.bpm / s.sub; }
   // Note 1 nearest the player (bottom), then 2 left, 3 right, 4 left … the last one at the top.
   function noteAngle(i, n) { var st = 360 / n; if (i === 1) return 90; var j = Math.floor(i / 2); return i % 2 === 0 ? 90 + st * j : 90 - st * j; }
-  window.__met = { tickInfo: tickInfo, interval: interval, noteAngle: noteAngle, EX: EX, PIECES: PIECES, pieceSeq: pieceSeq };
+  window.__met = { pieceInfo: function (t) { return pieceInfo(t); }, tickInfo: tickInfo, interval: interval, noteAngle: noteAngle, EX: EX, PIECES: PIECES, pieceSeq: pieceSeq };
 
   // ---- who can open it: students with weekly classes (soft gate: the page holds no private data)
   var token = '', role = '';
@@ -126,7 +126,6 @@
   if (!LAYOUTS[S.notes]) S.notes = S.size === 9 ? 10 : 9;   // older saves kept notes around the Ding
   delete S.size;
   function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
-  var mini = document.createElement('div'); mini.className = 'pmini'; mini.setAttribute('aria-hidden', 'true');
   // phones: a list screen and a player screen instead of one long page
   var MQ = window.matchMedia ? window.matchMedia('(max-width: 899px)') : { matches: false };
   var isPhone = function () { return !!MQ.matches; };
@@ -169,11 +168,11 @@
     setBpm(S.bpm); drawDial(); renderChips(); renderList(); renderDone(); applyMode(); if (pan.D) drawPan(); playerHead(); save();
   }
   // ---- pieces
-  var PC = null, pcCells = {}, pcHeads = [], pcAt = null;
+  var PC = null, pcCells = {}, pcHeads = [], pcAt = null, pcHalf = -1;
   function pickPiece(id, fromTap) {
     var pc = pieceOf(id); if (!pc) return;
     if (running) stop();
-    S.piece = id; PC = pieceSeq(pc); PC.pc = pc; PC.hands = /\d[RL]|D[RL]/.test(pc.secs.map(function (x) { return x.lines.join(' '); }).join(' '));
+    S.piece = id; PC = pieceSeq(pc); PC.pc = pc; PC.split = pc.secs.map(function (x) { return x.lines.join(' ').indexOf(',') >= 0; }); PC.hands = /\d[RL]|D[RL]/.test(pc.secs.map(function (x) { return x.lines.join(' '); }).join(' '));
     if (fromTap) { S.bpm = pc.bpm; S.pcSec = 0; }
     if (!(S.pcSec >= 0 && S.pcSec < pc.secs.length)) S.pcSec = 0;
     S.beats = pc.secs[0].lines[0].split(' ').length; S.sub = pc.sub; S.accent = true; S.gap = null;
@@ -194,20 +193,22 @@
     var pc = PC.pc, si = pos ? pos.si : S.pcSec, sec = pc.secs[si];
     var tabs = $('pcTabs'); tabs.innerHTML = '';
     pc.secs.forEach(function (x, i) {
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = x.n;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = isPhone() ? x.n.replace('Variation ', 'Var ') : x.n; b.setAttribute('aria-label', x.n);
       b.setAttribute('aria-pressed', String(i === si));
       b.onclick = function () { var was = running; if (was) stop(); S.pcSec = i; save(); renderPiece(null); if (was) start(); };
       tabs.appendChild(b);
     });
+    var onTab = tabs.children[si]; if (onTab && tabs.scrollWidth > tabs.clientWidth) tabs.scrollLeft = onTab.offsetLeft - (tabs.clientWidth - onTab.offsetWidth) / 2;
+    if (!pos) { var nb0 = sec.lines[0].split(' ').length; if (nb0 !== S.beats) { S.beats = nb0; drawDial(); renderChips(); } }
     var c = [], LR = sec.lineRep || pc.lineRep, SR = sec.secRep || pc.secRep;
     if (pos) {
       c.push('Line <b>' + (pos.li + 1) + '</b> of ' + sec.lines.length);
       if (LR > 1) c.push('time <b>' + (pos.lr + 1) + '</b> of ' + LR);
       if (SR > 1) c.push('round <b>' + (pos.sr + 1) + '</b> of ' + SR);
     } else {
-      c.push(LR > 1 ? 'Each line ' + LR + ' times' : sec.lines.length + ' lines');
-      if (SR > 1) c.push('each part ' + SR + ' times');
-      if (pc.secs.length > 1) c.push('then the next part');
+      c.push(sec.lines.length + (sec.lines.length === 1 ? ' line' : ' lines'));
+      if (LR > 1) c.push('each ' + LR + ' times');
+      if (SR > 1) c.push(SR + ' rounds');
     }
     $('pcCount').innerHTML = c.join(' · ');
     var box = $('pcLines'); box.innerHTML = ''; pcCells = {}; pcHeads = []; var anyHand = false;
@@ -219,10 +220,15 @@
       if (li < lo || li > hi) return;
       var beats = line.split(' ').map(parseBeat), row = document.createElement('div');
       if (li !== curLi) { row.className = 'pc-ln' + (pos && li < curLi ? ' past' : ''); row.textContent = beats.map(beatText).join('  '); box.appendChild(row); return; }
-      row.className = 'pc-now'; row.style.gridTemplateColumns = beats.map(function (h) { return h.length + 'fr'; }).join(' ');
+      row.className = 'pc-now';
+      var cellsN = beats.reduce(function (a, h) { return a + h.length; }, 0), half = Math.ceil(beats.length / 2);
+      pcHalf = cellsN > 8 ? (pos && pos.b >= half ? 1 : 0) : -1;
+      var b0 = pcHalf === 1 ? half : 0, b1 = pcHalf === 0 ? half : beats.length;
+      row.style.gridTemplateColumns = 'repeat(' + (b1 - b0) + ',minmax(0,1fr))';
       beats.forEach(function (halves, b) {
+        if (b < b0 || b >= b1) return;
         var cell = document.createElement('div'); cell.className = 'pc-bt';
-        var n = document.createElement('small'); n.className = 'bh'; n.textContent = b + 1; cell.appendChild(n); pcHeads.push(n);
+        var n = document.createElement('small'); n.className = 'bh'; n.textContent = b + 1; n.setAttribute('data-b', b); cell.appendChild(n); pcHeads.push(n);
         var wrap = document.createElement('div'); wrap.className = 'pc-in';
         halves.forEach(function (e, j) {
           var d = document.createElement('div');
@@ -249,14 +255,29 @@
     if (/(^| )T( |$)/.test(here)) key.push('<i class="t"></i>Tak');
     if (/(^| )X( |$)/.test(here)) key.push('<i class="o"></i>Your choice');
     if (sec.root) key.push('<i class="o"></i>Back to ' + sec.root);
-    $('pcKey').innerHTML = key.join(' '); $('pcKey').hidden = !key.length;
+    $('pcKey').innerHTML = key.join(' ') || '\u00a0';
+    $('pcNext').textContent = nextText(pos);
     pcAt = pos ? pos.si + '.' + pos.sr + '.' + pos.li : null;
+  }
+  function nextText(pos) {
+    var pc = PC.pc, si = pos ? pos.si : S.pcSec, sec = pc.secs[si], li = pos ? pos.li : 0, lr = pos ? pos.lr : 0, sr = pos ? pos.sr : 0;
+    var LR = sec.lineRep || pc.lineRep, SR = sec.secRep || pc.secRep, last = sec.lines.length - 1;
+    var text = function (line) { return line.split(' ').map(parseBeat).map(beatText).join(' · '); };
+    if (pcHalf === 0) return 'Next: the rest of this line';
+    if (lr < LR - 1) return 'Next: the same line again';
+    if (li < last) return 'Next: ' + text(sec.lines[li + 1]);
+    if (sr < SR - 1) return 'Next: round ' + (sr + 2) + ' · back to line 1';
+    if (pc.secs.length === 1) return 'Next: from the top';
+    var ns = (si + 1) % pc.secs.length;
+    return 'Next: ' + pc.secs[ns].n + (ns === 0 ? ', from the top' : '');
   }
   function pieceTick(t) {
     var pos = PC.seq[(PC.starts[S.pcSec] + t) % PC.seq.length];
     if (pcAt !== pos.si + '.' + pos.sr + '.' + pos.li) renderPiece(pos);
     else if ((PC.pc.secs[pos.si].lineRep || PC.pc.lineRep) > 1 && pos.b === 0 && pos.part === 0) renderPiece(pos);   // new time through the same line
-    if (pos.h === 0) pcHeads.forEach(function (x, i) { x.classList.toggle('on', i === pos.b); });
+    else if (pcHalf >= 0 && pcHalf !== (pos.b >= Math.ceil(pos.nb / 2) ? 1 : 0)) renderPiece(pos);   // long bar: second half
+    if (pos.h === 0) pcHeads.forEach(function (x) { x.classList.toggle('on', +x.getAttribute('data-b') === pos.b); });
+    if (pos.nb !== S.beats) { S.beats = pos.nb; drawDial(); renderChips(); }
     if (!pos.ev) return;
     for (var k in pcCells) pcCells[k].classList.toggle('cur', k === pos.b + '.' + pos.part);
     // notes inside one beat (two quick Dings) flash on and off, so each hit shows as its own flash
@@ -287,7 +308,7 @@
   // ---- beat dial
   var fields = [], ding;
   function drawDial() {
-    if (S.beatUi) drawBeatUi();
+    if ($('exBar')) drawExBar();
     var pd = $('pDots'); pd.innerHTML = ''; for (var di = 0; di < S.beats; di++) pd.appendChild(document.createElement('i'));
     var svg = $('svg'); svg.innerHTML = ''; fields = [];
     var mk = function (t, a) { var el = document.createElementNS(NS, t); for (var k in a) el.setAttribute(k, a[k]); svg.appendChild(el); return el; };
@@ -379,10 +400,15 @@
     g.gain.setValueAtTime(0, time); g.gain.linearRampToValueAtTime(v, time + 0.003); g.gain.exponentialRampToValueAtTime(0.001, time + 0.07);
     o.start(time); o.stop(time + 0.08);
   }
+  // in a piece every line is one bar: the strong click starts each line, whatever its length
+  function pieceInfo(t) {
+    var pos = PC.seq[(PC.starts[S.pcSec] + t) % PC.seq.length];
+    return { isBeat: pos.h === 0, beat: pos.b, bar: 0, muted: false, kind: pos.h ? 'sub' : (pos.b === 0 ? 'accent' : 'beat'), step: -1, quiet: pos.h > 0 && !PC.split[pos.si] };
+  }
   function schedule() {
     while (nextTime < ctx.currentTime + 0.12) {
-      var q = tickInfo(S, tick);
-      if (!q.muted) click(nextTime, q.kind);
+      var q = S.piece && PC ? pieceInfo(tick) : tickInfo(S, tick);
+      if (!q.muted && !q.quiet) click(nextTime, q.kind);
       q.time = nextTime; q.tick = tick; queue.push(q);
       nextTime += interval(S); tick++;
     }
@@ -435,32 +461,22 @@
     if (running && document.visibilityState === 'visible' && !wake) { try { wake = await navigator.wakeLock.request('screen'); } catch (e) {} }
   });
 
-  // ---- beat display on phones: a small circle in the map's corner, or the numbers above the boxes
-  // (two ways on trial; S.beatUi picks one)
-  if (S.beatUi !== 'corner') S.beatUi = 'boxes';
-  function drawBeatUi() {
-    var n = S.beats, h = '<svg viewBox="0 0 80 80">';
-    for (var i = 0; i < n; i++) { var a = (-90 + i * 360 / n) * Math.PI / 180; h += '<circle cx="' + (40 + 27 * Math.cos(a)).toFixed(1) + '" cy="' + (40 + 27 * Math.sin(a)).toFixed(1) + '" r="' + (i ? 8 : 9.5) + '"/>'; }
-    mini.innerHTML = h + '<text x="40" y="41"></text></svg><small>BEAT</small>';
-    var row = $('pRow'); row.innerHTML = ''; for (var j = 0; j < n; j++) { var sp = document.createElement('span'); sp.textContent = j + 1; row.appendChild(sp); }
-    document.body.classList.toggle('bu-corner', S.beatUi === 'corner'); document.body.classList.toggle('bu-boxes', S.beatUi !== 'corner');
-    Array.prototype.forEach.call($('beatUi').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === S.beatUi)); });
+  // ---- beat bar for exercises (pieces show the beat on the strip above the boxes)
+  function drawExBar() {
+    var bar = $('exBar'); bar.innerHTML = ''; bar.style.gridTemplateColumns = 'repeat(' + S.beats + ',minmax(0,1fr))';
+    for (var j = 0; j < S.beats; j++) { var sp = document.createElement('span'); sp.textContent = j + 1; bar.appendChild(sp); }
   }
   function showBeat(beat, muted) {
-    Array.prototype.forEach.call(mini.querySelectorAll('circle'), function (c, i) { c.classList.toggle('on', i === beat); });
-    mini.classList.toggle('mu', !!muted); var tx = mini.querySelector('text'); if (tx) tx.textContent = beat >= 0 ? beat + 1 : '';
-    Array.prototype.forEach.call($('pRow').children, function (x, i) { x.classList.toggle('on', i === beat); });
-    $('pRow').classList.toggle('mu', !!muted);
+    Array.prototype.forEach.call($('exBar').children, function (x, i) { x.classList.toggle('on', i === beat); });
+    $('exBar').classList.toggle('mu', !!muted);
     if (beat < 0) pcHeads.forEach(function (x) { x.classList.remove('on'); });
   }
-  Array.prototype.forEach.call($('beatUi').children, function (b) { b.onclick = function () { S.beatUi = b.getAttribute('data-v'); save(); drawBeatUi(); }; });
-  drawBeatUi();
 
   // ---- phone layout: list screen, player screen, settings sheet
   function renderLib() {
     var pc = S.piece && pieceOf(S.piece);
-    $('contT').textContent = pc ? pc.t + ' · ' + pc.secs[S.pcSec].n : EX[S.ex].t;
-    $('contS').textContent = 'Last time at ' + S.bpm + ' BPM';
+    $('contT').textContent = pc ? pc.t : EX[S.ex].t;
+    $('contS').textContent = (pc ? pc.secs[S.pcSec].n + ' · ' : 'Exercise ' + (S.ex + 1) + ' · ') + S.bpm + ' BPM';
     Array.prototype.forEach.call($('seg').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-t') === S.lib)); });
   }
   Array.prototype.forEach.call($('seg').children, function (b) {
@@ -525,11 +541,9 @@
       var pb = $('pBody'), sb = $('sBody');
       move($('chips'), pb); move($('pcBox'), pb); move(document.querySelector('.dial'), pb); move($('strip'), pb); move(document.querySelector('.pan'), pb);
       drawPan();
-      document.querySelector('.pan').appendChild(mini);
-      move(document.querySelector('.task'), sb); move($('sizes').parentNode, sb); move($('lookRow'), sb); move($('beatRow'), sb); move($('doneBtn'), sb);
+      move(document.querySelector('.task'), sb); move($('sizes').parentNode, sb); move($('lookRow'), sb); move($('doneBtn'), sb);
     } else if (!isPhone() && moved.length) {
       closePlayer(true);
-      if (mini.parentNode) mini.parentNode.removeChild(mini);
       moved.forEach(function (m) { m[1].parentNode.replaceChild(m[0], m[1]); }); moved = [];
       drawPan();
     }
