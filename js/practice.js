@@ -115,7 +115,7 @@
 
   // ---- saved settings (this device)
   var STORE = 'hp_practice_v1';
-  var S = { ex: 1, piece: null, pcSec: 0, done: [], bpm: 60, beats: 4, sub: 2, accent: false, gap: null, notes: 9, pat: PRESETS[0].steps.slice(), hp: true, vol: 80 };
+  var S = { ex: 1, metro: false, met: { beats: 4, sub: 1, accent: true, bpm: 80 }, piece: null, pcSec: 0, done: [], bpm: 60, beats: 4, sub: 2, accent: false, gap: null, notes: 9, pat: PRESETS[0].steps.slice(), hp: true, vol: 80 };
   var fixPat = function () { var ok = PRESETS.some(function (q) { return q.steps.join() === (S.pat || []).join(); }); if (!ok) S.pat = PRESETS[0].steps.slice(); };
   try { var saved = JSON.parse(localStorage.getItem(STORE) || '{}'); for (var k in saved) S[k] = saved[k]; } catch (e) {}
   if (!(S.ex >= 0 && S.ex < EX.length)) S.ex = 0;
@@ -134,9 +134,10 @@
   }
   function save() {
     try {
+      if (S.metro && S.met) S.met.bpm = S.bpm;
       localStorage.setItem(STORE, JSON.stringify(S));
       if (S.played) {
-        var pc = S.piece && pieceOf(S.piece), last = pc ? { t: pc.t, s: pc.secs[Math.min(S.pcSec || 0, pc.secs.length - 1)].n.replace('Variation ', 'Var ') } : { t: EX[S.ex].t, s: 'Exercise ' + (S.ex + 1) };
+        var pc = S.piece && pieceOf(S.piece), last = S.metro ? { t: 'Metronome', s: S.beats + ' beats' } : pc ? { t: pc.t, s: pc.secs[Math.min(S.pcSec || 0, pc.secs.length - 1)].n.replace('Variation ', 'Var ') } : { t: EX[S.ex].t, s: 'Exercise ' + (S.ex + 1) };
         last.bpm = S.bpm; localStorage.setItem('hp_practice_last', JSON.stringify(last));
       }
     } catch (e) {}
@@ -167,7 +168,7 @@
       var pc0 = S.piece && pieceOf(S.piece), c = document.createElement('button');
       c.type = 'button'; c.className = 'cont'; c.id = 'contP';
       c.innerHTML = '<span class="cont-t"><span class="ck">Continue</span><b></b></span><span class="cbtn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span>';
-      c.querySelector('b').textContent = pc0 ? pc0.t + ' · ' + pc0.secs[Math.min(S.pcSec, pc0.secs.length - 1)].n.replace('Variation ', 'Var ') : EX[S.ex].t + ' · ' + S.bpm + ' BPM';
+      c.querySelector('b').textContent = S.metro ? 'Metronome · ' + S.beats + ' beats · ' + S.bpm + ' BPM' : pc0 ? pc0.t + ' · ' + pc0.secs[Math.min(S.pcSec, pc0.secs.length - 1)].n.replace('Variation ', 'Var ') : EX[S.ex].t + ' · ' + S.bpm + ' BPM';
       c.onclick = function () { openPlayer(); };
       lib.appendChild(c);
     }
@@ -186,6 +187,12 @@
         }) }
     ];
     var only = S.shelf === 'pc' || S.shelf === 'ex' ? S.shelf : null;
+    if (!only) {
+      var mc = document.createElement('button'); mc.type = 'button'; mc.className = 'mtool' + (S.metro ? ' on' : ''); mc.id = 'metCard';
+      mc.innerHTML = '<span class="mti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="M12 15l5-9"/></svg></span><span class="mtx"><b>Metronome</b><small>Any tempo, any beat</small></span><span class="mgo"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span>';
+      mc.onclick = function () { openMetro(); openPlayer(); };
+      L.appendChild(mc);
+    }
     if (only) {
       var bk = document.createElement('button'); bk.type = 'button'; bk.className = 'shback';
       bk.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>All practice';
@@ -208,7 +215,7 @@
     });
   }
   function pick(i, fromTap) {
-    var e = EX[i]; S.ex = i; if (running && S.piece) stop(); S.piece = null;
+    var e = EX[i]; S.ex = i; if (running && (S.piece || S.metro)) stop(); S.piece = null; S.metro = false;
     // the exercise always sets its own beats, clicks, accent and gap; a tap also resets the tempo, a reopen keeps the student's tempo
     if (fromTap) S.bpm = e.bpm;
     S.beats = e.beats; S.sub = e.sub; S.accent = e.accent; S.gap = e.gap;
@@ -220,6 +227,7 @@
   function pickPiece(id, fromTap) {
     var pc = pieceOf(id); if (!pc) return;
     if (running) stop();
+    S.metro = false;
     S.piece = id; PC = pieceSeq(pc); PC.pc = pc; PC.split = pc.secs.map(function (x) { return x.lines.join(' ').indexOf(',') >= 0; }); PC.hands = /\d[RL]|D[RL]/.test(pc.secs.map(function (x) { return x.lines.join(' '); }).join(' '));
     if (fromTap) { S.bpm = pc.bpm; S.pcSec = 0; }
     if (!(S.pcSec >= 0 && S.pcSec < pc.secs.length)) S.pcSec = 0;
@@ -229,6 +237,7 @@
   }
   function applyMode() {
     var pc = !!S.piece;
+    document.body.classList.toggle('pv-met', !!S.metro); $('metBox').hidden = !S.metro;
     $('pcBox').hidden = !pc; $('hpTog').hidden = pc; $('strip').hidden = pc; $('pats').hidden = pc || PRESETS.length < 2;
     $('hpBox').hidden = pc ? false : !S.hp;
     if (!pc) PC = null;
@@ -560,7 +569,46 @@
     var bar = $('exBar'); bar.innerHTML = ''; bar.style.gridTemplateColumns = 'repeat(' + S.beats + ',minmax(0,1fr))';
     for (var j = 0; j < S.beats; j++) { var sp = document.createElement('span'); sp.textContent = j + 1; bar.appendChild(sp); }
   }
+  // ---- free metronome: any bar from 2 to 7 beats, 1 to 4 clicks a beat, tap tempo; settings are kept
+  function openMetro() {
+    if (running) stop();
+    S.metro = true; S.piece = null; PC = null;
+    var m = S.met || (S.met = { beats: 4, sub: 1, accent: true, bpm: 80 });
+    S.beats = m.beats; S.sub = m.sub; S.accent = m.accent; S.gap = null; S.bpm = m.bpm || S.bpm;
+    $('exK').textContent = 'Metronome'; $('exT').textContent = 'Free play';
+    $('exP').textContent = 'Pick how many beats are in a bar and how many clicks you want in each beat. Set the tempo with the slider, the number, or by tapping in time on Tap tempo. Beat 1 can have a stronger click so you always know where the bar starts.';
+    $('exG').textContent = 'Use it for anything you are learning: a song, a pattern, a groove.';
+    setBpm(S.bpm); drawDial(); renderChips(); renderList(); renderDone(); applyMode(); drawMet(); playerHead(); save();
+  }
+  function drawMet() {
+    var seg = function (id, vals, cur, set) {
+      var box = $(id); box.innerHTML = '';
+      vals.forEach(function (v) { var b = document.createElement('button'); b.type = 'button'; b.textContent = v; b.setAttribute('aria-pressed', String(v === cur)); b.onclick = function () { set(v); }; box.appendChild(b); });
+    };
+    seg('mBeats', [2, 3, 4, 5, 6, 7], S.beats, function (v) { S.beats = S.met.beats = v; save(); drawDial(); renderChips(); drawMet(); renderList(); });
+    seg('mSubs', [1, 2, 3, 4], S.sub, function (v) { S.sub = S.met.sub = v; save(); renderChips(); drawMet(); });
+    $('mAcc').setAttribute('aria-checked', String(!!S.accent));
+    var bb = $('mBoxes'); bb.innerHTML = ''; var n = S.beats;
+    bb.style.gridTemplateColumns = 'repeat(' + (n <= 4 ? n : n <= 6 ? 3 : 4) + ',minmax(0,1fr))';
+    for (var i = 0; i < n; i++) {
+      var sp = document.createElement('span'); sp.className = 'mb' + (i === 0 && S.accent ? ' one' : '');
+      var b = document.createElement('b'); b.textContent = i + 1; sp.appendChild(b);
+      if (S.sub > 1) { var d = document.createElement('em'); for (var k = 0; k < S.sub; k++) d.appendChild(document.createElement('u')); sp.appendChild(d); }
+      bb.appendChild(sp);
+    }
+  }
+  $('mAcc').onclick = function () { S.accent = S.met.accent = !S.accent; save(); drawDial(); renderChips(); drawMet(); };
+  var taps = [];
+  $('mTap').onclick = function () {
+    var t = performance.now();
+    if (taps.length && t - taps[taps.length - 1] > 2000) taps = [];
+    taps.push(t); if (taps.length > 5) taps.shift();
+    if (taps.length >= 2) { var gaps = 0; for (var i = 1; i < taps.length; i++) gaps += taps[i] - taps[i - 1]; setBpm(60000 / (gaps / (taps.length - 1))); }
+    $('mTap').querySelector('span').textContent = taps.length >= 2 ? 'Tap tempo · ' + S.bpm + ' BPM' : 'Tap again in time';
+    clearTimeout($('mTap').t); $('mTap').t = setTimeout(function () { $('mTap').querySelector('span').textContent = 'Tap tempo'; }, 2500);
+  };
   function showBeat(beat, muted) {
+    Array.prototype.forEach.call($('mBoxes').children, function (x, i) { x.classList.toggle('on', i === beat); });
     Array.prototype.forEach.call($('exBar').children, function (x, i) { x.classList.toggle('on', i === beat); });
     $('exBar').classList.toggle('mu', !!muted);
     if (beat < 0) pcHeads.forEach(function (x) { x.classList.remove('on'); });
@@ -570,9 +618,9 @@
   function renderLib() {}
   function playerHead() {
     var pc = S.piece && pieceOf(S.piece), b = document.body;
-    $('pTitle').textContent = pc ? pc.t : EX[S.ex].t;
-    $('pSub').textContent = pc ? 'Class pattern ' + (PIECES.indexOf(pc) + 1) + ' of ' + PIECES.filter(function (x) { return !x.soon; }).length : 'Timing drill ' + (S.ex + 1) + ' of ' + EX.length;
-    b.classList.toggle('pv-piece', !!pc); b.classList.toggle('pv-ex', !pc);
+    $('pTitle').textContent = S.metro ? 'Metronome' : pc ? pc.t : EX[S.ex].t;
+    $('pSub').textContent = S.metro ? 'Free play' : pc ? 'Class pattern ' + (PIECES.indexOf(pc) + 1) + ' of ' + PIECES.filter(function (x) { return !x.soon; }).length : 'Timing drill ' + (S.ex + 1) + ' of ' + EX.length;
+    b.classList.toggle('pv-piece', !!pc); b.classList.toggle('pv-ex', !pc && !S.metro); b.classList.toggle('pv-met', !!S.metro);
     b.classList.toggle('pv-map', S.mview === 'map'); b.classList.toggle('pv-dial', S.mview !== 'map');
     Array.prototype.forEach.call($('pMode').children, function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-v') === S.mview)); });
   }
@@ -645,7 +693,7 @@
   // ---- start
   $('play').innerHTML = PLAY; $('pPlay').innerHTML = PLAY;
   renderStrip(); drawPan(); renderPats(); renderSizes(); setHp(S.hp !== false);
-  if (S.piece) { var keepBpm = S.bpm; pickPiece(S.piece, false); setBpm(keepBpm); drawPan(); } else pick(S.ex, false);
+  if (S.metro) openMetro(); else if (S.piece) { var keepBpm = S.bpm; pickPiece(S.piece, false); setBpm(keepBpm); drawPan(); } else pick(S.ex, false);
   // arriving from My classes: Start opens piece 1, Continue opens where the student left off
   if (jump === 'start') { S.lib = 'pc'; pickPiece('scale', true); renderList(); }
   if (jump) openPlayer();
