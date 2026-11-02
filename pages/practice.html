@@ -450,6 +450,32 @@ input.bpm:focus{outline:none;box-shadow:inset 0 0 0 2.5px var(--wine);background
   .toast{bottom:48px}
 }
 
+/* ---- v60: free metronome ---- */
+.mtool{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:12px;align-items:center;width:100%;padding:12px 14px;border:0;border-radius:16px;background:var(--paper);box-shadow:inset 0 0 0 2px var(--tl);text-align:left;color:var(--ink)}
+.mtool.on{box-shadow:inset 0 0 0 2px var(--wine)}
+.mti{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--ivory);color:var(--wine)}.mti svg{width:24px;height:24px}
+.mtx b{display:block;font-size:1.05rem;font-weight:600}.mtx small{display:block;font-size:.9rem;color:var(--ink-3)}
+.mgo{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--wine);color:var(--on-wine)}.mgo svg{width:20px;height:20px}
+.metbox{display:flex;flex-direction:column;gap:12px;order:2;flex:1;min-height:0}
+.metbox[hidden]{display:none!important}
+.mgrp b{display:block;font-size:.9rem;font-weight:600;color:var(--ink-3);margin-bottom:6px}
+.mseg{display:flex;gap:6px}
+.mseg button{flex:1;min-width:0;min-height:46px;border:0;border-radius:12px;background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px var(--tl);font-weight:600;font-size:1.05rem}
+.mseg button[aria-pressed="true"]{background:var(--wine);color:var(--on-wine);box-shadow:none}
+.macc{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:0;border:0;background:none;color:var(--ink);text-align:left}
+.macc b{font-size:1rem;font-weight:600}
+.macc[aria-checked="true"] .sw{background:var(--wine)}.macc[aria-checked="true"] .sw::after{transform:translateX(18px)}
+.mboxes{display:grid;gap:8px;margin-top:8px}
+.mb{height:clamp(64px,12vh,110px);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px var(--tl)}
+.mb b{font:600 2.2rem/1 var(--sans)}
+.mb.one{box-shadow:inset 0 0 0 3px var(--wine)}
+.mb.on{background:var(--wine);color:var(--on-wine);box-shadow:none}
+.mb em{display:flex;gap:5px}.mb u{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.55}
+.mtap{align-self:center;min-height:48px;padding:0 26px;border:0;border-radius:999px;background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px var(--tl);font-weight:600;font-size:1rem}
+.mtap:active{box-shadow:inset 0 0 0 2.5px var(--wine);color:var(--wine)}
+body.pv-met .player .pcbox,body.pv-met .player .strip,body.pv-met .player .pan,body.pv-met .player .chips,body.pv-met .player .exbar,body.pv-met .player .psilent{display:none!important}
+@media (max-height:700px){.mb{min-height:60px}.mb b{font-size:1.8rem}.mseg button{min-height:42px}.metbox{gap:8px}}
+
 /* size-specific overrides come last so they win */
 /* very short phones (iPhone SE first gen): tighter strip and dock so the map stays readable */
 @media (max-width:899px) and (max-height:620px) and (orientation:portrait){
@@ -511,6 +537,15 @@ input.bpm:focus{outline:none;box-shadow:inset 0 0 0 2.5px var(--wine);background
   .player .pbody .pc-lines{height:100px}.player .pbody .pc-n{min-height:54px}
   .player .pcnext{height:24px;line-height:24px}
   .player .dock{gap:8px;padding-top:8px;padding-bottom:12px}.player .dock .play{min-height:50px}
+}
+@media (max-width:899px) and (max-height:500px) and (orientation:landscape){
+  .metbox{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);grid-template-rows:auto auto auto;align-content:start;column-gap:16px;row-gap:8px}
+  .metbox .mgrp,.metbox .macc{grid-column:1}
+  .metbox .mgrp b{margin-bottom:4px}
+  .metbox .mseg{gap:4px}.metbox .mseg button{min-height:44px}
+  .metbox .mboxes{grid-column:2;grid-row:1/3;margin-top:0;align-content:start}
+  .metbox .mb{height:auto;min-height:48px;padding:6px 0;gap:3px}.metbox .mb b{font-size:1.6rem}
+  .metbox .mtap{grid-column:2;grid-row:3;align-self:center;justify-self:center;min-height:44px}
 }
 </style>
 </head>
@@ -581,6 +616,13 @@ input.bpm:focus{outline:none;box-shadow:inset 0 0 0 2.5px var(--wine);background
   <div class="pbody" id="pBody">
     <div class="pmode" id="pMode" role="group" aria-label="View"><button type="button" data-v="dial">Beat circle</button><button type="button" data-v="map">Handpan map</button></div>
     <div class="exbar" id="exBar" aria-hidden="true"></div>
+    <div class="metbox" id="metBox" hidden>
+      <div class="mgrp"><b>Beats in a bar</b><div class="mseg" id="mBeats" role="group" aria-label="Beats in a bar"></div></div>
+      <div class="mgrp"><b>Clicks per beat</b><div class="mseg" id="mSubs" role="group" aria-label="Clicks per beat"></div></div>
+      <button class="macc" id="mAcc" type="button" role="switch" aria-checked="true"><b>Stronger click on beat 1</b><span class="sw"></span></button>
+      <div class="mboxes" id="mBoxes" aria-hidden="true"></div>
+      <button class="mtap" id="mTap" type="button"><span>Tap tempo</span></button>
+    </div>
     <div class="psilent" id="pSilent" aria-live="polite"></div>
   </div>
   <div class="dock">
@@ -602,6 +644,6 @@ input.bpm:focus{outline:none;box-shadow:inset 0 0 0 2.5px var(--wine);background
   <div class="spanel" role="dialog" aria-label="How to play and settings"><div class="stop"><span class="grab"></span><button class="ic sx" id="sX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="sbody" id="sBody"></div></div>
 </div>
 
-<script src="/js/practice.js?v=23" defer></script>
+<script src="/js/practice.js?v=24" defer></script>
 </body>
 </html>
