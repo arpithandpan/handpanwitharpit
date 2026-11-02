@@ -254,7 +254,7 @@ select{font:inherit;font-size:.92rem;color:var(--ink);background:var(--ivory);bo
 @media (min-width:600px) and (max-width:899px){.pbody{width:100%;max-width:680px;margin:0 auto}.pbody .pan svg{max-height:520px}.pbody .dial svg{max-height:460px}.spanel{left:50%;right:auto;width:560px;transform:translateX(-50%)}}
 
 /* ---- phone refinements: beat on the rim, equal boxes, larger type, slider dock, sheet with close ---- */
-.rim,.rimn,.look{display:none}
+.rim,.rimn{display:none}
 :root:not([data-theme="dark"]){--ink-3:#5e4645}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink-3:#c9b8b0}}
 :root[data-theme="dark"]{--ink-3:#c9b8b0}
@@ -359,6 +359,12 @@ input.bpm{width:3.2ch;padding:0;border:0;border-radius:10px;background:transpare
 input.bpm:hover{box-shadow:inset 0 0 0 1.5px var(--tl)}
 input.bpm:focus{outline:none;box-shadow:inset 0 0 0 2.5px var(--wine);background:var(--paper)}
 .segnote,.hpsel,.lastb{display:none}
+/* Light / Dark: on desktop it sits at the end of the practice card */
+.look{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.look b{font-size:.92rem;font-weight:600;color:var(--ink-2)}
+.look .seg3{display:flex;gap:8px;padding:0;background:none}
+.look .seg3 button{min-width:76px;min-height:42px;padding:0 14px;border:0;border-radius:999px;background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px var(--tl);font-weight:600;font-size:.95rem}
+.look .seg3 button[aria-pressed="true"]{background:var(--wine);color:var(--on-wine);box-shadow:none}
 .toast{position:fixed;left:50%;bottom:170px;transform:translateX(-50%);z-index:40;max-width:calc(100% - 32px);padding:12px 18px;border-radius:14px;background:var(--ink);color:var(--paper);font-weight:600;font-size:1rem;box-shadow:0 6px 20px rgba(0,0,0,.25);white-space:nowrap}
 @media (max-width:899px){
   .seg{gap:8px;padding:0;background:none}
@@ -454,7 +460,7 @@ input.bpm:focus{outline:none;box-shadow:inset 0 0 0 2.5px var(--wine);background
 </head>
 <body>
 <div class="bar">
-  <a class="back" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>My classes</a>
+  <a class="back" href="/pages/my"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>My classes</a>
   <span class="brand"><svg viewBox="0 0 300 300"><circle cx="150" cy="150" r="148" fill="#500018"/><ellipse cx="150" cy="150" rx="62" ry="52" fill="#F5EEE5"/><ellipse cx="150" cy="150" rx="34" ry="28" fill="#500018"/><ellipse cx="150" cy="46" rx="18" ry="14" fill="#F5EEE5"/><ellipse cx="254" cy="150" rx="16" ry="22" fill="#F5EEE5"/><ellipse cx="150" cy="256" rx="28" ry="22" fill="#F5EEE5"/><ellipse cx="46" cy="150" rx="16" ry="22" fill="#F5EEE5"/><ellipse cx="220" cy="80" rx="20" ry="16" transform="rotate(45 220 80)" fill="#F5EEE5"/><ellipse cx="220" cy="220" rx="26" ry="21" transform="rotate(-45 220 220)" fill="#F5EEE5"/><ellipse cx="80" cy="220" rx="26" ry="21" transform="rotate(45 80 220)" fill="#F5EEE5"/><ellipse cx="80" cy="80" rx="20" ry="16" transform="rotate(-45 80 80)" fill="#F5EEE5"/></svg>Arpit <i>Pandey</i></span>
 </div>
 
@@ -489,6 +495,7 @@ input.bpm:focus{outline:none;box-shadow:inset 0 0 0 2.5px var(--wine);background
       <div class="chips" id="chips"></div>
       <div class="vol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg><input type="range" id="vol" min="0" max="100" value="80" aria-label="Volume"></div>
       <p class="hint">Tap the circle or press Space to start and stop</p>
+      <div class="row-l look" id="lookRow"><b>Look</b><div class="seg3" id="look" role="group" aria-label="Look"><button type="button" data-v="light">Light</button><button type="button" data-v="dark">Dark</button></div></div>
     </div>
 
     <div class="card">
@@ -507,7 +514,6 @@ input.bpm:focus{outline:none;box-shadow:inset 0 0 0 2.5px var(--wine);background
           <div class="pan"><svg id="panSvg" viewBox="0 0 300 300" role="img" aria-label="Handpan map"></svg></div>
           <div class="pats" id="pats" role="group" aria-label="Pattern"></div>
           <div class="hpsel" id="hpSel"><b class="sk">Your handpan</b><div class="hprow"><div class="smap" id="sMap"></div><div class="hpc"><b>Notes, with Ding</b><div id="sizesSlot"></div><small>The map changes as you tap</small></div></div></div>
-          <div class="row-l look" id="lookRow"><b>Look</b><div class="seg3" id="look" role="group" aria-label="Look"><button type="button" data-v="light">Light</button><button type="button" data-v="dark">Dark</button></div></div>
           <div class="row-l"><b>Notes on your handpan (with Ding)</b><div class="sizes" id="sizes" role="group" aria-label="Notes on your handpan"></div></div>
         </div>
       </div>
@@ -539,6 +545,6 @@ input.bpm:focus{outline:none;box-shadow:inset 0 0 0 2.5px var(--wine);background
   <div class="spanel" role="dialog" aria-label="How to play and settings"><div class="stop"><span class="grab"></span><button class="ic sx" id="sX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="sbody" id="sBody"></div></div>
 </div>
 
-<script src="/js/practice.js?v=19" defer></script>
+<script src="/js/practice.js?v=20" defer></script>
 </body>
 </html>

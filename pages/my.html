@@ -236,6 +236,20 @@ a.mc-opt { text-decoration: none; }
 .acct-menu { border-radius: 10px; border: 1px solid var(--bk-stone); box-shadow: 0 6px 20px rgba(80,0,24,0.14); }
 .nav-links .acct-menu a, .acct-menu button { border-radius: 6px; font-size: 16px; color: var(--maroon); }
 @media (hover: hover) { .nav-links .acct-menu a:hover, .acct-menu button:hover { background: var(--bk-fill); } }
+.rp{display:grid;gap:16px}
+.rp-top{display:flex;gap:14px;align-items:center}
+.rp-ic{flex:none;width:44px;height:44px}
+.pi-s{fill:var(--ivory);stroke:var(--rule);stroke-width:8}.pi-d{fill:var(--card);stroke:var(--rule);stroke-width:8}.pi-n{fill:var(--card);stroke:var(--maroon);stroke-width:8}.pi-n.on{fill:var(--maroon)}
+.rp-k{margin:0;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--maroon)}
+.rp-t{margin:2px 0 0;font:600 1.6rem/1.15 'Cormorant Garamond',Georgia,serif;color:var(--ink)}
+.rp-s{margin:2px 0 0;font-size:.95rem;color:var(--ink-3)}
+.rp-row{display:flex;flex-wrap:wrap;gap:8px}
+.rp-row span{padding:6px 12px;border-radius:999px;background:var(--ivory);font-size:.9rem;color:var(--ink-2)}
+.rp-row b{color:var(--ink)}
+.rp-btns{display:flex;gap:10px;flex-wrap:wrap}
+.rp-btns .mc-btn{gap:8px;text-decoration:none}
+.rp-btns .solid{flex:1 1 160px;justify-content:center}
+@media (min-width:700px){.rp{grid-template-columns:1fr auto;align-items:center}.rp-row{grid-column:1}.rp-btns{grid-column:2;grid-row:1 / span 2;flex-direction:column;min-width:200px}.rp-btns .solid{flex:none}}
 </style>
 <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml"/>
 <link rel="icon" href="/favicon-32x32.png?v=2" sizes="32x32" type="image/png"/>
@@ -470,6 +484,21 @@ a.mc-opt { text-decoration: none; }
   }
 
   // ── render ──
+  // Rhythm practice card: continues where this phone left off, or starts with piece 1
+  function practiceCard() {
+    let last = null;
+    try { last = JSON.parse(localStorage.getItem('hp_practice_last') || 'null'); } catch (e) {}
+    const play = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
+    let pan = '<svg class="rp-ic" viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="138" class="pi-s"/><circle cx="150" cy="150" r="42" class="pi-d"/>';
+    for (let a = 0; a < 360; a += 45) { const r = a * Math.PI / 180; pan += '<ellipse cx="' + (150 + 92 * Math.cos(r)).toFixed(0) + '" cy="' + (150 + 92 * Math.sin(r)).toFixed(0) + '" rx="24" ry="20" class="pi-n' + (a === 0 ? ' on' : '') + '"/>'; }
+    pan += '</svg>';
+    const title = last && last.t ? esc(last.t) : 'Start with The Ladder';
+    const sub = last && last.t ? esc((last.s || '') + (last.bpm ? ' · last at ' + last.bpm + ' BPM' : '')) : 'Piece 1 of 4 · 60 BPM';
+    return '<div class="mc-card rp"><div class="rp-top">' + pan + '<div><p class="rp-k">Rhythm practice</p><p class="rp-t">' + title + '</p><p class="rp-s">' + sub + '</p></div></div>'
+      + '<div class="rp-row"><span><b>4</b> pieces from class</span><span><b>6</b> rhythm drills</span></div>'
+      + '<div class="rp-btns"><a class="mc-btn solid" href="/pages/practice#' + (last && last.t ? 'play' : 'start') + '">' + play + (last && last.t ? 'Continue' : 'Start') + '</a><a class="mc-btn line" href="/pages/practice">All practice</a></div></div>';
+  }
+
   function render() {
     const c = data.classes;
     show('mcPage');
@@ -513,7 +542,7 @@ a.mc-opt { text-decoration: none; }
     }
 
     // Rhythm practice (students in weekly classes)
-    html.push('<div class="mc-card"><div class="mc-bal"><div><h3>Rhythm practice</h3><p>Metronome exercises to keep steady time. Works offline.</p></div><a class="mc-btn line" href="/pages/practice">Open practice</a></div></div>');
+    html.push(practiceCard());
 
     // Coming up (skip the next class, it has its own card)
     const rest = c.upcoming.filter(u => !next || u.key !== next.key);
