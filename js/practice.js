@@ -102,6 +102,8 @@
   var token = '', role = '';
   try {
     if (location.hash === '#teacher') { localStorage.setItem('hp_practice_teacher', '1'); history.replaceState(null, '', location.pathname); }
+    var jump = location.hash === '#play' || location.hash === '#start' ? location.hash.slice(1) : '';
+    if (jump) history.replaceState(null, '', location.pathname);
     token = localStorage.getItem('hp_my_token') || ''; role = localStorage.getItem('hp_my_role') || '';
     if (localStorage.getItem('hp_practice_teacher') === '1') { token = token || 'teacher'; role = 'Student'; }
   } catch (e) {}
@@ -130,7 +132,15 @@
     el.textContent = '';
     txt.split('**').forEach(function (part, i) { if (!part) return; var n = i % 2 ? document.createElement('b') : document.createTextNode(part); if (i % 2) n.textContent = part; el.appendChild(n); });
   }
-  function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
+  function save() {
+    try {
+      localStorage.setItem(STORE, JSON.stringify(S));
+      if (S.played) {
+        var pc = S.piece && pieceOf(S.piece), last = pc ? { t: pc.t, s: pc.secs[Math.min(S.pcSec || 0, pc.secs.length - 1)].n.replace('Variation ', 'Var ') } : { t: EX[S.ex].t, s: 'Exercise ' + (S.ex + 1) };
+        last.bpm = S.bpm; localStorage.setItem('hp_practice_last', JSON.stringify(last));
+      }
+    } catch (e) {}
+  }
   // phones: a list screen and a player screen instead of one long page
   var MQ = window.matchMedia ? window.matchMedia('(max-width: 899px)') : { matches: false };
   var isPhone = function () { return !!MQ.matches; };
@@ -597,6 +607,9 @@
   $('play').innerHTML = PLAY; $('pPlay').innerHTML = PLAY;
   renderStrip(); drawPan(); renderPats(); renderSizes(); setHp(S.hp !== false);
   if (S.piece) { var keepBpm = S.bpm; pickPiece(S.piece, false); setBpm(keepBpm); drawPan(); } else pick(S.ex, false);
+  // arriving from My classes: Start opens piece 1, Continue opens where the student left off
+  if (jump === 'start') { S.lib = 'pc'; pickPiece('scale', true); renderList(); }
+  if (jump && isPhone()) openPlayer();
 
   // works offline after the first visit
   if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('/pages/practice-sw.js', { scope: '/pages/practice' }).catch(function () {}); });
