@@ -8,8 +8,6 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Handpan Metronome · Arpit Pandey</title>
-<link rel="preload" href="/audio/ding.mp3" as="fetch" crossorigin>
-<link rel="preload" href="/audio/knock.mp3" as="fetch" crossorigin>
 <style>
 @font-face{font-family:'Cormorant Garamond';src:url('/fonts/cormorant-garamond-latin-600-normal.woff2') format('woff2');font-weight:600;font-style:normal}
 @font-face{font-family:'Cormorant Garamond';src:url('/fonts/cormorant-garamond-latin-600-italic.woff2') format('woff2');font-weight:600;font-style:italic}
@@ -39,19 +37,9 @@ svg{display:block}
 .ic{flex:none;width:46px;height:46px;border:0;border-radius:50%;display:grid;place-items:center;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--tl);color:var(--ink);text-decoration:none}
 .ic svg{width:21px;height:21px}
 
-/* bottom tabs (phones) */
-.tabs{display:flex;background:var(--paper);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
-.tabs button{flex:1;min-width:0;min-height:56px;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:.88rem;font-weight:600;color:var(--ink-3)}
-.tabs button span{display:grid;place-items:center;width:60px;height:30px;border-radius:15px}
-.tabs button svg{width:22px;height:22px}
-.tabs button.on{color:var(--wine)}
-.tabs button.on span{background:var(--wine-soft)}
-body:not(.stu) .tabs [data-tab=lessons]{display:none}
-
 /* lists */
 .side{padding:16px max(16px,env(safe-area-inset-right)) 24px max(16px,env(safe-area-inset-left))}
 .vlist{display:grid;gap:12px;align-content:start}
-.seg.sideseg{display:none}
 .seg{display:flex;padding:4px;border-radius:16px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--tl)}
 .seg button{flex:1;min-width:0;min-height:46px;border:0;border-radius:12px;background:none;font-weight:600;font-size:1rem;color:var(--ink);white-space:nowrap}
 .seg button[aria-pressed="true"]{background:var(--wine);color:var(--on-wine)}
@@ -80,14 +68,31 @@ body:not(.stu) .tabs [data-tab=lessons]{display:none}
 /* player */
 .player{display:flex;flex-direction:column;background:var(--ivory)}
 .pbody{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:14px max(16px,env(safe-area-inset-right)) 12px max(16px,env(safe-area-inset-left))}
-.loaded{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 14px;border-radius:16px;background:var(--wine-soft)}
-.loaded .tx{flex:1;min-width:0}
-.loaded small{display:block;font-size:.85rem;font-weight:600;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.loaded b{display:block;font-size:1.12rem;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.loaded .ic{width:44px;height:44px;box-shadow:none}
+.pick{flex:none;display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:8px 10px 8px 16px;border:0;border-radius:18px;background:var(--paper);box-shadow:inset 0 0 0 2px var(--wine);text-align:left;color:var(--ink)}
+.pick .tx{flex:1;min-width:0}
+.pick small{display:block;font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.pick b{display:block;font-size:1.15rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick .pw{font-size:.92rem;font-weight:500;color:var(--ink-3)}
+.chev{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--wine);color:var(--on-wine)}.chev svg{width:20px;height:20px}
+.ptitle{display:none}
+.phint{margin:-4px 0 0;text-align:center;font-size:.95rem;color:var(--ink-3)}
+.fsp{flex:1}
+.pcrow{display:flex;align-items:center;justify-content:center;gap:10px;min-height:44px}
+.howb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 4px;border:0;background:none;color:var(--wine);font-weight:600;font-size:.95rem;white-space:nowrap}
+.howb svg{width:18px;height:18px}
+.chooser{display:grid;gap:10px;align-content:start}
+.it.big{grid-template-columns:44px minmax(0,1fr) auto;padding:14px}
+.it.big .n{width:44px;height:44px;color:var(--wine)}
+.it.big .n svg{width:22px;height:22px}
+.it.big.on .n{color:var(--on-wine)}
+.it.big b{font-size:1.15rem}
+.it .more{font-size:1.6rem;line-height:1;color:var(--wine)}
+.sidehead{display:flex;align-items:center;gap:10px;min-height:46px;margin-bottom:12px}
+.sidehead h2{margin:0;font:600 1.7rem/1.1 var(--serif);color:var(--ink)}
+.shead .ic{flex:none}
 
 /* free metronome */
-.free{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.free{flex:1;display:flex;flex-direction:column;gap:16px}
 .tcard{padding:16px;border-radius:24px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line);text-align:center}
 .tbig{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .step{flex:none;width:58px;height:58px;border:0;border-radius:50%;background:var(--ivory);color:var(--wine);font-size:1.8rem;font-weight:500;box-shadow:inset 0 0 0 1.5px var(--tl)}
@@ -101,13 +106,11 @@ body:not(.stu) .tabs [data-tab=lessons]{display:none}
 .dots{display:flex;justify-content:center;gap:8px}
 .dots .bx{flex:0 1 56px;aspect-ratio:1;min-width:0;border-radius:50%;display:grid;place-items:center;background:var(--paper);box-shadow:inset 0 0 0 2px var(--tl);color:var(--ink)}
 .dots .bx b{font-size:1.2rem;font-weight:600}
-.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .opt{display:flex;flex-direction:column;align-items:flex-start;min-height:60px;padding:8px 12px;border:0;border-radius:16px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--tl);text-align:left;color:var(--ink)}
 .opt small{font-size:.85rem;font-weight:500;color:var(--ink-3)}
 .opt b{font-size:1.05rem;font-weight:600;white-space:nowrap}
 .opt b::after{content:"";display:inline-block;width:7px;height:7px;margin-left:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-3px) rotate(45deg)}
-.hintl{align-self:center;min-height:44px;padding:0 10px;border:0;background:none;font-size:1rem;color:var(--ink-3)}
-.hintl b{color:var(--wine);font-weight:600}
 
 /* beat boxes: free dots and drill boxes */
 .bx{position:relative;transition:background .05s}
@@ -135,7 +138,7 @@ body:not(.stu) .tabs [data-tab=lessons]{display:none}
 .pc-tabs{display:flex;gap:6px;height:48px;align-items:center}
 .chip{flex:1 1 0;min-width:0;max-width:130px;min-height:44px;padding:0 4px;border:0;border-radius:999px;background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px var(--tl);font-weight:600;font-size:1rem;white-space:nowrap}
 .chip[aria-pressed="true"]{background:var(--wine);color:var(--on-wine);box-shadow:none}
-.pc-count{height:22px;line-height:22px;text-align:center;font-size:.95rem;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-count{min-width:0;height:22px;line-height:22px;text-align:center;font-size:.95rem;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pc-count b{color:var(--ink);font-variant-numeric:tabular-nums}
 .pc-lines{padding:4px;border-radius:14px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
 .pc-now{display:grid;gap:6px;padding:4px}
@@ -250,14 +253,11 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
   body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
   .bar{flex:none}
   .app{flex:1;min-height:0;position:relative}
-  .side,.player{position:absolute;inset:0;display:none}
-  .side.cur{display:block;overflow-y:auto;-webkit-overflow-scrolling:touch}
-  .player.cur{display:flex}
-  .tabs{flex:none}
-  body.bpm-edit .tabs{display:none}
+  .side{display:none}
+  .player{position:absolute;inset:0}
 }
 @media (min-width:600px) and (max-width:899px){
-  .side>.vlist,.pbody>*,.dock>*{width:100%;max-width:640px;margin-left:auto;margin-right:auto}
+  .pbody>*,.dock>*{width:100%;max-width:640px;margin-left:auto;margin-right:auto}
   .dock{justify-content:center}
   body:not(.bpm-edit) .dock>.crow{width:auto;margin:0}
   body:not(.bpm-edit) .dock>.play{max-width:480px;margin:0}
@@ -265,6 +265,7 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
 }
 /* short phones */
 @media (max-width:899px) and (max-height:760px){
+  body.bpm-edit .pick,body.bpm-edit .free .tcard,body.bpm-edit .pcrow{display:none}
   .bar h1{font-size:1.5rem}
   .free{gap:12px}
   .tcard{padding:12px}
@@ -275,20 +276,19 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
   .bb .bx b{font-size:2rem}
   .pc-n{min-height:56px}.pc-n b{font-size:1.25rem}
   .pc-key{display:none}
-  .m-lesson .loaded small{display:none}
   .pan{min-height:140px}
   body.bpm-edit .pan{min-height:120px}
   .pc-tabs{height:44px}
   .lesson{gap:6px}
-  .tabs button{min-height:50px}
 }
 @media (max-width:899px) and (max-height:600px) and (orientation:portrait){
   .pc-count{display:none}
   .pbody{padding-top:8px;padding-bottom:8px;gap:8px}
-  .loaded{padding:2px 2px 2px 12px}
+  .pick{min-height:56px;padding-top:4px;padding-bottom:4px}
   .pan{min-height:116px}
   body.bpm-edit .pan{min-height:96px}
-  .free .hintl{display:none}
+  body.bpm-edit .pick,body.bpm-edit .free .tcard{display:none}
+  .phint{display:none}
   .free{gap:10px}
   .medit b{font-size:3.1rem}
   .tcard .step{width:48px;height:48px}
@@ -298,19 +298,18 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
   .bb .bx b{font-size:1.7rem}
   .pc-n{min-height:50px}.pc-n b{font-size:1.15rem}
   .pcnext{height:24px;line-height:24px;font-size:.9rem}
-  .tabs button{min-height:46px}
   .opt{min-height:54px}
   .dots .bx{flex-basis:46px}
   .play{min-height:52px}
-  .tabs button span{height:26px}
 }
+@media (max-width:389px){.howb span{display:none}.howb{min-width:44px;justify-content:center}}
 @media (max-width:359px){
   .spanel{padding-left:12px;padding-right:12px}
   .sseg{gap:4px}
   .smap{width:84px;height:84px}
   .hprow{gap:10px;padding:8px}
   .bar{gap:8px}.bar h1{font-size:1.35rem}
-  .side,.pbody{padding-left:12px;padding-right:12px}
+  .pbody{padding-left:12px;padding-right:12px}
   .opt{padding:8px}.opt b{font-size:.95rem}
   .step{width:48px;height:48px}
   .dock{padding-left:12px;padding-right:12px;gap:8px}
@@ -319,12 +318,13 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
 }
 /* phones held sideways */
 @media (max-width:899px) and (max-height:500px) and (orientation:landscape){
-  body{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
-  .bar{grid-column:1/3}
-  .app{grid-column:2;grid-row:2}
-  .tabs{grid-column:1;grid-row:2;flex-direction:column;justify-content:center;gap:4px;width:auto;padding:6px 4px max(6px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));border-top:0;border-right:1px solid var(--line)}
-  .tabs button{flex:none;width:96px;min-height:56px;font-size:.82rem}
-  .tabs button span{width:44px;height:26px}
+  .phint,.fsp{display:none}
+  .free .tcard{padding:4px 12px}
+  .free .tcard .medit b{font-size:2.6rem}
+  .free .tcard .step,.tap{width:auto;min-width:44px;height:44px;min-height:44px}
+  .free .tcard .step{width:44px}
+  .pcrow{min-height:40px}
+  .lesson .pcnext{height:22px;line-height:22px}
   .bar{padding-top:max(6px,env(safe-area-inset-top));padding-bottom:6px}
   .bar h1{font-size:1.35rem}
   .bar .ic{width:44px;height:44px}
@@ -340,7 +340,7 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
   .free .dots{grid-column:1;grid-row:2;align-self:center;gap:6px}
   .free .opts{grid-column:2;grid-row:2;gap:6px}
   .opt b{font-size:.98rem}
-  .free .hintl{display:none}
+  .phint{display:none}
   .dots .bx{flex-basis:44px}
   .opt{min-height:50px;padding:6px 10px}
   .drill{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;column-gap:14px;row-gap:6px}
@@ -348,9 +348,11 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
   .drill .bb{grid-column:2;grid-row:1;min-height:0;max-height:none;grid-auto-rows:minmax(0,1fr);align-content:stretch}
   .drill .dstat{grid-column:1/3;grid-row:2}
   .bb .bx{min-height:48px;gap:4px}.bb .bx b{font-size:1.6rem}
-  .lesson{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto auto minmax(0,1fr);column-gap:16px;row-gap:6px}
-  .lesson>*{grid-column:1}
-  .lesson .pan{grid-column:2;grid-row:1/-1;min-height:0;height:100%;align-self:stretch}
+  .lesson{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-rows:auto auto auto minmax(0,1fr);column-gap:12px;row-gap:6px}
+  .lesson>*{grid-column:1/3}
+  .lesson .pc-tabs{grid-column:1;grid-row:1}
+  .lesson .pcrow{grid-column:2;grid-row:1}
+  .lesson .pan{grid-column:3;grid-row:1/-1;min-height:0;height:100%;align-self:stretch}
   .lesson .pan svg{height:100%;max-height:none}
   .pc-lines{overflow:visible}
   .pc-count{display:none}
@@ -370,10 +372,15 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
   .dock{padding-top:6px;padding-bottom:max(6px,env(safe-area-inset-bottom))}
   .play{min-height:48px}
   .crow .step{width:44px;height:44px}
-  .loaded{padding:4px 6px 4px 12px}.loaded small{display:none}
+  .pick{min-height:48px;padding:2px 4px 2px 14px;border-radius:14px}.pick small{display:none}.pick b{font-size:1.05rem}
+  .pick .chev{width:40px;height:40px}
 }
 @media (max-width:899px) and (max-height:360px) and (orientation:landscape){
-  .m-lesson .loaded,.m-drill .loaded{display:none!important}
+  .lesson .pc-tabs{grid-column:1/3}
+  .lesson .pcrow{grid-column:1/3;grid-row:2}
+  .drill{grid-template-rows:auto auto}
+  .drill .bb{min-height:110px}
+  .pcrow{min-height:40px}
   .pcnext{height:24px;line-height:24px}
 }
 
@@ -382,14 +389,15 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
   .bar{position:sticky;top:0;z-index:5;padding:12px 28px}
   .bar .logo{display:block;width:34px;height:34px;flex:none}
   .bar h1{font-size:1.8rem}
-  .tabs{display:none}
   .app{display:grid;grid-template-columns:380px minmax(0,1fr);gap:28px;max-width:1240px;margin:0 auto;padding:22px 28px 28px;align-items:start}
   .side{padding:0}
-  .stu .seg.sideseg{display:flex;margin-bottom:12px}
   .player{position:sticky;top:94px;height:calc(100vh - 118px);height:calc(100dvh - 118px);min-height:560px;max-height:900px;border-radius:24px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line);overflow:hidden}
   .player .pbody{padding:18px 22px 12px}
   .player .tcard,.player .opt,.player .dots .bx,.player .bb .bx,.player .how{background:var(--ivory)}
-  .player .loaded .ic{background:var(--paper)}
+  .pick,.phint{display:none}
+  .ptitle{display:block;text-align:center}
+  .ptitle h2{margin:0;font:600 1.8rem/1.15 var(--serif);color:var(--ink)}
+  .ptitle small{display:block;min-height:1.4em;font-size:.92rem;font-weight:600;color:var(--ink-3)}
   .player .tcard{box-shadow:none}
   .player .free{max-width:560px;width:100%;margin:0 auto}
   .player .pc-lines{background:var(--ivory)}
@@ -398,7 +406,6 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
   .dock{padding:12px 22px 16px}
   .sheet .spanel{left:50%;right:auto;top:50%;bottom:auto;width:min(560px,calc(100% - 48px));max-height:86vh;border-radius:24px;transform:translate(-50%,-50%)}
   .toast{bottom:48px}
-  #toTiming{display:none}
 }
 @media (min-width:900px) and (max-height:820px){
   .app{padding-top:16px}
@@ -420,26 +427,19 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
 <section class="gate" id="gate" hidden><h1>For students in <em>weekly classes</em></h1><p id="gateMsg">Log in to My classes first, then open Practice from there.</p><a href="/pages/my">Go to My classes</a></section>
 
 <main class="app" id="app">
-  <div class="side" id="side">
-    <div class="seg sideseg" id="sideSeg" role="group" aria-label="List"><button type="button" data-tab="timing">Timing</button><button type="button" data-tab="lessons">My lessons</button></div>
-    <section class="vlist" id="vTiming" aria-label="Timing">
-      <div class="seg" id="lvlSeg" role="group" aria-label="Level"><button type="button">Beginner</button><button type="button">Intermediate</button><button type="button">Advanced</button></div>
-      <p class="lead" id="lvlLead"></p>
-      <div class="list" id="drillList"></div>
-      <div class="cta" id="cta"><b>Learning with Arpit?</b><p>Students also get the patterns from class here.</p><a id="ctaGo" href="/pages/trial">Book a free trial</a></div>
-    </section>
-    <section class="vlist" id="vLessons" aria-label="My lessons" hidden>
-      <div id="contBox"></div>
-      <h2 class="sec">From your classes</h2>
-      <div class="list" id="lessonList"></div>
-    </section>
-  </div>
+  <aside class="side" id="side" aria-label="What to play">
+    <div class="sidehead"><button class="ic" id="sideBack" type="button" aria-label="Back" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h2 id="sideT">What to play</h2></div>
+    <div class="chooser" id="sideList"></div>
+  </aside>
 
   <section class="player" id="vMet" aria-label="Metronome">
     <div class="pbody" id="pBody">
-      <div class="loaded" id="loaded" hidden><div class="tx"><small id="ldK"></small><b id="ldT"></b></div><button class="ic" id="ldInfo" type="button" aria-label="How to play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button><button class="ic" id="ldX" type="button" aria-label="Close and go back to the plain metronome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <button class="pick" id="pick" type="button" aria-haspopup="dialog"><span class="tx"><small>What to play</small><b><span id="pickT">Just the click</span><span class="pw" id="pickW"></span></b></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></button>
+      <div class="ptitle"><h2 id="pTitle">Just the click</h2><small id="pWhere"></small></div>
 
       <div class="free" id="free">
+        <p class="phint" id="pickHint">Pick a timing drill or a pattern from class</p>
+        <div class="fsp"></div>
         <div class="tcard">
           <div class="tbig"><button class="step" id="mMinus" type="button" aria-label="Slower">−</button><button class="medit" id="mEdit" type="button" aria-label="Type a tempo"><b id="mBig">80</b><small>BPM ✎</small></button><button class="step" id="mPlus" type="button" aria-label="Faster">+</button></div>
           <input type="range" id="mRange" min="30" max="200" value="80" aria-label="Tempo in BPM">
@@ -449,9 +449,8 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
         <div class="opts">
           <button class="opt" id="oBeats" type="button"><small>Beats</small><b>4</b></button>
           <button class="opt" id="oClicks" type="button"><small>Clicks</small><b>1 / beat</b></button>
-          <button class="opt" id="oSound" type="button"><small>Sound</small><b>Knock</b></button>
         </div>
-        <button class="hintl" id="toTiming" type="button">New to timing? <b>Try a drill ›</b></button>
+        <div class="fsp"></div>
       </div>
 
       <div class="drill" id="drill" hidden>
@@ -463,7 +462,7 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
 
       <div class="lesson" id="lesson" hidden>
         <div class="pc-tabs" id="pcTabs" role="group" aria-label="Part"></div>
-        <div class="pc-count" id="pcCount"></div>
+        <div class="pcrow"><div class="pc-count" id="pcCount"></div><button class="howb" id="ldInfo" type="button" aria-label="How to play"><span>How to play</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></div>
         <div class="pc-lines" id="pcLines"></div>
         <div class="pcnext" id="pcNext"></div>
         <div class="pc-key" id="pcKey"></div>
@@ -483,18 +482,12 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
   </section>
 </main>
 
-<nav class="tabs" id="tabs" aria-label="Sections">
-  <button type="button" data-tab="met"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="M12 15l5-9"/></svg></span>Metronome</button>
-  <button type="button" data-tab="timing"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 18V12M9 18V6M14 18v-8M19 18V9"/></svg></span>Timing</button>
-  <button type="button" data-tab="lessons"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/></svg></span>My lessons</button>
-</nav>
-
 <div class="sheet" id="sheet" hidden>
   <div class="sbg" id="sBg"></div>
-  <div class="spanel" role="dialog" aria-modal="true" aria-labelledby="shT"><div class="shead"><h2 id="shT"></h2><button class="ic" id="sX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div id="sBody"></div></div>
+  <div class="spanel" role="dialog" aria-modal="true" aria-labelledby="shT"><div class="shead"><button class="ic" id="sBack" type="button" aria-label="Back" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h2 id="shT"></h2><button class="ic" id="sX" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div id="sBody"></div></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="/js/practice.js?v=25" defer></script>
+<script src="/js/practice.js?v=26" defer></script>
 </body>
 </html>
