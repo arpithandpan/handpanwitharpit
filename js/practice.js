@@ -166,41 +166,47 @@
 
   // ---- What to play: one list in two steps. First the click, timing drills, my lessons; then the drills or the lessons.
   // Phones open it in a sheet from the button above the player; wide screens keep it open on the left.
-  // one section open at a time: the one that is playing, or the one the student opens
-  var openSec = null;
+  // "Just the click" stays pinned on top; under it two tabs, Timing drills and My lessons.
+  // Tapping an entry applies it at once; there is no confirm step.
+  var pickTab = 'timing';
   var LIVE = PIECES.filter(function (x) { return !x.soon; });
   var IC = {
-    click: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="M12 15l5-9"/></svg>',
-    timing: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 18V12M9 18V6M14 18v-8M19 18V9"/></svg>',
-    lessons: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/></svg>'
+    click: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="M12 15l5-9"/></svg>'
   };
-  var CHEV = '<svg class="ach" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  var CHK = '<span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
   function row(n, t, sub, tag, on, soon) {
     var b = document.createElement('button'); b.type = 'button'; b.className = 'it' + (on ? ' on' : '') + (soon ? ' soon' : '');
-    b.innerHTML = '<span class="n"></span><span class="tx"><b></b><small></small></span><span class="tg"></span>';
+    b.innerHTML = '<span class="n"></span><span class="tx"><b></b><small></small></span><span class="tg"></span>' + (on ? CHK : '');
     b.querySelector('.n').innerHTML = n; b.querySelector('b').textContent = t; b.querySelector('small').textContent = sub; b.querySelector('.tg').innerHTML = tag;
     if (on) b.setAttribute('aria-current', 'true'); if (soon) b.disabled = true;
     return b;
   }
   var LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-label="Locked"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-  function chosen() { if (isPhone()) closeSheet(); else { openSec = playingSec(); renderSide(); } updatePick(); }
+  function chosen() { if (isPhone()) closeSheet(); else { pickTab = playingSec() === 'lessons' ? 'lessons' : 'timing'; renderSide(); } updatePick(); }
   function playingSec() { return S.mode === 'drill' ? 'timing' : S.mode === 'lesson' ? 'lessons' : null; }
   function renderChooser(box) {
     box.innerHTML = '';
     var add = function (p, el) { p.appendChild(el); return el; };
-    var sec = function (k, t, sub, on, open, fill) {
-      var wrap = add(box, document.createElement('div')); wrap.className = 'acc' + (open ? ' open' : '') + (on ? ' on' : ''); wrap.setAttribute('data-sec', k);
-      var h = add(wrap, document.createElement('button')); h.type = 'button'; h.className = 'acch'; h.setAttribute('data-k', k);
-      h.innerHTML = '<span class="n">' + IC[k] + '</span><span class="tx"><b></b><small></small></span>' + (fill ? CHEV : '');
-      h.querySelector('b').textContent = t; h.querySelector('small').textContent = sub;
-      if (fill) { h.setAttribute('aria-expanded', String(!!open)); h.onclick = function () { openSec = openSec === k ? null : k; renderChooser(box); }; }
-      else { h.onclick = function () { loadFree(); chosen(); }; if (on) h.setAttribute('aria-current', 'true'); }
-      if (open && fill) { var body = add(wrap, document.createElement('div')); body.className = 'accb'; fill(body); }
-    };
     var ex = S.mode === 'drill' && exOf(S.drill), pc = S.mode === 'lesson' && pieceOf(S.piece);
-    sec('click', 'Just the click', S.mode === 'free' ? 'Playing now' : 'Any tempo, any beat', S.mode === 'free', false, null);
-    sec('timing', 'Timing drills', ex ? 'Playing: ' + ex.t : EX.length + ' drills in 3 levels', !!ex, openSec === 'timing', function (body) {
-      var seg = add(body, document.createElement('div')); seg.className = 'seg'; seg.id = 'lvlSeg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Level');
+    if (!STUDENT) pickTab = 'timing';
+    // the click, always one tap away
+    var ck = add(box, row(IC.click, 'Just the click', S.mode === 'free' ? 'Playing now' : 'Any tempo, any beat', '', S.mode === 'free', false));
+    ck.classList.add('pk'); ck.setAttribute('data-k', 'click');
+    ck.onclick = function () { loadFree(); chosen(); };
+    // the two tabs; a dot marks the tab whose entry is playing
+    if (STUDENT) {
+      var tabs = add(box, document.createElement('div')); tabs.className = 'ptabs'; tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', 'What to play');
+      [['timing', 'Timing drills', !!ex], ['lessons', 'My lessons', !!pc]].forEach(function (q) {
+        var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('data-tab', q[0]);
+        b.textContent = q[1]; b.setAttribute('aria-selected', String(pickTab === q[0]));
+        if (q[2]) b.classList.add('live');
+        b.onclick = function () { pickTab = q[0]; renderChooser(box); showCurrent(box); };
+        tabs.appendChild(b);
+      });
+    }
+    var body = add(box, document.createElement('div')); body.className = 'pkbody'; body.setAttribute('data-tab', pickTab);
+    if (pickTab === 'timing') {
+      var seg = add(body, document.createElement('div')); seg.className = 'seg lvls'; seg.id = 'lvlSeg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Level');
       LEVELS.forEach(function (L, i) { var b = document.createElement('button'); b.type = 'button'; b.textContent = L.n; b.setAttribute('aria-pressed', String(i === S.lvl)); b.onclick = function () { S.lvl = i; save(); renderChooser(box); }; seg.appendChild(b); });
       var lead = add(body, document.createElement('p')); lead.className = 'lead'; lead.textContent = LEVELS[S.lvl].lead;
       var n = 0;
@@ -209,8 +215,7 @@
         var b = add(body, row(n, e.t, e.sum, String(e.bpm), S.mode === 'drill' && S.drill === e.id, false));
         b.setAttribute('data-id', e.id); b.onclick = function () { loadDrill(e.id, true); chosen(); };
       });
-    });
-    if (STUDENT) sec('lessons', 'My lessons', pc ? 'Playing: ' + pc.t : LIVE.length + ' patterns from class', !!pc, openSec === 'lessons', function (body) {
+    } else {
       var lp = pieceOf(S.lastPiece);
       if (lp && !pc) {
         var c2 = add(body, document.createElement('button')); c2.type = 'button'; c2.className = 'cont'; c2.id = 'contP';
@@ -223,15 +228,16 @@
         b.setAttribute('data-id', p.id);
         if (!p.soon) b.onclick = function () { loadPiece(p.id, true); chosen(); };
       });
-    });
-    var note = add(box, document.createElement('p')); note.className = 'snote'; note.textContent = STUDENT ? 'Timing drills work with any note. My lessons are the patterns Arpit teaches you.' : 'Timing drills work with any note and any pattern.';
+    }
+    var note = add(box, document.createElement('p')); note.className = 'snote';
+    note.textContent = !STUDENT ? 'Timing drills work with any note and any pattern.' : pickTab === 'timing' ? 'Timing drills work with any note on your handpan.' : 'My lessons are the patterns Arpit teaches you in class.';
     if (!STUDENT) { var c = add(box, document.createElement('div')); c.className = 'cta'; c.innerHTML = '<b>Learning with Arpit?</b><p>Students also get the patterns from class here.</p><a href="/pages/trial">Book a free trial</a>'; }
   }
-  // the entry that is playing comes into view by itself
-  function showCurrent(box) { var on = box.querySelector('.accb .it.on'); if (on && on.scrollIntoView) { try { on.scrollIntoView({ block: 'nearest' }); } catch (e) { on.scrollIntoView(false); } } }
+  function showCurrent(box) { var on = box.querySelector('.pkbody .it.on'); if (on && on.scrollIntoView) { try { on.scrollIntoView({ block: 'nearest' }); } catch (e) { on.scrollIntoView(false); } } }
   function openPick(sec) {
-    openSec = sec !== undefined ? sec : playingSec();
-    if (openSec === 'lessons' && !STUDENT) openSec = 'timing';
+    var want = sec !== undefined ? sec : playingSec();
+    if (want === 'timing' || want === 'lessons') pickTab = want;
+    if (pickTab === 'lessons' && !STUDENT) pickTab = 'timing';
     if (S.mode === 'drill') { var e0 = exOf(S.drill); if (e0) S.lvl = e0.lv; }
     var body = document.createElement('div'); body.className = 'chooser';
     openSheet('What to play', body, 'pick'); renderChooser(body); showCurrent(body);
@@ -655,10 +661,10 @@
   setBpm(keep);
   // arriving from My classes: Start opens pattern 1, Continue opens where the student stopped, Choose opens the lessons
   if (jump === 'start' && STUDENT) loadPiece('scale', true);
-  openSec = jump === 'lessons' || jump === 'timing' ? jump : playingSec();
-  if (openSec === 'lessons' && !STUDENT) openSec = 'timing';
+  pickTab = jump === 'lessons' || jump === 'timing' ? jump : (playingSec() || 'timing');
+  if (pickTab === 'lessons' && !STUDENT) pickTab = 'timing';
   renderOpts(); updatePick(); renderSide();
-  if (jump === 'lessons' || jump === 'timing') { if (isPhone()) openPick(openSec); }
+  if (jump === 'lessons' || jump === 'timing') { if (isPhone()) openPick(jump); }
 
   if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('/pages/practice-sw.js', { scope: '/pages/practice' }).catch(function () {}); });
 })();
