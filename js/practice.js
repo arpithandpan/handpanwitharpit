@@ -360,10 +360,11 @@
   }
 
   // ---- sheet
-  var lastFocus = null, sheetHist = false;
+  var lastFocus = null, sheetHist = false, sheetBack = false;
   function openSheet(title, body, kind) {
     if ($('sheet').hidden) lastFocus = document.activeElement;
     $('shT').textContent = title; var sb = $('sBody'); sb.innerHTML = ''; sb.appendChild(body); sb.setAttribute('data-k', kind || '');
+    document.querySelector('.spanel').classList.toggle('half', kind === 'pick');
     if ($('sheet').hidden && isPhone() && !sheetHist) { try { history.pushState({ sheet: 1 }, ''); sheetHist = true; } catch (e) {} }
     $('sheet').hidden = false; document.body.classList.add('sv'); $('sX').focus();
   }
@@ -371,10 +372,13 @@
   function closeSheet(fromHistory) {
     if ($('sheet').hidden) return;
     $('sheet').hidden = true; document.body.classList.remove('sv'); $('sBody').innerHTML = ''; $('sBody').removeAttribute('data-k');
-    if (sheetHist) { sheetHist = false; if (fromHistory !== true) { try { history.back(); } catch (e) {} } }
+    if (sheetHist) { sheetHist = false; if (fromHistory !== true) { sheetBack = true; try { history.back(); } catch (e) {} } }
     try { if (lastFocus) lastFocus.focus(); } catch (e) {}
   }
-  window.addEventListener('popstate', function () { if (sheetHist) { sheetHist = false; closeSheet(true); } });
+  window.addEventListener('popstate', function () {
+    if (sheetBack) { sheetBack = false; if (!$('sheet').hidden && sheetHist) { sheetHist = false; try { history.pushState({ sheet: 1 }, ''); sheetHist = true; } catch (e) {} } return; }
+    if (sheetHist) { sheetHist = false; closeSheet(true); }
+  });
   $('sBg').onclick = function () { closeSheet(); }; $('sX').onclick = function () { closeSheet(); };
   (function () {   // swipe the sheet down to close it
     var panel = document.querySelector('.spanel'), y0 = null, dy = 0;
