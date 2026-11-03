@@ -166,15 +166,15 @@
 
   // ---- What to play: one list in two steps. First the click, timing drills, my lessons; then the drills or the lessons.
   // Phones open it in a sheet from the button above the player; wide screens keep it open on the left.
-  var step = 'root';
-  var STEPS = { root: 'What to play', timing: 'Timing drills', lessons: 'My lessons' };
+  // one section open at a time: the one that is playing, or the one the student opens
+  var openSec = null;
   var LIVE = PIECES.filter(function (x) { return !x.soon; });
   var IC = {
     click: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="M12 15l5-9"/></svg>',
     timing: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 18V12M9 18V6M14 18v-8M19 18V9"/></svg>',
     lessons: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/></svg>'
   };
-  var BACKI = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>';
+  var CHEV = '<svg class="ach" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
   function row(n, t, sub, tag, on, soon) {
     var b = document.createElement('button'); b.type = 'button'; b.className = 'it' + (on ? ' on' : '') + (soon ? ' soon' : '');
     b.innerHTML = '<span class="n"></span><span class="tx"><b></b><small></small></span><span class="tg"></span>';
@@ -183,62 +183,64 @@
     return b;
   }
   var LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-label="Locked"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-  function chosen() { if (isPhone()) closeSheet(); else renderSide(); updatePick(); }
-  function renderChooser(box, st) {
-    box.innerHTML = ''; box.setAttribute('data-step', st);
-    var add = function (el) { box.appendChild(el); return el; };
-    if (st === 'root') {
-      var big = function (k, t, sub, more, on, fn) { var b = add(row(IC[k], t, sub, more ? '<span class="more" aria-hidden="true">›</span>' : '', on, false)); b.classList.add('big'); b.setAttribute('data-k', k); b.onclick = fn; return b; };
-      big('click', 'Just the click', 'Any tempo, any beat', false, S.mode === 'free', function () { loadFree(); chosen(); });
-      big('timing', 'Timing drills', EX.length + ' drills in 3 levels', true, S.mode === 'drill', function () { goStep('timing'); });
-      if (STUDENT) big('lessons', 'My lessons', LIVE.length + ' patterns from your classes', true, S.mode === 'lesson', function () { goStep('lessons'); });
-      var p = add(document.createElement('p')); p.className = 'snote'; p.textContent = STUDENT ? 'Timing drills work with any note. My lessons are the patterns Arpit teaches you.' : 'Timing drills work with any note and any pattern.';
-      if (!STUDENT) { var c = add(document.createElement('div')); c.className = 'cta'; c.innerHTML = '<b>Learning with Arpit?</b><p>Students also get the patterns from class here.</p><a href="/pages/trial">Book a free trial</a>'; }
-    } else if (st === 'timing') {
-      var seg = add(document.createElement('div')); seg.className = 'seg'; seg.id = 'lvlSeg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Level');
-      LEVELS.forEach(function (L, i) { var b = document.createElement('button'); b.type = 'button'; b.textContent = L.n; b.setAttribute('aria-pressed', String(i === S.lvl)); b.onclick = function () { S.lvl = i; save(); renderChooser(box, 'timing'); }; seg.appendChild(b); });
-      var lead = add(document.createElement('p')); lead.className = 'lead'; lead.textContent = LEVELS[S.lvl].lead;
+  function chosen() { if (isPhone()) closeSheet(); else { openSec = playingSec(); renderSide(); } updatePick(); }
+  function playingSec() { return S.mode === 'drill' ? 'timing' : S.mode === 'lesson' ? 'lessons' : null; }
+  function renderChooser(box) {
+    box.innerHTML = '';
+    var add = function (p, el) { p.appendChild(el); return el; };
+    var sec = function (k, t, sub, on, open, fill) {
+      var wrap = add(box, document.createElement('div')); wrap.className = 'acc' + (open ? ' open' : '') + (on ? ' on' : ''); wrap.setAttribute('data-sec', k);
+      var h = add(wrap, document.createElement('button')); h.type = 'button'; h.className = 'acch'; h.setAttribute('data-k', k);
+      h.innerHTML = '<span class="n">' + IC[k] + '</span><span class="tx"><b></b><small></small></span>' + (fill ? CHEV : '');
+      h.querySelector('b').textContent = t; h.querySelector('small').textContent = sub;
+      if (fill) { h.setAttribute('aria-expanded', String(!!open)); h.onclick = function () { openSec = openSec === k ? null : k; renderChooser(box); }; }
+      else { h.onclick = function () { loadFree(); chosen(); }; if (on) h.setAttribute('aria-current', 'true'); }
+      if (open && fill) { var body = add(wrap, document.createElement('div')); body.className = 'accb'; fill(body); }
+    };
+    var ex = S.mode === 'drill' && exOf(S.drill), pc = S.mode === 'lesson' && pieceOf(S.piece);
+    sec('click', 'Just the click', S.mode === 'free' ? 'Playing now' : 'Any tempo, any beat', S.mode === 'free', false, null);
+    sec('timing', 'Timing drills', ex ? 'Playing: ' + ex.t : EX.length + ' drills in 3 levels', !!ex, openSec === 'timing', function (body) {
+      var seg = add(body, document.createElement('div')); seg.className = 'seg'; seg.id = 'lvlSeg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Level');
+      LEVELS.forEach(function (L, i) { var b = document.createElement('button'); b.type = 'button'; b.textContent = L.n; b.setAttribute('aria-pressed', String(i === S.lvl)); b.onclick = function () { S.lvl = i; save(); renderChooser(box); }; seg.appendChild(b); });
+      var lead = add(body, document.createElement('p')); lead.className = 'lead'; lead.textContent = LEVELS[S.lvl].lead;
       var n = 0;
       EX.forEach(function (e) {
         if (e.lv !== S.lvl) return; n++;
-        var b = add(row(n, e.t, e.sum, String(e.bpm), S.mode === 'drill' && S.drill === e.id, false));
+        var b = add(body, row(n, e.t, e.sum, String(e.bpm), S.mode === 'drill' && S.drill === e.id, false));
         b.setAttribute('data-id', e.id); b.onclick = function () { loadDrill(e.id, true); chosen(); };
       });
-    } else {
+    });
+    if (STUDENT) sec('lessons', 'My lessons', pc ? 'Playing: ' + pc.t : LIVE.length + ' patterns from your classes', !!pc, openSec === 'lessons', function (body) {
       var lp = pieceOf(S.lastPiece);
-      if (lp) {
-        var c2 = add(document.createElement('button')); c2.type = 'button'; c2.className = 'cont'; c2.id = 'contP';
+      if (lp && !pc) {
+        var c2 = add(body, document.createElement('button')); c2.type = 'button'; c2.className = 'cont'; c2.id = 'contP';
         c2.innerHTML = '<span class="ct"><span class="ck">Continue</span><b></b></span><span class="cgo">' + PLAYI + '</span>';
         c2.querySelector('b').textContent = lp.t + ' · ' + lp.secs[Math.min(S.lastSec || 0, lp.secs.length - 1)].n.replace('Variation ', 'Var ');
         c2.onclick = function () { loadPiece(lp.id, false, S.lastSec || 0); chosen(); };
       }
-      PIECES.forEach(function (pc, i) {
-        var b = add(row(i + 1, pc.t, pc.sum, pc.soon ? LOCK : pc.tag, S.mode === 'lesson' && S.piece === pc.id, pc.soon));
-        b.setAttribute('data-id', pc.id);
-        if (!pc.soon) b.onclick = function () { loadPiece(pc.id, true); chosen(); };
+      PIECES.forEach(function (p, i) {
+        var b = add(body, row(i + 1, p.t, p.sum, p.soon ? LOCK : p.tag, S.mode === 'lesson' && S.piece === p.id, p.soon));
+        b.setAttribute('data-id', p.id);
+        if (!p.soon) b.onclick = function () { loadPiece(p.id, true); chosen(); };
       });
-    }
+    });
+    var note = add(box, document.createElement('p')); note.className = 'snote'; note.textContent = STUDENT ? 'Timing drills work with any note. My lessons are the patterns Arpit teaches you.' : 'Timing drills work with any note and any pattern.';
+    if (!STUDENT) { var c = add(box, document.createElement('div')); c.className = 'cta'; c.innerHTML = '<b>Learning with Arpit?</b><p>Students also get the patterns from class here.</p><a href="/pages/trial">Book a free trial</a>'; }
   }
-  function goStep(st) {
-    if (st === 'lessons' && !STUDENT) st = 'timing';
-    step = st;
-    if (isPhone()) { if ($('sheet').hidden || $('sBody').getAttribute('data-k') !== 'pick') openPick(st); else { $('shT').textContent = STEPS[st]; $('sBack').hidden = st === 'root'; renderChooser($('sBody').firstChild, st); $('sX').focus(); } }
-    else renderSide();
-  }
-  function openPick(st) {
-    step = st || 'root';
+  // the entry that is playing comes into view by itself
+  function showCurrent(box) { var on = box.querySelector('.accb .it.on'); if (on && on.scrollIntoView) { try { on.scrollIntoView({ block: 'nearest' }); } catch (e) { on.scrollIntoView(false); } } }
+  function openPick(sec) {
+    openSec = sec !== undefined ? sec : playingSec();
+    if (openSec === 'lessons' && !STUDENT) openSec = 'timing';
+    if (S.mode === 'drill') { var e0 = exOf(S.drill); if (e0) S.lvl = e0.lv; }
     var body = document.createElement('div'); body.className = 'chooser';
-    openSheet(STEPS[step], body, 'pick'); $('sBack').hidden = step === 'root';
-    renderChooser(body, step);
+    openSheet('What to play', body, 'pick'); renderChooser(body); showCurrent(body);
   }
   function renderSide() {
     if (isPhone()) return;
-    $('sideT').textContent = STEPS[step]; $('sideBack').hidden = step === 'root';
-    renderChooser($('sideList'), step);
+    renderChooser($('sideList'));
   }
-  $('sideBack').onclick = function () { goStep('root'); };
-  $('sBack').onclick = function () { goStep('root'); };
-  $('pick').onclick = function () { openPick('root'); };
+  $('pick').onclick = function () { openPick(); };
   function updatePick() {
     var pc = S.mode === 'lesson' && pieceOf(S.piece), e = S.mode === 'drill' && exOf(S.drill);
     var name = pc ? pc.t : e ? e.t : 'Just the click', where = pc ? 'My lessons' : e ? LEVELS[e.lv].n : '';
@@ -362,7 +364,6 @@
   function openSheet(title, body, kind) {
     if ($('sheet').hidden) lastFocus = document.activeElement;
     $('shT').textContent = title; var sb = $('sBody'); sb.innerHTML = ''; sb.appendChild(body); sb.setAttribute('data-k', kind || '');
-    $('sBack').hidden = true;
     if ($('sheet').hidden && isPhone() && !sheetHist) { try { history.pushState({ sheet: 1 }, ''); sheetHist = true; } catch (e) {} }
     $('sheet').hidden = false; document.body.classList.add('sv'); $('sX').focus();
   }
@@ -501,7 +502,7 @@
   function setBpm(v) {
     S.bpm = Math.max(30, Math.min(200, Math.round(v)));
     if (document.activeElement !== $('pBpm')) $('pBpm').value = S.bpm;
-    $('mBig').textContent = S.bpm; $('mRange').value = S.bpm; save();
+    $('mBig').textContent = S.bpm; $('mRange').value = S.bpm; placeWeight(); save();
   }
   $('mMinus').onclick = $('pMinus').onclick = function () { setBpm(S.bpm - 1); };
   $('mPlus').onclick = $('pPlus').onclick = function () { setBpm(S.bpm + 1); };
@@ -531,15 +532,17 @@
     // the big number in the metronome opens the same editor
     $('mEdit').onclick = function () { document.body.classList.add('bpm-edit'); f.focus(); };
   })();
-  var taps = [];
-  $('mTap').onclick = function () {
-    var t = performance.now();
-    if (taps.length && t - taps[taps.length - 1] > 2000) taps = [];
-    taps.push(t); if (taps.length > 5) taps.shift();
-    if (taps.length >= 2) { var gaps = 0; for (var i = 1; i < taps.length; i++) gaps += taps[i] - taps[i - 1]; setBpm(60000 / (gaps / (taps.length - 1))); }
-    $('mTap').querySelector('span').textContent = taps.length >= 2 ? 'Tap tempo · ' + S.bpm : 'Tap again in time';
-    clearTimeout($('mTap').t); $('mTap').t = setTimeout(function () { $('mTap').querySelector('span').textContent = 'Tap tempo'; }, 2500);
-  };
+  // ---- the metronome: the weight slides up for slow tempos and down for fast ones, like a real one;
+  // the rod reaches one side exactly on each click
+  var RM = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  var swing = { t: 0, k: 0, on: false };
+  function placeWeight() { var w = $('mWeight'); if (w) w.setAttribute('transform', 'translate(0 ' + Math.round((S.bpm - 30) / 170 * 92) + ')'); }
+  function rod(deg) { var r = $('mRod'); if (r) r.setAttribute('transform', 'rotate(' + deg.toFixed(2) + ' 110 200)'); }
+  function swingFrame() {
+    if (!swing.on || RM.matches || S.mode !== 'free') { rod(0); return; }
+    var T = 60 / S.bpm, x = (ctx.currentTime - swing.t) / T, k = swing.k + Math.floor(x), f = x - Math.floor(x);
+    rod(24 * (k % 2 ? -1 : 1) * Math.cos(Math.PI * f));
+  }
 
   // ---- audio: a short beep, high on beat 1. It never sounds like a handpan, so you hear your own notes and the click apart
   var ctx, running = false, nextTime = 0, tick = 0, timer = null, queue = [], wake = null, keepAlive = null;
@@ -578,8 +581,9 @@
     while (queue.length && queue[0].time <= ctx.currentTime) {
       var q = queue.shift();
       if (S.mode === 'lesson' && PC) pieceTick(q.tick);
-      if (q.isBeat && S.mode !== 'lesson') { lightBox(q.beat, q.muted); if (S.mode === 'drill') drillStat(q); }
+      if (q.isBeat && S.mode !== 'lesson') { lightBox(q.beat, q.muted); if (S.mode === 'drill') drillStat(q); swing.t = q.time; swing.k = Math.floor(q.tick / S.sub); swing.on = true; }
     }
+    swingFrame();
     requestAnimationFrame(draw);
   }
   var starting = false;
@@ -606,7 +610,7 @@
     try { wake = await navigator.wakeLock.request('screen'); } catch (e) { wake = null; }
   }
   function stop() {
-    running = false; clearInterval(timer); queue = [];
+    running = false; clearInterval(timer); queue = []; swing.on = false; rod(0);
     clearTimeout(offT); lightPan(null); lightBox(-1, false);
     $('pPlay').innerHTML = PLAY; $('pPlay').setAttribute('aria-label', 'Start'); document.body.classList.remove('playing');
     pcHeads.forEach(function (x) { x.classList.remove('on'); });
@@ -647,8 +651,10 @@
   setBpm(keep);
   // arriving from My classes: Start opens pattern 1, Continue opens where the student stopped, Choose opens the lessons
   if (jump === 'start' && STUDENT) loadPiece('scale', true);
+  openSec = jump === 'lessons' || jump === 'timing' ? jump : playingSec();
+  if (openSec === 'lessons' && !STUDENT) openSec = 'timing';
   renderOpts(); updatePick(); renderSide();
-  if (jump === 'lessons' || jump === 'timing') goStep(jump);
+  if (jump === 'lessons' || jump === 'timing') { if (isPhone()) openPick(openSec); }
 
   if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('/pages/practice-sw.js', { scope: '/pages/practice' }).catch(function () {}); });
 })();
