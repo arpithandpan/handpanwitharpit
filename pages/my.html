@@ -93,7 +93,8 @@
 .ws-policy p:not(.mc-h) { font-size: 0.92rem; color: var(--text-mid); line-height: 1.55; margin: 0 0 0.5rem; }
 .ws-policy .mc-btn { margin-top: 0.6rem; }
 .mc-info small a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
-.mc-sec { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mid); margin: 0.8rem 0 -0.3rem 0.2rem; }
+.mc-sec { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--maroon); margin: 1.1rem 0 -0.35rem 0.2rem; }
+.mc-sec:first-of-type { margin-top: 0.2rem; }
 .mc-help-h { font-size: 0.85rem; color: var(--text-mid); margin: 1.1rem 0 0.1rem; padding-top: 1rem; border-top: 1px solid rgba(80,0,24,0.12); }
 .mc-help-h:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .mc-help-h + .mc-link { border-top: 0; padding-top: 0.5rem; }
@@ -511,9 +512,10 @@ a.mc-opt { text-decoration: none; }
       bindLinks(); return;
     }
     const html = [head(c ? 'Times are in your time zone · ' + esc(c.tzCity) : 'Your bookings with Arpit')];
-    const both = !!(c && (w || wl));
     if (c) {
-    if (both) html.push('<p class="mc-sec">Classes</p>');
+    html.push('<p class="mc-sec">Practice</p>');
+    html.push(practiceCard());
+    html.push('<p class="mc-sec">Classes</p>');
     const next = c.upcoming.find(u => !u.later) || c.upcoming[0];
 
     // Next class
@@ -543,9 +545,6 @@ a.mc-opt { text-decoration: none; }
         + '</div><a class="mc-btn solid" href="' + esc(c.pay.url) + '">Pay ' + money(c.pay.amount, c.pay.currency) + '</a></div></div>');
     }
 
-    // Rhythm practice (students in weekly classes)
-    html.push(practiceCard());
-
     // Coming up (skip the next class, it has its own card)
     const rest = c.upcoming.filter(u => !next || u.key !== next.key);
     const parts = [];
@@ -564,9 +563,10 @@ a.mc-opt { text-decoration: none; }
 
     }
     if (w || wl) {
-      if (both) html.push('<p class="mc-sec">Workshops</p>');
+      html.push('<p class="mc-sec">Workshops</p>');
       html.push(workshopsHtml(w, wl));
     }
+    html.push('<p class="mc-sec">Help</p>');
     html.push('<div class="mc-card">' + linksHtml(c ? c.payments : []) + '</div>');
     $('mcPage').innerHTML = html.join('');
     bindLinks();
