@@ -164,83 +164,78 @@
   var PLAY = PLAYI + '<span>Start</span>';
   var STOP = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><span>Stop</span>';
 
-  // ---- What to play: one list in two steps. First the click, timing drills, my lessons; then the drills or the lessons.
-  // Phones open it in a sheet from the button above the player; wide screens keep it open on the left.
-  // "Just the click" stays pinned on top; under it two tabs, Timing drills and My lessons.
-  // Tapping an entry applies it at once; there is no confirm step.
-  var pickTab = 'timing';
+  // ---- What to play: one flat column in three labelled groups.
+  // Phones open it in a centered popup; wide screens keep it open on the left.
+  // Every row carries a Choose button; a tap anywhere on the row applies it at once.
   var LIVE = PIECES.filter(function (x) { return !x.soon; });
   var IC = {
     click: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="M12 15l5-9"/></svg>'
   };
   var CHK = '<span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
+  var CH = '<span class="pick2" aria-hidden="true">Choose</span>';
   function row(n, t, sub, tag, on, soon) {
     var b = document.createElement('button'); b.type = 'button'; b.className = 'it' + (on ? ' on' : '') + (soon ? ' soon' : '');
-    b.innerHTML = '<span class="n"></span><span class="tx"><b></b><small></small></span><span class="tg"></span>' + (on ? CHK : '');
-    b.querySelector('.n').innerHTML = n; b.querySelector('b').textContent = t; b.querySelector('small').textContent = sub; b.querySelector('.tg').innerHTML = tag;
+    b.innerHTML = '<span class="n"></span><span class="tx"><b></b><small></small></span>' + (tag ? '<span class="tg"></span>' : '') + (on ? CHK : soon ? '' : CH);
+    b.querySelector('.n').innerHTML = n; b.querySelector('b').textContent = t; b.querySelector('small').textContent = sub;
+    if (tag) b.querySelector('.tg').innerHTML = tag;
     if (on) b.setAttribute('aria-current', 'true'); if (soon) b.disabled = true;
     return b;
   }
   var LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-label="Locked"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-  function chosen() { if (isPhone()) closeSheet(); else { pickTab = playingSec() === 'lessons' ? 'lessons' : 'timing'; renderSide(); } updatePick(); }
+  function chosen() { if (isPhone()) closeSheet(); else renderSide(); updatePick(); }
   function playingSec() { return S.mode === 'drill' ? 'timing' : S.mode === 'lesson' ? 'lessons' : null; }
   function renderChooser(box) {
     box.innerHTML = '';
     var add = function (p, el) { p.appendChild(el); return el; };
+    function lab(txt, k) { var h = document.createElement('h3'); h.className = 'sec'; h.setAttribute('data-sec', k); h.textContent = txt; return add(box, h); }
     var ex = S.mode === 'drill' && exOf(S.drill), pc = S.mode === 'lesson' && pieceOf(S.piece);
-    if (!STUDENT) pickTab = 'timing';
-    // the click, always one tap away
+    // the click, always on top
+    lab('Metronome', 'click');
     var ck = add(box, row(IC.click, 'Just the click', S.mode === 'free' ? 'Playing now' : 'Any tempo, any beat', '', S.mode === 'free', false));
     ck.classList.add('pk'); ck.setAttribute('data-k', 'click');
     ck.onclick = function () { loadFree(); chosen(); };
-    // the two tabs; a dot marks the tab whose entry is playing
+    // the drills
+    lab('Timing drills · any note', 'timing');
+    var seg = add(box, document.createElement('div')); seg.className = 'seg lvls'; seg.id = 'lvlSeg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Level');
+    LEVELS.forEach(function (L, i) { var b = document.createElement('button'); b.type = 'button'; b.textContent = L.n; b.setAttribute('aria-pressed', String(i === S.lvl)); b.onclick = function () { S.lvl = i; save(); renderChooser(box); }; seg.appendChild(b); });
+    var lead = add(box, document.createElement('p')); lead.className = 'lead'; lead.textContent = LEVELS[S.lvl].lead;
+    var n = 0;
+    EX.forEach(function (e) {
+      if (e.lv !== S.lvl) return; n++;
+      var b = add(box, row(n, e.t, e.sum, '', S.mode === 'drill' && S.drill === e.id, false));
+      b.setAttribute('data-id', e.id); b.onclick = function () { loadDrill(e.id, true); chosen(); };
+    });
+    // the lessons, students only
     if (STUDENT) {
-      var tabs = add(box, document.createElement('div')); tabs.className = 'ptabs'; tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', 'What to play');
-      [['timing', 'Timing drills', !!ex], ['lessons', 'My lessons', !!pc]].forEach(function (q) {
-        var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('data-tab', q[0]);
-        b.textContent = q[1]; b.setAttribute('aria-selected', String(pickTab === q[0]));
-        if (q[2]) b.classList.add('live');
-        b.onclick = function () { pickTab = q[0]; renderChooser(box); showCurrent(box); };
-        tabs.appendChild(b);
-      });
-    }
-    var body = add(box, document.createElement('div')); body.className = 'pkbody'; body.setAttribute('data-tab', pickTab);
-    if (pickTab === 'timing') {
-      var seg = add(body, document.createElement('div')); seg.className = 'seg lvls'; seg.id = 'lvlSeg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Level');
-      LEVELS.forEach(function (L, i) { var b = document.createElement('button'); b.type = 'button'; b.textContent = L.n; b.setAttribute('aria-pressed', String(i === S.lvl)); b.onclick = function () { S.lvl = i; save(); renderChooser(box); }; seg.appendChild(b); });
-      var lead = add(body, document.createElement('p')); lead.className = 'lead'; lead.textContent = LEVELS[S.lvl].lead;
-      var n = 0;
-      EX.forEach(function (e) {
-        if (e.lv !== S.lvl) return; n++;
-        var b = add(body, row(n, e.t, e.sum, String(e.bpm), S.mode === 'drill' && S.drill === e.id, false));
-        b.setAttribute('data-id', e.id); b.onclick = function () { loadDrill(e.id, true); chosen(); };
-      });
-    } else {
+      lab('My lessons · from your classes', 'lessons');
       var lp = pieceOf(S.lastPiece);
       if (lp && !pc) {
-        var c2 = add(body, document.createElement('button')); c2.type = 'button'; c2.className = 'cont'; c2.id = 'contP';
+        var c2 = add(box, document.createElement('button')); c2.type = 'button'; c2.className = 'cont'; c2.id = 'contP';
         c2.innerHTML = '<span class="ct"><span class="ck">Continue</span><b></b></span><span class="cgo">' + PLAYI + '</span>';
         c2.querySelector('b').textContent = lp.t + ' · ' + lp.secs[Math.min(S.lastSec || 0, lp.secs.length - 1)].n.replace('Variation ', 'Var ');
         c2.onclick = function () { loadPiece(lp.id, false, S.lastSec || 0); chosen(); };
       }
       PIECES.forEach(function (p, i) {
-        var b = add(body, row(i + 1, p.t, p.sum, p.soon ? LOCK : p.tag, S.mode === 'lesson' && S.piece === p.id, p.soon));
+        var b = add(box, row(i + 1, p.t, p.sum, p.soon ? LOCK : '', S.mode === 'lesson' && S.piece === p.id, p.soon));
         b.setAttribute('data-id', p.id);
         if (!p.soon) b.onclick = function () { loadPiece(p.id, true); chosen(); };
       });
     }
     var note = add(box, document.createElement('p')); note.className = 'snote';
-    note.textContent = !STUDENT ? 'Timing drills work with any note and any pattern.' : pickTab === 'timing' ? 'Timing drills work with any note on your handpan.' : 'My lessons are the patterns Arpit teaches you in class.';
+    note.textContent = STUDENT ? 'Timing drills work with any note. My lessons are the patterns Arpit teaches you in class.' : 'Timing drills work with any note and any pattern.';
     if (!STUDENT) { var c = add(box, document.createElement('div')); c.className = 'cta'; c.innerHTML = '<b>Learning with Arpit?</b><p>Students also get the patterns from class here.</p><a href="/pages/trial">Book a free trial</a>'; }
   }
-  function showCurrent(box) { var on = box.querySelector('.pkbody .it.on'); if (on && on.scrollIntoView) { try { on.scrollIntoView({ block: 'nearest' }); } catch (e) { on.scrollIntoView(false); } } }
+  function showCurrent(box) { var on = box.querySelector('.it.on'); if (on && on.scrollIntoView) { try { on.scrollIntoView({ block: 'nearest' }); } catch (e) { on.scrollIntoView(false); } } }
   function openPick(sec) {
-    var want = sec !== undefined ? sec : playingSec();
-    if (want === 'timing' || want === 'lessons') pickTab = want;
-    if (pickTab === 'lessons' && !STUDENT) pickTab = 'timing';
+    var want = sec !== undefined ? sec : null;
+    if (want === 'lessons' && !STUDENT) want = null;
     if (S.mode === 'drill') { var e0 = exOf(S.drill); if (e0) S.lvl = e0.lv; }
     var body = document.createElement('div'); body.className = 'chooser';
-    openSheet('What to play', body, 'pick'); renderChooser(body); showCurrent(body);
+    openSheet('What to play', body, 'pick'); renderChooser(body);
+    if (want) {
+      var h = body.querySelector('.sec[data-sec="' + want + '"]');
+      if (h && h.scrollIntoView) { try { h.scrollIntoView({ block: 'start' }); } catch (e) { h.scrollIntoView(); } }
+    } else showCurrent(body);
   }
   function renderSide() {
     if (isPhone()) return;
@@ -661,8 +656,6 @@
   setBpm(keep);
   // arriving from My classes: Start opens pattern 1, Continue opens where the student stopped, Choose opens the lessons
   if (jump === 'start' && STUDENT) loadPiece('scale', true);
-  pickTab = jump === 'lessons' || jump === 'timing' ? jump : (playingSec() || 'timing');
-  if (pickTab === 'lessons' && !STUDENT) pickTab = 'timing';
   renderOpts(); updatePick(); renderSide();
   if (jump === 'lessons' || jump === 'timing') { if (isPhone()) openPick(jump); }
 
