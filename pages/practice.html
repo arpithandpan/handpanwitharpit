@@ -17,10 +17,11 @@
 :root{
   --wine:#500018; --wine-soft:#f2dcd7; --ivory:#f5eee5; --paper:#fffdfa; --sand:#ece2d5;
   --ink:#2a1418; --ink-2:#4f3b3c; --ink-3:#5e4645; --line:rgba(80,0,24,.14); --tl:rgba(80,0,24,.38); --on-wine:#fffdfa; --teal:#2f6461;
+  --scrim:rgba(42,20,24,.55);
   --serif:'Cormorant Garamond',Georgia,serif; --sans:'Figtree',system-ui,-apple-system,sans-serif;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--wine:#e9a9a0;--wine-soft:#4a2228;--ivory:#1a1214;--paper:#241a1c;--sand:#2e2224;--ink:#f5eee5;--ink-2:#dccfc4;--ink-3:#c9b8b0;--line:rgba(245,238,229,.14);--tl:rgba(245,238,229,.44);--on-wine:#1a1214;--teal:#8cc5bd;color-scheme:dark}}
-:root[data-theme="dark"]{--wine:#e9a9a0;--wine-soft:#4a2228;--ivory:#1a1214;--paper:#241a1c;--sand:#2e2224;--ink:#f5eee5;--ink-2:#dccfc4;--ink-3:#c9b8b0;--line:rgba(245,238,229,.14);--tl:rgba(245,238,229,.44);--on-wine:#1a1214;--teal:#8cc5bd;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--wine:#e9a9a0;--wine-soft:#4a2228;--ivory:#1a1214;--paper:#241a1c;--sand:#2e2224;--ink:#f5eee5;--ink-2:#dccfc4;--ink-3:#c9b8b0;--line:rgba(245,238,229,.14);--tl:rgba(245,238,229,.44);--on-wine:#1a1214;--teal:#8cc5bd;--scrim:rgba(0,0,0,.72);color-scheme:dark}}
+:root[data-theme="dark"]{--wine:#e9a9a0;--wine-soft:#4a2228;--ivory:#1a1214;--paper:#241a1c;--sand:#2e2224;--ink:#f5eee5;--ink-2:#dccfc4;--ink-3:#c9b8b0;--line:rgba(245,238,229,.14);--tl:rgba(245,238,229,.44);--on-wine:#1a1214;--teal:#8cc5bd;--scrim:rgba(0,0,0,.72);color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--ivory);color:var(--ink-2);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
@@ -207,8 +208,9 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
 
 /* sheet */
 .sheet{position:fixed;inset:0;z-index:30}
-.sbg{position:absolute;inset:0;background:rgba(26,18,20,.45)}
-.spanel{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:var(--paper);border-radius:24px 24px 0 0;padding:14px 18px max(20px,env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(42,20,24,.2);transition:transform .2s}
+.sbg{position:absolute;inset:0;background:var(--scrim);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.spanel{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:var(--paper);border-radius:24px 24px 0 0;padding:14px 18px max(20px,env(safe-area-inset-bottom));box-shadow:0 -18px 50px rgba(0,0,0,.35),inset 0 0 0 1px var(--line);transition:transform .2s}
+@media (max-width:899px){.spanel.half{max-height:min(68vh,620px)}}
 .shead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .shead h2{flex:1;min-width:0;margin:0;font:600 1.6rem/1.15 var(--serif);color:var(--ink)}
 .sgrp{display:grid;gap:12px}
@@ -524,6 +526,6 @@ body.bpm-edit .mtr{min-height:0}
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="/js/practice.js?v=27" defer></script>
+<script src="/js/practice.js?v=28" defer></script>
 </body>
 </html>
