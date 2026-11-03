@@ -210,7 +210,21 @@ body.bpm-edit .ebtns{display:flex;gap:10px}
 .sheet{position:fixed;inset:0;z-index:30}
 .sbg{position:absolute;inset:0;background:var(--scrim);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .spanel{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:var(--paper);border-radius:24px 24px 0 0;padding:14px 18px max(20px,env(safe-area-inset-bottom));box-shadow:0 -18px 50px rgba(0,0,0,.35),inset 0 0 0 1px var(--line);transition:transform .2s}
-@media (max-width:899px){.spanel.half{max-height:min(68vh,620px)}}
+/* the chooser is a centered popup with a FIXED height, so opening a section never moves its edges;
+   the open section grows inside it and its list scrolls within */
+@media (max-width:899px){
+  .spanel.half{top:50%;bottom:auto;left:14px;right:14px;transform:translateY(-50%);height:min(72vh,640px);max-height:none;border-radius:24px;padding-bottom:16px;display:flex;flex-direction:column;overflow:hidden}
+  .spanel.half .shead{flex:none}
+  .spanel.half #sBody{flex:1;min-height:0;display:flex;flex-direction:column}
+  .spanel.half .chooser{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+  .spanel.half .acc{flex:none}
+  .spanel.half .acc.open{flex:1;min-height:0;display:flex;flex-direction:column}
+  .spanel.half .acc.open .acch{flex:none}
+  .spanel.half .acc.open .accb{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .spanel.half .chooser>.snote{margin-top:auto;padding-top:8px}
+  .spanel.half .chooser>.cta{margin-top:auto}
+}
+@media (max-width:374px){.spanel.half{left:8px;right:8px;padding-left:12px;padding-right:12px}}
 .shead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .shead h2{flex:1;min-width:0;margin:0;font:600 1.6rem/1.15 var(--serif);color:var(--ink)}
 .sgrp{display:grid;gap:12px}
@@ -526,6 +540,6 @@ body.bpm-edit .mtr{min-height:0}
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="/js/practice.js?v=28" defer></script>
+<script src="/js/practice.js?v=29" defer></script>
 </body>
 </html>
