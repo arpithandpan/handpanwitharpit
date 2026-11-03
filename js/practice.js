@@ -210,7 +210,7 @@
         b.setAttribute('data-id', e.id); b.onclick = function () { loadDrill(e.id, true); chosen(); };
       });
     });
-    if (STUDENT) sec('lessons', 'My lessons', pc ? 'Playing: ' + pc.t : LIVE.length + ' patterns from your classes', !!pc, openSec === 'lessons', function (body) {
+    if (STUDENT) sec('lessons', 'My lessons', pc ? 'Playing: ' + pc.t : LIVE.length + ' patterns from class', !!pc, openSec === 'lessons', function (body) {
       var lp = pieceOf(S.lastPiece);
       if (lp && !pc) {
         var c2 = add(body, document.createElement('button')); c2.type = 'button'; c2.className = 'cont'; c2.id = 'contP';
@@ -382,7 +382,7 @@
   $('sBg').onclick = function () { closeSheet(); }; $('sX').onclick = function () { closeSheet(); };
   (function () {   // swipe the sheet down to close it
     var panel = document.querySelector('.spanel'), y0 = null, dy = 0;
-    panel.addEventListener('touchstart', function (e) { if (panel.scrollTop > 0) return; y0 = e.touches[0].clientY; dy = 0; panel.style.transition = 'none'; }, { passive: true });
+    panel.addEventListener('touchstart', function (e) { if (panel.scrollTop > 0 || panel.classList.contains('half')) return; y0 = e.touches[0].clientY; dy = 0; panel.style.transition = 'none'; }, { passive: true });
     panel.addEventListener('touchmove', function (e) { if (y0 === null) return; dy = Math.max(0, e.touches[0].clientY - y0); panel.style.transform = 'translateY(' + dy + 'px)'; }, { passive: true });
     panel.addEventListener('touchend', function () { if (y0 === null) return; panel.style.transition = ''; panel.style.transform = ''; if (dy > 70) closeSheet(); y0 = null; });
   })();
