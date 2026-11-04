@@ -23,9 +23,9 @@
 <link rel="preload" href="/fonts/figtree-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/pages/dashboard*"}}]},"eagerness":"moderate"}]}</script>
 <script>document.documentElement.classList.add('js');try{var r=sessionStorage.getItem('logoRot');if(r)document.documentElement.style.setProperty('--lr',r+'deg')}catch(e){}</script>
-<link rel="stylesheet" href="/css/site.css?v=2026-11-04e">
+<link rel="stylesheet" href="/css/site.css?v=2026-11-05b">
 <link rel="stylesheet" href="../css/style.css"/>
-<link rel="stylesheet" href="/css/flow.css?v=2026-11-04e">
+<link rel="stylesheet" href="/css/flow.css?v=2026-11-05b">
 <style>
 .tb-wrap { max-width: 760px; margin: 0 auto; }
 .tb-card { background: var(--card); border-radius: var(--card-radius); padding: 2rem 2rem 2.2rem; }
@@ -93,6 +93,7 @@
 .wk-short { display: none; }
 .tb-sum-change { flex-shrink: 0; align-self: center; display: inline-flex; align-items: center; gap: 0.35rem; background: var(--card); border: 1px solid var(--rule); border-radius: 40px; color: var(--maroon); font-family: var(--font-body); font-size: 0.88rem; cursor: pointer; padding: 0.45rem 0.8rem; }
 .tb-book { width: 100%; margin-top: 1.5rem; height: 56px; font-size: 1.05rem; }
+@media (min-width: 600px) { .tb-book { display: inline-flex; width: auto; min-width: 240px; align-self: flex-start; padding: 0 2rem; } }
 .tb-book[aria-busy="true"] { opacity: 0.7; pointer-events: none; }
 .tb-fine { text-align: center; font-size: 0.85rem; color: var(--text-mid); margin-top: 0.9rem; }
 .tb-alert { display: none; margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 12px; background: #FBEAEA; color: #8C1D18; font-size: 0.95rem; }
@@ -316,13 +317,22 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2"/>
 <style id="fields-v75">
 /* v75: fields look the same on every page: white, lifted by a soft shadow, on a card a shade deeper than the page. */
-:root{--lift:0 1px 2px rgba(42,20,24,.14),0 2px 6px rgba(42,20,24,.06);--card-deep:#efe5d8}
-.tb-card,.en-card,.lk-card,.form-card{background:var(--card-deep)!important}
-.tb-input,.lk-input,.country-search,.form-card input,.form-card select,.form-card textarea,.tb-cc,.country-select,.tb-opt:not(.on),.tb-day:not(.on):not(:disabled):not(.bkd),.tb-time:not(.on):not(.bkd):not(:disabled){background:#fff!important;border-color:transparent!important;box-shadow:var(--lift)!important}
+:root{--lift:0 1px 2px rgba(42,20,24,.14),0 2px 6px rgba(42,20,24,.06);--card-deep:#f5eee5}
+.tb-card,.en-card{background:#fff!important}.lk-card,.form-card,.mc-card{background:#f5eee5!important}
+.tb-input,.lk-input,.country-search,.form-card input,.form-card select,.form-card textarea,.tb-cc,.country-select,.tb-opt:not(.on),.tb-day:not(.on):not(:disabled):not(.bkd),.tb-time:not(.on):not(.bkd):not(:disabled){background:#fff!important;border:1px solid transparent!important;box-shadow:none!important}
 .form-card input[readonly]{background:#f6f0e8!important;box-shadow:none!important;cursor:default}
 .tb-input:focus,.lk-input:focus,.country-search:focus,.form-card input:focus,.form-card select:focus,.form-card textarea:focus{border-color:#500018!important;outline:none}
 .tb-input.err,.tb-cc.err,.form-card input.is-error,.lk-input.err,.lk-input.bad{border-color:#8a2614!important;background:#fdf1ef!important}
 .tb-input:disabled,.lk-input:disabled,.country-search:disabled,.form-card input:disabled,.form-card select:disabled,.tb-cc:disabled,.tb-opt:disabled{background:#f6f0e8!important;box-shadow:none!important;cursor:not-allowed}
+</style>
+<style id="ds-v76">:focus-visible{outline:3px solid #6a0a28;outline-offset:3px}button,a,input,select,textarea{touch-action:manipulation}@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}.tb-card,.en-card,.lk-card,.mc-card,.form-card{box-shadow:0 1px 2px rgba(42,20,24,.08),0 10px 28px rgba(42,20,24,.07)}.tb-day:disabled{color:#5c463f!important;border:1px solid rgba(42,20,24,.20)!important;background:#d9cab6!important}.tb-time.bkd{background:#d9cab6!important;border:1px solid rgba(42,20,24,.20)!important;border-style:solid!important;color:#5c463f!important}.tb-time.bkd small{color:#5c463f!important}.tb-time.bkd .strk{text-decoration-color:#8a756f!important}</style>
+<style id="tb-group">
+/* v77: three clear layers — page, raised booking panel, and each step in its own sub-card so the grouping reads */
+#tbCard{background:#FFFDFA!important;border:1px solid rgba(42,20,24,.07);box-shadow:0 2px 6px rgba(42,20,24,.06),0 22px 50px rgba(42,20,24,.10)!important;padding:1.5rem 1.5rem 1.7rem!important}
+#tbCard .tb-intro{margin:.1rem .25rem 1.1rem;color:#6f5a58}
+#tbCard .tb-step{border-top:none!important;margin-top:14px!important;padding:1.4rem 1.45rem!important;background:#f5eee5;border-radius:16px}
+#tbCard #tbForm>.tb-step:first-child{margin-top:0!important}
+@media (max-width:600px){#tbCard{padding:1.1rem 1.1rem 1.25rem!important}#tbCard .tb-step{padding:1.15rem 1.1rem!important}}
 </style>
 </head>
 <body data-page="trial">
@@ -521,7 +531,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 </footer>
 
 
-<script src="/js/site.js?v=2026-11-04e"></script>
+<script src="/js/site.js?v=2026-11-05b"></script>
 <script>
 (function () {
   const API = 'https://handpan-webhook-server-production.up.railway.app';

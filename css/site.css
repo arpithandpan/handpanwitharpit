@@ -22,13 +22,14 @@
 
 /* ---------- 1. Tokens ---------- */
 :root {
+  --field-line: rgba(42,20,24,.30);
   --wine: #500018;
   --wine-2: #6a0a28;
   --wine-deep: #3a0011;
   --wine-3: #7a1834;
   --ivory: #f5eee5;
   --paper: #fffdfa;
-  --sand: #ece2d5;
+  --sand: #f5eee5;
   --ink: #2a1418;
   --ink-2: #4f3b3c;
   --ink-3: #6b5150;
@@ -462,8 +463,8 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 .faq .ans { padding: 0 4px 24px; max-width: 760px; color: var(--ink-2); }
 
 /* ---------- 15. Forms ---------- */
-.form { display: grid; gap: 18px; }
-.form .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.form { display: grid; gap: 26px; }
+.form .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 18px; }
 @media (max-width: 600px) { .form .row { grid-template-columns: 1fr; } }
 .field { display: grid; gap: 8px; }
 .field > label, .field > .lbl { font-weight: 600; font-size: .95rem; color: var(--ink); }
@@ -820,12 +821,49 @@ a.ext { white-space: nowrap; }
 /* v75: no strokes on fields or cards. Fields are white and lifted by a soft shadow, on cards
    that are a shade deeper than the page, so they never merge with the background.
    Focus is a wine ring, an error is a red-tinted fill with a red ring. */
-:root { --lift: 0 1px 2px rgba(42, 20, 24, .14), 0 2px 6px rgba(42, 20, 24, .06); --card-deep: #efe5d8; }
+:root { --lift: 0 1px 2px rgba(42, 20, 24, .14), 0 2px 6px rgba(42, 20, 24, .06); --card-deep: #f5eee5; }
 .card:has(form), .notify, .bg-paper .card:has(form), .bg-paper .notify { background: var(--card-deep) !important; }
-.field input, .field select, .field textarea, .cc-btn, .xs-btn, .cc-search { background-color: #fff !important; border-color: transparent !important; box-shadow: var(--lift) !important; }
+.field input, .field select, .field textarea, .cc-btn, .xs-btn, .cc-search { background-color: #fff !important; border: 1px solid var(--field-line) !important; box-shadow: none !important; }
 .field input:focus, .field select:focus, .field textarea:focus, .cc-btn.open, .cc-btn:focus-visible, .xs-btn.open, .xs-btn:focus-visible, .cc-search:focus { border-color: var(--wine) !important; outline: none; }
 .field.invalid input, .field.invalid select, .field.invalid textarea, .field.invalid .cc-btn, .field.invalid .xs-btn { border-color: #8a2614 !important; background-color: #fdf1ef !important; }
 .field input:disabled, .field select:disabled, .field textarea:disabled, .field input[readonly], .cc-btn:disabled, .xs-btn:disabled { background-color: #f6f0e8 !important; box-shadow: none !important; color: var(--ink-3); cursor: not-allowed; }
-.chip span, .bg-paper .card .chip span { background: #fff !important; box-shadow: var(--lift); color: var(--ink); }
+.chip span, .bg-paper .card .chip span { background: #fff !important; border: 1px solid var(--field-line); box-shadow: none; color: var(--ink); }
 .chip input:checked + span, .bg-paper .card .chip input:checked + span { background: var(--wine) !important; color: var(--ivory); box-shadow: none; }
 .channel { background: var(--card-deep); box-shadow: 0 1px 2px rgba(42, 20, 24, .10), 0 4px 14px rgba(42, 20, 24, .05); }
+
+/* ---------- v76 gap pass: button sizes, loading, focus, reduced motion ---------- */
+.btn-md { min-height: 46px; padding: 0 22px; font-size: 1rem; }
+.btn-lg { min-height: 58px; padding: 0 32px; font-size: 1.0625rem; }
+.btn[aria-busy="true"], .btn.is-loading { position: relative; pointer-events: none; opacity: .8; }
+.btn[aria-busy="true"]::after, .btn.is-loading::after { content: ""; width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: btnspin .7s linear infinite; }
+@keyframes btnspin { to { transform: rotate(360deg); } }
+.btn:focus-visible { outline: 3px solid var(--wine-2); outline-offset: 3px; border-radius: 999px; }
+.nav-links a:focus-visible, .nav a:focus-visible { outline-width: 2px; outline-offset: 2px; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .btn[aria-busy="true"]::after, .btn.is-loading::after { animation-duration: 1.2s !important; animation-iteration-count: infinite !important; }
+}
+
+/* v76: deeper cards get a soft lift so their edge never merges with the page */
+.card:has(form), .notify, .bg-paper .card:has(form), .bg-paper .notify { box-shadow: 0 1px 2px rgba(42,20,24,.08), 0 10px 28px rgba(42,20,24,.07) !important; }
+
+/* ===== v77 FINAL: three colours only — maroon + beige + white. No field lines. =====
+   Rhythm by alternating section tone: plain sections are beige, .bg-paper sections are white.
+   Cards invert their section: white card on beige, beige card on white. Fields are always white on beige. */
+/* sections: plain = beige (page tone), .bg-paper = white, .on-wine = wine */
+html body .bg-paper { background: #fff; }
+/* display cards on a BEIGE (plain) section -> white */
+html body .sec:not(.bg-paper):not(.on-wine) .card, html body .sec:not(.bg-paper):not(.on-wine) .ws, html body .sec:not(.bg-paper):not(.on-wine) .steps li, html body .sec:not(.bg-paper):not(.on-wine) .plan, html body .sec:not(.bg-paper):not(.on-wine) .review, html body .card, html body .ws, html body .steps li, html body .plan, html body .review, html body .channel, html body .qcard, html body .wsbar { background: #fff; }
+/* display cards on a WHITE (.bg-paper) section -> beige */
+html body .bg-paper .card, html body .bg-paper .ws, html body .bg-paper .steps li, html body .bg-paper .plan, html body .bg-paper .review { background: var(--ivory); }
+/* featured pricing card stays wine */
+html body .plan.feat { background: var(--wine); }
+/* form cards (hold white fields) -> always beige, on whatever section */
+html body .card:has(form), html body .notify, html body .bg-paper .card:has(form), html body .bg-paper .notify { background: var(--ivory) !important; }
+/* fields, selects, chips, phone/search buttons -> white, no stroke, no shadow */
+html body .field input, html body .field select, html body .field textarea, html body .cc-btn, html body .xs-btn, html body .cc-search,
+html body .bg-paper .notify .field input, html body .bg-paper .card .field input, html body .bg-paper .card .field select, html body .bg-paper .card .field textarea,
+html body .chip span, html body .bg-paper .card .chip span,
+html body .bg-paper .card .cc-btn, html body .bg-paper .notify .cc-btn, html body .bg-paper .card .xs-btn, html body .bg-paper .notify .xs-btn {
+  background: #fff !important; border-color: transparent !important; box-shadow: none !important;
+}
