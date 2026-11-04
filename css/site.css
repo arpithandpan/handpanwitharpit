@@ -188,7 +188,7 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 .nav-login[aria-current="page"] { color: var(--wine); }
 @media (hover: hover) { .nav-login[aria-current="page"]:hover { background: none; } }
 .nav-login svg { width: 18px; height: 18px; }
-.nav-burger { display: none; width: 48px; height: 48px; border: 0; border-radius: 999px; background: rgba(80, 0, 24, .1); box-shadow: inset 0 0 0 1.5px var(--line-2); cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px; -webkit-tap-highlight-color: transparent; }
+.nav-burger { display: none; width: 48px; height: 48px; border: 0; border-radius: 999px; background: rgba(80, 0, 24, .09); cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px; -webkit-tap-highlight-color: transparent; }
 .nav-burger:focus:not(:focus-visible) { outline: none; }
 .nav-burger span { display: block; width: 20px; height: 2px; border-radius: 2px; background: var(--wine); }
 .nav-burger span:nth-child(2) { width: 14px; margin-left: 6px; }
@@ -198,7 +198,7 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 @keyframes mnavIn { from { opacity: 0; transform: translateY(-8px); } }
 .mnav-top { display: flex; justify-content: space-between; align-items: center; min-height: var(--nav-h); }
 .mnav-top span { font: 600 var(--t-micro)/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
-.mnav-x { width: 48px; height: 48px; border: 0; border-radius: 999px; background: rgba(80, 0, 24, .1); box-shadow: inset 0 0 0 1.5px var(--line-2); color: var(--wine); display: grid; place-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mnav-x { width: 48px; height: 48px; border: 0; border-radius: 999px; background: rgba(80, 0, 24, .09); color: var(--wine); display: grid; place-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .mnav-x:focus:not(:focus-visible) { outline: none; }
 .mnav-x svg { width: 20px; height: 20px; }
 .mnav ul { list-style: none; margin-top: 12px; }
@@ -746,9 +746,9 @@ html { scrollbar-gutter: stable; }
 /* phones: release cards become one wide row each (cover left, details right) */
 @media (max-width: 600px) {
   .releases { grid-template-columns: 1fr; gap: 12px; }
-  .rel { display: grid; grid-template-columns: 112px minmax(0, 1fr); padding: 0; align-items: stretch; }
-  .rel .ph { aspect-ratio: auto; width: 112px; height: 100%; min-height: 112px; }
-  .rel .bd { padding: 14px 16px 14px; }
+  .rel { display: grid; grid-template-columns: minmax(128px, 42%) minmax(0, 1fr); padding: 0; align-items: stretch; }
+  .rel .ph { aspect-ratio: 1; width: 100%; height: auto; min-height: 0; }
+  .rel .bd { padding: 14px 14px 14px 16px; }
   .rel h3 { font-size: 1.25rem; }
   .rel .meta { margin: 2px 0 10px; font-size: .9rem; }
   .rel-links { margin-top: auto; padding-top: 10px; gap: 6px; }
@@ -821,10 +821,11 @@ a.ext { white-space: nowrap; }
    that are a shade deeper than the page, so they never merge with the background.
    Focus is a wine ring, an error is a red-tinted fill with a red ring. */
 :root { --lift: 0 1px 2px rgba(42, 20, 24, .14), 0 2px 6px rgba(42, 20, 24, .06); --card-deep: #efe5d8; }
-.card:has(form), .notify { background: var(--card-deep); }
+.card:has(form), .notify, .bg-paper .card:has(form), .bg-paper .notify { background: var(--card-deep) !important; }
 .field input, .field select, .field textarea, .cc-btn, .xs-btn, .cc-search { background-color: #fff !important; border-color: transparent !important; box-shadow: var(--lift) !important; }
-.field input:focus, .field select:focus, .field textarea:focus, .cc-btn.open, .cc-btn:focus-visible, .xs-btn.open, .xs-btn:focus-visible, .cc-search:focus { border-color: var(--wine) !important; box-shadow: 0 0 0 3px rgba(80, 0, 24, .14) !important; outline: none; }
-.field.invalid input, .field.invalid select, .field.invalid textarea, .field.invalid .cc-btn, .field.invalid .xs-btn { border-color: #8a2614 !important; background-color: #fdf1ef !important; box-shadow: 0 0 0 3px rgba(138, 38, 20, .12) !important; }
+.field input:focus, .field select:focus, .field textarea:focus, .cc-btn.open, .cc-btn:focus-visible, .xs-btn.open, .xs-btn:focus-visible, .cc-search:focus { border-color: var(--wine) !important; outline: none; }
+.field.invalid input, .field.invalid select, .field.invalid textarea, .field.invalid .cc-btn, .field.invalid .xs-btn { border-color: #8a2614 !important; background-color: #fdf1ef !important; }
+.field input:disabled, .field select:disabled, .field textarea:disabled, .field input[readonly], .cc-btn:disabled, .xs-btn:disabled { background-color: #f6f0e8 !important; box-shadow: none !important; color: var(--ink-3); cursor: not-allowed; }
 .chip span, .bg-paper .card .chip span { background: #fff !important; box-shadow: var(--lift); color: var(--ink); }
 .chip input:checked + span, .bg-paper .card .chip input:checked + span { background: var(--wine) !important; color: var(--ivory); box-shadow: none; }
 .channel { background: var(--card-deep); box-shadow: 0 1px 2px rgba(42, 20, 24, .10), 0 4px 14px rgba(42, 20, 24, .05); }
