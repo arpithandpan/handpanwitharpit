@@ -512,7 +512,7 @@ a.mc-opt { text-decoration: none; }
   function render() {
     const c = data.classes;
     show('mcPage');
-    const head = (sub) => { const h = new Date().getHours(), g = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 17 ? 'Good afternoon' : 'Good evening'; return '<div class="mc-head"><h1 class="mc-hi" id="mcTitle">' + g + ', ' + esc(data.name) + '</h1><p class="mc-tz" id="mcSub">' + sub + '</p></div>'; };
+    const head = (sub) => { const h = new Date().getHours(), g = h < 5 ? 'Hi' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; return '<div class="mc-head"><h1 class="mc-hi" id="mcTitle">' + g + ', ' + esc(data.name) + '</h1><p class="mc-tz" id="mcSub">' + sub + '</p></div>'; };
     const w = data.workshops, wl = data.waitlist;
     if (!c && !w && !wl) {
       $('mcPage').innerHTML = head('Nothing is booked under your name right now.') + '<div class="mc-card">' + linksHtml(true) + '</div>';
