@@ -7,9 +7,9 @@
 
   // ---- timing drills: generic, they work with any note and any pattern. Fixed content.
   var LEVELS = [
-    { n: 'Beginner', lead: 'Stay with the click. Start slow, and go 5 BPM faster when it feels easy.' },
-    { n: 'Intermediate', lead: 'Beats split into smaller parts, and the click starts to step away.' },
-    { n: 'Advanced', lead: 'Less click, more you. Your inner clock does the work.' }
+    { n: 'Easy', lead: 'Stay with the click. Start slow, and go 5 BPM faster when it feels easy.' },
+    { n: 'Medium', lead: 'Beats split into smaller parts, and the click starts to step away.' },
+    { n: 'Hard', lead: 'Less click, more you. Your inner clock does the work.' }
   ];
   var EX = [
     { id: 'one', lv: 0, t: 'One per beat', sum: 'Find the pulse', p: 'One click on every beat. Play one note on each click. Any note works, the Ding is a good start.', g: '4 clean bars at 60 BPM', bpm: 60, beats: 4, sub: 1, accent: false, gap: null },
@@ -172,7 +172,7 @@
     click: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="M12 15l5-9"/></svg>'
   };
   var CHK = '<span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
-  var CH = '<span class="pick2" aria-hidden="true">Choose</span>';
+  var CH = '<span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 6l6 6-6 6"/></svg></span>';
   function row(n, t, sub, tag, on, soon) {
     var b = document.createElement('button'); b.type = 'button'; b.className = 'it' + (on ? ' on' : '') + (soon ? ' soon' : '');
     b.innerHTML = '<span class="n"></span><span class="tx"><b></b><small></small></span>' + (tag ? '<span class="tg"></span>' : '') + (on ? CHK : soon ? '' : CH);
@@ -507,11 +507,13 @@
   function setBpm(v) {
     S.bpm = Math.max(30, Math.min(200, Math.round(v)));
     if (document.activeElement !== $('pBpm')) $('pBpm').value = S.bpm;
-    $('mBig').textContent = S.bpm; $('mRange').value = S.bpm; placeWeight(); save();
+    $('mBig').textContent = S.bpm; $('mRange').value = S.bpm; rangeFill(); placeWeight(); save();
   }
   $('mMinus').onclick = $('pMinus').onclick = function () { setBpm(S.bpm - 1); };
   $('mPlus').onclick = $('pPlus').onclick = function () { setBpm(S.bpm + 1); };
+  function rangeFill() { var r = $('mRange'); r.style.setProperty('--p', ((r.value - 30) / 170 * 100) + '%'); }
   $('mRange').oninput = function (e) { setBpm(+e.target.value); };
+  rangeFill();
   (function () {
     var f = $('pBpm'), setB = $('pSetB'), cancel = $('pCancel'), hint = $('pHint'), setting = false;
     var lbl = function () {
@@ -551,6 +553,7 @@
 
   // ---- audio: a short beep, high on beat 1. It never sounds like a handpan, so you hear your own notes and the click apart
   var ctx, running = false, nextTime = 0, tick = 0, timer = null, queue = [], wake = null, keepAlive = null;
+  var wdT = null, wdLast = -1, wdMiss = 0;
   function silentWav() {
     var n = 4000, b = new Uint8Array(44 + n), v = new DataView(b.buffer), w = function (o, s) { for (var i = 0; i < s.length; i++) b[o + i] = s.charCodeAt(i); };
     w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
@@ -609,13 +612,21 @@
     starting = true; var ok = await ready(); starting = false;
     if (!ok) { toast('Tap Start again'); return; }
     S.played = true; if (S.mode === 'lesson') { S.lastPiece = S.piece; S.lastSec = S.pcSec; } save();
-    running = true; tick = 0; queue = []; nextTime = ctx.currentTime + 0.08;
+    running = true;
+    wdLast = -1; wdMiss = 0; clearInterval(wdT);
+    wdT = setInterval(function () {
+      if (!running || document.visibilityState === 'hidden') { wdLast = -1; wdMiss = 0; return; }
+      var t = -2; try { t = ctx.currentTime; } catch (e) {}
+      if (t === wdLast) { wdMiss++; if (wdMiss >= 2) { stop(); toast('Audio was paused by your phone. Tap Start to continue.'); } }
+      else wdMiss = 0;
+      wdLast = t;
+    }, 2000); tick = 0; queue = []; nextTime = ctx.currentTime + 0.08;
     schedule(); timer = setInterval(schedule, 25); requestAnimationFrame(draw);
     $('pPlay').innerHTML = STOP; $('pPlay').setAttribute('aria-label', 'Stop'); document.body.classList.add('playing');
     try { wake = await navigator.wakeLock.request('screen'); } catch (e) { wake = null; }
   }
   function stop() {
-    running = false; clearInterval(timer); queue = []; swing.on = false; rod(0);
+    running = false; clearInterval(timer); clearInterval(wdT); wdT = null; queue = []; swing.on = false; rod(0);
     clearTimeout(offT); lightPan(null); lightBox(-1, false);
     $('pPlay').innerHTML = PLAY; $('pPlay').setAttribute('aria-label', 'Start'); document.body.classList.remove('playing');
     pcHeads.forEach(function (x) { x.classList.remove('on'); });
@@ -630,8 +641,13 @@
     if (e.code === 'Space' && !/INPUT|SELECT|BUTTON|TEXTAREA/.test(e.target.tagName) && $('sheet').hidden) { e.preventDefault(); toggle(); }
     if (e.key === 'Escape' && !$('sheet').hidden) closeSheet();
   });
-  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden' && running) stop(); });
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden' && running) stop();
+    else if (document.visibilityState === 'visible' && !running && document.body.classList.contains('playing')) { try { stop(); } catch (e) {} }
+  });
   window.addEventListener('pagehide', function () { if (running) stop(); });
+  // coming back to a page that still says Stop while its clock is dead: clean it up
+  window.addEventListener('pageshow', function () { if (!running && document.body.classList.contains('playing')) { try { stop(); } catch (e) {} } });
 
   // ---- theme: only this page has a dark mode
   function applyTheme() {
