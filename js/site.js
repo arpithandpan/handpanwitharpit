@@ -22,7 +22,7 @@
      shows the logo at 0 and then jumps. Rotation and press use separate CSS properties
      (rotate, scale), so the press animation never drags the rotation along. */
   (function () {
-    var img = $('.nav .brand img');
+    var img = $('.nav .brand .logo');
     if (!img || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
     var rot = 0, lastY = null, ticking = false;
     try { rot = parseFloat(sessionStorage.getItem('logoRot')) || 0; } catch (e) {}
@@ -133,13 +133,15 @@
     var me = who();
     $$('[data-acct]').forEach(function (slot) {
       var AC_DASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg>';
+      var AC_USER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>';
+      var AC_CHEV = '<svg class="acct-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
       var AC_OUT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>';
       var login = $('.nav-login', slot), href = slot.getAttribute('data-acct');
       $$('.acct', slot).forEach(function (x) { x.remove(); });
       if (login) login.hidden = !!me;
       if (!me) return;
       var wrap = doc.createElement('div'); wrap.className = 'acct';
-      wrap.innerHTML = '<button type="button" class="acct-btn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu for ' + esc(me.name) + '">' + esc(me.name.charAt(0).toUpperCase()) + '</button>'
+      wrap.innerHTML = '<button type="button" class="acct-btn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu for ' + esc(me.name) + '">' + AC_USER + '<span class="acct-name">' + esc(me.name) + '</span>' + AC_CHEV + '</button>'
         + '<div class="acctm"><p>Logged in as <b>' + esc(me.name) + '</b></p><a href="' + esc(href) + '">' + AC_DASH + 'My space</a><span class="hr" aria-hidden="true"></span><button type="button" data-logout>' + AC_OUT + 'Log out</button></div>';
       if (/^\/pages\/my/.test(location.pathname)) wrap.querySelector('.acct-btn').classList.add('on');
       slot.appendChild(wrap);
