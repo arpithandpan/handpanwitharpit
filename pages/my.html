@@ -155,7 +155,7 @@ a.mc-opt { text-decoration: none; }
 /* sheets */
 .mc-scrim { position: fixed; inset: 0; background: rgba(40,10,15,0.45); z-index: 200; opacity: 0; transition: opacity .2s; }
 .mc-scrim.open { opacity: 1; }
-.mc-sheet { position: fixed; z-index: 201; background: var(--card); padding: 1.6rem 1.5rem 1.5rem; box-sizing: border-box; }
+.mc-sheet { position: fixed; z-index: 201; background: var(--card); padding: 1.6rem 1.5rem 1.5rem; box-sizing: border-box; overscroll-behavior: contain; }
 @media (max-width: 640px) {
   .mc-sheet { left: 0; right: 0; bottom: 0; border-radius: 22px 22px 0 0; max-height: 88vh; overflow: auto; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .25s ease; }
   .mc-sheet.open { transform: none; }
@@ -693,12 +693,25 @@ a.mc-opt { text-decoration: none; }
   }
 
   // ── sheets ──
-  let sheetEl = null, scrimEl = null, lastFocus = null;
+  let sheetEl = null, scrimEl = null, lastFocus = null, lockY = 0, locked = false;
+  function lockScroll() {
+    if (locked) return; locked = true;
+    lockY = window.scrollY || 0;
+    const b = document.body.style;
+    b.position = 'fixed'; b.top = -lockY + 'px'; b.left = '0'; b.right = '0'; b.width = '100%';
+  }
+  function unlockScroll() {
+    if (!locked) return; locked = false;
+    const b = document.body.style;
+    b.position = ''; b.top = ''; b.left = ''; b.right = ''; b.width = '';
+    window.scrollTo(0, lockY);
+  }
   function closeSheet() {
     if (!sheetEl) return;
     const s = sheetEl, k = scrimEl; sheetEl = scrimEl = null;
     s.classList.remove('open'); k.classList.remove('open');
     setTimeout(() => { s.remove(); k.remove(); }, 260);
+    unlockScroll();
     document.removeEventListener('keydown', onKey);
     if (lastFocus) try { lastFocus.focus(); } catch (e) {}
   }
@@ -710,6 +723,7 @@ a.mc-opt { text-decoration: none; }
     sheetEl = document.createElement('div'); sheetEl.className = 'mc-sheet'; sheetEl.setAttribute('role', 'dialog'); sheetEl.setAttribute('aria-modal', 'true');
     sheetEl.innerHTML = inner;
     document.body.appendChild(scrimEl); document.body.appendChild(sheetEl);
+    lockScroll();
     requestAnimationFrame(() => { scrimEl.classList.add('open'); sheetEl.classList.add('open'); });
     document.addEventListener('keydown', onKey);
     return sheetEl;
