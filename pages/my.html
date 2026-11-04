@@ -112,6 +112,8 @@ a.mc-opt { text-decoration: none; }
 .mc-pay .pr small { display: block; margin-top: 2px; font-size: 0.88rem; color: var(--text-mid); }
 .mc-pay a { color: var(--maroon); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.3); }
 .mc-pay .pr.more { padding-bottom: 0.2rem; }
+.mc-pay0 { display: flex; align-items: center; gap: 0.85rem; margin: 0; font-weight: 500; font-size: 0.98rem; color: var(--text-dark); }
+.mc-pay0 svg { flex: none; color: var(--maroon); }
 .mc-card > .mc-link:first-child { border-top: 0; padding-top: 0.2rem; }
 /* skeleton */
 .mc-sk { background: var(--card); border-radius: var(--card-radius); height: 210px; position: relative; overflow: hidden; }
@@ -500,8 +502,8 @@ a.mc-opt { text-decoration: none; }
     let pan = '<svg class="rp-ic" viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="138" class="pi-s"/><circle cx="150" cy="150" r="42" class="pi-d"/>';
     for (let a = 0; a < 360; a += 45) { const r = a * Math.PI / 180; pan += '<ellipse cx="' + (150 + 92 * Math.cos(r)).toFixed(0) + '" cy="' + (150 + 92 * Math.sin(r)).toFixed(0) + '" rx="24" ry="20" class="pi-n' + (a === 0 ? ' on' : '') + '"/>'; }
     pan += '</svg>';
-    const title = last && last.t ? 'Welcome back' : 'Start your practice';
-    const sub = last && last.t ? 'Last time: ' + esc(last.t + (last.s ? ', ' + String(last.s).replace(/ /g, '\u00a0') : '')) : 'Begins with the first pattern';
+    const title = last && last.t ? esc(last.t) : 'Start your practice';
+    const sub = last && last.t ? (last.s ? 'Continue from ' + esc(String(last.s).replace(/ /g, '\u00a0')) : 'Continue where you left off') : 'Begins with The Ladder, pattern 1';
     return '<div class="mc-card rp"><div class="rp-top">' + pan + '<div><p class="rp-k">Rhythm practice</p><p class="rp-t">' + title + '</p><p class="rp-s">' + sub + '</p></div></div>'
       + '<div class="rp-row"><span><b>4</b> patterns from class</span><span><b>11</b> timing drills</span></div>'
       + '<div class="rp-btns"><a class="mc-btn solid" href="/pages/practice#' + (last && last.t ? 'play' : 'start') + '">' + play + 'Open practice</a><p class="rp-hint">Pick a drill or a pattern inside</p></div></div>';
@@ -558,8 +560,8 @@ a.mc-opt { text-decoration: none; }
     html.push('<p class="mc-sec">Practice</p>');
     html.push(practiceCard());
 
-    if (c.pay || (c.payments && c.payments.length)) {
-      html.push('<p class="mc-sec">Payments</p>');
+    html.push('<p class="mc-sec">Payments</p>');
+    {
       if (c.pay) {
         const due = c.left <= 0;
         html.push('<div class="mc-card"><div class="mc-bal"><div>'
@@ -568,6 +570,7 @@ a.mc-opt { text-decoration: none; }
           + '</div><a class="mc-btn solid" href="' + esc(c.pay.url) + '">Pay ' + money(c.pay.amount, c.pay.currency) + '</a></div></div>');
       }
       if (c.payments && c.payments.length) html.push('<div class="mc-card">' + payHtml(c.payments) + '</div>');
+      else if (!c.pay) html.push('<div class="mc-card"><p class="mc-pay0">' + ICON_DOC + 'No payments yet</p><p class="mc-empty" style="margin:0.35rem 0 0 2.1rem;">Your payment links and invoices will show up here.</p></div>');
     }
     }
     if (w || wl) {
