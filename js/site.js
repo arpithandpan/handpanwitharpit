@@ -132,20 +132,22 @@
   function renderAcct() {
     var me = who();
     $$('[data-acct]').forEach(function (slot) {
+      var AC_DASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg>';
+      var AC_OUT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>';
       var login = $('.nav-login', slot), href = slot.getAttribute('data-acct');
       $$('.acct', slot).forEach(function (x) { x.remove(); });
       if (login) login.hidden = !!me;
       if (!me) return;
       var wrap = doc.createElement('div'); wrap.className = 'acct';
       wrap.innerHTML = '<button type="button" class="acct-btn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu for ' + esc(me.name) + '">' + esc(me.name.charAt(0).toUpperCase()) + '</button>'
-        + '<div class="acctm"><p>Logged in as <b>' + esc(me.name) + '</b></p><a href="' + esc(href) + '">My classes and bookings</a><button type="button" data-logout>Log out</button></div>';
+        + '<div class="acctm"><p>Logged in as <b>' + esc(me.name) + '</b></p><a href="' + esc(href) + '">' + AC_DASH + 'My space</a><span class="hr" aria-hidden="true"></span><button type="button" data-logout>' + AC_OUT + 'Log out</button></div>';
       if (/^\/pages\/my/.test(location.pathname)) wrap.querySelector('.acct-btn').classList.add('on');
       slot.appendChild(wrap);
     });
     $$('[data-macct]').forEach(function (box) {
       var href = box.getAttribute('data-macct');
       box.innerHTML = me
-        ? '<a class="btn btn-line" href="' + esc(href) + '">My classes</a><span class="who">Logged in as ' + esc(me.name) + ' · <a class="inline-link" href="#" data-logout>Log out</a></span>'
+        ? '<a class="btn btn-line" href="' + esc(href) + '">My space</a><span class="who">Logged in as ' + esc(me.name) + ' · <a class="inline-link" href="#" data-logout>Log out</a></span>'
         : '<a class="btn btn-line" href="' + esc(href) + '">Student login</a>';
     });
   }

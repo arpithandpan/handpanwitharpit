@@ -26,9 +26,9 @@
 <link rel="preload" href="/fonts/figtree-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/pages/dashboard*"}}]},"eagerness":"moderate"}]}</script>
 <script>document.documentElement.classList.add('js');try{var r=sessionStorage.getItem('logoRot');if(r)document.documentElement.style.setProperty('--lr',r+'deg')}catch(e){}</script>
-<link rel="stylesheet" href="/css/site.css?v=2026-11-01h">
+<link rel="stylesheet" href="/css/site.css?v=2026-11-04a">
 <link rel="stylesheet" href="../css/style.css"/>
-<link rel="stylesheet" href="/css/flow.css?v=2026-11-01h">
+<link rel="stylesheet" href="/css/flow.css?v=2026-11-04a">
 <style>
 [hidden] { display: none !important; }
 /* This page is the login page: the "Log in" button shows as the current
@@ -93,8 +93,8 @@
 .ws-policy p:not(.mc-h) { font-size: 0.92rem; color: var(--text-mid); line-height: 1.55; margin: 0 0 0.5rem; }
 .ws-policy .mc-btn { margin-top: 0.6rem; }
 .mc-info small a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
-.mc-sec { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--maroon); margin: 1.1rem 0 -0.35rem 0.2rem; }
-.mc-sec:first-of-type { margin-top: 0.2rem; }
+.mc-sec { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--maroon); margin: 1.1rem 0 -0.35rem 0.2rem; padding-top: 1.1rem; border-top: 1.5px solid rgba(80,0,24,0.16); }
+.mc-sec:first-of-type { margin-top: 0.2rem; padding-top: 0; border-top: 0; }
 .mc-help-h { font-size: 0.85rem; color: var(--text-mid); margin: 1.1rem 0 0.1rem; padding-top: 1rem; border-top: 1px solid rgba(80,0,24,0.12); }
 .mc-help-h:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .mc-help-h + .mc-link { border-top: 0; padding-top: 0.5rem; }
@@ -105,9 +105,14 @@ a.mc-opt { text-decoration: none; }
 .mc-link:last-child { padding-bottom: 0.2rem; }
 .mc-link .end { margin-left: auto; color: var(--text-mid); transition: transform .2s; }
 .mc-link[aria-expanded="true"] .end { transform: rotate(180deg); }
-.mc-pay { padding: 0 0 0.6rem 2.1rem; }
-.mc-pay div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.92rem; padding: 0.45rem 0; color: var(--text-dark); }
-.mc-pay a { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
+.mc-pay { padding: 0 0 0.4rem 2.1rem; }
+.mc-pay .pr { padding: 0.6rem 0; border-top: 1px solid rgba(80,0,24,0.08); }
+.mc-pay .pr:first-child { border-top: 0; }
+.mc-pay .pr b { display: block; font-size: 0.95rem; font-weight: 600; color: var(--text-dark); }
+.mc-pay .pr small { display: block; margin-top: 2px; font-size: 0.88rem; color: var(--text-mid); }
+.mc-pay a { color: var(--maroon); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.3); }
+.mc-pay .pr.more { padding-bottom: 0.2rem; }
+.mc-card > .mc-link:first-child { border-top: 0; padding-top: 0.2rem; }
 /* skeleton */
 .mc-sk { background: var(--card); border-radius: var(--card-radius); height: 210px; position: relative; overflow: hidden; }
 .mc-sk.s2 { height: 300px; }
@@ -355,7 +360,7 @@ a.mc-opt { text-decoration: none; }
 </footer>
 
 
-<script src="/js/site.js?v=2026-11-01h"></script>
+<script src="/js/site.js?v=2026-11-04a"></script>
 <script>
 (function () {
   const API = 'https://handpan-webhook-server-production.up.railway.app';
@@ -505,16 +510,14 @@ a.mc-opt { text-decoration: none; }
   function render() {
     const c = data.classes;
     show('mcPage');
-    const head = (sub) => '<div class="mc-head"><h1 class="mc-hi" id="mcTitle">Hi ' + esc(data.name) + '</h1><p class="mc-tz" id="mcSub">' + sub + '</p></div>';
+    const head = (sub) => { const h = new Date().getHours(), g = h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 17 ? 'Good afternoon' : 'Good evening'; return '<div class="mc-head"><h1 class="mc-hi" id="mcTitle">' + g + ', ' + esc(data.name) + '</h1><p class="mc-tz" id="mcSub">' + sub + '</p></div>'; };
     const w = data.workshops, wl = data.waitlist;
     if (!c && !w && !wl) {
-      $('mcPage').innerHTML = head('Nothing is booked under your name right now.') + '<div class="mc-card">' + linksHtml([]) + '</div>';
+      $('mcPage').innerHTML = head('Nothing is booked under your name right now.') + '<div class="mc-card">' + linksHtml(true) + '</div>';
       bindLinks(); return;
     }
     const html = [head(c ? 'Times are in your time zone · ' + esc(c.tzCity) : 'Your bookings with Arpit')];
     if (c) {
-    html.push('<p class="mc-sec">Practice</p>');
-    html.push(practiceCard());
     html.push('<p class="mc-sec">Classes</p>');
     const next = c.upcoming.find(u => !u.later) || c.upcoming[0];
 
@@ -536,15 +539,6 @@ a.mc-opt { text-decoration: none; }
         + '</div>');
     }
 
-    // Payment due
-    if (c.pay) {
-      const due = c.left <= 0;
-      html.push('<div class="mc-card"><div class="mc-bal"><div>'
-        + '<h3>' + (due ? 'Payment due' : (c.left === 1 ? '1 class left' : c.left + ' classes left')) + '</h3>'
-        + '<p>' + (due ? c.pay.classes + ' classes · ' + money(c.pay.amount, c.pay.currency) : 'Your next payment link is ready.') + '</p>'
-        + '</div><a class="mc-btn solid" href="' + esc(c.pay.url) + '">Pay ' + money(c.pay.amount, c.pay.currency) + '</a></div></div>');
-    }
-
     // Coming up (skip the next class, it has its own card)
     const rest = c.upcoming.filter(u => !next || u.key !== next.key);
     const parts = [];
@@ -558,16 +552,30 @@ a.mc-opt { text-decoration: none; }
     const now = rest.filter(u => !u.later), later = rest.filter(u => u.later);
     if (now.length) parts.push('<ul class="mc-list">' + now.map(row).join('') + '</ul>');
     if (later.length) parts.push('<p class="mc-group">After your next payment</p><ul class="mc-list">' + later.map(row).join('') + '</ul>');
-    if (parts.length) html.push('<div class="mc-card"><p class="mc-h">Coming up</p>' + parts.join('') + '</div>');
+    if (parts.length) html.push('<div class="mc-card"><p class="mc-h">Coming up</p>' + parts.join('') + '<p class="mc-cal">Planning a longer break? <button type="button" class="mc-inline js-contact" data-topic="a longer break">Contact Arpit</button></p>' + '</div>');
     if (!next && !parts.length) html.push('<div class="mc-card"><p class="mc-h">No classes coming up</p><p class="mc-empty">Nothing is scheduled for the next four weeks. Get in touch below to plan your next class.</p></div>');
 
+    html.push('<p class="mc-sec">Practice</p>');
+    html.push(practiceCard());
+
+    if (c.pay || (c.payments && c.payments.length)) {
+      html.push('<p class="mc-sec">Payments</p>');
+      if (c.pay) {
+        const due = c.left <= 0;
+        html.push('<div class="mc-card"><div class="mc-bal"><div>'
+          + '<h3>' + (due ? 'Payment due' : (c.left === 1 ? '1 class left' : c.left + ' classes left')) + '</h3>'
+          + '<p>' + (due ? c.pay.classes + ' classes · ' + money(c.pay.amount, c.pay.currency) : 'Your next payment link is ready.') + '</p>'
+          + '</div><a class="mc-btn solid" href="' + esc(c.pay.url) + '">Pay ' + money(c.pay.amount, c.pay.currency) + '</a></div></div>');
+      }
+      if (c.payments && c.payments.length) html.push('<div class="mc-card">' + payHtml(c.payments) + '</div>');
+    }
     }
     if (w || wl) {
       html.push('<p class="mc-sec">Workshops</p>');
       html.push(workshopsHtml(w, wl));
     }
     html.push('<p class="mc-sec">Help</p>');
-    html.push('<div class="mc-card">' + linksHtml(c ? c.payments : []) + '</div>');
+    html.push('<div class="mc-card">' + linksHtml() + '</div>');
     $('mcPage').innerHTML = html.join('');
     bindLinks();
     if (/[?&]pay=1/.test(location.search) && $('mcPayToggle') && !render._payOpened) {
@@ -655,14 +663,20 @@ a.mc-opt { text-decoration: none; }
     return out.join('');
   }
 
-  function linksHtml(payments) {
+  function payHtml(list) {
+    const rows = list.slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+    const row = p => '<div class="pr"><b>' + money(p.amount, p.currency) + (p.classes ? ' · ' + p.classes + ' classes' : '') + '</b><small>' + (p.date ? ymdLabel(p.date) : '')
+      + (p.invoice ? (p.date ? ' · ' : '') + '<a href="' + API + '/api/my/' + token + '/invoice/' + encodeURIComponent(p.invoice) + '" target="_blank" rel="noopener">Invoice</a>' : '') + '</small></div>';
+    let h = '<button class="mc-link" type="button" id="mcPayToggle" aria-expanded="false" aria-controls="mcPays">' + ICON_DOC + 'Payments and invoices' + ICON_DOWN + '</button>'
+      + '<div class="mc-pay" id="mcPays" hidden>' + rows.slice(0, 4).map(row).join('');
+    if (rows.length > 4) h += '<div id="mcPayRest" hidden>' + rows.slice(4).map(row).join('') + '</div>'
+      + '<div class="pr more"><button type="button" class="mc-inline" id="mcPayMore">Show ' + (rows.length - 4) + ' earlier payment' + (rows.length - 4 > 1 ? 's' : '') + '</button></div>';
+    h += '</div>';
+    return h;
+  }
+  function linksHtml(withHead) {
     let h = '';
-    if (payments.length) {
-      h += '<button class="mc-link" type="button" id="mcPayToggle" aria-expanded="false" aria-controls="mcPays">' + ICON_DOC + 'Payments and invoices' + ICON_DOWN + '</button>'
-        + '<div class="mc-pay" id="mcPays" hidden>' + payments.map(p => '<div><span>' + (p.date ? ymdLabel(p.date) + ' · ' : '') + money(p.amount, p.currency) + (p.classes ? ' · ' + p.classes + ' classes' : '') + '</span>'
-          + (p.invoice ? '<a href="' + API + '/api/my/' + token + '/invoice/' + encodeURIComponent(p.invoice) + '" target="_blank" rel="noopener">Invoice</a>' : '') + '</div>').join('') + '</div>';
-    }
-    h += '<p class="mc-help-h">Need help?</p>';
+    if (withHead) h += '<p class="mc-help-h">Need help?</p>';
     h += '<a class="mc-link" href="' + esc(waLink('Hi Arpit')) + '" target="_blank" rel="noopener">' + ICON_WA + 'WhatsApp Arpit' + ICON_RIGHT + '</a>';
     h += '<a class="mc-link" href="' + esc(mailLink('My classes')) + '">' + ICON_MAIL + 'Email Arpit' + ICON_RIGHT + '</a>';
     return h;
@@ -670,6 +684,8 @@ a.mc-opt { text-decoration: none; }
   function bindLinks() {
     const t = $('mcPayToggle');
     if (t) t.onclick = () => { const open = t.getAttribute('aria-expanded') === 'true'; t.setAttribute('aria-expanded', String(!open)); $('mcPays').hidden = open; };
+    const mb = $('mcPayMore');
+    if (mb) mb.onclick = () => { $('mcPayRest').hidden = false; mb.closest('.pr').remove(); };
 
   }
 
