@@ -1381,7 +1381,7 @@ body.dark-mode .date-picker-btn { background: var(--s2); border-color: var(--lin
   display: none; position: absolute; top: calc(100% + 4px); left: 0;
   background: var(--s1); border: 1.5px solid var(--line); border-radius: var(--r-sm);
   box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: var(--z-dropdown);
-  max-height: min(60vh, 520px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+  max-height: 240px; overflow-y: auto; overflow-x: hidden;
 }
 .form-select-menu.open { display: block; }
 .form-select-opt {
@@ -13917,7 +13917,6 @@ function makeFormSelect(nativeSelect) {
 
   const menu = document.createElement('div');
   menu.className = 'form-select-menu';
-  menu.addEventListener('wheel', e => { if (menu.scrollHeight > menu.clientHeight) { e.preventDefault(); e.stopPropagation(); menu.scrollTop += e.deltaY; } }, { passive: false });
 
   function getLabel() {
     const sel = nativeSelect.options[nativeSelect.selectedIndex];
@@ -13926,14 +13925,6 @@ function makeFormSelect(nativeSelect) {
 
   function buildMenu() {
     menu.innerHTML = '';
-    if (nativeSelect.options.length > 8) {
-      const sw = document.createElement('div'); sw.className = 'fs-cur-search-wrap';
-      const si = document.createElement('input'); si.className = 'fs-cur-search'; si.type = 'search'; si.placeholder = 'Type to find\u2026'; si.setAttribute('aria-label', 'Filter options'); si.autocomplete = 'off';
-      si.onclick = e => e.stopPropagation();
-      si.oninput = () => { const q = si.value.toLowerCase(); menu.querySelectorAll('.form-select-opt').forEach(d => { d.style.display = d.textContent.toLowerCase().indexOf(q) >= 0 ? '' : 'none'; }); };
-      si.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); const f = Array.from(menu.querySelectorAll('.form-select-opt')).find(d => d.style.display !== 'none'); if (f) f.click(); } };
-      sw.appendChild(si); menu.appendChild(sw);
-    }
     Array.from(nativeSelect.options).forEach((opt, i) => {
       const div = document.createElement('div');
       div.className = 'form-select-opt' + (nativeSelect.selectedIndex === i ? ' selected' : '');
@@ -13993,8 +13984,6 @@ function makeFormSelect(nativeSelect) {
       menu.style.top = 'calc(100% + 4px)';
       menu.style.bottom = 'auto';
     }
-    const si = menu.querySelector('.fs-cur-search');
-    if (si) { si.value = ''; setTimeout(() => si.focus(), 30); }
   }
   function closeMenu() { menu.classList.remove('open'); btn.classList.remove('open'); }
 
@@ -18041,7 +18030,7 @@ function schOpenSlot(id) {
   schOpenForm('slot', r ? 'Edit Weekly Slot' : 'Add Weekly Slot',
     '<div class="sch-note">The WhatsApp reminder goes about an hour before every class in this slot.</div>'
     + '<div class="form-row">' + g('Student', stuField) + g('Student\'s timezone', '<select class="form-input" id="schTz" data-label="Timezone">' + tzOpts + '</select>') + '</div>'
-    + '<div id="schIstBox"><div class="form-row">' + g('Day (IST)', '<select class="form-input" id="schSlotDay" data-label="Day">' + dayOpts(r ? Number(r.weekday) : 1) + '</select>')
+    + '<div id="schIstBox"><div class="form-row">' + g('Day (IST)', '<select class="form-input" id="schDay" data-label="Day">' + dayOpts(r ? Number(r.weekday) : 1) + '</select>')
     + g('Time (IST)', schTimeField('schTime', r ? r.time_ist : '20:00')) + '</div></div>'
     + '<div id="schLocalBox"><div class="form-row">' + g('Day (their time)', '<select class="form-input" id="schLDay" data-label="Day">' + dayOpts(isLocal ? Number(r.local_weekday) : 1) + '</select>')
     + g('Time (their time)', schTimeField('schLTime', isLocal ? r.local_time : '10:00')) + '</div>'
@@ -18082,7 +18071,7 @@ async function schSaveSlot(id) {
   const row = { student_id: studentId, student_tz: tz, zoom_link: document.getElementById('schLink').value.trim() || null, active: document.getElementById('schActive').value === '1' };
   if (tz === 'Asia/Kolkata') {
     const t = schTimeValue('schTime');
-    Object.assign(row, { weekday: Number(document.getElementById('schSlotDay').value), time_ist: t, local_weekday: null, local_time: null });
+    Object.assign(row, { weekday: Number(document.getElementById('schDay').value), time_ist: t, local_weekday: null, local_time: null });
   } else {
     const lt = schTimeValue('schLTime'), ld = Number(document.getElementById('schLDay').value);
     const ist = schLocalToIst(ld, lt, tz);
