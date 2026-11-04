@@ -18041,7 +18041,7 @@ function schOpenSlot(id) {
   schOpenForm('slot', r ? 'Edit Weekly Slot' : 'Add Weekly Slot',
     '<div class="sch-note">The WhatsApp reminder goes about an hour before every class in this slot.</div>'
     + '<div class="form-row">' + g('Student', stuField) + g('Student\'s timezone', '<select class="form-input" id="schTz" data-label="Timezone">' + tzOpts + '</select>') + '</div>'
-    + '<div id="schIstBox"><div class="form-row">' + g('Day (IST)', '<select class="form-input" id="schDay" data-label="Day">' + dayOpts(r ? Number(r.weekday) : 1) + '</select>')
+    + '<div id="schIstBox"><div class="form-row">' + g('Day (IST)', '<select class="form-input" id="schSlotDay" data-label="Day">' + dayOpts(r ? Number(r.weekday) : 1) + '</select>')
     + g('Time (IST)', schTimeField('schTime', r ? r.time_ist : '20:00')) + '</div></div>'
     + '<div id="schLocalBox"><div class="form-row">' + g('Day (their time)', '<select class="form-input" id="schLDay" data-label="Day">' + dayOpts(isLocal ? Number(r.local_weekday) : 1) + '</select>')
     + g('Time (their time)', schTimeField('schLTime', isLocal ? r.local_time : '10:00')) + '</div>'
@@ -18082,7 +18082,7 @@ async function schSaveSlot(id) {
   const row = { student_id: studentId, student_tz: tz, zoom_link: document.getElementById('schLink').value.trim() || null, active: document.getElementById('schActive').value === '1' };
   if (tz === 'Asia/Kolkata') {
     const t = schTimeValue('schTime');
-    Object.assign(row, { weekday: Number(document.getElementById('schDay').value), time_ist: t, local_weekday: null, local_time: null });
+    Object.assign(row, { weekday: Number(document.getElementById('schSlotDay').value), time_ist: t, local_weekday: null, local_time: null });
   } else {
     const lt = schTimeValue('schLTime'), ld = Number(document.getElementById('schLDay').value);
     const ist = schLocalToIst(ld, lt, tz);
