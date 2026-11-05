@@ -20518,6 +20518,24 @@ html body table.rd-t .rd-in > div > .rd-acts:first-child { padding-top: 16px; }
   html body .sf-row > .section-search-wrap { flex: 0 0 320px; width: 320px; max-width: 320px; margin: 0 !important; }
   html body .sf-row > .filter-bar { display: flex; flex: 1 1 auto; min-width: 0; align-items: center; flex-wrap: wrap; gap: 10px; margin: 0 !important; }
   html body .sf-row .mobile-filter-btn { display: none; }
+  /* v270: the page tabs (Students | Trials, Payments | Pending links) join the same bar on desktop,
+     sitting first, so the page has one horizontal control row instead of a tab strip stacked above. */
+  html body .sf-row > .pg-tabs { margin: 0; flex: 0 0 auto; }
+  /* v270: on the list pages the whole control bar (tabs, search, filters) and the table read as ONE
+     card. The toolbar (.sec-tools) becomes the card's header, a hairline divides it from the table, and
+     the table loses its own top edge so the two fuse. The search gets a darker recess so it still reads
+     as an input on the card. Phones and narrow tablets keep the stacked layout from the mobile rules. */
+  html body :is(#section-workshops, #section-participants, #section-classes, #section-fee-payments, #section-payments, #section-leads, #section-waitlist, #section-invoices) .sec-tools {
+    background: var(--s1); border: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    border-radius: 14px 14px 0 0; padding: 14px 16px; margin: 0;
+  }
+  html body :is(#section-workshops, #section-participants, #section-classes, #section-fee-payments, #section-payments, #section-leads, #section-waitlist, #section-invoices) .sec-tools > .sf-row { flex: 1 1 100%; width: 100%; margin: 0; }
+  html body :is(#section-workshops, #section-participants, #section-classes, #section-fee-payments, #section-payments, #section-leads, #section-waitlist, #section-invoices) .sec-tools + .dash-table-wrap {
+    border-top: 0 !important; border-radius: 0 0 14px 14px !important; margin-top: 0 !important;
+  }
+  html body :is(#section-workshops, #section-participants, #section-classes, #section-fee-payments, #section-payments, #section-leads, #section-waitlist, #section-invoices) .sec-tools .section-search-input {
+    background: var(--bg) !important; border: 1px solid var(--line) !important;
+  }
   /* v270: Phone alerts are a mobile thing. On desktop you are already looking at the live dashboard,
      so the "turn on alerts" strip only takes space and reads oddly ("phone" on a laptop). Hide it on
      desktop; on phones and the installed app it stays exactly as before. */
@@ -21818,6 +21836,32 @@ document.addEventListener('click', e => {
   const run = () => { try { rows(); sched(); } catch (e) {} };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
   window.matchMedia('(max-width: 900px), (max-height: 500px) and (pointer: coarse)').addEventListener('change', run);
+})();
+</script>
+
+<script id="studioBarMerge">
+// v270: on desktop the page tabs (Students | Trials, Payments | Pending links) join the search + filter
+// row, so each list page has one horizontal control bar instead of a tab strip stacked above the search.
+// Phones keep the full-width tab row exactly as before.
+(function () {
+  const desktop = () => window.matchMedia('(min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine)').matches;
+  const PAIRS = [['stuTabs', 'search-wrap-classes'], ['feeTabs', 'search-wrap-fee-payments']];
+  function place() {
+    PAIRS.forEach(([tabId, swId]) => {
+      const tabs = document.getElementById(tabId), sw = document.getElementById(swId);
+      if (!tabs || !sw) return;
+      const sf = sw.closest('.sf-row'); if (!sf) return;
+      if (desktop()) {
+        if (tabs.parentElement !== sf || sf.firstElementChild !== tabs) sf.insertBefore(tabs, sf.firstChild);
+      } else if (tabs.parentElement === sf) {
+        sf.parentNode.insertBefore(tabs, sf);
+      }
+    });
+  }
+  let q = 0; const run = () => { cancelAnimationFrame(q); q = requestAnimationFrame(() => { try { place(); } catch (e) {} }); };
+  if (window.MutationObserver) new MutationObserver(run).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+  window.matchMedia('(min-width: 901px)').addEventListener('change', run);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
 </script>
 
