@@ -17109,6 +17109,12 @@ function zState(it, nowMs) {
     return { st: 'done', mins, ago: nowMs - end };
   }
   const ppl = m.people || [], inside = ppl.filter(p => !p.lobby);
+  // v264: the class is genuinely happening when the host and a student are both in the room, OR when
+  // two or more real people are inside. Zoom does not always flag Arpit as the host (he joins with a
+  // display name or device that doesn't match), and when it misses, he still shows up as a participant,
+  // so "two people in the room" is the reliable "class is on" signal and the card never gets stuck on
+  // "waiting" while a class is actually running.
+  const bothIn = (m.hostIn && inside.length > 0) || inside.length >= 2;
   // v263: after the class's end time only a real class (you and the student both inside) keeps it
   // running, and never more than 90 min over. You alone in the room, or a missed "left" event, no longer
   // keeps an old class on the Today card.
@@ -17116,11 +17122,11 @@ function zState(it, nowMs) {
   // both of you left early and nobody came back for 3 min: the class is over, whatever the clock says
   if (m.bothSince && m.emptySince && !m.hostIn && !inside.length && nowMs - new Date(m.emptySince).getTime() > 3 * 60000)
     return { st: 'done', mins: Math.max(1, Math.round((new Date(m.emptySince).getTime() - new Date(m.bothSince).getTime()) / 60000)), ago: nowMs - new Date(m.emptySince).getTime() };
-  if (nowMs > slotEnd && (!(m.hostIn && inside.length) || nowMs > slotEnd + 90 * 60000)) {
+  if (nowMs > slotEnd && (!bothIn || nowMs > slotEnd + 90 * 60000)) {
     if (m.bothSince && m.emptySince) return { st: 'done', mins: Math.max(1, Math.round((new Date(m.emptySince).getTime() - new Date(m.bothSince).getTime()) / 60000)), ago: nowMs - new Date(m.emptySince).getTime() };
     return null;
   }
-  if (m.hostIn && inside.length) return { st: 'live', mins: Math.max(0, Math.floor((nowMs - new Date(m.bothSince || inside[0].since).getTime()) / 60000)), since: m.bothSince || inside[0].since };
+  if (bothIn) { const start = m.bothSince || (inside[0] && inside[0].since) || m.startedAt || nowMs; return { st: 'live', mins: Math.max(0, Math.floor((nowMs - new Date(start).getTime()) / 60000)), since: start }; }
   if (ppl.length) return { st: 'wait', who: ppl[0].name, mins: Math.max(0, Math.round((nowMs - new Date(ppl[0].since).getTime()) / 60000)) };
   if (m.hostIn) return { st: 'host' };
   return null;
