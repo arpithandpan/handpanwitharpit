@@ -20509,6 +20509,19 @@ html body table.rd-t .rd-in > div > .rd-acts:first-child { padding-top: 16px; }
   html body .sec-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
   html body .sec-tools > .section-search-wrap { flex: 0 0 340px; width: 340px; max-width: 340px; margin: 0 !important; }
   html body .sec-tools > :is(.filter-bar, [id^="filter-bar-"]) { flex: 1 1 auto; min-width: 0; margin: 0 !important; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }   /* v241: the invoices bar kept its own bottom margin, so it sat higher than the search */
+  /* v270: two older wrappers (.sec-tools and .sf-row) ended up nested, which stacked the search and
+     filters on desktop and left each page a different search width. .sf-row is the real container now,
+     so it gets the one aligned row: a fixed search box with the filters flowing beside it, the same on
+     every page. The mobile "Filters" button is hidden here — on desktop the inline dropdowns are the
+     filter control, so the button only duplicated them. */
+  html body .sf-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  html body .sf-row > .section-search-wrap { flex: 0 0 320px; width: 320px; max-width: 320px; margin: 0 !important; }
+  html body .sf-row > .filter-bar { display: flex; flex: 1 1 auto; min-width: 0; align-items: center; flex-wrap: wrap; gap: 10px; margin: 0 !important; }
+  html body .sf-row .mobile-filter-btn { display: none; }
+  /* v270: Phone alerts are a mobile thing. On desktop you are already looking at the live dashboard,
+     so the "turn on alerts" strip only takes space and reads oddly ("phone" on a laptop). Hide it on
+     desktop; on phones and the installed app it stays exactly as before. */
+  html body #pushWarn { display: none !important; }
 }
 @media (max-width: 900px), (max-height: 500px) and (pointer: coarse) { html body .sec-tools { display: contents; } }
 /* v228 · small desktop fixes */
@@ -21845,7 +21858,7 @@ document.addEventListener('click', e => {
   });
   window.addEventListener('online', () => setTimeout(() => refresh(true), 800));
   if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev => { if (ev.data && ev.data.type === 'push') setTimeout(() => refresh(false), 500); });
-  setInterval(() => refresh(false), 60000);
+  setInterval(() => refresh(false), 30000);   // v270: poll the open page every 30 s (was 60 s) so background changes show sooner
 })();
 </script>
 </body>
