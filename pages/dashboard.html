@@ -20536,6 +20536,17 @@ html body table.rd-t .rd-in > div > .rd-acts:first-child { padding-top: 16px; }
   html body :is(#section-workshops, #section-participants, #section-classes, #section-fee-payments, #section-payments, #section-leads, #section-waitlist, #section-invoices) .sec-tools .section-search-input {
     background: var(--bg) !important; border: 1px solid var(--line) !important;
   }
+  /* v270: Schedule is built differently (its own Week / List / Weekly slots tabs and three views), so a
+     small wrapper (.sch-card, added by script on desktop) groups the tab bar and the active view into
+     the same one-card look as the other pages. The tab bar is the header, the away strip and the view
+     (calendar or table) are the body. Phones keep the stacked layout. */
+  html body #section-schedule .sch-card { background: var(--s1); border: 1px solid var(--line); border-radius: 14px; margin: 0 0 20px; }
+  html body #section-schedule .sch-card .sch-bar { margin: 0; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  html body #section-schedule .sch-card #schBlocks:not(:empty) { padding: 12px 16px 0; margin: 0; }
+  html body #section-schedule .sch-card #schCalWrap { margin: 0 !important; }
+  html body #section-schedule .sch-card .schw { border: 0; border-radius: 0 0 14px 14px; }
+  html body #section-schedule .sch-card #schListWrap { padding: 14px 16px 0; }
+  html body #section-schedule .sch-card :is(#schListWrap, #schSlotsWrap) .dash-table-wrap { border: 0 !important; border-radius: 0 0 14px 14px !important; margin: 0 !important; }
   /* v270: Phone alerts are a mobile thing. On desktop you are already looking at the live dashboard,
      so the "turn on alerts" strip only takes space and reads oddly ("phone" on a laptop). Hide it on
      desktop; on phones and the installed app it stays exactly as before. */
@@ -21860,6 +21871,32 @@ document.addEventListener('click', e => {
   }
   let q = 0; const run = () => { cancelAnimationFrame(q); q = requestAnimationFrame(() => { try { place(); } catch (e) {} }); };
   if (window.MutationObserver) new MutationObserver(run).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+  window.matchMedia('(min-width: 901px)').addEventListener('change', run);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+</script>
+
+<script id="studioSchedCard">
+// v270: on desktop the Schedule page's tab bar and its active view (Week calendar, List or Weekly
+// slots) are grouped into one card, matching the other pages. A light wrapper does it so the three
+// views keep switching exactly as before. Phones and narrow tablets keep the stacked layout.
+(function () {
+  const desktop = () => window.matchMedia('(min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine)').matches;
+  function place() {
+    const sec = document.getElementById('section-schedule'); if (!sec) return;
+    const bar = sec.querySelector('.sch-bar'); if (!bar) return;
+    const parts = [bar, document.getElementById('schBlocks'), document.getElementById('schCalWrap'), document.getElementById('schListWrap'), document.getElementById('schSlotsWrap')].filter(Boolean);
+    let card = sec.querySelector('.sch-card');
+    if (desktop()) {
+      if (!card) { card = document.createElement('div'); card.className = 'sch-card'; bar.parentNode.insertBefore(card, bar); }
+      parts.forEach(p => { if (p.parentElement !== card) card.appendChild(p); });
+    } else if (card) {
+      parts.forEach(p => card.parentNode.insertBefore(p, card));
+      card.remove();
+    }
+  }
+  let q = 0; const run = () => { cancelAnimationFrame(q); q = requestAnimationFrame(() => { try { place(); } catch (e) {} }); };
+  if (window.MutationObserver) new MutationObserver(run).observe(document.body, { childList: true, subtree: true });
   window.matchMedia('(min-width: 901px)').addEventListener('change', run);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
