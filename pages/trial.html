@@ -27,7 +27,7 @@
 <link rel="stylesheet" href="../css/style.css"/>
 <link rel="stylesheet" href="/css/flow.css?v=2026-11-05e">
 <style>
-.tb-wrap { max-width: 760px; margin: 0 auto; }
+.tb-wrap { max-width: 560px; margin: 0 auto; }
 .tb-card { background: var(--card); border-radius: var(--card-radius); padding: 2rem 2rem 2.2rem; }
 .tb-intro { color: var(--maroon); font-size: 0.98rem; margin: 0 0 1.5rem; line-height: 1.55; }
 /* Headings and short paragraphs: spread words evenly so no line ends with a lone word. */
@@ -93,7 +93,7 @@
 .wk-short { display: none; }
 .tb-sum-change { flex-shrink: 0; align-self: center; display: inline-flex; align-items: center; gap: 0.35rem; background: var(--card); border: 1px solid var(--rule); border-radius: 40px; color: var(--maroon); font-family: var(--font-body); font-size: 0.88rem; cursor: pointer; padding: 0.45rem 0.8rem; }
 .tb-book { width: 100%; margin-top: 1.5rem; height: 56px; font-size: 1.05rem; }
-@media (min-width: 600px) { .tb-book { display: inline-flex; width: auto; min-width: 240px; align-self: flex-start; padding: 0 2rem; } }
+@media (min-width: 600px) { .tb-book { padding: 0 2rem; } }
 .tb-book[aria-busy="true"] { opacity: 0.7; pointer-events: none; }
 .tb-fine { text-align: center; font-size: 0.85rem; color: var(--text-mid); margin-top: 0.9rem; }
 .tb-alert { display: none; margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 12px; background: #FBEAEA; color: #8C1D18; font-size: 0.95rem; }
@@ -334,7 +334,7 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 #tbCard #tbForm>.tb-step:first-child{margin-top:0!important}
 @media (max-width:600px){#tbCard{padding:1.1rem 1.1rem 1.25rem!important}#tbCard .tb-step{padding:1.15rem 1.1rem!important}}
 </style>
-<style id="book-row">.tb-book-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:1.5rem}.tb-book-row .tb-book{margin-top:0!important}.tb-book-row .tb-fine-inline{margin-top:0!important;text-align:right!important;white-space:nowrap;max-width:none}@media (max-width:600px){.tb-book-row{justify-content:center}.tb-book-row .tb-fine-inline{text-align:center!important;white-space:normal}}</style>
+<style id="book-row">.tb-book-row{display:block;margin-top:1.5rem}.tb-book-row .tb-book{margin-top:0!important}.tb-book-row .tb-fine-inline{margin-top:10px!important;text-align:center!important;white-space:normal;max-width:none}</style>
 <style id="cc-search-fill">#tbCcSearch{background:#f5eee5!important}#tbCcSearch:focus{border-color:#500018!important}</style>
 <style id="ccs-fill">#tbCcSearch,#enCcSearch,#country-search,.country-list input,.cc-pop input,input.country-search,input.cc-search{background:#f5eee5!important;background-color:#f5eee5!important;background-image:none!important;border-color:transparent!important;box-shadow:none!important}#tbCcSearch:focus,#enCcSearch:focus,#country-search:focus,.country-list input:focus,.cc-pop input:focus{border-color:#500018!important}</style>
 </head>
@@ -401,12 +401,14 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
         <div class="tb-step">
           <div class="tb-label"><strong>2. Pick a day</strong><span id="tbMonths"></span></div>
           <div class="tb-cal" id="tbDays"><div class="tb-skel"></div></div>
+          <div class="tb-err" id="err-day"></div>
         </div>
 
         <div class="tb-step">
           <div class="tb-label"><strong>3. Pick a time</strong><span id="tbTzNote"></span></div>
           <div class="tb-bkd-note" id="tbBkdNote" style="display:none;">Greyed times are already booked.</div>
           <div id="tbTimes"><div class="tb-empty">Pick a day first.</div></div>
+          <div class="tb-err" id="err-time"></div>
         </div>
 
         <div class="tb-step" id="tbStep4">
@@ -820,11 +822,11 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 
   $('tbDays').addEventListener('click', e => {
     const b = e.target.closest('.tb-day'); if (!b || b.disabled) return;
-    selDay = b.dataset.k; selSlot = null; renderDays(); renderTimes(); softIn($('tbTimes'));
+    selDay = b.dataset.k; selSlot = null; setErr('day', ''); renderDays(); renderTimes(); softIn($('tbTimes'));
   });
   $('tbTimes').addEventListener('click', e => {
     const b = e.target.closest('.tb-time'); if (!b) return;
-    selSlot = b.dataset.iso; renderTimes(); hideAlert();
+    selSlot = b.dataset.iso; renderTimes(); hideAlert(); setErr('time', '');
   });
 
   // ── Handpan choice ──
@@ -885,10 +887,11 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 
   // ── Book ──
   $('tbBook').onclick = async () => {
-    hideAlert();
+    hideAlert(); setErr('day', ''); setErr('time', '');
     const name = $('tbName').value.trim(), email = $('tbEmail').value.trim(), phone = $('tbPhone').value.replace(/\D/g, '');
     let bad = false;
-    if (!selSlot) { showAlert('Pick a day and a time first.'); bad = true; }
+    if (!selDay) { setErr('day', 'Pick a day'); bad = true; }
+    else if (!selSlot) { setErr('time', 'Pick a time'); bad = true; }
     if (name.length < 2) { setErr('name', 'Enter your name'); bad = true; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setErr('email', 'Enter a valid email'); bad = true; }
     if (phone.replace(/^0+/, '').length < 6) { setErr('phone', 'Enter your phone number'); bad = true; }
