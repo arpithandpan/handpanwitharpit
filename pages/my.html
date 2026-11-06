@@ -39,7 +39,14 @@
 .mc-narrow { max-width: 520px; }
 .mc-card { background: var(--card); border-radius: var(--card-radius); padding: 1.75rem 2rem; }
 .mc-k { font-size: 0.85rem; color: var(--text-mid); margin: 0 0 0.35rem; }
-.mc-when { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; color: var(--maroon); font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.5rem); line-height: 1.05; margin: 0 0 0.35rem; }
+/* v272: class date/time reads clearer as bold upright sans with tabular (lining) numbers,
+   matching the site's number convention (.price b), instead of the serif italic that looked
+   the same as the "Good morning" greeting. The next-class card splits it into a big date line
+   (.mc-when) and a small weekday+time line (.mc-when2) below. */
+.mc-when { font-family: var(--sans); font-style: normal; font-weight: 700; color: var(--maroon); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; font-size: clamp(1.95rem, 1.45rem + 1.6vw, 2.55rem); line-height: 1.1; margin: 0 0 0.35rem; }
+.mc-when2 { font-family: var(--sans); font-weight: 600; color: var(--maroon); font-variant-numeric: tabular-nums; font-size: clamp(1.15rem, 1.05rem + 0.45vw, 1.32rem); line-height: 1.2; margin: 0.3rem 0 0; }
+.mc-card .mc-when { margin-bottom: 0; }
+.mc-card .mc-when2 + .mc-sub { margin-top: 0.55rem; }
 .mc-sub { font-size: 0.97rem; color: var(--text-dark); margin: 0 0 1.4rem; }
 .mc-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
 .mc-btn { font-family: var(--font-body); font-size: 0.98rem; font-weight: 500; border-radius: 40px; padding: 0 1.4rem; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; border: 1px solid var(--maroon); text-decoration: none; transition: background .15s, color .15s, border-color .15s; -webkit-tap-highlight-color: transparent; }
@@ -47,7 +54,9 @@
 .mc-btn.line { background: transparent; color: var(--maroon); border-color: var(--rule); }
 @media (hover: hover) { .mc-btn.solid:hover { background: var(--maroon-deep); } .mc-btn.line:hover { border-color: var(--maroon); } }
 .mc-btn.busy { pointer-events: none; opacity: 0.6; }
-.mc-spacer { flex: 1; }
+/* v272: Move/Skip sit left with the date now, not pushed to the right edge. Mobile already
+   hid this spacer, so its full-width button stack is unchanged. */
+.mc-spacer { display: none; }
 .mc-locked { font-size: 0.92rem; color: var(--text-mid); margin: 0; line-height: 1.55; }
 .mc-locked a, .mc-inline { color: var(--maroon); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(80,0,24,.25); }
 .mc-bal { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
@@ -547,7 +556,8 @@ body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: col
     if (next) {
       const left = c.changesLeft[next.key.slice(0, 7)] || 0;
       html.push('<div class="mc-card"><p class="mc-k">Next class · ' + inDays(next.start) + '</p>'
-        + '<p class="mc-when">' + esc(whenLong(next.start)) + '</p>'
+        + '<p class="mc-when">' + esc(f(next.start, { day: 'numeric', month: 'long' })) + '</p>'
+        + '<p class="mc-when2">' + esc(f(next.start, { weekday: 'long' }) + ' · ' + time(next.start)) + '</p>'
         + '<p class="mc-sub">' + (next.min || 60) + ' min on Zoom' + (next.makeup ? ' · make-up class' : next.moved ? ' · moved' : '') + '</p>'
         + '<div class="mc-row">'
         + (c.zoom ? '<a class="mc-btn solid" href="' + esc(c.zoom) + '" target="_blank" rel="noopener">' + ICON_ZOOM + 'Join Zoom</a>' : '')
