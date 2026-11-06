@@ -19486,6 +19486,12 @@ html body .thm-pick button:hover { background: var(--s2); border-color: var(--li
 /* floating menus and popovers */
 html body .global-search-dropdown, html body .filter-dd-menu, html body .custom-select-menu, html body .form-select-menu, html body .notif-dots-menu, html body .cl-menu, html body .sch-pop, html body .wa-menu, html body .date-picker-cal, html body .cc-picker, html body .wa-sr-pop, html body .wa-emo, html body .dp-pop, html body .date-picker-pop, html body .custom-select-dropdown, html body .form-select-dropdown {
   background: var(--s-elev) !important; color: var(--tx) !important; border: var(--bw) solid var(--line) !important; border-radius: var(--r-md) !important; box-shadow: var(--sh-2) !important; overflow: hidden; }
+/* List dropdowns must scroll when their options run long (e.g. the hour picker,
+   1–12). The rule above forces overflow:hidden on every floating menu, which
+   clips long lists and kills scrolling; restore vertical scroll for the
+   list-type menus while keeping horizontal clipping for rounded corners. */
+html body .form-select-menu, html body .custom-select-menu, html body .custom-select-dropdown, html body .form-select-dropdown, html body .filter-dd-menu, html body .cl-menu, html body .notif-dots-menu, html body .global-search-dropdown {
+  overflow-x: hidden !important; overflow-y: auto !important; max-height: min(240px, 60vh) !important; -webkit-overflow-scrolling: touch; }
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) { html body .m-dots-popover { background: var(--s-elev) !important; border: var(--bw) solid var(--line) !important; border-radius: var(--r-md) !important; box-shadow: var(--sh-2) !important; } }
 html body .m-dots-item, html body .custom-select-option, html body .form-select-opt, html body .filter-dd-menu button, html body .notif-dots-menu button, html body .cl-menu button, html body .search-result-item {
   display: flex; align-items: center; gap: var(--sp-3); width: 100%; min-height: var(--ctl-h-md); padding: 0 var(--sp-4); font-size: var(--fs-ui) !important; color: var(--tx); text-align: left; background: none; border: 0; cursor: pointer; transition: background-color var(--dur-fast) var(--ease); }
