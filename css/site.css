@@ -626,6 +626,10 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 .brand b { white-space: nowrap; }
 .nav-acts:has(.acct) > .btn-sm { display: none; }
 @media (max-width: 420px) { .nav-in:has(.acct) .brand b { display: none; } }
+/* No-flash nav: when a session token exists, the inline head script adds .hp-auth to <html>
+   synchronously (before first paint), so the logged-out buttons never show for a frame while
+   the deferred site.js swaps in the account button. Logged out (no .hp-auth) is unaffected. */
+.hp-auth .nav-login, .hp-auth .nav-free { display: none; }
 
 /* ---------- 22. Hero: outline button + review card ---------- */
 .btn-line { background: transparent; color: var(--wine); box-shadow: inset 0 0 0 1.5px var(--wine); }
