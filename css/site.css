@@ -183,15 +183,17 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 .navl a { position: relative; isolation: isolate; }
 .navl a[aria-current="page"] { color: var(--wine); }
 @media (hover: hover) { .navl a[aria-current="page"]:hover { background: none; } }
-.nav-pill { position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: rgba(80, 0, 24, .14); transform-origin: 50% 50%; animation: navPillIn .32s cubic-bezier(.3, .7, .2, 1) both; }
-/* active pill settles in on each page (self-contained, CSS-only — no cross-page JS animation) */
-@keyframes navPillIn { from { opacity: 0; transform: scale(.82); } to { opacity: 1; transform: scale(1); } }
+/* The active pill is STATIC on load — it simply appears on the current tab the instant the page
+   paints. No navigation-triggered animation at all, so nothing can stutter during a page load on
+   any browser or device. Only hover (colour) and press (pill) animate, and those fire on user
+   interaction, never during the load. */
+.nav-pill { position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: rgba(80, 0, 24, .14); }
 /* No pill on hover (colour only). The pill appears on PRESS, then carries over as the
    active pill on the page you land on. Works on mouse AND touch (:active = tap feedback). */
 .navl a:active, .nav-login:active { transform: scale(.95); }
 .navl a:not([aria-current="page"]):active, .nav-login:not([aria-current="page"]):active { background: rgba(80, 0, 24, .14); color: var(--wine); }
 .nav-login { transition: background .2s, color .2s, transform .12s ease; }
-@media (prefers-reduced-motion: reduce) { .nav-pill { animation: none; } .navl a:active, .nav-login:active { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .navl a:active, .nav-login:active { transform: none; } }
 .nav-acts { display: flex; align-items: center; gap: 8px; }
 .nav-login { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; font-weight: 500; font-size: .98rem; color: var(--ink-2); text-decoration: none; }
 @media (hover: hover) { .nav-login:hover { color: var(--wine); } }
