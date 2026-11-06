@@ -20634,6 +20634,17 @@ html.dk body .section-search-input:focus, body.dark-mode .section-search-input:f
 html.dk body .filter-dd-btn, body.dark-mode .filter-dd-btn { background: #1b2333 !important; border: 1px solid #2e3a4e !important; color: var(--tx2) !important; }
 html.dk body .filter-dd-btn:hover, body.dark-mode .filter-dd-btn:hover { background: #222c3e !important; color: var(--tx) !important; }
 html.dk body .pg-tabs .inv-seg, body.dark-mode .pg-tabs .inv-seg { background: #1b2333 !important; border: 1px solid #2e3a4e !important; }
+
+/* v247 · keep the Students/Trials (and Payments/Pending) toggle at the TOP of the
+   list, not below it. The toggle rides with the search+filter toolbar, which sits
+   after the trials/pending panel in the markup; on desktop (tabs on) we order that
+   panel last, so the toolbar — and the toggle — stay on top for either tab. */
+@media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
+  body.stuTabs-on #section-classes { display: flex; flex-direction: column; }
+  body.stuTabs-on #section-classes > #trialsPanel { order: 10; }
+  body.feeTabs-on #section-fee-payments { display: flex; flex-direction: column; }
+  body.feeTabs-on #section-fee-payments > #feeRequestsPanel { order: 10; }
+}
 @media (hover: hover) { html:not(.dk) body :is(.btn-dash-outline, .btn-dash-ghost, .btn-dash-sync):not(:disabled):hover { background: color-mix(in srgb, var(--tx) 7%, var(--s1)) !important; } }   /* light: secondary buttons react to the mouse */
 /* v235: what shows behind the page when you overscroll (trackpad bounce, pull down) follows the theme.
    It was the dark launch colour in every mode, so light themes flashed a black band at the top. */
