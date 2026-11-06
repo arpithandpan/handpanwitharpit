@@ -20635,15 +20635,25 @@ html.dk body .filter-dd-btn, body.dark-mode .filter-dd-btn { background: #1b2333
 html.dk body .filter-dd-btn:hover, body.dark-mode .filter-dd-btn:hover { background: #222c3e !important; color: var(--tx) !important; }
 html.dk body .pg-tabs .inv-seg, body.dark-mode .pg-tabs .inv-seg { background: #1b2333 !important; border: 1px solid #2e3a4e !important; }
 
-/* v247 · keep the Students/Trials (and Payments/Pending) toggle at the TOP of the
-   list, not below it. The toggle rides with the search+filter toolbar, which sits
-   after the trials/pending panel in the markup; on desktop (tabs on) we order that
-   panel last, so the toolbar — and the toggle — stay on top for either tab. */
+/* v248 · Trials / Pending views, desktop. Two fixes together:
+   1. The Students/Trials (and Payments/Pending) toggle stays at the TOP of the list.
+      It rides with the search+filter toolbar, which sits after the panel in the
+      markup; ordering the panel last puts the toolbar — and the toggle — back on top.
+   2. The panel's stats + description + table become ONE card joined under the toolbar,
+      instead of grey page text floating between two separate cards. */
 @media (min-width: 901px) and (min-height: 501px), (min-width: 901px) and (pointer: fine) {
   body.stuTabs-on #section-classes { display: flex; flex-direction: column; }
   body.stuTabs-on #section-classes > #trialsPanel { order: 10; }
   body.feeTabs-on #section-fee-payments { display: flex; flex-direction: column; }
   body.feeTabs-on #section-fee-payments > #feeRequestsPanel { order: 10; }
+
+  /* the panel is the card body, joined to the toolbar above (no top border/radius) */
+  body.stuTabs-on #trialsPanel, body.feeTabs-on #feeRequestsPanel {
+    background: var(--s1) !important; border: 1px solid var(--line) !important; border-top: 0 !important;
+    border-radius: 0 0 14px 14px !important; padding: 16px 18px !important; margin: 0 0 2rem !important; overflow: hidden; }
+  /* its table spans edge to edge, below the text, with no inner card border */
+  body.stuTabs-on #trialsPanel > .dash-table-wrap, body.feeTabs-on #feeRequestsPanel > .dash-table-wrap {
+    border: 0 !important; border-radius: 0 !important; margin: 14px -18px !important; width: auto; }
 }
 @media (hover: hover) { html:not(.dk) body :is(.btn-dash-outline, .btn-dash-ghost, .btn-dash-sync):not(:disabled):hover { background: color-mix(in srgb, var(--tx) 7%, var(--s1)) !important; } }   /* light: secondary buttons react to the mouse */
 /* v235: what shows behind the page when you overscroll (trackpad bounce, pull down) follows the theme.
