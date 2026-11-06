@@ -20602,19 +20602,28 @@ html.mono:not(.dk) body table thead th, html.mono:not(.dk) body .overview-card-h
 html:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: color-mix(in srgb, var(--acc) 6%, var(--s1)) !important; }
 html.mono:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: #f6f6f6 !important; }
 
-/* v244 · header band (depth 3) + defined controls. The column-header row reads
-   as a distinct band, clearly set off from the data rows, with a crisp divider.
-   Search and the Status filter get a clear stroke + soft fill so they no longer
-   melt into the white card. Light / dark / mono each get their own values. */
-/* header: no filled band (that floated as a stripe under the white toolbar).
-   Instead the header sits on the card and is set off by a strong divider line
-   and bolder, darker labels. Clean in every theme, no layout dependency. */
-html:not(.dk) body table thead th { background: var(--s1) !important; color: #2f3b52 !important; font-weight: 700 !important; border-bottom: 1.5px solid #aeb6c5 !important; }
-html:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: var(--s1) !important; }
-html.mono:not(.dk) body table thead th { background: var(--s1) !important; color: #2f2f33 !important; font-weight: 700 !important; border-bottom: 1.5px solid #c6c6ca !important; }
-html.mono:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: var(--s1) !important; }
-html.dk body table thead th, body.dark-mode table thead th { background: var(--s1) !important; color: #c6cedd !important; font-weight: 700 !important; border-bottom: 1.5px solid #46526a !important; }
-html.dk body .dash-table-wrap table thead .ws-action-sticky, body.dark-mode .dash-table-wrap table thead .ws-action-sticky { background: var(--s1) !important; }
+/* v245 · gray band top. The toolbar (.sec-tools, the card's header) and the
+   column-header row share ONE gray band (depth 3), the data rows stay white.
+   Because .sec-tools and the table are already joined into one card, the toolbar
+   grey + header grey read as a single band — no floating stripe. Controls carry
+   a clear stroke + light fill so they never melt into the band. Light/dark/mono. */
+
+/* toolbar card-header = gray band */
+html:not(.dk) body .sec-tools { background: #c2c9d8 !important; border-color: #aeb6c5 !important; }
+html.mono:not(.dk) body .sec-tools { background: #d7d7db !important; border-color: #c6c6ca !important; }
+html.dk body .sec-tools, body.dark-mode .sec-tools { background: #2c3648 !important; border-color: #46526a !important; }
+
+/* column-header row continues the band */
+html:not(.dk) body table thead th { background: #c2c9d8 !important; color: #2f3b52 !important; font-weight: 700 !important; border-bottom: 1px solid #aeb6c5 !important; }
+html:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: #c2c9d8 !important; }
+html.mono:not(.dk) body table thead th { background: #d7d7db !important; color: #2f2f33 !important; font-weight: 700 !important; border-bottom: 1px solid #c6c6ca !important; }
+html.mono:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: #d7d7db !important; }
+html.dk body table thead th, body.dark-mode table thead th { background: #2c3648 !important; color: #c6cedd !important; font-weight: 700 !important; border-bottom: 1px solid #46526a !important; }
+html.dk body .dash-table-wrap table thead .ws-action-sticky, body.dark-mode .dash-table-wrap table thead .ws-action-sticky { background: #2c3648 !important; }
+
+/* Students/Trials tab group reads as a light chip on the band */
+html:not(.dk) body .pg-tabs .inv-seg { background: #f3f5f9 !important; border: 1px solid #b2bace !important; }
+html.dk body .pg-tabs .inv-seg, body.dark-mode .pg-tabs .inv-seg { background: #39455c !important; border: 1px solid #44516b !important; }
 
 /* Controls: clear stroke + soft fill (light). */
 html:not(.dk) body .section-search-input { background: #f3f5f9 !important; border: 1px solid #b2bace !important; color: var(--tx) !important; }
