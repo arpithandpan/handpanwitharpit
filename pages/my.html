@@ -123,11 +123,18 @@ a.mc-opt { text-decoration: none; }
    padding when collapsed (centres the row in the card); restore the gap only when the list is open. */
 #mcPayToggle { padding-bottom: 0.2rem; }
 #mcPayToggle[aria-expanded="true"] { padding-bottom: 0.9rem; }
-/* skeleton */
-.mc-sk { background: #ece2d5; border-radius: var(--card-radius); height: 210px; position: relative; overflow: hidden; }
+/* skeleton (kept for the measure sheet sub-loader; darker base so it's visible on card bg) */
+.mc-sk { background: #e6d8c6; border-radius: var(--card-radius); height: 210px; position: relative; overflow: hidden; }
 .mc-sk.s2 { height: 300px; }
-.mc-sk::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent); animation: mcShimmer 1.4s infinite; }
+.mc-sk::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); animation: mcShimmer 1.4s infinite; }
 @keyframes mcShimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+/* loading — rotating handpan logo (same spinner as trial / book / gig / pay) */
+.mc-loader { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 4.5rem 1.25rem 5rem; }
+.handpan-spinner { width: 60px; height: 60px; animation: mcSpin 1.9s linear infinite; }
+@keyframes mcSpin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+.mc-loader-t1 { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 600; font-size: 1.5rem; color: var(--maroon); margin-top: 1.2rem; }
+.mc-loader-t2 { font-size: 0.92rem; color: var(--text-mid); margin-top: 0.4rem; }
+@media (prefers-reduced-motion: reduce) { .handpan-spinner { animation: none; } }
 /* link form */
 .lk-card h3 { color: var(--maroon); font-size: 1.15rem; font-weight: 600; margin: 0 0 0.35rem; }
 .lk-card p { font-size: 0.97rem; color: var(--text-dark); margin: 0 0 1.4rem; line-height: 1.55; }
@@ -323,7 +330,34 @@ body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: col
 
 <section class="section mc-section">
   <!-- loading -->
-  <div class="mc-wrap" id="mcLoading" hidden><div class="mc-sk"></div><div class="mc-sk s2"></div></div>
+  <div class="mc-wrap" id="mcLoading" hidden>
+    <div class="mc-loader" role="status" aria-live="polite">
+      <div class="handpan-spinner"><svg width="60" height="60" viewBox="0 0 300 300" style="display:block;" aria-hidden="true">
+        <circle cx="150" cy="150" r="148" fill="#F5EEE5"/>
+        <circle cx="150" cy="150" r="138" fill="#500018"/>
+        <ellipse cx="150" cy="150" rx="62" ry="52" fill="#F5EEE5"/>
+        <ellipse cx="150" cy="150" rx="34" ry="28" fill="#500018"/>
+        <ellipse cx="150" cy="46" rx="18" ry="14" fill="#F5EEE5"/>
+        <ellipse cx="150" cy="46" rx="9" ry="7" fill="#500018"/>
+        <ellipse cx="220" cy="80" rx="20" ry="16" transform="rotate(45 220 80)" fill="#F5EEE5"/>
+        <ellipse cx="220" cy="80" rx="10" ry="8" transform="rotate(45 220 80)" fill="#500018"/>
+        <ellipse cx="254" cy="150" rx="16" ry="22" fill="#F5EEE5"/>
+        <ellipse cx="254" cy="150" rx="8" ry="11" fill="#500018"/>
+        <ellipse cx="220" cy="220" rx="26" ry="21" transform="rotate(-45 220 220)" fill="#F5EEE5"/>
+        <ellipse cx="220" cy="220" rx="14" ry="11" transform="rotate(-45 220 220)" fill="#500018"/>
+        <ellipse cx="150" cy="256" rx="28" ry="22" fill="#F5EEE5"/>
+        <ellipse cx="150" cy="256" rx="15" ry="12" fill="#500018"/>
+        <ellipse cx="80" cy="220" rx="26" ry="21" transform="rotate(45 80 220)" fill="#F5EEE5"/>
+        <ellipse cx="80" cy="220" rx="14" ry="11" transform="rotate(45 80 220)" fill="#500018"/>
+        <ellipse cx="46" cy="150" rx="16" ry="22" fill="#F5EEE5"/>
+        <ellipse cx="46" cy="150" rx="8" ry="11" fill="#500018"/>
+        <ellipse cx="80" cy="80" rx="20" ry="16" transform="rotate(-45 80 80)" fill="#F5EEE5"/>
+        <ellipse cx="80" cy="80" rx="10" ry="8" transform="rotate(-45 80 80)" fill="#500018"/>
+      </svg></div>
+      <div class="mc-loader-t1">Loading your space…</div>
+      <div class="mc-loader-t2">One moment, bringing up your classes and payments.</div>
+    </div>
+  </div>
 
   <!-- ask for link -->
   <div class="mc-wrap mc-narrow" id="mcAsk" hidden>
