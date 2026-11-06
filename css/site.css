@@ -178,7 +178,7 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
 .brand b { font: 600 1.45rem/1 var(--serif); letter-spacing: -.005em; }
 .brand b i { color: var(--wine); }
 .navl { display: flex; align-items: center; gap: 4px; list-style: none; }
-.navl a { display: block; padding: 10px 14px; border-radius: 999px; font-weight: 500; font-size: .98rem; color: var(--ink-2); text-decoration: none; transition: background .2s, color .2s, transform .12s ease; }
+.navl a { display: block; padding: 10px 14px; border-radius: 999px; font-weight: 500; font-size: .98rem; color: var(--ink-2); text-decoration: none; transition: color .2s; }
 @media (hover: hover) { .navl a:hover { color: var(--wine); } }
 .navl a { position: relative; isolation: isolate; }
 .navl a[aria-current="page"] { color: var(--wine); }
@@ -188,12 +188,9 @@ main > :first-child { padding-top: calc(var(--nav-h) + clamp(32px, 5vw, 72px)); 
    any browser or device. Only hover (colour) and press (pill) animate, and those fire on user
    interaction, never during the load. */
 .nav-pill { position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: rgba(80, 0, 24, .14); }
-/* No pill on hover (colour only). The pill appears on PRESS, then carries over as the
-   active pill on the page you land on. Works on mouse AND touch (:active = tap feedback). */
-.navl a:active, .nav-login:active { transform: scale(.95); }
-.navl a:not([aria-current="page"]):active, .nav-login:not([aria-current="page"]):active { background: rgba(80, 0, 24, .14); color: var(--wine); }
-.nav-login { transition: background .2s, color .2s, transform .12s ease; }
-@media (prefers-reduced-motion: reduce) { .navl a:active, .nav-login:active { transform: none; } }
+/* Hover = colour only (no pill). No press state either. The active pill just appears, static, on
+   the page you land on. Nothing animates on navigation, so nothing can stutter on any browser. */
+.nav-login { transition: background .2s, color .2s; }
 .nav-acts { display: flex; align-items: center; gap: 8px; }
 .nav-login { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; font-weight: 500; font-size: .98rem; color: var(--ink-2); text-decoration: none; }
 @media (hover: hover) { .nav-login:hover { color: var(--wine); } }
