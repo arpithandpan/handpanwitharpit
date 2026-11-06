@@ -20602,42 +20602,38 @@ html.mono:not(.dk) body table thead th, html.mono:not(.dk) body .overview-card-h
 html:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: color-mix(in srgb, var(--acc) 6%, var(--s1)) !important; }
 html.mono:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: #f6f6f6 !important; }
 
-/* v245 · gray band top. The toolbar (.sec-tools, the card's header) and the
-   column-header row share ONE gray band (depth 3), the data rows stay white.
-   Because .sec-tools and the table are already joined into one card, the toolbar
-   grey + header grey read as a single band — no floating stripe. Controls carry
-   a clear stroke + light fill so they never melt into the band. Light/dark/mono. */
+/* v246 · refined table (from Arpit's references): a clean card with outlined
+   pill controls, a subtle framed header (thin lines top + bottom, dim uppercase
+   labels — not a heavy band), and the toolbar sitting on the white/charcoal card.
+   Light / dark / mono. The data rows and status pills keep their own styling. */
 
-/* toolbar card-header = gray band */
-html:not(.dk) body .sec-tools { background: #c2c9d8 !important; border-color: #aeb6c5 !important; }
-html.mono:not(.dk) body .sec-tools { background: #d7d7db !important; border-color: #c6c6ca !important; }
-html.dk body .sec-tools, body.dark-mode .sec-tools { background: #2c3648 !important; border-color: #46526a !important; }
+/* toolbar stays the card colour (no grey band) */
+html:not(.dk) body .sec-tools { background: var(--s1) !important; }
+html.dk body .sec-tools, body.dark-mode .sec-tools { background: var(--s1) !important; }
 
-/* column-header row continues the band */
-html:not(.dk) body table thead th { background: #c2c9d8 !important; color: #2f3b52 !important; font-weight: 700 !important; border-bottom: 1px solid #aeb6c5 !important; }
-html:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: #c2c9d8 !important; }
-html.mono:not(.dk) body table thead th { background: #d7d7db !important; color: #2f2f33 !important; font-weight: 700 !important; border-bottom: 1px solid #c6c6ca !important; }
-html.mono:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: #d7d7db !important; }
-html.dk body table thead th, body.dark-mode table thead th { background: #2c3648 !important; color: #c6cedd !important; font-weight: 700 !important; border-bottom: 1px solid #46526a !important; }
-html.dk body .dash-table-wrap table thead .ws-action-sticky, body.dark-mode .dash-table-wrap table thead .ws-action-sticky { background: #2c3648 !important; }
+/* subtle framed header */
+html:not(.dk) body table thead th { background: #f1f3f8 !important; color: #7a8498 !important; font-weight: 600 !important; border-top: 1px solid #e4e7ee !important; border-bottom: 1px solid #e4e7ee !important; }
+html:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: #f1f3f8 !important; }
+html.mono:not(.dk) body table thead th { background: #f1f1f3 !important; color: #6a6a6e !important; font-weight: 600 !important; border-top: 1px solid #e3e3e6 !important; border-bottom: 1px solid #e3e3e6 !important; }
+html.mono:not(.dk) body .dash-table-wrap table thead .ws-action-sticky { background: #f1f1f3 !important; }
+html.dk body table thead th, body.dark-mode table thead th { background: #1a2231 !important; color: #8792a4 !important; font-weight: 600 !important; border-top: 1px solid #273145 !important; border-bottom: 1px solid #273145 !important; }
+html.dk body .dash-table-wrap table thead .ws-action-sticky, body.dark-mode .dash-table-wrap table thead .ws-action-sticky { background: #1a2231 !important; }
 
-/* Students/Trials tab group reads as a light chip on the band */
-html:not(.dk) body .pg-tabs .inv-seg { background: #f3f5f9 !important; border: 1px solid #b2bace !important; }
-html.dk body .pg-tabs .inv-seg, body.dark-mode .pg-tabs .inv-seg { background: #39455c !important; border: 1px solid #44516b !important; }
-
-/* Controls: clear stroke + soft fill (light). */
-html:not(.dk) body .section-search-input { background: #f3f5f9 !important; border: 1px solid #b2bace !important; color: var(--tx) !important; }
-html:not(.dk) body .section-search-input::placeholder { color: #6b7488 !important; }
-html:not(.dk) body .section-search-input:focus { border-color: var(--acc-tx) !important; background: #ffffff !important; box-shadow: 0 0 0 3px rgba(47,95,224,.16) !important; }
-html:not(.dk) body .filter-dd-btn { background: #f3f5f9 !important; border: 1px solid #b2bace !important; color: #39435a !important; }
-html:not(.dk) body .filter-dd-btn:hover { background: #e9edf4 !important; border-color: #9aa3b6 !important; color: #39435a !important; }
-html:not(.dk) body .filter-dd-btn.active, html:not(.dk) body .filter-dd-btn.open { border-color: var(--acc-tx) !important; color: var(--acc-tx) !important; background: color-mix(in srgb, var(--acc-tx) 7%, #f3f5f9) !important; }
-/* Controls (dark). */
-html.dk body .section-search-input, body.dark-mode .section-search-input { background: #39455c !important; border: 1px solid #44516b !important; color: var(--tx) !important; }
-html.dk body .section-search-input::placeholder, body.dark-mode .section-search-input::placeholder { color: #9aa6ba !important; }
-html.dk body .section-search-input:focus, body.dark-mode .section-search-input:focus { border-color: var(--acc-tx) !important; box-shadow: 0 0 0 3px rgba(130,166,255,.18) !important; }
-html.dk body .filter-dd-btn, body.dark-mode .filter-dd-btn { background: #39455c !important; border: 1px solid #44516b !important; color: var(--tx2) !important; }
-html.dk body .filter-dd-btn:hover, body.dark-mode .filter-dd-btn:hover { background: #42506a !important; color: var(--tx) !important; }
+/* outlined pill controls — search, Status filter, Students/Trials tabs */
+html:not(.dk) body .section-search-input { background: #f6f8fb !important; border: 1px solid #d6dbe4 !important; color: var(--tx) !important; }
+html:not(.dk) body .section-search-input::placeholder { color: #8a93a4 !important; }
+html:not(.dk) body .section-search-input:focus { border-color: var(--acc-tx) !important; background: #ffffff !important; box-shadow: 0 0 0 3px rgba(47,95,224,.14) !important; }
+html:not(.dk) body .filter-dd-btn { background: #f6f8fb !important; border: 1px solid #d6dbe4 !important; color: #4a5468 !important; }
+html:not(.dk) body .filter-dd-btn:hover { background: #eef1f6 !important; border-color: #c2c9d6 !important; color: #4a5468 !important; }
+html:not(.dk) body .filter-dd-btn.active, html:not(.dk) body .filter-dd-btn.open { border-color: var(--acc-tx) !important; color: var(--acc-tx) !important; background: color-mix(in srgb, var(--acc-tx) 6%, #f6f8fb) !important; }
+html:not(.dk) body .pg-tabs .inv-seg { background: #f6f8fb !important; border: 1px solid #d6dbe4 !important; }
+/* outlined pill controls (dark) */
+html.dk body .section-search-input, body.dark-mode .section-search-input { background: #1b2333 !important; border: 1px solid #2e3a4e !important; color: var(--tx) !important; }
+html.dk body .section-search-input::placeholder, body.dark-mode .section-search-input::placeholder { color: #7d8799 !important; }
+html.dk body .section-search-input:focus, body.dark-mode .section-search-input:focus { border-color: var(--acc-tx) !important; box-shadow: 0 0 0 3px rgba(130,166,255,.16) !important; }
+html.dk body .filter-dd-btn, body.dark-mode .filter-dd-btn { background: #1b2333 !important; border: 1px solid #2e3a4e !important; color: var(--tx2) !important; }
+html.dk body .filter-dd-btn:hover, body.dark-mode .filter-dd-btn:hover { background: #222c3e !important; color: var(--tx) !important; }
+html.dk body .pg-tabs .inv-seg, body.dark-mode .pg-tabs .inv-seg { background: #1b2333 !important; border: 1px solid #2e3a4e !important; }
 @media (hover: hover) { html:not(.dk) body :is(.btn-dash-outline, .btn-dash-ghost, .btn-dash-sync):not(:disabled):hover { background: color-mix(in srgb, var(--tx) 7%, var(--s1)) !important; } }   /* light: secondary buttons react to the mouse */
 /* v235: what shows behind the page when you overscroll (trackpad bounce, pull down) follows the theme.
    It was the dark launch colour in every mode, so light themes flashed a black band at the top. */
