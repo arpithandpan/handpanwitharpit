@@ -51,39 +51,13 @@
     }
   })();
 
-  /* ---------- active pill glides from the previous tab (header itself never moves) ---------- */
-  (function () {
-    var KEY = 'hpPill', tabs = $$('.navl a, .nav-login');
-    tabs.forEach(function (a) {
-      a.addEventListener('click', function () {
-        var cur = $('.nav-pill');
-        if (!cur) return;
-        var r = cur.getBoundingClientRect();
-        try { sessionStorage.setItem(KEY, JSON.stringify({ x: r.left, w: r.width, t: Date.now() })); } catch (e) {}
-      });
-    });
-    var pill = $('.nav-pill'), from = null;
-    try { from = JSON.parse(sessionStorage.getItem(KEY) || 'null'); sessionStorage.removeItem(KEY); } catch (e) {}
-    if (!pill || !from || Date.now() - from.t > 4000 || !pill.animate) return;
-    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    // Measure the target ONLY after web fonts have loaded. Before that the nav labels use a
-    // fallback font with different widths, so the pill's final spot is not known yet and the
-    // glide used to stretch or jump (most visible on Edge, where the font lands a frame later).
-    function glide() {
-      if (!pill.isConnected || Date.now() - from.t > 9000) return;
-      var to = pill.getBoundingClientRect();
-      if (!to.width || Math.abs(from.x - to.left) < 2) return; // hidden (mobile menu) or same spot
-      // move the left and right edges (not a scale), so the rounded ends never stretch
-      var l = from.x - to.left, r = (to.left + to.width) - (from.x + from.w);
-      pill.animate([{ left: l + 'px', right: r + 'px' }, { left: '0px', right: '0px' }],
-        { duration: 320, easing: 'cubic-bezier(.3, .7, .2, 1)' });
-    }
-    // One extra rAF after fonts so layout is fully flushed before we measure.
-    function run() { requestAnimationFrame(glide); }
-    var f = doc.fonts;
-    if (f && f.ready && typeof f.ready.then === 'function') { f.ready.then(run).catch(run); }
-    else { requestAnimationFrame(run); }
-  })();
+  /* ---------- nav pill ----------
+     The active pill is now handled entirely in CSS: it sits on the current page's tab
+     and plays a short self-contained entrance when the new page paints. Hover and press
+     are CSS :hover / :active. There is deliberately NO cross-page JS animation here any more:
+     trying to glide one element across a full page reload is what caused the jerk/stutter in
+     some browsers, because the browser tears down and rebuilds the whole page on navigation. */
+
 
   /* ---------- links to other sites: open in a new tab and show a small "leaves the site" arrow ---------- */
   (function () {
