@@ -264,6 +264,9 @@ html, body, button, a, input, label, .tb-wrap * { touch-action: manipulation; }
 .tb-pop input { font-size: 16px; }
 /* Booked slots and fully booked days - real bookings only, shown greyed */
 .tb-day { position: relative; }
+/* unavailable days get a diagonal slash so it is clear they cannot be picked */
+.tb-day:disabled { overflow: hidden; }
+.tb-day:disabled::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top right, transparent calc(50% - 1px), rgba(80,0,24,.3) calc(50% - 1px), rgba(80,0,24,.3) calc(50% + 1px), transparent calc(50% + 1px)); }
 .tb-day.fullday { background: transparent; border-style: dashed; color: var(--bk-stone); padding-top: 0.35rem; padding-bottom: 0.3rem; }
 .tb-day.fullday.on { background: var(--maroon); border-style: solid; color: var(--ivory); }
 .tb-day .ftag { display: block; font-size: 9.5px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1; margin-top: 3px; }
