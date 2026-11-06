@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refined Table</title>
+<style>
+  :root{
+    --page:#eceef3; --card:#ffffff; --card-bd:#e4e7ee;
+    --tx:#1a2232; --tx2:#4a5468; --tx3:#8a93a4;
+    --ctl-bg:#f6f8fb; --ctl-bd:#d6dbe4; --ctl-hover:#eef1f6;
+    --head-bg:#f7f8fb; --head-tx:#8792a4; --head-bd:#e4e7ee;
+    --row-bd:#eef0f4; --row-hover:#fafbfd;
+    --pink:#d6336c; --acc:#2f5fe0;
+    --ok:#15803d; --ok-bg:#e7f6ec; --amber:#9a6316; --amber-bg:#fbf0dd; --blue:#2f5fe0; --blue-bg:#eaf0ff;
+    --r:16px; --r-ctl:10px;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+    --page:#0f1420; --card:#161d2b; --card-bd:#273145;
+    --tx:#e7ecf4; --tx2:#aeb8c8; --tx3:#7d8799;
+    --ctl-bg:#1b2333; --ctl-bd:#2e3a4e; --ctl-hover:#222c3e;
+    --head-bg:#1a2231; --head-tx:#7d8799; --head-bd:#273145;
+    --row-bd:#222c3d; --row-hover:#1b2333;
+    --pink:#e5588a; --acc:#6f9bff;
+    --ok:#4ade80; --ok-bg:rgba(74,222,128,.13); --amber:#e0a060; --amber-bg:rgba(224,160,96,.14); --blue:#82a6ff; --blue-bg:rgba(130,166,255,.14);
+  }}
+  :root[data-theme="dark"]{
+    --page:#0f1420; --card:#161d2b; --card-bd:#273145;
+    --tx:#e7ecf4; --tx2:#aeb8c8; --tx3:#7d8799;
+    --ctl-bg:#1b2333; --ctl-bd:#2e3a4e; --ctl-hover:#222c3e;
+    --head-bg:#1a2231; --head-tx:#7d8799; --head-bd:#273145;
+    --row-bd:#222c3d; --row-hover:#1b2333;
+    --pink:#e5588a; --acc:#6f9bff;
+    --ok:#4ade80; --ok-bg:rgba(74,222,128,.13); --amber:#e0a060; --amber-bg:rgba(224,160,96,.14); --blue:#82a6ff; --blue-bg:rgba(130,166,255,.14);
+  }
+
+  *{box-sizing:border-box}
+  body{ margin:0; background:var(--page); color:var(--tx);
+    font-family:'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; padding:24px 16px; transition:.2s; }
+  .wrap{ max-width:1000px; margin:0 auto; }
+  .top{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+  h1{ font-size:17px; font-weight:600; margin:0; }
+  .seg0{ display:inline-flex; background:var(--ctl-bg); border:1px solid var(--ctl-bd); border-radius:999px; padding:3px; }
+  .seg0 button{ border:0; background:transparent; color:var(--tx3); font:inherit; font-size:13px; font-weight:600; padding:6px 14px; border-radius:999px; cursor:pointer; }
+  .seg0 button.on{ background:var(--acc); color:#fff; }
+
+  .card{ background:var(--card); border:1px solid var(--card-bd); border-radius:var(--r); overflow:hidden;
+    box-shadow:0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.03); }
+
+  /* toolbar: outlined pill controls, airy */
+  .toolbar{ display:flex; align-items:center; gap:10px; padding:16px 18px; flex-wrap:wrap; }
+  .tabs{ display:inline-flex; background:var(--ctl-bg); border:1px solid var(--ctl-bd); border-radius:999px; padding:3px; gap:2px; }
+  .tabs button{ border:0; background:transparent; color:var(--tx2); font:inherit; font-size:13px; font-weight:600; padding:8px 15px; border-radius:999px; cursor:pointer; display:inline-flex; align-items:center; gap:7px; transition:.15s; }
+  .tabs button .n{ color:var(--tx3); font-weight:700; }
+  .tabs button:hover{ background:var(--ctl-hover); }
+  .tabs button.on{ background:var(--pink); color:#fff; }
+  .tabs button.on .n{ color:#fff; opacity:.85; }
+
+  .pill{ display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 14px; background:var(--ctl-bg); border:1px solid var(--ctl-bd); border-radius:var(--r-ctl); color:var(--tx2); font-size:13.5px; font-weight:500; cursor:pointer; transition:.15s; white-space:nowrap; }
+  .pill:hover{ background:var(--ctl-hover); }
+  .pill svg{ opacity:.65 }
+  .search{ flex:1; min-width:180px; color:var(--tx3); font-weight:400; }
+  .search:focus-within{ border-color:var(--acc); }
+  .spacer{ flex:1 }
+  .btn-primary{ display:inline-flex; align-items:center; gap:7px; height:40px; padding:0 16px; background:var(--pink); color:#fff; border:0; border-radius:var(--r-ctl); font-size:13.5px; font-weight:600; cursor:pointer; }
+
+  table{ width:100%; border-collapse:collapse; }
+  thead th{ text-align:left; font-size:11px; letter-spacing:.06em; font-weight:600; text-transform:uppercase; color:var(--head-tx);
+    background:var(--head-bg); padding:12px 18px; white-space:nowrap; border-top:1px solid var(--head-bd); border-bottom:1px solid var(--head-bd); }
+  tbody td{ padding:15px 18px; font-size:14px; border-bottom:1px solid var(--row-bd); vertical-align:middle; }
+  tbody tr:last-child td{ border-bottom:0; }
+  tbody tr:hover td{ background:var(--row-hover); }
+  .nm{ font-weight:600; } .nm small{ color:var(--tx3); font-weight:400; font-size:.8em; margin-left:5px; }
+  .ph{ color:var(--tx3); font-size:12px; margin-top:2px; }
+  .sid{ color:var(--tx3); font-size:13px; font-variant-numeric:tabular-nums; }
+  .chip{ display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; padding:4px 11px; border-radius:999px; }
+  .chip.break{ background:var(--amber-bg); color:var(--amber); }
+  .chip.active{ background:var(--ok-bg); color:var(--ok); }
+  .chip.rem{ background:var(--blue-bg); color:var(--blue); font-size:11px; }
+  .chip .dot{ width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .paid{ color:var(--ok); font-weight:600; }
+
+  .cap{ font-size:12px; color:var(--tx3); margin:12px 2px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>Refined table — inspired by your references</h1>
+    <div class="seg0" id="segTheme"><button data-t="light">Light</button><button data-t="dark">Dark</button></div>
+  </div>
+
+  <div class="card">
+    <div class="toolbar">
+      <div class="tabs">
+        <button class="on">Students <span class="n">16</span></button>
+        <button>Trials <span class="n">5</span></button>
+      </div>
+      <label class="pill search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search by name, phone…
+      </label>
+      <div class="pill">Status
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn-primary"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Student</button>
+    </div>
+    <table>
+      <thead><tr><th>S #</th><th>Name</th><th>Status</th><th>Level</th><th>Remaining</th><th>Total paid</th></tr></thead>
+      <tbody>
+        <tr><td class="sid">S-006</td><td><div class="nm">Sherrine <small>USA</small></div><div class="ph">+1 980 939 5742</div></td><td><span class="chip break"><span class="dot"></span>On break</span></td><td>Beginner</td><td><span class="chip rem">1 left</span></td><td class="paid">$36</td></tr>
+        <tr><td class="sid">S-007</td><td><div class="nm">Shankar Srinivasan</div><div class="ph">+91 97699 47616</div></td><td><span class="chip break"><span class="dot"></span>On break</span></td><td>Beginner</td><td><span class="chip rem">0 left</span></td><td class="paid">₹4,500</td></tr>
+        <tr><td class="sid">S-003</td><td><div class="nm">Ananya</div><div class="ph">+91 97397 42036 · +1 number</div></td><td><span class="chip active"><span class="dot"></span>Active</span></td><td>Beginner</td><td><span class="chip rem">4 left</span></td><td class="paid">₹6,000</td></tr>
+        <tr><td class="sid">S-016</td><td><div class="nm">Anurag Gupta</div><div class="ph">+91 97397 42036</div></td><td><span class="chip active"><span class="dot"></span>Active</span></td><td>Beginner</td><td><span class="chip rem">0 left</span></td><td class="paid">₹0</td></tr>
+        <tr><td class="sid">S-011</td><td><div class="nm">Trina <small>USA</small></div><div class="ph">+1 786 510 2669</div></td><td><span class="chip active"><span class="dot"></span>Active</span></td><td>Beginner</td><td><span class="chip rem">3 left</span></td><td class="paid">$144</td></tr>
+        <tr><td class="sid">S-005</td><td><div class="nm">Sahana Mukherjee</div><div class="ph">+91 98749 72229</div></td><td><span class="chip active"><span class="dot"></span>Active</span></td><td>Beginner</td><td><span class="chip rem">4 left</span></td><td class="paid">₹14,000</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="cap">Outlined pill controls, a primary pink action, a subtle header, soft status chips with a dot, and airy rows with a quiet hover. Flip Light / Dark. Tell me what to push further.</p>
+</div>
+
+<script>
+  document.querySelector('.tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return;
+    document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); });
+  document.getElementById('segTheme').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return;
+    document.querySelectorAll('#segTheme button').forEach(x=>x.classList.toggle('on',x===b));
+    document.documentElement.setAttribute('data-theme', b.dataset.t); });
+  (function(){ const d = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', d?'dark':'light');
+    document.querySelector('#segTheme button[data-t="'+(d?'dark':'light')+'"]').classList.add('on'); })();
+</script>
+</body>
+</html>
